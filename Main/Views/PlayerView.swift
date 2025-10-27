@@ -7,12 +7,36 @@ struct ExtraActivity {
 }
 
 let schoolActivities: [ExtraActivity] = [
-    ExtraActivity(label: "Sports", prerequisite: [], abilityKeyPath: \.physicalAbility),
-    ExtraActivity(label: "Music", prerequisite: [], abilityKeyPath: \.creativeExpression),
-    ExtraActivity(label: "Painting", prerequisite: [] ,abilityKeyPath: \.creativeExpression),
-    ExtraActivity(label: "Chess", prerequisite: [], abilityKeyPath: \.attentionToDetail),
-    ExtraActivity(label: "Reading", prerequisite: [], abilityKeyPath: \.creativeExpression),
-    ExtraActivity(label: "Gaming", prerequisite: [], abilityKeyPath: \.spatialThinking),
+    ExtraActivity(
+        label: "Sports",
+        prerequisite: [],
+        abilityKeyPath: \.physicalAbility
+    ),
+    ExtraActivity(
+        label: "Music",
+        prerequisite: [],
+        abilityKeyPath: \.creativeExpression
+    ),
+    ExtraActivity(
+        label: "Painting",
+        prerequisite: [],
+        abilityKeyPath: \.creativeExpression
+    ),
+    ExtraActivity(
+        label: "Chess",
+        prerequisite: [],
+        abilityKeyPath: \.attentionToDetail
+    ),
+    ExtraActivity(
+        label: "Reading",
+        prerequisite: [],
+        abilityKeyPath: \.creativeExpression
+    ),
+    ExtraActivity(
+        label: "Gaming",
+        prerequisite: [],
+        abilityKeyPath: \.spatialThinking
+    ),
     ExtraActivity(
         label: "Hanging out with friends",
         prerequisite: [],
@@ -32,13 +56,13 @@ struct PlayerView: View {
     @State private var selectedPortfolio: Set<PortfolioItem> = []
     @State private var selectedCertifications: Set<Certification> = []
     @State private var yearsLeftToGraduation: Int? = nil
-    
+
     var availableCareers: [Job] {
         detailsAll.filter {
             $0.requirements.education <= player.degrees.last!.1.eqf
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 16) {
             VStack(alignment: .leading) {
@@ -49,11 +73,21 @@ struct PlayerView: View {
                     VStack {
                         Button("+1 Year") {
                             player.age += 1
-                            player.hardSkills.certifications.formUnion(selectedCertifications)
-                            player.hardSkills.languages.formUnion(selectedLanguages)
-                            player.hardSkills.licenses.formUnion(selectedLicences)
-                            player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
-                            player.hardSkills.software.formUnion(selectedSoftware)
+                            player.hardSkills.certifications.formUnion(
+                                selectedCertifications
+                            )
+                            player.hardSkills.languages.formUnion(
+                                selectedLanguages
+                            )
+                            player.hardSkills.licenses.formUnion(
+                                selectedLicences
+                            )
+                            player.hardSkills.portfolioItems.formUnion(
+                                selectedPortfolio
+                            )
+                            player.hardSkills.software.formUnion(
+                                selectedSoftware
+                            )
                             selectedActivities = []
                             selectedLicences = []
                             selectedLanguages = []
@@ -63,14 +97,16 @@ struct PlayerView: View {
                             yearsLeftToGraduation? -= 1
                             if yearsLeftToGraduation == 0 {
                                 showDecisionSheet.toggle()
-                                if let currentEducation = player.currentEducation {
+                                if let currentEducation = player
+                                    .currentEducation
+                                {
                                     player.degrees.append(currentEducation)
                                 }
                                 yearsLeftToGraduation = nil
                                 player.currentEducation = nil
                             }
                         }
-                        
+
                         if player.currentOccupation != nil {
                             Button("Quit Job") {
                                 showDecisionSheet.toggle()
@@ -79,20 +115,28 @@ struct PlayerView: View {
                         }
                     }
                 }
-                Text("Education Level: EQF \(player.degrees.last!.1.eqf)")
-                Text("Degree: \(player.degrees.last!.1.description)")
+                Text(
+                    "Education Level: EQF \(player.degrees.last!.1.eqf) (\(player.degrees.last!.1.description))"
+                )
                 VStack {
-                    Text("Current occupation: \(player.currentOccupation?.id ?? "None")")
+                    if let currentOccupation = player.currentOccupation {
+                        Text("Current occupation: \(currentOccupation.id)")
+                    }
                     if let currentEducation = player.currentEducation {
-                        Text(
-                            "Current education: \(currentEducation)"
-                        )
+                        VStack {
+                            Text(
+                                "Current Education: \(currentEducation.0.rawValue)"
+                            )
+                            Text(
+                                "Pursuing degree: \(currentEducation.1.rawValue)"
+                            )
+                        }
                     }
                 }
-            
+
             }
             .padding(.top, 10)
-            
+
             HStack {
                 VStack(alignment: .leading) {
                     Text("Soft skills:")
@@ -109,55 +153,86 @@ struct PlayerView: View {
                         }
                     }
                 }.padding()
-                
+
                 VStack(alignment: .leading) {
                     Text("Hard skills:").font(.headline)
                     HStack {
                         Text("🗣️ Languages: ")
                         Spacer()
-                        ForEach(Array(player.hardSkills.languages)) { skill in
+                        ForEach(
+                            Array(
+                                player.hardSkills.languages.union(
+                                    selectedLanguages
+                                )
+                            )
+                        ) { skill in
                             Text("\(skill.rawValue)")
                         }
                     }
-                    
+
                     HStack {
                         Text("🧩 Portfolio: ")
                         Spacer()
-                        ForEach(Array(player.hardSkills.portfolioItems)) {
+                        ForEach(
+                            Array(
+                                player.hardSkills.portfolioItems.union(
+                                    selectedPortfolio
+                                )
+                            )
+                        ) {
                             skill in
                             Text("\(skill.rawValue)")
                         }
                     }
-                    
+
                     HStack {
                         Text("📜 Certification: ")
                         Spacer()
-                        ForEach(Array(player.hardSkills.certifications)) {
+                        ForEach(
+                            Array(
+                                player.hardSkills.certifications.union(
+                                    selectedCertifications
+                                )
+                            )
+                        ) {
                             skill in
                             Text("\(skill.rawValue)")
                         }
                     }
-                    
+
                     HStack {
                         Text("💻 Software: ")
                         Spacer()
-                        ForEach(Array(player.hardSkills.software)) { skill in
+                        ForEach(
+                            Array(
+                                player.hardSkills.software.union(
+                                    selectedSoftware
+                                )
+                            )
+                        ) { skill in
                             Text("\(skill.rawValue)")
                         }
                     }
-                    
+
                     HStack {
                         Text("🪪 Licenses:  ")
                         Spacer()
-                        ForEach(Array(player.hardSkills.licenses)) { skill in
+                        ForEach(
+                            Array(
+                                player.hardSkills.licenses.union(
+                                    selectedLicences
+                                )
+                            )
+                        ) { skill in
                             Text("\(skill.rawValue)")
                         }
                     }
-                }.padding()
+                }.padding([.bottom, .trailing], 20)
+
             }
-            
+
             Divider()
-            
+
             Text("Choose an activity to boost a skill:")
             HStack {
                 ScrollView {
@@ -205,7 +280,7 @@ struct PlayerView: View {
                                 }
                             )
                         ) { skill in
-                            Toggle(
+                            let t = Toggle(
                                 skill.rawValue,
                                 isOn: Binding(
                                     get: {
@@ -218,7 +293,7 @@ struct PlayerView: View {
                                             selectedLanguages.insert(
                                                 skill
                                             )
-                                            
+
                                         } else {
                                             selectedLanguages.remove(
                                                 skill
@@ -226,11 +301,16 @@ struct PlayerView: View {
                                         }
                                     }
                                 )
-                            )
-                            .toggleStyle(.checkbox)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            ).frame(maxWidth: .infinity, alignment: .leading)
+                            #if os(macOS)
+                                t.toggleStyle(.checkbox)
+                            #endif
+                            #if os(iOS)
+                                t.toggleStyle(.switch)
+                            #endif
+
                         }
-                        
+
                     }
                     VStack(spacing: 10) {
                         Text("Certifications:")
@@ -241,7 +321,7 @@ struct PlayerView: View {
                                 }
                             )
                         ) { skill in
-                            Toggle(
+                            let t = Toggle(
                                 skill.rawValue,
                                 isOn: Binding(
                                     get: {
@@ -254,7 +334,7 @@ struct PlayerView: View {
                                             selectedCertifications.insert(
                                                 skill
                                             )
-                                            
+
                                         } else {
                                             selectedCertifications.remove(
                                                 skill
@@ -263,10 +343,15 @@ struct PlayerView: View {
                                     }
                                 )
                             )
-                            .toggleStyle(.checkbox)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            #if os(macOS)
+                                t.toggleStyle(.checkbox)
+                            #endif
+                            #if os(iOS)
+                                t.toggleStyle(.switch)
+                            #endif
                         }
-                        
+
                     }
                     VStack(spacing: 10) {
                         Text("Licenses:")
@@ -277,7 +362,7 @@ struct PlayerView: View {
                                 }
                             )
                         ) { skill in
-                            Toggle(
+                            let t = Toggle(
                                 skill.rawValue,
                                 isOn: Binding(
                                     get: {
@@ -290,7 +375,7 @@ struct PlayerView: View {
                                             selectedLicences.insert(
                                                 skill
                                             )
-                                            
+
                                         } else {
                                             selectedLicences.remove(
                                                 skill
@@ -299,10 +384,15 @@ struct PlayerView: View {
                                     }
                                 )
                             )
-                            .toggleStyle(.checkbox)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            #if os(macOS)
+                                t.toggleStyle(.checkbox)
+                            #endif
+                            #if os(iOS)
+                                t.toggleStyle(.switch)
+                            #endif
                         }
-                        
+
                     }
                     VStack(spacing: 10) {
                         Text("Software:")
@@ -313,7 +403,7 @@ struct PlayerView: View {
                                 }
                             )
                         ) { skill in
-                            Toggle(
+                            let t = Toggle(
                                 skill.rawValue,
                                 isOn: Binding(
                                     get: {
@@ -326,7 +416,7 @@ struct PlayerView: View {
                                             selectedSoftware.insert(
                                                 skill
                                             )
-                                            
+
                                         } else {
                                             selectedSoftware.remove(
                                                 skill
@@ -335,10 +425,15 @@ struct PlayerView: View {
                                     }
                                 )
                             )
-                            .toggleStyle(.checkbox)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            #if os(macOS)
+                                t.toggleStyle(.checkbox)
+                            #endif
+                            #if os(iOS)
+                                t.toggleStyle(.switch)
+                            #endif
                         }
-                        
+
                     }
                     VStack(spacing: 10) {
                         Text("Portfolio Items:")
@@ -349,7 +444,7 @@ struct PlayerView: View {
                                 }
                             )
                         ) { skill in
-                            Toggle(
+                            let t = Toggle(
                                 skill.rawValue,
                                 isOn: Binding(
                                     get: {
@@ -362,7 +457,7 @@ struct PlayerView: View {
                                             selectedPortfolio.insert(
                                                 skill
                                             )
-                                            
+
                                         } else {
                                             selectedPortfolio.remove(
                                                 skill
@@ -371,15 +466,20 @@ struct PlayerView: View {
                                     }
                                 )
                             )
-                            .toggleStyle(.checkbox)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            #if os(macOS)
+                                t.toggleStyle(.checkbox)
+                            #endif
+                            #if os(iOS)
+                                t.toggleStyle(.switch)
+                            #endif
                         }
-                        
+
                     }
-                    
+
                 }
                 .padding(.bottom, 8)
-                
+
             }
             .sheet(isPresented: $showDecisionSheet) {
                 VStack(spacing: 18) {
@@ -395,7 +495,7 @@ struct PlayerView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-                    
+
                     Button {
                         showDecisionSheet = false
                         showCareersSheet = true
@@ -405,7 +505,7 @@ struct PlayerView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    
+
                     Button("Cancel") {
                         showDecisionSheet.toggle()
                     }
@@ -423,10 +523,13 @@ struct PlayerView: View {
                         ForEach(TertiaryProfile.allCases) { profile in
                             if let next = player.degrees.last?.1.next {
                                 HStack {
-                                    ForEach(next){ level in
+                                    ForEach(next) { level in
                                         Button {
-                                            player.currentEducation = (profile, level)
-                                            yearsLeftToGraduation = level.yearsToComplete()
+                                            player.currentEducation = (
+                                                profile, level
+                                            )
+                                            yearsLeftToGraduation =
+                                                level.yearsToComplete()
                                             showTertiarySheet.toggle()
                                         } label: {
                                             VStack(alignment: .leading) {
@@ -436,7 +539,10 @@ struct PlayerView: View {
                                                     .font(.caption)
                                                 Text(level.rawValue)
                                             }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .frame(
+                                                maxWidth: .infinity,
+                                                alignment: .leading
+                                            )
                                         }
                                         .buttonStyle(.borderedProminent)
                                     }
@@ -456,18 +562,18 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $showCareersSheet) {
                 NavigationStack {
-                    
+
                     ScrollView {
                         VStack {
                             Text("Jobs for you")
                                 .font(.title2)
                                 .padding(.vertical)
-                            
+
                             ForEach(availableCareers) { detail in
                                 NavigationLink {
                                     VStack {
                                         DetailView(detail: detail)
-                                        
+
                                         Button("Choose this job") {
                                             player.currentOccupation = detail
                                             showCareersSheet.toggle()
@@ -478,7 +584,7 @@ struct PlayerView: View {
                                 }
                             }
                             .listStyle(.plain)
-                            
+
                             Button("Close") {
                                 showCareersSheet.toggle()
                             }
