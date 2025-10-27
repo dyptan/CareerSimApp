@@ -39,12 +39,12 @@ struct Job: Identifiable, Codable, Hashable {
     let icon: String
     let requirements: Requirements
     let version: Int
-
+    
     struct Requirements: Codable, Hashable {
         let education: Int
         let cognitive: Cognitive
         let physical: Physical
-
+        
         struct Cognitive: Codable, Hashable {
             let analyticalReasoning: Int?
             let creativeExpression: Int?
@@ -56,14 +56,14 @@ struct Job: Identifiable, Codable, Hashable {
             let attentionToDetail: Int?
             let resilienceCognitive: Int?
         }
-
+        
         struct Physical: Codable, Hashable {
             let mechanicalOperation: Int?
             let physicalAbility: Int?
             let outdoorOrientation: Int?
             let resiliencePhysical: Int?
         }
-
+        
         var analyticalReasoning: Int { cognitive.analyticalReasoning ?? 0 }
         var creativeExpression: Int { cognitive.creativeExpression ?? 0 }
         var socialCommunication: Int { cognitive.socialCommunication ?? 0 }
@@ -73,12 +73,12 @@ struct Job: Identifiable, Codable, Hashable {
         var spatialThinking: Int { cognitive.spatialThinking ?? 0 }
         var attentionToDetail: Int { cognitive.attentionToDetail ?? 0 }
         var resilienceCognitive: Int { cognitive.resilienceCognitive ?? 0 }
-
+        
         var mechanicalOperation: Int { physical.mechanicalOperation ?? 0 }
         var physicalAbility: Int { physical.physicalAbility ?? 0 }
         var outdoorOrientation: Int { physical.outdoorOrientation ?? 0 }
         var resiliencePhysical: Int { physical.resiliencePhysical ?? 0 }
-
+        
         func educationLabel() -> String {
             switch education {
             case ..<1: return "EQF 1"
@@ -93,72 +93,35 @@ struct Job: Identifiable, Codable, Hashable {
             }
         }
     }
-
-//    private func personaScores() -> [Group: Double] {
-//        let r = requirements
-//
-//        // Base scores from digitized traits
-//        var scores: [Group: Double] = [
-//            .people:      1.0 * Double(r.socialCommunication) + 0.7 * Double(r.teamLeadership) + 0.5 * Double(r.influenceAndNetworking) + 0.3 * Double(r.attentionToDetail) + 0.2 * Double(r.resilienceCognitive),
-//            .tools:       1.0 * Double(r.analyticalReasoning) + 0.7 * Double(r.attentionToDetail) + 0.5 * Double(r.spatialThinking) + 0.2 * Double(r.resilienceCognitive),
-//            .creative:    1.0 * Double(r.creativeExpression) + 0.4 * Double(r.socialCommunication),
-//            .outdoors:    1.0 * Double(r.outdoorOrientation) + 0.4 * Double(r.mechanicalOperation) + 0.3 * Double(r.physicalAbility) + 0.3 * Double(r.resiliencePhysical),
-//            .sports:      1.0 * Double(r.physicalAbility) + 0.6 * Double(r.resiliencePhysical) + 0.3 * Double(r.socialCommunication) + 0.2 * Double(r.riskTolerance),
-//            .science:     1.0 * Double(r.analyticalReasoning) + 0.7 * Double(r.attentionToDetail) + 0.4 * Double(r.spatialThinking) + 0.3 * Double(r.riskTolerance) + 0.2 * Double(r.resilienceCognitive),
-//            .mechanical:  1.0 * Double(r.mechanicalOperation) + 0.6 * Double(r.spatialThinking) + 0.4 * Double(r.riskTolerance) + 0.3 * Double(r.attentionToDetail) + 0.2 * Double(r.resiliencePhysical)
-//        ]
-//
-//        // Light nudges
-//        if r.socialCommunication >= 4 && r.teamLeadership <= 2 {
-//            scores[.people, default: 0] += 0.4
-//        }
-//        if r.teamLeadership >= 4 && r.socialCommunication >= 3 {
-//            scores[.people, default: 0] += 0.5
-//        }
-//        if r.influenceAndNetworking >= 4 && r.socialCommunication >= 3 {
-//            scores[.people, default: 0] += 0.4
-//        }
-//        if r.riskTolerance >= 4 && r.mechanicalOperation >= 3 {
-//            scores[.mechanical, default: 0] += 0.5
-//        }
-//        if r.outdoorOrientation >= 3 && r.analyticalReasoning >= 3 {
-//            scores[.science, default: 0] += 0.3
-//            scores[.outdoors, default: 0] += 0.3
-//        }
-//        if r.education >= 5 { // Higher EQF tends to reinforce Tools/Science paths
-//            scores[.tools, default: 0] += 0.3
-//            scores[.science, default: 0] += 0.3
-//        }
-//
-//        return scores
-//    }
-
-//    var effectiveInterest: Group {
-//        // If any digitized trait is present (>0), use scoring
-//        let r = requirements
-//        let hasTraits =
-//            r.analyticalReasoning > 0 ||
-//            r.creativeExpression > 0 ||
-//            r.socialCommunication > 0 ||
-//            r.teamLeadership > 0 ||
-//            r.influenceAndNetworking > 0 ||
-//            r.riskTolerance > 0 ||
-//            r.spatialThinking > 0 ||
-//            r.attentionToDetail > 0 ||
-//            r.resilienceCognitive > 0 ||
-//            r.mechanicalOperation > 0 ||
-//            r.physicalAbility > 0 ||
-//            r.outdoorOrientation > 0 ||
-//            r.resiliencePhysical > 0
-//
-//        if hasTraits {
-//            let scores = personaScores()
-//            if let best = scores.max(by: { $0.value < $1.value })?.key {
-//                return best
-//            }
-//        }
-//
-//        // No legacy fallback; default to the category’s persona
-//        return category.persona
-//    }
 }
+
+var jobExample = Job(
+    id: "superman",
+    category: .agriculture,
+    income: 10000,
+    prestige: 5,
+    summary: "sdf",
+    icon: "🦸",
+    requirements: Job.Requirements(
+        education: 0,
+        cognitive: Job.Requirements.Cognitive(
+            analyticalReasoning: 2,
+            creativeExpression: 3,
+            socialCommunication: 4,
+            teamLeadership: 5,
+            influenceAndNetworking: 5,
+            riskTolerance: 6,
+            spatialThinking: 7,
+            attentionToDetail: 8,
+            resilienceCognitive: 5
+        ),
+        physical: Job.Requirements.Physical(
+            mechanicalOperation: nil,
+            physicalAbility: nil,
+            outdoorOrientation: nil,
+            resiliencePhysical: nil
+        )
+    ),
+    version: 1
+)
+

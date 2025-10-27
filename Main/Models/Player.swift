@@ -32,7 +32,7 @@ final class Player: ObservableObject {
             software: [.macOS],
             licenses: []
         ),
-        degrees: [(TertiaryProfile?, Level)] = [(nil, .PrimarySchool)],
+        degrees: [(TertiaryProfile?, Level)] = [],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil
     ) {

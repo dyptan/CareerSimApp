@@ -45,17 +45,18 @@ let schoolActivities: [ExtraActivity] = [
 ]
 
 struct PlayerView: View {
-    @StateObject private var player = Player()
-    @State private var showDecisionSheet = false
-    @State private var showTertiarySheet = false
-    @State private var showCareersSheet = false
-    @State private var selectedActivities: Set<String> = []
-    @State private var selectedLanguages: Set<Language> = []
-    @State private var selectedSoftware: Set<Software> = []
-    @State private var selectedLicences: Set<License> = []
-    @State private var selectedPortfolio: Set<PortfolioItem> = []
-    @State private var selectedCertifications: Set<Certification> = []
-    @State private var yearsLeftToGraduation: Int? = nil
+    @StateObject var player = Player()
+    @State var showDecisionSheet = false
+    @State var showTertiarySheet = false
+    @State var showCareersSheet = false
+    @State var selectedActivities: Set<String> = []
+    @State var selectedLanguages: Set<Language> = []
+    @State var selectedSoftware: Set<Software> = []
+    @State var selectedLicences: Set<License> = []
+    @State var selectedPortfolio: Set<PortfolioItem> = []
+    @State var selectedCertifications: Set<Certification> = []
+    @State var yearsLeftToGraduation: Int? = nil
+    @State var descisionText = "You're 18! What's your next step?"
 
     var availableCareers: [Job] {
         detailsAll.filter {
@@ -65,78 +66,20 @@ struct PlayerView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("Age: \(player.age)")
-                        .font(.title2)
-                    Spacer()
-                    VStack {
-                        Button("+1 Year") {
-                            player.age += 1
-                            player.hardSkills.certifications.formUnion(
-                                selectedCertifications
-                            )
-                            player.hardSkills.languages.formUnion(
-                                selectedLanguages
-                            )
-                            player.hardSkills.licenses.formUnion(
-                                selectedLicences
-                            )
-                            player.hardSkills.portfolioItems.formUnion(
-                                selectedPortfolio
-                            )
-                            player.hardSkills.software.formUnion(
-                                selectedSoftware
-                            )
-                            selectedActivities = []
-                            selectedLicences = []
-                            selectedLanguages = []
-                            selectedPortfolio = []
-                            selectedSoftware = []
-                            selectedCertifications = []
-                            yearsLeftToGraduation? -= 1
-                            if yearsLeftToGraduation == 0 {
-                                showDecisionSheet.toggle()
-                                if let currentEducation = player
-                                    .currentEducation
-                                {
-                                    player.degrees.append(currentEducation)
-                                }
-                                yearsLeftToGraduation = nil
-                                player.currentEducation = nil
-                            }
-                        }
-
-                        if player.currentOccupation != nil {
-                            Button("Quit Job") {
-                                showDecisionSheet.toggle()
-                                player.currentOccupation = nil
-                            }
-                        }
-                    }
-                }
-                Text(
-                    "Education Level: EQF \(player.degrees.last!.1.eqf) (\(player.degrees.last!.1.description))"
-                )
-                VStack {
-                    if let currentOccupation = player.currentOccupation {
-                        Text("Current occupation: \(currentOccupation.id)")
-                    }
-                    if let currentEducation = player.currentEducation {
-                        VStack {
-                            Text(
-                                "Current Education: \(currentEducation.0.rawValue)"
-                            )
-                            Text(
-                                "Pursuing degree: \(currentEducation.1.rawValue)"
-                            )
-                        }
-                    }
-                }
-
-            }
-            .padding(.top, 10)
-
+            HeaderView(
+                player: player,
+                showDecisionSheet: $showDecisionSheet,
+                showTertiarySheet: $showTertiarySheet,
+                showCareersSheet: $showCareersSheet,
+                selectedActivities: $selectedActivities,
+                selectedLanguages: $selectedLanguages,
+                selectedSoftware: $selectedSoftware,
+                selectedLicences: $selectedLicences,
+                selectedPortfolio: $selectedPortfolio,
+                selectedCertifications: $selectedCertifications,
+                yearsLeftToGraduation: $yearsLeftToGraduation,
+                descisionText: $descisionText
+            )
             HStack {
                 VStack(alignment: .leading) {
                     Text("Soft skills:")
@@ -153,12 +96,12 @@ struct PlayerView: View {
                         }
                     }
                 }.padding()
-
+                Divider()
+                Spacer()
                 VStack(alignment: .leading) {
                     Text("Hard skills:").font(.headline)
+                    Text("Languages: ")
                     HStack {
-                        Text("🗣️ Languages: ")
-                        Spacer()
                         ForEach(
                             Array(
                                 player.hardSkills.languages.union(
@@ -166,13 +109,13 @@ struct PlayerView: View {
                                 )
                             )
                         ) { skill in
-                            Text("\(skill.rawValue)")
+                            Text("\(skill.pictogram)")
                         }
                     }
 
+                    Spacer()
+                    Text("Portfolio: ")
                     HStack {
-                        Text("🧩 Portfolio: ")
-                        Spacer()
                         ForEach(
                             Array(
                                 player.hardSkills.portfolioItems.union(
@@ -181,13 +124,13 @@ struct PlayerView: View {
                             )
                         ) {
                             skill in
-                            Text("\(skill.rawValue)")
+                            Text("\(skill.pictogram)")
                         }
                     }
+                    Spacer()
+                    Text("Certifications: ")
 
                     HStack {
-                        Text("📜 Certification: ")
-                        Spacer()
                         ForEach(
                             Array(
                                 player.hardSkills.certifications.union(
@@ -196,13 +139,13 @@ struct PlayerView: View {
                             )
                         ) {
                             skill in
-                            Text("\(skill.rawValue)")
+                            Text("\(skill.pictogram)")
                         }
                     }
 
+                    Spacer()
+                    Text("Software: ")
                     HStack {
-                        Text("💻 Software: ")
-                        Spacer()
                         ForEach(
                             Array(
                                 player.hardSkills.software.union(
@@ -210,13 +153,13 @@ struct PlayerView: View {
                                 )
                             )
                         ) { skill in
-                            Text("\(skill.rawValue)")
+                            Text("\(skill.pictogram)")
                         }
                     }
 
+                    Spacer()
+                    Text("Licenses: ")
                     HStack {
-                        Text("🪪 Licenses:  ")
-                        Spacer()
                         ForEach(
                             Array(
                                 player.hardSkills.licenses.union(
@@ -227,7 +170,7 @@ struct PlayerView: View {
                             Text("\(skill.rawValue)")
                         }
                     }
-                }.padding([.bottom, .trailing], 20)
+                }.padding()
 
             }
 
@@ -311,8 +254,6 @@ struct PlayerView: View {
 
                         }
 
-                    }
-                    VStack(spacing: 10) {
                         Text("Certifications:")
                         ForEach(
                             Array(
@@ -352,8 +293,6 @@ struct PlayerView: View {
                             #endif
                         }
 
-                    }
-                    VStack(spacing: 10) {
                         Text("Licenses:")
                         ForEach(
                             Array(
@@ -393,8 +332,6 @@ struct PlayerView: View {
                             #endif
                         }
 
-                    }
-                    VStack(spacing: 10) {
                         Text("Software:")
                         ForEach(
                             Array(
@@ -434,8 +371,6 @@ struct PlayerView: View {
                             #endif
                         }
 
-                    }
-                    VStack(spacing: 10) {
                         Text("Portfolio Items:")
                         ForEach(
                             Array(
@@ -483,7 +418,7 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $showDecisionSheet) {
                 VStack(spacing: 18) {
-                    Text("You're 18! What's your next step?")
+                    Text(descisionText)
                         .font(.title2)
                         .padding()
                     Button {
@@ -506,10 +441,6 @@ struct PlayerView: View {
                     }
                     .buttonStyle(.bordered)
 
-                    Button("Cancel") {
-                        showDecisionSheet.toggle()
-                    }
-                    .foregroundStyle(.secondary)
                 }
                 .padding()
                 .presentationDetents([.medium])
@@ -597,9 +528,11 @@ struct PlayerView: View {
             }
             .onChange(of: player.age) { oldValue, newValue in
                 switch newValue {
-                case 10: player.degrees.append((nil, .MiddleSchool))
-                case 14: player.degrees.append((nil, .HighSchool))
-                case 18: showDecisionSheet = true
+                case 10: player.degrees.append((nil, .PrimarySchool))
+                case 14: player.degrees.append((nil, .MiddleSchool))
+                case 18:
+                    player.degrees.append((nil, .HighSchool))
+                    showDecisionSheet.toggle()
                 default: break
                 }
             }
@@ -607,3 +540,4 @@ struct PlayerView: View {
         }.padding()
     }
 }
+

@@ -50,7 +50,7 @@ enum Level: String, CaseIterable, Identifiable {
         }
     }
 
-    var description: String {
+    var degree: String {
         switch self {
         case .PrimarySchool: return "Primary School Diploma"
         case .MiddleSchool: return "Middle School Diploma"
