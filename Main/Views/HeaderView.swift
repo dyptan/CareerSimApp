@@ -34,10 +34,14 @@ struct HeaderView: View {
                 VStack(alignment: .leading) {
                     Button("+1 Year") {
                         player.age += 1
-                        player.hardSkills.certifications.formUnion(selectedCertifications)
+                        player.hardSkills.certifications.formUnion(
+                            selectedCertifications
+                        )
                         player.hardSkills.languages.formUnion(selectedLanguages)
                         player.hardSkills.licenses.formUnion(selectedLicences)
-                        player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
+                        player.hardSkills.portfolioItems.formUnion(
+                            selectedPortfolio
+                        )
                         player.hardSkills.software.formUnion(selectedSoftware)
 
                         // Clear staged selections after applying
@@ -50,13 +54,18 @@ struct HeaderView: View {
 
                         yearsLeftToGraduation? -= 1
                         if yearsLeftToGraduation == 0 {
-                            descisionText = "You're done with your degree! What's your next step?"
+                            descisionText =
+                                "You're done with your degree! What's your next step?"
                             showDecisionSheet.toggle()
                             if let currentEducation = player.currentEducation {
                                 player.degrees.append(currentEducation)
                             }
                             yearsLeftToGraduation = nil
                             player.currentEducation = nil
+                        }
+
+                        if let income = player.currentOccupation?.income {
+                            player.savings += income
                         }
                     }
 
@@ -81,14 +90,20 @@ struct HeaderView: View {
                 Text("⭐️")
             }
 
-            VStack {
-                if let currentOccupation = player.currentOccupation {
-                    Text("Current occupation: \(currentOccupation.id)")
-                }
-                if let currentEducation = player.currentEducation {
-                    Text("Studying: \(currentEducation.0.rawValue) \(currentEducation.1.rawValue)")
-                }
+            Text("Bank balance: \(player.savings * 1000)")
+            Text(String(repeating: "💶", count: player.savings / 10))
+
+            if let currentOccupation = player.currentOccupation {
+                Text(
+                    "Occupation: \(currentOccupation.id) \(currentOccupation.icon)"
+                )
             }
+            if let currentEducation = player.currentEducation {
+                Text(
+                    "Studying: \(currentEducation.0.rawValue) \(currentEducation.1.rawValue)"
+                )
+            }
+
         }
         .padding(.top, 10)
     }

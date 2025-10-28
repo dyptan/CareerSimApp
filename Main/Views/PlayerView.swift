@@ -57,6 +57,7 @@ struct PlayerView: View {
     @State var selectedCertifications: Set<Certification> = []
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = "You're 18! What's your next step?"
+    @State var showRetirementSheet = false
 
     var availableCareers: [Job] {
         detailsAll.filter {
@@ -92,7 +93,7 @@ struct PlayerView: View {
                             Text(skill.pictogram)
                             Text(skill.label)
                             Spacer()
-                            Text("\(player.softSkills[keyPath: skill.keyPath])")
+                            Text(String(repeating: skill.pictogram, count: player.softSkills[keyPath: skill.keyPath]))
                         }
                     }
                 }.padding()
@@ -526,6 +527,43 @@ struct PlayerView: View {
                 }
                 .presentationDetents([.medium, .large])
             }
+            .sheet(isPresented: $showRetirementSheet) {
+                VStack(spacing: 16) {
+                    Text("Retirement")
+                        .font(.title2.bold())
+                        .padding(.top)
+
+                    // Minimal summary; expand if desired
+                    Text("You’ve retired at age \(player.age).")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+
+                    if let lastDegree = player.degrees.last {
+                        Text("Highest education: \(lastDegree.1.degree)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let job = player.currentOccupation {
+                        Text("Last occupation: \(job.id)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Button {
+                        showRetirementSheet = false
+                    } label: {
+                        Text("Close")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top, 8)
+                }
+                .padding()
+                .presentationDetents([.medium])
+            }
             .onChange(of: player.age) { oldValue, newValue in
                 switch newValue {
                 case 10: player.degrees.append((nil, .PrimarySchool))
@@ -533,6 +571,7 @@ struct PlayerView: View {
                 case 18:
                     player.degrees.append((nil, .HighSchool))
                     showDecisionSheet.toggle()
+                case 80: showRetirementSheet.toggle()
                 default: break
                 }
             }
@@ -540,4 +579,3 @@ struct PlayerView: View {
         }.padding()
     }
 }
-

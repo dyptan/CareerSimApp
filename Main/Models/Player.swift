@@ -8,6 +8,7 @@ final class Player: ObservableObject {
     @Published var hardSkills: HardSkills
     @Published var currentOccupation: Job?
     @Published var currentEducation: (TertiaryProfile, Level)?
+    @Published var savings: Int
 
     init(
         age: Int = 7,
@@ -34,7 +35,8 @@ final class Player: ObservableObject {
         ),
         degrees: [(TertiaryProfile?, Level)] = [],
         jobExperiance: [(Job, Int)] = [],
-        currentOccupation: Job? = nil
+        currentOccupation: Job? = nil,
+        savings: Int = 0
     ) {
         self.age = age
         self.softSkills = abilities
@@ -42,6 +44,7 @@ final class Player: ObservableObject {
         self.degrees = degrees
         self.jobExperiance = jobExperiance
         self.currentOccupation = currentOccupation
+        self.savings = savings
     }
 
     func boostAbility(_ keyPath: WritableKeyPath<SoftSkills, Int>) {
