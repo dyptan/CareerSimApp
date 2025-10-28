@@ -2,7 +2,10 @@ import SwiftUI
 
 struct DetailView: View {
     var detail: Job
+    @ObservedObject var player: Player
+    @Binding var showCareersSheet: Bool
 
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -31,7 +34,12 @@ struct DetailView: View {
                     Text(detail.summary)
                         .font(.body)
                 }
-                .padding()    
+                .padding()
+                
+                Button("Choose this job") {
+                    player.currentOccupation = detail
+                    showCareersSheet.toggle()
+                }.padding()
             }
             .padding(.bottom, 24)
         }
@@ -63,11 +71,11 @@ struct DetailView: View {
 }
 
 #Preview {
-    NavigationStack {
-        if let first = detailsAll.first {
-            DetailView(detail: first)
-        } else {
-            Text("No careers loaded")
-        }
-    }
+//    NavigationStack {
+//        if let first = detailsAll.first {
+//            DetailView(detail: first)
+//        } else {
+//            Text("No careers loaded")
+//        }
+//    }
 }

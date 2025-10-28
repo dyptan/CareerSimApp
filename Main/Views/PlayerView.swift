@@ -48,7 +48,7 @@ struct PlayerView: View {
     @StateObject var player = Player()
     @State var showDecisionSheet = false
     @State var showTertiarySheet = false
-    @State var showCareersSheet = false
+    @State var showCareersSheet = true
     @State var selectedActivities: Set<String> = []
     @State var selectedLanguages: Set<Language> = []
     @State var selectedSoftware: Set<Software> = []
@@ -59,10 +59,27 @@ struct PlayerView: View {
     @State var descisionText = "You're 18! What's your next step?"
     @State var showRetirementSheet = false
 
-    var availableCareers: [Job] {
+    func availableJobs() -> [Job] {
         detailsAll.filter {
-            $0.requirements.education <= player.degrees.last!.1.eqf
+            $0.requirements.education <= player.degrees.last?.1.eqf ?? 3
         }
+    }
+    
+
+    // Aggregated job experience: total years per Job
+    private var aggregatedJobYears: [(job: Job, years: Int)] {
+        var dict: [Job: Int] = [:]
+        for (job, years) in player.jobExperiance {
+            dict[job, default: 0] += years
+        }
+        // Sort by years desc, then by id for stable order
+        return
+            dict
+            .map { ($0.key, $0.value) }
+            .sorted { lhs, rhs in
+                if lhs.1 != rhs.1 { return lhs.1 > rhs.1 }
+                return lhs.0.id < rhs.0.id
+            }
     }
 
     var body: some View {
@@ -82,6 +99,7 @@ struct PlayerView: View {
                 descisionText: $descisionText
             )
             HStack {
+                //Soft skills
                 VStack(alignment: .leading) {
                     Text("Soft skills:")
                         .font(.headline)
@@ -93,12 +111,20 @@ struct PlayerView: View {
                             Text(skill.pictogram)
                             Text(skill.label)
                             Spacer()
-                            Text(String(repeating: skill.pictogram, count: player.softSkills[keyPath: skill.keyPath]))
+                            Text(
+                                String(
+                                    repeating: skill.pictogram,
+                                    count: player.softSkills[
+                                        keyPath: skill.keyPath
+                                    ]
+                                )
+                            )
                         }
                     }
                 }.padding()
                 Divider()
                 Spacer()
+                //Hard skills
                 VStack(alignment: .leading) {
                     Text("Hard skills:").font(.headline)
                     Text("Languages: ")
@@ -215,6 +241,7 @@ struct PlayerView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
+                    //Hard skills
                     VStack(spacing: 10) {
                         Text("Languages:")
                         ForEach(
@@ -493,39 +520,14 @@ struct PlayerView: View {
                 .presentationDetents([.medium, .large])
             }
             .sheet(isPresented: $showCareersSheet) {
-                NavigationStack {
-
-                    ScrollView {
-                        VStack {
-                            Text("Jobs for you")
-                                .font(.title2)
-                                .padding(.vertical)
-
-                            ForEach(availableCareers) { detail in
-                                NavigationLink {
-                                    VStack {
-                                        DetailView(detail: detail)
-
-                                        Button("Choose this job") {
-                                            player.currentOccupation = detail
-                                            showCareersSheet.toggle()
-                                        }.padding()
-                                    }
-                                } label: {
-                                    DetailRow(detail: detail)
-                                }
-                            }
-                            .listStyle(.plain)
-
-                            Button("Close") {
-                                showCareersSheet.toggle()
-                            }
-                            .padding(.top)
-                        }
-                        .padding()
-                    }
-                }
-                .presentationDetents([.medium, .large])
+                
+                CareersSheet(availableJobs: availableJobs(), player: player, showCareersSheet: $showCareersSheet)
+                    .frame(idealHeight: 500, alignment: .leading)
+                
+                Button("Close") {
+                    showCareersSheet = false
+                }.padding()
+                
             }
             .sheet(isPresented: $showRetirementSheet) {
                 VStack(spacing: 16) {
@@ -533,11 +535,45 @@ struct PlayerView: View {
                         .font(.title2.bold())
                         .padding(.top)
 
-                    // Minimal summary; expand if desired
                     Text("You’ve retired at age \(player.age).")
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
+
+                    // Degrees summary
+                    let degreeCount = player.degrees.count
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Degrees earned: \(degreeCount)")
+                            .font(.headline)
+
+                        ForEach(
+                            Array(player.degrees.enumerated()),
+                            id: \.offset
+                        ) { _, entry in
+                            Text("• \(entry.1.degree)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    // Work history summary
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Work history")
+                            .font(.headline)
+
+                        ForEach(
+                            Array(aggregatedJobYears.enumerated()),
+                            id: \.offset
+                        ) { _, item in
+                            Text("• \(item.job.id) — \(item.years) years")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     if let lastDegree = player.degrees.last {
                         Text("Highest education: \(lastDegree.1.degree)")
@@ -579,3 +615,5 @@ struct PlayerView: View {
         }.padding()
     }
 }
+
+

@@ -16,7 +16,6 @@ struct CategoryRow: View, Hashable {
         }
         .padding(.vertical, 6)
         .tag(Optional(category))
-        .accessibilityIdentifier("CategoryRow_\(category.rawValue)")
     }
 }
 
