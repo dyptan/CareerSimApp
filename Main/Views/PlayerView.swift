@@ -60,9 +60,7 @@ struct PlayerView: View {
     @State var showRetirementSheet = false
 
     func availableJobs() -> [Job] {
-        detailsAll.filter {
-            $0.requirements.education <= player.degrees.last?.1.eqf ?? 3
-        }
+        detailsAll
     }
     
 
@@ -108,7 +106,6 @@ struct PlayerView: View {
                         id: \.offset
                     ) { (idx, skill) in
                         HStack {
-                            Text(skill.pictogram)
                             Text(skill.label)
                             Spacer()
                             Text(
@@ -520,14 +517,12 @@ struct PlayerView: View {
                 .presentationDetents([.medium, .large])
             }
             .sheet(isPresented: $showCareersSheet) {
-                
                 CareersSheet(availableJobs: availableJobs(), player: player, showCareersSheet: $showCareersSheet)
                     .frame(idealHeight: 500, alignment: .leading)
                 
                 Button("Close") {
                     showCareersSheet = false
                 }.padding()
-                
             }
             .sheet(isPresented: $showRetirementSheet) {
                 VStack(spacing: 16) {

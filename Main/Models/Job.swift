@@ -80,16 +80,17 @@ struct Job: Identifiable, Codable, Hashable {
         var resiliencePhysical: Int { physical.resiliencePhysical ?? 0 }
         
         func educationLabel() -> String {
+            // Map EQF-ish scale used in this model to human-friendly education tiers.
             switch education {
-            case ..<1: return "EQF 1"
-            case 1: return "EQF 1"
-            case 2: return "EQF 2"
-            case 3: return "EQF 3"
-            case 4: return "EQF 4"
-            case 5: return "EQF 5"
-            case 6: return "EQF 6"
-            case 7: return "EQF 7"
-            default: return "EQF 8+"
+            case ..<1: return "Primary school"
+            case 1: return "Primary school"
+            case 2: return "Middle school"
+            case 3: return "High school"
+            case 4: return "College / Vocational"
+            case 5: return "University — Bachelor’s"
+            case 6: return "University — Master’s"
+            case 7: return "Doctorate"
+            default: return "Doctorate+"
             }
         }
     }
@@ -124,4 +125,3 @@ var jobExample = Job(
     ),
     version: 1
 )
-
