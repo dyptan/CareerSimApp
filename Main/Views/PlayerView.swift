@@ -3,44 +3,49 @@ import SwiftUI
 struct ExtraActivity {
     let label: String
     let prerequisite: [SoftSkills]
-    let abilityKeyPath: WritableKeyPath<SoftSkills, Int>
+    let abilityKeyPaths: [WritableKeyPath<SoftSkills, Int>]
 }
 
 let schoolActivities: [ExtraActivity] = [
     ExtraActivity(
         label: "Sports",
         prerequisite: [],
-        abilityKeyPath: \.physicalAbility
+        abilityKeyPaths: [\.physicalAbility, \.riskTolerance, \.outdoorOrientation]
     ),
     ExtraActivity(
         label: "Music",
         prerequisite: [],
-        abilityKeyPath: \.creativeExpression
+        abilityKeyPaths: [\.creativeExpression, \.influenceAndNetworking]
     ),
     ExtraActivity(
         label: "Painting",
         prerequisite: [],
-        abilityKeyPath: \.creativeExpression
+        abilityKeyPaths: [\.creativeExpression]
     ),
     ExtraActivity(
         label: "Chess",
         prerequisite: [],
-        abilityKeyPath: \.attentionToDetail
+        abilityKeyPaths: [\.attentionToDetail, \.analyticalReasoning, \.resilienceCognitive]
     ),
     ExtraActivity(
         label: "Reading",
         prerequisite: [],
-        abilityKeyPath: \.creativeExpression
+        abilityKeyPaths: [\.attentionToDetail, \.analyticalReasoning, \.teamLeadership]
     ),
     ExtraActivity(
         label: "Gaming",
         prerequisite: [],
-        abilityKeyPath: \.spatialThinking
+        abilityKeyPaths: [\.spatialThinking, \.mechanicalOperation]
+    ),
+    ExtraActivity(
+        label: "Scouting",
+        prerequisite: [],
+        abilityKeyPaths: [\.resiliencePhysical, \.outdoorOrientation]
     ),
     ExtraActivity(
         label: "Hanging out with friends",
         prerequisite: [],
-        abilityKeyPath: \.socialCommunication
+        abilityKeyPaths: [\.socialCommunication, \.influenceAndNetworking]
     ),
 ]
 
@@ -218,18 +223,18 @@ struct PlayerView: View {
                                             selectedActivities.insert(
                                                 activity.label
                                             )
-                                            player.softSkills[
-                                                keyPath: activity.abilityKeyPath
-                                            ] += 1
-
+                                            // Increment all referenced soft skills by 1
+                                            for keyPath in activity.abilityKeyPaths {
+                                                player.softSkills[keyPath: keyPath] += 1
+                                            }
                                         } else {
                                             selectedActivities.remove(
                                                 activity.label
                                             )
-                                            player.softSkills[
-                                                keyPath: activity.abilityKeyPath
-                                            ] -= 1
-
+                                            // Decrement all referenced soft skills by 1
+                                            for keyPath in activity.abilityKeyPaths {
+                                                player.softSkills[keyPath: keyPath] -= 1
+                                            }
                                         }
                                     }
                                 )
@@ -484,6 +489,7 @@ struct PlayerView: View {
                                             player.currentEducation = (
                                                 profile, level
                                             )
+                                            player.currentOccupation = nil
                                             yearsLeftToGraduation =
                                                 level.yearsToComplete()
                                             showTertiarySheet.toggle()
@@ -610,5 +616,3 @@ struct PlayerView: View {
         }.padding()
     }
 }
-
-

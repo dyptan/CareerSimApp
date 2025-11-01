@@ -62,6 +62,7 @@ struct Job: Identifiable, Codable, Hashable {
             let physicalAbility: Int?
             let outdoorOrientation: Int?
             let resiliencePhysical: Int?
+            let endurance: Int?
         }
         
         var analyticalReasoning: Int { cognitive.analyticalReasoning ?? 0 }
@@ -78,6 +79,7 @@ struct Job: Identifiable, Codable, Hashable {
         var physicalAbility: Int { physical.physicalAbility ?? 0 }
         var outdoorOrientation: Int { physical.outdoorOrientation ?? 0 }
         var resiliencePhysical: Int { physical.resiliencePhysical ?? 0 }
+        var endurance: Int { physical.endurance ?? 0 }
         
         func educationLabel() -> String {
             // Map EQF-ish scale used in this model to human-friendly education tiers.
@@ -120,7 +122,8 @@ var jobExample = Job(
             mechanicalOperation: nil,
             physicalAbility: nil,
             outdoorOrientation: nil,
-            resiliencePhysical: nil
+            resiliencePhysical: nil,
+            endurance: nil
         )
     ),
     version: 1

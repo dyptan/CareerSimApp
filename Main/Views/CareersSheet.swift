@@ -28,7 +28,7 @@ struct CareersSheet: View {
                                 ) { job in
                                     NavigationLink {
                                         DetailView(
-                                            detail: job,
+                                            job: job,
                                             player: player,
                                             showCareersSheet: $showCareersSheet
                                         )

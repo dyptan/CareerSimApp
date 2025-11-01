@@ -24,7 +24,8 @@ final class Player: ObservableObject {
             resilienceCognitive: Int.random(in: 0..<3),
             mechanicalOperation: Int.random(in: 0..<3),
             physicalAbility: 0,
-            resiliencePhysical: 0
+            resiliencePhysical: 0,
+            outdoorOrientation: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
             languages: [.ukrainian],
