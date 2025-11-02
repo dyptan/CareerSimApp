@@ -25,7 +25,8 @@ final class Player: ObservableObject {
             mechanicalOperation: Int.random(in: 0..<3),
             physicalAbility: 0,
             resiliencePhysical: 0,
-            outdoorOrientation: Int.random(in: 0..<3)
+            outdoorOrientation: Int.random(in: 0..<3),
+            opportunityRecognition: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
             languages: [.ukrainian],
@@ -52,3 +53,4 @@ final class Player: ObservableObject {
         softSkills[keyPath: keyPath] += 1
     }
 }
+

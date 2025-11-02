@@ -2,50 +2,65 @@ import SwiftUI
 
 struct ExtraActivity {
     let label: String
-    let prerequisite: [SoftSkills]
     let abilityKeyPaths: [WritableKeyPath<SoftSkills, Int>]
 }
 
 let schoolActivities: [ExtraActivity] = [
     ExtraActivity(
         label: "Sports",
-        prerequisite: [],
         abilityKeyPaths: [\.physicalAbility, \.riskTolerance, \.outdoorOrientation]
     ),
     ExtraActivity(
-        label: "Music",
-        prerequisite: [],
+        label: "Band",
         abilityKeyPaths: [\.creativeExpression, \.influenceAndNetworking]
     ),
     ExtraActivity(
-        label: "Painting",
-        prerequisite: [],
+        label: "Art",
         abilityKeyPaths: [\.creativeExpression]
     ),
     ExtraActivity(
         label: "Chess",
-        prerequisite: [],
         abilityKeyPaths: [\.attentionToDetail, \.analyticalReasoning, \.resilienceCognitive]
     ),
     ExtraActivity(
-        label: "Reading",
-        prerequisite: [],
+        label: "Literature",
         abilityKeyPaths: [\.attentionToDetail, \.analyticalReasoning, \.teamLeadership]
     ),
     ExtraActivity(
-        label: "Gaming",
-        prerequisite: [],
+        label: "3D simulation gaming",
+        abilityKeyPaths: [\.spatialThinking, \.mechanicalOperation]
+    ),
+    ExtraActivity(
+        label: "Economic simulation gaming",
         abilityKeyPaths: [\.spatialThinking, \.mechanicalOperation]
     ),
     ExtraActivity(
         label: "Scouting",
-        prerequisite: [],
         abilityKeyPaths: [\.resiliencePhysical, \.outdoorOrientation]
     ),
     ExtraActivity(
         label: "Hanging out with friends",
-        prerequisite: [],
         abilityKeyPaths: [\.socialCommunication, \.influenceAndNetworking]
+    ),
+    ExtraActivity(
+        label: "Modeling",
+        abilityKeyPaths: [\.mechanicalOperation, \.creativeExpression, \.attentionToDetail]
+    ),
+    ExtraActivity(
+        label: "Mini-job",
+        abilityKeyPaths: [\.riskTolerance, \.teamLeadership]
+    ),
+    ExtraActivity(
+        label: "Organizing events",
+        abilityKeyPaths: [\.influenceAndNetworking, \.teamLeadership, \.socialCommunication]
+    ),
+    ExtraActivity(
+        label: "Pop‑up Stand",
+        abilityKeyPaths: [\.opportunityRecognition, \.socialCommunication, \.attentionToDetail]
+    ),
+    ExtraActivity(
+        label: "Volunteering Fundraising",
+        abilityKeyPaths: [\.opportunityRecognition, \.influenceAndNetworking, \.teamLeadership]
     ),
 ]
 
@@ -68,6 +83,10 @@ struct PlayerView: View {
         detailsAll
     }
     
+    // Build a lookup from skill keyPath to its pictogram for quick rendering
+    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
+        Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram) })
+    }
 
     // Aggregated job experience: total years per Job
     private var aggregatedJobYears: [(job: Job, years: Int)] {
@@ -210,30 +229,40 @@ struct PlayerView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(schoolActivities, id: \.label) { activity in
+                            // Build pictograms for this activity's boosted skills
+                            let pictos = activity.abilityKeyPaths.compactMap { kp in
+                                skillPictogramByKeyPath[kp as PartialKeyPath<SoftSkills>]
+                            }.joined()
+
+                            // You can pick at most 3 activities per year.
+                            let atLimit = selectedActivities.count >= 3
+                            let isSelected = selectedActivities.contains(activity.label)
+                            
                             Toggle(
-                                activity.label,
+                                "\(activity.label) \(pictos)",
                                 isOn: Binding(
                                     get: {
-                                        selectedActivities.contains(
-                                            activity.label
-                                        )
+                                        isSelected
                                     },
-                                    set: { isSelected in
-                                        if isSelected {
-                                            selectedActivities.insert(
-                                                activity.label
-                                            )
+                                    set: { wantSelected in
+                                        if wantSelected {
+                                            // Only allow selecting if not at limit
+                                            guard !atLimit else {
+                                                // noop: keep it off if trying to exceed limit
+                                                return
+                                            }
+                                            selectedActivities.insert(activity.label)
                                             // Increment all referenced soft skills by 1
                                             for keyPath in activity.abilityKeyPaths {
                                                 player.softSkills[keyPath: keyPath] += 1
                                             }
                                         } else {
-                                            selectedActivities.remove(
-                                                activity.label
-                                            )
-                                            // Decrement all referenced soft skills by 1
-                                            for keyPath in activity.abilityKeyPaths {
-                                                player.softSkills[keyPath: keyPath] -= 1
+                                            // Deselecting always allowed
+                                            if selectedActivities.remove(activity.label) != nil {
+                                                // Decrement all referenced soft skills by 1
+                                                for keyPath in activity.abilityKeyPaths {
+                                                    player.softSkills[keyPath: keyPath] -= 1
+                                                }
                                             }
                                         }
                                     }
@@ -241,6 +270,9 @@ struct PlayerView: View {
                             )
                             .toggleStyle(.automatic)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .disabled(!isSelected && atLimit) // Disable unselected toggles when at limit
+                            .opacity(!isSelected && atLimit ? 0.5 : 1.0)
+                            .help(atLimit && !isSelected ? "You can take up to 3 activities this year." : "")
                         }
                     }
                     //Hard skills
@@ -608,7 +640,7 @@ struct PlayerView: View {
                 case 18:
                     player.degrees.append((nil, .HighSchool))
                     showDecisionSheet.toggle()
-                case 80: showRetirementSheet.toggle()
+                case 68: showRetirementSheet.toggle()
                 default: break
                 }
             }

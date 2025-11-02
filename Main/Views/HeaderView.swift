@@ -25,13 +25,25 @@ struct HeaderView: View {
     @Binding var yearsLeftToGraduation: Int?
     @Binding var descisionText: String
 
+    private let maxActivitiesPerYear = 3
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 Text("Age: \(player.age)")
                     .font(.title2)
                 Spacer()
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 8) {
+                    // Visible activities counter
+                    HStack(spacing: 6) {
+                        Text("Activities this year:")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                            .font(.headline.monospacedDigit())
+                            .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                    }
+
                     Button("+1 Year") {
                         player.age += 1
                         player.hardSkills.certifications.formUnion(
@@ -44,7 +56,7 @@ struct HeaderView: View {
                         )
                         player.hardSkills.software.formUnion(selectedSoftware)
 
-                        // Clear staged selections after applying
+                        // Clear staged selections after applying (resets the counter)
                         selectedActivities = []
                         selectedLicences = []
                         selectedLanguages = []
@@ -68,6 +80,7 @@ struct HeaderView: View {
                             player.savings += income
                         }
                     }
+                    .disabled(false)
 
                     if player.currentOccupation != nil {
                         Button("Find new Job") {

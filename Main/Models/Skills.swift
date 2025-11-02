@@ -105,6 +105,8 @@ struct SoftSkills: Codable, Hashable {
     var physicalAbility: Int
     var resiliencePhysical: Int
     var outdoorOrientation: Int
+    // NEW: Entrepreneurship-related
+    var opportunityRecognition: Int
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoning, "Analytical Reasoning", "🧠"),
@@ -119,6 +121,9 @@ struct SoftSkills: Codable, Hashable {
         (\.physicalAbility, "Physical Ability", "💪"),
         (\.resilienceCognitive, "Cognitive Resilience", "🧩"),
         (\.resiliencePhysical, "Physical Resilience", "🛡️"),
-        (\.outdoorOrientation, "Outdoor Orientation", "🌲")
+        (\.outdoorOrientation, "Outdoor Orientation", "🌲"),
+        // NEW: display in UI
+        (\.opportunityRecognition, "Opportunity Recognition", "🔭")
     ]
 }
+
