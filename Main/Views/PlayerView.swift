@@ -609,8 +609,29 @@ struct PlayerView: View {
 
                     Button {
                         showRetirementSheet = false
+                        let newPlayer = Player()
+                        selectedActivities = []
+                        selectedLanguages = []
+                        selectedSoftware = []
+                        selectedLicences = []
+                        selectedPortfolio = []
+                        selectedCertifications = []
+                        yearsLeftToGraduation = nil
+                        descisionText = "You're 18! What's your next step?"
+                        showDecisionSheet = false
+                        showTertiarySheet = false
+                        showCareersSheet = true
+                        // Assign the new player last to trigger UI refresh
+                        player.age = newPlayer.age
+                        player.degrees = newPlayer.degrees
+                        player.jobExperiance = newPlayer.jobExperiance
+                        player.softSkills = newPlayer.softSkills
+                        player.hardSkills = newPlayer.hardSkills
+                        player.currentOccupation = newPlayer.currentOccupation
+                        player.currentEducation = newPlayer.currentEducation
+                        player.savings = newPlayer.savings
                     } label: {
-                        Text("Close")
+                        Text("Restart")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                     }
