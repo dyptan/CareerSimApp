@@ -9,6 +9,8 @@ final class Player: ObservableObject {
     @Published var currentOccupation: Job?
     @Published var currentEducation: (TertiaryProfile, Level)?
     @Published var savings: Int
+    // New: certifications that become locked after a year passes
+    @Published var lockedCertifications: Set<Certification>
 
     init(
         age: Int = 7,
@@ -38,7 +40,8 @@ final class Player: ObservableObject {
         degrees: [(TertiaryProfile?, Level)] = [],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil,
-        savings: Int = 0
+        savings: Int = 0,
+        lockedCertifications: Set<Certification> = []
     ) {
         self.age = age
         self.softSkills = abilities
@@ -47,6 +50,7 @@ final class Player: ObservableObject {
         self.jobExperiance = jobExperiance
         self.currentOccupation = currentOccupation
         self.savings = savings
+        self.lockedCertifications = lockedCertifications
     }
 
     func boostAbility(_ keyPath: WritableKeyPath<SoftSkills, Int>) {

@@ -78,6 +78,8 @@ struct PlayerView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = "You're 18! What's your next step?"
     @State var showRetirementSheet = false
+    // New: controls Certifications & Licenses sheet
+    @State private var showCertsLicensesSheet = false
 
     func availableJobs() -> [Job] {
         detailsAll
@@ -173,19 +175,32 @@ struct PlayerView: View {
                         }
                     }
                     Spacer()
-                    Text("Certifications: ")
 
+                    // Certifications & Licenses moved to separate sheet, show compact summary + edit button
                     HStack {
-                        ForEach(
-                            Array(
-                                player.hardSkills.certifications.union(
-                                    selectedCertifications
-                                )
-                            )
-                        ) {
-                            skill in
-                            Text("\(skill.pictogram)")
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Certifications & Licenses:")
+                            HStack(spacing: 6) {
+                                // show a compact preview
+                                if selectedCertifications.isEmpty && selectedLicences.isEmpty {
+                                    Text("None selected")
+                                        .foregroundStyle(.secondary)
+                                } else {
+                                    ForEach(Array(selectedCertifications.prefix(6))) { cert in
+                                        Text(cert.pictogram)
+                                    }
+                                    ForEach(Array(selectedLicences.prefix(6))) { lic in
+                                        // quick initial badge for license
+                                        Text(String(lic.rawValue.prefix(1)).uppercased())
+                                    }
+                                }
+                            }
                         }
+                        Spacer()
+                        Button("Edit") {
+                            showCertsLicensesSheet = true
+                        }
+                        .buttonStyle(.bordered)
                     }
 
                     Spacer()
@@ -303,83 +318,7 @@ struct PlayerView: View {
 
                         }
 
-                        Text("Certifications:")
-                        ForEach(
-                            Array(
-                                HardSkills().certifications.sorted {
-                                    $0.rawValue > $1.rawValue
-                                }
-                            )
-                        ) { skill in
-                            let t = Toggle(
-                                skill.rawValue,
-                                isOn: Binding(
-                                    get: {
-                                        selectedCertifications.contains(
-                                            skill
-                                        )
-                                    },
-                                    set: { isSelected in
-                                        if isSelected {
-                                            selectedCertifications.insert(
-                                                skill
-                                            )
-
-                                        } else {
-                                            selectedCertifications.remove(
-                                                skill
-                                            )
-                                        }
-                                    }
-                                )
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            #if os(macOS)
-                                t.toggleStyle(.checkbox)
-                            #endif
-                            #if os(iOS)
-                                t.toggleStyle(.switch)
-                            #endif
-                        }
-
-                        Text("Licenses:")
-                        ForEach(
-                            Array(
-                                HardSkills().licenses.sorted {
-                                    $0.rawValue > $1.rawValue
-                                }
-                            )
-                        ) { skill in
-                            let t = Toggle(
-                                skill.rawValue,
-                                isOn: Binding(
-                                    get: {
-                                        selectedLicences.contains(
-                                            skill
-                                        )
-                                    },
-                                    set: { isSelected in
-                                        if isSelected {
-                                            selectedLicences.insert(
-                                                skill
-                                            )
-
-                                        } else {
-                                            selectedLicences.remove(
-                                                skill
-                                            )
-                                        }
-                                    }
-                                )
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            #if os(macOS)
-                                t.toggleStyle(.checkbox)
-                            #endif
-                            #if os(iOS)
-                                t.toggleStyle(.switch)
-                            #endif
-                        }
+                        // Certifications & Licenses UI moved into separate sheet
 
                         Text("Software:")
                         ForEach(
@@ -549,6 +488,28 @@ struct PlayerView: View {
                     showCareersSheet = false
                 }.padding()
             }
+            // New: certifications & licenses sheet
+            .sheet(isPresented: $showCertsLicensesSheet) {
+                NavigationStack {
+                    ScrollView {
+                        CertificationsAndLicensesView(
+                            selectedCertifications: $selectedCertifications,
+                            selectedLicences: $selectedLicences
+                        )
+                        // Pass lockedCertifications via environment to avoid changing signature?
+                        // We’ll instead pass it down via environment object:
+                        .environmentObject(player)
+                        .padding()
+                    }
+                    .navigationTitle("Certifications & Licenses")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Done") { showCertsLicensesSheet = false }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+            }
             .sheet(isPresented: $showRetirementSheet) {
                 VStack(spacing: 16) {
                     Text("Retirement")
@@ -630,6 +591,7 @@ struct PlayerView: View {
                         player.currentOccupation = newPlayer.currentOccupation
                         player.currentEducation = newPlayer.currentEducation
                         player.savings = newPlayer.savings
+                        player.lockedCertifications = newPlayer.lockedCertifications
                     } label: {
                         Text("Restart")
                             .font(.headline)
@@ -656,3 +618,4 @@ struct PlayerView: View {
         }.padding()
     }
 }
+

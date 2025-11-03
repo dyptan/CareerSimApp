@@ -45,6 +45,9 @@ struct HeaderView: View {
                     }
 
                     Button("+1 Year") {
+                        // Lock certifications that were selected at the end of this year
+                        player.lockedCertifications.formUnion(selectedCertifications)
+
                         player.age += 1
                         player.hardSkills.certifications.formUnion(
                             selectedCertifications
@@ -56,13 +59,7 @@ struct HeaderView: View {
                         )
                         player.hardSkills.software.formUnion(selectedSoftware)
 
-                        // Clear staged selections after applying (resets the counter)
                         selectedActivities = []
-                        selectedLicences = []
-                        selectedLanguages = []
-                        selectedPortfolio = []
-                        selectedSoftware = []
-                        selectedCertifications = []
 
                         yearsLeftToGraduation? -= 1
                         if yearsLeftToGraduation == 0 {
@@ -143,3 +140,4 @@ struct HeaderView: View {
         descisionText: .constant("sdf")
     )
 }
+

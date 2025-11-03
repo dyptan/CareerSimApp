@@ -48,16 +48,66 @@ enum PortfolioItem: String, Codable, Hashable, CaseIterable, Identifiable {
 }
 
 enum Certification: String, Codable, Hashable, CaseIterable, Identifiable{
+    // Existing
     case aws, azure, google, scrum, security
+    // Skilled trades
+    case cwi           // Certified Welding Inspector
+    case epa608        // EPA 608 (HVAC)
+    case nate          // NATE (HVAC)
+    case faaAMP        // FAA A&P (Aircraft Mechanic)
+    // Healthcare support
+    case cna           // Certified Nursing Assistant
+    case dentalAssistant
+    case medicalAssistant
+    case pharmacyTech
+    // Business and finance
+    case cfp           // Certified Financial Planner
+    case series65
+    // Transportation and logistics
+    case flightAttendantCert
+    
     var id: String { rawValue }
     
     var pictogram: String {
         switch self {
-        case .aws: return "☁️"      // Cloud
-        case .azure: return "🌥️"    // Sun behind cloud
-        case .google: return "🔎"    // Magnifying glass
-        case .scrum: return "🏉"     // Rugby football
-        case .security: return "🔒"  // Lock
+        case .aws: return "☁️"
+        case .azure: return "🌥️"
+        case .google: return "🔎"
+        case .scrum: return "🏉"
+        case .security: return "🔒"
+        case .cwi: return "🧪"
+        case .epa608: return "🌡️"
+        case .nate: return "❄️"
+        case .faaAMP: return "✈️"
+        case .cna: return "🩺"
+        case .dentalAssistant: return "🦷"
+        case .medicalAssistant: return "🏥"
+        case .pharmacyTech: return "💊"
+        case .cfp: return "📈"
+        case .series65: return "💹"
+        case .flightAttendantCert: return "🛫"
+        }
+    }
+    
+    // Kid-friendly display names
+    var friendlyName: String {
+        switch self {
+        case .aws: return "AWS Cloud Badge \(pictogram)"
+        case .azure: return "Azure Cloud Badge \(pictogram)"
+        case .google: return "Google Tech Badge \(pictogram)"
+        case .scrum: return "Teamwork (Scrum) Badge \(pictogram)"
+        case .security: return "Online Safety Badge \(pictogram)"
+        case .cwi: return "Welding Inspector (CWI) \(pictogram)"
+        case .epa608: return "HVAC Clean Air (EPA 608) \(pictogram)"
+        case .nate: return "HVAC Pro (NATE) \(pictogram)"
+        case .faaAMP: return "Airplane Fixer (FAA A&P) \(pictogram)"
+        case .cna: return "Care Helper (CNA) \(pictogram)"
+        case .dentalAssistant: return "Tooth Helper (Dental Assistant) \(pictogram)"
+        case .medicalAssistant: return "Clinic Helper (Medical Assistant) \(pictogram)"
+        case .pharmacyTech: return "Medicine Helper (Pharmacy Tech) \(pictogram)"
+        case .cfp: return "Money Planner (CFP) \(pictogram)"
+        case .series65: return "Investing Helper (Series 65) \(pictogram)"
+        case .flightAttendantCert: return "Flight Helper (Attendant Cert) \(pictogram)"
         }
     }
 }
@@ -79,7 +129,18 @@ enum Software: String, Codable, Hashable, CaseIterable, Identifiable {
 }
 
 enum License: String, Codable, Hashable, CaseIterable, Identifiable {
+    // Existing
     case drivers, pilot, nurse
+    // Skilled trades
+    case electrician
+    case plumber
+    // Transportation and logistics
+    case cdl
+    case commercialPilot
+    // Business & finance
+    case realEstateAgent
+    case insuranceAgent
+    
     var id: String { rawValue }
 }
 
@@ -126,4 +187,3 @@ struct SoftSkills: Codable, Hashable {
         (\.opportunityRecognition, "Opportunity Recognition", "🔭")
     ]
 }
-
