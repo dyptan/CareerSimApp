@@ -11,11 +11,11 @@ let schoolActivities: [ExtraActivity] = [
         abilityKeyPaths: [\.physicalAbility, \.riskTolerance, \.outdoorOrientation]
     ),
     ExtraActivity(
-        label: "Band",
+        label: "Music band",
         abilityKeyPaths: [\.creativeExpression, \.influenceAndNetworking]
     ),
     ExtraActivity(
-        label: "Art",
+        label: "Photography",
         abilityKeyPaths: [\.creativeExpression]
     ),
     ExtraActivity(
@@ -83,18 +83,15 @@ struct PlayerView: View {
         detailsAll
     }
     
-    // Build a lookup from skill keyPath to its pictogram for quick rendering
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram) })
     }
 
-    // Aggregated job experience: total years per Job
     private var aggregatedJobYears: [(job: Job, years: Int)] {
         var dict: [Job: Int] = [:]
         for (job, years) in player.jobExperiance {
             dict[job, default: 0] += years
         }
-        // Sort by years desc, then by id for stable order
         return
             dict
             .map { ($0.key, $0.value) }
@@ -229,12 +226,10 @@ struct PlayerView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(schoolActivities, id: \.label) { activity in
-                            // Build pictograms for this activity's boosted skills
                             let pictos = activity.abilityKeyPaths.compactMap { kp in
                                 skillPictogramByKeyPath[kp as PartialKeyPath<SoftSkills>]
                             }.joined()
 
-                            // You can pick at most 3 activities per year.
                             let atLimit = selectedActivities.count >= 3
                             let isSelected = selectedActivities.contains(activity.label)
                             
@@ -244,22 +239,14 @@ struct PlayerView: View {
                                     get: {
                                         isSelected
                                     },
-                                    set: { wantSelected in
-                                        if wantSelected {
-                                            // Only allow selecting if not at limit
-                                            guard !atLimit else {
-                                                // noop: keep it off if trying to exceed limit
-                                                return
-                                            }
+                                    set: { isOn in
+                                        if isOn && !atLimit {
                                             selectedActivities.insert(activity.label)
-                                            // Increment all referenced soft skills by 1
                                             for keyPath in activity.abilityKeyPaths {
                                                 player.softSkills[keyPath: keyPath] += 1
                                             }
                                         } else {
-                                            // Deselecting always allowed
                                             if selectedActivities.remove(activity.label) != nil {
-                                                // Decrement all referenced soft skills by 1
                                                 for keyPath in activity.abilityKeyPaths {
                                                     player.softSkills[keyPath: keyPath] -= 1
                                                 }
@@ -270,7 +257,7 @@ struct PlayerView: View {
                             )
                             .toggleStyle(.automatic)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .disabled(!isSelected && atLimit) // Disable unselected toggles when at limit
+                            .disabled(!isSelected && atLimit)
                             .opacity(!isSelected && atLimit ? 0.5 : 1.0)
                             .help(atLimit && !isSelected ? "You can take up to 3 activities this year." : "")
                         }
