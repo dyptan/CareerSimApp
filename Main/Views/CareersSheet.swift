@@ -1,9 +1,3 @@
-//
-//  CareersSheet.swift
-//
-//  Created by Ivan Dyptan on 28.10.25.
-//
-
 import SwiftUI
 
 struct CareersSheet: View {

@@ -1,29 +1,6 @@
 import Foundation
 
 struct Job: Identifiable, Codable, Hashable {
-    // luck: 0 = Low-paid, poor working conditions, "desperation jobs"
-    // luck: 1 = Mainstream, steady jobs (nurse, teacher, technician, etc)
-    // luck: 2 = Highly competitive/fast-growing, but broadly accessible (tech, design, entry data, etc)
-    // luck: 3 = Rare, niche, or out-of-date professions
-    // luck: 4 = Elite, prestigious, extremely selective (investment banker, ceo, etc)
-    // luck: 5 = High risk/high reward (influencer, celebrity, eSports, etc)
-    //
-    // education: 0 = EQF 1 (No formal education / basic skills)
-    // education: 1 = EQF 2 (Primary school)
-    // education: 2 = EQF 3 (Lower secondary)
-    // education: 3 = EQF 4 (Upper secondary, high school, apprenticeship)
-    // education: 4 = EQF 5 (Short-cycle tertiary or advanced vocational)
-    // education: 5 = EQF 6 (Bachelor's degree or equivalent)
-    // education: 6 = EQF 7 (Master's degree or equivalent)
-    // education: 7 = EQF 8 (Doctorate or equivalent)
-    //
-    // cognitive/physical requirement levels (0–5):
-    //   0 = Not needed
-    //   1 = Minimal/basic
-    //   2 = Somewhat helpful
-    //   3 = Clearly useful/moderate
-    //   4 = Important/high
-    //   5 = Essential/critical for success
     let id: String
     let category: Category
     let income: Int
@@ -82,7 +59,6 @@ struct Job: Identifiable, Codable, Hashable {
         var endurance: Int { physical.endurance ?? 0 }
         
         func educationLabel() -> String {
-            // Map EQF-ish scale used in this model to human-friendly education tiers.
             switch education {
             case ..<1: return "Primary school"
             case 1: return "Primary school"

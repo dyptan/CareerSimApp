@@ -1,7 +1,5 @@
 import SwiftUI
 
-
-
 struct MainView: View {
     @StateObject var player = Player()
     @State var showDecisionSheet = false

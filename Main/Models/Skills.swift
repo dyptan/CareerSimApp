@@ -1,31 +1,18 @@
-//
-//  Language.swift
-//  CareersApp
-//
-//  Created by Ivan Dyptan on 26.10.25.
-//  Copyright © 2025 Apple. All rights reserved.
-//
-
 enum Language: String, Codable, Hashable, CaseIterable, Identifiable {
     case swift = "swift"
     case C = "C"
     case python = "python"
     case java = "java"
     case english = "english"
-    case german = "german"
-    // Keep rawValue stable but fix the case name spelling for code use
-    case ukrainian = "ukraininan"
     var id: String { rawValue }
     
     var pictogram: String {
         switch self {
-        case .swift: return "🦅"   // Swift bird
-        case .C: return "💾"       // Classic disk for C
-        case .python: return "🐍"  // Python snake
-        case .java: return "☕️"    // Coffee cup
-        case .english: return "🇬🇧" // UK flag
-        case .german: return "🇩🇪"  // Germany flag
-        case .ukrainian: return "🇺🇦" // Ukraine flag (note: rawValue kept as "ukraininan")
+        case .swift: return "🦅"
+        case .C: return "💾"
+        case .python: return "🐍"
+        case .java: return "☕️"
+        case .english: return "🇬🇧"
         }
     }
 }
@@ -47,7 +34,6 @@ enum PortfolioItem: String, Codable, Hashable, CaseIterable, Identifiable {
 }
 
 enum Certification: String, Codable, Hashable, CaseIterable, Identifiable{
-    // Existing
     case aws, azure, google, scrum, security
     // Skilled trades
     case cwi           // Certified Welding Inspector
@@ -88,7 +74,6 @@ enum Certification: String, Codable, Hashable, CaseIterable, Identifiable{
         }
     }
     
-    // Kid-friendly display names
     var friendlyName: String {
         switch self {
         case .aws: return "AWS Cloud Badge \(pictogram)"
@@ -128,15 +113,11 @@ enum Software: String, Codable, Hashable, CaseIterable, Identifiable {
 }
 
 enum License: String, Codable, Hashable, CaseIterable, Identifiable {
-    // Existing
     case drivers, pilot, nurse
-    // Skilled trades
     case electrician
     case plumber
-    // Transportation and logistics
     case cdl
     case commercialPilot
-    // Business & finance
     case realEstateAgent
     case insuranceAgent
     
@@ -193,7 +174,6 @@ struct SoftSkills: Codable, Hashable {
     var physicalAbility: Int
     var resiliencePhysical: Int
     var outdoorOrientation: Int
-    // NEW: Entrepreneurship-related
     var opportunityRecognition: Int
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
@@ -210,7 +190,6 @@ struct SoftSkills: Codable, Hashable {
         (\.resilienceCognitive, "Cognitive Resilience", "🧩"),
         (\.resiliencePhysical, "Physical Resilience", "🛡️"),
         (\.outdoorOrientation, "Outdoor Orientation", "🌲"),
-        // NEW: display in UI
         (\.opportunityRecognition, "Opportunity Recognition", "🔭")
     ]
 }

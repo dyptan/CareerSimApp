@@ -1,10 +1,3 @@
-//
-//  HeaderView.swift
-//  CareersApp
-//
-//  Created by Ivan Dyptan on 27.10.25.
-//  Copyright © 2025 Apple. All rights reserved.
-//
 import SwiftUI
 
 struct HeaderView: View {

@@ -6,10 +6,8 @@ struct HardStillsView: View {
     @Binding var selectedLanguages: Set<Language>
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedPortfolio: Set<PortfolioItem>
-    // Global per-year activity tracker (shared with HeaderView / ActivitiesView)
     @Binding var selectedActivities: Set<String>
 
-    // Access player to read locked items
     @EnvironmentObject private var player: Player
 
     private let maxActivitiesPerYear = 3

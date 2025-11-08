@@ -1,12 +1,3 @@
-//
-//  ExtraActivity.swift
-//  CareersApp
-//
-//  Created by Ivan Dyptan on 08.11.25.
-//  Copyright © 2025 Apple. All rights reserved.
-//
-
-
 struct ExtraActivity {
     let label: String
     let abilityKeyPaths: [WritableKeyPath<SoftSkills, Int>]
