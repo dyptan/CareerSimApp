@@ -3,109 +3,205 @@ import SwiftUI
 struct CertificationsAndLicensesView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedLicences: Set<License>
-    // Access player to read locked certifications
+    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedSoftware: Set<Software>
+    @Binding var selectedPortfolio: Set<PortfolioItem>
+    // Global per-year activity tracker (shared with HeaderView / ActivitiesView)
+    @Binding var selectedActivities: Set<String>
+
+    // Access player to read locked items
     @EnvironmentObject private var player: Player
 
-    // Local radio selection (at most one). We sync this with selectedCertifications.
-    @State private var selectedRadioCert: Certification?
+    private let maxActivitiesPerYear = 3
 
-    // Precompute sorted arrays to simplify generic inference and avoid heavy work in body
+    var body: some View {
+        VStack(spacing: 20) {
+            CertificationsView(
+                selectedCertifications: $selectedCertifications,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+
+            Divider()
+
+            LicensesView(
+                selectedLicences: $selectedLicences,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+
+            Divider()
+
+            LanguagesView(
+                selectedLanguages: $selectedLanguages,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+
+            Divider()
+
+            SoftwareView(
+                selectedSoftware: $selectedSoftware,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+
+            Divider()
+
+            PortfolioView(
+                selectedPortfolio: $selectedPortfolio,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Certifications (consumes activity slots, respects lockedCertifications)
+
+private struct CertificationsView: View {
+    @Binding var selectedCertifications: Set<Certification>
+    @Binding var selectedActivities: Set<String>
+    @EnvironmentObject private var player: Player
+
+    private let maxActivitiesPerYear = 3
+
     private var sortedCertifications: [Certification] {
         Certification.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            counterRow
+
+            Text("Certifications:")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            ForEach(sortedCertifications, id: \.self) { cert in
+                let isLocked = player.lockedCertifications.contains(cert)
+                let isSelected = selectedCertifications.contains(cert)
+                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+
+                Toggle(
+                    "Certification: \(cert.friendlyName)",
+                    isOn: Binding(
+                        get: { isSelected },
+                        set: { isOn in
+                            guard !isLocked else { return }
+                            if isOn {
+                                if !atLimit {
+                                    selectedCertifications.insert(cert)
+                                    selectedActivities.insert("cert:\(cert.rawValue)")
+                                }
+                            } else {
+                                if selectedCertifications.remove(cert) != nil {
+                                    selectedActivities.remove("cert:\(cert.rawValue)")
+                                }
+                            }
+                        }
+                    )
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .disabled(isLocked || (!isSelected && atLimit))
+                .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                .help(isLocked
+                      ? "Locked after year end"
+                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                #if os(macOS)
+                .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                .toggleStyle(.switch)
+                #endif
+            }
+        }
+    }
+
+    private var counterRow: some View {
+        HStack(spacing: 6) {
+            Text("Activities this year:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                .font(.headline.monospacedDigit())
+                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Licenses (consumes activity slots, respects lockedLicenses)
+
+private struct LicensesView: View {
+    @Binding var selectedLicences: Set<License>
+    @Binding var selectedActivities: Set<String>
+    @EnvironmentObject private var player: Player
+
+    private let maxActivitiesPerYear = 3
+
     private var sortedLicenses: [License] {
         License.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
     var body: some View {
-        VStack(spacing: 10) {
-//            // Certifications as radio-like selection (at most one)
-//            Text("Certifications:")
-//
-            ForEach(sortedCertifications, id: \.self) { cert in
-                let isLocked = player.lockedCertifications.contains(cert)
-                // Selected if this is the current radio choice
-                let isSelected = selectedRadioCert == cert
+        VStack(spacing: 12) {
+            counterRow
 
-                // Row acts like a radio option
-                HStack {
-                    // Simple radio indicator
-                    Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-//                        .foregroundStyle(isLocked ? .secondary : .accentColor)
-                    Text(cert.friendlyName)
-                        .foregroundStyle(isLocked ? .secondary : .primary)
-                    Spacer()
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    guard !isLocked else { return }
-                    if isSelected {
-                        // Tapping again deselects (so “at most one”, not “exactly one”)
-                        selectedRadioCert = nil
-                        selectedCertifications.removeAll()
-                    } else {
-                        selectedRadioCert = cert
-                        // Ensure only this one is in the bound set
-                        selectedCertifications = [cert]
-                    }
-                }
-                .opacity(isLocked ? 0.5 : 1.0)
-                .disabled(isLocked)
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(cert.friendlyName)
-                .accessibilityValue(isSelected ? "Selected" : "Not selected")
-                .accessibilityHint(isLocked ? "Locked after year end" : "Select to choose this certification")
-            }
-
-            // Licenses (unchanged behavior)
             Text("Licenses:")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             ForEach(sortedLicenses, id: \.self) { lic in
-                let binding = Binding<Bool>(
-                    get: { selectedLicences.contains(lic) },
-                    set: { isSelected in
-                        if isSelected {
-                            selectedLicences.insert(lic)
-                        } else {
-                            selectedLicences.remove(lic)
+                let isLocked = player.lockedLicenses.contains(lic)
+                let isSelected = selectedLicences.contains(lic)
+                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+
+                Toggle(
+                    "License: \(displayName(for: lic))",
+                    isOn: Binding(
+                        get: { isSelected },
+                        set: { isOn in
+                            guard !isLocked else { return }
+                            if isOn {
+                                if !atLimit {
+                                    selectedLicences.insert(lic)
+                                    selectedActivities.insert("lic:\(lic.rawValue)")
+                                }
+                            } else {
+                                if selectedLicences.remove(lic) != nil {
+                                    selectedActivities.remove("lic:\(lic.rawValue)")
+                                }
+                            }
                         }
-                    }
+                    )
                 )
-
-                let t = Toggle(displayName(for: lic), isOn: binding)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .disabled(isLocked || (!isSelected && atLimit))
+                .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                .help(isLocked
+                      ? "Locked after year end"
+                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
                 #if os(macOS)
-                t.toggleStyle(.checkbox)
+                .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                t.toggleStyle(.switch)
+                .toggleStyle(.switch)
                 #endif
             }
         }
-        // Keep local radio selection in sync with external binding
-        .onAppear {
-            if let current = selectedCertifications.first {
-                selectedRadioCert = current
-            } else {
-                selectedRadioCert = nil
-            }
-        }
-        .onChange(of: selectedCertifications) { _, newValue in
-            if let first = newValue.first {
-                if selectedRadioCert != first {
-                    selectedRadioCert = first
-                }
-            } else if selectedRadioCert != nil {
-                selectedRadioCert = nil
-            }
-        }
-        .onChange(of: selectedRadioCert) { _, newSelection in
-            // Keep the external set aligned with radio selection
-            if let cert = newSelection {
-                selectedCertifications = [cert]
-            } else {
-                selectedCertifications.removeAll()
-            }
+    }
+
+    private var counterRow: some View {
+        HStack(spacing: 6) {
+            Text("Activities this year:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                .font(.headline.monospacedDigit())
+                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+            Spacer()
         }
     }
 
@@ -133,12 +229,242 @@ struct CertificationsAndLicensesView: View {
     }
 }
 
+// MARK: - Languages (consumes activity slots, respects lockedLanguages)
+
+private struct LanguagesView: View {
+    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedActivities: Set<String>
+    @EnvironmentObject private var player: Player
+
+    private let maxActivitiesPerYear = 3
+
+    private var sortedLanguages: [Language] {
+        Language.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            counterRow
+
+            Text("Languages:")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            ForEach(sortedLanguages, id: \.self) { lang in
+                let isLocked = player.lockedLanguages.contains(lang)
+                let isSelected = selectedLanguages.contains(lang)
+                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+
+                Toggle(
+                    "Language: \(lang.rawValue) \(lang.pictogram)",
+                    isOn: Binding(
+                        get: { isSelected },
+                        set: { isOn in
+                            guard !isLocked else { return }
+                            if isOn {
+                                if !atLimit {
+                                    selectedLanguages.insert(lang)
+                                    selectedActivities.insert("lang:\(lang.rawValue)")
+                                }
+                            } else {
+                                if selectedLanguages.remove(lang) != nil {
+                                    selectedActivities.remove("lang:\(lang.rawValue)")
+                                }
+                            }
+                        }
+                    )
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .disabled(isLocked || (!isSelected && atLimit))
+                .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                .help(isLocked
+                      ? "Locked after year end"
+                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                #if os(macOS)
+                .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                .toggleStyle(.switch)
+                #endif
+            }
+        }
+    }
+
+    private var counterRow: some View {
+        HStack(spacing: 6) {
+            Text("Activities this year:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                .font(.headline.monospacedDigit())
+                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Software (consumes activity slots, respects lockedSoftware)
+
+private struct SoftwareView: View {
+    @Binding var selectedSoftware: Set<Software>
+    @Binding var selectedActivities: Set<String>
+    @EnvironmentObject private var player: Player
+
+    private let maxActivitiesPerYear = 3
+
+    private var sortedSoftware: [Software] {
+        Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            counterRow
+
+            Text("Software:")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            ForEach(sortedSoftware, id: \.self) { sw in
+                let isLocked = player.lockedSoftware.contains(sw)
+                let isSelected = selectedSoftware.contains(sw)
+                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+
+                Toggle(
+                    "Software: \(sw.rawValue) \(sw.pictogram)",
+                    isOn: Binding(
+                        get: { isSelected },
+                        set: { isOn in
+                            guard !isLocked else { return }
+                            if isOn {
+                                if !atLimit {
+                                    selectedSoftware.insert(sw)
+                                    selectedActivities.insert("soft:\(sw.rawValue)")
+                                }
+                            } else {
+                                if selectedSoftware.remove(sw) != nil {
+                                    selectedActivities.remove("soft:\(sw.rawValue)")
+                                }
+                            }
+                        }
+                    )
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .disabled(isLocked || (!isSelected && atLimit))
+                .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                .help(isLocked
+                      ? "Locked after year end"
+                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                #if os(macOS)
+                .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                .toggleStyle(.switch)
+                #endif
+            }
+        }
+    }
+
+    private var counterRow: some View {
+        HStack(spacing: 6) {
+            Text("Activities this year:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                .font(.headline.monospacedDigit())
+                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+            Spacer()
+        }
+    }
+}
+
+// MARK: - Portfolio (consumes activity slots, respects lockedPortfolio)
+
+private struct PortfolioView: View {
+    @Binding var selectedPortfolio: Set<PortfolioItem>
+    @Binding var selectedActivities: Set<String>
+    @EnvironmentObject private var player: Player
+
+    private let maxActivitiesPerYear = 3
+
+    private var sortedPortfolio: [PortfolioItem] {
+        PortfolioItem.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            counterRow
+
+            Text("Portfolio Items:")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            ForEach(sortedPortfolio, id: \.self) { item in
+                let isLocked = player.lockedPortfolio.contains(item)
+                let isSelected = selectedPortfolio.contains(item)
+                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+
+                Toggle(
+                    "Portfolio: \(item.rawValue) \(item.pictogram)",
+                    isOn: Binding(
+                        get: { isSelected },
+                        set: { isOn in
+                            guard !isLocked else { return }
+                            if isOn {
+                                if !atLimit {
+                                    selectedPortfolio.insert(item)
+                                    selectedActivities.insert("port:\(item.rawValue)")
+                                }
+                            } else {
+                                if selectedPortfolio.remove(item) != nil {
+                                    selectedActivities.remove("port:\(item.rawValue)")
+                                }
+                            }
+                        }
+                    )
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .disabled(isLocked || (!isSelected && atLimit))
+                .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                .help(isLocked
+                      ? "Locked after year end"
+                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                #if os(macOS)
+                .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                .toggleStyle(.switch)
+                #endif
+            }
+        }
+    }
+
+    private var counterRow: some View {
+        HStack(spacing: 6) {
+            Text("Activities this year:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                .font(.headline.monospacedDigit())
+                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+            Spacer()
+        }
+    }
+}
+
 #Preview {
     @Previewable @State var certs = Set<Certification>()
     @Previewable @State var lic = Set<License>()
+    @Previewable @State var langs = Set<Language>()
+    @Previewable @State var soft = Set<Software>()
+    @Previewable @State var port = Set<PortfolioItem>()
+    @Previewable @State var acts = Set<String>()
     return CertificationsAndLicensesView(
         selectedCertifications: $certs,
-        selectedLicences: $lic
+        selectedLicences: $lic,
+        selectedLanguages: $langs,
+        selectedSoftware: $soft,
+        selectedPortfolio: $port,
+        selectedActivities: $acts
     )
     .environmentObject(Player())
     .padding()

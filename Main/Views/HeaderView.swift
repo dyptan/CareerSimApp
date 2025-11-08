@@ -45,22 +45,32 @@ struct HeaderView: View {
                     }
 
                     Button("+1 Year") {
-                        // Lock certifications that were selected at the end of this year
-                        player.lockedCertifications.formUnion(selectedCertifications)
-
+                        // Advance year
                         player.age += 1
-                        player.hardSkills.certifications.formUnion(
-                            selectedCertifications
-                        )
+
+                        // Persist this year's learning into the player's permanent hard skills
+                        player.hardSkills.certifications.formUnion(selectedCertifications)
                         player.hardSkills.languages.formUnion(selectedLanguages)
                         player.hardSkills.licenses.formUnion(selectedLicences)
-                        player.hardSkills.portfolioItems.formUnion(
-                            selectedPortfolio
-                        )
+                        player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
                         player.hardSkills.software.formUnion(selectedSoftware)
 
-                        selectedActivities = []
+                        // Lock learned items so they won't be available next years
+                        player.lockedCertifications.formUnion(selectedCertifications)
+                        player.lockedLanguages.formUnion(selectedLanguages)
+                        player.lockedLicenses.formUnion(selectedLicences)
+                        player.lockedPortfolio.formUnion(selectedPortfolio)
+                        player.lockedSoftware.formUnion(selectedSoftware)
 
+                        // Clear all in-progress selections for the new year
+                        selectedActivities.removeAll()
+                        selectedLanguages.removeAll()
+                        selectedSoftware.removeAll()
+                        selectedLicences.removeAll()
+                        selectedPortfolio.removeAll()
+                        selectedCertifications.removeAll()
+
+                        // Education progress
                         yearsLeftToGraduation? -= 1
                         if yearsLeftToGraduation == 0 {
                             descisionText =
@@ -73,6 +83,7 @@ struct HeaderView: View {
                             player.currentEducation = nil
                         }
 
+                        // Income
                         if let income = player.currentOccupation?.income {
                             player.savings += income
                         }
@@ -140,4 +151,3 @@ struct HeaderView: View {
         descisionText: .constant("sdf")
     )
 }
-
