@@ -9,7 +9,6 @@ final class Player: ObservableObject {
     @Published var currentOccupation: Job?
     @Published var currentEducation: (TertiaryProfile, Level)?
     @Published var savings: Int
-    // Locked after a year passes
     @Published var lockedCertifications: Set<Certification>
     @Published var lockedLanguages: Set<Language>
     @Published var lockedSoftware: Set<Software>
@@ -35,10 +34,10 @@ final class Player: ObservableObject {
             opportunityRecognition: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
-            languages: [.ukrainian],
+            languages: [],
             portfolioItems: [],
             certifications: [],
-            software: [.macOS],
+            software: [],
             licenses: []
         ),
         degrees: [(TertiaryProfile?, Level)] = [],

@@ -4,7 +4,7 @@ struct MainView: View {
     @StateObject var player = Player()
     @State var showDecisionSheet = false
     @State var showTertiarySheet = false
-    @State var showCareersSheet = true
+    @State var showCareersSheet = false
     @State var selectedActivities: Set<String> = []
     @State var selectedLanguages: Set<Language> = []
     @State var selectedSoftware: Set<Software> = []
@@ -14,7 +14,6 @@ struct MainView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = "You're 18! What's your next step?"
     @State var showRetirementSheet = false
-    // New: controls Certifications & Licenses sheet
     @State private var showCertsLicensesSheet = false
     
     func availableJobs() -> [Job] {
