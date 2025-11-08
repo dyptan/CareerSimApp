@@ -15,7 +15,6 @@
 		551B66F42EBFB89100092DC7 /* ExtraActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F32EBFB89100092DC7 /* ExtraActivity.swift */; };
 		551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F52EBFB91900092DC7 /* SkillsView.swift */; };
 		551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */; };
-		5596D8332E9AED0D00E98CEF /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D8192E9AE25E00E98CEF /* Migration.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
@@ -28,7 +27,7 @@
 		84F851C92EA0F30F0066C41A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851C82EA0F30F0066C41A /* Player.swift */; };
 		84F851CB2EA0F3130066C41A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CA2EA0F3130066C41A /* MainView.swift */; };
 		84F851CD2EA16C290066C41A /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CC2EA16C290066C41A /* Level.swift */; };
-		C20D77EE24B665D7002E7AEA /* CareersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* CareersApp.swift */; };
+		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -65,7 +64,6 @@
 		551B66F32EBFB89100092DC7 /* ExtraActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraActivity.swift; sourceTree = "<group>"; };
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
-		5596D8192E9AE25E00E98CEF /* Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Migration.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5596D86A2E9AF46B00E98CEF /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
@@ -80,7 +78,7 @@
 		84F851CA2EA0F3130066C41A /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		84F851CC2EA16C290066C41A /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		C20D77EA24B665D7002E7AEA /* CareersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C20D77ED24B665D7002E7AEA /* CareersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareersApp.swift; sourceTree = "<group>"; };
+		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FB75835CADF255844DAD0DAD /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
@@ -120,7 +118,6 @@
 		5596D82E2E9AE72200E98CEF /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				5596D8192E9AE25E00E98CEF /* Migration.swift */,
 				55A6ED042E9542630033B674 /* Loader.swift */,
 			);
 			path = Utils;
@@ -149,7 +146,7 @@
 		C20D77EC24B665D7002E7AEA /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				C20D77ED24B665D7002E7AEA /* CareersApp.swift */,
+				C20D77ED24B665D7002E7AEA /* Main.swift */,
 				C2FEB33824B7CA02004FAB73 /* Views */,
 				C20D780824B685C4002E7AEA /* Models */,
 				5596D82E2E9AE72200E98CEF /* Utils */,
@@ -325,7 +322,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5596D8332E9AED0D00E98CEF /* Migration.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */,
 				55B02BFE2EB955E600554212 /* HardStillsView.swift in Sources */,
 				55A6ED052E9542630033B674 /* Loader.swift in Sources */,
@@ -336,7 +332,7 @@
 				550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */,
 				55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */,
 				550C55032EAE6C1200887B96 /* Skills.swift in Sources */,
-				C20D77EE24B665D7002E7AEA /* CareersApp.swift in Sources */,
+				C20D77EE24B665D7002E7AEA /* Main.swift in Sources */,
 				84F851CB2EA0F3130066C41A /* MainView.swift in Sources */,
 				551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */,
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,

@@ -83,8 +83,8 @@ struct HeaderView: View {
                     }
                     .disabled(false)
 
-                    if player.currentOccupation != nil {
-                        Button("Find new Job") {
+                    if player.age > 18 {
+                        Button("Find a Job") {
                             showCareersSheet.toggle()
                             player.currentOccupation = nil
                         }
