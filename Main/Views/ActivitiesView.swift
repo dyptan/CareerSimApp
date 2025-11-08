@@ -7,7 +7,7 @@ struct ActivitiesView: View {
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedPortfolio: Set<PortfolioItem>
 
-    // Local mapping from soft-skill key paths to pictograms
+    
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
@@ -18,7 +18,7 @@ struct ActivitiesView: View {
 
     var body: some View {
         ScrollView {
-            // Activities
+            
             VStack(spacing: 10) {
                 ForEach(schoolActivities, id: \.label) { activity in
                     let pictos = activity.abilityKeyPaths.compactMap { kp in
@@ -56,95 +56,6 @@ struct ActivitiesView: View {
                 }
             }
 
-            // Hard skills
-            VStack(spacing: 10) {
-                Text("Languages:")
-                ForEach(
-                    Array(
-                        HardSkills().languages.sorted { $0.rawValue > $1.rawValue }
-                    )
-                ) { skill in
-                    let t = Toggle(
-                        skill.rawValue,
-                        isOn: Binding(
-                            get: { selectedLanguages.contains(skill) },
-                            set: { isSelected in
-                                if isSelected {
-                                    selectedLanguages.insert(skill)
-                                } else {
-                                    selectedLanguages.remove(skill)
-                                }
-                            }
-                        )
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    #if os(macOS)
-                    t.toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                    t.toggleStyle(.switch)
-                    #endif
-                }
-
-                Text("Software:")
-                ForEach(
-                    Array(
-                        HardSkills().software.sorted { $0.rawValue > $1.rawValue }
-                    )
-                ) { skill in
-                    let t = Toggle(
-                        skill.rawValue,
-                        isOn: Binding(
-                            get: { selectedSoftware.contains(skill) },
-                            set: { isSelected in
-                                if isSelected {
-                                    selectedSoftware.insert(skill)
-                                } else {
-                                    selectedSoftware.remove(skill)
-                                }
-                            }
-                        )
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    #if os(macOS)
-                    t.toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                    t.toggleStyle(.switch)
-                    #endif
-                }
-
-                Text("Portfolio Items:")
-                ForEach(
-                    Array(
-                        HardSkills().portfolioItems.sorted { $0.rawValue > $1.rawValue }
-                    )
-                ) { skill in
-                    let t = Toggle(
-                        skill.rawValue,
-                        isOn: Binding(
-                            get: { selectedPortfolio.contains(skill) },
-                            set: { isSelected in
-                                if isSelected {
-                                    selectedPortfolio.insert(skill)
-                                } else {
-                                    selectedPortfolio.remove(skill)
-                                }
-                            }
-                        )
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    #if os(macOS)
-                    t.toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                    t.toggleStyle(.switch)
-                    #endif
-                }
-            }
         }
         .padding(.bottom, 8)
     }

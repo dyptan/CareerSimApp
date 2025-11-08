@@ -6,7 +6,6 @@
 //  Copyright © 2025 Apple. All rights reserved.
 //
 
-
 enum Language: String, Codable, Hashable, CaseIterable, Identifiable {
     case swift = "swift"
     case C = "C"
@@ -142,6 +141,34 @@ enum License: String, Codable, Hashable, CaseIterable, Identifiable {
     case insuranceAgent
     
     var id: String { rawValue }
+    
+    var pictogram: String {
+        switch self {
+        case .drivers: return "🚗"
+        case .pilot: return "✈️"
+        case .nurse: return "🩺"
+        case .electrician: return "🔌"
+        case .plumber: return "🔧"
+        case .cdl: return "🚚"
+        case .commercialPilot: return "🛫"
+        case .realEstateAgent: return "🏠"
+        case .insuranceAgent: return "🛡️"
+        }
+    }
+    
+    var friendlyName: String {
+        switch self {
+        case .drivers: return "Driver’s License \(pictogram)"
+        case .pilot: return "Pilot License \(pictogram)"
+        case .nurse: return "Nurse License \(pictogram)"
+        case .electrician: return "Electrician License \(pictogram)"
+        case .plumber: return "Plumber License \(pictogram)"
+        case .cdl: return "Commercial Driver’s License \(pictogram)"
+        case .commercialPilot: return "Commercial Pilot License \(pictogram)"
+        case .realEstateAgent: return "Real Estate Agent License \(pictogram)"
+        case .insuranceAgent: return "Insurance Agent License \(pictogram)"
+        }
+    }
 }
 
 struct HardSkills: Codable, Hashable {
@@ -187,3 +214,4 @@ struct SoftSkills: Codable, Hashable {
         (\.opportunityRecognition, "Opportunity Recognition", "🔭")
     ]
 }
+

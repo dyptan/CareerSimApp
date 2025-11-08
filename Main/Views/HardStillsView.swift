@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CertificationsAndLicensesView: View {
+struct HardStillsView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedLanguages: Set<Language>
@@ -85,7 +85,7 @@ private struct CertificationsView: View {
                 let atLimit = selectedActivities.count >= maxActivitiesPerYear
 
                 Toggle(
-                    "Certification: \(cert.friendlyName)",
+                    cert.friendlyName,
                     isOn: Binding(
                         get: { isSelected },
                         set: { isOn in
@@ -159,7 +159,7 @@ private struct LicensesView: View {
                 let atLimit = selectedActivities.count >= maxActivitiesPerYear
 
                 Toggle(
-                    "License: \(displayName(for: lic))",
+                    lic.friendlyName,
                     isOn: Binding(
                         get: { isSelected },
                         set: { isOn in
@@ -202,29 +202,6 @@ private struct LicensesView: View {
                 .font(.headline.monospacedDigit())
                 .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
             Spacer()
-        }
-    }
-
-    private func displayName(for lic: License) -> String {
-        switch lic {
-        case .drivers:
-            return "Driver’s License 🚗"
-        case .pilot:
-            return "Pilot License ✈️"
-        case .nurse:
-            return "Nurse License 🩺"
-        case .electrician:
-            return "Electrician License 🔌"
-        case .plumber:
-            return "Plumber License 🔧"
-        case .cdl:
-            return "Commercial Driver’s License 🚚"
-        case .commercialPilot:
-            return "Commercial Pilot License 🛫"
-        case .realEstateAgent:
-            return "Real Estate Agent License 🏠"
-        case .insuranceAgent:
-            return "Insurance Agent License 🛡️"
         }
     }
 }
@@ -458,7 +435,7 @@ private struct PortfolioView: View {
     @Previewable @State var soft = Set<Software>()
     @Previewable @State var port = Set<PortfolioItem>()
     @Previewable @State var acts = Set<String>()
-    return CertificationsAndLicensesView(
+    return HardStillsView(
         selectedCertifications: $certs,
         selectedLicences: $lic,
         selectedLanguages: $langs,
@@ -469,3 +446,4 @@ private struct PortfolioView: View {
     .environmentObject(Player())
     .padding()
 }
+

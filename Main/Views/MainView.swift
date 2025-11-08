@@ -173,7 +173,7 @@ struct MainView: View {
         .sheet(isPresented: $showCertsLicensesSheet) {
             NavigationStack {
                 ScrollView {
-                    CertificationsAndLicensesView(
+                    HardStillsView(
                         selectedCertifications: $selectedCertifications,
                         selectedLicences: $selectedLicences,
                         selectedLanguages: $selectedLanguages,

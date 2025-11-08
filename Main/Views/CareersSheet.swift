@@ -27,14 +27,14 @@ struct CareersSheet: View {
                                     availableJobs.filter { $0.category == category }
                                 ) { job in
                                     NavigationLink {
-                                        DetailView(
+                                        JobView(
                                             job: job,
                                             player: player,
                                             showCareersSheet: $showCareersSheet
                                         )
 
                                     } label: {
-                                        DetailRow(detail: job)
+                                        JobRow(detail: job)
                                     }
                                 }
                             }

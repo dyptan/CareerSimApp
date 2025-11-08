@@ -20,6 +20,8 @@ struct SkillsView: View {
         HStack {
             // Soft skills
             VStack(alignment: .leading) {
+                
+                
                 Text("Soft skills:")
                     .font(.headline)
                 ForEach(
@@ -47,8 +49,13 @@ struct SkillsView: View {
 
             // Hard skills
             VStack(alignment: .leading) {
+                
+                Button("Edit") {
+                    showCertsLicensesSheet = true
+                }
+                .buttonStyle(.bordered)
                 Text("Hard skills:").font(.headline)
-
+                Spacer()
                 Text("Languages: ")
                 HStack {
                     ForEach(
@@ -84,24 +91,17 @@ struct SkillsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Certifications & Licenses:")
                         HStack(spacing: 6) {
-                            if selectedCertifications.isEmpty && selectedLicences.isEmpty {
-                                Text("None selected")
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                ForEach(Array(selectedCertifications.prefix(6))) { cert in
-                                    Text(cert.pictogram)
-                                }
-                                ForEach(Array(selectedLicences.prefix(6))) { lic in
-                                    Text(String(lic.rawValue.prefix(1)).uppercased())
-                                }
+                            
+                            ForEach(Array(selectedCertifications.union(player.hardSkills.certifications))) { cert in
+                                Text(cert.pictogram)
+                            }
+                            
+                            ForEach(Array(selectedLicences.union(player.hardSkills.licenses))) { lic in
+                                Text(lic.pictogram)
                             }
                         }
                     }
-                    Spacer()
-                    Button("Edit") {
-                        showCertsLicensesSheet = true
-                    }
-                    .buttonStyle(.bordered)
+                
                 }
 
                 Spacer()
@@ -119,20 +119,6 @@ struct SkillsView: View {
                     }
                 }
 
-                Spacer()
-
-                Text("Licenses: ")
-                HStack {
-                    ForEach(
-                        Array(
-                            player.hardSkills.licenses.union(
-                                selectedLicences
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.rawValue)")
-                    }
-                }
             }
             .padding()
         }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DetailRow: View {
+struct JobRow: View {
     var detail: Job
 
     var body: some View {
@@ -60,7 +60,7 @@ private struct PrestigeView: View {
 
 #Preview {
     if let first = detailsAll.first {
-        DetailRow(detail: first)
+        JobRow(detail: first)
             .padding()
     }
 }

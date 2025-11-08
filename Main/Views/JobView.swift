@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DetailView: View {
+struct JobView: View {
     var job: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
@@ -258,7 +258,7 @@ struct DetailView: View {
 #Preview {
     NavigationStack {
         if let first = detailsAll.first {
-            DetailView(job: first, player: Player(), showCareersSheet: .constant(true))
+            JobView(job: first, player: Player(), showCareersSheet: .constant(true))
         } else {
             Text("No careers loaded")
         }
