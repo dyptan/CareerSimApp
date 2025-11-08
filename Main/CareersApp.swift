@@ -2,12 +2,10 @@ import SwiftUI
 
 @main
 struct Main: App {
-    
-    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                PlayerView()
+                MainView()
             }
         }
     }
@@ -15,6 +13,6 @@ struct Main: App {
 
 #Preview {
     NavigationStack {
-        PlayerView()
+        MainView()
     }
 }
