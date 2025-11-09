@@ -14,29 +14,13 @@ struct MainView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = "You're 18! What's your next step?"
     @State var showRetirementSheet = false
-    @State private var showCertsLicensesSheet = false
+    @State var showCertsLicensesSheet = false
     
-    func availableJobs() -> [Job] {
-        detailsAll
-    }
     
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram) })
     }
     
-    private var aggregatedJobYears: [(job: Job, years: Int)] {
-        var dict: [Job: Int] = [:]
-        for (job, years) in player.jobExperiance {
-            dict[job, default: 0] += years
-        }
-        return
-        dict
-            .map { ($0.key, $0.value) }
-            .sorted { lhs, rhs in
-                if lhs.1 != rhs.1 { return lhs.1 > rhs.1 }
-                return lhs.0.id < rhs.0.id
-            }
-    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -159,14 +143,13 @@ struct MainView: View {
             .presentationDetents([.medium, .large])
         }
         .sheet(isPresented: $showCareersSheet) {
-            CareersSheet(availableJobs: availableJobs(), player: player, showCareersSheet: $showCareersSheet)
+            CareersSheet(availableJobs: jobs, player: player, showCareersSheet: $showCareersSheet)
                 .frame(idealHeight: 500, alignment: .leading)
             
             Button("Close") {
                 showCareersSheet = false
             }.padding()
         }
-        // New: certifications & licenses sheet
         .sheet(isPresented: $showCertsLicensesSheet) {
             NavigationStack {
                 ScrollView {
@@ -219,16 +202,16 @@ struct MainView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Work history summary
+                
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Work history")
                         .font(.headline)
                     
                     ForEach(
-                        Array(aggregatedJobYears.enumerated()),
+                        Array(player.jobExperiance.enumerated()),
                         id: \.offset
                     ) { _, item in
-                        Text("• \(item.job.id) — \(item.years) years")
+                        Text("• \(item)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -236,17 +219,11 @@ struct MainView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                if let lastDegree = player.degrees.last {
-                    Text("Highest education: \(lastDegree.1.degree)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+               
+                Text("Money earned: \(player.savings)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 
-                if let job = player.currentOccupation {
-                    Text("Last occupation: \(job.id)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
                 
                 Button {
                     showRetirementSheet = false

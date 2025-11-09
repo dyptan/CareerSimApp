@@ -50,7 +50,7 @@ struct CareersSheet: View {
 
 #Preview {
     @Previewable @State var show = true
-    var sampleJobs: [Job] = [
+    let sampleJobs: [Job] = [
         jobExample
     ]
     // Simple preview scaffolding

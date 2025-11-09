@@ -59,7 +59,7 @@ private struct PrestigeView: View {
 }
 
 #Preview {
-    if let first = detailsAll.first {
+    if let first = jobs.first {
         JobRow(detail: first)
             .padding()
     }

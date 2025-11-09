@@ -257,7 +257,7 @@ struct JobView: View {
 
 #Preview {
     NavigationStack {
-        if let first = detailsAll.first {
+        if let first = jobs.first {
             JobView(job: first, player: Player(), showCareersSheet: .constant(true))
         } else {
             Text("No careers loaded")
