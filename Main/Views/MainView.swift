@@ -14,7 +14,8 @@ struct MainView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = "You're 18! What's your next step?"
     @State var showRetirementSheet = false
-    @State var showCertsLicensesSheet = false
+    @State var showHardSkillsSheet = false
+    @State var showSoftSkillsSheet = false
     
     
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
@@ -47,24 +48,12 @@ struct MainView: View {
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
                 selectedCertifications: $selectedCertifications,
-                showCertsLicensesSheet: $showCertsLicensesSheet
+                showHardSkillsSheet: $showHardSkillsSheet,
+                showSoftSkillsSheet: $showSoftSkillsSheet,
             )
             
-            Divider()
             
-            Text("Choose an activity to boost a skill:")
-            
-            // Combined Activities + Hard-skill selection view
-            ActivitiesView(
-                player: player,
-                selectedActivities: $selectedActivities,
-                selectedLanguages: $selectedLanguages,
-                selectedSoftware: $selectedSoftware,
-                selectedPortfolio: $selectedPortfolio
-            )
-            
-            // Right side remains as in your layout; if you intended only one column,
-            // you can remove this Spacer and keep the single ActivitiesView.
+        
         }
         .sheet(isPresented: $showDecisionSheet) {
             VStack(spacing: 18) {
@@ -150,7 +139,7 @@ struct MainView: View {
                 showCareersSheet = false
             }.padding()
         }
-        .sheet(isPresented: $showCertsLicensesSheet) {
+        .sheet(isPresented: $showHardSkillsSheet) {
             NavigationStack {
                 ScrollView {
                     HardStillsView(
@@ -167,7 +156,28 @@ struct MainView: View {
                 .navigationTitle("Certifications & Licenses")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") { showCertsLicensesSheet = false }
+                        Button("Done") { showHardSkillsSheet = false }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+        }.sheet(isPresented: $showSoftSkillsSheet) {
+            NavigationStack {
+                ScrollView {
+                    ActivitiesView(
+                        player: player,
+                        selectedActivities: $selectedActivities,
+                        selectedLanguages: $selectedLanguages,
+                        selectedSoftware: $selectedSoftware,
+                        selectedPortfolio: $selectedPortfolio
+                    )
+                    .environmentObject(player)
+                    .padding()
+                }
+                .navigationTitle("Activities")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { showSoftSkillsSheet = false }
                     }
                 }
             }

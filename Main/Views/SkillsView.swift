@@ -10,20 +10,113 @@ struct SkillsView: View {
     @Binding var selectedCertifications: Set<Certification>
 
     // Controls the Certifications & Licenses sheet in the parent
-    @Binding var showCertsLicensesSheet: Bool
+    @Binding var showHardSkillsSheet: Bool
+    @Binding var showSoftSkillsSheet: Bool
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram) })
+        Dictionary(
+            uniqueKeysWithValues: SoftSkills.skillNames.map {
+                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
+            }
+        )
+    }
+    
+    // Skill proficiency to emoji mapping
+    private func emojiForLevel(_ value: Int) -> String {
+        switch value {
+        case ..<2: return "☹️"     // none
+        case 2: return "🙁"    // weak
+        case 3: return "😐"    // okay
+        case 4: return "🙂"    // high
+        case 5: return "😀"    // high
+        case 6: return "😁"    // high
+        case 7: return "😎"    // high
+        default: return "👑"       // very high
+        }
     }
 
     var body: some View {
-        HStack {
+        VStack(alignment: .leading) {
+            // Hard skills
+
+            Button("Hard skills") {
+                showHardSkillsSheet = true
+            }
+            .buttonStyle(.bordered)
+
+            HStack {
+                Text("Languages: ")
+                ForEach(
+                    Array(
+                        player.hardSkills.languages.union(
+                            selectedLanguages
+                        )
+                    )
+                ) { skill in
+                    Text("\(skill.pictogram)")
+                }
+            }
+
+            HStack {
+                Text("Portfolio: ")
+                ForEach(
+                    Array(
+                        player.hardSkills.portfolioItems.union(
+                            selectedPortfolio
+                        )
+                    )
+                ) { skill in
+                    Text("\(skill.pictogram)")
+                }
+            }
+
+            // Certifications & Licenses summary + edit button
+            HStack {
+                Text("Certifications & Licenses:")
+
+                ForEach(
+                    Array(
+                        selectedCertifications.union(
+                            player.hardSkills.certifications
+                        )
+                    )
+                ) { cert in
+                    Text(cert.pictogram)
+                }
+
+                ForEach(
+                    Array(
+                        selectedLicences.union(
+                            player.hardSkills.licenses
+                        )
+                    )
+                ) { lic in
+                    Text(lic.pictogram)
+                }
+            }
+
+            HStack {
+                Text("Software: ")
+                ForEach(
+                    Array(
+                        player.hardSkills.software.union(
+                            selectedSoftware
+                        )
+                    )
+                ) { skill in
+                    Text("\(skill.pictogram)")
+                }
+            }
+
+            Divider()
+
             // Soft skills
             VStack(alignment: .leading) {
-                
-                
-                Text("Soft skills:")
-                    .font(.headline)
+
+                Button("Soft skills") {
+                    showSoftSkillsSheet = true
+                }
+                .buttonStyle(.bordered).font(.headline)
                 ForEach(
                     Array(SoftSkills.skillNames.enumerated()),
                     id: \.offset
@@ -31,96 +124,15 @@ struct SkillsView: View {
                     HStack {
                         Text(skill.label)
                         Spacer()
-                        Text(
-                            String(
-                                repeating: skill.pictogram,
-                                count: player.softSkills[
-                                    keyPath: skill.keyPath
-                                ]
-                            )
-                        )
+                        // Use proficiency-mapped emoji here!
+                        Text(emojiForLevel(player.softSkills[keyPath: skill.keyPath]))
                     }
                 }
             }
-            .padding()
 
-            Divider()
-            Spacer()
-
-            // Hard skills
-            VStack(alignment: .leading) {
-                
-                Button("Edit") {
-                    showCertsLicensesSheet = true
-                }
-                .buttonStyle(.bordered)
-                Text("Hard skills:").font(.headline)
-                Spacer()
-                Text("Languages: ")
-                HStack {
-                    ForEach(
-                        Array(
-                            player.hardSkills.languages.union(
-                                selectedLanguages
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-
-                Spacer()
-
-                Text("Portfolio: ")
-                HStack {
-                    ForEach(
-                        Array(
-                            player.hardSkills.portfolioItems.union(
-                                selectedPortfolio
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-
-                Spacer()
-
-                // Certifications & Licenses summary + edit button
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Certifications & Licenses:")
-                        HStack(spacing: 6) {
-                            
-                            ForEach(Array(selectedCertifications.union(player.hardSkills.certifications))) { cert in
-                                Text(cert.pictogram)
-                            }
-                            
-                            ForEach(Array(selectedLicences.union(player.hardSkills.licenses))) { lic in
-                                Text(lic.pictogram)
-                            }
-                        }
-                    }
-                
-                }
-
-                Spacer()
-
-                Text("Software: ")
-                HStack {
-                    ForEach(
-                        Array(
-                            player.hardSkills.software.union(
-                                selectedSoftware
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-
-            }
-            .padding()
+            SkillEmojiCloudView(player: player)
+                .frame(height: 180)
+                .padding(.top, 8)
         }
     }
 }
@@ -133,7 +145,8 @@ struct SkillsView: View {
         selectedLicences: .constant([]),
         selectedPortfolio: .constant([]),
         selectedCertifications: .constant([]),
-        showCertsLicensesSheet: .constant(false)
+        showHardSkillsSheet: .constant(false),
+        showSoftSkillsSheet: .constant(false)
     )
     .padding()
 }

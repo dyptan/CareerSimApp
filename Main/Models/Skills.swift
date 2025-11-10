@@ -161,36 +161,34 @@ struct HardSkills: Codable, Hashable {
 }
 
 struct SoftSkills: Codable, Hashable {
-    var analyticalReasoning: Int
-    var creativeExpression: Int
-    var socialCommunication: Int
-    var teamLeadership: Int
-    var influenceAndNetworking: Int
-    var riskTolerance: Int
-    var spatialThinking: Int
-    var attentionToDetail: Int
-    var resilienceCognitive: Int
-    var mechanicalOperation: Int
-    var physicalAbility: Int
-    var resiliencePhysical: Int
-    var outdoorOrientation: Int
-    var opportunityRecognition: Int
+    // Kid-friendly names
+    var problemSolving: Int            // was analyticalReasoning
+    var creativity: Int                // was creativeExpression
+    var communication: Int             // was socialCommunication
+    var leadershipAndFriends: Int      // merged teamLeadership + influenceAndNetworking
+    var riskTaking: Int                // was riskTolerance
+    var navigation: Int                // was spatialThinking
+    var carefulness: Int               // was attentionToDetail
+    var tinkering: Int                 // was mechanicalOperation
+    var strength: Int                  // was physicalAbility
+    var focusAndGrit: Int              // was resilienceCognitive
+    var stamina: Int                   // was resiliencePhysical
+    var weatherEndurance: Int          // was outdoorOrientation
+    var entrepreneurship: Int          // was opportunityRecognition
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
-        (\.analyticalReasoning, "Analytical Reasoning", "🧠"),
-        (\.creativeExpression, "Creative Expression", "🎨"),
-        (\.socialCommunication, "Social Communication", "💬"),
-        (\.teamLeadership, "Team Leadership", "👥"),
-        (\.influenceAndNetworking, "Influence & Networking", "🤝"),
-        (\.riskTolerance, "Risk Tolerance", "🎲"),
-        (\.spatialThinking, "Spatial Thinking", "🧭"),
-        (\.attentionToDetail, "Attention to Detail", "🔎"),
-        (\.mechanicalOperation, "Mechanical Operation", "🛠️"),
-        (\.physicalAbility, "Physical Ability", "💪"),
-        (\.resilienceCognitive, "Cognitive Resilience", "🧩"),
-        (\.resiliencePhysical, "Physical Resilience", "🛡️"),
-        (\.outdoorOrientation, "Outdoor Orientation", "🌲"),
-        (\.opportunityRecognition, "Opportunity Recognition", "🔭")
+        (\.problemSolving, "Problem Solving", "🧩"),
+        (\.creativity, "Creativity", "🎨"),
+        (\.communication, "Communication", "💬"),
+        (\.leadershipAndFriends, "Leadership & Friends", "👥🤝"),
+        (\.riskTaking, "Risk Taking", "🎲"),
+        (\.navigation, "Navigation", "🧭"),
+        (\.carefulness, "Carefulness", "🔎"),
+        (\.tinkering, "Tinkering", "🔧"),
+        (\.strength, "Strength", "💪"),
+        (\.focusAndGrit, "Focus & Grit", "🧠💪"),
+        (\.stamina, "Stamina", "🛡️"),
+        (\.weatherEndurance, "Weather Endurance", "🌦️💪"),
+        (\.entrepreneurship, "Entrepreneurship", "💡💼")
     ]
 }
-

@@ -12,7 +12,9 @@ struct Main: App {
 }
 
 #Preview {
+    
     NavigationStack {
         MainView()
     }
+    
 }

@@ -19,21 +19,23 @@ struct JobView: View {
         let p = player.softSkills
         let j = job.requirements
 
+        // Leadership/networking merge: take the tougher of the two requirements
+        let leadershipRequired = max(j.teamLeadership, j.influenceAndNetworking)
+
         let unmet =
-            player.degrees.last?.1.eqf ?? 0 < j.education
-            || p.analyticalReasoning < j.analyticalReasoning
-            || p.creativeExpression < j.creativeExpression
-            || p.socialCommunication < j.socialCommunication
-            || p.teamLeadership < j.teamLeadership
-            || p.influenceAndNetworking < j.influenceAndNetworking
-            || p.riskTolerance < j.riskTolerance
-            || p.spatialThinking < j.spatialThinking
-            || p.attentionToDetail < j.attentionToDetail
-            || p.resilienceCognitive < j.resilienceCognitive
-            || p.mechanicalOperation < j.mechanicalOperation
-            || p.physicalAbility < j.physicalAbility
-            || p.resiliencePhysical < j.resiliencePhysical
-            || p.outdoorOrientation < j.outdoorOrientation
+            (player.degrees.last?.1.eqf ?? 0) < j.education
+            || p.problemSolving < j.analyticalReasoning
+            || p.creativity < j.creativeExpression
+            || p.communication < j.socialCommunication
+            || p.leadershipAndFriends < leadershipRequired
+            || p.riskTaking < j.riskTolerance
+            || p.navigation < j.spatialThinking
+            || p.carefulness < j.attentionToDetail
+            || p.focusAndGrit < j.resilienceCognitive
+            || p.tinkering < j.mechanicalOperation
+            || p.strength < j.physicalAbility
+            || p.stamina < j.resiliencePhysical
+            || p.weatherEndurance < j.outdoorOrientation
 
         return !unmet
     }
@@ -53,10 +55,9 @@ struct JobView: View {
                     .foregroundStyle(.secondary)
 
                 HStack(spacing: 16) {
-                    // Education removed from summary row; now in requirements
                     labelBox(
                         title: "Prestige",
-                        content: Text(String(repeating:"😎", count: job.prestige))
+                        content: Text(emojiForLevel(job.prestige))
                     )
                     labelBox(
                         title: "Income",
@@ -67,7 +68,6 @@ struct JobView: View {
                             Text(job.reward())
                         }
                     )
-                
                 }
                 .padding(.horizontal)
 
@@ -104,58 +104,52 @@ struct JobView: View {
                         Text("Brainy skills")
                             .font(.headline)
                         requirementRow(
-                            label: "Analytical Reasoning",
-                            emoji: icon(for: "Analytical Reasoning", fallback: "🧠"),
+                            label: "Problem Solving",
+                            emoji: icon(for: "Problem Solving", fallback: "🧩"),
                             level: job.requirements.analyticalReasoning,
-                            playerLevel: player.softSkills.analyticalReasoning
+                            playerLevel: player.softSkills.problemSolving
                         )
                         requirementRow(
-                            label: "Creative Expression",
-                            emoji: icon(for: "Creative Expression", fallback: "🎨"),
+                            label: "Creativity",
+                            emoji: icon(for: "Creativity", fallback: "🎨"),
                             level: job.requirements.creativeExpression,
-                            playerLevel: player.softSkills.creativeExpression
+                            playerLevel: player.softSkills.creativity
                         )
                         requirementRow(
-                            label: "Social Communication",
-                            emoji: icon(for: "Social Communication", fallback: "💬"),
+                            label: "Communication",
+                            emoji: icon(for: "Communication", fallback: "💬"),
                             level: job.requirements.socialCommunication,
-                            playerLevel: player.softSkills.socialCommunication
+                            playerLevel: player.softSkills.communication
                         )
                         requirementRow(
-                            label: "Team Leadership",
-                            emoji: icon(for: "Team Leadership", fallback: "👥"),
-                            level: job.requirements.teamLeadership,
-                            playerLevel: player.softSkills.teamLeadership
+                            label: "Leadership & Friends",
+                            emoji: icon(for: "Leadership & Friends", fallback: "👥"),
+                            level: max(job.requirements.teamLeadership, job.requirements.influenceAndNetworking),
+                            playerLevel: player.softSkills.leadershipAndFriends
                         )
                         requirementRow(
-                            label: "Influence & Networking",
-                            emoji: icon(for: "Influence & Networking", fallback: "🤝"),
-                            level: job.requirements.influenceAndNetworking,
-                            playerLevel: player.softSkills.influenceAndNetworking
-                        )
-                        requirementRow(
-                            label: "Risk Tolerance",
-                            emoji: icon(for: "Risk Tolerance", fallback: "🎲"),
+                            label: "Risk Taking",
+                            emoji: icon(for: "Risk Taking", fallback: "🎲"),
                             level: job.requirements.riskTolerance,
-                            playerLevel: player.softSkills.riskTolerance
+                            playerLevel: player.softSkills.riskTaking
                         )
                         requirementRow(
-                            label: "Spatial Thinking",
-                            emoji: icon(for: "Spatial Thinking", fallback: "🧭"),
+                            label: "Navigation",
+                            emoji: icon(for: "Navigation", fallback: "🧭"),
                             level: job.requirements.spatialThinking,
-                            playerLevel: player.softSkills.spatialThinking
+                            playerLevel: player.softSkills.navigation
                         )
                         requirementRow(
-                            label: "Attention to Detail",
-                            emoji: icon(for: "Attention to Detail", fallback: "🔎"),
+                            label: "Carefulness",
+                            emoji: icon(for: "Carefulness", fallback: "🔎"),
                             level: job.requirements.attentionToDetail,
-                            playerLevel: player.softSkills.attentionToDetail
+                            playerLevel: player.softSkills.carefulness
                         )
                         requirementRow(
-                            label: "Cognitive Resilience",
-                            emoji: icon(for: "Cognitive Resilience", fallback: "🧩"),
+                            label: "Focus & Grit",
+                            emoji: icon(for: "Focus & Grit", fallback: "🧠"),
                             level: job.requirements.resilienceCognitive,
-                            playerLevel: player.softSkills.resilienceCognitive
+                            playerLevel: player.softSkills.focusAndGrit
                         )
                     }
                     .padding(.vertical, 6)
@@ -165,28 +159,28 @@ struct JobView: View {
                         Text("Body & hands-on")
                             .font(.headline)
                         requirementRow(
-                            label: "Mechanical Operation",
-                            emoji: icon(for: "Mechanical Operation", fallback: "🛠️"),
+                            label: "Tinkering",
+                            emoji: icon(for: "Tinkering", fallback: "🛠️"),
                             level: job.requirements.mechanicalOperation,
-                            playerLevel: player.softSkills.mechanicalOperation
+                            playerLevel: player.softSkills.tinkering
                         )
                         requirementRow(
-                            label: "Physical Ability",
-                            emoji: icon(for: "Physical Ability", fallback: "💪"),
+                            label: "Strength",
+                            emoji: icon(for: "Strength", fallback: "💪"),
                             level: job.requirements.physicalAbility,
-                            playerLevel: player.softSkills.physicalAbility
+                            playerLevel: player.softSkills.strength
                         )
                         requirementRow(
-                            label: "Outdoor Orientation",
-                            emoji: "🌲",
+                            label: "Weather Endurance",
+                            emoji: "🌦️💪",
                             level: job.requirements.outdoorOrientation,
-                            playerLevel: player.softSkills.outdoorOrientation
+                            playerLevel: player.softSkills.weatherEndurance
                         )
                         requirementRow(
-                            label: "Physical Resilience",
-                            emoji: icon(for: "Physical Resilience", fallback: "🛡️"),
+                            label: "Stamina",
+                            emoji: icon(for: "Stamina", fallback: "🛡️"),
                             level: job.requirements.resiliencePhysical,
-                            playerLevel: player.softSkills.resiliencePhysical
+                            playerLevel: player.softSkills.stamina
                         )
                     }
                     .padding(.vertical, 6)
@@ -212,24 +206,45 @@ struct JobView: View {
         .navigationTitle("")
     }
 
-    // MARK: - Pictogram helpers
+    // MARK: - Level-to-emoji mapping
+
+    // You can tweak thresholds freely.
+    private func emojiForLevel(_ value: Int) -> String {
+        switch value {
+        case ..<1: return "😞"     // none
+        case 1...2: return "☹️"    // weak
+        case 3...4: return "🙂"    // okay
+        case 5...6: return "😎"    // high
+        default: return "⭐️"       // very high
+        }
+    }
+
+    // MARK: - Pictogram helpers (now qualitative)
 
     private func requirementRow(label: String, emoji: String, level: Int, playerLevel: Int) -> some View {
         let required = max(level, 0)
+        let meets = playerLevel >= required
+        let requiredEmoji = emojiForLevel(required)
+        let playerEmoji = emojiForLevel(playerLevel)
+
         return HStack {
             Text(label)
             Spacer()
-            HStack(spacing: 0) {
-                ForEach(0..<required, id: \.self) { idx in
-                    Text(emoji)
-                        .opacity(idx < playerLevel ? 1.0 : 0.35)
-                }
+            HStack(spacing: 6) {
+                // Show required vs player with small legend via accessibility
+                Text(requiredEmoji)
+                    .opacity(0.8)
+                    .help("Required level")
+                Text(playerEmoji)
+                    .opacity(meets ? 1.0 : 0.6)
+                    .help("Your level")
             }
             .font(.body)
-            .accessibilityLabel("\(label) required \(required), you have \(playerLevel)")
+            .accessibilityLabel("\(label). Required \(requiredEmoji). You \(playerEmoji).")
         }
         .font(.body)
-        .accessibilityHint(playerLevel >= required ? "\(label) requirement met" : "\(label) requirement not met")
+        .foregroundStyle(meets ? .primary : .secondary)
+        .accessibilityHint(meets ? "\(label) requirement met" : "\(label) requirement not met")
     }
 
     private func stars(level: Int) -> some View {

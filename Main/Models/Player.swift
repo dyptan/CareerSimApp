@@ -18,20 +18,19 @@ final class Player: ObservableObject {
     init(
         age: Int = 7,
         abilities: SoftSkills = SoftSkills(
-            analyticalReasoning: Int.random(in: 0..<3),
-            creativeExpression: Int.random(in: 0..<3),
-            socialCommunication: Int.random(in: 0..<3),
-            teamLeadership: Int.random(in: 0..<3),
-            influenceAndNetworking: Int.random(in: 0..<3),
-            riskTolerance: Int.random(in: 0..<3),
-            spatialThinking: Int.random(in: 0..<3),
-            attentionToDetail: Int.random(in: 0..<3),
-            resilienceCognitive: Int.random(in: 0..<3),
-            mechanicalOperation: Int.random(in: 0..<3),
-            physicalAbility: 0,
-            resiliencePhysical: 0,
-            outdoorOrientation: Int.random(in: 0..<3),
-            opportunityRecognition: Int.random(in: 0..<3)
+            problemSolving: Int.random(in: 0..<3),
+            creativity: Int.random(in: 0..<3),
+            communication: Int.random(in: 0..<3),
+            leadershipAndFriends: Int.random(in: 0..<3),
+            riskTaking: Int.random(in: 0..<3),
+            navigation: Int.random(in: 0..<3),
+            carefulness: Int.random(in: 0..<3),
+            tinkering: Int.random(in: 0..<3),
+            strength: Int.random(in: 0..<3),
+            focusAndGrit: Int.random(in: 0..<3),
+            stamina: Int.random(in: 0..<3),
+            weatherEndurance: Int.random(in: 0..<3),
+            entrepreneurship: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
             languages: [],
