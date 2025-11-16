@@ -98,7 +98,7 @@ enum TertiaryProfile: String, CaseIterable, Identifiable {
         // Baseline: each year of study grows communication and leadership/teamwork.
         let years = level.yearsToComplete(isUS)
         updated.communication += years
-        updated.leadershipAndFriends += years
+        updated.leadership += years
 
         switch self {
         case .stem:
@@ -116,15 +116,15 @@ enum TertiaryProfile: String, CaseIterable, Identifiable {
             updated.communication += 6
             updated.carefulness += 6
             // Some leadership via performances/projects
-            updated.leadershipAndFriends += 4
+            updated.leadership += 4
             // Focus on practice
             updated.focusAndGrit += 3
 
         case .business:
             // Leadership, entrepreneurship, risk taking, communication.
-            updated.leadershipAndFriends += 12
-            updated.entrepreneurship += 10
-            updated.riskTaking += 6
+            updated.leadership += 12
+            updated.creativityAndInsightfulThinking += 10
+            updated.courage += 6
             updated.communication += 6
             // Some problem solving and carefulness (finance/ops)
             updated.problemSolving += 3
@@ -135,7 +135,7 @@ enum TertiaryProfile: String, CaseIterable, Identifiable {
             updated.carefulness += 12
             updated.communication += 6
             updated.focusAndGrit += 6
-            updated.stamina += 4
+            updated.perseverance += 4
             updated.strength += 2
 
         case .humanities:

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HeaderView: View {
-    // Inject the model and all state this header needs to read/mutate
+//     Inject the model and all state this header needs to read/mutate
     @ObservedObject var player: Player
 
     @Binding var showDecisionSheet: Bool
@@ -9,7 +9,7 @@ struct HeaderView: View {
     @Binding var showCareersSheet: Bool
 
     @Binding var selectedActivities: Set<String>
-    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedLanguages: Set<ProgrammingLanguage>
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
@@ -123,24 +123,24 @@ struct HeaderView: View {
     }
 }
 
-#Preview {
-    HeaderView(
-        player: Player(
-            degrees: [(.some(.business), .Bachelor)],
-            currentOccupation: .some(
-                jobExample
-            )
-        ),
-        showDecisionSheet: .constant(false),
-        showTertiarySheet: .constant(false),
-        showCareersSheet: .constant(false),
-        selectedActivities: .constant(Set<String>()),
-        selectedLanguages: .constant(Set<Language>()),
-        selectedSoftware: .constant(Set<Software>()),
-        selectedLicences: .constant(Set<License>()),
-        selectedPortfolio: .constant(Set<PortfolioItem>()),
-        selectedCertifications: .constant(Set<Certification>()),
-        yearsLeftToGraduation: .constant(nil),
-        descisionText: .constant("sdf")
-    )
-}
+//#Preview {
+//    HeaderView(
+//        player: Player(
+//            degrees: [(.some(.business), .Bachelor)],
+//            currentOccupation: .some(
+//                jobExample
+//            )
+//        ),
+//        showDecisionSheet: .constant(false),
+//        showTertiarySheet: .constant(false),
+//        showCareersSheet: .constant(false),
+//        selectedActivities: .constant(Set<String>()),
+//        selectedLanguages: .constant(Set<Language>()),
+//        selectedSoftware: .constant(Set<Software>()),
+//        selectedLicences: .constant(Set<License>()),
+//        selectedPortfolio: .constant(Set<PortfolioItem>()),
+//        selectedCertifications: .constant(Set<Certification>()),
+//        yearsLeftToGraduation: .constant(nil),
+//        descisionText: .constant("sdf")
+//    )
+//}

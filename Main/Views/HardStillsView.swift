@@ -3,7 +3,7 @@ import SwiftUI
 struct HardStillsView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedLicences: Set<License>
-    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedLanguages: Set<ProgrammingLanguage>
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedActivities: Set<String>
@@ -207,14 +207,14 @@ private struct LicensesView: View {
 // MARK: - Languages (consumes activity slots, respects lockedLanguages)
 
 private struct LanguagesView: View {
-    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedLanguages: Set<ProgrammingLanguage>
     @Binding var selectedActivities: Set<String>
     @EnvironmentObject private var player: Player
 
     private let maxActivitiesPerYear = 3
 
-    private var sortedLanguages: [Language] {
-        Language.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+    private var sortedLanguages: [ProgrammingLanguage] {
+        ProgrammingLanguage.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
     var body: some View {
@@ -429,11 +429,11 @@ private struct PortfolioView: View {
 #Preview {
     @Previewable @State var certs = Set<Certification>()
     @Previewable @State var lic = Set<License>()
-    @Previewable @State var langs = Set<Language>()
+    @Previewable @State var langs = Set<ProgrammingLanguage>()
     @Previewable @State var soft = Set<Software>()
     @Previewable @State var port = Set<PortfolioItem>()
     @Previewable @State var acts = Set<String>()
-    return HardStillsView(
+    HardStillsView(
         selectedCertifications: $certs,
         selectedLicences: $lic,
         selectedLanguages: $langs,

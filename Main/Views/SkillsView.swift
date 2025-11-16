@@ -3,7 +3,7 @@ import SwiftUI
 struct SkillsView: View {
     @ObservedObject var player: Player
 
-    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedLanguages: Set<ProgrammingLanguage>
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
@@ -22,18 +22,18 @@ struct SkillsView: View {
     }
     
     // Skill proficiency to emoji mapping
-    private func emojiForLevel(_ value: Int) -> String {
-        switch value {
-        case ..<2: return "☹️"     // none
-        case 2: return "🙁"    // weak
-        case 3: return "😐"    // okay
-        case 4: return "🙂"    // high
-        case 5: return "😀"    // high
-        case 6: return "😁"    // high
-        case 7: return "😎"    // high
-        default: return "👑"       // very high
-        }
-    }
+//    private func emojiForLevel(_ value: Int) -> String {
+//        switch value {
+//        case ..<2: return "☹️"     // none
+//        case 2: return "🙁"    // weak
+//        case 3: return "😐"    // okay
+//        case 4: return "🙂"    // high
+//        case 5: return "😀"    // high
+//        case 6: return "😁"    // high
+//        case 7: return "😎"    // high
+//        default: return "👑"       // very high
+//        }
+//    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -124,15 +124,20 @@ struct SkillsView: View {
                     HStack {
                         Text(skill.label)
                         Spacer()
+                        Text(
+                            String(
+                                repeating: skill.pictogram,
+                                count: player.softSkills[
+                                    keyPath: skill.keyPath
+                                ]
+                            )
+                        )
                         // Use proficiency-mapped emoji here!
-                        Text(emojiForLevel(player.softSkills[keyPath: skill.keyPath]))
+//                        Text(emojiForLevel(player.softSkills[keyPath: skill.keyPath]))
                     }
                 }
             }
 
-            SkillEmojiCloudView(player: player)
-                .frame(height: 180)
-                .padding(.top, 8)
         }
     }
 }

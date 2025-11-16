@@ -28,7 +28,7 @@ struct JobView: View {
             || p.creativity < j.creativeExpression
             || p.communication < j.socialCommunication
             || p.leadershipAndFriends < leadershipRequired
-            || p.riskTaking < j.riskTolerance
+            || p.courage < j.riskTolerance
             || p.navigation < j.spatialThinking
             || p.carefulness < j.attentionToDetail
             || p.focusAndGrit < j.resilienceCognitive
@@ -57,7 +57,7 @@ struct JobView: View {
                 HStack(spacing: 16) {
                     labelBox(
                         title: "Prestige",
-                        content: Text(emojiForLevel(job.prestige))
+                        content: Text(String(repeating: "😎", count: job.prestige))
                     )
                     labelBox(
                         title: "Income",
@@ -131,7 +131,7 @@ struct JobView: View {
                             label: "Risk Taking",
                             emoji: icon(for: "Risk Taking", fallback: "🎲"),
                             level: job.requirements.riskTolerance,
-                            playerLevel: player.softSkills.riskTaking
+                            playerLevel: player.softSkills.courage
                         )
                         requirementRow(
                             label: "Navigation",
@@ -206,41 +206,21 @@ struct JobView: View {
         .navigationTitle("")
     }
 
-    // MARK: - Level-to-emoji mapping
-
-    // You can tweak thresholds freely.
-    private func emojiForLevel(_ value: Int) -> String {
-        switch value {
-        case ..<1: return "😞"     // none
-        case 1...2: return "☹️"    // weak
-        case 3...4: return "🙂"    // okay
-        case 5...6: return "😎"    // high
-        default: return "⭐️"       // very high
-        }
-    }
-
     // MARK: - Pictogram helpers (now qualitative)
 
     private func requirementRow(label: String, emoji: String, level: Int, playerLevel: Int) -> some View {
         let required = max(level, 0)
         let meets = playerLevel >= required
-        let requiredEmoji = emojiForLevel(required)
-        let playerEmoji = emojiForLevel(playerLevel)
 
         return HStack {
             Text(label)
             Spacer()
-            HStack(spacing: 6) {
-                // Show required vs player with small legend via accessibility
-                Text(requiredEmoji)
-                    .opacity(0.8)
-                    .help("Required level")
-                Text(playerEmoji)
-                    .opacity(meets ? 1.0 : 0.6)
-                    .help("Your level")
-            }
+            HStack(spacing: 0) {
+                ForEach(0..<required, id: \.self) { idx in
+                    Text(emoji)
+                        .opacity(idx < playerLevel ? 1.0 : 0.35)
+                }}
             .font(.body)
-            .accessibilityLabel("\(label). Required \(requiredEmoji). You \(playerEmoji).")
         }
         .font(.body)
         .foregroundStyle(meets ? .primary : .secondary)

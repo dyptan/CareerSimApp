@@ -15,7 +15,7 @@
 		551B66F42EBFB89100092DC7 /* ExtraActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F32EBFB89100092DC7 /* ExtraActivity.swift */; };
 		551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F52EBFB91900092DC7 /* SkillsView.swift */; };
 		551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */; };
-		5544884E2EC28721002761C5 /* SkillEmojiCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5544884D2EC28721002761C5 /* SkillEmojiCloudView.swift */; };
+		551FC65C2ECA3011000910A0 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551FC65B2ECA3011000910A0 /* Language.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
@@ -65,7 +65,7 @@
 		551B66F32EBFB89100092DC7 /* ExtraActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraActivity.swift; sourceTree = "<group>"; };
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
-		5544884D2EC28721002761C5 /* SkillEmojiCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillEmojiCloudView.swift; sourceTree = "<group>"; };
+		551FC65B2ECA3011000910A0 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5596D86A2E9AF46B00E98CEF /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 				55B02BFD2EB955E600554212 /* HardStillsView.swift */,
 				551B66F52EBFB91900092DC7 /* SkillsView.swift */,
 				551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */,
-				5544884D2EC28721002761C5 /* SkillEmojiCloudView.swift */,
+				551FC65B2ECA3011000910A0 /* Language.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -330,6 +330,7 @@
 				55A6ED052E9542630033B674 /* Loader.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,
 				55A6ED012E9542000033B674 /* JobView.swift in Sources */,
+				551FC65C2ECA3011000910A0 /* Language.swift in Sources */,
 				551B66F42EBFB89100092DC7 /* ExtraActivity.swift in Sources */,
 				84F851C92EA0F30F0066C41A /* Player.swift in Sources */,
 				550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */,
@@ -338,7 +339,6 @@
 				C20D77EE24B665D7002E7AEA /* Main.swift in Sources */,
 				84F851CB2EA0F3130066C41A /* MainView.swift in Sources */,
 				551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */,
-				5544884E2EC28721002761C5 /* SkillEmojiCloudView.swift in Sources */,
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,
 				84F851CD2EA16C290066C41A /* Level.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* Category.swift in Sources */,

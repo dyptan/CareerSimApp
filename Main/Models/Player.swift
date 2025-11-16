@@ -10,7 +10,7 @@ final class Player: ObservableObject {
     @Published var currentEducation: (TertiaryProfile, Level)?
     @Published var savings: Int
     @Published var lockedCertifications: Set<Certification>
-    @Published var lockedLanguages: Set<Language>
+    @Published var lockedLanguages: Set<ProgrammingLanguage>
     @Published var lockedSoftware: Set<Software>
     @Published var lockedPortfolio: Set<PortfolioItem>
     @Published var lockedLicenses: Set<License>
@@ -18,17 +18,20 @@ final class Player: ObservableObject {
     init(
         age: Int = 7,
         abilities: SoftSkills = SoftSkills(
-            problemSolving: Int.random(in: 0..<3),
-            creativity: Int.random(in: 0..<3),
-            communication: Int.random(in: 0..<3),
+            analyticalReasoningAndProblemSolving: Int.random(in: 0..<3),
+            creativityAndInsightfulThinking: Int.random(in: 0..<3),
+            communicationAndNetworking: Int.random(in: 0..<3),
+            leadershipAndInfluence: Int.random(in: 0..<3),
+            courageAndRiskTolerance: Int.random(in: 0..<3),
+            carefulnessAndAttentionToDetail: Int.random(in: 0..<3),
+            tinkeringAndFingerPrecision: Int.random(in: 0..<3),
+            spacialNavigation: Int.random(in: 0..<3),
+            physicalStrength: Int.random(in: 0..<3),
+            coordinationAndBalance: Int.random(in: 0..<3),
+            perseveranceAndGrit: Int.random(in: 0..<3),
+            resilienceAndEndurance: Int.random(in: 0..<3),
             leadershipAndFriends: Int.random(in: 0..<3),
-            riskTaking: Int.random(in: 0..<3),
-            navigation: Int.random(in: 0..<3),
-            carefulness: Int.random(in: 0..<3),
-            tinkering: Int.random(in: 0..<3),
-            strength: Int.random(in: 0..<3),
             focusAndGrit: Int.random(in: 0..<3),
-            stamina: Int.random(in: 0..<3),
             weatherEndurance: Int.random(in: 0..<3),
             entrepreneurship: Int.random(in: 0..<3)
         ),
@@ -44,7 +47,7 @@ final class Player: ObservableObject {
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedCertifications: Set<Certification> = [],
-        lockedLanguages: Set<Language> = [],
+        lockedLanguages: Set<ProgrammingLanguage> = [],
         lockedSoftware: Set<Software> = [],
         lockedPortfolio: Set<PortfolioItem> = [],
         lockedLicenses: Set<License> = []

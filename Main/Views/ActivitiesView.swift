@@ -3,7 +3,7 @@ import SwiftUI
 struct ActivitiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
-    @Binding var selectedLanguages: Set<Language>
+    @Binding var selectedLanguages: Set<ProgrammingLanguage>
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedPortfolio: Set<PortfolioItem>
 

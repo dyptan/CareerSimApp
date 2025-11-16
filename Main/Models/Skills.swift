@@ -1,4 +1,4 @@
-enum Language: String, Codable, Hashable, CaseIterable, Identifiable {
+enum ProgrammingLanguage: String, Codable, Hashable, CaseIterable, Identifiable {
     case swift = "swift"
     case C = "C"
     case python = "python"
@@ -153,7 +153,7 @@ enum License: String, Codable, Hashable, CaseIterable, Identifiable {
 }
 
 struct HardSkills: Codable, Hashable {
-    var languages = Set(Language.allCases)
+    var languages = Set(ProgrammingLanguage.allCases)
     var portfolioItems = Set(PortfolioItem.allCases)
     var certifications = Set(Certification.allCases)
     var software = Set(Software.allCases)
@@ -161,34 +161,84 @@ struct HardSkills: Codable, Hashable {
 }
 
 struct SoftSkills: Codable, Hashable {
-    // Kid-friendly names
-    var problemSolving: Int            // was analyticalReasoning
-    var creativity: Int                // was creativeExpression
-    var communication: Int             // was socialCommunication
-    var leadershipAndFriends: Int      // merged teamLeadership + influenceAndNetworking
-    var riskTaking: Int                // was riskTolerance
-    var navigation: Int                // was spatialThinking
-    var carefulness: Int               // was attentionToDetail
-    var tinkering: Int                 // was mechanicalOperation
-    var strength: Int                  // was physicalAbility
-    var focusAndGrit: Int              // was resilienceCognitive
-    var stamina: Int                   // was resiliencePhysical
-    var weatherEndurance: Int          // was outdoorOrientation
-    var entrepreneurship: Int          // was opportunityRecognition
+    var analyticalReasoningAndProblemSolving: Int = 0
+    var creativityAndInsightfulThinking: Int = 0
+    var communicationAndNetworking: Int = 0
+    var leadershipAndInfluence: Int = 0
+    var courageAndRiskTolerance: Int = 0
+    var carefulnessAndAttentionToDetail: Int = 0
+    var tinkeringAndFingerPrecision: Int = 0
+    var spacialNavigation: Int = 0
+    var physicalStrength: Int = 0
+    var coordinationAndBalance: Int = 0
+    var perseveranceAndGrit: Int = 0
+    var resilienceAndEndurance: Int = 0
+
+    // Extra fields for game logic, if needed, but avoid duplication with computed aliases!
+    var leadershipAndFriends: Int = 0
+    var focusAndGrit: Int = 0
+    var weatherEndurance: Int = 0
+    var entrepreneurship: Int = 0
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
-        (\.problemSolving, "Problem Solving", "🧩"),
-        (\.creativity, "Creativity", "🎨"),
-        (\.communication, "Communication", "💬"),
-        (\.leadershipAndFriends, "Leadership & Friends", "👥🤝"),
-        (\.riskTaking, "Risk Taking", "🎲"),
-        (\.navigation, "Navigation", "🧭"),
-        (\.carefulness, "Carefulness", "🔎"),
-        (\.tinkering, "Tinkering", "🔧"),
-        (\.strength, "Strength", "💪"),
-        (\.focusAndGrit, "Focus & Grit", "🧠💪"),
-        (\.stamina, "Stamina", "🛡️"),
-        (\.weatherEndurance, "Weather Endurance", "🌦️💪"),
-        (\.entrepreneurship, "Entrepreneurship", "💡💼")
+        (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
+        (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
+        (\.communicationAndNetworking, "Communication", "💬"),
+        (\.leadershipAndInfluence, "Leadership", "👥"),
+        (\.courageAndRiskTolerance, "Courage", "🎲"),
+        (\.carefulnessAndAttentionToDetail, "Carefulness", "🔎"),
+        (\.tinkeringAndFingerPrecision, "Tinkering", "🔧"),
+        (\.spacialNavigation, "Navigation", "🧭"),
+        (\.physicalStrength, "Strength", "💪"),
+        (\.coordinationAndBalance, "Coordination", "🤸"),
+        (\.perseveranceAndGrit, "Perseverance", "🛡️"),
+        (\.resilienceAndEndurance, "Endurance", "🌦️")
     ]
+
+    // Short computed aliases
+    var problemSolving: Int {
+        get { analyticalReasoningAndProblemSolving }
+        set { analyticalReasoningAndProblemSolving = newValue }
+    }
+    var creativity: Int {
+        get { creativityAndInsightfulThinking }
+        set { creativityAndInsightfulThinking = newValue }
+    }
+    var communication: Int {
+        get { communicationAndNetworking }
+        set { communicationAndNetworking = newValue }
+    }
+    var leadership: Int {
+        get { leadershipAndInfluence }
+        set { leadershipAndInfluence = newValue }
+    }
+    var courage: Int {
+        get { courageAndRiskTolerance }
+        set { courageAndRiskTolerance = newValue }
+    }
+    var carefulness: Int {
+        get { carefulnessAndAttentionToDetail }
+        set { carefulnessAndAttentionToDetail = newValue }
+    }
+    var tinkering: Int {
+        get { tinkeringAndFingerPrecision }
+        set { tinkeringAndFingerPrecision = newValue }
+    }
+    var navigation: Int {
+        get { spacialNavigation }
+        set { spacialNavigation = newValue }
+    }
+    var strength: Int {
+        get { physicalStrength }
+        set { physicalStrength = newValue }
+    }
+    var stamina: Int {
+        get { resilienceAndEndurance }
+        set { resilienceAndEndurance = newValue }
+    }
+    var perseverance: Int {
+        get { perseveranceAndGrit }
+        set { perseveranceAndGrit = newValue }
+    }
+    // Add similar computed properties for 'focusAndGrit', 'leadershipAndFriends', etc. if needed
 }

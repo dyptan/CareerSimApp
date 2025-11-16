@@ -6,7 +6,7 @@ struct MainView: View {
     @State var showTertiarySheet = false
     @State var showCareersSheet = false
     @State var selectedActivities: Set<String> = []
-    @State var selectedLanguages: Set<Language> = []
+    @State var selectedLanguages: Set<ProgrammingLanguage> = []
     @State var selectedSoftware: Set<Software> = []
     @State var selectedLicences: Set<License> = []
     @State var selectedPortfolio: Set<PortfolioItem> = []
@@ -221,7 +221,7 @@ struct MainView: View {
                         Array(player.jobExperiance.enumerated()),
                         id: \.offset
                     ) { _, item in
-                        Text("• \(item)")
+                        Text("• \(item.1) years as \(item.0.id)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }

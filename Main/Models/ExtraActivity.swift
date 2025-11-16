@@ -7,7 +7,7 @@ let schoolActivities: [ExtraActivity] = [
     // Sports & Outdoors
     ExtraActivity(
         label: "Sports",
-        abilityKeyPaths: [\.strength, \.riskTaking, \.weatherEndurance]
+        abilityKeyPaths: [\.strength, \.courage, \.weatherEndurance]
     ),
     ExtraActivity(
         label: "Scouting",
@@ -99,7 +99,7 @@ let schoolActivities: [ExtraActivity] = [
     // Work & Entrepreneurship
     ExtraActivity(
         label: "Mini‑job",
-        abilityKeyPaths: [\.riskTaking, \.leadershipAndFriends]
+        abilityKeyPaths: [\.courage, \.leadershipAndFriends]
     ),
     ExtraActivity(
         label: "Pop‑up Stand",
