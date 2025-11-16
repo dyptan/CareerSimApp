@@ -1,17 +1,21 @@
 import SwiftUI
 
+extension SoftSkills {
+    static func pictogram(forLabel label: String) -> String? {
+        skillNames.first(where: { $0.label == label })?.pictogram
+    }
+    static func label(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>) -> String? {
+        skillNames.first(where: { $0.keyPath == keyPath })?.label
+    }
+    static func pictogram(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>) -> String? {
+        skillNames.first(where: { $0.keyPath == keyPath })?.pictogram
+    }
+}
+
 struct JobView: View {
     var job: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
-
-    private var softSkillIconByLabel: [String: String] {
-        Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.label, $0.pictogram) })
-    }
-
-    private func icon(for label: String, fallback: String) -> String {
-        softSkillIconByLabel[label] ?? fallback
-    }
 
     // MARK: - Requirement checks
 
@@ -24,18 +28,18 @@ struct JobView: View {
 
         let unmet =
             (player.degrees.last?.1.eqf ?? 0) < j.education
-            || p.problemSolving < j.analyticalReasoning
-            || p.creativity < j.creativeExpression
-            || p.communication < j.socialCommunication
-            || p.leadershipAndFriends < leadershipRequired
-            || p.courage < j.riskTolerance
-            || p.navigation < j.spatialThinking
-            || p.carefulness < j.attentionToDetail
-            || p.focusAndGrit < j.resilienceCognitive
-            || p.tinkering < j.mechanicalOperation
-            || p.strength < j.physicalAbility
-            || p.stamina < j.resiliencePhysical
-            || p.weatherEndurance < j.outdoorOrientation
+            || p.analyticalReasoningAndProblemSolving < j.analyticalReasoning
+            || p.creativityAndInsightfulThinking < j.creativeExpression
+            || p.communicationAndNetworking < j.socialCommunication
+            || p.leadershipAndInfluence < leadershipRequired
+            || p.courageAndRiskTolerance < j.riskTolerance
+            || p.spacialNavigation < j.spatialThinking
+            || p.carefulnessAndAttentionToDetail < j.attentionToDetail
+            || p.perseveranceAndGrit < j.resilienceCognitive
+            || p.tinkeringAndFingerPrecision < j.mechanicalOperation
+            || p.physicalStrength < j.physicalAbility
+            || p.resilienceAndEndurance < j.resiliencePhysical
+            || p.resilienceAndEndurance < j.outdoorOrientation
 
         return !unmet
     }
@@ -91,7 +95,7 @@ struct JobView: View {
                         HStack {
                             requirementRow(
                                 label: job.requirements.educationLabel(),
-                                emoji: "📚",
+                                emoji: "🎓",
                                 level: job.requirements.education,
                                 playerLevel: player.degrees.last?.1.eqf ?? 0
                             )
@@ -104,52 +108,52 @@ struct JobView: View {
                         Text("Brainy skills")
                             .font(.headline)
                         requirementRow(
-                            label: "Problem Solving",
-                            emoji: icon(for: "Problem Solving", fallback: "🧩"),
+                            label: SoftSkills.label(forKeyPath: \.analyticalReasoningAndProblemSolving) ?? "Problem Solving",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.analyticalReasoningAndProblemSolving) ?? "🧩",
                             level: job.requirements.analyticalReasoning,
-                            playerLevel: player.softSkills.problemSolving
+                            playerLevel: player.softSkills.analyticalReasoningAndProblemSolving
                         )
                         requirementRow(
-                            label: "Creativity",
-                            emoji: icon(for: "Creativity", fallback: "🎨"),
+                            label: SoftSkills.label(forKeyPath: \.creativityAndInsightfulThinking) ?? "Creativity",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.creativityAndInsightfulThinking) ?? "🎨",
                             level: job.requirements.creativeExpression,
-                            playerLevel: player.softSkills.creativity
+                            playerLevel: player.softSkills.creativityAndInsightfulThinking
                         )
                         requirementRow(
-                            label: "Communication",
-                            emoji: icon(for: "Communication", fallback: "💬"),
+                            label: SoftSkills.label(forKeyPath: \.communicationAndNetworking) ?? "Communication",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.communicationAndNetworking) ?? "💬",
                             level: job.requirements.socialCommunication,
-                            playerLevel: player.softSkills.communication
+                            playerLevel: player.softSkills.communicationAndNetworking
                         )
                         requirementRow(
-                            label: "Leadership & Friends",
-                            emoji: icon(for: "Leadership & Friends", fallback: "👥"),
+                            label: SoftSkills.label(forKeyPath: \.leadershipAndInfluence) ?? "Leadership",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.leadershipAndInfluence) ?? "👥",
                             level: max(job.requirements.teamLeadership, job.requirements.influenceAndNetworking),
-                            playerLevel: player.softSkills.leadershipAndFriends
+                            playerLevel: player.softSkills.leadershipAndInfluence
                         )
                         requirementRow(
-                            label: "Risk Taking",
-                            emoji: icon(for: "Risk Taking", fallback: "🎲"),
+                            label: SoftSkills.label(forKeyPath: \.courageAndRiskTolerance) ?? "Courage",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.courageAndRiskTolerance) ?? "🎲",
                             level: job.requirements.riskTolerance,
-                            playerLevel: player.softSkills.courage
+                            playerLevel: player.softSkills.courageAndRiskTolerance
                         )
                         requirementRow(
-                            label: "Navigation",
-                            emoji: icon(for: "Navigation", fallback: "🧭"),
+                            label: SoftSkills.label(forKeyPath: \.spacialNavigation) ?? "Navigation",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.spacialNavigation) ?? "🧭",
                             level: job.requirements.spatialThinking,
-                            playerLevel: player.softSkills.navigation
+                            playerLevel: player.softSkills.spacialNavigation
                         )
                         requirementRow(
-                            label: "Carefulness",
-                            emoji: icon(for: "Carefulness", fallback: "🔎"),
+                            label: SoftSkills.label(forKeyPath: \.carefulnessAndAttentionToDetail) ?? "Carefulness",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.carefulnessAndAttentionToDetail) ?? "🔎",
                             level: job.requirements.attentionToDetail,
-                            playerLevel: player.softSkills.carefulness
+                            playerLevel: player.softSkills.carefulnessAndAttentionToDetail
                         )
                         requirementRow(
-                            label: "Focus & Grit",
-                            emoji: icon(for: "Focus & Grit", fallback: "🧠"),
+                            label: SoftSkills.label(forKeyPath: \.perseveranceAndGrit) ?? "Perseverance",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.perseveranceAndGrit) ?? "🛡️",
                             level: job.requirements.resilienceCognitive,
-                            playerLevel: player.softSkills.focusAndGrit
+                            playerLevel: player.softSkills.perseveranceAndGrit
                         )
                     }
                     .padding(.vertical, 6)
@@ -159,28 +163,28 @@ struct JobView: View {
                         Text("Body & hands-on")
                             .font(.headline)
                         requirementRow(
-                            label: "Tinkering",
-                            emoji: icon(for: "Tinkering", fallback: "🛠️"),
+                            label: SoftSkills.label(forKeyPath: \.tinkeringAndFingerPrecision) ?? "Tinkering",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.tinkeringAndFingerPrecision) ?? "🔧",
                             level: job.requirements.mechanicalOperation,
-                            playerLevel: player.softSkills.tinkering
+                            playerLevel: player.softSkills.tinkeringAndFingerPrecision
                         )
                         requirementRow(
-                            label: "Strength",
-                            emoji: icon(for: "Strength", fallback: "💪"),
+                            label: SoftSkills.label(forKeyPath: \.physicalStrength) ?? "Strength",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.physicalStrength) ?? "💪",
                             level: job.requirements.physicalAbility,
-                            playerLevel: player.softSkills.strength
+                            playerLevel: player.softSkills.physicalStrength
                         )
                         requirementRow(
-                            label: "Weather Endurance",
-                            emoji: "🌦️💪",
-                            level: job.requirements.outdoorOrientation,
-                            playerLevel: player.softSkills.weatherEndurance
+                            label: SoftSkills.label(forKeyPath: \.coordinationAndBalance) ?? "Coordination",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.coordinationAndBalance) ?? "🤸",
+                            level: 0,
+                            playerLevel: player.softSkills.coordinationAndBalance
                         )
                         requirementRow(
-                            label: "Stamina",
-                            emoji: icon(for: "Stamina", fallback: "🛡️"),
-                            level: job.requirements.resiliencePhysical,
-                            playerLevel: player.softSkills.stamina
+                            label: SoftSkills.label(forKeyPath: \.resilienceAndEndurance) ?? "Endurance",
+                            emoji: SoftSkills.pictogram(forKeyPath: \.resilienceAndEndurance) ?? "🌦️",
+                            level: max(job.requirements.resiliencePhysical, job.requirements.outdoorOrientation),
+                            playerLevel: player.softSkills.resilienceAndEndurance
                         )
                     }
                     .padding(.vertical, 6)
@@ -250,12 +254,39 @@ struct JobView: View {
     }
 }
 
+// Standalone preview with a sample job
 #Preview {
-    NavigationStack {
-        if let first = jobs.first {
-            JobView(job: first, player: Player(), showCareersSheet: .constant(true))
-        } else {
-            Text("No careers loaded")
-        }
+    let exampleJob = Job(
+        id: "SampleJob",
+        category: .agriculture,
+        income: 1000,
+        prestige: 3,
+        summary: "Test job for preview.",
+        icon: "🧑‍🌾",
+        requirements: Job.Requirements(
+            education: 1,
+            cognitive: Job.Requirements.Cognitive(
+                analyticalReasoning: 1,
+                creativeExpression: 1,
+                socialCommunication: 1,
+                teamLeadership: 1,
+                influenceAndNetworking: 1,
+                riskTolerance: 1,
+                spatialThinking: 1,
+                attentionToDetail: 1,
+                resilienceCognitive: 1
+            ),
+            physical: Job.Requirements.Physical(
+                mechanicalOperation: 1,
+                physicalAbility: 1,
+                outdoorOrientation: 1,
+                resiliencePhysical: 1,
+                endurance: 1
+            )
+        ),
+        version: 1
+    )
+    return NavigationStack {
+        JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
     }
 }

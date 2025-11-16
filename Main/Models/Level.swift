@@ -1,4 +1,5 @@
 enum Level: String, CaseIterable, Identifiable {
+    case Kindergarten
     case PrimarySchool
     case MiddleSchool
     case HighSchool
@@ -11,6 +12,7 @@ enum Level: String, CaseIterable, Identifiable {
 
     var eqf: Int {
         switch self {
+        case .Kindergarten : return 1
         case .PrimarySchool : return 2
         case .MiddleSchool : return 3
         case .HighSchool : return 4
@@ -23,6 +25,7 @@ enum Level: String, CaseIterable, Identifiable {
     
     func yearsToComplete(_ isUS: Bool = false) -> Int {
         switch (self, isUS) {
+        case (.Kindergarten, _): return 4
         case (.PrimarySchool, _): return 4
         case (.MiddleSchool, true): return 4
         case (.MiddleSchool, false): return 5
@@ -38,6 +41,7 @@ enum Level: String, CaseIterable, Identifiable {
 
     var next: [Level] {
         switch self {
+        case .Kindergarten: return [.PrimarySchool]
         case .PrimarySchool: return [.MiddleSchool]
         case .MiddleSchool: return [.HighSchool]
         case .HighSchool: return [.Vocational, .Bachelor]
@@ -50,13 +54,14 @@ enum Level: String, CaseIterable, Identifiable {
 
     var degree: String {
         switch self {
-        case .PrimarySchool: return "Primary School Diploma"
-        case .MiddleSchool: return "Middle School Diploma"
-        case .HighSchool: return "High School Diploma"
-        case .Vocational: return "Associate Degree"
-        case .Bachelor: return "Bachelor’s Degree"
-        case .Master: return "Master’s Degree"
-        case .Doctorate: return "Doctorate (PhD)"
+        case .Kindergarten: return "👶"
+        case .PrimarySchool: return "Primary School 🧒"
+        case .MiddleSchool: return "Middle School 👦"
+        case .HighSchool: return "High School 👱‍♂️"
+        case .Vocational: return "Associate Degree 🧑‍🔧"
+        case .Bachelor: return "Bachelor’s Degree 👨‍🎓"
+        case .Master: return "Master’s Degree 🎓"
+        case .Doctorate: return "Doctorate (PhD) 💼"
         }
     }
 }
@@ -90,106 +95,82 @@ enum TertiaryProfile: String, CaseIterable, Identifiable {
         }
     }
 
-    // Apply profile-based boosts to soft skills.
-    // Includes baseline +1 per year to communication and leadershipAndFriends.
     func applyBoost(to abilities: SoftSkills, for level: Level = .Bachelor, isUS: Bool = false) -> SoftSkills {
         var updated = abilities
 
-        // Baseline: each year of study grows communication and leadership/teamwork.
         let years = level.yearsToComplete(isUS)
-        updated.communication += years
-        updated.leadership += years
+        updated.communicationAndNetworking += years
+        updated.leadershipAndInfluence += years
 
         switch self {
         case .stem:
-            // Strong technical/problem skills, carefulness, tinkering; some grit.
-            updated.problemSolving += 12
-            updated.carefulness += 10
-            updated.tinkering += 8
-            updated.focusAndGrit += 6
-            // Optional smaller boosts
-            updated.navigation += 3
+            updated.analyticalReasoningAndProblemSolving += 12
+            updated.carefulnessAndAttentionToDetail += 10
+            updated.tinkeringAndFingerPrecision += 8
+            updated.perseveranceAndGrit += 6
+            updated.spacialNavigation += 3
 
         case .arts:
-            // Creativity and communication, plus carefulness for craft.
-            updated.creativity += 12
-            updated.communication += 6
-            updated.carefulness += 6
-            // Some leadership via performances/projects
-            updated.leadership += 4
-            // Focus on practice
-            updated.focusAndGrit += 3
+            updated.creativityAndInsightfulThinking += 12
+            updated.communicationAndNetworking += 6
+            updated.carefulnessAndAttentionToDetail += 6
+            updated.leadershipAndInfluence += 4
+            updated.perseveranceAndGrit += 3
 
         case .business:
-            // Leadership, entrepreneurship, risk taking, communication.
-            updated.leadership += 12
+            updated.leadershipAndInfluence += 12
             updated.creativityAndInsightfulThinking += 10
-            updated.courage += 6
-            updated.communication += 6
-            // Some problem solving and carefulness (finance/ops)
-            updated.problemSolving += 3
-            updated.carefulness += 3
+            updated.courageAndRiskTolerance += 6
+            updated.communicationAndNetworking += 6
+            updated.analyticalReasoningAndProblemSolving += 3
+            updated.carefulnessAndAttentionToDetail += 3
 
         case .health:
-            // Accuracy, empathy/communication, grit; some physical/stamina.
-            updated.carefulness += 12
-            updated.communication += 6
-            updated.focusAndGrit += 6
-            updated.perseverance += 4
-            updated.strength += 2
+            updated.carefulnessAndAttentionToDetail += 12
+            updated.communicationAndNetworking += 6
+            updated.perseveranceAndGrit += 6
+            updated.resilienceAndEndurance += 4
+            updated.physicalStrength += 2
 
         case .humanities:
-            // Communication, reasoning, some creativity.
-            updated.communication += 8
-            updated.problemSolving += 4
-            updated.creativity += 4
-            updated.focusAndGrit += 3
-            updated.carefulness += 3
+            updated.communicationAndNetworking += 8
+            updated.analyticalReasoningAndProblemSolving += 4
+            updated.creativityAndInsightfulThinking += 4
+            updated.perseveranceAndGrit += 3
+            updated.carefulnessAndAttentionToDetail += 3
 
         case .trades:
-            // Hands-on, navigation, physical stamina and weather endurance.
-            updated.tinkering += 12
-            updated.navigation += 6
-            updated.stamina += 6
-            updated.weatherEndurance += 5
-            updated.strength += 4
-            // Some carefulness for precision work
-            updated.carefulness += 4
+            updated.tinkeringAndFingerPrecision += 12
+            updated.spacialNavigation += 6
+            updated.resilienceAndEndurance += 6
+            updated.physicalStrength += 4
+            updated.carefulnessAndAttentionToDetail += 4
 
         case .law:
-            // Reasoning, carefulness, communication, grit; some leadership.
-            updated.problemSolving += 12
-            updated.carefulness += 10
-            updated.communication += 8
-            updated.focusAndGrit += 6
-            updated.leadershipAndFriends += 4
+            updated.analyticalReasoningAndProblemSolving += 12
+            updated.carefulnessAndAttentionToDetail += 10
+            updated.communicationAndNetworking += 8
+            updated.perseveranceAndGrit += 6
+            updated.leadershipAndInfluence += 4
 
         case .education:
-            // Strong communication and leadership/teamwork; patience/grit.
-            updated.communication += 12
-            updated.leadershipAndFriends += 8
-            updated.focusAndGrit += 6
-            updated.carefulness += 4
-            // Creativity for lesson design
-            updated.creativity += 4
+            updated.communicationAndNetworking += 12
+            updated.leadershipAndInfluence += 8
+            updated.perseveranceAndGrit += 6
+            updated.carefulnessAndAttentionToDetail += 4
+            updated.creativityAndInsightfulThinking += 4
 
         case .media:
-            // Communication, creativity, leadership/team projects; carefulness for accuracy.
-            updated.communication += 12
-            updated.creativity += 8
-            updated.leadershipAndFriends += 6
-            updated.carefulness += 4
-            // Entrepreneurship for creators
-            updated.entrepreneurship += 3
+            updated.communicationAndNetworking += 12
+            updated.creativityAndInsightfulThinking += 8
+            updated.leadershipAndInfluence += 6
+            updated.carefulnessAndAttentionToDetail += 4
 
         case .hospitality:
-            // Communication, leadership/teamwork, stamina; some entrepreneurship.
-            updated.communication += 10
-            updated.leadershipAndFriends += 6
-            updated.stamina += 6
-            updated.entrepreneurship += 3
-            // Carefulness for service quality
-            updated.carefulness += 3
+            updated.communicationAndNetworking += 10
+            updated.leadershipAndInfluence += 6
+            updated.resilienceAndEndurance += 6
+            updated.carefulnessAndAttentionToDetail += 3
         }
 
         return updated

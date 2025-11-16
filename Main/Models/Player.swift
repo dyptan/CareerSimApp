@@ -14,6 +14,7 @@ final class Player: ObservableObject {
     @Published var lockedSoftware: Set<Software>
     @Published var lockedPortfolio: Set<PortfolioItem>
     @Published var lockedLicenses: Set<License>
+    @Published var lockedActivities: Set<String>
 
     init(
         age: Int = 7,
@@ -29,11 +30,7 @@ final class Player: ObservableObject {
             physicalStrength: Int.random(in: 0..<3),
             coordinationAndBalance: Int.random(in: 0..<3),
             perseveranceAndGrit: Int.random(in: 0..<3),
-            resilienceAndEndurance: Int.random(in: 0..<3),
-            leadershipAndFriends: Int.random(in: 0..<3),
-            focusAndGrit: Int.random(in: 0..<3),
-            weatherEndurance: Int.random(in: 0..<3),
-            entrepreneurship: Int.random(in: 0..<3)
+            resilienceAndEndurance: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
             languages: [],
@@ -42,7 +39,7 @@ final class Player: ObservableObject {
             software: [],
             licenses: []
         ),
-        degrees: [(TertiaryProfile?, Level)] = [],
+        degrees: [(TertiaryProfile?, Level)] = [(nil, Level.PrimarySchool)],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil,
         savings: Int = 0,
@@ -50,7 +47,8 @@ final class Player: ObservableObject {
         lockedLanguages: Set<ProgrammingLanguage> = [],
         lockedSoftware: Set<Software> = [],
         lockedPortfolio: Set<PortfolioItem> = [],
-        lockedLicenses: Set<License> = []
+        lockedLicenses: Set<License> = [],
+        lockedActivities: Set<String> = []
     ) {
         self.age = age
         self.softSkills = abilities
@@ -64,6 +62,7 @@ final class Player: ObservableObject {
         self.lockedSoftware = lockedSoftware
         self.lockedPortfolio = lockedPortfolio
         self.lockedLicenses = lockedLicenses
+        self.lockedActivities = lockedActivities
     }
 
     func boostAbility(_ keyPath: WritableKeyPath<SoftSkills, Int>) {

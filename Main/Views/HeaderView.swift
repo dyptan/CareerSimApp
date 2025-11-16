@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HeaderView: View {
-//     Inject the model and all state this header needs to read/mutate
+    //     Inject the model and all state this header needs to read/mutate
     @ObservedObject var player: Player
 
     @Binding var showDecisionSheet: Bool
@@ -22,90 +22,18 @@ struct HeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("Age: \(player.age)")
-                    .font(.title2)
-                Spacer()
-                VStack(alignment: .leading, spacing: 8) {
-                    // Visible activities counter
-                    HStack(spacing: 6) {
-                        Text("Activities this year:")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
-                            .font(.headline.monospacedDigit())
-                            .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
-                    }
 
-                    Button("+1 Year") {
-                        // Advance year
-                        player.age += 1
-
-                        // Persist this year's learning into the player's permanent hard skills
-                        player.hardSkills.certifications.formUnion(selectedCertifications)
-                        player.hardSkills.languages.formUnion(selectedLanguages)
-                        player.hardSkills.licenses.formUnion(selectedLicences)
-                        player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
-                        player.hardSkills.software.formUnion(selectedSoftware)
-
-                        // Lock learned items so they won't be available next years
-                        player.lockedCertifications.formUnion(selectedCertifications)
-                        player.lockedLanguages.formUnion(selectedLanguages)
-                        player.lockedLicenses.formUnion(selectedLicences)
-                        player.lockedPortfolio.formUnion(selectedPortfolio)
-                        player.lockedSoftware.formUnion(selectedSoftware)
-
-                        // Clear all in-progress selections for the new year
-                        selectedActivities.removeAll()
-                        selectedLanguages.removeAll()
-                        selectedSoftware.removeAll()
-                        selectedLicences.removeAll()
-                        selectedPortfolio.removeAll()
-                        selectedCertifications.removeAll()
-
-                        // Education progress
-                        yearsLeftToGraduation? -= 1
-                        if yearsLeftToGraduation == 0 {
-                            descisionText =
-                                "You're done with your degree! What's your next step?"
-                            showDecisionSheet.toggle()
-                            if let currentEducation = player.currentEducation {
-                                player.degrees.append(currentEducation)
-                            }
-                            yearsLeftToGraduation = nil
-                            player.currentEducation = nil
-                        }
-
-                        // Income
-                        if let income = player.currentOccupation?.income {
-                            player.savings += income
-                        }
-                    }
-                    .disabled(false)
-
-                    if player.age > 18 {
-                        Button("Find a Job") {
-                            showCareersSheet.toggle()
-                            player.currentOccupation = nil
-                        }
-                        Button("Get a new degree") {
-                            showTertiarySheet.toggle()
-                        }
-                    }
-                }
-            }
+            Text("Age: \(player.age)")
+                .font(.title2)
 
             if let lastlog = player.degrees.last {
-                HStack {
-                    Text(lastlog.1.degree)
-                    Text(String(repeating: "⭐️", count: lastlog.1.eqf))
-                }
-            } else {
-                Text("⭐️")
+                Text("Education: \(lastlog.1.degree)")
             }
 
-            Text("Bank balance: \(player.savings * 1000)")
-            Text(String(repeating: "💶", count: player.savings / 10))
+            if player.savings > 0 {
+                Text("Bank balance: \(player.savings * 1000)")
+                Text(String(repeating: "💶", count: player.savings / 10))
+            }
 
             if let currentOccupation = player.currentOccupation {
                 Text(
@@ -118,29 +46,45 @@ struct HeaderView: View {
                 )
             }
 
+            HStack {
+
+                if player.age > 18 {
+                    Button("Find a Job") {
+                        showCareersSheet.toggle()
+                        player.currentOccupation = nil
+                    }
+                }
+
+                if let eqf = player.degrees.last?.1.eqf, eqf >= 4 {
+                    Button("Get a degree") {
+                        showTertiarySheet.toggle()
+                    }
+                }
+            }
+
         }
-        .padding(.top, 10)
     }
 }
 
-//#Preview {
-//    HeaderView(
-//        player: Player(
-//            degrees: [(.some(.business), .Bachelor)],
-//            currentOccupation: .some(
-//                jobExample
-//            )
-//        ),
-//        showDecisionSheet: .constant(false),
-//        showTertiarySheet: .constant(false),
-//        showCareersSheet: .constant(false),
-//        selectedActivities: .constant(Set<String>()),
-//        selectedLanguages: .constant(Set<Language>()),
-//        selectedSoftware: .constant(Set<Software>()),
-//        selectedLicences: .constant(Set<License>()),
-//        selectedPortfolio: .constant(Set<PortfolioItem>()),
-//        selectedCertifications: .constant(Set<Certification>()),
-//        yearsLeftToGraduation: .constant(nil),
-//        descisionText: .constant("sdf")
-//    )
-//}
+#Preview {
+    HeaderView(
+        player: Player(
+            degrees: [(.some(.business), .Bachelor)],
+            currentOccupation: .some(
+                jobExample
+            )
+        ),
+        showDecisionSheet: .constant(false),
+        showTertiarySheet: .constant(false),
+        showCareersSheet: .constant(false),
+        selectedActivities: .constant(Set<String>()),
+        selectedLanguages: .constant(Set<ProgrammingLanguage>()),
+        selectedSoftware: .constant(Set<Software>()),
+        selectedLicences: .constant(Set<License>()),
+        selectedPortfolio: .constant(Set<PortfolioItem>()),
+        selectedCertifications: .constant(Set<Certification>()),
+        yearsLeftToGraduation: .constant(nil),
+        descisionText: .constant("sdf")
+    )
+
+}

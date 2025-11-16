@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HardStillsView: View {
+struct HardSkillsView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedLanguages: Set<ProgrammingLanguage>
@@ -91,11 +91,15 @@ private struct CertificationsView: View {
                             if isOn {
                                 if !atLimit {
                                     selectedCertifications.insert(cert)
-                                    selectedActivities.insert("cert:\(cert.rawValue)")
+                                    selectedActivities.insert(
+                                        "cert:\(cert.rawValue)"
+                                    )
                                 }
                             } else {
                                 if selectedCertifications.remove(cert) != nil {
-                                    selectedActivities.remove("cert:\(cert.rawValue)")
+                                    selectedActivities.remove(
+                                        "cert:\(cert.rawValue)"
+                                    )
                                 }
                             }
                         }
@@ -104,14 +108,18 @@ private struct CertificationsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .disabled(isLocked || (!isSelected && atLimit))
                 .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
-                .help(isLocked
-                      ? "Locked after year end"
-                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                .help(
+                    isLocked
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : "")
+                )
                 #if os(macOS)
-                .toggleStyle(.checkbox)
+                    .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                .toggleStyle(.switch)
+                    .toggleStyle(.switch)
                 #endif
             }
         }
@@ -124,7 +132,10 @@ private struct CertificationsView: View {
                 .foregroundStyle(.secondary)
             Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                .foregroundStyle(
+                    selectedActivities.count >= maxActivitiesPerYear
+                        ? .red : .primary
+                )
             Spacer()
         }
     }
@@ -165,11 +176,15 @@ private struct LicensesView: View {
                             if isOn {
                                 if !atLimit {
                                     selectedLicences.insert(lic)
-                                    selectedActivities.insert("lic:\(lic.rawValue)")
+                                    selectedActivities.insert(
+                                        "lic:\(lic.rawValue)"
+                                    )
                                 }
                             } else {
                                 if selectedLicences.remove(lic) != nil {
-                                    selectedActivities.remove("lic:\(lic.rawValue)")
+                                    selectedActivities.remove(
+                                        "lic:\(lic.rawValue)"
+                                    )
                                 }
                             }
                         }
@@ -178,14 +193,18 @@ private struct LicensesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .disabled(isLocked || (!isSelected && atLimit))
                 .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
-                .help(isLocked
-                      ? "Locked after year end"
-                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                .help(
+                    isLocked
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : "")
+                )
                 #if os(macOS)
-                .toggleStyle(.checkbox)
+                    .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                .toggleStyle(.switch)
+                    .toggleStyle(.switch)
                 #endif
             }
         }
@@ -198,7 +217,10 @@ private struct LicensesView: View {
                 .foregroundStyle(.secondary)
             Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                .foregroundStyle(
+                    selectedActivities.count >= maxActivitiesPerYear
+                        ? .red : .primary
+                )
             Spacer()
         }
     }
@@ -239,11 +261,15 @@ private struct LanguagesView: View {
                             if isOn {
                                 if !atLimit {
                                     selectedLanguages.insert(lang)
-                                    selectedActivities.insert("lang:\(lang.rawValue)")
+                                    selectedActivities.insert(
+                                        "lang:\(lang.rawValue)"
+                                    )
                                 }
                             } else {
                                 if selectedLanguages.remove(lang) != nil {
-                                    selectedActivities.remove("lang:\(lang.rawValue)")
+                                    selectedActivities.remove(
+                                        "lang:\(lang.rawValue)"
+                                    )
                                 }
                             }
                         }
@@ -252,14 +278,18 @@ private struct LanguagesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .disabled(isLocked || (!isSelected && atLimit))
                 .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
-                .help(isLocked
-                      ? "Locked after year end"
-                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                .help(
+                    isLocked
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : "")
+                )
                 #if os(macOS)
-                .toggleStyle(.checkbox)
+                    .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                .toggleStyle(.switch)
+                    .toggleStyle(.switch)
                 #endif
             }
         }
@@ -272,7 +302,10 @@ private struct LanguagesView: View {
                 .foregroundStyle(.secondary)
             Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                .foregroundStyle(
+                    selectedActivities.count >= maxActivitiesPerYear
+                        ? .red : .primary
+                )
             Spacer()
         }
     }
@@ -313,11 +346,15 @@ private struct SoftwareView: View {
                             if isOn {
                                 if !atLimit {
                                     selectedSoftware.insert(sw)
-                                    selectedActivities.insert("soft:\(sw.rawValue)")
+                                    selectedActivities.insert(
+                                        "soft:\(sw.rawValue)"
+                                    )
                                 }
                             } else {
                                 if selectedSoftware.remove(sw) != nil {
-                                    selectedActivities.remove("soft:\(sw.rawValue)")
+                                    selectedActivities.remove(
+                                        "soft:\(sw.rawValue)"
+                                    )
                                 }
                             }
                         }
@@ -326,14 +363,18 @@ private struct SoftwareView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .disabled(isLocked || (!isSelected && atLimit))
                 .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
-                .help(isLocked
-                      ? "Locked after year end"
-                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                .help(
+                    isLocked
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : "")
+                )
                 #if os(macOS)
-                .toggleStyle(.checkbox)
+                    .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                .toggleStyle(.switch)
+                    .toggleStyle(.switch)
                 #endif
             }
         }
@@ -346,7 +387,10 @@ private struct SoftwareView: View {
                 .foregroundStyle(.secondary)
             Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                .foregroundStyle(
+                    selectedActivities.count >= maxActivitiesPerYear
+                        ? .red : .primary
+                )
             Spacer()
         }
     }
@@ -387,11 +431,15 @@ private struct PortfolioView: View {
                             if isOn {
                                 if !atLimit {
                                     selectedPortfolio.insert(item)
-                                    selectedActivities.insert("port:\(item.rawValue)")
+                                    selectedActivities.insert(
+                                        "port:\(item.rawValue)"
+                                    )
                                 }
                             } else {
                                 if selectedPortfolio.remove(item) != nil {
-                                    selectedActivities.remove("port:\(item.rawValue)")
+                                    selectedActivities.remove(
+                                        "port:\(item.rawValue)"
+                                    )
                                 }
                             }
                         }
@@ -400,14 +448,18 @@ private struct PortfolioView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .disabled(isLocked || (!isSelected && atLimit))
                 .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
-                .help(isLocked
-                      ? "Locked after year end"
-                      : ((!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." : ""))
+                .help(
+                    isLocked
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : "")
+                )
                 #if os(macOS)
-                .toggleStyle(.checkbox)
+                    .toggleStyle(.checkbox)
                 #endif
                 #if os(iOS)
-                .toggleStyle(.switch)
+                    .toggleStyle(.switch)
                 #endif
             }
         }
@@ -420,7 +472,10 @@ private struct PortfolioView: View {
                 .foregroundStyle(.secondary)
             Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
                 .font(.headline.monospacedDigit())
-                .foregroundStyle(selectedActivities.count >= maxActivitiesPerYear ? .red : .primary)
+                .foregroundStyle(
+                    selectedActivities.count >= maxActivitiesPerYear
+                        ? .red : .primary
+                )
             Spacer()
         }
     }
@@ -433,7 +488,7 @@ private struct PortfolioView: View {
     @Previewable @State var soft = Set<Software>()
     @Previewable @State var port = Set<PortfolioItem>()
     @Previewable @State var acts = Set<String>()
-    HardStillsView(
+    HardSkillsView(
         selectedCertifications: $certs,
         selectedLicences: $lic,
         selectedLanguages: $langs,
@@ -444,4 +499,3 @@ private struct PortfolioView: View {
     .environmentObject(Player())
     .padding()
 }
-

@@ -16,15 +16,17 @@ struct MainView: View {
     @State var showRetirementSheet = false
     @State var showHardSkillsSheet = false
     @State var showSoftSkillsSheet = false
-    
-    
+
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(uniqueKeysWithValues: SoftSkills.skillNames.map { ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram) })
+        Dictionary(
+            uniqueKeysWithValues: SoftSkills.skillNames.map {
+                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
+            }
+        )
     }
-    
-    
+
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading) {
             HeaderView(
                 player: player,
                 showDecisionSheet: $showDecisionSheet,
@@ -38,9 +40,8 @@ struct MainView: View {
                 selectedCertifications: $selectedCertifications,
                 yearsLeftToGraduation: $yearsLeftToGraduation,
                 descisionText: $descisionText
-            )
-            
-            // Extracted Skills view
+            ).padding(.bottom)
+
             SkillsView(
                 player: player,
                 selectedLanguages: $selectedLanguages,
@@ -51,9 +52,7 @@ struct MainView: View {
                 showHardSkillsSheet: $showHardSkillsSheet,
                 showSoftSkillsSheet: $showSoftSkillsSheet,
             )
-            
-            
-        
+
         }
         .sheet(isPresented: $showDecisionSheet) {
             VStack(spacing: 18) {
@@ -69,7 +68,7 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                
+
                 Button {
                     showDecisionSheet = false
                     showCareersSheet = true
@@ -79,7 +78,7 @@ struct MainView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                
+
             }
             .padding()
             .presentationDetents([.medium])
@@ -100,7 +99,7 @@ struct MainView: View {
                                         )
                                         player.currentOccupation = nil
                                         yearsLeftToGraduation =
-                                        level.yearsToComplete()
+                                            level.yearsToComplete()
                                         showTertiarySheet.toggle()
                                     } label: {
                                         VStack(alignment: .leading) {
@@ -132,9 +131,13 @@ struct MainView: View {
             .presentationDetents([.medium, .large])
         }
         .sheet(isPresented: $showCareersSheet) {
-            CareersSheet(availableJobs: jobs, player: player, showCareersSheet: $showCareersSheet)
-                .frame(idealHeight: 500, alignment: .leading)
-            
+            CareersSheet(
+                availableJobs: jobs,
+                player: player,
+                showCareersSheet: $showCareersSheet
+            )
+            .frame(idealHeight: 500, alignment: .leading)
+
             Button("Close") {
                 showCareersSheet = false
             }.padding()
@@ -142,7 +145,7 @@ struct MainView: View {
         .sheet(isPresented: $showHardSkillsSheet) {
             NavigationStack {
                 ScrollView {
-                    HardStillsView(
+                    HardSkillsView(
                         selectedCertifications: $selectedCertifications,
                         selectedLicences: $selectedLicences,
                         selectedLanguages: $selectedLanguages,
@@ -153,7 +156,7 @@ struct MainView: View {
                     .environmentObject(player)
                     .padding()
                 }
-                .navigationTitle("Certifications & Licenses")
+                .navigationTitle("Sign up for training")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") { showHardSkillsSheet = false }
@@ -161,7 +164,8 @@ struct MainView: View {
                 }
             }
             .presentationDetents([.medium, .large])
-        }.sheet(isPresented: $showSoftSkillsSheet) {
+        }
+        .sheet(isPresented: $showSoftSkillsSheet) {
             NavigationStack {
                 ScrollView {
                     ActivitiesView(
@@ -174,7 +178,7 @@ struct MainView: View {
                     .environmentObject(player)
                     .padding()
                 }
-                .navigationTitle("Activities")
+                .navigationTitle("Participate in activities: ")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") { showSoftSkillsSheet = false }
@@ -188,18 +192,18 @@ struct MainView: View {
                 Text("Retirement")
                     .font(.title2.bold())
                     .padding(.top)
-                
+
                 Text("You’ve retired at age \(player.age).")
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-                
+
                 // Degrees summary
                 let degreeCount = player.degrees.count
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Degrees earned: \(degreeCount)")
                         .font(.headline)
-                    
+
                     ForEach(
                         Array(player.degrees.enumerated()),
                         id: \.offset
@@ -208,15 +212,14 @@ struct MainView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-                    
+
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Work history")
                         .font(.headline)
-                    
+
                     ForEach(
                         Array(player.jobExperiance.enumerated()),
                         id: \.offset
@@ -225,16 +228,14 @@ struct MainView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-                    
+
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-               
+
                 Text("Money earned: \(player.savings)")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                
-                
+
                 Button {
                     showRetirementSheet = false
                     let newPlayer = Player()
@@ -282,6 +283,55 @@ struct MainView: View {
             }
         }
         .padding()
+
+        Spacer()
         
+        Button("+1 Year") {
+            // Advance year
+            player.age += 1
+
+            // Persist this year's learning into the player's permanent hard skills
+            player.hardSkills.certifications.formUnion(selectedCertifications)
+            player.hardSkills.languages.formUnion(selectedLanguages)
+            player.hardSkills.licenses.formUnion(selectedLicences)
+            player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
+            player.hardSkills.software.formUnion(selectedSoftware)
+
+            // Lock learned items so they won't be available next years
+            player.lockedCertifications.formUnion(selectedCertifications)
+            player.lockedLanguages.formUnion(selectedLanguages)
+            player.lockedLicenses.formUnion(selectedLicences)
+            player.lockedPortfolio.formUnion(selectedPortfolio)
+            player.lockedSoftware.formUnion(selectedSoftware)
+
+            // Clear all in-progress selections for the new year
+            selectedActivities.removeAll()
+            selectedLanguages.removeAll()
+            selectedSoftware.removeAll()
+            selectedLicences.removeAll()
+            selectedPortfolio.removeAll()
+            selectedCertifications.removeAll()
+
+            // Education progress
+            yearsLeftToGraduation? -= 1
+            if yearsLeftToGraduation == 0 {
+                descisionText =
+                    "You're done with your degree! What's your next step?"
+                showDecisionSheet.toggle()
+                if let currentEducation = player.currentEducation {
+                    player.degrees.append(currentEducation)
+                }
+                yearsLeftToGraduation = nil
+                player.currentEducation = nil
+            }
+
+            // Income
+            if let income = player.currentOccupation?.income {
+                player.savings += income
+            }
+        }
+        .buttonStyle(.borderedProminent)
+        .padding()
+        .font(.headline)
     }
 }

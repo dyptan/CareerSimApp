@@ -174,11 +174,6 @@ struct SoftSkills: Codable, Hashable {
     var perseveranceAndGrit: Int = 0
     var resilienceAndEndurance: Int = 0
 
-    // Extra fields for game logic, if needed, but avoid duplication with computed aliases!
-    var leadershipAndFriends: Int = 0
-    var focusAndGrit: Int = 0
-    var weatherEndurance: Int = 0
-    var entrepreneurship: Int = 0
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
@@ -194,51 +189,4 @@ struct SoftSkills: Codable, Hashable {
         (\.perseveranceAndGrit, "Perseverance", "🛡️"),
         (\.resilienceAndEndurance, "Endurance", "🌦️")
     ]
-
-    // Short computed aliases
-    var problemSolving: Int {
-        get { analyticalReasoningAndProblemSolving }
-        set { analyticalReasoningAndProblemSolving = newValue }
-    }
-    var creativity: Int {
-        get { creativityAndInsightfulThinking }
-        set { creativityAndInsightfulThinking = newValue }
-    }
-    var communication: Int {
-        get { communicationAndNetworking }
-        set { communicationAndNetworking = newValue }
-    }
-    var leadership: Int {
-        get { leadershipAndInfluence }
-        set { leadershipAndInfluence = newValue }
-    }
-    var courage: Int {
-        get { courageAndRiskTolerance }
-        set { courageAndRiskTolerance = newValue }
-    }
-    var carefulness: Int {
-        get { carefulnessAndAttentionToDetail }
-        set { carefulnessAndAttentionToDetail = newValue }
-    }
-    var tinkering: Int {
-        get { tinkeringAndFingerPrecision }
-        set { tinkeringAndFingerPrecision = newValue }
-    }
-    var navigation: Int {
-        get { spacialNavigation }
-        set { spacialNavigation = newValue }
-    }
-    var strength: Int {
-        get { physicalStrength }
-        set { physicalStrength = newValue }
-    }
-    var stamina: Int {
-        get { resilienceAndEndurance }
-        set { resilienceAndEndurance = newValue }
-    }
-    var perseverance: Int {
-        get { perseveranceAndGrit }
-        set { perseveranceAndGrit = newValue }
-    }
-    // Add similar computed properties for 'focusAndGrit', 'leadershipAndFriends', etc. if needed
 }

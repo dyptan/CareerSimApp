@@ -8,8 +8,6 @@ struct SkillsView: View {
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedCertifications: Set<Certification>
-
-    // Controls the Certifications & Licenses sheet in the parent
     @Binding var showHardSkillsSheet: Bool
     @Binding var showSoftSkillsSheet: Bool
 
@@ -20,32 +18,18 @@ struct SkillsView: View {
             }
         )
     }
-    
-    // Skill proficiency to emoji mapping
-//    private func emojiForLevel(_ value: Int) -> String {
-//        switch value {
-//        case ..<2: return "☹️"     // none
-//        case 2: return "🙁"    // weak
-//        case 3: return "😐"    // okay
-//        case 4: return "🙂"    // high
-//        case 5: return "😀"    // high
-//        case 6: return "😁"    // high
-//        case 7: return "😎"    // high
-//        default: return "👑"       // very high
-//        }
-//    }
+
 
     var body: some View {
         VStack(alignment: .leading) {
-            // Hard skills
 
-            Button("Hard skills") {
+            Button("Learn hard skills") {
                 showHardSkillsSheet = true
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.bordered).font(.headline)
 
             HStack {
-                Text("Languages: ")
+                Text("Programming languages: ")
                 ForEach(
                     Array(
                         player.hardSkills.languages.union(
@@ -70,7 +54,6 @@ struct SkillsView: View {
                 }
             }
 
-            // Certifications & Licenses summary + edit button
             HStack {
                 Text("Certifications & Licenses:")
 
@@ -110,13 +93,13 @@ struct SkillsView: View {
 
             Divider()
 
-            // Soft skills
             VStack(alignment: .leading) {
 
-                Button("Soft skills") {
+                Button("Boost soft skills") {
                     showSoftSkillsSheet = true
                 }
                 .buttonStyle(.bordered).font(.headline)
+                
                 ForEach(
                     Array(SoftSkills.skillNames.enumerated()),
                     id: \.offset
@@ -132,8 +115,6 @@ struct SkillsView: View {
                                 ]
                             )
                         )
-                        // Use proficiency-mapped emoji here!
-//                        Text(emojiForLevel(player.softSkills[keyPath: skill.keyPath]))
                     }
                 }
             }
