@@ -27,7 +27,7 @@ struct HeaderView: View {
                 .font(.title2)
 
             if let lastlog = player.degrees.last {
-                Text("Education: \(lastlog.1.degree)")
+                Text("Last degree: \(lastlog.degreeName)")
             }
 
             if player.savings > 0 {
@@ -41,9 +41,9 @@ struct HeaderView: View {
                 )
             }
             if let currentEducation = player.currentEducation {
-                Text(
-                    "Studying: \(currentEducation.0.rawValue) \(currentEducation.1.rawValue)"
-                )
+                if let prof = currentEducation.profile {
+                    Text("Studying: \(currentEducation.degreeName)")
+                }
             }
 
             HStack {
@@ -52,13 +52,13 @@ struct HeaderView: View {
                     Button("Find a Job") {
                         showCareersSheet.toggle()
                         player.currentOccupation = nil
-                    }
+                    }.buttonStyle(.borderedProminent)
                 }
 
-                if let eqf = player.degrees.last?.1.eqf, eqf >= 4 {
+                if let eqf = player.degrees.last?.eqf, eqf >= 4 {
                     Button("Get a degree") {
                         showTertiarySheet.toggle()
-                    }
+                    }.buttonStyle(.borderedProminent)
                 }
             }
 
@@ -69,7 +69,7 @@ struct HeaderView: View {
 #Preview {
     HeaderView(
         player: Player(
-            degrees: [(.some(.business), .Bachelor)],
+            degrees: [],
             currentOccupation: .some(
                 jobExample
             )
@@ -88,3 +88,4 @@ struct HeaderView: View {
     )
 
 }
+

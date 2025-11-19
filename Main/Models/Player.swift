@@ -2,12 +2,12 @@ import Foundation
 
 final class Player: ObservableObject {
     @Published var age: Int
-    @Published var degrees: [(TertiaryProfile?, Level)]
+    @Published var degrees: [Education]
     @Published var jobExperiance: [(Job, Int)]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
     @Published var currentOccupation: Job?
-    @Published var currentEducation: (TertiaryProfile, Level)?
+    @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedCertifications: Set<Certification>
     @Published var lockedLanguages: Set<ProgrammingLanguage>
@@ -18,7 +18,7 @@ final class Player: ObservableObject {
 
     init(
         age: Int = 7,
-        abilities: SoftSkills = SoftSkills(
+        softSkills: SoftSkills = SoftSkills(
             analyticalReasoningAndProblemSolving: Int.random(in: 0..<3),
             creativityAndInsightfulThinking: Int.random(in: 0..<3),
             communicationAndNetworking: Int.random(in: 0..<3),
@@ -39,7 +39,7 @@ final class Player: ObservableObject {
             software: [],
             licenses: []
         ),
-        degrees: [(TertiaryProfile?, Level)] = [(nil, Level.PrimarySchool)],
+        degrees: [Education] = [],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil,
         savings: Int = 0,
@@ -51,7 +51,7 @@ final class Player: ObservableObject {
         lockedActivities: Set<String> = []
     ) {
         self.age = age
-        self.softSkills = abilities
+        self.softSkills = softSkills
         self.hardSkills = hardSkills
         self.degrees = degrees
         self.jobExperiance = jobExperiance
@@ -69,3 +69,4 @@ final class Player: ObservableObject {
         softSkills[keyPath: keyPath] += 1
     }
 }
+

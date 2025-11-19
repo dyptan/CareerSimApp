@@ -27,7 +27,7 @@ struct JobView: View {
         let leadershipRequired = max(j.teamLeadership, j.influenceAndNetworking)
 
         let unmet =
-            (player.degrees.last?.1.eqf ?? 0) < j.education
+            (player.degrees.last?.eqf ?? 0) < j.education
             || p.analyticalReasoningAndProblemSolving < j.analyticalReasoning
             || p.creativityAndInsightfulThinking < j.creativeExpression
             || p.communicationAndNetworking < j.socialCommunication
@@ -97,7 +97,7 @@ struct JobView: View {
                                 label: job.requirements.educationLabel(),
                                 emoji: "🎓",
                                 level: job.requirements.education,
-                                playerLevel: player.degrees.last?.1.eqf ?? 0
+                                playerLevel: player.degrees.last?.eqf ?? 0
                             )
                         }
                     }
@@ -290,3 +290,4 @@ struct JobView: View {
         JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
     }
 }
+

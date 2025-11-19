@@ -84,52 +84,9 @@ struct MainView: View {
             .presentationDetents([.medium])
         }
         .sheet(isPresented: $showTertiarySheet) {
-            NavigationStack {
-                VStack(spacing: 16) {
-                    Text("Pick your education direction")
-                        .font(.title2)
-                        .padding(.vertical)
-                    ForEach(TertiaryProfile.allCases) { profile in
-                        if let next = player.degrees.last?.1.next {
-                            HStack {
-                                ForEach(next) { level in
-                                    Button {
-                                        player.currentEducation = (
-                                            profile, level
-                                        )
-                                        player.currentOccupation = nil
-                                        yearsLeftToGraduation =
-                                            level.yearsToComplete()
-                                        showTertiarySheet.toggle()
-                                    } label: {
-                                        VStack(alignment: .leading) {
-                                            Text(profile.rawValue)
-                                                .font(.headline)
-                                            Text(profile.description)
-                                                .font(.caption)
-                                            Text(level.rawValue)
-                                        }
-                                        .frame(
-                                            maxWidth: .infinity,
-                                            alignment: .leading
-                                        )
-                                    }
-                                    .buttonStyle(.borderedProminent)
-                                }
-                            }
-                        }
-                    }
-                    Button("Find a job") {
-                        showTertiarySheet = false
-                        showCareersSheet = true
-                    }
-                    .foregroundStyle(.secondary)
-                    .buttonStyle(.borderedProminent)
-                }
-                .padding()
-            }
-            .presentationDetents([.medium, .large])
+            EducationView(player: player, yearsLeftToGraduation: $yearsLeftToGraduation, showTertiarySheet: $showTertiarySheet, showCareersSheet: $showCareersSheet)
         }
+            
         .sheet(isPresented: $showCareersSheet) {
             CareersSheet(
                 availableJobs: jobs,
@@ -208,7 +165,7 @@ struct MainView: View {
                         Array(player.degrees.enumerated()),
                         id: \.offset
                     ) { _, entry in
-                        Text("• \(entry.1.degree)")
+                        Text("• \(entry.degreeName)")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -273,10 +230,10 @@ struct MainView: View {
         }
         .onChange(of: player.age) { oldValue, newValue in
             switch newValue {
-            case 10: player.degrees.append((nil, .PrimarySchool))
-            case 14: player.degrees.append((nil, .MiddleSchool))
+            case 10: player.degrees.append(Education(Level.Stage.PrimarySchool))
+            case 14: player.degrees.append(Education(Level.Stage.MiddleSchool))
             case 18:
-                player.degrees.append((nil, .HighSchool))
+                player.degrees.append(Education(Level.Stage.HighSchool))
                 showDecisionSheet.toggle()
             case 68: showRetirementSheet.toggle()
             default: break
