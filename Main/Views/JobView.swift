@@ -286,8 +286,14 @@ struct JobView: View {
         ),
         version: 1
     )
-    return NavigationStack {
-        JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
+    if #available(macOS 13.0, *) {
+        return NavigationStack {
+            JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
+        }
+    } else {
+        return NavigationView {
+            JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
+        }
     }
 }
 

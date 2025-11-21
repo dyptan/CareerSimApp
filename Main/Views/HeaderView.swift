@@ -41,7 +41,7 @@ struct HeaderView: View {
                 )
             }
             if let currentEducation = player.currentEducation {
-                if let prof = currentEducation.profile {
+                if currentEducation.profile != nil {
                     Text("Studying: \(currentEducation.degreeName)")
                 }
             }

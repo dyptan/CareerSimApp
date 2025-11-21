@@ -18,44 +18,60 @@ struct EducationView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    ForEach(availableProfiles, id: \.self) { profile in
-                        NavigationLink {
-                            DegreesSubmenuView(
-                                player: player,
-                                profile: profile,
-                                degrees: degrees(for: profile),
-                                yearsLeftToGraduation: $yearsLeftToGraduation,
-                                showTertiarySheet: $showTertiarySheet   // FIXED: was $showCareersSheet
-                            )
-                        } label: {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(profile.rawValue.capitalized)
-                                    .font(.headline)
-                                Text(profile.description)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 6)
-                        }
-                    }
-                } header: {
-                    Text("Pick your education direction")
+        Group {
+            if #available(iOS 16, macOS 13, *) {
+                NavigationStack {
+                    content
+                        .navigationTitle("Education")
                 }
-
-                Section {
-                    Button("Find a job") {
-                        showCareersSheet = true
-                        showTertiarySheet = false
-                    }
-                    .foregroundStyle(.secondary)
+            } else {
+                NavigationView {
+                    content
+                        .navigationTitle("Education")
                 }
+                #if os(iOS)
+                .navigationViewStyle(.stack)
+                #endif
             }
-            .navigationTitle("Education")
-            .frame(minHeight: 500)
+        }
+        .frame(minHeight: 500)
+    }
+
+    private var content: some View {
+        List {
+            Section {
+                ForEach(availableProfiles, id: \.self) { profile in
+                    NavigationLink {
+                        DegreesSubmenuView(
+                            player: player,
+                            profile: profile,
+                            degrees: degrees(for: profile),
+                            yearsLeftToGraduation: $yearsLeftToGraduation,
+                            showTertiarySheet: $showTertiarySheet
+                        )
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(profile.rawValue.capitalized)
+                                .font(.headline)
+                            Text(profile.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 6)
+                    }
+                }
+            } header: {
+                Text("Pick your education direction")
+            }
+
+            Section {
+                Button("Find a job") {
+                    showCareersSheet = true
+                    showTertiarySheet = false
+                }
+                .foregroundStyle(.secondary)
+            }
         }
     }
 

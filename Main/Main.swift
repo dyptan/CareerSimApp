@@ -4,8 +4,14 @@ import SwiftUI
 struct Main: App {
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                MainView()
+            if #available(macOS 13.0, *) {
+                NavigationStack {
+                    MainView()
+                }
+            } else {
+                NavigationView {
+                    MainView()
+                }
             }
         }
     }
@@ -13,8 +19,14 @@ struct Main: App {
 
 #Preview {
     
-    NavigationStack {
+    if #available(macOS 13.0, *) {
+        NavigationStack {
+            MainView()
+        }
+    } else {
+        NavigationView {
         MainView()
+    }
     }
     
 }

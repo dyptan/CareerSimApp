@@ -59,7 +59,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var persona: Group {
+    var persona: PersonaGroup {
         switch self {
         case .publicServices, .education, .health, .service:
             return .people

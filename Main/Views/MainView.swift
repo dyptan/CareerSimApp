@@ -81,12 +81,11 @@ struct MainView: View {
 
             }
             .padding()
-            .presentationDetents([.medium])
+            .modifier(DetentsIfAvailable([.medium]))
         }
         .sheet(isPresented: $showTertiarySheet) {
             EducationView(player: player, yearsLeftToGraduation: $yearsLeftToGraduation, showTertiarySheet: $showTertiarySheet, showCareersSheet: $showCareersSheet)
         }
-            
         .sheet(isPresented: $showCareersSheet) {
             CareersSheet(
                 availableJobs: jobs,
@@ -100,49 +99,62 @@ struct MainView: View {
             }.padding()
         }
         .sheet(isPresented: $showHardSkillsSheet) {
-            NavigationStack {
-                ScrollView {
-                    HardSkillsView(
-                        selectedCertifications: $selectedCertifications,
-                        selectedLicences: $selectedLicences,
-                        selectedLanguages: $selectedLanguages,
-                        selectedSoftware: $selectedSoftware,
-                        selectedPortfolio: $selectedPortfolio,
-                        selectedActivities: $selectedActivities
-                    )
-                    .environmentObject(player)
-                    .padding()
-                }
-                .navigationTitle("Sign up for training")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") { showHardSkillsSheet = false }
+            Group {
+                if #available(iOS 16, macOS 13, *) {
+                    NavigationStack {
+                        hardSkillsContent
+                            .navigationTitle("Sign up for training")
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Done") { showHardSkillsSheet = false }
+                                }
+                            }
                     }
+                } else {
+                    NavigationView {
+                        hardSkillsContent
+                            .navigationTitle("Sign up for training")
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Done") { showHardSkillsSheet = false }
+                                }
+                            }
+                    }
+                    #if os(iOS)
+                    .navigationViewStyle(.stack)
+                    #endif
                 }
             }
-            .presentationDetents([.medium, .large])
+            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showSoftSkillsSheet) {
-            NavigationStack {
-                ScrollView {
-                    ActivitiesView(
-                        player: player,
-                        selectedActivities: $selectedActivities,
-                        selectedLanguages: $selectedLanguages,
-                        selectedSoftware: $selectedSoftware,
-                        selectedPortfolio: $selectedPortfolio
-                    )
-                    .environmentObject(player)
-                    .padding()
-                }
-                .navigationTitle("Participate in activities: ")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Done") { showSoftSkillsSheet = false }
+            Group {
+                if #available(iOS 16, macOS 13, *) {
+                    NavigationStack {
+                        softSkillsContent
+                            .navigationTitle("Participate in activities: ")
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Done") { showSoftSkillsSheet = false }
+                                }
+                            }
                     }
+                } else {
+                    NavigationView {
+                        softSkillsContent
+                            .navigationTitle("Participate in activities: ")
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Done") { showSoftSkillsSheet = false }
+                                }
+                            }
+                    }
+                    #if os(iOS)
+                    .navigationViewStyle(.stack)
+                    #endif
                 }
             }
-            .presentationDetents([.medium, .large])
+            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showRetirementSheet) {
             VStack(spacing: 16) {
@@ -226,9 +238,9 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
-            .presentationDetents([.medium])
+            .modifier(DetentsIfAvailable([.medium]))
         }
-        .onChange(of: player.age) { oldValue, newValue in
+        .onChange(of: player.age) { newValue in
             switch newValue {
             case 10: player.degrees.append(Education(Level.Stage.PrimarySchool))
             case 14: player.degrees.append(Education(Level.Stage.MiddleSchool))
@@ -290,5 +302,63 @@ struct MainView: View {
         .buttonStyle(.borderedProminent)
         .padding()
         .font(.headline)
+    }
+
+    // MARK: - Shared sheet contents
+
+    private var hardSkillsContent: some View {
+        ScrollView {
+            HardSkillsView(
+                selectedCertifications: $selectedCertifications,
+                selectedLicences: $selectedLicences,
+                selectedLanguages: $selectedLanguages,
+                selectedSoftware: $selectedSoftware,
+                selectedPortfolio: $selectedPortfolio,
+                selectedActivities: $selectedActivities
+            )
+            .environmentObject(player)
+            .padding()
+        }
+    }
+
+    private var softSkillsContent: some View {
+        ScrollView {
+            ActivitiesView(
+                player: player,
+                selectedActivities: $selectedActivities,
+                selectedLanguages: $selectedLanguages,
+                selectedSoftware: $selectedSoftware,
+                selectedPortfolio: $selectedPortfolio
+            )
+            .environmentObject(player)
+            .padding()
+        }
+    }
+}
+
+// Helper view modifier to apply detents only when available
+private struct DetentsIfAvailable: ViewModifier {
+    enum DetentSpec {
+        case medium
+        case large
+    }
+    private let detents: [DetentSpec]
+
+    init(_ detents: [DetentSpec]) {
+        self.detents = detents
+    }
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16, macOS 13, *) {
+            let mapping: [DetentSpec: PresentationDetent] = [
+                .medium: .medium,
+                .large: .large
+            ]
+            return AnyView(
+                content.presentationDetents(Set(detents.compactMap { mapping[$0] }))
+            )
+        } else {
+            return AnyView(content)
+        }
     }
 }

@@ -481,21 +481,3 @@ private struct PortfolioView: View {
     }
 }
 
-#Preview {
-    @Previewable @State var certs = Set<Certification>()
-    @Previewable @State var lic = Set<License>()
-    @Previewable @State var langs = Set<ProgrammingLanguage>()
-    @Previewable @State var soft = Set<Software>()
-    @Previewable @State var port = Set<PortfolioItem>()
-    @Previewable @State var acts = Set<String>()
-    HardSkillsView(
-        selectedCertifications: $certs,
-        selectedLicences: $lic,
-        selectedLanguages: $langs,
-        selectedSoftware: $soft,
-        selectedPortfolio: $port,
-        selectedActivities: $acts
-    )
-    .environmentObject(Player())
-    .padding()
-}

@@ -9,55 +9,67 @@ struct CareersSheet: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(categories()) { category in
-
-                        NavigationLink {
-                            
-                            
-                            List {
-                                ForEach(
-                                    availableJobs.filter { $0.category == category }
-                                ) { job in
-                                    NavigationLink {
-                                        JobView(
-                                            job: job,
-                                            player: player,
-                                            showCareersSheet: $showCareersSheet
-                                        )
-
-                                    } label: {
-                                        JobRow(detail: job)
-                                    }
-                                }
-                            }
-                            
-                            
-                        } label: {
-                            CategoryRow(category: category)
-
-                        }
-
-                }
-                .listStyle(.plain)
-                .navigationTitle("Jobs for you")
-
+        if #available(iOS 16, macOS 13, *) {
+            NavigationStack {
+                content
+                    .navigationTitle("Jobs for you")
             }
+        } else {
+            NavigationView {
+                content
+                    .navigationTitle("Jobs for you")
+            }
+            #if os(iOS)
+            .navigationViewStyle(.stack)
+            #endif
+        }
+    }
+
+    private var content: some View {
+        List {
+            ForEach(categories()) { category in
+                NavigationLink {
+                    List {
+                        ForEach(
+                            availableJobs.filter { $0.category == category }
+                        ) { job in
+                            NavigationLink {
+                                JobView(
+                                    job: job,
+                                    player: player,
+                                    showCareersSheet: $showCareersSheet
+                                )
+                            } label: {
+                                JobRow(detail: job)
+                            }
+                        }
+                    }
+                } label: {
+                    CategoryRow(category: category)
+                }
+            }
+            .listStyle(.plain)
         }
     }
 }
 
+private struct CareersSheetPreviewContainer: View {
+    @State private var show = true
+    let sampleJobs: [Job]
+    let player = Player()
+
+    var body: some View {
+        CareersSheet(
+            availableJobs: sampleJobs,
+            player: player,
+            showCareersSheet: $show
+        )
+    }
+}
+
 #Preview {
-    @Previewable @State var show = true
     let sampleJobs: [Job] = [
         jobExample
     ]
-    // Simple preview scaffolding
-    let player = Player()
-    CareersSheet(
-        availableJobs: sampleJobs,
-        player: player,
-        showCareersSheet: $show
-    )
+    CareersSheetPreviewContainer(sampleJobs: sampleJobs)
 }
