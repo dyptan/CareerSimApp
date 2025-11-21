@@ -23,82 +23,7 @@ struct SkillsView: View {
     var body: some View {
         VStack(alignment: .leading) {
 
-            Button("Learn hard skills") {
-                showHardSkillsSheet = true
-            }
-            .buttonStyle(.bordered).font(.headline)
-
-            HStack {
-                Text("Programming languages: ")
-                ForEach(
-                    Array(
-                        player.hardSkills.languages.union(
-                            selectedLanguages
-                        )
-                    )
-                ) { skill in
-                    Text("\(skill.pictogram)")
-                }
-            }
-
-            HStack {
-                Text("Portfolio: ")
-                ForEach(
-                    Array(
-                        player.hardSkills.portfolioItems.union(
-                            selectedPortfolio
-                        )
-                    )
-                ) { skill in
-                    Text("\(skill.pictogram)")
-                }
-            }
-
-            HStack {
-                Text("Certifications & Licenses:")
-
-                ForEach(
-                    Array(
-                        selectedCertifications.union(
-                            player.hardSkills.certifications
-                        )
-                    )
-                ) { cert in
-                    Text(cert.pictogram)
-                }
-
-                ForEach(
-                    Array(
-                        selectedLicences.union(
-                            player.hardSkills.licenses
-                        )
-                    )
-                ) { lic in
-                    Text(lic.pictogram)
-                }
-            }
-
-            HStack {
-                Text("Software: ")
-                ForEach(
-                    Array(
-                        player.hardSkills.software.union(
-                            selectedSoftware
-                        )
-                    )
-                ) { skill in
-                    Text("\(skill.pictogram)")
-                }
-            }
-
-            Divider()
-
             VStack(alignment: .leading) {
-
-                Button("Boost soft skills") {
-                    showSoftSkillsSheet = true
-                }
-                .buttonStyle(.bordered).font(.headline)
                 
                 ForEach(
                     Array(SoftSkills.skillNames.enumerated()),
@@ -118,8 +43,88 @@ struct SkillsView: View {
                     }
                 }
             }
+            
+            Button("Boost soft skills") {
+                showSoftSkillsSheet = true
+            }
+            .buttonStyle(.bordered).font(.headline)
 
         }
+    
+        Divider()
+
+            VStack (alignment: .leading){
+                Button("Learn hard skills") {
+                    showHardSkillsSheet = true
+                }
+                .buttonStyle(.bordered).font(.headline)
+
+                HStack {
+                    Text("Programming languages: ")
+                    ForEach(
+                        Array(
+                            player.hardSkills.languages.union(
+                                selectedLanguages
+                            )
+                        )
+                    ) { skill in
+                        Text("\(skill.pictogram)")
+                    }
+                }
+
+                HStack {
+                    Text("Portfolio: ")
+                    ForEach(
+                        Array(
+                            player.hardSkills.portfolioItems.union(
+                                selectedPortfolio
+                            )
+                        )
+                    ) { skill in
+                        Text("\(skill.pictogram)")
+                    }
+                }
+
+                HStack {
+                    Text("Certifications & Licenses:")
+
+                    ForEach(
+                        Array(
+                            selectedCertifications.union(
+                                player.hardSkills.certifications
+                            )
+                        )
+                    ) { cert in
+                        Text(cert.pictogram)
+                    }
+
+                    ForEach(
+                        Array(
+                            selectedLicences.union(
+                                player.hardSkills.licenses
+                            )
+                        )
+                    ) { lic in
+                        Text(lic.pictogram)
+                    }
+                }
+
+                HStack {
+                    Text("Software: ")
+                    ForEach(
+                        Array(
+                            player.hardSkills.software.union(
+                                selectedSoftware
+                            )
+                        )
+                    ) { skill in
+                        Text("\(skill.pictogram)")
+                    }
+                }
+
+            }
+
+
     }
 }
 
