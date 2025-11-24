@@ -1,163 +1,274 @@
-enum ProgrammingLanguage: String, Codable, Hashable, CaseIterable, Identifiable {
-    case swift = "swift"
-    case C = "C"
-    case python = "python"
-    case java = "java"
-    case english = "english"
-    var id: String { rawValue }
-    
-    var pictogram: String {
+import Foundation
+
+// MARK: - Proficiency
+
+enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Comparable {
+    case level1 = 1
+    case level2 = 2
+    case level3 = 3
+
+    var id: Int { rawValue }
+
+    // Comparable by raw value
+    static func < (lhs: ProficiencyLevel, rhs: ProficiencyLevel) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+
+    var displayName: String {
         switch self {
-        case .swift: return "🦅"
-        case .C: return "💾"
-        case .python: return "🐍"
-        case .java: return "☕️"
-        case .english: return "🇬🇧"
+        case .level1: return "Level 1"
+        case .level2: return "Level 2"
+        case .level3: return "Level 3"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .level1: return "Associate / Beginner: foundational knowledge and basic application."
+        case .level2: return "Professional / Intermediate: solid skills, applied independently."
+        case .level3: return "Expert / Advanced: deep mastery, leadership and complex tasks."
+        }
+    }
+
+    var next: ProficiencyLevel? {
+        switch self {
+        case .level1: return .level2
+        case .level2: return .level3
+        case .level3: return nil
         }
     }
 }
 
-enum PortfolioItem: String, Codable, Hashable, CaseIterable, Identifiable {
-    case app, website, game, library, paper, presentation
-    var id: String { rawValue }
-    
-    var pictogram: String {
-        switch self {
-        case .app: return "📱"
-        case .website: return "🌐"
-        case .game: return "🎮"
-        case .library: return "📚"
-        case .paper: return "📄"
-        case .presentation: return "📊"
-        }
-    }
-}
-
-enum Certification: String, Codable, Hashable, CaseIterable, Identifiable{
-    case aws, azure, google, scrum, security
-    // Skilled trades
-    case cwi           // Certified Welding Inspector
-    case epa608        // EPA 608 (HVAC)
-    case nate          // NATE (HVAC)
-    case faaAMP        // FAA A&P (Aircraft Mechanic)
-    // Healthcare support
-    case cna           // Certified Nursing Assistant
-    case dentalAssistant
-    case medicalAssistant
-    case pharmacyTech
-    // Business and finance
-    case cfp           // Certified Financial Planner
-    case series65
-    // Transportation and logistics
-    case flightAttendantCert
-    
-    var id: String { rawValue }
-    
-    var pictogram: String {
-        switch self {
-        case .aws: return "☁️"
-        case .azure: return "🌥️"
-        case .google: return "🔎"
-        case .scrum: return "🏉"
-        case .security: return "🔒"
-        case .cwi: return "🧪"
-        case .epa608: return "🌡️"
-        case .nate: return "❄️"
-        case .faaAMP: return "✈️"
-        case .cna: return "🩺"
-        case .dentalAssistant: return "🦷"
-        case .medicalAssistant: return "🏥"
-        case .pharmacyTech: return "💊"
-        case .cfp: return "📈"
-        case .series65: return "💹"
-        case .flightAttendantCert: return "🛫"
-        }
-    }
-    
-    var friendlyName: String {
-        switch self {
-        case .aws: return "AWS Cloud Badge \(pictogram)"
-        case .azure: return "Azure Cloud Badge \(pictogram)"
-        case .google: return "Google Tech Badge \(pictogram)"
-        case .scrum: return "Teamwork (Scrum) Badge \(pictogram)"
-        case .security: return "Online Safety Badge \(pictogram)"
-        case .cwi: return "Welding Inspector (CWI) \(pictogram)"
-        case .epa608: return "HVAC Clean Air (EPA 608) \(pictogram)"
-        case .nate: return "HVAC Pro (NATE) \(pictogram)"
-        case .faaAMP: return "Airplane Fixer (FAA A&P) \(pictogram)"
-        case .cna: return "Care Helper (CNA) \(pictogram)"
-        case .dentalAssistant: return "Tooth Helper (Dental Assistant) \(pictogram)"
-        case .medicalAssistant: return "Clinic Helper (Medical Assistant) \(pictogram)"
-        case .pharmacyTech: return "Medicine Helper (Pharmacy Tech) \(pictogram)"
-        case .cfp: return "Money Planner (CFP) \(pictogram)"
-        case .series65: return "Investing Helper (Series 65) \(pictogram)"
-        case .flightAttendantCert: return "Flight Helper (Attendant Cert) \(pictogram)"
-        }
-    }
-}
-
-enum Software: String, Codable, Hashable, CaseIterable, Identifiable {
-    case macOS, linux, unity, photoshop, blender, excel
-    var id: String { rawValue }
-    
-    var pictogram: String {
-        switch self {
-        case .macOS: return "🍏"
-        case .linux: return "🐧"
-        case .unity: return "🕹️"
-        case .photoshop: return "🖌️"
-        case .blender: return "🎨"
-        case .excel: return "📊"
-        }
-    }
-}
-
-enum License: String, Codable, Hashable, CaseIterable, Identifiable {
-    case drivers, pilot, nurse
-    case electrician
-    case plumber
-    case cdl
-    case commercialPilot
-    case realEstateAgent
-    case insuranceAgent
-    
-    var id: String { rawValue }
-    
-    var pictogram: String {
-        switch self {
-        case .drivers: return "🚗"
-        case .pilot: return "✈️"
-        case .nurse: return "🩺"
-        case .electrician: return "🔌"
-        case .plumber: return "🔧"
-        case .cdl: return "🚚"
-        case .commercialPilot: return "🛫"
-        case .realEstateAgent: return "🏠"
-        case .insuranceAgent: return "🛡️"
-        }
-    }
-    
-    var friendlyName: String {
-        switch self {
-        case .drivers: return "Driver’s License \(pictogram)"
-        case .pilot: return "Pilot License \(pictogram)"
-        case .nurse: return "Nurse License \(pictogram)"
-        case .electrician: return "Electrician License \(pictogram)"
-        case .plumber: return "Plumber License \(pictogram)"
-        case .cdl: return "Commercial Driver’s License \(pictogram)"
-        case .commercialPilot: return "Commercial Pilot License \(pictogram)"
-        case .realEstateAgent: return "Real Estate Agent License \(pictogram)"
-        case .insuranceAgent: return "Insurance Agent License \(pictogram)"
-        }
-    }
-}
+// MARK: - Hard skills model (leveled dictionaries + set-facing API)
 
 struct HardSkills: Codable, Hashable {
-    var languages = Set(ProgrammingLanguage.allCases)
-    var portfolioItems = Set(PortfolioItem.allCases)
-    var certifications = Set(Certification.allCases)
-    var software = Set(Software.allCases)
-    var licenses = Set(License.allCases)
+
+    // Internal leveled storage
+    private(set) var languageLevels: [ProgrammingLanguage: ProficiencyLevel] = [:]
+    private(set) var portfolioLevels: [PortfolioItem: ProficiencyLevel] = [:]
+    private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
+    private(set) var softwareLevels: [Software: ProficiencyLevel] = [:]
+    private(set) var licenseLevels: [License: ProficiencyLevel] = [:]
+
+    // Backwards-compatible set views for UI (keys only)
+    var languages: Set<ProgrammingLanguage> {
+        get { Set(languageLevels.keys) }
+        set {
+            // Keep existing levels if present; default new ones to level1
+            var next = languageLevels
+            // Remove any keys not in new set
+            for key in next.keys where !newValue.contains(key) {
+                next.removeValue(forKey: key)
+            }
+            // Add any new keys with default level
+            for key in newValue where next[key] == nil {
+                next[key] = .level1
+            }
+            languageLevels = next
+        }
+    }
+
+    var portfolioItems: Set<PortfolioItem> {
+        get { Set(portfolioLevels.keys) }
+        set {
+            var next = portfolioLevels
+            for key in next.keys where !newValue.contains(key) {
+                next.removeValue(forKey: key)
+            }
+            for key in newValue where next[key] == nil {
+                next[key] = .level1
+            }
+            portfolioLevels = next
+        }
+    }
+
+    var certifications: Set<Certification> {
+        get { Set(certificationLevels.keys) }
+        set {
+            var next = certificationLevels
+            for key in next.keys where !newValue.contains(key) {
+                next.removeValue(forKey: key)
+            }
+            for key in newValue where next[key] == nil {
+                next[key] = .level1
+            }
+            certificationLevels = next
+        }
+    }
+
+    var software: Set<Software> {
+        get { Set(softwareLevels.keys) }
+        set {
+            var next = softwareLevels
+            for key in next.keys where !newValue.contains(key) {
+                next.removeValue(forKey: key)
+            }
+            for key in newValue where next[key] == nil {
+                next[key] = .level1
+            }
+            softwareLevels = next
+        }
+    }
+
+    var licenses: Set<License> {
+        get { Set(licenseLevels.keys) }
+        set {
+            var next = licenseLevels
+            for key in next.keys where !newValue.contains(key) {
+                next.removeValue(forKey: key)
+            }
+            for key in newValue where next[key] == nil {
+                next[key] = .level1
+            }
+            licenseLevels = next
+        }
+    }
+
+    // MARK: - Initializer (keeps Player default working)
+
+    init(
+        languages: Set<ProgrammingLanguage> = [],
+        portfolioItems: Set<PortfolioItem> = [],
+        certifications: Set<Certification> = [],
+        software: Set<Software> = [],
+        licenses: Set<License> = []
+    ) {
+        // Default all provided to level1
+        self.languageLevels = Dictionary(uniqueKeysWithValues: languages.map { ($0, .level1) })
+        self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
+        self.certificationLevels = Dictionary(uniqueKeysWithValues: certifications.map { ($0, .level1) })
+        self.softwareLevels = Dictionary(uniqueKeysWithValues: software.map { ($0, .level1) })
+        self.licenseLevels = Dictionary(uniqueKeysWithValues: licenses.map { ($0, .level1) })
+    }
+
+    // MARK: - Level accessors
+
+    func level(for lang: ProgrammingLanguage) -> ProficiencyLevel? { languageLevels[lang] }
+    func level(for item: PortfolioItem) -> ProficiencyLevel? { portfolioLevels[item] }
+    func level(for cert: Certification) -> ProficiencyLevel? { certificationLevels[cert] }
+    func level(for sw: Software) -> ProficiencyLevel? { softwareLevels[sw] }
+    func level(for lic: License) -> ProficiencyLevel? { licenseLevels[lic] }
+
+    // MARK: - Mutating setters
+
+    mutating func setLevel(_ level: ProficiencyLevel, for lang: ProgrammingLanguage) {
+        languageLevels[lang] = level
+    }
+    mutating func setLevel(_ level: ProficiencyLevel, for item: PortfolioItem) {
+        portfolioLevels[item] = level
+    }
+    mutating func setLevel(_ level: ProficiencyLevel, for cert: Certification) {
+        certificationLevels[cert] = level
+    }
+    mutating func setLevel(_ level: ProficiencyLevel, for sw: Software) {
+        softwareLevels[sw] = level
+    }
+    mutating func setLevel(_ level: ProficiencyLevel, for lic: License) {
+        licenseLevels[lic] = level
+    }
+
+    // MARK: - Promotion helpers (keeps highest)
+
+    mutating func promote(to level: ProficiencyLevel, for lang: ProgrammingLanguage) {
+        languageLevels[lang] = max(languageLevels[lang] ?? .level1, level)
+    }
+    mutating func promote(to level: ProficiencyLevel, for item: PortfolioItem) {
+        portfolioLevels[item] = max(portfolioLevels[item] ?? .level1, level)
+    }
+    mutating func promote(to level: ProficiencyLevel, for cert: Certification) {
+        certificationLevels[cert] = max(certificationLevels[cert] ?? .level1, level)
+    }
+    mutating func promote(to level: ProficiencyLevel, for sw: Software) {
+        softwareLevels[sw] = max(softwareLevels[sw] ?? .level1, level)
+    }
+    mutating func promote(to level: ProficiencyLevel, for lic: License) {
+        licenseLevels[lic] = max(licenseLevels[lic] ?? .level1, level)
+    }
+
+    // MARK: - Sequential progression policy (1 level per year)
+
+    // Current level or default to level0 conceptually (nil)
+    private func currentLevel<T: Hashable>(in dict: [T: ProficiencyLevel], for key: T) -> ProficiencyLevel? {
+        dict[key]
+    }
+
+    private func nextLevel(after level: ProficiencyLevel?) -> ProficiencyLevel? {
+        switch level {
+        case nil: return .level1
+        case .some(let lv): return lv.next
+        }
+    }
+
+    func isMaxLevel<T: Hashable>(_ key: T, in dict: [T: ProficiencyLevel]) -> Bool {
+        (dict[key] ?? .level1) == .level3
+    }
+
+    // Whether the item can be trained this year (i.e., there exists a next level)
+    func canTrain(_ lang: ProgrammingLanguage) -> Bool {
+        nextLevel(after: currentLevel(in: languageLevels, for: lang)) != nil
+    }
+    func canTrain(_ item: PortfolioItem) -> Bool {
+        nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
+    }
+    func canTrain(_ cert: Certification) -> Bool {
+        nextLevel(after: currentLevel(in: certificationLevels, for: cert)) != nil
+    }
+    func canTrain(_ sw: Software) -> Bool {
+        nextLevel(after: currentLevel(in: softwareLevels, for: sw)) != nil
+    }
+    func canTrain(_ lic: License) -> Bool {
+        nextLevel(after: currentLevel(in: licenseLevels, for: lic)) != nil
+    }
+
+    // Advance exactly one level (if possible). Returns the new level if advanced.
+    @discardableResult
+    mutating func trainOneYear(_ lang: ProgrammingLanguage) -> ProficiencyLevel? {
+        let next = nextLevel(after: languageLevels[lang])
+        if let n = next {
+            languageLevels[lang] = n
+        }
+        return languageLevels[lang]
+    }
+    @discardableResult
+    mutating func trainOneYear(_ item: PortfolioItem) -> ProficiencyLevel? {
+        let next = nextLevel(after: portfolioLevels[item])
+        if let n = next {
+            portfolioLevels[item] = n
+        }
+        return portfolioLevels[item]
+    }
+    @discardableResult
+    mutating func trainOneYear(_ cert: Certification) -> ProficiencyLevel? {
+        let next = nextLevel(after: certificationLevels[cert])
+        if let n = next {
+            certificationLevels[cert] = n
+        }
+        return certificationLevels[cert]
+    }
+    @discardableResult
+    mutating func trainOneYear(_ sw: Software) -> ProficiencyLevel? {
+        let next = nextLevel(after: softwareLevels[sw])
+        if let n = next {
+            softwareLevels[sw] = n
+        }
+        return softwareLevels[sw]
+    }
+    @discardableResult
+    mutating func trainOneYear(_ lic: License) -> ProficiencyLevel? {
+        let next = nextLevel(after: licenseLevels[lic])
+        if let n = next {
+            licenseLevels[lic] = n
+        }
+        return licenseLevels[lic]
+    }
+
+    // MARK: - Removal
+
+    mutating func remove(_ lang: ProgrammingLanguage) { languageLevels.removeValue(forKey: lang) }
+    mutating func remove(_ item: PortfolioItem) { portfolioLevels.removeValue(forKey: item) }
+    mutating func remove(_ cert: Certification) { certificationLevels.removeValue(forKey: cert) }
+    mutating func remove(_ sw: Software) { softwareLevels.removeValue(forKey: sw) }
+    mutating func remove(_ lic: License) { licenseLevels.removeValue(forKey: lic) }
 }
 
 struct SoftSkills: Codable, Hashable {
@@ -173,8 +284,8 @@ struct SoftSkills: Codable, Hashable {
     var coordinationAndBalance: Int = 0
     var perseveranceAndGrit: Int = 0
     var resilienceAndEndurance: Int = 0
-
-
+    
+    
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
         (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
@@ -189,4 +300,11 @@ struct SoftSkills: Codable, Hashable {
         (\.perseveranceAndGrit, "Perseverance", "🛡️"),
         (\.resilienceAndEndurance, "Endurance", "🌦️")
     ]
+}
+// MARK: - Optional: convenience display helpers for a skill + level
+
+extension ProficiencyLevel {
+    func formatted(for name: String) -> String {
+        "\(name) — \(displayName)"
+    }
 }
