@@ -20,12 +20,23 @@ struct HeaderView: View {
 
     private let maxActivitiesPerYear = 3
 
+    // Local state to drive the scale animation when age changes
+    @State var didBumpAgeScale = false
+
     var body: some View {
         VStack(alignment: .leading) {
             
             Text("Age: \(player.age)")
+                .scaleEffect(didBumpAgeScale ? 1.5 : 1)
+                .animation(.spring(), value: didBumpAgeScale)
                 .font(.title2)
-            
+                .onChange(of: player.age) { _ in
+                    didBumpAgeScale = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        didBumpAgeScale = false
+                    }
+                }
+                
             if let lastlog = player.degrees.last {
                 Text("Last degree: \(lastlog.degreeName)")
             }
@@ -88,4 +99,3 @@ struct HeaderView: View {
     )
 
 }
-
