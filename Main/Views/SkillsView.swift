@@ -2,15 +2,14 @@ import SwiftUI
 
 struct SkillsView: View {
     @ObservedObject var player: Player
-
-    @Binding var selectedLanguages: Set<ProgrammingLanguage>
+    
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedCertifications: Set<Certification>
     @Binding var showHardSkillsSheet: Bool
     @Binding var showSoftSkillsSheet: Bool
-
+    
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
@@ -18,11 +17,11 @@ struct SkillsView: View {
             }
         )
     }
-
-
+    
+    
     var body: some View {
         VStack(alignment: .leading) {
-
+            
             VStack(alignment: .leading) {
                 
                 ForEach(
@@ -48,30 +47,19 @@ struct SkillsView: View {
                 showSoftSkillsSheet = true
             }
             .buttonStyle(.bordered).font(.headline)
-
+            
         }
-    
+        
         Divider()
-
-            VStack (alignment: .leading){
-                Button("Learn hard skills") {
-                    showHardSkillsSheet = true
-                }
-                .buttonStyle(.bordered).font(.headline)
-
-                HStack {
-                    Text("Programming languages: ")
-                    ForEach(
-                        Array(
-                            player.hardSkills.languages.union(
-                                selectedLanguages
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-
+        
+        VStack (alignment: .leading){
+            Button("Learn hard skills") {
+                showHardSkillsSheet = true
+            }
+            .buttonStyle(.bordered).font(.headline)
+            
+            HStack {
+                
                 HStack {
                     Text("Portfolio: ")
                     ForEach(
@@ -84,10 +72,10 @@ struct SkillsView: View {
                         Text("\(skill.pictogram)")
                     }
                 }
-
+                
                 HStack {
                     Text("Certifications & Licenses:")
-
+                    
                     ForEach(
                         Array(
                             selectedCertifications.union(
@@ -97,7 +85,7 @@ struct SkillsView: View {
                     ) { cert in
                         Text(cert.pictogram)
                     }
-
+                    
                     ForEach(
                         Array(
                             selectedLicences.union(
@@ -108,7 +96,7 @@ struct SkillsView: View {
                         Text(lic.pictogram)
                     }
                 }
-
+                
                 HStack {
                     Text("Software: ")
                     ForEach(
@@ -121,17 +109,17 @@ struct SkillsView: View {
                         Text("\(skill.pictogram)")
                     }
                 }
-
+                
             }
-
-
+            
+            
+        }
     }
 }
 
 #Preview {
     SkillsView(
         player: Player(),
-        selectedLanguages: .constant([]),
         selectedSoftware: .constant([]),
         selectedLicences: .constant([]),
         selectedPortfolio: .constant([]),

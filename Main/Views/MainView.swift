@@ -6,7 +6,6 @@ struct MainView: View {
     @State var showTertiarySheet = false
     @State var showCareersSheet = false
     @State var selectedActivities: Set<String> = []
-    @State var selectedLanguages: Set<ProgrammingLanguage> = []
     @State var selectedSoftware: Set<Software> = []
     @State var selectedLicences: Set<License> = []
     @State var selectedPortfolio: Set<PortfolioItem> = []
@@ -33,7 +32,6 @@ struct MainView: View {
                 showTertiarySheet: $showTertiarySheet,
                 showCareersSheet: $showCareersSheet,
                 selectedActivities: $selectedActivities,
-                selectedLanguages: $selectedLanguages,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
@@ -44,7 +42,6 @@ struct MainView: View {
 
             SkillsView(
                 player: player,
-                selectedLanguages: $selectedLanguages,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
@@ -81,7 +78,7 @@ struct MainView: View {
 
             }
             .padding()
-            .modifier(DetentsIfAvailable([.medium]))
+//            .modifier(DetentsIfAvailable([.medium]))
         }
         .sheet(isPresented: $showTertiarySheet) {
             EducationView(player: player, yearsLeftToGraduation: $yearsLeftToGraduation, showTertiarySheet: $showTertiarySheet, showCareersSheet: $showCareersSheet)
@@ -125,7 +122,7 @@ struct MainView: View {
                     #endif
                 }
             }
-            .modifier(DetentsIfAvailable([.medium, .large]))
+//            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showSoftSkillsSheet) {
             Group {
@@ -154,7 +151,7 @@ struct MainView: View {
                     #endif
                 }
             }
-            .modifier(DetentsIfAvailable([.medium, .large]))
+//            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showRetirementSheet) {
             VStack(spacing: 16) {
@@ -209,7 +206,6 @@ struct MainView: View {
                     showRetirementSheet = false
                     let newPlayer = Player()
                     selectedActivities = []
-                    selectedLanguages = []
                     selectedSoftware = []
                     selectedLicences = []
                     selectedPortfolio = []
@@ -238,7 +234,7 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
-            .modifier(DetentsIfAvailable([.medium]))
+//            .modifier(DetentsIfAvailable([.medium]))
         }
         .onChange(of: player.age) { newValue in
             switch newValue {
@@ -261,21 +257,17 @@ struct MainView: View {
 
             // Persist this year's learning into the player's permanent hard skills
             player.hardSkills.certifications.formUnion(selectedCertifications)
-            player.hardSkills.languages.formUnion(selectedLanguages)
             player.hardSkills.licenses.formUnion(selectedLicences)
             player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
             player.hardSkills.software.formUnion(selectedSoftware)
 
             // Lock learned items so they won't be available next years
             player.lockedCertifications.formUnion(selectedCertifications)
-            player.lockedLanguages.formUnion(selectedLanguages)
-            player.lockedLicenses.formUnion(selectedLicences)
             player.lockedPortfolio.formUnion(selectedPortfolio)
             player.lockedSoftware.formUnion(selectedSoftware)
 
             // Clear all in-progress selections for the new year
             selectedActivities.removeAll()
-            selectedLanguages.removeAll()
             selectedSoftware.removeAll()
             selectedLicences.removeAll()
             selectedPortfolio.removeAll()
@@ -311,7 +303,6 @@ struct MainView: View {
             HardSkillsView(
                 selectedCertifications: $selectedCertifications,
                 selectedLicences: $selectedLicences,
-                selectedLanguages: $selectedLanguages,
                 selectedSoftware: $selectedSoftware,
                 selectedPortfolio: $selectedPortfolio,
                 selectedActivities: $selectedActivities
@@ -326,7 +317,6 @@ struct MainView: View {
             ActivitiesView(
                 player: player,
                 selectedActivities: $selectedActivities,
-                selectedLanguages: $selectedLanguages,
                 selectedSoftware: $selectedSoftware,
                 selectedPortfolio: $selectedPortfolio
             )
@@ -336,29 +326,29 @@ struct MainView: View {
     }
 }
 
-// Helper view modifier to apply detents only when available
-private struct DetentsIfAvailable: ViewModifier {
-    enum DetentSpec {
-        case medium
-        case large
-    }
-    private let detents: [DetentSpec]
-
-    init(_ detents: [DetentSpec]) {
-        self.detents = detents
-    }
-
-    func body(content: Content) -> some View {
-        if #available(iOS 16, macOS 13, *) {
-            let mapping: [DetentSpec: PresentationDetent] = [
-                .medium: .medium,
-                .large: .large
-            ]
-            return AnyView(
-                content.presentationDetents(Set(detents.compactMap { mapping[$0] }))
-            )
-        } else {
-            return AnyView(content)
-        }
-    }
-}
+//// Helper view modifier to apply detents only when available
+//private struct DetentsIfAvailable: ViewModifier {
+//    enum DetentSpec {
+//        case medium
+//        case large
+//    }
+//    private let detents: [DetentSpec]
+//
+//    init(_ detents: [DetentSpec]) {
+//        self.detents = detents
+//    }
+//
+//    func body(content: Content) -> some View {
+//        if #available(iOS 16, macOS 13, *) {
+//            let mapping: [DetentSpec: PresentationDetent] = [
+//                .medium: .medium,
+//                .large: .large
+//            ]
+//            return AnyView(
+//                content.presentationDetents(Set(detents.compactMap { mapping[$0] }))
+//            )
+//        } else {
+//            return AnyView(content)
+//        }
+//    }
+//}

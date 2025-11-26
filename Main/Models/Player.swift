@@ -10,7 +10,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedCertifications: Set<Certification>
-    @Published var lockedLanguages: Set<ProgrammingLanguage>
     @Published var lockedSoftware: Set<Software>
     @Published var lockedPortfolio: Set<PortfolioItem>
     @Published var lockedLicenses: Set<License>
@@ -33,7 +32,6 @@ final class Player: ObservableObject {
             resilienceAndEndurance: Int.random(in: 0..<3)
         ),
         hardSkills: HardSkills = HardSkills(
-            languages: [],
             portfolioItems: [],
             certifications: [],
             software: [],
@@ -44,7 +42,6 @@ final class Player: ObservableObject {
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedCertifications: Set<Certification> = [],
-        lockedLanguages: Set<ProgrammingLanguage> = [],
         lockedSoftware: Set<Software> = [],
         lockedPortfolio: Set<PortfolioItem> = [],
         lockedLicenses: Set<License> = [],
@@ -58,7 +55,6 @@ final class Player: ObservableObject {
         self.currentOccupation = currentOccupation
         self.savings = savings
         self.lockedCertifications = lockedCertifications
-        self.lockedLanguages = lockedLanguages
         self.lockedSoftware = lockedSoftware
         self.lockedPortfolio = lockedPortfolio
         self.lockedLicenses = lockedLicenses

@@ -5,12 +5,16 @@ struct Main: App {
     var body: some Scene {
         WindowGroup {
             if #available(macOS 13.0, *) {
-                NavigationStack {
-                    MainView()
+                ScrollView {
+                    NavigationStack {
+                        MainView()
+                    }
                 }
             } else {
-                NavigationView {
-                    MainView()
+                ScrollView {
+                    NavigationView {
+                        MainView()
+                    }
                 }
             }
         }

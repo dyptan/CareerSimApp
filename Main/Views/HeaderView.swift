@@ -9,7 +9,7 @@ struct HeaderView: View {
     @Binding var showCareersSheet: Bool
 
     @Binding var selectedActivities: Set<String>
-    @Binding var selectedLanguages: Set<ProgrammingLanguage>
+
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
@@ -78,7 +78,6 @@ struct HeaderView: View {
         showTertiarySheet: .constant(false),
         showCareersSheet: .constant(false),
         selectedActivities: .constant(Set<String>()),
-        selectedLanguages: .constant(Set<ProgrammingLanguage>()),
         selectedSoftware: .constant(Set<Software>()),
         selectedLicences: .constant(Set<License>()),
         selectedPortfolio: .constant(Set<PortfolioItem>()),

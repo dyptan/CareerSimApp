@@ -59,4 +59,58 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .flightAttendantCert: return "🧳"
         }
     }
+    
+    var costForCertification: Int {
+          switch self {
+          case .aws: return 350   // prep + exam voucher
+          case .azure: return 350
+          case .google: return 300
+          case .scrum: return 600 // 2-day course + exam
+          case .security: return 250 // basic security awareness + test
+          case .cwi: return 3000  // course + exam (CWI is pricey)
+          case .epa608: return 200 // prep + exam
+          case .nate: return 450   // prep + exam
+          case .faaAMP: return 6000 // A&P prep/testing (very rough, excluding full school tuition)
+          case .cna: return 1500   // course + clinical + exam
+          case .dentalAssistant: return 2500 // short program + exam
+          case .medicalAssistant: return 3500 // program + exam
+          case .pharmacyTech: return 1200 // course + exam
+          case .cfp: return 7000   // coursework + exam fee
+          case .series65: return 500 // prep + exam
+          case .flightAttendantCert: return 1000 // prep + airline hiring process costs
+          }
+      }
+
+    
+    func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
+        let age = player.age
+        let softSkills = player.softSkills
+        switch self {
+        case .cwi, .epa608, .nate, .faaAMP, .cfp, .series65:
+            if age < 18 { return .blocked(reason: "Requires age 18+") }
+        case .flightAttendantCert:
+            if age < 17 { return .blocked(reason: "Requires age 17+") }
+        default:
+            break
+        }
+
+        switch self {
+        case .scrum:
+            if softSkills.communicationAndNetworking < 2 || softSkills.leadershipAndInfluence < 2 {
+                return .blocked(reason: "Needs better Communication and Leadership")
+            }
+        case .security:
+            if softSkills.carefulnessAndAttentionToDetail < 2 {
+                return .blocked(reason: "Needs more Carefulness")
+            }
+        case .aws, .azure, .google:
+            if softSkills.analyticalReasoningAndProblemSolving < 2 {
+                return .blocked(reason: "Needs more Problem Solving")
+            }
+        default:
+            break
+        }
+        return .ok(cost: costForCertification)
+    }
+    
 }

@@ -44,29 +44,11 @@ enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Compa
 struct HardSkills: Codable, Hashable {
 
     // Internal leveled storage
-    private(set) var languageLevels: [ProgrammingLanguage: ProficiencyLevel] = [:]
     private(set) var portfolioLevels: [PortfolioItem: ProficiencyLevel] = [:]
     private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
     private(set) var softwareLevels: [Software: ProficiencyLevel] = [:]
     private(set) var licenseLevels: [License: ProficiencyLevel] = [:]
 
-    // Backwards-compatible set views for UI (keys only)
-    var languages: Set<ProgrammingLanguage> {
-        get { Set(languageLevels.keys) }
-        set {
-            // Keep existing levels if present; default new ones to level1
-            var next = languageLevels
-            // Remove any keys not in new set
-            for key in next.keys where !newValue.contains(key) {
-                next.removeValue(forKey: key)
-            }
-            // Add any new keys with default level
-            for key in newValue where next[key] == nil {
-                next[key] = .level1
-            }
-            languageLevels = next
-        }
-    }
 
     var portfolioItems: Set<PortfolioItem> {
         get { Set(portfolioLevels.keys) }
@@ -127,14 +109,12 @@ struct HardSkills: Codable, Hashable {
     // MARK: - Initializer (keeps Player default working)
 
     init(
-        languages: Set<ProgrammingLanguage> = [],
         portfolioItems: Set<PortfolioItem> = [],
         certifications: Set<Certification> = [],
         software: Set<Software> = [],
         licenses: Set<License> = []
     ) {
         // Default all provided to level1
-        self.languageLevels = Dictionary(uniqueKeysWithValues: languages.map { ($0, .level1) })
         self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
         self.certificationLevels = Dictionary(uniqueKeysWithValues: certifications.map { ($0, .level1) })
         self.softwareLevels = Dictionary(uniqueKeysWithValues: software.map { ($0, .level1) })
@@ -143,7 +123,6 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Level accessors
 
-    func level(for lang: ProgrammingLanguage) -> ProficiencyLevel? { languageLevels[lang] }
     func level(for item: PortfolioItem) -> ProficiencyLevel? { portfolioLevels[item] }
     func level(for cert: Certification) -> ProficiencyLevel? { certificationLevels[cert] }
     func level(for sw: Software) -> ProficiencyLevel? { softwareLevels[sw] }
@@ -151,9 +130,7 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Mutating setters
 
-    mutating func setLevel(_ level: ProficiencyLevel, for lang: ProgrammingLanguage) {
-        languageLevels[lang] = level
-    }
+    
     mutating func setLevel(_ level: ProficiencyLevel, for item: PortfolioItem) {
         portfolioLevels[item] = level
     }
@@ -169,9 +146,6 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Promotion helpers (keeps highest)
 
-    mutating func promote(to level: ProficiencyLevel, for lang: ProgrammingLanguage) {
-        languageLevels[lang] = max(languageLevels[lang] ?? .level1, level)
-    }
     mutating func promote(to level: ProficiencyLevel, for item: PortfolioItem) {
         portfolioLevels[item] = max(portfolioLevels[item] ?? .level1, level)
     }
@@ -204,9 +178,7 @@ struct HardSkills: Codable, Hashable {
     }
 
     // Whether the item can be trained this year (i.e., there exists a next level)
-    func canTrain(_ lang: ProgrammingLanguage) -> Bool {
-        nextLevel(after: currentLevel(in: languageLevels, for: lang)) != nil
-    }
+
     func canTrain(_ item: PortfolioItem) -> Bool {
         nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
     }
@@ -220,15 +192,7 @@ struct HardSkills: Codable, Hashable {
         nextLevel(after: currentLevel(in: licenseLevels, for: lic)) != nil
     }
 
-    // Advance exactly one level (if possible). Returns the new level if advanced.
-    @discardableResult
-    mutating func trainOneYear(_ lang: ProgrammingLanguage) -> ProficiencyLevel? {
-        let next = nextLevel(after: languageLevels[lang])
-        if let n = next {
-            languageLevels[lang] = n
-        }
-        return languageLevels[lang]
-    }
+
     @discardableResult
     mutating func trainOneYear(_ item: PortfolioItem) -> ProficiencyLevel? {
         let next = nextLevel(after: portfolioLevels[item])
@@ -264,7 +228,6 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Removal
 
-    mutating func remove(_ lang: ProgrammingLanguage) { languageLevels.removeValue(forKey: lang) }
     mutating func remove(_ item: PortfolioItem) { portfolioLevels.removeValue(forKey: item) }
     mutating func remove(_ cert: Certification) { certificationLevels.removeValue(forKey: cert) }
     mutating func remove(_ sw: Software) { softwareLevels.removeValue(forKey: sw) }

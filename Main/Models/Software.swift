@@ -1,23 +1,26 @@
 import Foundation
 
 enum Software: String, CaseIterable, Codable, Hashable, Identifiable {
-    case macOS = "macOS"
-    case linux = "Linux"
-    case excel = "Excel"
-    case unity = "Unity"
-    case photoshop = "Photoshop"
-    case blender = "Blender"
+    case officeSuite = "Office"
+    case gameEngine = "Game Engine"
+    case mediaEditing = "Photo/Video Editing"
+    case programming = "Programming"
 
     var id: String { rawValue }
 
     var pictogram: String {
         switch self {
-        case .macOS: return "🍎"
-        case .linux: return "🐧"
-        case .excel: return "📊"
-        case .unity: return "🕹️"
-        case .photoshop: return "🖌️"
-        case .blender: return "🌀"
+        case .officeSuite: return "📊"
+        case .gameEngine: return "🕹️"
+        case .mediaEditing: return "🖌️"
+        case .programming: return "💻"
         }
+    }
+    
+    func softwareRequirements(_ player: Player) -> TrainingRequirementResult {
+        if player.softSkills.analyticalReasoningAndProblemSolving < 1 {
+            return .blocked(reason: "Needs more Problem Solving")
+        }
+        return .ok(cost: 0)
     }
 }
