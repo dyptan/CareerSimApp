@@ -22,16 +22,17 @@ struct HeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-
+            
             Text("Age: \(player.age)")
                 .font(.title2)
-
+            
             if let lastlog = player.degrees.last {
                 Text("Last degree: \(lastlog.degreeName)")
             }
-
+            
+            Text("Bank balance: \(player.savings)$")
+            
             if player.savings > 0 {
-                Text("Bank balance: \(player.savings * 1000)")
                 Text(String(repeating: "💶", count: player.savings / 10))
             }
 

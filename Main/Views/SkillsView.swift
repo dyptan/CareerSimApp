@@ -2,14 +2,14 @@ import SwiftUI
 
 struct SkillsView: View {
     @ObservedObject var player: Player
-    
+
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedCertifications: Set<Certification>
     @Binding var showHardSkillsSheet: Bool
     @Binding var showSoftSkillsSheet: Bool
-    
+
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
@@ -17,13 +17,12 @@ struct SkillsView: View {
             }
         )
     }
-    
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            
+
             VStack(alignment: .leading) {
-                
+
                 ForEach(
                     Array(SoftSkills.skillNames.enumerated()),
                     id: \.offset
@@ -42,76 +41,83 @@ struct SkillsView: View {
                     }
                 }
             }
-            
-            Button("Boost soft skills") {
-                showSoftSkillsSheet = true
+
+            HStack{
+                Button("Activities") {
+                    showSoftSkillsSheet = true
+                }
+                .buttonStyle(.bordered).font(.headline)
+                
+                Button("Cources&Trainings") {
+                    showHardSkillsSheet = true
+                }
+                .buttonStyle(.bordered).font(.headline).frame(alignment: .trailing)
             }
-            .buttonStyle(.bordered).font(.headline)
-            
+
         }
-        
+
         Divider()
-        
-        VStack (alignment: .leading){
-            Button("Learn hard skills") {
-                showHardSkillsSheet = true
-            }
-            .buttonStyle(.bordered).font(.headline)
-            
+
+        VStack(alignment: .leading) {
+
             HStack {
-                
-                HStack {
+                if !player.hardSkills.portfolioItems.isEmpty {
                     Text("Portfolio: ")
-                    ForEach(
-                        Array(
-                            player.hardSkills.portfolioItems.union(
-                                selectedPortfolio
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
                 }
-                
-                HStack {
-                    Text("Certifications & Licenses:")
-                    
-                    ForEach(
-                        Array(
-                            selectedCertifications.union(
-                                player.hardSkills.certifications
-                            )
+                ForEach(
+                    Array(
+                        player.hardSkills.portfolioItems.union(
+                            selectedPortfolio
                         )
-                    ) { cert in
-                        Text(cert.pictogram)
-                    }
-                    
-                    ForEach(
-                        Array(
-                            selectedLicences.union(
-                                player.hardSkills.licenses
-                            )
-                        )
-                    ) { lic in
-                        Text(lic.pictogram)
-                    }
+                    )
+                ) { skill in
+                    Text("\(skill.pictogram)")
                 }
-                
-                HStack {
-                    Text("Software: ")
-                    ForEach(
-                        Array(
-                            player.hardSkills.software.union(
-                                selectedSoftware
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-                
             }
-            
+
+            HStack {
+                if !player.hardSkills.certifications.isEmpty || !player.hardSkills.licenses.isEmpty {
+                    
+                    Text("Certifications & Licenses:")
+                }
+
+                ForEach(
+                    Array(
+                        selectedCertifications.union(
+                            player.hardSkills.certifications
+                        )
+                    )
+                ) { cert in
+                    Text(cert.pictogram)
+                }
+
+                ForEach(
+                    Array(
+                        selectedLicences.union(
+                            player.hardSkills.licenses
+                        )
+                    )
+                ) { lic in
+                    Text(lic.pictogram)
+                }
+            }
+
+            HStack {
+                if !player.hardSkills.software.isEmpty {
+                    
+                    Text("Software: ")
+                }
+                ForEach(
+                    Array(
+                        player.hardSkills.software.union(
+                            selectedSoftware
+                        )
+                    )
+                ) { skill in
+                    Text("\(skill.pictogram)")
+                }
+            }
+
             
         }
     }

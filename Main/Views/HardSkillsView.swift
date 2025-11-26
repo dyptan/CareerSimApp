@@ -68,9 +68,16 @@ struct HardSkillsView: View {
                         case .ok: return nil
                         }
                     }()
+                    // Prefer dynamic cost from requirement (if ok), else fallback to static
+                    let priceText: String = {
+                        switch requirement {
+                        case .ok(let cost): return "$\(cost)"
+                        case .blocked: return "$\(cert.costForCertification)"
+                        }
+                    }()
 
                     Toggle(
-                        cert.friendlyName,
+                        "\(cert.friendlyName) — \(priceText)",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in
@@ -148,9 +155,16 @@ struct HardSkillsView: View {
                         case .ok: return nil
                         }
                     }()
+                    // Prefer dynamic cost from requirement (if ok), else fallback to static
+                    let priceText: String = {
+                        switch requirement {
+                        case .ok(let cost): return "$\(cost)"
+                        case .blocked: return "$\(lic.costForLicense)"
+                        }
+                    }()
 
                     Toggle(
-                        lic.friendlyName,
+                        "\(lic.friendlyName) — \(priceText)",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in
@@ -225,7 +239,7 @@ struct HardSkillsView: View {
                     }()
 
                     Toggle(
-                        "Software: \(sw.rawValue) \(sw.pictogram)",
+                        "\(sw.rawValue) \(sw.pictogram)",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in
@@ -291,7 +305,7 @@ struct HardSkillsView: View {
                         selectedActivities.count >= maxActivitiesPerYear
 
                     Toggle(
-                        "Portfolio: \(item.rawValue) \(item.pictogram)",
+                        "\(item.rawValue) \(item.pictogram)",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in

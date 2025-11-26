@@ -78,10 +78,14 @@ struct MainView: View {
 
             }
             .padding()
-//            .modifier(DetentsIfAvailable([.medium]))
         }
         .sheet(isPresented: $showTertiarySheet) {
-            EducationView(player: player, yearsLeftToGraduation: $yearsLeftToGraduation, showTertiarySheet: $showTertiarySheet, showCareersSheet: $showCareersSheet)
+            EducationView(
+                player: player,
+                yearsLeftToGraduation: $yearsLeftToGraduation,
+                showTertiarySheet: $showTertiarySheet,
+                showCareersSheet: $showCareersSheet
+            )
         }
         .sheet(isPresented: $showCareersSheet) {
             CareersSheet(
@@ -103,7 +107,9 @@ struct MainView: View {
                             .navigationTitle("Sign up for training")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") { showHardSkillsSheet = false }
+                                    Button("Done") {
+                                        showHardSkillsSheet = false
+                                    }
                                 }
                             }
                     }
@@ -113,16 +119,17 @@ struct MainView: View {
                             .navigationTitle("Sign up for training")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") { showHardSkillsSheet = false }
+                                    Button("Done") {
+                                        showHardSkillsSheet = false
+                                    }
                                 }
                             }
                     }
                     #if os(iOS)
-                    .navigationViewStyle(.stack)
+                        .navigationViewStyle(.stack)
                     #endif
                 }
             }
-//            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showSoftSkillsSheet) {
             Group {
@@ -132,7 +139,9 @@ struct MainView: View {
                             .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") { showSoftSkillsSheet = false }
+                                    Button("Done") {
+                                        showSoftSkillsSheet = false
+                                    }
                                 }
                             }
                     }
@@ -142,16 +151,17 @@ struct MainView: View {
                             .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") { showSoftSkillsSheet = false }
+                                    Button("Done") {
+                                        showSoftSkillsSheet = false
+                                    }
                                 }
                             }
                     }
                     #if os(iOS)
-                    .navigationViewStyle(.stack)
+                        .navigationViewStyle(.stack)
                     #endif
                 }
             }
-//            .modifier(DetentsIfAvailable([.medium, .large]))
         }
         .sheet(isPresented: $showRetirementSheet) {
             VStack(spacing: 16) {
@@ -234,7 +244,6 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
-//            .modifier(DetentsIfAvailable([.medium]))
         }
         .onChange(of: player.age) { newValue in
             switch newValue {
@@ -250,7 +259,7 @@ struct MainView: View {
         .padding()
 
         Spacer()
-        
+
         Button("+1 Year") {
             // Advance year
             player.age += 1
@@ -286,17 +295,14 @@ struct MainView: View {
                 player.currentEducation = nil
             }
 
-            // Income
             if let income = player.currentOccupation?.income {
-                player.savings += income
+                player.savings += income * 1000
             }
         }
         .buttonStyle(.borderedProminent)
         .padding()
         .font(.headline)
     }
-
-    // MARK: - Shared sheet contents
 
     private var hardSkillsContent: some View {
         ScrollView {
@@ -325,30 +331,3 @@ struct MainView: View {
         }
     }
 }
-
-//// Helper view modifier to apply detents only when available
-//private struct DetentsIfAvailable: ViewModifier {
-//    enum DetentSpec {
-//        case medium
-//        case large
-//    }
-//    private let detents: [DetentSpec]
-//
-//    init(_ detents: [DetentSpec]) {
-//        self.detents = detents
-//    }
-//
-//    func body(content: Content) -> some View {
-//        if #available(iOS 16, macOS 13, *) {
-//            let mapping: [DetentSpec: PresentationDetent] = [
-//                .medium: .medium,
-//                .large: .large
-//            ]
-//            return AnyView(
-//                content.presentationDetents(Set(detents.compactMap { mapping[$0] }))
-//            )
-//        } else {
-//            return AnyView(content)
-//        }
-//    }
-//}
