@@ -5,7 +5,7 @@ struct HobbyOrActivity {
 
 let extraCurriculum: [HobbyOrActivity] = [
     HobbyOrActivity(
-        label: "Sports",
+        label: "Sports and Athletics",
         abilityKeyPaths: [\.physicalStrength, \.resilienceAndEndurance, \.coordinationAndBalance]
     ),
     HobbyOrActivity(
@@ -14,10 +14,10 @@ let extraCurriculum: [HobbyOrActivity] = [
     ),
     HobbyOrActivity(
         label: "Music Band",
-        abilityKeyPaths: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision]
+        abilityKeyPaths: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.communicationAndNetworking]
     ),
     HobbyOrActivity(
-        label: "Photography and Videography",
+        label: "Photography and Cinematography",
         abilityKeyPaths: [\.creativityAndInsightfulThinking, \.communicationAndNetworking]
     ),
     HobbyOrActivity(
@@ -25,32 +25,20 @@ let extraCurriculum: [HobbyOrActivity] = [
         abilityKeyPaths: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision]
     ),
     HobbyOrActivity(
-        label: "Chess",
+        label: "Chess and Strategy Games",
         abilityKeyPaths: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail]
     ),
     HobbyOrActivity(
-        label: "Hobby journalism",
-        abilityKeyPaths: [\.creativityAndInsightfulThinking, \.leadershipAndInfluence, \.communicationAndNetworking]
+        label: "Journalism and Writing",
+        abilityKeyPaths: [\.creativityAndInsightfulThinking, \.leadershipAndInfluence]
     ),
     HobbyOrActivity(
-        label: "Astronomy",
+        label: "Theatre and Acting",
         abilityKeyPaths: [\.creativityAndInsightfulThinking, \.perseveranceAndGrit]
-    ),
-    HobbyOrActivity(
-        label: "Turn based gaming",
-        abilityKeyPaths: [\.analyticalReasoningAndProblemSolving]
     ),
     HobbyOrActivity(
         label: "Hanging out with friends",
         abilityKeyPaths: [\.communicationAndNetworking]
-    ),
-    HobbyOrActivity(
-        label: "Student Council",
-        abilityKeyPaths: [\.leadershipAndInfluence, \.communicationAndNetworking]
-    ),
-    HobbyOrActivity(
-        label: "Organizing Events",
-        abilityKeyPaths: [\.leadershipAndInfluence, \.perseveranceAndGrit]
     ),
     HobbyOrActivity(
         label: "Modeling",
@@ -61,7 +49,7 @@ let extraCurriculum: [HobbyOrActivity] = [
         abilityKeyPaths: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail, \.perseveranceAndGrit]
     ),
     HobbyOrActivity(
-        label: "Volunteering & Fundraising",
+        label: "Organizing events, Fundraising",
         abilityKeyPaths: [\.communicationAndNetworking, \.leadershipAndInfluence, \.perseveranceAndGrit, \.courageAndRiskTolerance]
     )
 ]

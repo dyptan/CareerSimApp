@@ -256,6 +256,123 @@ struct Education: Codable, Hashable, Identifiable {
     var eqf: Int { Level(stage: level).eqf }
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
 
+    // MARK: - Requirements
+
+    struct Requirements: Codable, Hashable {
+        var minEQF: Int = 0
+
+        // Soft skills thresholds (mirrors JobView names)
+        var analyticalReasoning: Int = 0
+        var creativeExpression: Int = 0
+        var socialCommunication: Int = 0
+        var leadershipAndInfluence: Int = 0
+        var riskTolerance: Int = 0
+        var spatialThinking: Int = 0
+        var attentionToDetail: Int = 0
+        var perseveranceAndGrit: Int = 0
+        var tinkering: Int = 0
+        var physicalStrength: Int = 0
+        var endurance: Int = 0
+    }
+
+    // Default requirements per education (tweak as desired)
+    var requirements: Requirements {
+        switch (level, profile) {
+        case (.Vocational, .some(let p)):
+            switch p {
+            case .technology:
+                return Requirements(minEQF: 3, analyticalReasoning: 1, attentionToDetail: 1, tinkering: 1)
+            case .engineering:
+                return Requirements(minEQF: 3, analyticalReasoning: 1, spatialThinking: 1, tinkering: 1)
+            case .health:
+                return Requirements(minEQF: 3, socialCommunication: 1, attentionToDetail: 1)
+            case .agriculture:
+                return Requirements(minEQF: 3, endurance: 1)
+            case .design:
+                return Requirements(minEQF: 3, creativeExpression: 1)
+            case .sports:
+                return Requirements(minEQF: 3, physicalStrength: 1, endurance: 1)
+            case .service:
+                return Requirements(minEQF: 3, socialCommunication: 1)
+            default:
+                return Requirements(minEQF: 3)
+            }
+
+        case (.Bachelor, .some(let p)):
+            switch p {
+            case .engineering:
+                return Requirements(minEQF: 3, analyticalReasoning: 2, spatialThinking: 1, attentionToDetail: 1)
+            case .technology:
+                return Requirements(minEQF: 3, analyticalReasoning: 2, attentionToDetail: 1)
+            case .science:
+                return Requirements(minEQF: 3, analyticalReasoning: 2, perseveranceAndGrit: 1)
+            case .arts:
+                return Requirements(minEQF: 3, creativeExpression: 2)
+            case .design:
+                return Requirements(minEQF: 3, creativeExpression: 2, attentionToDetail: 1)
+            case .business:
+                return Requirements(minEQF: 3, socialCommunication: 1, leadershipAndInfluence: 1)
+            case .education:
+                return Requirements(minEQF: 3, socialCommunication: 1)
+            case .health:
+                return Requirements(minEQF: 3, attentionToDetail: 1, perseveranceAndGrit: 1)
+            case .humanities:
+                return Requirements(minEQF: 3, socialCommunication: 1, perseveranceAndGrit: 1)
+            case .law:
+                return Requirements(minEQF: 3, analyticalReasoning: 1, socialCommunication: 1, perseveranceAndGrit: 1)
+            case .agriculture:
+                return Requirements(minEQF: 3, endurance: 1)
+            case .sports:
+                return Requirements(minEQF: 3, physicalStrength: 1, endurance: 1)
+            case .service:
+                return Requirements(minEQF: 3, socialCommunication: 1)
+            }
+
+        case (.Master, .some(let p)):
+            // Require Bachelor EQF and bump soft-skill expectations slightly
+            var base = Education(.Bachelor, profile: p).requirements
+            base.minEQF = 5
+            base.analyticalReasoning = max(base.analyticalReasoning, 2)
+            base.creativeExpression = max(base.creativeExpression, 2)
+            base.perseveranceAndGrit = max(base.perseveranceAndGrit, 2)
+            return base
+
+        case (.Doctorate, .some(let p)):
+            var base = Education(.Master, profile: p).requirements
+            base.minEQF = 6
+            base.perseveranceAndGrit = max(base.perseveranceAndGrit, 2)
+            base.analyticalReasoning = max(base.analyticalReasoning, 2)
+            return base
+
+        // Early education has no requirements
+        default:
+            return Requirements()
+        }
+    }
+
+    func meetsRequirements(player: Player) -> Bool {
+        let p = player.softSkills
+        let highestEQF = player.degrees.last?.eqf ?? 0
+        let r = requirements
+
+        guard highestEQF >= r.minEQF else { return false }
+        guard p.analyticalReasoningAndProblemSolving >= r.analyticalReasoning else { return false }
+        guard p.creativityAndInsightfulThinking >= r.creativeExpression else { return false }
+        guard p.communicationAndNetworking >= r.socialCommunication else { return false }
+        guard p.leadershipAndInfluence >= r.leadershipAndInfluence else { return false }
+        guard p.courageAndRiskTolerance >= r.riskTolerance else { return false }
+        guard p.spacialNavigation >= r.spatialThinking else { return false }
+        guard p.carefulnessAndAttentionToDetail >= r.attentionToDetail else { return false }
+        guard p.perseveranceAndGrit >= r.perseveranceAndGrit else { return false }
+        guard p.tinkeringAndFingerPrecision >= r.tinkering else { return false }
+        guard p.physicalStrength >= r.physicalStrength else { return false }
+        guard p.resilienceAndEndurance >= r.endurance else { return false }
+
+        return true
+    }
+
+    // Delegated properties to names
+
     /// Profile-aware degree label (EU default)
     var degreeName: String {
         switch (level, profile) {

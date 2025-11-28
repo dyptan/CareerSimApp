@@ -22,14 +22,6 @@ enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Compa
         }
     }
 
-    var description: String {
-        switch self {
-        case .level1: return "Associate / Beginner: foundational knowledge and basic application."
-        case .level2: return "Professional / Intermediate: solid skills, applied independently."
-        case .level3: return "Expert / Advanced: deep mastery, leadership and complex tasks."
-        }
-    }
-
     var next: ProficiencyLevel? {
         switch self {
         case .level1: return .level2
@@ -254,8 +246,8 @@ struct SoftSkills: Codable, Hashable {
         (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
         (\.communicationAndNetworking, "Communication", "💬"),
         (\.leadershipAndInfluence, "Leadership", "👥"),
-        (\.courageAndRiskTolerance, "Courage", "🎲"),
-        (\.carefulnessAndAttentionToDetail, "Carefulness", "🔎"),
+        (\.courageAndRiskTolerance, "Risk Tolerance", "🎲"),
+        (\.carefulnessAndAttentionToDetail, "Attention To Detail", "🔎"),
         (\.tinkeringAndFingerPrecision, "Tinkering", "🔧"),
         (\.spacialNavigation, "Navigation", "🧭"),
         (\.physicalStrength, "Strength", "💪"),

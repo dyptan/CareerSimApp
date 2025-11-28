@@ -30,7 +30,7 @@ struct EducationView: View {
                         .navigationTitle("Education")
                 }
                 #if os(iOS)
-                .navigationViewStyle(.stack)
+                    .navigationViewStyle(.stack)
                 #endif
             }
         }
@@ -65,13 +65,11 @@ struct EducationView: View {
                 Text("Pick your education direction")
             }
 
-            Section {
-                Button("Find a job") {
-                    showCareersSheet = true
-                    showTertiarySheet = false
-                }
-                .foregroundStyle(.secondary)
+            Button("Close") {
+                showTertiarySheet = false
             }
+            .foregroundStyle(.secondary)
+
         }
     }
 
@@ -79,7 +77,9 @@ struct EducationView: View {
         availableEducations
             .filter { $0.profile == profile }
             .sorted { lhs, rhs in
-                let order: [Level.Stage: Int] = [.Vocational: 0, .Bachelor: 1, .Master: 2, .Doctorate: 3]
+                let order: [Level.Stage: Int] = [
+                    .Vocational: 0, .Bachelor: 1, .Master: 2, .Doctorate: 3,
+                ]
                 return (order[lhs.level] ?? 99) < (order[rhs.level] ?? 99)
             }
     }
@@ -94,26 +94,218 @@ private struct DegreesSubmenuView: View {
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
 
+    private func requirementRow(
+        label: String,
+        emoji: String,
+        level: Int,
+        playerLevel: Int
+    ) -> some View {
+        let required = max(level, 0)
+        let meets = playerLevel >= required
+
+        return HStack {
+            Text(label)
+            Spacer()
+            HStack(spacing: 0) {
+                ForEach(0..<required, id: \.self) { idx in
+                    Text(emoji)
+                        .opacity(idx < playerLevel ? 1.0 : 0.35)
+                }
+            }
+            .font(.body)
+        }
+        .font(.body)
+        .foregroundStyle(meets ? .primary : .secondary)
+        .accessibilityHint(
+            meets ? "\(label) requirement met" : "\(label) requirement not met"
+        )
+    }
+
     var body: some View {
         List {
             Section {
                 ForEach(degrees) { education in
-                    Button {
-                        player.currentOccupation = nil
-                        player.currentEducation = education
-                        yearsLeftToGraduation = education.yearsToComplete
-                        showTertiarySheet = false
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(education.degreeName)
-                                .font(.headline)
-                            Text("Takes \(education.yearsToComplete) years")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                    let r = education.requirements
+                    let highestEQF = player.degrees.last?.eqf ?? 0
+                    let meetsAll = education.meetsRequirements(player: player)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(education.degreeName)
+                                    .font(.headline)
+                                Text("Takes \(education.yearsToComplete) years")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Button {
+                                player.currentOccupation = nil
+                                player.currentEducation = education
+                                yearsLeftToGraduation =
+                                    education.yearsToComplete
+                                showTertiarySheet = false
+                            } label: {
+                                Text(
+                                    meetsAll ? "Choose" : "Requirements not met"
+                                )
+                                .frame(maxWidth: 140)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(!meetsAll)
+                            .opacity(meetsAll ? 1.0 : 0.5)
+                            .accessibilityHint(
+                                meetsAll
+                                    ? "All requirements met"
+                                    : "Some requirements are not met"
+                            )
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 6)
+
+                        // Requirements block (mirrors JobView)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("What do you need?")
+                                .font(.subheadline.bold())
+
+                            // Education prerequisite (EQF)
+                            requirementRow(
+                                label: "Previous education",
+                                emoji: "🎓",
+                                level: r.minEQF,
+                                playerLevel: highestEQF
+                            )
+
+                            // Brainy
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath:
+                                        \.analyticalReasoningAndProblemSolving
+                                ) ?? "Problem Solving",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath:
+                                        \.analyticalReasoningAndProblemSolving
+                                ) ?? "🧩",
+                                level: r.analyticalReasoning,
+                                playerLevel: player.softSkills
+                                    .analyticalReasoningAndProblemSolving
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath:
+                                        \.creativityAndInsightfulThinking
+                                ) ?? "Creativity",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath:
+                                        \.creativityAndInsightfulThinking
+                                ) ?? "🎨",
+                                level: r.creativeExpression,
+                                playerLevel: player.softSkills
+                                    .creativityAndInsightfulThinking
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.communicationAndNetworking
+                                ) ?? "Communication",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.communicationAndNetworking
+                                ) ?? "💬",
+                                level: r.socialCommunication,
+                                playerLevel: player.softSkills
+                                    .communicationAndNetworking
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.leadershipAndInfluence
+                                ) ?? "Leadership",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.leadershipAndInfluence
+                                ) ?? "👥",
+                                level: r.leadershipAndInfluence,
+                                playerLevel: player.softSkills
+                                    .leadershipAndInfluence
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.courageAndRiskTolerance
+                                ) ?? "Courage",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.courageAndRiskTolerance
+                                ) ?? "🎲",
+                                level: r.riskTolerance,
+                                playerLevel: player.softSkills
+                                    .courageAndRiskTolerance
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.spacialNavigation
+                                ) ?? "Navigation",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.spacialNavigation
+                                ) ?? "🧭",
+                                level: r.spatialThinking,
+                                playerLevel: player.softSkills.spacialNavigation
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath:
+                                        \.carefulnessAndAttentionToDetail
+                                ) ?? "Carefulness",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath:
+                                        \.carefulnessAndAttentionToDetail
+                                ) ?? "🔎",
+                                level: r.attentionToDetail,
+                                playerLevel: player.softSkills
+                                    .carefulnessAndAttentionToDetail
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.perseveranceAndGrit
+                                ) ?? "Perseverance",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.perseveranceAndGrit
+                                ) ?? "🛡️",
+                                level: r.perseveranceAndGrit,
+                                playerLevel: player.softSkills
+                                    .perseveranceAndGrit
+                            )
+
+                            // Physical / hands-on
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.tinkeringAndFingerPrecision
+                                ) ?? "Tinkering",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.tinkeringAndFingerPrecision
+                                ) ?? "🔧",
+                                level: r.tinkering,
+                                playerLevel: player.softSkills
+                                    .tinkeringAndFingerPrecision
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.physicalStrength
+                                ) ?? "Strength",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.physicalStrength
+                                ) ?? "💪",
+                                level: r.physicalStrength,
+                                playerLevel: player.softSkills.physicalStrength
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.resilienceAndEndurance
+                                ) ?? "Endurance",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.resilienceAndEndurance
+                                ) ?? "🌦️",
+                                level: r.endurance,
+                                playerLevel: player.softSkills
+                                    .resilienceAndEndurance
+                            )
+                        }
+                        .padding(.top, 4)
                     }
+                    .padding(.vertical, 6)
                 }
             } header: {
                 Text(profile.rawValue.capitalized)

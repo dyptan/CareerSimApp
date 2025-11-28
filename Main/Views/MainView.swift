@@ -11,7 +11,7 @@ struct MainView: View {
     @State var selectedPortfolio: Set<PortfolioItem> = []
     @State var selectedCertifications: Set<Certification> = []
     @State var yearsLeftToGraduation: Int? = nil
-    @State var descisionText = "You're 18! What's your next step?"
+    @State var descisionText = ""
     @State var showRetirementSheet = false
     @State var showHardSkillsSheet = false
     @State var showSoftSkillsSheet = false
@@ -48,6 +48,8 @@ struct MainView: View {
                 selectedCertifications: $selectedCertifications,
                 showHardSkillsSheet: $showHardSkillsSheet,
                 showSoftSkillsSheet: $showSoftSkillsSheet,
+                showCareersSheet: $showCareersSheet,
+                showTertiarySheet: $showTertiarySheet,
             )
 
         }
@@ -250,6 +252,7 @@ struct MainView: View {
             case 10: player.degrees.append(Education(Level.Stage.PrimarySchool))
             case 14: player.degrees.append(Education(Level.Stage.MiddleSchool))
             case 18:
+                descisionText = "You're 18! What's your next step?"
                 player.degrees.append(Education(Level.Stage.HighSchool))
                 showDecisionSheet.toggle()
             case 68: showRetirementSheet.toggle()
@@ -258,8 +261,37 @@ struct MainView: View {
         }
         .padding()
 
-        Spacer()
+        Divider()
+        HStack {
+            Button("Activities") {
+                showSoftSkillsSheet = true
+            }
+            .buttonStyle(.bordered).font(.headline)
 
+            Button("Cources&Trainings") {
+                showHardSkillsSheet = true
+            }
+            .buttonStyle(.bordered).font(.headline).frame(
+                alignment: .trailing
+            )
+
+        }
+
+        HStack {
+            Button("Jobs") {
+                showCareersSheet.toggle()
+            }.buttonStyle(.bordered).font(.headline).frame(
+                alignment: .trailing
+            )
+
+            Button("Degrees") {
+                showTertiarySheet.toggle()
+            }.buttonStyle(.bordered).font(.headline).frame(
+                alignment: .trailing
+            )
+
+        }
+        
         Button("+1 Year") {
             // Advance year
             player.age += 1
@@ -300,8 +332,9 @@ struct MainView: View {
             }
         }
         .buttonStyle(.borderedProminent)
-        .padding()
+        .padding(.bottom, 8)
         .font(.headline)
+
     }
 
     private var hardSkillsContent: some View {

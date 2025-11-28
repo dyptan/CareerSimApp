@@ -26,16 +26,18 @@ struct HeaderView: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            Text("Age: \(player.age)")
-                .scaleEffect(didBumpAgeScale ? 1.5 : 1)
-                .animation(.spring(), value: didBumpAgeScale)
-                .font(.title2)
-                .onChange(of: player.age) { _ in
-                    didBumpAgeScale = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        didBumpAgeScale = false
+            HStack{
+                Text("Age:")
+                Text("\(player.age)")
+                    .scaleEffect(didBumpAgeScale ? 1.5 : 1)
+                    .animation(.spring(), value: didBumpAgeScale)
+                    .onChange(of: player.age) { _ in
+                        didBumpAgeScale = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            didBumpAgeScale = false
+                        }
                     }
-                }
+            }
                 
             if let lastlog = player.degrees.last {
                 Text("Last degree: \(lastlog.degreeName)")
@@ -58,21 +60,7 @@ struct HeaderView: View {
                 }
             }
 
-            HStack {
-
-                if player.age > 18 {
-                    Button("Find a Job") {
-                        showCareersSheet.toggle()
-                        player.currentOccupation = nil
-                    }.buttonStyle(.borderedProminent)
-                }
-
-                if let eqf = player.degrees.last?.eqf, eqf >= 4 {
-                    Button("Get a degree") {
-                        showTertiarySheet.toggle()
-                    }.buttonStyle(.borderedProminent)
-                }
-            }
+            
 
         }
     }

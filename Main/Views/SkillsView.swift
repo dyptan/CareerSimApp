@@ -9,6 +9,8 @@ struct SkillsView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var showHardSkillsSheet: Bool
     @Binding var showSoftSkillsSheet: Bool
+    @Binding var showCareersSheet: Bool
+    @Binding var showTertiarySheet: Bool
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -42,28 +44,15 @@ struct SkillsView: View {
                 }
             }
 
-            HStack{
-                Button("Activities") {
-                    showSoftSkillsSheet = true
-                }
-                .buttonStyle(.bordered).font(.headline)
-                
-                Button("Cources&Trainings") {
-                    showHardSkillsSheet = true
-                }
-                .buttonStyle(.bordered).font(.headline).frame(alignment: .trailing)
-            }
-
         }
-
         Divider()
 
         VStack(alignment: .leading) {
 
             HStack {
-                if !player.hardSkills.portfolioItems.isEmpty {
-                    Text("Portfolio: ")
-                }
+
+                Text("Portfolio")
+
                 ForEach(
                     Array(
                         player.hardSkills.portfolioItems.union(
@@ -75,38 +64,33 @@ struct SkillsView: View {
                 }
             }
 
-            HStack {
-                if !player.hardSkills.certifications.isEmpty || !player.hardSkills.licenses.isEmpty {
-                    
-                    Text("Certifications & Licenses:")
-                }
+            Text("Certifications")
 
-                ForEach(
-                    Array(
-                        selectedCertifications.union(
-                            player.hardSkills.certifications
-                        )
+            ForEach(
+                Array(
+                    selectedCertifications.union(
+                        player.hardSkills.certifications
                     )
-                ) { cert in
-                    Text(cert.pictogram)
-                }
+                )
+            ) { cert in
+                Text(cert.pictogram)
+            }
 
-                ForEach(
-                    Array(
-                        selectedLicences.union(
-                            player.hardSkills.licenses
-                        )
+            Text("Licenses")
+            ForEach(
+                Array(
+                    selectedLicences.union(
+                        player.hardSkills.licenses
                     )
-                ) { lic in
-                    Text(lic.pictogram)
-                }
+                )
+            ) { lic in
+                Text(lic.pictogram)
             }
 
             HStack {
-                if !player.hardSkills.software.isEmpty {
-                    
-                    Text("Software: ")
-                }
+
+                Text("Computer Skills")
+
                 ForEach(
                     Array(
                         player.hardSkills.software.union(
@@ -131,7 +115,9 @@ struct SkillsView: View {
         selectedPortfolio: .constant([]),
         selectedCertifications: .constant([]),
         showHardSkillsSheet: .constant(false),
-        showSoftSkillsSheet: .constant(false)
+        showSoftSkillsSheet: .constant(false),
+        showCareersSheet: .constant(false),
+        showTertiarySheet: .constant(false)
     )
     .padding()
 }
