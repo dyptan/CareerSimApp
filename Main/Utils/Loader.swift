@@ -1,7 +1,19 @@
 import Foundation
 
-var jobs: [Job] = load("dataV4.json")
+var jobs: [Job] = loadJobsV5("dataV5.json")
 
+private func loadJobsV5(_ filename: String) -> [Job] {
+    guard let url = Bundle.main.url(forResource: filename, withExtension: nil) else {
+        fatalError("Couldn't find \(filename) in main bundle.")
+    }
+    do {
+        return try JobV5Adapter.loadJobs(from: url)
+    } catch {
+        fatalError("Couldn't parse \(filename) as V5 jobs:\n\(error)")
+    }
+}
+
+// Generic loader kept if needed elsewhere
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
     

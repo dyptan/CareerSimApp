@@ -229,10 +229,10 @@ struct MainView: View {
                     showCareersSheet = true
                     // Assign the new player last to trigger UI refresh
                     player.age = newPlayer.age
-                    player.degrees = newPlayer.degrees
-                    player.jobExperiance = newPlayer.jobExperiance
                     player.softSkills = newPlayer.softSkills
                     player.hardSkills = newPlayer.hardSkills
+                    player.degrees = newPlayer.degrees
+                    player.jobExperiance = newPlayer.jobExperiance
                     player.currentOccupation = newPlayer.currentOccupation
                     player.currentEducation = newPlayer.currentEducation
                     player.savings = newPlayer.savings
@@ -328,7 +328,8 @@ struct MainView: View {
             }
 
             if let income = player.currentOccupation?.income {
-                player.savings += income * 1000
+                // income is full dollars now
+                player.savings += income
             }
         }
         .buttonStyle(.borderedProminent)

@@ -3,104 +3,113 @@ import Foundation
 struct Job: Identifiable, Codable, Hashable {
     let id: String
     let category: Category
-    let income: Int
-    func reward() -> String {
-        switch income {
-        case 0...60: return "💵"
-        case 61..<120: return "💵💵"
-        default: return "💵💵💵"
-        }
-    }
-    let prestige: Int
+    let income: Int            // full dollars per year (e.g., 72000)
     let summary: String
     let icon: String
     let requirements: Requirements
     let version: Int
-    
+
     struct Requirements: Codable, Hashable {
-        let education: Int
-        let cognitive: Cognitive
-        let physical: Physical
-        
-        struct Cognitive: Codable, Hashable {
-            let analyticalReasoning: Int?
-            let creativeExpression: Int?
-            let socialCommunication: Int?
-            let teamLeadership: Int?
-            let influenceAndNetworking: Int?
-            let riskTolerance: Int?
-            let spatialThinking: Int?
-            let attentionToDetail: Int?
-            let resilienceCognitive: Int?
-        }
-        
-        struct Physical: Codable, Hashable {
-            let mechanicalOperation: Int?
-            let physicalAbility: Int?
-            let outdoorOrientation: Int?
-            let resiliencePhysical: Int?
-            let endurance: Int?
-        }
-        
-        var analyticalReasoning: Int { cognitive.analyticalReasoning ?? 0 }
-        var creativeExpression: Int { cognitive.creativeExpression ?? 0 }
-        var socialCommunication: Int { cognitive.socialCommunication ?? 0 }
-        var teamLeadership: Int { cognitive.teamLeadership ?? 0 }
-        var influenceAndNetworking: Int { cognitive.influenceAndNetworking ?? 0 }
-        var riskTolerance: Int { cognitive.riskTolerance ?? 0 }
-        var spatialThinking: Int { cognitive.spatialThinking ?? 0 }
-        var attentionToDetail: Int { cognitive.attentionToDetail ?? 0 }
-        var resilienceCognitive: Int { cognitive.resilienceCognitive ?? 0 }
-        
-        var mechanicalOperation: Int { physical.mechanicalOperation ?? 0 }
-        var physicalAbility: Int { physical.physicalAbility ?? 0 }
-        var outdoorOrientation: Int { physical.outdoorOrientation ?? 0 }
-        var resiliencePhysical: Int { physical.resiliencePhysical ?? 0 }
-        var endurance: Int { physical.endurance ?? 0 }
-        
-        func educationLabel() -> String {
-            switch education {
-            case ..<1: return "Primary school"
-            case 1: return "Primary school"
-            case 2: return "Middle school"
-            case 3: return "High school"
-            case 4: return "College / Vocational"
-            case 5: return "University — Bachelor’s"
-            case 6: return "University — Master’s"
-            case 7: return "Doctorate"
-            default: return "Doctorate+"
+        let education: Education
+        let softSkills: SoftSkillsBlock
+        let hardSkills: HardSkillsBlock
+
+        struct Education: Codable, Hashable {
+            let minEQF: Int
+            let acceptedProfiles: [TertiaryProfile]?
+
+            enum CodingKeys: String, CodingKey {
+                case minEQF
+                case acceptedProfiles
             }
+
+            init(minEQF: Int, acceptedProfiles: [TertiaryProfile]?) {
+                self.minEQF = minEQF
+                self.acceptedProfiles = acceptedProfiles
+            }
+
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                self.minEQF = try container.decode(Int.self, forKey: .minEQF)
+                if let raw = try container.decodeIfPresent([String].self, forKey: .acceptedProfiles) {
+                    self.acceptedProfiles = raw.compactMap { TertiaryProfile(rawValue: $0) }
+                } else {
+                    self.acceptedProfiles = nil
+                }
+            }
+
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode(minEQF, forKey: .minEQF)
+                if let profiles = acceptedProfiles {
+                    try container.encode(profiles.map { $0.rawValue }, forKey: .acceptedProfiles)
+                }
+            }
+
+            func educationLabel() -> String {
+                switch minEQF {
+                case ..<1: return "Primary school"
+                case 1: return "Primary school"
+                case 2: return "Middle school"
+                case 3: return "High school"
+                case 4: return "College / Vocational"
+                case 5: return "University — Bachelor’s"
+                case 6: return "University — Master’s"
+                case 7: return "Doctorate"
+                default: return "Doctorate+"
+                }
+            }
+        }
+
+        // Matches keys from dataV5.json
+        struct SoftSkillsBlock: Codable, Hashable {
+            let analyticalReasoningAndProblemSolving: Int
+            let creativityAndInsightfulThinking: Int
+            let communicationAndNetworking: Int
+            let leadershipAndInfluence: Int
+            let courageAndRiskTolerance: Int
+            let spacialNavigation: Int
+            let carefulnessAndAttentionToDetail: Int
+            let perseveranceAndGrit: Int
+            let tinkeringAndFingerPrecision: Int
+            let physicalStrength: Int
+            let coordinationAndBalance: Int
+            let resilienceAndEndurance: Int
+        }
+
+        struct HardSkillsBlock: Codable, Hashable {
+            let certifications: [String]
+            let licenses: [String]
+            let software: [String]
+            let portfolio: [String]
         }
     }
 }
 
+// Example remains only for previews if needed
 var jobExample = Job(
     id: "superman",
     category: .agriculture,
     income: 10000,
-    prestige: 5,
     summary: "sdf",
     icon: "🦸",
     requirements: Job.Requirements(
-        education: 0,
-        cognitive: Job.Requirements.Cognitive(
-            analyticalReasoning: 2,
-            creativeExpression: 3,
-            socialCommunication: 4,
-            teamLeadership: 5,
-            influenceAndNetworking: 5,
-            riskTolerance: 6,
-            spatialThinking: 7,
-            attentionToDetail: 8,
-            resilienceCognitive: 5
+        education: .init(minEQF: 0, acceptedProfiles: nil),
+        softSkills: .init(
+            analyticalReasoningAndProblemSolving: 2,
+            creativityAndInsightfulThinking: 3,
+            communicationAndNetworking: 4,
+            leadershipAndInfluence: 2,
+            courageAndRiskTolerance: 1,
+            spacialNavigation: 1,
+            carefulnessAndAttentionToDetail: 1,
+            perseveranceAndGrit: 1,
+            tinkeringAndFingerPrecision: 1,
+            physicalStrength: 1,
+            coordinationAndBalance: 1,
+            resilienceAndEndurance: 1
         ),
-        physical: Job.Requirements.Physical(
-            mechanicalOperation: nil,
-            physicalAbility: nil,
-            outdoorOrientation: nil,
-            resiliencePhysical: nil,
-            endurance: nil
-        )
+        hardSkills: .init(certifications: [], licenses: [], software: [], portfolio: [])
     ),
-    version: 1
+    version: 5
 )

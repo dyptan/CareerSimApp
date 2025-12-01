@@ -3,6 +3,14 @@ import SwiftUI
 struct JobRow: View {
     var detail: Job
 
+    private func formattedIncome(_ dollars: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: dollars)) ?? "$\(dollars)"
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Text(detail.icon)
@@ -16,7 +24,7 @@ struct JobRow: View {
                     Text(detail.id)
                         .font(.headline)
                     Spacer()
-                    Text(detail.reward())
+                    Text(formattedIncome(detail.income))
                         .font(.caption2.bold())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -26,8 +34,7 @@ struct JobRow: View {
                 }
 
                 HStack(spacing: 8) {
-                    DifficultyView(level: detail.requirements.education)
-                    PrestigeView(prestige: detail.prestige)
+                    DifficultyView(level: detail.requirements.education.minEQF)
                 }
             }
             Spacer()
@@ -45,16 +52,6 @@ private struct DifficultyView: View {
             Text(String(repeating: "⭐️", count: filled) + String(repeating: "☆", count: empty))
                 .font(.caption)
         }
-    }
-}
-
-private struct PrestigeView: View {
-    let prestige: Int
-    var body: some View {
-        HStack(spacing: 4) {
-            Text(String(repeating: "😎", count: prestige))
-        }
-        .font(.caption)
     }
 }
 

@@ -1,0 +1,344 @@
+[
+  {
+    "id": "Registered Nurse",
+    "category": "Health",
+    "income": 72000,
+    "summary": "Provides patient care, administers medication, and coordinates with medical teams.",
+    "icon": "🩺",
+    "requirements": {
+      "education": { "minEQF": 6, "acceptedProfiles": ["health", "science"] },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 4,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 5,
+        "leadershipAndInfluence": 2,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 1,
+        "carefulnessAndAttentionToDetail": 5,
+        "perseveranceAndGrit": 4,
+        "tinkeringAndFingerPrecision": 1,
+        "physicalStrength": 3,
+        "coordinationAndBalance": 1,
+        "resilienceAndEndurance": 4
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": ["RN"],
+        "software": ["Office"],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Software Developer",
+    "category": "Technology",
+    "income": 110000,
+    "summary": "Designs and builds computer programs and applications.",
+    "icon": "💻",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["technology", "engineering", "science"] },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 5,
+        "creativityAndInsightfulThinking": 3,
+        "communicationAndNetworking": 2,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 2,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 1,
+        "physicalStrength": 1,
+        "coordinationAndBalance": 0,
+        "resilienceAndEndurance": 2
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": [],
+        "software": ["Programming", "Office"],
+        "portfolio": ["App", "Website"]
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Graphic Designer",
+    "category": "Design",
+    "income": 53000,
+    "summary": "Creates visual concepts and designs for advertisements, publications, or digital media.",
+    "icon": "🎨",
+    "requirements": {
+      "education": { "minEQF": 4 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 3,
+        "creativityAndInsightfulThinking": 5,
+        "communicationAndNetworking": 3,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 2,
+        "physicalStrength": 1,
+        "coordinationAndBalance": 1,
+        "resilienceAndEndurance": 2
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": [],
+        "software": ["Photo/Video Editing", "Office"],
+        "portfolio": ["Presentation", "Website"]
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Light Truck Delivery Driver",
+    "category": "Logistics",
+    "income": 39000,
+    "summary": "Delivers goods locally using vans or small trucks.",
+    "icon": "🚐",
+    "requirements": {
+      "education": { "minEQF": 3 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 2,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 2,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 3,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 3,
+        "physicalStrength": 3,
+        "coordinationAndBalance": 2,
+        "resilienceAndEndurance": 3
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": ["B"],
+        "software": [],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+
+  {
+    "id": "Heavy Truck Driver",
+    "category": "Logistics",
+    "income": 52000,
+    "summary": "Transports goods long distances using large trucks or tractor-trailers.",
+    "icon": "🚛",
+    "requirements": {
+      "education": { "minEQF": 3 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 3,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 2,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 3,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 4,
+        "physicalStrength": 4,
+        "coordinationAndBalance": 2,
+        "resilienceAndEndurance": 4
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": ["CE"],
+        "software": [],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Electrician",
+    "category": "Construction",
+    "income": 58000,
+    "summary": "Installs and repairs electrical systems in homes, businesses, and factories.",
+    "icon": "💡",
+    "requirements": {
+      "education": { "minEQF": 4 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 3,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 2,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 4,
+        "physicalStrength": 4,
+        "coordinationAndBalance": 2,
+        "resilienceAndEndurance": 3
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": ["EL"],
+        "software": [],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Plumber",
+    "category": "Construction",
+    "income": 57000,
+    "summary": "Installs and repairs water supply and drainage systems.",
+    "icon": "🚰",
+    "requirements": {
+      "education": { "minEQF": 4 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 3,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 2,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 4,
+        "physicalStrength": 4,
+        "coordinationAndBalance": 2,
+        "resilienceAndEndurance": 3
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": ["PL"],
+        "software": [],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Accountant/Auditor",
+    "category": "Business",
+    "income": 60000,
+    "summary": "Prepares and examines financial records, ensuring accuracy and compliance.",
+    "icon": "📊",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["business", "law"] },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 5,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 3,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 1,
+        "spacialNavigation": 2,
+        "carefulnessAndAttentionToDetail": 5,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 1,
+        "physicalStrength": 1,
+        "coordinationAndBalance": 0,
+        "resilienceAndEndurance": 1
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": [],
+        "software": ["Office"],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Elementary School Teacher",
+    "category": "Education",
+    "income": 60000,
+    "summary": "Teaches academic subjects to children and manages a classroom.",
+    "icon": "📚",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["education", "humanities"] },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 4,
+        "creativityAndInsightfulThinking": 3,
+        "communicationAndNetworking": 5,
+        "leadershipAndInfluence": 3,
+        "courageAndRiskTolerance": 1,
+        "spacialNavigation": 1,
+        "carefulnessAndAttentionToDetail": 3,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 1,
+        "physicalStrength": 2,
+        "coordinationAndBalance": 1,
+        "resilienceAndEndurance": 2
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": [],
+        "software": ["Office"],
+        "portfolio": ["Presentation"]
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "IT Support Specialist",
+    "category": "Technology",
+    "income": 52000,
+    "summary": "Provides technical assistance, sets up systems, and resolves IT issues.",
+    "icon": "🖥️",
+    "requirements": {
+      "education": { "minEQF": 4 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 4,
+        "creativityAndInsightfulThinking": 1,
+        "communicationAndNetworking": 4,
+        "leadershipAndInfluence": 1,
+        "courageAndRiskTolerance": 1,
+        "spacialNavigation": 3,
+        "carefulnessAndAttentionToDetail": 4,
+        "perseveranceAndGrit": 3,
+        "tinkeringAndFingerPrecision": 2,
+        "physicalStrength": 2,
+        "coordinationAndBalance": 1,
+        "resilienceAndEndurance": 2
+      },
+      "hardSkills": {
+        "certifications": ["Security"],
+        "licenses": [],
+        "software": ["Office", "Programming"],
+        "portfolio": []
+      }
+    },
+    "version": 5
+  },
+  {
+    "id": "Chef",
+    "category": "Hospitality",
+    "income": 54000,
+    "summary": "Leads the kitchen, plans menus, and oversees food preparation and staff.",
+    "icon": "👨‍🍳",
+    "requirements": {
+      "education": { "minEQF": 4 },
+      "softSkills": {
+        "analyticalReasoningAndProblemSolving": 4,
+        "creativityAndInsightfulThinking": 4,
+        "communicationAndNetworking": 4,
+        "leadershipAndInfluence": 5,
+        "courageAndRiskTolerance": 2,
+        "spacialNavigation": 2,
+        "carefulnessAndAttentionToDetail": 5,
+        "perseveranceAndGrit": 4,
+        "tinkeringAndFingerPrecision": 2,
+        "physicalStrength": 4,
+        "coordinationAndBalance": 2,
+        "resilienceAndEndurance": 4
+      },
+      "hardSkills": {
+        "certifications": [],
+        "licenses": [],
+        "software": [],
+        "portfolio": ["Presentation"]
+      }
+    },
+    "version": 5
+  }
+]
