@@ -4,10 +4,14 @@ extension SoftSkills {
     static func pictogram(forLabel label: String) -> String? {
         skillNames.first(where: { $0.label == label })?.pictogram
     }
-    static func label(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>) -> String? {
+    static func label(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>)
+        -> String?
+    {
         skillNames.first(where: { $0.keyPath == keyPath })?.label
     }
-    static func pictogram(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>) -> String? {
+    static func pictogram(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>)
+        -> String?
+    {
         skillNames.first(where: { $0.keyPath == keyPath })?.pictogram
     }
 }
@@ -17,16 +21,18 @@ struct JobView: View {
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
 
-    private var requiredSoft: Job.Requirements.SoftSkillsBlock { job.requirements.softSkills }
-    private var requiredHard: Job.Requirements.HardSkillsBlock { job.requirements.hardSkills }
-
-    // MARK: - Mapping helpers from string to enums
+    private var requiredSoft: Job.Requirements.SoftSkillsBlock {
+        job.requirements.softSkills
+    }
+    private var requiredHard: Job.Requirements.HardSkillsBlock {
+        job.requirements.hardSkills
+    }
 
     private func certFrom(raw: String) -> Certification? {
         Certification(rawValue: raw)
     }
     private func licenseFrom(raw: String) -> License? {
-        // Map common short codes if present in dataV5
+
         switch raw {
         case "B", "Driver's License": return .drivers
         case "CE", "CDL": return .cdl
@@ -37,8 +43,8 @@ struct JobView: View {
             return License(rawValue: raw)
         }
     }
+    
     private func softwareFrom(raw: String) -> Software? {
-        // Known values in v5: "Office", "Programming", "Photo/Video Editing"
         switch raw {
         case "Office": return .officeSuite
         case "Programming": return .programming
@@ -48,6 +54,7 @@ struct JobView: View {
             return Software(rawValue: raw)
         }
     }
+    
     private func portfolioFrom(raw: String) -> PortfolioItem? {
         PortfolioItem(rawValue: raw)
     }
@@ -56,11 +63,13 @@ struct JobView: View {
 
     private var educationMet: Bool {
         let playerEQF = player.degrees.last?.eqf ?? 0
-        guard playerEQF >= job.requirements.education.minEQF else { return false }
+        guard playerEQF >= job.requirements.education.minEQF else {
+            return false
+        }
 
-        // If acceptedProfiles is supplied, ensure the latest degree’s profile (if any) is included.
-        if let accepted = job.requirements.education.acceptedProfiles, !accepted.isEmpty {
-            // Check any of the player's degrees for a matching profile
+        if let accepted = job.requirements.education.acceptedProfiles,
+            !accepted.isEmpty
+        {
             let playerProfiles = player.degrees.compactMap { $0.profile }
             if playerProfiles.isEmpty { return false }
             return playerProfiles.contains(where: { accepted.contains($0) })
@@ -73,18 +82,21 @@ struct JobView: View {
         let p = player.softSkills
         let r = requiredSoft
         return
-            p.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving &&
-            p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking &&
-            p.communicationAndNetworking >= r.communicationAndNetworking &&
-            p.leadershipAndInfluence >= r.leadershipAndInfluence &&
-            p.courageAndRiskTolerance >= r.courageAndRiskTolerance &&
-            p.spacialNavigation >= r.spacialNavigation &&
-            p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail &&
-            p.perseveranceAndGrit >= r.perseveranceAndGrit &&
-            p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision &&
-            p.physicalStrength >= r.physicalStrength &&
-            p.coordinationAndBalance >= r.coordinationAndBalance &&
-            p.resilienceAndEndurance >= r.resilienceAndEndurance
+            p.analyticalReasoningAndProblemSolving
+            >= r.analyticalReasoningAndProblemSolving
+            && p.creativityAndInsightfulThinking
+                >= r.creativityAndInsightfulThinking
+            && p.communicationAndNetworking >= r.communicationAndNetworking
+            && p.leadershipAndInfluence >= r.leadershipAndInfluence
+            && p.courageAndRiskTolerance >= r.courageAndRiskTolerance
+            && p.spacialNavigation >= r.spacialNavigation
+            && p.carefulnessAndAttentionToDetail
+                >= r.carefulnessAndAttentionToDetail
+            && p.perseveranceAndGrit >= r.perseveranceAndGrit
+            && p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
+            && p.physicalStrength >= r.physicalStrength
+            && p.coordinationAndBalance >= r.coordinationAndBalance
+            && p.resilienceAndEndurance >= r.resilienceAndEndurance
     }
 
     private var hardSkillsMet: Bool {
@@ -115,191 +127,22 @@ struct JobView: View {
         educationMet && softSkillsMet && hardSkillsMet
     }
 
-    private func formattedIncome(_ dollars: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: dollars)) ?? "$\(dollars)"
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                Text(job.icon)
-                    .font(.system(size: 96))
-                    .padding(.top, 16)
-
-                Text(job.id)
-                    .font(.largeTitle.bold())
-
-                Text(job.category.rawValue)
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-
-                HStack(spacing: 16) {
-                    labelBox(
-                        title: "Education",
-                        content: Text(job.requirements.education.educationLabel())
-                    )
-                    labelBox(
-                        title: "Income",
-                        content: HStack(spacing: 4) {
-                            Text(formattedIncome(job.income))
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    )
-                }
-                .padding(.horizontal)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("What is this job?")
-                        .font(.title2.bold())
-                    Text(job.summary)
-                        .font(.body)
-                }
-                .padding()
-
-                // Requirements
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("What do you need?")
-                        .font(.title2.bold())
-
-                    // Education
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Education")
-                            .font(.headline)
-                        requirementRow(
-                            label: job.requirements.education.educationLabel(),
-                            emoji: "🎓",
-                            level: job.requirements.education.minEQF,
-                            playerLevel: player.degrees.last?.eqf ?? 0
-                        )
-                        if let accepted = job.requirements.education.acceptedProfiles, !accepted.isEmpty {
-                            let playerProfiles = player.degrees.compactMap { $0.profile }
-                            let met = !playerProfiles.isEmpty && playerProfiles.contains(where: { accepted.contains($0) })
-                            HStack {
-                                Text("Accepted profiles: \(accepted.map { $0.rawValue.capitalized }.joined(separator: ", "))")
-                                Spacer()
-                                Text(met ? "✓" : "✗")
-                            }
-                            .font(.subheadline)
-                            .foregroundStyle(met ? .primary : .secondary)
-                        }
-                    }
-                    .padding(.vertical, 6)
-
-                    // Soft skills (flat)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Soft skills")
-                            .font(.headline)
-                        softRequirement(\.analyticalReasoningAndProblemSolving, requiredSoft.analyticalReasoningAndProblemSolving)
-                        softRequirement(\.creativityAndInsightfulThinking, requiredSoft.creativityAndInsightfulThinking)
-                        softRequirement(\.communicationAndNetworking, requiredSoft.communicationAndNetworking)
-                        softRequirement(\.leadershipAndInfluence, requiredSoft.leadershipAndInfluence)
-                        softRequirement(\.courageAndRiskTolerance, requiredSoft.courageAndRiskTolerance)
-                        softRequirement(\.spacialNavigation, requiredSoft.spacialNavigation)
-                        softRequirement(\.carefulnessAndAttentionToDetail, requiredSoft.carefulnessAndAttentionToDetail)
-                        softRequirement(\.perseveranceAndGrit, requiredSoft.perseveranceAndGrit)
-                        softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
-                        softRequirement(\.physicalStrength, requiredSoft.physicalStrength)
-                        softRequirement(\.coordinationAndBalance, requiredSoft.coordinationAndBalance)
-                        softRequirement(\.resilienceAndEndurance, requiredSoft.resilienceAndEndurance)
-                    }
-                    .padding(.vertical, 6)
-
-                    // Hard skills
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Hard skills")
-                            .font(.headline)
-
-                        // Certifications
-                        if !requiredHard.certifications.isEmpty {
-                            Text("Certifications")
-                                .font(.subheadline.bold())
-                            ForEach(requiredHard.certifications, id: \.self) { code in
-                                let enumVal = certFrom(raw: code)
-                                let owned = enumVal.map { player.hardSkills.certifications.contains($0) } ?? false
-                                hardRequirementRow(
-                                    label: enumVal?.friendlyName ?? code,
-                                    emoji: enumVal?.pictogram ?? "🎓",
-                                    met: owned
-                                )
-                            }
-                        }
-
-                        // Licenses
-                        if !requiredHard.licenses.isEmpty {
-                            Text("Licenses")
-                                .font(.subheadline.bold())
-                            ForEach(requiredHard.licenses, id: \.self) { code in
-                                let enumVal = licenseFrom(raw: code)
-                                let owned = enumVal.map { player.hardSkills.licenses.contains($0) } ?? false
-                                hardRequirementRow(
-                                    label: enumVal?.friendlyName ?? code,
-                                    emoji: enumVal?.pictogram ?? "📜",
-                                    met: owned
-                                )
-                            }
-                        }
-
-                        // Software
-                        if !requiredHard.software.isEmpty {
-                            Text("Software")
-                                .font(.subheadline.bold())
-                            ForEach(requiredHard.software, id: \.self) { code in
-                                let enumVal = softwareFrom(raw: code)
-                                let owned = enumVal.map { player.hardSkills.software.contains($0) } ?? false
-                                hardRequirementRow(
-                                    label: enumVal?.rawValue ?? code,
-                                    emoji: enumVal?.pictogram ?? "💻",
-                                    met: owned
-                                )
-                            }
-                        }
-
-                        // Portfolio
-                        if !requiredHard.portfolio.isEmpty {
-                            Text("Portfolio")
-                                .font(.subheadline.bold())
-                            ForEach(requiredHard.portfolio, id: \.self) { code in
-                                let enumVal = portfolioFrom(raw: code)
-                                let owned = enumVal.map { player.hardSkills.portfolioItems.contains($0) } ?? false
-                                hardRequirementRow(
-                                    label: enumVal?.rawValue ?? code,
-                                    emoji: enumVal?.pictogram ?? "📁",
-                                    met: owned
-                                )
-                            }
-                        }
-                    }
-                    .padding(.vertical, 6)
-                }
-                .padding(.horizontal)
-
-                Button {
-                    player.currentOccupation = job
-                    showCareersSheet.toggle()
-                } label: {
-                    Text(allRequirementsMet ? "Choose this job" : "Requirements not met")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!allRequirementsMet)
-                .opacity(allRequirementsMet ? 1.0 : 0.5)
-                .accessibilityHint(allRequirementsMet ? "All requirements met" : "Some requirements are not met")
-                .padding()
-            }
-            .padding(.bottom, 24)
-        }
-        .accessibilityIdentifier("CareerDetailRoot")
-        .navigationTitle("")
-    }
+//    private func formattedIncome(_ dollars: Int) -> String {
+//        let formatter = NumberFormatter()
+//        formatter.numberStyle = .currency
+//        formatter.currencyCode = "USD"
+//        formatter.maximumFractionDigits = 0
+//        return formatter.string(from: NSNumber(value: dollars)) ?? "$\(dollars)"
+//    }
 
     // MARK: - UI helpers
 
-    private func requirementRow(label: String, emoji: String, level: Int, playerLevel: Int) -> some View {
+    private func requirementRow(
+        label: String,
+        emoji: String,
+        level: Int,
+        playerLevel: Int
+    ) -> some View {
         let required = max(level, 0)
         let meets = playerLevel >= required
 
@@ -310,15 +153,19 @@ struct JobView: View {
                 ForEach(0..<required, id: \.self) { idx in
                     Text(emoji)
                         .opacity(idx < playerLevel ? 1.0 : 0.35)
-                }}
+                }
+            }
             .font(.body)
         }
         .font(.body)
         .foregroundStyle(meets ? .primary : .secondary)
-        .accessibilityHint(meets ? "\(label) requirement met" : "\(label) requirement not met")
+        .padding(.horizontal)
     }
 
-    private func softRequirement(_ keyPath: WritableKeyPath<SoftSkills, Int>, _ requiredLevel: Int) -> some View {
+    private func softRequirement(
+        _ keyPath: WritableKeyPath<SoftSkills, Int>,
+        _ requiredLevel: Int
+    ) -> some View {
         requirementRow(
             label: SoftSkills.label(forKeyPath: keyPath) ?? "",
             emoji: SoftSkills.pictogram(forKeyPath: keyPath) ?? "",
@@ -327,73 +174,245 @@ struct JobView: View {
         )
     }
 
-    private func hardRequirementRow(label: String, emoji: String, met: Bool) -> some View {
+    private func hardRequirementRow(label: String, emoji: String, met: Bool)
+        -> some View
+    {
         HStack {
             Text(label)
             Spacer()
             Text(emoji)
-            Text(met ? "✓" : "✗")
-                .foregroundStyle(met ? .green : .secondary)
+                .opacity(met ? 1.0 : 0.35)
         }
         .font(.body)
         .foregroundStyle(met ? .primary : .secondary)
-        .accessibilityHint(met ? "\(label) requirement met" : "\(label) requirement not met")
+        .padding(.horizontal)
     }
 
-    private func labelBox<T: View>(title: String, content: T) -> some View {
-        VStack(spacing: 6) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            content
+//    private func labelBox<T: View>(title: String, content: T) -> some View {
+//        VStack(spacing: 6) {
+//            Text(title)
+//                .font(.caption)
+//                .foregroundStyle(.secondary)
+//            content
+//                .font(.body)
+//        }
+//        .padding(12)
+//        .frame(maxWidth: .infinity)
+//        .clipShape(RoundedRectangle(cornerRadius: 12))
+//    }
+
+    var body: some View {
+        ScrollView {
+            Text(job.icon)
+                .font(.system(size: 96))
+                .padding(.top, 16)
+
+            Text(job.id)
+                .font(.largeTitle.bold())
+                .padding()
+
+            Text(job.summary)
                 .font(.body)
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity ,alignment: .leading)
+
+            HStack(spacing: 16) {
+                Text("Income")
+                Text("\(job.income) $")
+            }
+            .font(.subheadline)
+            .frame(maxWidth: .infinity ,alignment: .leading)
+            .padding(.horizontal)
+           
+
+            Text("Requirements")
+                .font(.title3)
+                .padding()
+                .frame(maxWidth: .infinity ,alignment: .leading)
+
+            Divider()
+            
+            requirementRow(
+                label: job.requirements.education.educationLabel(),
+                emoji: "🎓",
+                level: job.requirements.education.minEQF,
+                playerLevel: player.degrees.last?.eqf ?? 0
+            )
+            
+            if let accepted = job.requirements.education.acceptedProfiles,
+                !accepted.isEmpty
+            {
+                let playerProfiles = player.degrees.compactMap { $0.profile }
+                let met =
+                    !playerProfiles.isEmpty
+                    && playerProfiles.contains(where: { accepted.contains($0) })
+                HStack {
+                    Text(
+                        "Accepted profiles: \(accepted.map { $0.rawValue.capitalized }.joined(separator: ", "))"
+                    )
+                    Spacer()
+                    Text(met ? "✅" : "❌")
+                }
+                .font(.subheadline)
+                .foregroundStyle(met ? .primary : .secondary)
+                .padding()
+            }
+            
+            softRequirement(
+                \.analyticalReasoningAndProblemSolving,
+                requiredSoft.analyticalReasoningAndProblemSolving
+            )
+            softRequirement(
+                \.creativityAndInsightfulThinking,
+                requiredSoft.creativityAndInsightfulThinking
+            )
+            softRequirement(
+                \.communicationAndNetworking,
+                requiredSoft.communicationAndNetworking
+            )
+            softRequirement(
+                \.leadershipAndInfluence,
+                requiredSoft.leadershipAndInfluence
+            )
+            softRequirement(
+                \.courageAndRiskTolerance,
+                requiredSoft.courageAndRiskTolerance
+            )
+            softRequirement(\.spacialNavigation, requiredSoft.spacialNavigation)
+            softRequirement(
+                \.carefulnessAndAttentionToDetail,
+                requiredSoft.carefulnessAndAttentionToDetail
+            )
+            softRequirement(
+                \.perseveranceAndGrit,
+                requiredSoft.perseveranceAndGrit
+            )
+            softRequirement(
+                \.tinkeringAndFingerPrecision,
+                requiredSoft.tinkeringAndFingerPrecision
+            )
+            softRequirement(\.physicalStrength, requiredSoft.physicalStrength)
+            softRequirement(
+                \.coordinationAndBalance,
+                requiredSoft.coordinationAndBalance
+            )
+            softRequirement(
+                \.resilienceAndEndurance,
+                requiredSoft.resilienceAndEndurance
+            )
+
+            Spacer()
+            // Certifications
+            if !requiredHard.certifications.isEmpty {
+                Text("Certifications")
+                    .font(.subheadline.bold())
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
+                
+                ForEach(requiredHard.certifications, id: \.self) { code in
+                    let enumVal = certFrom(raw: code)
+                    let owned =
+                        enumVal.map {
+                            player.hardSkills.certifications.contains($0)
+                        } ?? false
+                    hardRequirementRow(
+                        label: enumVal?.friendlyName ?? code,
+                        emoji: enumVal?.pictogram ?? "🎓",
+                        met: owned
+                    )
+                }
+            }
+
+            // Licenses
+            if !requiredHard.licenses.isEmpty {
+                Text("Licenses")
+                    .font(.subheadline.bold())
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
+
+                ForEach(requiredHard.licenses, id: \.self) { code in
+                    let enumVal = licenseFrom(raw: code)
+                    let owned =
+                        enumVal.map { player.hardSkills.licenses.contains($0) }
+                        ?? false
+                    hardRequirementRow(
+                        label: enumVal?.friendlyName ?? code,
+                        emoji: enumVal?.pictogram ?? "📜",
+                        met: owned
+                    )
+                }
+            }
+
+            // Software
+            if !requiredHard.software.isEmpty {
+                Text("Software")
+                    .font(.subheadline.bold())
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
+
+                ForEach(requiredHard.software, id: \.self) { code in
+                    let enumVal = softwareFrom(raw: code)
+                    let owned =
+                        enumVal.map { player.hardSkills.software.contains($0) }
+                        ?? false
+                    hardRequirementRow(
+                        label: enumVal?.rawValue ?? code,
+                        emoji: enumVal?.pictogram ?? "💻",
+                        met: owned
+                    )
+                }
+            }
+
+            // Portfolio
+            if !requiredHard.portfolio.isEmpty {
+                Text("Portfolio")
+                    .font(.subheadline.bold())
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
+
+                ForEach(requiredHard.portfolio, id: \.self) { code in
+                    let enumVal = portfolioFrom(raw: code)
+                    let owned =
+                        enumVal.map {
+                            player.hardSkills.portfolioItems.contains($0)
+                        } ?? false
+                    hardRequirementRow(
+                        label: enumVal?.rawValue ?? code,
+                        emoji: enumVal?.pictogram ?? "📁",
+                        met: owned
+                    )
+                }
+            }
+
+            Button {
+                player.currentOccupation = job
+                showCareersSheet.toggle()
+            } label: {
+                Text(
+                    allRequirementsMet
+                        ? "Choose this job" : "Requirements not met"
+                )
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!allRequirementsMet)
+            .opacity(allRequirementsMet ? 1.0 : 0.5)
+            .accessibilityHint(
+                allRequirementsMet
+                    ? "All requirements met" : "Some requirements are not met"
+            )
+            .padding()
+
         }
-        .padding(12)
-        .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
-// Standalone preview with a sample job
 #Preview {
-    let exampleJob = Job(
-        id: "SampleJob",
-        category: .agriculture,
-        income: 72000,
-        summary: "Test job for preview.",
-        icon: "🧑‍🌾",
-        requirements: Job.Requirements(
-            education: .init(minEQF: 3, acceptedProfiles: [.technology]),
-            softSkills: .init(
-                analyticalReasoningAndProblemSolving: 1,
-                creativityAndInsightfulThinking: 1,
-                communicationAndNetworking: 1,
-                leadershipAndInfluence: 1,
-                courageAndRiskTolerance: 1,
-                spacialNavigation: 1,
-                carefulnessAndAttentionToDetail: 1,
-                perseveranceAndGrit: 1,
-                tinkeringAndFingerPrecision: 1,
-                physicalStrength: 1,
-                coordinationAndBalance: 1,
-                resilienceAndEndurance: 1
-            ),
-            hardSkills: .init(
-                certifications: ["Security"],
-                licenses: ["B"],
-                software: ["Office", "Programming"],
-                portfolio: ["Website"]
-            )
-        ),
-        version: 5
-    )
-    if #available(macOS 13.0, *) {
-        return NavigationStack {
-            JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
-        }
-    } else {
-        return NavigationView {
-            JobView(job: exampleJob, player: Player(), showCareersSheet: .constant(true))
-        }
+    NavigationView {
+        JobView(
+            job: jobExample,
+            player: Player(),
+            showCareersSheet: .constant(true)
+        )
     }
 }

@@ -70,9 +70,7 @@ struct HeaderView: View {
     HeaderView(
         player: Player(
             degrees: [],
-            currentOccupation: .some(
-                jobExample
-            )
+            currentOccupation: .none
         ),
         showDecisionSheet: .constant(false),
         showTertiarySheet: .constant(false),

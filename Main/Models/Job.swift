@@ -109,7 +109,7 @@ var jobExample = Job(
             coordinationAndBalance: 1,
             resilienceAndEndurance: 1
         ),
-        hardSkills: .init(certifications: [], licenses: [], software: [], portfolio: [])
+        hardSkills: .init(certifications: ["AWS"], licenses: ["C"], software: ["Office 365"], portfolio: [])
     ),
     version: 5
 )
