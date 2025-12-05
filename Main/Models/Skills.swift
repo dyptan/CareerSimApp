@@ -239,8 +239,15 @@ struct SoftSkills: Codable, Hashable {
     var coordinationAndBalance: Int = 0
     var perseveranceAndGrit: Int = 0
     var resilienceAndEndurance: Int = 0
-    
-    
+
+    // New school-age soft skills
+    var emotionalIntelligence: Int = 0                // Empathy
+    var collaborationAndTeamwork: Int = 0             // Collaboration
+    var timeManagementAndPlanning: Int = 0            // Time Management
+    var selfDisciplineAndStudyHabits: Int = 0         // Study Habits / Self-Discipline
+    var adaptabilityAndLearningAgility: Int = 0       // Adaptability
+    var presentationAndStorytelling: Int = 0          // Presentation
+
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
         (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
@@ -253,7 +260,15 @@ struct SoftSkills: Codable, Hashable {
         (\.physicalStrength, "Strength", "💪"),
         (\.coordinationAndBalance, "Coordination", "🤸"),
         (\.perseveranceAndGrit, "Perseverance", "🛡️"),
-        (\.resilienceAndEndurance, "Endurance", "🌦️")
+        (\.resilienceAndEndurance, "Endurance", "🌦️"),
+
+        // New school-age soft skills (labels + pictograms)
+        (\.emotionalIntelligence, "Emotional Intelligence", "🫶"),
+        (\.collaborationAndTeamwork, "Collaboration", "🤝"),
+        (\.timeManagementAndPlanning, "Time Management", "⏱️"),
+        (\.selfDisciplineAndStudyHabits, "Study Habits", "📚"),
+        (\.adaptabilityAndLearningAgility, "Adaptability", "🔄"),
+        (\.presentationAndStorytelling, "Presentation", "🎤")
     ]
 }
 // MARK: - Optional: convenience display helpers for a skill + level

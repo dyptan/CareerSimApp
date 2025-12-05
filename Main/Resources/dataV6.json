@@ -1,0 +1,318 @@
+[
+  {
+    "id": "Registered Nurse",
+    "category": "Health",
+    "income": 72000,
+    "summary": "Provides patient care, administers medication, and coordinates with medical teams.",
+    "icon": "🩺",
+    "requirements": {
+      "education": { "minEQF": 6, "acceptedProfiles": ["health", "science"] },
+      "experience": [
+        { "role": "Registered Nurse", "years": 1, "note": "Direct clinical experience is preferred." },
+        { "role": "Medical Assistant", "years": 2, "weight": 0.6, "note": "Counts partially if working in clinical settings." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 4, "description": "Analyze symptoms, labs, and patient history to choose appropriate actions during care." },
+        { "name": "Communication", "level": 5, "description": "Explain procedures, listen to patients, and coordinate handoffs with doctors and staff." },
+        { "name": "Attention To Detail", "level": 5, "description": "Follow protocols and dosages precisely to ensure patient safety." },
+        { "name": "Perseverance", "level": 4, "description": "Maintain focus and consistency through long, demanding shifts." },
+        { "name": "Strength", "level": 3, "description": "Assist with lifting, positioning, and moving patients safely." },
+        { "name": "Endurance", "level": 4, "description": "Sustain energy and composure through busy, physically active schedules." }
+      ],
+      "hardSkills": [
+        { "name": "Registered Nurse License", "level": 1, "description": "Legal license to practice nursing in clinical settings." },
+        { "name": "Office", "level": 2, "description": "Use documents and spreadsheets for charting, reporting, and care coordination." }
+      ]
+    },
+    "companyTier": "government",
+    "version": 6
+  },
+
+  {
+    "id": "Software Developer",
+    "category": "Technology",
+    "income": 110000,
+    "summary": "Designs and builds computer programs and applications.",
+    "icon": "💻",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["technology", "engineering", "science"] },
+      "experience": [
+        { "role": "Software Developer", "years": 2, "note": "Direct feature development or product work." },
+        { "role": "IT Support Specialist", "years": 3, "weight": 0.5, "note": "Counts partially when scripting/automation was involved." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 5, "description": "Break down complex requirements and design correct, efficient solutions." },
+        { "name": "Creativity", "level": 3, "description": "Find elegant approaches to UX and system design." },
+        { "name": "Attention To Detail", "level": 4, "description": "Write precise code and tests to prevent defects and outages." },
+        { "name": "Perseverance", "level": 3, "description": "Debug patiently and refine solutions over multiple iterations." }
+      ],
+      "hardSkills": [
+        { "name": "Programming", "level": 3, "description": "Implement, test, and maintain software using modern languages and tools." },
+        { "name": "Office", "level": 2, "description": "Use documents/spreadsheets for specs, planning, and reporting." },
+        { "name": "App", "level": 1, "description": "A shipped or demonstrable app showing practical development experience." },
+        { "name": "Website", "level": 1, "description": "A live or demo website demonstrating front-end or full-stack skills." }
+      ]
+    },
+    "companyTier": "enterprise",
+    "version": 6
+  },
+
+  {
+    "id": "Graphic Designer",
+    "category": "Design",
+    "income": 53000,
+    "summary": "Creates visual concepts and designs for advertisements, publications, or digital media.",
+    "icon": "🎨",
+    "requirements": {
+      "education": { "minEQF": 4, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Graphic Designer", "years": 1, "note": "Client or in-house design work." },
+        { "role": "Media Designer", "years": 2, "weight": 0.7, "note": "Counts when focused on visual content production." }
+      ],
+      "softSkills": [
+        { "name": "Creativity", "level": 5, "description": "Generate compelling visual ideas and distinctive styles." },
+        { "name": "Navigation", "level": 3, "description": "Apply layout, composition, and spatial balance for clear design." },
+        { "name": "Attention To Detail", "level": 4, "description": "Maintain pixel precision, consistency, and brand alignment." },
+        { "name": "Perseverance", "level": 3, "description": "Iterate through feedback cycles to reach polished outcomes." }
+      ],
+      "hardSkills": [
+        { "name": "Photo/Video Editing", "level": 3, "description": "Use professional tools to create and refine visual assets." },
+        { "name": "Office", "level": 2, "description": "Prepare presentations and project documentation." },
+        { "name": "Presentation", "level": 1, "description": "A deck or talk that effectively communicates design work." },
+        { "name": "Website", "level": 1, "description": "A portfolio site showcasing design projects." }
+      ]
+    },
+    "companyTier": "smb",
+    "version": 6
+  },
+
+  {
+    "id": "Light Truck Delivery Driver",
+    "category": "Logistics",
+    "income": 39000,
+    "summary": "Delivers goods locally using vans or small trucks.",
+    "icon": "🚐",
+    "requirements": {
+      "education": { "minEQF": 3, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Light Truck Delivery Driver", "years": 1, "note": "Local courier or route delivery." },
+        { "role": "Warehouse Associate", "years": 2, "weight": 0.5, "note": "Counts when handling loading/unloading and routing." }
+      ],
+      "softSkills": [
+        { "name": "Navigation", "level": 3, "description": "Plan efficient routes and adapt to traffic or detours." },
+        { "name": "Attention To Detail", "level": 3, "description": "Verify addresses and packages to avoid delivery errors." },
+        { "name": "Perseverance", "level": 3, "description": "Maintain productivity and schedule adherence throughout the day." },
+        { "name": "Tinkering", "level": 3, "description": "Handle loading/unloading and basic equipment safely." },
+        { "name": "Strength", "level": 3, "description": "Lift and carry packages safely and efficiently." },
+        { "name": "Coordination", "level": 2, "description": "Operate vehicles smoothly for safe, timely delivery." },
+        { "name": "Endurance", "level": 3, "description": "Work long or irregular hours while remaining alert." }
+      ],
+      "hardSkills": [
+        { "name": "Driver’s License", "level": 1, "description": "Standard driving license (B) required to operate vehicles legally." }
+      ]
+    },
+    "companyTier": "smb",
+    "version": 6
+  },
+
+  {
+    "id": "Heavy Truck Driver",
+    "category": "Logistics",
+    "income": 52000,
+    "summary": "Transports goods long distances using large trucks or tractor-trailers.",
+    "icon": "🚛",
+    "requirements": {
+      "education": { "minEQF": 3, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Heavy Truck Driver", "years": 1, "note": "Long-haul or regional routes." },
+        { "role": "Light Truck Delivery Driver", "years": 2, "weight": 0.6, "note": "Counts partially for driving experience." }
+      ],
+      "softSkills": [
+        { "name": "Navigation", "level": 3, "description": "Navigate highways and cities efficiently to meet schedules." },
+        { "name": "Attention To Detail", "level": 4, "description": "Inspect vehicle and cargo thoroughly for safety and compliance." },
+        { "name": "Perseverance", "level": 3, "description": "Stay focused and disciplined during long-haul trips." },
+        { "name": "Tinkering", "level": 4, "description": "Secure cargo and perform minor checks or adjustments." },
+        { "name": "Strength", "level": 4, "description": "Manage heavy gear and cargo as needed." },
+        { "name": "Endurance", "level": 4, "description": "Handle extended driving hours with proper rest cycles." }
+      ],
+      "hardSkills": [
+        { "name": "Commercial Driver’s License", "level": 1, "description": "Heavy truck (CE) license required to operate large vehicles." }
+      ]
+    },
+    "companyTier": "midMarket",
+    "version": 6
+  },
+
+  {
+    "id": "Electrician",
+    "category": "Construction",
+    "income": 58000,
+    "summary": "Installs and repairs electrical systems in homes, businesses, and factories.",
+    "icon": "💡",
+    "requirements": {
+      "education": { "minEQF": 4, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Electrician", "years": 1, "note": "Apprenticeship or supervised field work." },
+        { "role": "Maintenance Technician", "years": 2, "weight": 0.5, "note": "Counts when involving electrical systems." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 3, "description": "Diagnose faults and plan safe, effective fixes." },
+        { "name": "Navigation", "level": 3, "description": "Plan cable runs and device placements in varied spaces." },
+        { "name": "Attention To Detail", "level": 4, "description": "Follow codes and ensure precise, safe connections." },
+        { "name": "Perseverance", "level": 3, "description": "Complete multi-step installations and repairs reliably." },
+        { "name": "Tinkering", "level": 4, "description": "Perform precise wiring, terminations, and device work." },
+        { "name": "Strength", "level": 4, "description": "Carry tools and equipment; work in physically demanding settings." },
+        { "name": "Endurance", "level": 3, "description": "Stay active on-site across full-day projects." }
+      ],
+      "hardSkills": [
+        { "name": "Electrician License", "level": 1, "description": "Authorization to perform electrical installations and repairs." }
+      ]
+    },
+    "companyTier": "smb",
+    "version": 6
+  },
+
+  {
+    "id": "Plumber",
+    "category": "Construction",
+    "income": 57000,
+    "summary": "Installs and repairs water supply and drainage systems.",
+    "icon": "🚰",
+    "requirements": {
+      "education": { "minEQF": 4, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Plumber", "years": 1, "note": "Apprenticeship or supervised field work." },
+        { "role": "Maintenance Technician", "years": 2, "weight": 0.5, "note": "Counts when involving plumbing systems." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 3, "description": "Diagnose leaks and flow issues to choose effective fixes." },
+        { "name": "Navigation", "level": 3, "description": "Plan pipe routes and placements in tight or complex spaces." },
+        { "name": "Attention To Detail", "level": 4, "description": "Ensure tight seals, correct fittings, and code compliance." },
+        { "name": "Perseverance", "level": 3, "description": "Work steadily through multi-step installations." },
+        { "name": "Tinkering", "level": 4, "description": "Perform precise fitting, soldering, and fixture work." },
+        { "name": "Strength", "level": 4, "description": "Carry materials and equipment across job sites." },
+        { "name": "Endurance", "level": 3, "description": "Remain active and productive through full-day tasks." }
+      ],
+      "hardSkills": [
+        { "name": "Plumber License", "level": 1, "description": "Authorization to perform plumbing installations and repairs." }
+      ]
+    },
+    "companyTier": "smb",
+    "version": 6
+  },
+
+  {
+    "id": "Accountant/Auditor",
+    "category": "Business",
+    "income": 60000,
+    "summary": "Prepares and examines financial records, ensuring accuracy and compliance.",
+    "icon": "📊",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["business", "law"] },
+      "experience": [
+        { "role": "Accountant/Auditor", "years": 1, "note": "Financial reporting or audit cycles." },
+        { "role": "Financial Analyst", "years": 2, "weight": 0.7, "note": "Counts when focused on accounting and compliance." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 5, "description": "Analyze financial data and identify trends or discrepancies." },
+        { "name": "Communication", "level": 3, "description": "Explain findings and recommendations to stakeholders." },
+        { "name": "Attention To Detail", "level": 5, "description": "Ensure entries and calculations are correct and compliant." },
+        { "name": "Perseverance", "level": 3, "description": "Work through meticulous, time-consuming audits." }
+      ],
+      "hardSkills": [
+        { "name": "Office", "level": 3, "description": "Advanced spreadsheets and documents for analysis and reporting." }
+      ]
+    },
+    "companyTier": "midMarket",
+    "version": 6
+  },
+
+  {
+    "id": "Elementary School Teacher",
+    "category": "Education",
+    "income": 60000,
+    "summary": "Teaches academic subjects to children and manages a classroom.",
+    "icon": "📚",
+    "requirements": {
+      "education": { "minEQF": 5, "acceptedProfiles": ["education", "humanities"] },
+      "experience": [
+        { "role": "Elementary School Teacher", "years": 1, "note": "Classroom teaching or student teaching." },
+        { "role": "Tutor", "years": 2, "weight": 0.6, "note": "Counts when working with children on curricula." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 3, "description": "Adapt lessons and interventions to student needs." },
+        { "name": "Creativity", "level": 3, "description": "Design engaging activities and materials." },
+        { "name": "Communication", "level": 5, "description": "Explain clearly, listen actively, and manage the classroom." },
+        { "name": "Leadership", "level": 3, "description": "Guide and motivate students; set routines and expectations." },
+        { "name": "Attention To Detail", "level": 3, "description": "Track progress, assignments, and requirements." },
+        { "name": "Perseverance", "level": 3, "description": "Maintain consistency and energy across the school term." }
+      ],
+      "hardSkills": [
+        { "name": "Office", "level": 2, "description": "Prepare lesson plans, worksheets, and reports." },
+        { "name": "Presentation", "level": 1, "description": "A deck or talk demonstrating communication skills." }
+      ]
+    },
+    "companyTier": "government",
+    "version": 6
+  },
+
+  {
+    "id": "IT Support Specialist",
+    "category": "Technology",
+    "income": 52000,
+    "summary": "Provides technical assistance, sets up systems, and resolves IT issues.",
+    "icon": "🖥️",
+    "requirements": {
+      "education": { "minEQF": 4, "acceptedProfiles": null },
+      "experience": [
+        { "role": "IT Support Specialist", "years": 1, "note": "Help desk, deskside, or systems support." },
+        { "role": "Software Developer", "years": 2, "weight": 0.4, "note": "Counts partially when focused on tooling and automation." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 4, "description": "Diagnose issues and identify effective fixes." },
+        { "name": "Communication", "level": 4, "description": "Explain solutions to non-technical users clearly." },
+        { "name": "Attention To Detail", "level": 4, "description": "Follow procedures and document steps accurately." },
+        { "name": "Perseverance", "level": 3, "description": "Work through stubborn or recurring problems." },
+        { "name": "Tinkering", "level": 2, "description": "Handle hardware setups and basic repairs safely." },
+        { "name": "Strength", "level": 2, "description": "Move and rack equipment when needed." }
+      ],
+      "hardSkills": [
+        { "name": "Security", "level": 1, "description": "Basic security awareness certification for safe system handling." },
+        { "name": "Office", "level": 2, "description": "Track issues and produce clear documentation." },
+        { "name": "Programming", "level": 1, "description": "Basic scripting to automate routine tasks." }
+      ]
+    },
+    "companyTier": "midMarket",
+    "version": 6
+  },
+
+  {
+    "id": "Chef",
+    "category": "Hospitality",
+    "income": 54000,
+    "summary": "Leads the kitchen, plans menus, and oversees food preparation and staff.",
+    "icon": "👨‍🍳",
+    "requirements": {
+      "education": { "minEQF": 4, "acceptedProfiles": null },
+      "experience": [
+        { "role": "Chef", "years": 1, "note": "Line cook, sous chef, or kitchen lead experience." },
+        { "role": "Caterer", "years": 2, "weight": 0.6, "note": "Counts when managing prep and service at events." }
+      ],
+      "softSkills": [
+        { "name": "Problem Solving", "level": 4, "description": "Organize prep, timing, and resources efficiently for service." },
+        { "name": "Creativity", "level": 4, "description": "Design appealing dishes and menus that stand out." },
+        { "name": "Communication", "level": 4, "description": "Coordinate with kitchen and front-of-house for smooth service." },
+        { "name": "Leadership", "level": 5, "description": "Lead, mentor, and motivate the kitchen team under pressure." },
+        { "name": "Attention To Detail", "level": 5, "description": "Maintain consistency, plating standards, and food safety." },
+        { "name": "Perseverance", "level": 4, "description": "Handle long shifts, rushes, and high service volume." },
+        { "name": "Strength", "level": 4, "description": "Move heavy pots, pans, and supplies routinely." },
+        { "name": "Endurance", "level": 4, "description": "Sustain energy throughout demanding services." }
+      ],
+      "hardSkills": [
+        { "name": "Presentation", "level": 1, "description": "A talk or demo showcasing culinary work and communication." }
+      ]
+    },
+    "companyTier": "smb",
+    "version": 6
+  }
+]

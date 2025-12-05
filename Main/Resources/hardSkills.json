@@ -1,0 +1,86 @@
+[
+  {
+    "id": "rn",
+    "name": "Registered Nurse License",
+    "type": "license",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "office",
+    "name": "Office Suite",
+    "type": "software",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "programming",
+    "name": "Programming",
+    "type": "software",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "appPortfolio",
+    "name": "App",
+    "type": "portfolio",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "websitePortfolio",
+    "name": "Website",
+    "type": "portfolio",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "mediaEditing",
+    "name": "Photo & Video Editing",
+    "type": "software",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "presentationPortfolio",
+    "name": "Presentation",
+    "type": "portfolio",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "drivers",
+    "name": "Driver’s License",
+    "type": "license",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "cdl",
+    "name": "Commercial Driver’s License",
+    "type": "license",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "electrician",
+    "name": "Electrician License",
+    "type": "license",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "plumber",
+    "name": "Plumber License",
+    "type": "license",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "security",
+    "name": "Security Awareness",
+    "type": "certification",
+    "description": null,
+    "asset": null
+  }
+]

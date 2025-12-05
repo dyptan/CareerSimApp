@@ -132,48 +132,34 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
     var degreeMeaning: String {
         switch self {
         case .business:
-            return
-                "You learn how money, teams, and products work together to make a business succeed."
+            return "You learn how money, teams, and products work together to make a business succeed."
         case .engineering:
-            return
-                "You learn math, science, and design to make machines, bridges, and technologies work."
+            return "You learn math, science, and design to make machines, bridges, and technologies work."
         case .health:
-            return
-                "You learn how the body works and how to care for people in clinics and hospitals."
+            return "You learn how the body works and how to care for people in clinics and hospitals."
         case .arts:
-            return
-                "You practice creative skills like drawing, music, acting, or cooking to express ideas."
+            return "You practice creative skills like drawing, music, acting, or cooking to express ideas."
         case .science:
-            return
-                "You learn to ask questions, test ideas, and discover new knowledge about nature and the universe."
+            return "You learn to ask questions, test ideas, and discover new knowledge about nature and the universe."
         case .education:
-            return
-                "You learn how people learn, and how to teach different subjects to students."
+            return "You learn how people learn, and how to teach different subjects to students."
         case .technology:
-            return
-                "You learn coding, systems, and security to build software and manage data."
+            return "You learn coding, systems, and security to build software and manage data."
         case .sports:
-            return
-                "You learn about movement, training, and health to improve athletic performance."
+            return "You learn about movement, training, and health to improve athletic performance."
         case .agriculture:
-            return
-                "You learn how to grow crops, care for animals, and manage farms sustainably."
+            return "You learn how to grow crops, care for animals, and manage farms sustainably."
         case .humanities:
-            return
-                "You study language, culture, and history to understand people and societies."
+            return "You study language, culture, and history to understand people and societies."
         case .law:
-            return
-                "You learn rules, rights, and justice systems to help people follow the law."
+            return "You learn rules, rights, and justice systems to help people follow the law."
         case .design:
-            return
-                "You learn to plan how things look and work so they’re easy and fun to use."
+            return "You learn to plan how things look and work so they’re easy and fun to use."
         case .service:
-            return
-                "You learn practical skills to support people in daily life and at work."
+            return "You learn practical skills to support people in daily life and at work."
         }
     }
 
-    /// Which jobs this helps you land (examples)
     var helpfulJobs: String {
         switch self {
         case .business:
@@ -205,7 +191,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// Broad grouping useful for rules (e.g. STEM vs non-STEM)
     var isSTEM: Bool {
         switch self {
         case .engineering, .science, .technology:
@@ -215,20 +200,16 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// Whether this profile has a sensible Vocational (dual) track
     var allowsVocational: Bool {
         switch self {
-        case .engineering, .technology, .health, .agriculture, .design,
-            .service, .sports:
+        case .engineering, .technology, .health, .agriculture, .design, .service, .sports:
             return true
         case .business, .arts, .science, .education, .humanities, .law:
             return false
         }
     }
-
 }
 
-// Concrete education choice: stage + optional profile
 struct Education: Codable, Hashable, Identifiable {
     var level: Level.Stage
     var profile: TertiaryProfile?  // nil for early education
@@ -241,7 +222,6 @@ struct Education: Codable, Hashable, Identifiable {
         }
     }
 
-    // Convenience initializers
     init(_ level: Level.Stage) {
         self.level = level
         self.profile = nil
@@ -252,11 +232,8 @@ struct Education: Codable, Hashable, Identifiable {
         self.profile = profile
     }
 
-    // Delegated properties
     var eqf: Int { Level(stage: level).eqf }
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
-
-    // MARK: - Requirements
 
     struct Requirements: Codable, Hashable {
         var minEQF: Int = 0
@@ -273,27 +250,167 @@ struct Education: Codable, Hashable, Identifiable {
         var tinkering: Int = 0
         var physicalStrength: Int = 0
         var endurance: Int = 0
+
+        // New school-age soft skills thresholds
+        var emotionalIntelligence: Int = 0
+        var collaborationAndTeamwork: Int = 0
+        var timeManagementAndPlanning: Int = 0
+        var selfDisciplineAndStudyHabits: Int = 0
+        var adaptabilityAndLearningAgility: Int = 0
+        var presentationAndStorytelling: Int = 0
     }
 
-    // Default requirements per education (tweak as desired)
     var requirements: Requirements {
         switch (level, profile) {
         case (.Vocational, .some(let p)):
             switch p {
             case .technology:
-                return Requirements(minEQF: 3, analyticalReasoning: 1, attentionToDetail: 1, tinkering: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 1,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 0,
+                    tinkering: 1,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .engineering:
-                return Requirements(minEQF: 3, analyticalReasoning: 1, spatialThinking: 1, tinkering: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 1,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 1,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 1,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .health:
-                return Requirements(minEQF: 3, socialCommunication: 1, attentionToDetail: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 1,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .agriculture:
-                return Requirements(minEQF: 3, endurance: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 1,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .design:
-                return Requirements(minEQF: 3, creativeExpression: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 1,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .sports:
-                return Requirements(minEQF: 3, physicalStrength: 1, endurance: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 1,
+                    endurance: 1,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 1,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .service:
-                return Requirements(minEQF: 3, socialCommunication: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 1,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             default:
                 return Requirements(minEQF: 3)
             }
@@ -301,35 +418,281 @@ struct Education: Codable, Hashable, Identifiable {
         case (.Bachelor, .some(let p)):
             switch p {
             case .engineering:
-                return Requirements(minEQF: 3, analyticalReasoning: 2, spatialThinking: 1, attentionToDetail: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 2,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 1,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .technology:
-                return Requirements(minEQF: 3, analyticalReasoning: 2, attentionToDetail: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 2,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .science:
-                return Requirements(minEQF: 3, analyticalReasoning: 2, perseveranceAndGrit: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 2,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 1,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .arts:
-                return Requirements(minEQF: 3, creativeExpression: 2)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 2,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .design:
-                return Requirements(minEQF: 3, creativeExpression: 2, attentionToDetail: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 2,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .business:
-                return Requirements(minEQF: 3, socialCommunication: 1, leadershipAndInfluence: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 1,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .education:
-                return Requirements(minEQF: 3, socialCommunication: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 1,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .health:
-                return Requirements(minEQF: 3, attentionToDetail: 1, perseveranceAndGrit: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 1,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 1,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .humanities:
-                return Requirements(minEQF: 3, socialCommunication: 1, perseveranceAndGrit: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .law:
-                return Requirements(minEQF: 3, analyticalReasoning: 1, socialCommunication: 1, perseveranceAndGrit: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 1,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 1
+                )
             case .agriculture:
-                return Requirements(minEQF: 3, endurance: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 1,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 1,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 0,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .sports:
-                return Requirements(minEQF: 3, physicalStrength: 1, endurance: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 0,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 1,
+                    endurance: 1,
+                    emotionalIntelligence: 0,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 1,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             case .service:
-                return Requirements(minEQF: 3, socialCommunication: 1)
+                return Requirements(
+                    minEQF: 3,
+                    analyticalReasoning: 0,
+                    creativeExpression: 0,
+                    socialCommunication: 1,
+                    leadershipAndInfluence: 0,
+                    riskTolerance: 0,
+                    spatialThinking: 0,
+                    attentionToDetail: 0,
+                    perseveranceAndGrit: 0,
+                    tinkering: 0,
+                    physicalStrength: 0,
+                    endurance: 0,
+                    emotionalIntelligence: 1,
+                    collaborationAndTeamwork: 1,
+                    timeManagementAndPlanning: 0,
+                    selfDisciplineAndStudyHabits: 0,
+                    adaptabilityAndLearningAgility: 0,
+                    presentationAndStorytelling: 0
+                )
             }
 
         case (.Master, .some(let p)):
-            // Require Bachelor EQF and bump soft-skill expectations slightly
             var base = Education(.Bachelor, profile: p).requirements
             base.minEQF = 5
             base.analyticalReasoning = max(base.analyticalReasoning, 2)
@@ -344,7 +707,6 @@ struct Education: Codable, Hashable, Identifiable {
             base.analyticalReasoning = max(base.analyticalReasoning, 2)
             return base
 
-        // Early education has no requirements
         default:
             return Requirements()
         }
@@ -368,22 +730,23 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.physicalStrength >= r.physicalStrength else { return false }
         guard p.resilienceAndEndurance >= r.endurance else { return false }
 
+        guard p.emotionalIntelligence >= r.emotionalIntelligence else { return false }
+        guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
+        guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
+        guard p.selfDisciplineAndStudyHabits >= r.selfDisciplineAndStudyHabits else { return false }
+        guard p.adaptabilityAndLearningAgility >= r.adaptabilityAndLearningAgility else { return false }
+        guard p.presentationAndStorytelling >= r.presentationAndStorytelling else { return false }
+
         return true
     }
 
-    // Delegated properties to names
-
-    /// Profile-aware degree label (EU default)
     var degreeName: String {
         switch (level, profile) {
-        // Vocational: profile-aware where applicable, generic otherwise
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
             let title = prof.rawValue.capitalized
             return "Vocational Diploma in \(title)"
         case (.Vocational, _):
             return "Vocational Diploma"
-
-        // Bachelor: long names by profile (EU style)
         case (.Bachelor, .some(let prof)):
             switch prof {
             case .business: return "Bachelor of Business Administration"
@@ -392,8 +755,7 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Bachelor of Arts"
             case .science: return "Bachelor of Science"
             case .education: return "Bachelor of Education"
-            case .technology:
-                return "Bachelor of Science in Information Technology"
+            case .technology: return "Bachelor of Science in Information Technology"
             case .agriculture: return "Bachelor of Agriculture"
             case .humanities: return "Bachelor of Arts in Humanities"
             case .law: return "Bachelor of Laws"
@@ -401,8 +763,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .service: return "Bachelor of Science in Service Management"
             case .sports: return "Bachelor of Science in Sports Science"
             }
-
-        // Master: long names by profile (EU style)
         case (.Master, .some(let prof)):
             switch prof {
             case .business: return "Master of Business Administration"
@@ -411,17 +771,14 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Master of Arts"
             case .science: return "Master of Science"
             case .education: return "Master of Education"
-            case .technology:
-                return "Master of Science in Information Technology"
+            case .technology: return "Master of Science in Information Technology"
             case .agriculture: return "Master of Agriculture"
-            case .humanities: return "Master of Arts in Humanities"
+            case .humanities: return "Master of Philosophy in Humanities"
             case .law: return "Master of Laws"
             case .design: return "Master of Design"
             case .service: return "Master of Science in Service Management"
             case .sports: return "Master of Science in Sports Science"
             }
-
-        // Doctorate: long names by profile (EU style)
         case (.Doctorate, .some(let prof)):
             switch prof {
             case .business: return "Doctor of Business Administration"
@@ -430,8 +787,7 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Doctor of Fine Arts"
             case .science: return "Doctor of Philosophy in Science"
             case .education: return "Doctor of Education"
-            case .technology:
-                return "Doctor of Philosophy in Information Technology"
+            case .technology: return "Doctor of Philosophy in Information Technology"
             case .agriculture: return "Doctor of Philosophy in Agriculture"
             case .humanities: return "Doctor of Philosophy in Humanities"
             case .law: return "Doctor of Juridical Science"
@@ -439,24 +795,18 @@ struct Education: Codable, Hashable, Identifiable {
             case .service: return "Doctor of Philosophy in Service Management"
             case .sports: return "Doctor of Philosophy in Sports Science"
             }
-
         default:
-            // Early education or unsupported combinations
             return Level(stage: level).degree
         }
     }
 
-    /// Profile-aware degree label (US variant)
     var degreeUS: String {
         switch (level, profile) {
-        // Vocational
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
             let title = prof.rawValue.capitalized
             return "Associate of Applied Science in \(title)"
         case (.Vocational, _):
             return "Trade Certificate"
-
-        // Bachelor (US style)
         case (.Bachelor, .some(let prof)):
             switch prof {
             case .business: return "Bachelor of Business Administration"
@@ -465,8 +815,7 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Bachelor of Arts in Arts"
             case .science: return "Bachelor of Science"
             case .education: return "Bachelor of Education"
-            case .technology:
-                return "Bachelor of Science in Information Technology"
+            case .technology: return "Bachelor of Science in Information Technology"
             case .agriculture: return "Bachelor of Science in Agriculture"
             case .humanities: return "Bachelor of Arts in Humanities"
             case .law: return "Bachelor of Arts in Law"
@@ -474,8 +823,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .service: return "Bachelor of Science in Service Management"
             case .sports: return "Bachelor of Science in Kinesiology"
             }
-
-        // Master (US style)
         case (.Master, .some(let prof)):
             switch prof {
             case .business: return "Master of Business Administration"
@@ -484,8 +831,7 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Master of Arts in Arts"
             case .science: return "Master of Science"
             case .education: return "Master of Education"
-            case .technology:
-                return "Master of Science in Information Technology"
+            case .technology: return "Master of Science in Information Technology"
             case .agriculture: return "Master of Science in Agriculture"
             case .humanities: return "Master of Arts in Humanities"
             case .law: return "Master of Laws"
@@ -493,8 +839,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .service: return "Master of Science in Service Management"
             case .sports: return "Master of Science in Kinesiology"
             }
-
-        // Doctorate (US style)
         case (.Doctorate, .some(let prof)):
             switch prof {
             case .business: return "Doctor of Business Administration"
@@ -503,8 +847,7 @@ struct Education: Codable, Hashable, Identifiable {
             case .arts: return "Doctor of Fine Arts"
             case .science: return "Doctor of Philosophy in Science"
             case .education: return "Doctor of Education"
-            case .technology:
-                return "Doctor of Philosophy in Information Technology"
+            case .technology: return "Doctor of Philosophy in Information Technology"
             case .agriculture: return "Doctor of Philosophy in Agriculture"
             case .humanities: return "Doctor of Philosophy in Humanities"
             case .law: return "Doctor of Juridical Science"
@@ -512,7 +855,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .service: return "Doctor of Philosophy in Service Management"
             case .sports: return "Doctor of Philosophy in Kinesiology"
             }
-
         default:
             return Level(stage: level).degreeUS
         }
@@ -522,20 +864,15 @@ struct Education: Codable, Hashable, Identifiable {
 func availableNextEducations(holds: [Education]) -> [Education] {
     var available: [Education] = []
 
-    // Default: Always show Bachelor and Vocational options across all profiles
     for profile in TertiaryProfile.allCases {
-        // Add Bachelor options for all profiles
         let bachelor = Education(.Bachelor, profile: profile)
         available.append(bachelor)
-
-        // Add Vocational options only for profiles that allow it
         if profile.allowsVocational {
             let vocational = Education(.Vocational, profile: profile)
             available.append(vocational)
         }
     }
 
-    // Check if player holds a Bachelor degree in any profile
     let bachelorDegrees = holds.filter { $0.level == .Bachelor }
     for bachelor in bachelorDegrees {
         if let profile = bachelor.profile {
@@ -544,7 +881,6 @@ func availableNextEducations(holds: [Education]) -> [Education] {
         }
     }
 
-    // Check if player holds a Master degree in any profile
     let masterDegrees = holds.filter { $0.level == .Master }
     for master in masterDegrees {
         if let profile = master.profile {
@@ -554,5 +890,4 @@ func availableNextEducations(holds: [Education]) -> [Education] {
     }
 
     return available
-
 }

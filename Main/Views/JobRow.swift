@@ -20,10 +20,19 @@ struct JobRow: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 6) {
-                HStack {
+                HStack(spacing: 8) {
                     Text(detail.id)
                         .font(.headline)
                     Spacer()
+                    if let tier = detail.companyTier {
+                        Text(tier.displayName)
+                            .font(.caption2.bold())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.12))
+                            .foregroundStyle(.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
                     Text(formattedIncome(detail.income))
                         .font(.caption2.bold())
                         .padding(.horizontal, 8)
@@ -56,8 +65,8 @@ private struct DifficultyView: View {
 }
 
 #Preview {
-    if let first = jobs.first {
-        JobRow(detail: first)
-            .padding()
-    }
+//    if let first = jobs.first {
+//        JobRow(detail: first)
+//            .padding()
+//    }
 }

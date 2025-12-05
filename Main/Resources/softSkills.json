@@ -1,0 +1,74 @@
+[
+  {
+    "id": "analyticalReasoning",
+    "name": "Problem Solving",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "creativity",
+    "name": "Creativity",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "communication",
+    "name": "Communication",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "leadership",
+    "name": "Leadership",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "riskTolerance",
+    "name": "Risk Tolerance",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "spatialNavigation",
+    "name": "Navigation",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "attentionToDetail",
+    "name": "Attention To Detail",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "perseverance",
+    "name": "Perseverance",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "tinkering",
+    "name": "Tinkering",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "strength",
+    "name": "Strength",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "coordination",
+    "name": "Coordination",
+    "description": null,
+    "asset": null
+  },
+  {
+    "id": "endurance",
+    "name": "Endurance",
+    "description": null,
+    "asset": null
+  }
+]

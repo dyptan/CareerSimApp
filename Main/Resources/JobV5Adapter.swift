@@ -106,6 +106,7 @@ enum JobV5Adapter {
             summary: src.summary,
             icon: src.icon,
             requirements: req,
+            companyTier: nil, // Back-compat for V5
             version: src.version
         )
     }

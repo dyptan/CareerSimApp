@@ -1,0 +1,19 @@
+[
+{ "id": "rn", "name": "Registered Nurse License", "type": "license", "description": "RN license required to practice.", "asset": null },
+{ "id": "drivers", "name": "Driver’s License", "type": "license", "description": "Standard driving license (B).", "asset": null },
+{ "id": "cdl", "name": "Commercial Driver’s License", "type": "license", "description": "Heavy truck (CE) license.", "asset": null },
+{ "id": "electrician", "name": "Electrician License", "type": "license", "description": "Authorization to perform electrical work.", "asset": null },
+{ "id": "plumber", "name": "Plumber License", "type": "license", "description": "Authorization to perform plumbing work.", "asset": null },
+
+{ "id": "office", "name": "Office Suite", "type": "software", "description": "Spreadsheets, documents, presentations.", "asset": null },
+{ "id": "programming", "name": "Programming", "type": "software", "description": "General software development skills.", "asset": null },
+{ "id": "mediaEditing", "name": "Photo & Video Editing", "type": "software", "description": "Image and video editing tools.", "asset": null },
+{ "id": "gameEngine", "name": "Game Engine", "type": "software", "description": "Tools for building games.", "asset": null },
+
+{ "id": "appPortfolio", "name": "App", "type": "portfolio", "description": "An app you’ve built.", "asset": null },
+{ "id": "gamePortfolio", "name": "Game", "type": "portfolio", "description": "A game you’ve built.", "asset": null },
+{ "id": "websitePortfolio", "name": "Website", "type": "portfolio", "description": "A website you’ve built.", "asset": null },
+{ "id": "libraryPortfolio", "name": "Library", "type": "portfolio", "description": "An open-source library.", "asset": null },
+{ "id": "paperPortfolio", "name": "Paper", "type": "portfolio", "description": "A research paper or publication.", "asset": null },
+{ "id": "presentationPortfolio", "name": "Presentation", "type": "portfolio", "description": "A talk or presentation.", "asset": null }
+]

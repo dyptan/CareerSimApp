@@ -78,44 +78,39 @@ struct JobView: View {
         return true
     }
 
-    private var softSkillsMet: Bool {
+    // Soft skills no longer gate jobs; keep computed but unused (for display)
+    private var softSkillsHelpfulScore: Int {
         let p = player.softSkills
         let r = requiredSoft
-        return
-            p.analyticalReasoningAndProblemSolving
-            >= r.analyticalReasoningAndProblemSolving
-            && p.creativityAndInsightfulThinking
-                >= r.creativityAndInsightfulThinking
-            && p.communicationAndNetworking >= r.communicationAndNetworking
-            && p.leadershipAndInfluence >= r.leadershipAndInfluence
-            && p.courageAndRiskTolerance >= r.courageAndRiskTolerance
-            && p.spacialNavigation >= r.spacialNavigation
-            && p.carefulnessAndAttentionToDetail
-                >= r.carefulnessAndAttentionToDetail
-            && p.perseveranceAndGrit >= r.perseveranceAndGrit
-            && p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
-            && p.physicalStrength >= r.physicalStrength
-            && p.coordinationAndBalance >= r.coordinationAndBalance
-            && p.resilienceAndEndurance >= r.resilienceAndEndurance
+        var score = 0
+        if p.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving { score += 1 }
+        if p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking { score += 1 }
+        if p.communicationAndNetworking >= r.communicationAndNetworking { score += 1 }
+        if p.leadershipAndInfluence >= r.leadershipAndInfluence { score += 1 }
+        if p.courageAndRiskTolerance >= r.courageAndRiskTolerance { score += 1 }
+        if p.spacialNavigation >= r.spacialNavigation { score += 1 }
+        if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
+        if p.perseveranceAndGrit >= r.perseveranceAndGrit { score += 1 }
+        if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
+        if p.physicalStrength >= r.physicalStrength { score += 1 }
+        if p.coordinationAndBalance >= r.coordinationAndBalance { score += 1 }
+        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
+        return score
     }
 
     private var hardSkillsMet: Bool {
-        // Certifications
         let certsOK = requiredHard.certifications.allSatisfy { code in
             guard let enumVal = certFrom(raw: code) else { return false }
             return player.hardSkills.certifications.contains(enumVal)
         }
-        // Licenses
         let licensesOK = requiredHard.licenses.allSatisfy { code in
             guard let enumVal = licenseFrom(raw: code) else { return false }
             return player.hardSkills.licenses.contains(enumVal)
         }
-        // Software
         let softwareOK = requiredHard.software.allSatisfy { code in
             guard let enumVal = softwareFrom(raw: code) else { return false }
             return player.hardSkills.software.contains(enumVal)
         }
-        // Portfolio
         let portfolioOK = requiredHard.portfolio.allSatisfy { code in
             guard let enumVal = portfolioFrom(raw: code) else { return false }
             return player.hardSkills.portfolioItems.contains(enumVal)
@@ -124,16 +119,9 @@ struct JobView: View {
     }
 
     private var allRequirementsMet: Bool {
-        educationMet && softSkillsMet && hardSkillsMet
+        // Emphasize degree + hard skills; soft skills are helpful only
+        educationMet && hardSkillsMet
     }
-
-//    private func formattedIncome(_ dollars: Int) -> String {
-//        let formatter = NumberFormatter()
-//        formatter.numberStyle = .currency
-//        formatter.currencyCode = "USD"
-//        formatter.maximumFractionDigits = 0
-//        return formatter.string(from: NSNumber(value: dollars)) ?? "$\(dollars)"
-//    }
 
     // MARK: - UI helpers
 
@@ -188,19 +176,6 @@ struct JobView: View {
         .padding(.horizontal)
     }
 
-//    private func labelBox<T: View>(title: String, content: T) -> some View {
-//        VStack(spacing: 6) {
-//            Text(title)
-//                .font(.caption)
-//                .foregroundStyle(.secondary)
-//            content
-//                .font(.body)
-//        }
-//        .padding(12)
-//        .frame(maxWidth: .infinity)
-//        .clipShape(RoundedRectangle(cornerRadius: 12))
-//    }
-
     var body: some View {
         ScrollView {
             Text(job.icon)
@@ -216,14 +191,23 @@ struct JobView: View {
                 .padding(.horizontal)
                 .frame(maxWidth: .infinity ,alignment: .leading)
 
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 Text("Income")
                 Text("\(job.income) $")
+                Spacer()
+                if let tier = job.companyTier {
+                    Text(tier.displayName)
+                        .font(.caption.bold())
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.secondary.opacity(0.12))
+                        .foregroundStyle(.secondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
             }
             .font(.subheadline)
             .frame(maxWidth: .infinity ,alignment: .leading)
             .padding(.horizontal)
-           
 
             Text("Requirements")
                 .font(.title3)
@@ -239,67 +223,38 @@ struct JobView: View {
                 playerLevel: player.degrees.last?.eqf ?? 0
             )
             
-            if let accepted = job.requirements.education.acceptedProfiles,
-                !accepted.isEmpty
+            // Helpful soft skills (not gating)
+            if requiredSoft.analyticalReasoningAndProblemSolving
+                + requiredSoft.creativityAndInsightfulThinking
+                + requiredSoft.communicationAndNetworking
+                + requiredSoft.leadershipAndInfluence
+                + requiredSoft.courageAndRiskTolerance
+                + requiredSoft.spacialNavigation
+                + requiredSoft.carefulnessAndAttentionToDetail
+                + requiredSoft.perseveranceAndGrit
+                + requiredSoft.tinkeringAndFingerPrecision
+                + requiredSoft.physicalStrength
+                + requiredSoft.coordinationAndBalance
+                + requiredSoft.resilienceAndEndurance > 0
             {
-                let playerProfiles = player.degrees.compactMap { $0.profile }
-                let met =
-                    !playerProfiles.isEmpty
-                    && playerProfiles.contains(where: { accepted.contains($0) })
-                HStack {
-                    Text(
-                        "Accepted profiles: \(accepted.map { $0.rawValue.capitalized }.joined(separator: ", "))"
-                    )
-                    Spacer()
-                    Text(met ? "✅" : "❌")
-                }
-                .font(.subheadline)
-                .foregroundStyle(met ? .primary : .secondary)
-                .padding()
+                Text("Helpful skills")
+                    .font(.subheadline.bold())
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
+
+                softRequirement(\.analyticalReasoningAndProblemSolving, requiredSoft.analyticalReasoningAndProblemSolving)
+                softRequirement(\.creativityAndInsightfulThinking, requiredSoft.creativityAndInsightfulThinking)
+                softRequirement(\.communicationAndNetworking, requiredSoft.communicationAndNetworking)
+                softRequirement(\.leadershipAndInfluence, requiredSoft.leadershipAndInfluence)
+                softRequirement(\.courageAndRiskTolerance, requiredSoft.courageAndRiskTolerance)
+                softRequirement(\.spacialNavigation, requiredSoft.spacialNavigation)
+                softRequirement(\.carefulnessAndAttentionToDetail, requiredSoft.carefulnessAndAttentionToDetail)
+                softRequirement(\.perseveranceAndGrit, requiredSoft.perseveranceAndGrit)
+                softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
+                softRequirement(\.physicalStrength, requiredSoft.physicalStrength)
+                softRequirement(\.coordinationAndBalance, requiredSoft.coordinationAndBalance)
+                softRequirement(\.resilienceAndEndurance, requiredSoft.resilienceAndEndurance)
             }
-            
-            softRequirement(
-                \.analyticalReasoningAndProblemSolving,
-                requiredSoft.analyticalReasoningAndProblemSolving
-            )
-            softRequirement(
-                \.creativityAndInsightfulThinking,
-                requiredSoft.creativityAndInsightfulThinking
-            )
-            softRequirement(
-                \.communicationAndNetworking,
-                requiredSoft.communicationAndNetworking
-            )
-            softRequirement(
-                \.leadershipAndInfluence,
-                requiredSoft.leadershipAndInfluence
-            )
-            softRequirement(
-                \.courageAndRiskTolerance,
-                requiredSoft.courageAndRiskTolerance
-            )
-            softRequirement(\.spacialNavigation, requiredSoft.spacialNavigation)
-            softRequirement(
-                \.carefulnessAndAttentionToDetail,
-                requiredSoft.carefulnessAndAttentionToDetail
-            )
-            softRequirement(
-                \.perseveranceAndGrit,
-                requiredSoft.perseveranceAndGrit
-            )
-            softRequirement(
-                \.tinkeringAndFingerPrecision,
-                requiredSoft.tinkeringAndFingerPrecision
-            )
-            softRequirement(\.physicalStrength, requiredSoft.physicalStrength)
-            softRequirement(
-                \.coordinationAndBalance,
-                requiredSoft.coordinationAndBalance
-            )
-            softRequirement(
-                \.resilienceAndEndurance,
-                requiredSoft.resilienceAndEndurance
-            )
 
             Spacer()
             // Certifications

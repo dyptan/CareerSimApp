@@ -161,7 +161,7 @@ private struct DegreesSubmenuView: View {
                             )
                         }
 
-                        // Requirements block (mirrors JobView)
+                        // Requirements block (now includes new school-age skills)
                         VStack(alignment: .leading, spacing: 8) {
                             Text("What do you need?")
                                 .font(.subheadline.bold())
@@ -301,6 +301,68 @@ private struct DegreesSubmenuView: View {
                                 level: r.endurance,
                                 playerLevel: player.softSkills
                                     .resilienceAndEndurance
+                            )
+
+                            // New school-age soft skills
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.emotionalIntelligence
+                                ) ?? "Emotional Intelligence",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.emotionalIntelligence
+                                ) ?? "🫶",
+                                level: r.emotionalIntelligence,
+                                playerLevel: player.softSkills.emotionalIntelligence
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.collaborationAndTeamwork
+                                ) ?? "Collaboration",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.collaborationAndTeamwork
+                                ) ?? "🤝",
+                                level: r.collaborationAndTeamwork,
+                                playerLevel: player.softSkills.collaborationAndTeamwork
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.timeManagementAndPlanning
+                                ) ?? "Time Management",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.timeManagementAndPlanning
+                                ) ?? "⏱️",
+                                level: r.timeManagementAndPlanning,
+                                playerLevel: player.softSkills.timeManagementAndPlanning
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.selfDisciplineAndStudyHabits
+                                ) ?? "Study Habits",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.selfDisciplineAndStudyHabits
+                                ) ?? "📚",
+                                level: r.selfDisciplineAndStudyHabits,
+                                playerLevel: player.softSkills.selfDisciplineAndStudyHabits
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.adaptabilityAndLearningAgility
+                                ) ?? "Adaptability",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.adaptabilityAndLearningAgility
+                                ) ?? "🔄",
+                                level: r.adaptabilityAndLearningAgility,
+                                playerLevel: player.softSkills.adaptabilityAndLearningAgility
+                            )
+                            requirementRow(
+                                label: SoftSkills.label(
+                                    forKeyPath: \.presentationAndStorytelling
+                                ) ?? "Presentation",
+                                emoji: SoftSkills.pictogram(
+                                    forKeyPath: \.presentationAndStorytelling
+                                ) ?? "🎤",
+                                level: r.presentationAndStorytelling,
+                                playerLevel: player.softSkills.presentationAndStorytelling
                             )
                         }
                         .padding(.top, 4)

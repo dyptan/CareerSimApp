@@ -7,6 +7,7 @@ struct Job: Identifiable, Codable, Hashable {
     let summary: String
     let icon: String
     let requirements: Requirements
+    let companyTier: CompanyTier?   // NEW (optional for back-compat)
     let version: Int
 
     struct Requirements: Codable, Hashable {
@@ -111,5 +112,6 @@ var jobExample = Job(
         ),
         hardSkills: .init(certifications: ["AWS"], licenses: ["C"], software: ["Office 365"], portfolio: [])
     ),
+    companyTier: .startup,
     version: 5
 )

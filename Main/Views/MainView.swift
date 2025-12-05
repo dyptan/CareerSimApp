@@ -16,6 +16,11 @@ struct MainView: View {
     @State var showHardSkillsSheet = false
     @State var showSoftSkillsSheet = false
 
+    // Use hard-coded jobs for now
+    private var availableJobs: [Job] {
+        HardcodedJobs.sampleJobs()
+    }
+
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
@@ -91,7 +96,7 @@ struct MainView: View {
         }
         .sheet(isPresented: $showCareersSheet) {
             CareersSheet(
-                availableJobs: jobs,
+                availableJobs: availableJobs,
                 player: player,
                 showCareersSheet: $showCareersSheet
             )
