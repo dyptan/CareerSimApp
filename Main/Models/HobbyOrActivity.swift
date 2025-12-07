@@ -4,7 +4,6 @@ struct HobbyOrActivity {
 }
 
 let extraCurriculum: [HobbyOrActivity] = [
-    // Physical / team play
     HobbyOrActivity(
         label: "Sports and Athletics",
         abilityKeyPaths: [
@@ -25,7 +24,6 @@ let extraCurriculum: [HobbyOrActivity] = [
         ]
     ),
 
-    // Creative / performing arts
     HobbyOrActivity(
         label: "Music Band",
         abilityKeyPaths: [
@@ -63,7 +61,6 @@ let extraCurriculum: [HobbyOrActivity] = [
         ]
     ),
 
-    // Analytical / academic
     HobbyOrActivity(
         label: "Chess and Strategy Games",
         abilityKeyPaths: [
@@ -82,9 +79,8 @@ let extraCurriculum: [HobbyOrActivity] = [
         ]
     ),
 
-    // Communication / leadership / social
     HobbyOrActivity(
-        label: "Journalism and Writing",
+        label: "Journalism, Blogging, Podcasting",
         abilityKeyPaths: [
             \.creativityAndInsightfulThinking,
             \.leadershipAndInfluence,
@@ -111,26 +107,7 @@ let extraCurriculum: [HobbyOrActivity] = [
         ]
     ),
 
-    // Hands-on / crafts
-    HobbyOrActivity(
-        label: "Modeling",
-        abilityKeyPaths: [
-            \.tinkeringAndFingerPrecision,
-            \.perseveranceAndGrit,
-            \.carefulnessAndAttentionToDetail
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Crafting, Knitting, and Sewing",
-        abilityKeyPaths: [
-            \.tinkeringAndFingerPrecision,
-            \.carefulnessAndAttentionToDetail,
-            \.perseveranceAndGrit,
-            \.selfDisciplineAndStudyHabits
-        ]
-    ),
 
-    // Lifestyle / wellness
     HobbyOrActivity(
         label: "Cooking and Baking",
         abilityKeyPaths: [
@@ -150,25 +127,7 @@ let extraCurriculum: [HobbyOrActivity] = [
             \.selfDisciplineAndStudyHabits
         ]
     ),
-    HobbyOrActivity(
-        label: "Dress-Up and DIY Accessories",
-        abilityKeyPaths: [
-            \.creativityAndInsightfulThinking,
-            \.carefulnessAndAttentionToDetail,
-            \.tinkeringAndFingerPrecision
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Gardening",
-        abilityKeyPaths: [
-            \.perseveranceAndGrit,
-            \.carefulnessAndAttentionToDetail,
-            \.spacialNavigation,
-            \.timeManagementAndPlanning
-        ]
-    ),
 
-    // Language / teaching
     HobbyOrActivity(
         label: "Language Learning",
         abilityKeyPaths: [
@@ -176,157 +135,6 @@ let extraCurriculum: [HobbyOrActivity] = [
             \.communicationAndNetworking,
             \.analyticalReasoningAndProblemSolving,
             \.selfDisciplineAndStudyHabits
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Teaching and Tutoring",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.leadershipAndInfluence,
-            \.carefulnessAndAttentionToDetail,
-            \.presentationAndStorytelling,
-            \.emotionalIntelligence
-        ]
-    ),
-
-    // Service / community
-    HobbyOrActivity(
-        label: "Volunteering and Community Service",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.leadershipAndInfluence,
-            \.perseveranceAndGrit,
-            \.emotionalIntelligence,
-            \.collaborationAndTeamwork
-        ]
-    ),
-
-    // Media / content
-    HobbyOrActivity(
-        label: "Blogging and Content Creation",
-        abilityKeyPaths: [
-            \.creativityAndInsightfulThinking,
-            \.communicationAndNetworking,
-            \.perseveranceAndGrit,
-            \.presentationAndStorytelling
-        ]
-    ),
-
-    // New: school-age skills centric
-    HobbyOrActivity(
-        label: "Public Speaking Club",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.leadershipAndInfluence,
-            \.perseveranceAndGrit,
-            \.presentationAndStorytelling
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Debate Club",
-        abilityKeyPaths: [
-            \.analyticalReasoningAndProblemSolving,
-            \.communicationAndNetworking,
-            \.courageAndRiskTolerance,
-            \.presentationAndStorytelling
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Science Club",
-        abilityKeyPaths: [
-            \.analyticalReasoningAndProblemSolving,
-            \.carefulnessAndAttentionToDetail,
-            \.perseveranceAndGrit,
-            \.selfDisciplineAndStudyHabits
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Math Puzzles and Logic Games",
-        abilityKeyPaths: [
-            \.analyticalReasoningAndProblemSolving,
-            \.perseveranceAndGrit,
-            \.carefulnessAndAttentionToDetail
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Robotics / LEGO Engineering",
-        abilityKeyPaths: [
-            \.tinkeringAndFingerPrecision,
-            \.analyticalReasoningAndProblemSolving,
-            \.perseveranceAndGrit,
-            \.collaborationAndTeamwork
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Coding Club (Kids)",
-        abilityKeyPaths: [
-            \.analyticalReasoningAndProblemSolving,
-            \.carefulnessAndAttentionToDetail,
-            \.perseveranceAndGrit,
-            \.selfDisciplineAndStudyHabits
-        ]
-    ),
-    HobbyOrActivity(
-        label: "School Newspaper",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.creativityAndInsightfulThinking,
-            \.leadershipAndInfluence,
-            \.timeManagementAndPlanning
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Student Council / Class Helper",
-        abilityKeyPaths: [
-            \.leadershipAndInfluence,
-            \.communicationAndNetworking,
-            \.courageAndRiskTolerance,
-            \.collaborationAndTeamwork
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Entrepreneurship Fair / Lemonade Stand",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.courageAndRiskTolerance,
-            \.leadershipAndInfluence,
-            \.timeManagementAndPlanning
-        ]
-    ),
-    HobbyOrActivity(
-        label: "First Aid Basics (Kids)",
-        abilityKeyPaths: [
-            \.carefulnessAndAttentionToDetail,
-            \.resilienceAndEndurance,
-            \.courageAndRiskTolerance,
-            \.emotionalIntelligence
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Nature Hikes and Orienteering",
-        abilityKeyPaths: [
-            \.spacialNavigation,
-            \.resilienceAndEndurance,
-            \.perseveranceAndGrit,
-            \.timeManagementAndPlanning
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Instrument Practice",
-        abilityKeyPaths: [
-            \.perseveranceAndGrit,
-            \.tinkeringAndFingerPrecision,
-            \.creativityAndInsightfulThinking,
-            \.selfDisciplineAndStudyHabits
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Choir / Singing Group",
-        abilityKeyPaths: [
-            \.communicationAndNetworking,
-            \.creativityAndInsightfulThinking,
-            \.perseveranceAndGrit,
-            \.collaborationAndTeamwork
         ]
     ),
     HobbyOrActivity(
@@ -338,52 +146,12 @@ let extraCurriculum: [HobbyOrActivity] = [
         ]
     ),
     HobbyOrActivity(
-        label: "Book Club / Reading Circle",
+        label: "Reading books",
         abilityKeyPaths: [
             \.communicationAndNetworking,
             \.analyticalReasoningAndProblemSolving,
             \.perseveranceAndGrit,
             \.presentationAndStorytelling
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Show & Tell / Storytelling",
-        abilityKeyPaths: [
-            \.presentationAndStorytelling,
-            \.communicationAndNetworking,
-            \.selfDisciplineAndStudyHabits
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Group Projects Club",
-        abilityKeyPaths: [
-            \.collaborationAndTeamwork,
-            \.timeManagementAndPlanning,
-            \.presentationAndStorytelling
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Study Planner / Homework Club",
-        abilityKeyPaths: [
-            \.timeManagementAndPlanning,
-            \.selfDisciplineAndStudyHabits,
-            \.perseveranceAndGrit
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Improv Games / Drama Games",
-        abilityKeyPaths: [
-            \.adaptabilityAndLearningAgility,
-            \.presentationAndStorytelling,
-            \.courageAndRiskTolerance
-        ]
-    ),
-    HobbyOrActivity(
-        label: "Peer Mentoring / Buddy Helper",
-        abilityKeyPaths: [
-            \.emotionalIntelligence,
-            \.collaborationAndTeamwork,
-            \.communicationAndNetworking
         ]
     )
 ]

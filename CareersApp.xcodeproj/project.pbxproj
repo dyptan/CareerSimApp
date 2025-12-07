@@ -12,7 +12,6 @@
 		550618422ED2245900C56E99 /* Certification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Certification.swift */; };
 		550618442ED2245D00C56E99 /* License.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618432ED2245D00C56E99 /* License.swift */; };
 		5506184A2ED7529C00C56E99 /* TrainingRequirementResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618482ED74FA000C56E99 /* TrainingRequirementResult.swift */; };
-		5506184E2EDDA59B00C56E99 /* JobV5Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506184D2EDDA59B00C56E99 /* JobV5Adapter.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
 		550C55052EAE7C5300887B96 /* migration.py in Resources */ = {isa = PBXBuildFile; fileRef = 550C55042EAE7C5300887B96 /* migration.py */; };
 		550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C550E2EB02BDE00887B96 /* HeaderView.swift */; };
@@ -21,10 +20,8 @@
 		551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F52EBFB91900092DC7 /* SkillsView.swift */; };
 		551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */; };
 		553578DE2EE39324003C8BD2 /* HardcodedJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */; };
-		553578E02EE39361003C8BD2 /* HardcodedJobs 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578DF2EE39361003C8BD2 /* HardcodedJobs 2.swift */; };
-		559526B72EDDDF56004D5BD8 /* migration_v5_to_v6.py in Resources */ = {isa = PBXBuildFile; fileRef = 559526B62EDDDF56004D5BD8 /* migration_v5_to_v6.py */; };
-		559526B92EDDDF57004D5BD8 /* SkillMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559526B82EDDDF57004D5BD8 /* SkillMeta.swift */; };
-		559526BB2EDDDF58004D5BD8 /* SkillsRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559526BA2EDDDF58004D5BD8 /* SkillsRegistry.swift */; };
+		553578E22EE4EC9E003C8BD2 /* PortfolioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */; };
+		553578E42EE4EEEB003C8BD2 /* PortfolioSectionPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578E32EE4EEEB003C8BD2 /* PortfolioSectionPreviewView.swift */; };
 		559526BD2EDDDF59004D5BD8 /* JobV6Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */; };
 		559526C22EDDE77D004D5BD8 /* dataV6.json in Resources */ = {isa = PBXBuildFile; fileRef = 559526C12EDDE77D004D5BD8 /* dataV6.json */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
@@ -74,7 +71,6 @@
 		550618412ED2245900C56E99 /* Certification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certification.swift; sourceTree = "<group>"; };
 		550618432ED2245D00C56E99 /* License.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = License.swift; sourceTree = "<group>"; };
 		550618482ED74FA000C56E99 /* TrainingRequirementResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingRequirementResult.swift; sourceTree = "<group>"; };
-		5506184D2EDDA59B00C56E99 /* JobV5Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobV5Adapter.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
 		550C55042EAE7C5300887B96 /* migration.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = migration.py; sourceTree = "<group>"; };
 		550C550E2EB02BDE00887B96 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -83,10 +79,8 @@
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardcodedJobs.swift; sourceTree = "<group>"; };
-		553578DF2EE39361003C8BD2 /* HardcodedJobs 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HardcodedJobs 2.swift"; sourceTree = "<group>"; };
-		559526B62EDDDF56004D5BD8 /* migration_v5_to_v6.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = migration_v5_to_v6.py; sourceTree = "<group>"; };
-		559526B82EDDDF57004D5BD8 /* SkillMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillMeta.swift; sourceTree = "<group>"; };
-		559526BA2EDDDF58004D5BD8 /* SkillsRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsRegistry.swift; sourceTree = "<group>"; };
+		553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItem.swift; sourceTree = "<group>"; };
+		553578E32EE4EEEB003C8BD2 /* PortfolioSectionPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioSectionPreviewView.swift; sourceTree = "<group>"; };
 		559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobV6Adapter.swift; sourceTree = "<group>"; };
 		559526C12EDDE77D004D5BD8 /* dataV6.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dataV6.json; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
@@ -157,6 +151,7 @@
 				5596D86B2E9AF46B00E98CEF /* Tests */,
 				C20D77EB24B665D7002E7AEA /* Products */,
 				0BA6BB22EC06EFBEA60A948C /* Configuration */,
+				553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -216,13 +211,8 @@
 				559526C12EDDE77D004D5BD8 /* dataV6.json */,
 				550C55042EAE7C5300887B96 /* migration.py */,
 				84F851C42E9E8D710066C41A /* AppIcon.icon */,
-				5506184D2EDDA59B00C56E99 /* JobV5Adapter.swift */,
-				559526B62EDDDF56004D5BD8 /* migration_v5_to_v6.py */,
-				559526B82EDDDF57004D5BD8 /* SkillMeta.swift */,
-				559526BA2EDDDF58004D5BD8 /* SkillsRegistry.swift */,
 				559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */,
 				553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */,
-				553578DF2EE39361003C8BD2 /* HardcodedJobs 2.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -240,6 +230,7 @@
 				55B02BFD2EB955E600554212 /* HardSkillsView.swift */,
 				551B66F52EBFB91900092DC7 /* SkillsView.swift */,
 				551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */,
+				553578E32EE4EEEB003C8BD2 /* PortfolioSectionPreviewView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -341,7 +332,6 @@
 			files = (
 				C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */,
 				559526C22EDDE77D004D5BD8 /* dataV6.json in Resources */,
-				559526B72EDDDF56004D5BD8 /* migration_v5_to_v6.py in Resources */,
 				550C55052EAE7C5300887B96 /* migration.py in Resources */,
 				84F851C52E9E8D710066C41A /* AppIcon.icon in Resources */,
 				C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */,
@@ -355,6 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				553578E22EE4EC9E003C8BD2 /* PortfolioItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,10 +357,8 @@
 				55B02BFE2EB955E600554212 /* HardSkillsView.swift in Sources */,
 				55A6ED052E9542630033B674 /* Loader.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,
-				559526B92EDDDF57004D5BD8 /* SkillMeta.swift in Sources */,
 				55A6ED012E9542000033B674 /* JobView.swift in Sources */,
 				551B66F42EBFB89100092DC7 /* HobbyOrActivity.swift in Sources */,
-				559526BB2EDDDF58004D5BD8 /* SkillsRegistry.swift in Sources */,
 				84F851C92EA0F30F0066C41A /* Player.swift in Sources */,
 				553578DE2EE39324003C8BD2 /* HardcodedJobs.swift in Sources */,
 				559526BD2EDDDF59004D5BD8 /* JobV6Adapter.swift in Sources */,
@@ -384,11 +373,10 @@
 				551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */,
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,
 				84F851CD2EA16C290066C41A /* Education.swift in Sources */,
-				553578E02EE39361003C8BD2 /* HardcodedJobs 2.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* Category.swift in Sources */,
+				553578E42EE4EEEB003C8BD2 /* PortfolioSectionPreviewView.swift in Sources */,
 				550618422ED2245900C56E99 /* Certification.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* Group.swift in Sources */,
-				5506184E2EDDA59B00C56E99 /* JobV5Adapter.swift in Sources */,
 				550618402ED2245400C56E99 /* PortfolioItem.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* CareersSheet.swift in Sources */,

@@ -61,56 +61,215 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     }
     
     var costForCertification: Int {
-          switch self {
-          case .aws: return 350   // prep + exam voucher
-          case .azure: return 350
-          case .google: return 300
-          case .scrum: return 600 // 2-day course + exam
-          case .security: return 250 // basic security awareness + test
-          case .cwi: return 3000  // course + exam (CWI is pricey)
-          case .epa608: return 200 // prep + exam
-          case .nate: return 450   // prep + exam
-          case .faaAMP: return 6000 // A&P prep/testing (very rough, excluding full school tuition)
-          case .cna: return 1500   // course + clinical + exam
-          case .dentalAssistant: return 2500 // short program + exam
-          case .medicalAssistant: return 3500 // program + exam
-          case .pharmacyTech: return 1200 // course + exam
-          case .cfp: return 7000   // coursework + exam fee
-          case .series65: return 500 // prep + exam
-          case .flightAttendantCert: return 1000 // prep + airline hiring process costs
-          }
-      }
-
-    
-    func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
-        let age = player.age
-        let softSkills = player.softSkills
         switch self {
-        case .cwi, .epa608, .nate, .faaAMP, .cfp, .series65:
-            if age < 18 { return .blocked(reason: "Requires age 18+") }
-        case .flightAttendantCert:
-            if age < 17 { return .blocked(reason: "Requires age 17+") }
-        default:
-            break
+        case .aws: return 350
+        case .azure: return 350
+        case .google: return 300
+        case .scrum: return 600
+        case .security: return 250
+        case .cwi: return 3000
+        case .epa608: return 200
+        case .nate: return 450
+        case .faaAMP: return 6000
+        case .cna: return 1500
+        case .dentalAssistant: return 2500
+        case .medicalAssistant: return 3500
+        case .pharmacyTech: return 1200
+        case .cfp: return 7000
+        case .series65: return 500
+        case .flightAttendantCert: return 1000
         }
-
-        switch self {
-        case .scrum:
-            if softSkills.communicationAndNetworking < 2 || softSkills.leadershipAndInfluence < 2 {
-                return .blocked(reason: "Needs better Communication and Leadership")
-            }
-        case .security:
-            if softSkills.carefulnessAndAttentionToDetail < 2 {
-                return .blocked(reason: "Needs more Carefulness")
-            }
-        case .aws, .azure, .google:
-            if softSkills.analyticalReasoningAndProblemSolving < 2 {
-                return .blocked(reason: "Needs more Problem Solving")
-            }
-        default:
-            break
-        }
-        return .ok(cost: costForCertification)
     }
-    
+
+    // MARK: - Requirements profile for UI rendering (like Job requirements)
+    struct RequirementsProfile: Hashable {
+        var analyticalReasoningAndProblemSolving: Int = 0
+        var creativityAndInsightfulThinking: Int = 0
+        var communicationAndNetworking: Int = 0
+        var leadershipAndInfluence: Int = 0
+        var courageAndRiskTolerance: Int = 0
+        var spacialNavigation: Int = 0
+        var carefulnessAndAttentionToDetail: Int = 0
+        var perseveranceAndGrit: Int = 0
+        var tinkeringAndFingerPrecision: Int = 0
+        var physicalStrength: Int = 0
+        var coordinationAndBalance: Int = 0
+        var resilienceAndEndurance: Int = 0
+    }
+
+    // Builds the threshold profile used by the UI, and evaluates if player meets it.
+    func requirementsProfile(for player: Player) -> (profile: RequirementsProfile, meetsAll: Bool, cost: Int, message: String?) {
+        var r = RequirementsProfile()
+
+        // IT and low-risk: only analytical matters
+        let itOrLowRisk: Set<Certification> = [.aws, .azure, .google, .scrum, .security]
+        if itOrLowRisk.contains(self) {
+            r.analyticalReasoningAndProblemSolving = 5
+            let ok = player.softSkills.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving
+            return (r, ok, costForCertification, ok ? nil : "Needs more Problem Solving")
+        }
+
+        switch self {
+        case .cna:
+            r.communicationAndNetworking = 2
+            r.resilienceAndEndurance = 2
+            r.carefulnessAndAttentionToDetail = 2
+
+        case .dentalAssistant:
+            r.carefulnessAndAttentionToDetail = 3
+            r.communicationAndNetworking = 2
+
+        case .medicalAssistant:
+            r.communicationAndNetworking = 2
+            r.carefulnessAndAttentionToDetail = 3
+            r.perseveranceAndGrit = 2
+
+        case .pharmacyTech:
+            r.analyticalReasoningAndProblemSolving = 2
+            r.carefulnessAndAttentionToDetail = 3
+
+        case .cwi:
+            r.perseveranceAndGrit = 3
+            r.carefulnessAndAttentionToDetail = 3
+
+        case .epa608:
+            r.carefulnessAndAttentionToDetail = 3
+            r.analyticalReasoningAndProblemSolving = 2
+
+        case .nate:
+            r.tinkeringAndFingerPrecision = 3
+            r.perseveranceAndGrit = 2
+
+        case .faaAMP:
+            r.tinkeringAndFingerPrecision = 3
+            r.carefulnessAndAttentionToDetail = 3
+            r.perseveranceAndGrit = 3
+
+        case .cfp:
+            r.analyticalReasoningAndProblemSolving = 3
+            r.communicationAndNetworking = 2
+
+        case .series65:
+            r.analyticalReasoningAndProblemSolving = 3
+
+        case .flightAttendantCert:
+            r.communicationAndNetworking = 2
+            r.resilienceAndEndurance = 3
+
+        // IT/low-risk are handled above
+        case .aws, .azure, .google, .scrum, .security:
+            break
+        }
+
+        // Evaluate meetsAll
+        let s = player.softSkills
+        var meets = true
+        meets = meets && s.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving
+        meets = meets && s.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking
+        meets = meets && s.communicationAndNetworking >= r.communicationAndNetworking
+        meets = meets && s.leadershipAndInfluence >= r.leadershipAndInfluence
+        meets = meets && s.courageAndRiskTolerance >= r.courageAndRiskTolerance
+        meets = meets && s.spacialNavigation >= r.spacialNavigation
+        meets = meets && s.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail
+        meets = meets && s.perseveranceAndGrit >= r.perseveranceAndGrit
+        meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
+        meets = meets && s.physicalStrength >= r.physicalStrength
+        meets = meets && s.coordinationAndBalance >= r.coordinationAndBalance
+        meets = meets && s.resilienceAndEndurance >= r.resilienceAndEndurance
+
+        // Derive a simple first unmet message (optional)
+        let message: String? = {
+            if s.analyticalReasoningAndProblemSolving < r.analyticalReasoningAndProblemSolving { return "Needs more Problem Solving" }
+            if s.creativityAndInsightfulThinking < r.creativityAndInsightfulThinking { return "Needs more Creativity" }
+            if s.communicationAndNetworking < r.communicationAndNetworking { return "Needs better Communication" }
+            if s.leadershipAndInfluence < r.leadershipAndInfluence { return "Needs more Leadership" }
+            if s.courageAndRiskTolerance < r.courageAndRiskTolerance { return "Needs more Courage" }
+            if s.spacialNavigation < r.spacialNavigation { return "Needs better Navigation" }
+            if s.carefulnessAndAttentionToDetail < r.carefulnessAndAttentionToDetail { return "Needs more Carefulness" }
+            if s.perseveranceAndGrit < r.perseveranceAndGrit { return "Needs more Perseverance" }
+            if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
+            if s.physicalStrength < r.physicalStrength { return "Needs more Strength" }
+            if s.coordinationAndBalance < r.coordinationAndBalance { return "Needs better Coordination" }
+            if s.resilienceAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
+            return nil
+        }()
+
+        return (r, meets, costForCertification, message)
+    }
+
+    // Existing gating remains available for logic decisions
+    func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
+        let s = player.softSkills
+
+        // IT and low-risk: only analytical matters (threshold ~2)
+        let itOrLowRisk: Set<Certification> = [.aws, .azure, .google, .scrum, .security]
+        if itOrLowRisk.contains(self) {
+            return s.analyticalReasoningAndProblemSolving >= 5
+                ? .ok(cost: costForCertification)
+                : .blocked(reason: "Needs more Problem Solving")
+        }
+
+        switch self {
+        case .cna:
+            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
+            guard s.resilienceAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
+            guard s.carefulnessAndAttentionToDetail >= 2 else { return .blocked(reason: "Needs more Carefulness") }
+            return .ok(cost: costForCertification)
+
+        case .dentalAssistant:
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
+            return .ok(cost: costForCertification)
+
+        case .medicalAssistant:
+            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            guard s.perseveranceAndGrit >= 2 else { return .blocked(reason: "Needs more Perseverance") }
+            return .ok(cost: costForCertification)
+
+        case .pharmacyTech:
+            guard s.analyticalReasoningAndProblemSolving >= 2 else { return .blocked(reason: "Needs more Problem Solving") }
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            return .ok(cost: costForCertification)
+
+        case .cwi:
+            guard s.perseveranceAndGrit >= 3 else { return .blocked(reason: "Needs more Perseverance") }
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            return .ok(cost: costForCertification)
+
+        case .epa608:
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            guard s.analyticalReasoningAndProblemSolving >= 2 else { return .blocked(reason: "Needs more Problem Solving") }
+            return .ok(cost: costForCertification)
+
+        case .nate:
+            guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
+            guard s.perseveranceAndGrit >= 2 else { return .blocked(reason: "Needs more Perseverance") }
+            return .ok(cost: costForCertification)
+
+        case .faaAMP:
+            guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
+            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
+            guard s.perseveranceAndGrit >= 3 else { return .blocked(reason: "Needs more Perseverance") }
+            return .ok(cost: costForCertification)
+
+        case .cfp:
+            guard s.analyticalReasoningAndProblemSolving >= 3 else { return .blocked(reason: "Needs more Problem Solving") }
+            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
+            return .ok(cost: costForCertification)
+
+        case .series65:
+            guard s.analyticalReasoningAndProblemSolving >= 3 else { return .blocked(reason: "Needs more Problem Solving") }
+            return .ok(cost: costForCertification)
+
+        case .flightAttendantCert:
+            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
+            guard s.resilienceAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
+            return .ok(cost: costForCertification)
+
+        // IT/low-risk handled earlier
+        case .aws, .azure, .google, .scrum, .security:
+            return .ok(cost: costForCertification)
+        }
+    }
 }
