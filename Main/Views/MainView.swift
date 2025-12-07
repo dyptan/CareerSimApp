@@ -13,7 +13,13 @@ struct MainView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = ""
     @State var showRetirementSheet = false
-    @State var showHardSkillsSheet = false
+
+    // NEW: separate sheets for each hard-skill group
+    @State private var showCertificationsSheet = false
+    @State private var showLicensesSheet = false
+    @State private var showSoftwareSheet = false
+    @State private var showPortfolioSheet = false
+
     @State var showSoftSkillsSheet = false
 
     // Use hard-coded jobs for now
@@ -51,10 +57,10 @@ struct MainView: View {
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
                 selectedCertifications: $selectedCertifications,
-                showHardSkillsSheet: $showHardSkillsSheet,
+                showHardSkillsSheet: .constant(false),
                 showSoftSkillsSheet: $showSoftSkillsSheet,
                 showCareersSheet: $showCareersSheet,
-                showTertiarySheet: $showTertiarySheet,
+                showTertiarySheet: $showTertiarySheet
             )
 
         }
@@ -93,6 +99,9 @@ struct MainView: View {
                 showTertiarySheet: $showTertiarySheet,
                 showCareersSheet: $showCareersSheet
             )
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
         }
         .sheet(isPresented: $showCareersSheet) {
             CareersSheet(
@@ -101,42 +110,165 @@ struct MainView: View {
                 showCareersSheet: $showCareersSheet
             )
             .frame(idealHeight: 500, alignment: .leading)
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
 
             Button("Close") {
                 showCareersSheet = false
             }.padding()
         }
-        .sheet(isPresented: $showHardSkillsSheet) {
+        // Certifications sheet
+        .sheet(isPresented: $showCertificationsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        hardSkillsContent
-                            .navigationTitle("Sign up for training")
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
-                                        showHardSkillsSheet = false
-                                    }
-                                }
+                        CertificationsTrainingView(
+                            selectedCertifications: $selectedCertifications,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showCertificationsSheet = false }
                             }
+                        }
                     }
                 } else {
                     NavigationView {
-                        hardSkillsContent
-                            .navigationTitle("Sign up for training")
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
-                                        showHardSkillsSheet = false
-                                    }
-                                }
+                        CertificationsTrainingView(
+                            selectedCertifications: $selectedCertifications,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showCertificationsSheet = false }
                             }
+                        }
                     }
                     #if os(iOS)
-                        .navigationViewStyle(.stack)
+                    .navigationViewStyle(.stack)
                     #endif
                 }
             }
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
+        }
+        // Licenses sheet
+        .sheet(isPresented: $showLicensesSheet) {
+            Group {
+                if #available(iOS 16, macOS 13, *) {
+                    NavigationStack {
+                        LicensesTrainingView(
+                            selectedLicences: $selectedLicences,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showLicensesSheet = false }
+                            }
+                        }
+                    }
+                } else {
+                    NavigationView {
+                        LicensesTrainingView(
+                            selectedLicences: $selectedLicences,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showLicensesSheet = false }
+                            }
+                        }
+                    }
+                    #if os(iOS)
+                    .navigationViewStyle(.stack)
+                    #endif
+                }
+            }
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
+        }
+        // Software sheet
+        .sheet(isPresented: $showSoftwareSheet) {
+            Group {
+                if #available(iOS 16, macOS 13, *) {
+                    NavigationStack {
+                        SoftwareTrainingView(
+                            selectedSoftware: $selectedSoftware,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showSoftwareSheet = false }
+                            }
+                        }
+                    }
+                } else {
+                    NavigationView {
+                        SoftwareTrainingView(
+                            selectedSoftware: $selectedSoftware,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showSoftwareSheet = false }
+                            }
+                        }
+                    }
+                    #if os(iOS)
+                    .navigationViewStyle(.stack)
+                    #endif
+                }
+            }
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
+        }
+        // Portfolio sheet
+        .sheet(isPresented: $showPortfolioSheet) {
+            Group {
+                if #available(iOS 16, macOS 13, *) {
+                    NavigationStack {
+                        PortfolioTrainingView(
+                            selectedPortfolio: $selectedPortfolio,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showPortfolioSheet = false }
+                            }
+                        }
+                    }
+                } else {
+                    NavigationView {
+                        PortfolioTrainingView(
+                            selectedPortfolio: $selectedPortfolio,
+                            selectedActivities: $selectedActivities
+                        )
+                        .environmentObject(player)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Done") { showPortfolioSheet = false }
+                            }
+                        }
+                    }
+                    #if os(iOS)
+                    .navigationViewStyle(.stack)
+                    #endif
+                }
+            }
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
         }
         .sheet(isPresented: $showSoftSkillsSheet) {
             Group {
@@ -169,6 +301,9 @@ struct MainView: View {
                     #endif
                 }
             }
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
         }
         .sheet(isPresented: $showRetirementSheet) {
             VStack(spacing: 16) {
@@ -251,6 +386,9 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
+            #if os(macOS)
+            .frame(minWidth: 700, minHeight: 400)
+            #endif
         }
         .onChange(of: player.age) { newValue in
             switch newValue {
@@ -272,14 +410,21 @@ struct MainView: View {
                 showSoftSkillsSheet = true
             }
             .buttonStyle(.bordered).font(.headline)
+        }
 
-            Button("Cources&Trainings") {
-                showHardSkillsSheet = true
-            }
-            .buttonStyle(.bordered).font(.headline).frame(
-                alignment: .trailing
-            )
+        // Distinct hard-skill buttons
+        HStack {
+            Button("Portfolio") { showPortfolioSheet = true }
+                .buttonStyle(.bordered).font(.headline)
 
+            Button("Software") { showSoftwareSheet = true }
+                .buttonStyle(.bordered).font(.headline)
+
+            Button("Certifications") { showCertificationsSheet = true }
+                .buttonStyle(.bordered).font(.headline)
+
+            Button("Licenses") { showLicensesSheet = true }
+                .buttonStyle(.bordered).font(.headline)
         }
 
         HStack {
@@ -343,20 +488,6 @@ struct MainView: View {
 
     }
 
-    private var hardSkillsContent: some View {
-        ScrollView {
-            HardSkillsView(
-                selectedCertifications: $selectedCertifications,
-                selectedLicences: $selectedLicences,
-                selectedSoftware: $selectedSoftware,
-                selectedPortfolio: $selectedPortfolio,
-                selectedActivities: $selectedActivities
-            )
-            .environmentObject(player)
-            .padding()
-        }
-    }
-
     private var softSkillsContent: some View {
         ScrollView {
             ActivitiesView(
@@ -369,4 +500,8 @@ struct MainView: View {
             .padding()
         }
     }
+}
+
+#Preview {
+    MainView()
 }

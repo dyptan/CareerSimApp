@@ -1,6 +1,9 @@
 import Foundation
 
-// MARK: - Proficiency
+enum TrainingRequirementResult {
+    case ok(cost: Int)
+    case blocked(reason: String)
+}
 
 enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Comparable {
     case level1 = 1

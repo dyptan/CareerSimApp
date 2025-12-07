@@ -33,7 +33,7 @@ struct ActivitiesView: View {
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(extraCurriculum, id: \.label) { activity in
+                    ForEach(activities, id: \.label) { activity in
                         let pictos = activity.abilityKeyPaths.compactMap { kp in
                             skillPictogramByKeyPath[
                                 kp as PartialKeyPath<SoftSkills>
