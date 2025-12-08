@@ -7,8 +7,8 @@ struct SkillsView: View {
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedCertifications: Set<Certification>
-    @Binding var showHardSkillsSheet: Bool
-    @Binding var showSoftSkillsSheet: Bool
+//    @Binding var showHardSkillsSheet: Bool
+//    @Binding var showSoftSkillsSheet: Bool
     @Binding var showCareersSheet: Bool
     @Binding var showTertiarySheet: Bool
 
@@ -113,8 +113,8 @@ struct SkillsView: View {
         selectedLicences: .constant([]),
         selectedPortfolio: .constant([.app]),
         selectedCertifications: .constant([]),
-        showHardSkillsSheet: .constant(false),
-        showSoftSkillsSheet: .constant(false),
+//        showHardSkillsSheet: .constant(false),
+//        showSoftSkillsSheet: .constant(false),
         showCareersSheet: .constant(false),
         showTertiarySheet: .constant(false)
     )

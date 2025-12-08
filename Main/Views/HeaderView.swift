@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct HeaderView: View {
-    //     Inject the model and all state this header needs to read/mutate
     @ObservedObject var player: Player
 
     @Binding var showDecisionSheet: Bool
@@ -18,9 +17,8 @@ struct HeaderView: View {
     @Binding var yearsLeftToGraduation: Int?
     @Binding var descisionText: String
 
-    private let maxActivitiesPerYear = 3
+    private let maxActivitiesPerYear = 1
 
-    // Local state to drive the scale animation when age changes
     @State var didBumpAgeScale = false
 
     var body: some View {
@@ -29,7 +27,7 @@ struct HeaderView: View {
             HStack{
                 Text("Age:")
                 Text("\(player.age)")
-                    .scaleEffect(didBumpAgeScale ? 1.5 : 1)
+                    .scaleEffect(didBumpAgeScale ? 2 : 1)
                     .animation(.spring(), value: didBumpAgeScale)
                     .onChange(of: player.age) { _ in
                         didBumpAgeScale = true
@@ -46,7 +44,7 @@ struct HeaderView: View {
             Text("Bank balance: \(player.savings)$")
             
             if player.savings > 0 {
-                Text(String(repeating: "💶", count: player.savings / 10))
+                Text(String(repeating: "💶", count: player.savings / 100000))
             }
 
             if let currentOccupation = player.currentOccupation {

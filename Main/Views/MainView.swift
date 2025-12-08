@@ -54,8 +54,8 @@ struct MainView: View {
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
                 selectedCertifications: $selectedCertifications,
-                showHardSkillsSheet: .constant(false),
-                showSoftSkillsSheet: $showSoftSkillsSheet,
+//                showHardSkillsSheet: .constant(false),
+//                showSoftSkillsSheet: $showSoftSkillsSheet,
                 showCareersSheet: $showCareersSheet,
                 showTertiarySheet: $showTertiarySheet
             )
