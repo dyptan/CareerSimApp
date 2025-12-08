@@ -58,51 +58,51 @@ struct LicensesTrainingView: View {
         switch lic {
         case .drivers:
             return [
-                (\.spacialNavigation, 1),
+                (\.spacialNavigationAndOrientation, 1),
                 (\.coordinationAndBalance, 1),
-                (\.resilienceAndEndurance, 1),
+                (\.physicalStrengthAndEndurance, 1),
             ]
         case .cdl:
             return [
-                (\.spacialNavigation, 2),
+                (\.spacialNavigationAndOrientation, 2),
                 (\.coordinationAndBalance, 2),
-                (\.resilienceAndEndurance, 2),
-                (\.perseveranceAndGrit, 2),
+                (\.physicalStrengthAndEndurance, 2),
+                (\.patienceAndPerseverance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
         case .pilot:
             return [
-                (\.spacialNavigation, 2),
+                (\.spacialNavigationAndOrientation, 2),
                 (\.coordinationAndBalance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
                 (\.analyticalReasoningAndProblemSolving, 2),
             ]
         case .commercialPilot:
             return [
-                (\.spacialNavigation, 3),
+                (\.spacialNavigationAndOrientation, 3),
                 (\.coordinationAndBalance, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.perseveranceAndGrit, 3),
+                (\.patienceAndPerseverance, 3),
                 (\.analyticalReasoningAndProblemSolving, 3),
             ]
         case .nurse:
             return [
                 (\.communicationAndNetworking, 2),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.resilienceAndEndurance, 2),
+                (\.physicalStrengthAndEndurance, 2),
             ]
         case .electrician:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.perseveranceAndGrit, 2),
+                (\.patienceAndPerseverance, 2),
             ]
         case .plumber:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 2),
-                (\.perseveranceAndGrit, 2),
-                (\.physicalStrength, 2),
+                (\.patienceAndPerseverance, 2),
+                (\.physicalStrengthAndEndurance, 2),
             ]
         case .realEstateAgent:
             return [
@@ -223,3 +223,4 @@ struct LicensesTrainingView: View {
     }
     return Container()
 }
+

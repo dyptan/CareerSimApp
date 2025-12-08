@@ -169,13 +169,13 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         meets = meets && s.communicationAndNetworking >= r.communicationAndNetworking
         meets = meets && s.leadershipAndInfluence >= r.leadershipAndInfluence
         meets = meets && s.courageAndRiskTolerance >= r.courageAndRiskTolerance
-        meets = meets && s.spacialNavigation >= r.spacialNavigation
+        meets = meets && s.spacialNavigationAndOrientation >= r.spacialNavigation
         meets = meets && s.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail
-        meets = meets && s.perseveranceAndGrit >= r.perseveranceAndGrit
+        meets = meets && s.patienceAndPerseverance >= r.perseveranceAndGrit
         meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
-        meets = meets && s.physicalStrength >= r.physicalStrength
+        meets = meets && s.physicalStrengthAndEndurance >= r.physicalStrength
         meets = meets && s.coordinationAndBalance >= r.coordinationAndBalance
-        meets = meets && s.resilienceAndEndurance >= r.resilienceAndEndurance
+        meets = meets && s.physicalStrengthAndEndurance >= r.resilienceAndEndurance
 
         // Derive a simple first unmet message (optional)
         let message: String? = {
@@ -184,13 +184,13 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             if s.communicationAndNetworking < r.communicationAndNetworking { return "Needs better Communication" }
             if s.leadershipAndInfluence < r.leadershipAndInfluence { return "Needs more Leadership" }
             if s.courageAndRiskTolerance < r.courageAndRiskTolerance { return "Needs more Courage" }
-            if s.spacialNavigation < r.spacialNavigation { return "Needs better Navigation" }
+            if s.spacialNavigationAndOrientation < r.spacialNavigation { return "Needs better Navigation" }
             if s.carefulnessAndAttentionToDetail < r.carefulnessAndAttentionToDetail { return "Needs more Carefulness" }
-            if s.perseveranceAndGrit < r.perseveranceAndGrit { return "Needs more Perseverance" }
+            if s.patienceAndPerseverance < r.perseveranceAndGrit { return "Needs more Perseverance" }
             if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
-            if s.physicalStrength < r.physicalStrength { return "Needs more Strength" }
+            if s.physicalStrengthAndEndurance < r.physicalStrength { return "Needs more Strength" }
             if s.coordinationAndBalance < r.coordinationAndBalance { return "Needs better Coordination" }
-            if s.resilienceAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
+            if s.physicalStrengthAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
             return nil
         }()
 
@@ -212,7 +212,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .cna:
             guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.resilienceAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
+            guard s.physicalStrengthAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
             guard s.carefulnessAndAttentionToDetail >= 2 else { return .blocked(reason: "Needs more Carefulness") }
             return .ok(cost: costForCertification)
 
@@ -224,7 +224,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .medicalAssistant:
             guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
             guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.perseveranceAndGrit >= 2 else { return .blocked(reason: "Needs more Perseverance") }
+            guard s.patienceAndPerseverance >= 2 else { return .blocked(reason: "Needs more Perseverance") }
             return .ok(cost: costForCertification)
 
         case .pharmacyTech:
@@ -233,7 +233,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             return .ok(cost: costForCertification)
 
         case .cwi:
-            guard s.perseveranceAndGrit >= 3 else { return .blocked(reason: "Needs more Perseverance") }
+            guard s.patienceAndPerseverance >= 3 else { return .blocked(reason: "Needs more Perseverance") }
             guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
             return .ok(cost: costForCertification)
 
@@ -244,13 +244,13 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
 
         case .nate:
             guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
-            guard s.perseveranceAndGrit >= 2 else { return .blocked(reason: "Needs more Perseverance") }
+            guard s.patienceAndPerseverance >= 2 else { return .blocked(reason: "Needs more Perseverance") }
             return .ok(cost: costForCertification)
 
         case .faaAMP:
             guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
             guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.perseveranceAndGrit >= 3 else { return .blocked(reason: "Needs more Perseverance") }
+            guard s.patienceAndPerseverance >= 3 else { return .blocked(reason: "Needs more Perseverance") }
             return .ok(cost: costForCertification)
 
         case .cfp:
@@ -264,7 +264,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
 
         case .flightAttendantCert:
             guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.resilienceAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
+            guard s.physicalStrengthAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
             return .ok(cost: costForCertification)
 
         // IT/low-risk handled earlier
@@ -273,3 +273,4 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 }
+

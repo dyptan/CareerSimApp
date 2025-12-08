@@ -88,13 +88,13 @@ struct JobView: View {
         if p.communicationAndNetworking >= r.communicationAndNetworking { score += 1 }
         if p.leadershipAndInfluence >= r.leadershipAndInfluence { score += 1 }
         if p.courageAndRiskTolerance >= r.courageAndRiskTolerance { score += 1 }
-        if p.spacialNavigation >= r.spacialNavigation { score += 1 }
+        if p.spacialNavigationAndOrientation >= r.spacialNavigation { score += 1 }
         if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
-        if p.perseveranceAndGrit >= r.perseveranceAndGrit { score += 1 }
+        if p.patienceAndPerseverance >= r.perseveranceAndGrit { score += 1 }
         if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
-        if p.physicalStrength >= r.physicalStrength { score += 1 }
+        if p.physicalStrengthAndEndurance >= r.physicalStrength { score += 1 }
         if p.coordinationAndBalance >= r.coordinationAndBalance { score += 1 }
-        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
+        if p.physicalStrengthAndEndurance >= r.resilienceAndEndurance { score += 1 }
         return score
     }
 
@@ -247,13 +247,13 @@ struct JobView: View {
                 softRequirement(\.communicationAndNetworking, requiredSoft.communicationAndNetworking)
                 softRequirement(\.leadershipAndInfluence, requiredSoft.leadershipAndInfluence)
                 softRequirement(\.courageAndRiskTolerance, requiredSoft.courageAndRiskTolerance)
-                softRequirement(\.spacialNavigation, requiredSoft.spacialNavigation)
+                softRequirement(\.spacialNavigationAndOrientation, requiredSoft.spacialNavigation)
                 softRequirement(\.carefulnessAndAttentionToDetail, requiredSoft.carefulnessAndAttentionToDetail)
-                softRequirement(\.perseveranceAndGrit, requiredSoft.perseveranceAndGrit)
+                softRequirement(\.patienceAndPerseverance, requiredSoft.perseveranceAndGrit)
                 softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
-                softRequirement(\.physicalStrength, requiredSoft.physicalStrength)
+                softRequirement(\.physicalStrengthAndEndurance, requiredSoft.physicalStrength)
                 softRequirement(\.coordinationAndBalance, requiredSoft.coordinationAndBalance)
-                softRequirement(\.resilienceAndEndurance, requiredSoft.resilienceAndEndurance)
+                softRequirement(\.physicalStrengthAndEndurance, requiredSoft.resilienceAndEndurance)
             }
 
             Spacer()
@@ -371,3 +371,4 @@ struct JobView: View {
         )
     }
 }
+

@@ -21,50 +21,46 @@ struct SkillsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-
-            VStack(alignment: .leading) {
-
-                ForEach(
-                    Array(SoftSkills.skillNames.enumerated()),
-                    id: \.offset
-                ) { (_, skill) in
-                    HStack {
-                        Text(skill.label)
-                        Spacer()
-                        Text(
-                            String(
-                                repeating: skill.pictogram,
-                                count: player.softSkills[
-                                    keyPath: skill.keyPath
-                                ]
-                            )
-                        )
-                    }
-                }
-            }
-
-        }
-        Divider()
 
         VStack(alignment: .leading) {
 
-            HStack {
-
-                Text("Portfolio")
-
-                ForEach(
-                    Array(
-                        player.hardSkills.portfolioItems.union(
-                            selectedPortfolio
+            ForEach(
+                Array(SoftSkills.skillNames.enumerated()),
+                id: \.offset
+            ) { (_, skill) in
+                HStack {
+                    Text(skill.label)
+                    Spacer()
+                    Text(
+                        String(
+                            repeating: skill.pictogram,
+                            count: player.softSkills[
+                                keyPath: skill.keyPath
+                            ]
                         )
                     )
-                ) { skill in
-                    Text("\(skill.pictogram)")
                 }
             }
 
-            Text("Certifications")
+            Divider()
+
+            if !player.hardSkills.portfolioItems.isEmpty {
+                Text("Portfolio")
+            }
+
+            ForEach(
+                Array(
+                    player.hardSkills.portfolioItems.union(
+                        selectedPortfolio
+                    )
+                )
+            ) { skill in
+                Text("\(skill.id) \(skill.pictogram)")
+            }
+
+            if !player.hardSkills.certifications.isEmpty {
+                Text("Certifications")
+            }
 
             ForEach(
                 Array(
@@ -76,7 +72,10 @@ struct SkillsView: View {
                 Text(cert.pictogram)
             }
 
-            Text("Licenses")
+            if !player.hardSkills.licenses.isEmpty {
+                Text("Licenses")
+            }
+            
             ForEach(
                 Array(
                     selectedLicences.union(
@@ -87,24 +86,24 @@ struct SkillsView: View {
                 Text(lic.pictogram)
             }
 
-            HStack {
-
+            if !player.hardSkills.software.isEmpty {
                 Text("Computer Skills")
+            }
+            
 
-                ForEach(
-                    Array(
-                        player.hardSkills.software.union(
-                            selectedSoftware
-                        )
+            ForEach(
+                Array(
+                    player.hardSkills.software.union(
+                        selectedSoftware
                     )
-                ) { skill in
-                    Text("\(skill.pictogram)")
-                }
+                )
+            ) { skill in
+                Text("\(skill.pictogram)")
             }
 
-            
         }
     }
+
 }
 
 #Preview {
@@ -112,7 +111,7 @@ struct SkillsView: View {
         player: Player(),
         selectedSoftware: .constant([]),
         selectedLicences: .constant([]),
-        selectedPortfolio: .constant([]),
+        selectedPortfolio: .constant([.app]),
         selectedCertifications: .constant([]),
         showHardSkillsSheet: .constant(false),
         showSoftSkillsSheet: .constant(false),

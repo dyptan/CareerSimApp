@@ -64,7 +64,7 @@ struct CertificationsTrainingView: View {
         case .cna:
             return [
                 (\.communicationAndNetworking, 2),
-                (\.resilienceAndEndurance, 2),
+                (\.physicalStrengthAndEndurance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
         case .dentalAssistant:
@@ -76,7 +76,7 @@ struct CertificationsTrainingView: View {
             return [
                 (\.communicationAndNetworking, 2),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.perseveranceAndGrit, 2),
+                (\.patienceAndPerseverance, 2),
             ]
         case .pharmacyTech:
             return [
@@ -85,7 +85,7 @@ struct CertificationsTrainingView: View {
             ]
         case .cwi:
             return [
-                (\.perseveranceAndGrit, 3),
+                (\.patienceAndPerseverance, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
             ]
         case .epa608:
@@ -96,13 +96,13 @@ struct CertificationsTrainingView: View {
         case .nate:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
-                (\.perseveranceAndGrit, 2),
+                (\.patienceAndPerseverance, 2),
             ]
         case .faaAMP:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.perseveranceAndGrit, 3),
+                (\.patienceAndPerseverance, 3),
             ]
         case .cfp:
             return [
@@ -116,7 +116,7 @@ struct CertificationsTrainingView: View {
         case .flightAttendantCert:
             return [
                 (\.communicationAndNetworking, 2),
-                (\.resilienceAndEndurance, 3),
+                (\.physicalStrengthAndEndurance, 3),
             ]
         }
     }
@@ -247,3 +247,4 @@ struct CertificationsTrainingView: View {
     }
     return Container()
 }
+

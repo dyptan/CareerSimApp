@@ -13,8 +13,6 @@ struct MainView: View {
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = ""
     @State var showRetirementSheet = false
-
-    // NEW: separate sheets for each hard-skill group
     @State private var showCertificationsSheet = false
     @State private var showLicensesSheet = false
     @State private var showSoftwareSheet = false
@@ -22,7 +20,6 @@ struct MainView: View {
 
     @State var showSoftSkillsSheet = false
 
-    // Use hard-coded jobs for now
     private var availableJobs: [Job] {
         HardcodedJobs.sampleJobs()
     }

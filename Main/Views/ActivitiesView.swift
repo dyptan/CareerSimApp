@@ -34,18 +34,17 @@ struct ActivitiesView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(activities, id: \.label) { activity in
-                        let pictos = activity.abilityKeyPaths.compactMap { kp in
-                            skillPictogramByKeyPath[
-                                kp as PartialKeyPath<SoftSkills>
-                            ]
-                        }.joined()
-                        let isLocked = player.lockedActivities.contains(
-                            activity.label
-                        )
-                        let atLimit = selectedActivities.count >= 3
-                        let isSelected = selectedActivities.contains(
-                            activity.label
-                        )
+                        let pictos: String = {
+                            activity.abilities.flatMap { ability -> [String] in
+                                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
+                                guard let pic = skillPictogramByKeyPath[kp] else { return [] }
+                                return Array(repeating: pic, count: max(ability.weight, 1))
+                            }.joined()
+                        }()
+
+                        let isLocked = player.lockedActivities.contains(activity.label)
+                        let atLimit = selectedActivities.count >= maxActivitiesPerYear
+                        let isSelected = selectedActivities.contains(activity.label)
 
                         Toggle(
                             "\(activity.label) \(pictos)",
@@ -53,27 +52,14 @@ struct ActivitiesView: View {
                                 get: { isSelected },
                                 set: { isOn in
                                     if isOn && !atLimit {
-                                        selectedActivities.insert(
-                                            activity.label
-                                        )
-                                        for keyPath in activity.abilityKeyPaths
-                                        {
-                                            player.softSkills[
-                                                keyPath: keyPath
-                                            ] += 1
+                                        selectedActivities.insert(activity.label)
+                                        for ability in activity.abilities {
+                                            player.softSkills[keyPath: ability.keyPath] += ability.weight
                                         }
                                     } else {
-                                        if selectedActivities.remove(
-                                            activity.label
-                                        )
-                                            != nil
-                                        {
-                                            for keyPath in activity
-                                                .abilityKeyPaths
-                                            {
-                                                player.softSkills[
-                                                    keyPath: keyPath
-                                                ] -= 1
+                                        if selectedActivities.remove(activity.label) != nil {
+                                            for ability in activity.abilities {
+                                                player.softSkills[keyPath: ability.keyPath] -= ability.weight
                                             }
                                         }
                                     }
@@ -83,14 +69,12 @@ struct ActivitiesView: View {
                         .toggleStyle(.automatic)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .disabled(isLocked || (!isSelected && atLimit))
-                        .opacity(
-                            (isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0
-                        )
+                        .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
                         .help(
                             isLocked
                                 ? "Locked after year end"
                                 : ((!isSelected && atLimit)
-                                    ? "You can take up to 3 activities this year."
+                                    ? "You can take up to \(maxActivitiesPerYear) activities this year."
                                     : "")
                         )
                         #if os(macOS)

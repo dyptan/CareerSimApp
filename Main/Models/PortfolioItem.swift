@@ -51,7 +51,6 @@ enum PortfolioItem: String, CaseIterable, Codable, Hashable, Identifiable {
                 .joined(separator: ", ")
             return .blocked(reason: reason)
         }
-        // No cost to add a portfolio item once requirements are met
         return .ok(cost: 0)
     }
 }

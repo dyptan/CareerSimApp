@@ -237,19 +237,17 @@ struct SoftSkills: Codable, Hashable {
     var courageAndRiskTolerance: Int = 0
     var carefulnessAndAttentionToDetail: Int = 0
     var tinkeringAndFingerPrecision: Int = 0
-    var spacialNavigation: Int = 0
-    var physicalStrength: Int = 0
+    var spacialNavigationAndOrientation: Int = 0
+    var physicalStrengthAndEndurance: Int = 0
     var coordinationAndBalance: Int = 0
-    var perseveranceAndGrit: Int = 0
-    var resilienceAndEndurance: Int = 0
-
-    // New school-age soft skills
-    var emotionalIntelligence: Int = 0                // Empathy
-    var collaborationAndTeamwork: Int = 0             // Collaboration
-    var timeManagementAndPlanning: Int = 0            // Time Management
-    var selfDisciplineAndStudyHabits: Int = 0         // Study Habits / Self-Discipline
-    var adaptabilityAndLearningAgility: Int = 0       // Adaptability
-    var presentationAndStorytelling: Int = 0          // Presentation
+    var stressResistanceAndEmotionalRegulation: Int = 0
+    var outdoorAndWeatherResilience: Int = 0
+    var patienceAndPerseverance: Int = 0
+    var collaborationAndTeamwork: Int = 0
+    var timeManagementAndPlanning: Int = 0
+    var selfDisciplineAndStudyHabits: Int = 0
+    var adaptabilityAndLearningAgility: Int = 0
+    var presentationAndStorytelling: Int = 0
 
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
@@ -259,14 +257,14 @@ struct SoftSkills: Codable, Hashable {
         (\.courageAndRiskTolerance, "Risk Tolerance", "🎲"),
         (\.carefulnessAndAttentionToDetail, "Attention To Detail", "🔎"),
         (\.tinkeringAndFingerPrecision, "Tinkering", "🔧"),
-        (\.spacialNavigation, "Navigation", "🧭"),
-        (\.physicalStrength, "Strength", "💪"),
+        (\.spacialNavigationAndOrientation, "Navigation", "🧭"),
+        (\.physicalStrengthAndEndurance, "Strength & Endurance", "💪"),
         (\.coordinationAndBalance, "Coordination", "🤸"),
-        (\.perseveranceAndGrit, "Perseverance", "🛡️"),
-        (\.resilienceAndEndurance, "Endurance", "🌦️"),
+        (\.patienceAndPerseverance, "Perseverance", "🛡️"),
+        (\.outdoorAndWeatherResilience, "Outdoor Resilience", "🌦️"),
 
-        // New school-age soft skills (labels + pictograms)
-        (\.emotionalIntelligence, "Emotional Intelligence", "🫶"),
+        // School-age / emotional skills (merged)
+        (\.stressResistanceAndEmotionalRegulation, "Emotional Regulation", "🧘"),
         (\.collaborationAndTeamwork, "Collaboration", "🤝"),
         (\.timeManagementAndPlanning, "Time Management", "⏱️"),
         (\.selfDisciplineAndStudyHabits, "Study Habits", "📚"),
@@ -281,3 +279,4 @@ extension ProficiencyLevel {
         "\(name) — \(displayName)"
     }
 }
+

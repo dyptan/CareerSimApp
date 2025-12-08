@@ -122,7 +122,7 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         case .sports: return "Train bodies and minds to perform their best."
         case .agriculture: return "Grow food and care for plants and animals."
         case .humanities: return "Study people, cultures, and history."
-        case .law: return "Learn rules and how to keep things fair."
+        case .law: return "Learn rules, rights, and justice systems to help people follow the law."
         case .design: return "Make things useful and beautiful."
         case .service: return "Help others with important everyday tasks."
         }
@@ -260,453 +260,299 @@ struct Education: Codable, Hashable, Identifiable {
         var presentationAndStorytelling: Int = 0
     }
 
+    // MARK: - Requirements scaffolding to scale difficulty
+
+    private static func baseRequirements(for profile: TertiaryProfile) -> Requirements {
+        var r = Requirements(minEQF: 3)
+
+        // Core values doubled (capped at 5) + a few non-essential adds
+        switch profile {
+        case .technology:
+            r.analyticalReasoning = 4
+            r.attentionToDetail = 4
+            r.perseveranceAndGrit = 4
+            r.selfDisciplineAndStudyHabits = 4
+            r.tinkering = 2
+            r.timeManagementAndPlanning = 2
+            r.collaborationAndTeamwork = 2
+            // non-essential
+            r.presentationAndStorytelling = 1
+            r.adaptabilityAndLearningAgility = 1
+            r.socialCommunication = 1
+
+        case .engineering:
+            r.analyticalReasoning = 4
+            r.spatialThinking = 4
+            r.perseveranceAndGrit = 4
+            r.attentionToDetail = 2
+            r.tinkering = 2
+            r.timeManagementAndPlanning = 2
+            r.collaborationAndTeamwork = 2
+            // non-essential
+            r.presentationAndStorytelling = 1
+            r.selfDisciplineAndStudyHabits = 1
+
+        case .science:
+            r.analyticalReasoning = 4
+            r.perseveranceAndGrit = 4
+            r.selfDisciplineAndStudyHabits = 4
+            r.timeManagementAndPlanning = 2
+            r.presentationAndStorytelling = 2
+            // non-essential
+            r.attentionToDetail = 1
+            r.collaborationAndTeamwork = 1
+
+        case .arts:
+            r.creativeExpression = 5
+            r.presentationAndStorytelling = 4
+            r.attentionToDetail = 2
+            r.perseveranceAndGrit = 2
+            r.socialCommunication = 2
+            // non-essential
+            r.adaptabilityAndLearningAgility = 1
+            r.selfDisciplineAndStudyHabits = 1
+
+        case .design:
+            r.creativeExpression = 5
+            r.attentionToDetail = 4
+            r.presentationAndStorytelling = 4
+            r.spatialThinking = 2
+            // non-essential
+            r.analyticalReasoning = 1
+            r.collaborationAndTeamwork = 1
+            r.timeManagementAndPlanning = 1
+
+        case .business:
+            r.socialCommunication = 4
+            r.leadershipAndInfluence = 4
+            r.analyticalReasoning = 2
+            r.timeManagementAndPlanning = 4
+            r.presentationAndStorytelling = 4
+            r.collaborationAndTeamwork = 2
+            r.riskTolerance = 2
+            // non-essential
+            r.adaptabilityAndLearningAgility = 1
+            r.perseveranceAndGrit = 1
+            r.selfDisciplineAndStudyHabits = 1
+
+        case .education:
+            r.socialCommunication = 4
+            r.emotionalIntelligence = 4
+            r.presentationAndStorytelling = 4
+            r.perseveranceAndGrit = 4
+            r.timeManagementAndPlanning = 2
+            // non-essential
+            r.collaborationAndTeamwork = 1
+            r.adaptabilityAndLearningAgility = 1
+            r.selfDisciplineAndStudyHabits = 1
+
+        case .health:
+            r.socialCommunication = 4
+            r.attentionToDetail = 4
+            r.endurance = 4
+            r.emotionalIntelligence = 4
+            r.perseveranceAndGrit = 2
+            // non-essential
+            r.physicalStrength = 2
+            r.timeManagementAndPlanning = 1
+            r.collaborationAndTeamwork = 1
+
+        case .sports:
+            r.physicalStrength = 4
+            r.endurance = 4
+            r.collaborationAndTeamwork = 4
+            r.selfDisciplineAndStudyHabits = 4
+            // non-essential
+            r.perseveranceAndGrit = 2
+            r.riskTolerance = 1
+            r.timeManagementAndPlanning = 1
+
+        case .agriculture:
+            r.perseveranceAndGrit = 4
+            r.endurance = 4
+            r.physicalStrength = 4
+            r.timeManagementAndPlanning = 2
+            // non-essential
+            r.spatialThinking = 1
+            r.attentionToDetail = 1
+            r.collaborationAndTeamwork = 1
+
+        case .humanities:
+            r.socialCommunication = 4
+            r.perseveranceAndGrit = 4
+            r.presentationAndStorytelling = 4
+            r.analyticalReasoning = 2
+            // non-essential
+            r.selfDisciplineAndStudyHabits = 2
+            r.timeManagementAndPlanning = 1
+            r.adaptabilityAndLearningAgility = 1
+
+        case .law:
+            r.analyticalReasoning = 4
+            r.socialCommunication = 4
+            r.attentionToDetail = 4
+            r.perseveranceAndGrit = 4
+            r.presentationAndStorytelling = 4
+            // non-essential
+            r.timeManagementAndPlanning = 2
+            r.leadershipAndInfluence = 1
+            r.selfDisciplineAndStudyHabits = 1
+
+        case .service:
+            r.socialCommunication = 4
+            r.emotionalIntelligence = 4
+            r.collaborationAndTeamwork = 4
+            r.timeManagementAndPlanning = 2
+            r.perseveranceAndGrit = 2
+            // non-essential
+            r.presentationAndStorytelling = 1
+            r.riskTolerance = 1
+            r.adaptabilityAndLearningAgility = 1
+        }
+
+        return r
+    }
+
+    private static func elevated(_ r: Requirements, by delta: Int) -> Requirements {
+        var x = r
+        func bump(_ v: Int) -> Int { v > 0 ? min(v + delta, 5) : 0 }
+
+        x.analyticalReasoning = bump(x.analyticalReasoning)
+        x.creativeExpression = bump(x.creativeExpression)
+        x.socialCommunication = bump(x.socialCommunication)
+        x.leadershipAndInfluence = bump(x.leadershipAndInfluence)
+        x.riskTolerance = bump(x.riskTolerance)
+        x.spatialThinking = bump(x.spatialThinking)
+        x.attentionToDetail = bump(x.attentionToDetail)
+        x.perseveranceAndGrit = bump(x.perseveranceAndGrit)
+        x.tinkering = bump(x.tinkering)
+        x.physicalStrength = bump(x.physicalStrength)
+        x.endurance = bump(x.endurance)
+
+        x.emotionalIntelligence = bump(x.emotionalIntelligence)
+        x.collaborationAndTeamwork = bump(x.collaborationAndTeamwork)
+        x.timeManagementAndPlanning = bump(x.timeManagementAndPlanning)
+        x.selfDisciplineAndStudyHabits = bump(x.selfDisciplineAndStudyHabits)
+        x.adaptabilityAndLearningAgility = bump(x.adaptabilityAndLearningAgility)
+        x.presentationAndStorytelling = bump(x.presentationAndStorytelling)
+
+        return x
+    }
+
+    private static func enforceMinimums(_ r: Requirements, for level: Level.Stage, profile: TertiaryProfile) -> Requirements {
+        var x = r
+
+        // General escalation by level (keep within 5)
+        switch level {
+        case .Vocational:
+            break
+        case .Bachelor:
+            if profile.isSTEM {
+                x.analyticalReasoning = min(max(x.analyticalReasoning, x.analyticalReasoning > 0 ? 3 : 0), 5)
+                x.attentionToDetail = min(max(x.attentionToDetail, x.attentionToDetail > 0 ? 2 : 0), 5)
+                x.perseveranceAndGrit = min(max(x.perseveranceAndGrit, x.perseveranceAndGrit > 0 ? 2 : 0), 5)
+            }
+        case .Master:
+            if profile.isSTEM {
+                x.analyticalReasoning = min(max(x.analyticalReasoning, x.analyticalReasoning > 0 ? 4 : 0), 5)
+            } else {
+                x.analyticalReasoning = min(max(x.analyticalReasoning, x.analyticalReasoning > 0 ? 3 : 0), 5)
+            }
+            x.perseveranceAndGrit = min(max(x.perseveranceAndGrit, x.perseveranceAndGrit > 0 ? 3 : 0), 5)
+        case .Doctorate:
+            if profile.isSTEM {
+                x.analyticalReasoning = min(max(x.analyticalReasoning, x.analyticalReasoning > 0 ? 5 : 0), 5)
+            } else {
+                x.analyticalReasoning = min(max(x.analyticalReasoning, x.analyticalReasoning > 0 ? 4 : 0), 5)
+            }
+            x.perseveranceAndGrit = min(max(x.perseveranceAndGrit, x.perseveranceAndGrit > 0 ? 4 : 0), 5)
+            x.selfDisciplineAndStudyHabits = min(max(x.selfDisciplineAndStudyHabits, x.selfDisciplineAndStudyHabits > 0 ? 3 : 0), 5)
+        default:
+            break
+        }
+
+        // Profile-specific tuning (keep within 5)
+        switch profile {
+        case .arts, .design:
+            if level == .Master || level == .Doctorate {
+                x.creativeExpression = min(max(x.creativeExpression, x.creativeExpression > 0 ? (level == .Doctorate ? 5 : 4) : 0), 5)
+                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+            }
+        case .education:
+            if level == .Bachelor || level == .Master || level == .Doctorate {
+                x.emotionalIntelligence = min(max(x.emotionalIntelligence, x.emotionalIntelligence > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+            }
+        case .health:
+            if level == .Bachelor || level == .Master || level == .Doctorate {
+                x.socialCommunication = min(max(x.socialCommunication, x.socialCommunication > 0 ? 3 : 0), 5)
+                x.attentionToDetail = min(max(x.attentionToDetail, x.attentionToDetail > 0 ? 3 : 0), 5)
+                x.endurance = min(max(x.endurance, x.endurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.emotionalIntelligence = min(max(x.emotionalIntelligence, x.emotionalIntelligence > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+            }
+        case .business, .law, .humanities:
+            if level == .Master || level == .Doctorate {
+                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+            }
+        default:
+            break
+        }
+
+        return x
+    }
+
+    private static func clamped(_ r: Requirements) -> Requirements {
+        var x = r
+        func cap(_ v: Int) -> Int { min(max(0, v), 5) }
+
+        x.analyticalReasoning = cap(x.analyticalReasoning)
+        x.creativeExpression = cap(x.creativeExpression)
+        x.socialCommunication = cap(x.socialCommunication)
+        x.leadershipAndInfluence = cap(x.leadershipAndInfluence)
+        x.riskTolerance = cap(x.riskTolerance)
+        x.spatialThinking = cap(x.spatialThinking)
+        x.attentionToDetail = cap(x.attentionToDetail)
+        x.perseveranceAndGrit = cap(x.perseveranceAndGrit)
+        x.tinkering = cap(x.tinkering)
+        x.physicalStrength = cap(x.physicalStrength)
+        x.endurance = cap(x.endurance)
+
+        x.emotionalIntelligence = cap(x.emotionalIntelligence)
+        x.collaborationAndTeamwork = cap(x.collaborationAndTeamwork)
+        x.timeManagementAndPlanning = cap(x.timeManagementAndPlanning)
+        x.selfDisciplineAndStudyHabits = cap(x.selfDisciplineAndStudyHabits)
+        x.adaptabilityAndLearningAgility = cap(x.adaptabilityAndLearningAgility)
+        x.presentationAndStorytelling = cap(x.presentationAndStorytelling)
+
+        return x
+    }
+
     var requirements: Requirements {
-        switch (level, profile) {
-        case (.Vocational, .some(let p)):
-            switch p {
-            case .technology:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 1,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 0,
-                    tinkering: 1,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .engineering:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 1,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 1,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 1,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .health:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 1,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .agriculture:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 1,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .design:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 1,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .sports:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 1,
-                    endurance: 1,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 1,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .service:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 1,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            default:
-                return Requirements(minEQF: 3)
-            }
+        guard let p = profile else { return Requirements() }
 
-        case (.Bachelor, .some(let p)):
-            switch p {
-            case .engineering:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 2,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 1,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .technology:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 2,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .science:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 2,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 1,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .arts:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 2,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .design:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 2,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .business:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 1,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .education:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 1,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .health:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 1,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 1,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .humanities:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .law:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 1,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 1
-                )
-            case .agriculture:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 1,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 1,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 0,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .sports:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 0,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 1,
-                    endurance: 1,
-                    emotionalIntelligence: 0,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 1,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            case .service:
-                return Requirements(
-                    minEQF: 3,
-                    analyticalReasoning: 0,
-                    creativeExpression: 0,
-                    socialCommunication: 1,
-                    leadershipAndInfluence: 0,
-                    riskTolerance: 0,
-                    spatialThinking: 0,
-                    attentionToDetail: 0,
-                    perseveranceAndGrit: 0,
-                    tinkering: 0,
-                    physicalStrength: 0,
-                    endurance: 0,
-                    emotionalIntelligence: 1,
-                    collaborationAndTeamwork: 1,
-                    timeManagementAndPlanning: 0,
-                    selfDisciplineAndStudyHabits: 0,
-                    adaptabilityAndLearningAgility: 0,
-                    presentationAndStorytelling: 0
-                )
-            }
+        // Baseline by profile (doubled cores + some non-essentials)
+        var base = Education.baseRequirements(for: p)
 
-        case (.Master, .some(let p)):
-            var base = Education(.Bachelor, profile: p).requirements
-            base.minEQF = 5
-            base.analyticalReasoning = max(base.analyticalReasoning, 2)
-            base.creativeExpression = max(base.creativeExpression, 2)
-            base.perseveranceAndGrit = max(base.perseveranceAndGrit, 2)
-            return base
-
-        case (.Doctorate, .some(let p)):
-            var base = Education(.Master, profile: p).requirements
-            base.minEQF = 6
-            base.perseveranceAndGrit = max(base.perseveranceAndGrit, 2)
-            base.analyticalReasoning = max(base.analyticalReasoning, 2)
-            return base
-
+        // Escalate by level, enforce minimums, and clamp to 0...5
+        switch level {
+        case .Vocational:
+            base.minEQF = 3
+            return Education.clamped(base)
+        case .Bachelor:
+            var r = Education.elevated(base, by: 1)
+            r.minEQF = 3
+            r = Education.enforceMinimums(r, for: .Bachelor, profile: p)
+            return Education.clamped(r)
+        case .Master:
+            var r = Education.elevated(base, by: 2)
+            r.minEQF = 5
+            r = Education.enforceMinimums(r, for: .Master, profile: p)
+            return Education.clamped(r)
+        case .Doctorate:
+            var r = Education.elevated(base, by: 3)
+            r.minEQF = 6
+            r = Education.enforceMinimums(r, for: .Doctorate, profile: p)
+            return Education.clamped(r)
         default:
             return Requirements()
         }
@@ -723,14 +569,14 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.communicationAndNetworking >= r.socialCommunication else { return false }
         guard p.leadershipAndInfluence >= r.leadershipAndInfluence else { return false }
         guard p.courageAndRiskTolerance >= r.riskTolerance else { return false }
-        guard p.spacialNavigation >= r.spatialThinking else { return false }
+        guard p.spacialNavigationAndOrientation >= r.spatialThinking else { return false }
         guard p.carefulnessAndAttentionToDetail >= r.attentionToDetail else { return false }
-        guard p.perseveranceAndGrit >= r.perseveranceAndGrit else { return false }
+        guard p.patienceAndPerseverance >= r.perseveranceAndGrit else { return false }
         guard p.tinkeringAndFingerPrecision >= r.tinkering else { return false }
-        guard p.physicalStrength >= r.physicalStrength else { return false }
-        guard p.resilienceAndEndurance >= r.endurance else { return false }
+        guard p.physicalStrengthAndEndurance >= r.physicalStrength else { return false }
+        guard p.physicalStrengthAndEndurance >= r.endurance else { return false }
 
-        guard p.emotionalIntelligence >= r.emotionalIntelligence else { return false }
+        guard p.stressResistanceAndEmotionalRegulation >= r.emotionalIntelligence else { return false }
         guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
         guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
         guard p.selfDisciplineAndStudyHabits >= r.selfDisciplineAndStudyHabits else { return false }

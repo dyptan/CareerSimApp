@@ -236,13 +236,13 @@ private struct DegreesSubmenuView: View {
                             )
                             requirementRow(
                                 label: SoftSkills.label(
-                                    forKeyPath: \.spacialNavigation
+                                    forKeyPath: \.spacialNavigationAndOrientation
                                 ) ?? "Navigation",
                                 emoji: SoftSkills.pictogram(
-                                    forKeyPath: \.spacialNavigation
+                                    forKeyPath: \.spacialNavigationAndOrientation
                                 ) ?? "🧭",
                                 level: r.spatialThinking,
-                                playerLevel: player.softSkills.spacialNavigation
+                                playerLevel: player.softSkills.spacialNavigationAndOrientation
                             )
                             requirementRow(
                                 label: SoftSkills.label(
@@ -259,14 +259,14 @@ private struct DegreesSubmenuView: View {
                             )
                             requirementRow(
                                 label: SoftSkills.label(
-                                    forKeyPath: \.perseveranceAndGrit
+                                    forKeyPath: \.patienceAndPerseverance
                                 ) ?? "Perseverance",
                                 emoji: SoftSkills.pictogram(
-                                    forKeyPath: \.perseveranceAndGrit
+                                    forKeyPath: \.patienceAndPerseverance
                                 ) ?? "🛡️",
                                 level: r.perseveranceAndGrit,
                                 playerLevel: player.softSkills
-                                    .perseveranceAndGrit
+                                    .patienceAndPerseverance
                             )
 
                             // Physical / hands-on
@@ -283,36 +283,36 @@ private struct DegreesSubmenuView: View {
                             )
                             requirementRow(
                                 label: SoftSkills.label(
-                                    forKeyPath: \.physicalStrength
+                                    forKeyPath: \.physicalStrengthAndEndurance
                                 ) ?? "Strength",
                                 emoji: SoftSkills.pictogram(
-                                    forKeyPath: \.physicalStrength
+                                    forKeyPath: \.physicalStrengthAndEndurance
                                 ) ?? "💪",
                                 level: r.physicalStrength,
-                                playerLevel: player.softSkills.physicalStrength
+                                playerLevel: player.softSkills.physicalStrengthAndEndurance
                             )
                             requirementRow(
                                 label: SoftSkills.label(
-                                    forKeyPath: \.resilienceAndEndurance
+                                    forKeyPath: \.physicalStrengthAndEndurance
                                 ) ?? "Endurance",
                                 emoji: SoftSkills.pictogram(
-                                    forKeyPath: \.resilienceAndEndurance
+                                    forKeyPath: \.physicalStrengthAndEndurance
                                 ) ?? "🌦️",
                                 level: r.endurance,
                                 playerLevel: player.softSkills
-                                    .resilienceAndEndurance
+                                    .physicalStrengthAndEndurance
                             )
 
                             // New school-age soft skills
                             requirementRow(
                                 label: SoftSkills.label(
-                                    forKeyPath: \.emotionalIntelligence
+                                    forKeyPath: \.stressResistanceAndEmotionalRegulation
                                 ) ?? "Emotional Intelligence",
                                 emoji: SoftSkills.pictogram(
-                                    forKeyPath: \.emotionalIntelligence
-                                ) ?? "🫶",
+                                    forKeyPath: \.stressResistanceAndEmotionalRegulation
+                                ) ?? "🧘",
                                 level: r.emotionalIntelligence,
-                                playerLevel: player.softSkills.emotionalIntelligence
+                                playerLevel: player.softSkills.stressResistanceAndEmotionalRegulation
                             )
                             requirementRow(
                                 label: SoftSkills.label(
