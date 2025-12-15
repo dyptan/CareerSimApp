@@ -12,49 +12,6 @@ struct SoftwareTrainingView: View {
         Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
-    private var counterRow: some View {
-        HStack(spacing: 6) {
-            Text("Activities this year:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(
-                    selectedActivities.count >= maxActivitiesPerYear
-                        ? .red : .primary
-                )
-            Spacer()
-            Text("Savings: $\(player.savings)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private func requirementRow(
-        label: String,
-        emoji: String,
-        level: Int,
-        playerLevel: Int
-    ) -> some View {
-        let required = max(level, 0)
-        let meets = playerLevel >= required
-
-        return HStack {
-            Text(label)
-            Spacer()
-            HStack(spacing: 0) {
-                ForEach(0..<required, id: \.self) { idx in
-                    Text(emoji)
-                        .opacity(idx < playerLevel ? 1.0 : 0.35)
-                }
-            }
-            .font(.body)
-        }
-        .font(.body)
-        .foregroundStyle(meets ? .primary : .secondary)
-        .padding(.horizontal, 6)
-    }
-
     var body: some View {
         ScrollView {
 
@@ -126,7 +83,7 @@ struct SoftwareTrainingView: View {
                                 : (blockedReason ?? ""))
                     )
 
-                    requirementRow(
+                    RequirementRow(
                         label: SoftSkills.label(
                             forKeyPath: \.analyticalReasoningAndProblemSolving
                         ) ?? "Problem Solving",

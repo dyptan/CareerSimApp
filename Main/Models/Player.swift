@@ -6,6 +6,7 @@ final class Player: ObservableObject {
     @Published var jobExperiance: [(Job, Int)]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
+    @Published var hardSkillLevels: [Certification: Int]
     @Published var currentOccupation: Job?
     @Published var currentEducation: Education?
     @Published var savings: Int
@@ -43,6 +44,7 @@ final class Player: ObservableObject {
             software: [],
             licenses: []
         ),
+        hardSkillLevels: [Certification: Int] = [:],
         degrees: [Education] = [],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil,
@@ -56,6 +58,7 @@ final class Player: ObservableObject {
         self.age = age
         self.softSkills = softSkills
         self.hardSkills = hardSkills
+        self.hardSkillLevels = hardSkillLevels
         self.degrees = degrees
         self.jobExperiance = jobExperiance
         self.currentOccupation = currentOccupation

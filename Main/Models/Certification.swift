@@ -101,13 +101,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     func requirementsProfile(for player: Player) -> (profile: RequirementsProfile, meetsAll: Bool, cost: Int, message: String?) {
         var r = RequirementsProfile()
 
-        // IT and low-risk: only analytical matters
-        let itOrLowRisk: Set<Certification> = [.aws, .azure, .google, .scrum, .security]
-        if itOrLowRisk.contains(self) {
-            r.analyticalReasoningAndProblemSolving = 5
-            let ok = player.softSkills.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving
-            return (r, ok, costForCertification, ok ? nil : "Needs more Problem Solving")
-        }
 
         switch self {
         case .cna:
@@ -156,9 +149,17 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             r.communicationAndNetworking = 2
             r.resilienceAndEndurance = 3
 
-        // IT/low-risk are handled above
-        case .aws, .azure, .google, .scrum, .security:
-            break
+        case .aws:
+            r.analyticalReasoningAndProblemSolving = 3
+        case .azure:
+            r.analyticalReasoningAndProblemSolving = 3
+        case .google:
+            r.analyticalReasoningAndProblemSolving = 3
+        case .scrum:
+            r.communicationAndNetworking = 2
+        case .security:
+            r.analyticalReasoningAndProblemSolving = 2
+            r.carefulnessAndAttentionToDetail = 2
         }
 
         // Evaluate meetsAll
@@ -201,13 +202,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
         let s = player.softSkills
 
-        // IT and low-risk: only analytical matters (threshold ~2)
-        let itOrLowRisk: Set<Certification> = [.aws, .azure, .google, .scrum, .security]
-        if itOrLowRisk.contains(self) {
-            return s.analyticalReasoningAndProblemSolving >= 5
-                ? .ok(cost: costForCertification)
-                : .blocked(reason: "Needs more Problem Solving")
-        }
 
         switch self {
         case .cna:
@@ -267,8 +261,9 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             guard s.physicalStrengthAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
             return .ok(cost: costForCertification)
 
-        // IT/low-risk handled earlier
         case .aws, .azure, .google, .scrum, .security:
+            let prof = requirementsProfile(for: player)
+            guard prof.meetsAll else { return .blocked(reason: prof.message ?? "Requirements not met") }
             return .ok(cost: costForCertification)
         }
     }

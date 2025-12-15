@@ -30,31 +30,6 @@ struct CertificationsTrainingView: View {
         }
     }
 
-    private func requirementRow(
-        label: String,
-        emoji: String,
-        level: Int,
-        playerLevel: Int
-    ) -> some View {
-        let required = max(level, 0)
-        let meets = playerLevel >= required
-
-        return HStack {
-            Text(label)
-            Spacer()
-            HStack(spacing: 0) {
-                ForEach(0..<required, id: \.self) { idx in
-                    Text(emoji)
-                        .opacity(idx < playerLevel ? 1.0 : 0.35)
-                }
-            }
-            .font(.body)
-        }
-        .font(.body)
-        .foregroundStyle(meets ? .primary : .secondary)
-        .padding(.horizontal, 6)
-    }
-
     private func certificationThresholds(_ cert: Certification) -> [(
         WritableKeyPath<SoftSkills, Int>, Int
     )] {
@@ -118,6 +93,19 @@ struct CertificationsTrainingView: View {
                 (\.communicationAndNetworking, 2),
                 (\.physicalStrengthAndEndurance, 3),
             ]
+        }
+    }
+
+    private func requiredHardLevel(for cert: Certification) -> Int {
+        switch cert {
+        case .aws, .azure, .google:
+            return 3 // e.g., Associate (1), Professional (2), Specialty (3)
+        case .security:
+            return 2
+        case .scrum:
+            return 2
+        default:
+            return 1
         }
     }
 
@@ -209,7 +197,7 @@ struct CertificationsTrainingView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(0..<thresholds.count, id: \.self) { idx in
                                 let (kp, lvl) = thresholds[idx]
-                                requirementRow(
+                                RequirementRow(
                                     label: SoftSkills.label(forKeyPath: kp)
                                         ?? "",
                                     emoji: SoftSkills.pictogram(forKeyPath: kp)

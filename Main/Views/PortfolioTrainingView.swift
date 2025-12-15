@@ -12,23 +12,6 @@ struct PortfolioTrainingView: View {
         PortfolioItem.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
-    private var counterRow: some View {
-        HStack(spacing: 6) {
-            Text("Activities this year:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(
-                    selectedActivities.count >= maxActivitiesPerYear
-                        ? .red : .primary
-                )
-            Spacer()
-            Text("Savings: $\(player.savings)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-    }
 
     var body: some View {
         ScrollView {
@@ -98,6 +81,18 @@ struct PortfolioTrainingView: View {
                                 ? "You can take up to \(maxActivitiesPerYear) activities this year."
                                 : "")
                     )
+                    RequirementRow(
+                        label: SoftSkills.label(
+                            forKeyPath: \.analyticalReasoningAndProblemSolving
+                        ) ?? "Problem Solving",
+                        emoji: SoftSkills.pictogram(
+                            forKeyPath: \.analyticalReasoningAndProblemSolving
+                        ) ?? "🧩",
+                        level: 1,
+                        playerLevel: player.softSkills
+                            .analyticalReasoningAndProblemSolving
+                    )
+                    .padding(.vertical, 4)
                     
                 }
             
@@ -124,6 +119,3 @@ struct PortfolioTrainingView: View {
     return Container()
 }
 
-#Preview {
-    EmptyView()
-}
