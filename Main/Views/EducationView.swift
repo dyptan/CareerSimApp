@@ -22,12 +22,11 @@ struct EducationView: View {
             if #available(iOS 16, macOS 13, *) {
                 NavigationStack {
                     content
-                        .navigationTitle("Education")
+                        
                 }
             } else {
                 NavigationView {
                     content
-                        .navigationTitle("Education")
                 }
                 #if os(iOS)
                     .navigationViewStyle(.stack)
@@ -38,8 +37,12 @@ struct EducationView: View {
     }
 
     private var content: some View {
+        
         List {
-            Section {
+            
+//                Button("Close") {
+//                    showTertiarySheet = false
+//                }
                 ForEach(availableProfiles, id: \.self) { profile in
                     NavigationLink {
                         DegreesSubmenuView(
@@ -61,16 +64,8 @@ struct EducationView: View {
                         .padding(.vertical, 6)
                     }
                 }
-            } header: {
-                Text("Pick your education direction")
             }
-
-            Button("Close") {
-                showTertiarySheet = false
-            }
-            .foregroundStyle(.secondary)
-
-        }
+        
     }
 
     private func degrees(for profile: TertiaryProfile) -> [Education] {
@@ -123,12 +118,12 @@ private struct DegreesSubmenuView: View {
 
     var body: some View {
         List {
-            Section {
+            
                 ForEach(degrees) { education in
                     let r = education.requirements
                     let highestEQF = player.degrees.last?.eqf ?? 0
                     let meetsAll = education.meetsRequirements(player: player)
-
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
@@ -143,7 +138,7 @@ private struct DegreesSubmenuView: View {
                                 player.currentOccupation = nil
                                 player.currentEducation = education
                                 yearsLeftToGraduation =
-                                    education.yearsToComplete
+                                education.yearsToComplete
                                 showTertiarySheet = false
                             } label: {
                                 Text(
@@ -156,16 +151,16 @@ private struct DegreesSubmenuView: View {
                             .opacity(meetsAll ? 1.0 : 0.5)
                             .accessibilityHint(
                                 meetsAll
-                                    ? "All requirements met"
-                                    : "Some requirements are not met"
+                                ? "All requirements met"
+                                : "Some requirements are not met"
                             )
                         }
-
+                        
                         // Requirements block (now includes new school-age skills)
                         VStack(alignment: .leading, spacing: 8) {
                             Text("What do you need?")
                                 .font(.subheadline.bold())
-
+                            
                             // Education prerequisite (EQF)
                             requirementRow(
                                 label: "Previous education",
@@ -173,7 +168,7 @@ private struct DegreesSubmenuView: View {
                                 level: r.minEQF,
                                 playerLevel: highestEQF
                             )
-
+                            
                             // Brainy
                             requirementRow(
                                 label: SoftSkills.label(
@@ -268,7 +263,7 @@ private struct DegreesSubmenuView: View {
                                 playerLevel: player.softSkills
                                     .patienceAndPerseverance
                             )
-
+                            
                             // Physical / hands-on
                             requirementRow(
                                 label: SoftSkills.label(
@@ -302,7 +297,7 @@ private struct DegreesSubmenuView: View {
                                 playerLevel: player.softSkills
                                     .physicalStrengthAndEndurance
                             )
-
+                            
                             // New school-age soft skills
                             requirementRow(
                                 label: SoftSkills.label(
@@ -369,9 +364,7 @@ private struct DegreesSubmenuView: View {
                     }
                     .padding(.vertical, 6)
                 }
-            } header: {
-                Text(profile.rawValue.capitalized)
-            }
+            
         }
         .navigationTitle(profile.rawValue.capitalized)
         .frame(minHeight: 400)

@@ -16,7 +16,7 @@ extension SoftSkills {
     }
 }
 
-struct JobView: View {
+struct JobDetail: View {
     var job: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
@@ -364,7 +364,7 @@ struct JobView: View {
 
 #Preview {
     NavigationView {
-        JobView(
+        JobDetail(
             job: jobExample,
             player: Player(),
             showCareersSheet: .constant(true)

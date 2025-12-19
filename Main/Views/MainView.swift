@@ -15,8 +15,8 @@ struct MainView: View {
     @State var showRetirementSheet = false
     @State private var showCertificationsSheet = false
     @State private var showLicensesSheet = false
-    @State private var showSoftwareSheet = false
-    @State private var showPortfolioSheet = false
+    @State private var showCourcesSheet = false
+    @State private var showProjectsSheet = false
 
     @State var showSoftSkillsSheet = false
 
@@ -48,14 +48,12 @@ struct MainView: View {
                 descisionText: $descisionText
             ).padding(.bottom)
 
-            SkillsView(
+            SkillsSection(
                 player: player,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedPortfolio,
                 selectedCertifications: $selectedCertifications,
-//                showHardSkillsSheet: .constant(false),
-//                showSoftSkillsSheet: $showSoftSkillsSheet,
                 showCareersSheet: $showCareersSheet,
                 showTertiarySheet: $showTertiarySheet
             )
@@ -99,9 +97,14 @@ struct MainView: View {
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
+
+            Button("Close") {
+                showTertiarySheet = false
+            }
+            .padding()
         }
         .sheet(isPresented: $showCareersSheet) {
-            CareersSheet(
+            JobsView(
                 availableJobs: availableJobs,
                 player: player,
                 showCareersSheet: $showCareersSheet
@@ -115,12 +118,11 @@ struct MainView: View {
                 showCareersSheet = false
             }.padding()
         }
-        // Certifications sheet
         .sheet(isPresented: $showCertificationsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        CertificationsTrainingView(
+                        CertificationsView(
                             selectedCertifications: $selectedCertifications,
                             selectedActivities: $selectedActivities
                         )
@@ -133,7 +135,7 @@ struct MainView: View {
                     }
                 } else {
                     NavigationView {
-                        CertificationsTrainingView(
+                        CertificationsView(
                             selectedCertifications: $selectedCertifications,
                             selectedActivities: $selectedActivities
                         )
@@ -153,12 +155,11 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        // Licenses sheet
         .sheet(isPresented: $showLicensesSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        LicensesTrainingView(
+                        LicensesView(
                             selectedLicences: $selectedLicences,
                             selectedActivities: $selectedActivities
                         )
@@ -171,7 +172,7 @@ struct MainView: View {
                     }
                 } else {
                     NavigationView {
-                        LicensesTrainingView(
+                        LicensesView(
                             selectedLicences: $selectedLicences,
                             selectedActivities: $selectedActivities
                         )
@@ -191,32 +192,31 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        // Software sheet
-        .sheet(isPresented: $showSoftwareSheet) {
+        .sheet(isPresented: $showCourcesSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        SoftwareTrainingView(
+                        CoursesView(
                             selectedSoftware: $selectedSoftware,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showSoftwareSheet = false }
+                                Button("Done") { showCourcesSheet = false }
                             }
                         }
                     }
                 } else {
                     NavigationView {
-                        SoftwareTrainingView(
+                        CoursesView(
                             selectedSoftware: $selectedSoftware,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showSoftwareSheet = false }
+                                Button("Done") { showCourcesSheet = false }
                             }
                         }
                     }
@@ -229,32 +229,31 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        // Portfolio sheet
-        .sheet(isPresented: $showPortfolioSheet) {
+        .sheet(isPresented: $showProjectsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        PortfolioTrainingView(
+                        ProjectsView(
                             selectedPortfolio: $selectedPortfolio,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showPortfolioSheet = false }
+                                Button("Done") { showProjectsSheet = false }
                             }
                         }
                     }
                 } else {
                     NavigationView {
-                        PortfolioTrainingView(
+                        ProjectsView(
                             selectedPortfolio: $selectedPortfolio,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showPortfolioSheet = false }
+                                Button("Done") { showProjectsSheet = false }
                             }
                         }
                     }
@@ -271,7 +270,7 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        softSkillsContent
+                        activitiesView
                             .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
@@ -283,7 +282,7 @@ struct MainView: View {
                     }
                 } else {
                     NavigationView {
-                        softSkillsContent
+                        activitiesView
                             .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
@@ -312,40 +311,6 @@ struct MainView: View {
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-
-                // Degrees summary
-                let degreeCount = player.degrees.count
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Degrees earned: \(degreeCount)")
-                        .font(.headline)
-
-                    ForEach(
-                        Array(player.degrees.enumerated()),
-                        id: \.offset
-                    ) { _, entry in
-                        Text("• \(entry.degreeName)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Work history")
-                        .font(.headline)
-
-                    ForEach(
-                        Array(player.jobExperiance.enumerated()),
-                        id: \.offset
-                    ) { _, item in
-                        Text("• \(item.1) years as \(item.0.id)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 Text("Money earned: \(player.savings)")
                     .font(.subheadline)
@@ -403,18 +368,11 @@ struct MainView: View {
 
         Divider()
         HStack {
-            Button("Activities") {
-                showSoftSkillsSheet = true
-            }
-            .buttonStyle(.bordered).font(.headline)
-        }
-
-        // Distinct hard-skill buttons
-        HStack {
-            Button("Portfolio") { showPortfolioSheet = true }
+        
+            Button("Projects") { showProjectsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
 
-            Button("Software") { showSoftwareSheet = true }
+            Button("Courses") { showCourcesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
 
             Button("Certifications") { showCertificationsSheet = true }
@@ -425,13 +383,16 @@ struct MainView: View {
         }
 
         HStack {
+            Button("Activities") { showSoftSkillsSheet = true }
+                .buttonStyle(.bordered).font(.headline)
+            
             Button("Jobs") {
                 showCareersSheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
             )
 
-            Button("Degrees") {
+            Button("Education") {
                 showTertiarySheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
@@ -439,29 +400,23 @@ struct MainView: View {
 
         }
         
-        Button("+1 Year") {
-            // Advance year
+        Button("To next year") {
             player.age += 1
-
-            // Persist this year's learning into the player's permanent hard skills
             player.hardSkills.certifications.formUnion(selectedCertifications)
             player.hardSkills.licenses.formUnion(selectedLicences)
             player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
             player.hardSkills.software.formUnion(selectedSoftware)
 
-            // Lock learned items so they won't be available next years
             player.lockedCertifications.formUnion(selectedCertifications)
             player.lockedPortfolio.formUnion(selectedPortfolio)
             player.lockedSoftware.formUnion(selectedSoftware)
 
-            // Clear all in-progress selections for the new year
             selectedActivities.removeAll()
             selectedSoftware.removeAll()
             selectedLicences.removeAll()
             selectedPortfolio.removeAll()
             selectedCertifications.removeAll()
 
-            // Education progress
             yearsLeftToGraduation? -= 1
             if yearsLeftToGraduation == 0 {
                 descisionText =
@@ -475,7 +430,6 @@ struct MainView: View {
             }
 
             if let income = player.currentOccupation?.income {
-                // income is full dollars now
                 player.savings += income
             }
         }
@@ -485,8 +439,7 @@ struct MainView: View {
 
     }
 
-    private var softSkillsContent: some View {
-        ScrollView {
+    private var activitiesView: some View {
             ActivitiesView(
                 player: player,
                 selectedActivities: $selectedActivities,
@@ -495,10 +448,10 @@ struct MainView: View {
             )
             .environmentObject(player)
             .padding()
-        }
     }
 }
 
 #Preview {
     MainView()
 }
+

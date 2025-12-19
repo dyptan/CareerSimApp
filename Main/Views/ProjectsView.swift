@@ -1,27 +1,28 @@
 import SwiftUI
 
-struct SoftwareTrainingView: View {
+struct ProjectsView: View {
     @EnvironmentObject private var player: Player
 
-    @Binding var selectedSoftware: Set<Software>
+    @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedActivities: Set<String>
 
     let maxActivitiesPerYear = 1
 
-    private var sortedSoftware: [Software] {
-        Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+    private var sortedPortfolio: [PortfolioItem] {
+        PortfolioItem.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
+
 
     var body: some View {
         ScrollView {
 
-            Text("Software")
-            ForEach(sortedSoftware, id: \.self) { sw in
-                let isLocked = player.lockedSoftware.contains(sw)
-                let isSelected = selectedSoftware.contains(sw)
+            Text("Portfolio Items")
+            ForEach(sortedPortfolio, id: \.self) { item in
+                let isLocked = player.lockedPortfolio.contains(item)
+                let isSelected = selectedPortfolio.contains(item)
                 let atLimit = selectedActivities.count >= maxActivitiesPerYear
 
-                let requirement = sw.softwareRequirements(player)
+                let requirement = item.portfolioRequirements(player)
                 let blockedReason: String? = {
                     switch requirement {
                     case .blocked(let reason): return reason
@@ -29,29 +30,27 @@ struct SoftwareTrainingView: View {
                     }
                 }()
 
-                VStack(alignment: .leading, spacing: 6) {
                     Toggle(
-                        "\(sw.rawValue) \(sw.pictogram)",
+                        "\(item.rawValue) \(item.pictogram) \(blockedReason ?? "")",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in
                                 guard !isLocked else { return }
                                 if isOn {
                                     guard !atLimit else { return }
-                                    switch sw.softwareRequirements(player) {
-                                    case .ok(let cost):
-                                        selectedSoftware.insert(sw)
+                                    switch item.portfolioRequirements(player) {
+                                    case .ok:
+                                        selectedPortfolio.insert(item)
                                         selectedActivities.insert(
-                                            "soft:\(sw.rawValue)"
+                                            "port:\(item.rawValue)"
                                         )
-                                        player.savings -= cost
                                     case .blocked:
                                         break
                                     }
                                 } else {
-                                    if selectedSoftware.remove(sw) != nil {
+                                    if selectedPortfolio.remove(item) != nil {
                                         selectedActivities.remove(
-                                            "soft:\(sw.rawValue)"
+                                            "port:\(item.rawValue)"
                                         )
                                     }
                                 }
@@ -80,9 +79,8 @@ struct SoftwareTrainingView: View {
                             ? "Locked after year end"
                             : ((!isSelected && atLimit)
                                 ? "You can take up to \(maxActivitiesPerYear) activities this year."
-                                : (blockedReason ?? ""))
+                                : "")
                     )
-
                     RequirementRow(
                         label: SoftSkills.label(
                             forKeyPath: \.analyticalReasoningAndProblemSolving
@@ -94,24 +92,24 @@ struct SoftwareTrainingView: View {
                         playerLevel: player.softSkills
                             .analyticalReasoningAndProblemSolving
                     )
+                    .padding(.vertical, 4)
+                    
                 }
-                .padding(.vertical, 4)
-            }
+            
         }
         .padding(.horizontal)
-
     }
 }
 
 #Preview {
     struct Container: View {
-        @State var selected: Set<Software> = []
+        @State var selected: Set<PortfolioItem> = []
         @State var acts: Set<String> = []
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
-                SoftwareTrainingView(
-                    selectedSoftware: $selected,
+                ProjectsView(
+                    selectedPortfolio: $selected,
                     selectedActivities: $acts
                 )
                 .environmentObject(player)
@@ -120,3 +118,4 @@ struct SoftwareTrainingView: View {
     }
     return Container()
 }
+

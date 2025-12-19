@@ -1,14 +1,12 @@
 import SwiftUI
 
-struct SkillsView: View {
+struct SkillsSection: View {
     @ObservedObject var player: Player
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<PortfolioItem>
     @Binding var selectedCertifications: Set<Certification>
-//    @Binding var showHardSkillsSheet: Bool
-//    @Binding var showSoftSkillsSheet: Bool
     @Binding var showCareersSheet: Bool
     @Binding var showTertiarySheet: Bool
 
@@ -22,7 +20,7 @@ struct SkillsView: View {
 
     var body: some View {
 
-        VStack(alignment: .leading) {
+        ScrollView {
 
             ForEach(
                 Array(SoftSkills.skillNames.enumerated()),
@@ -91,14 +89,16 @@ struct SkillsView: View {
             }
             
 
-            ForEach(
-                Array(
-                    player.hardSkills.software.union(
-                        selectedSoftware
+            VStack(alignment: .leading){
+                ForEach(
+                    Array(
+                        player.hardSkills.software.union(
+                            selectedSoftware
+                        )
                     )
-                )
-            ) { skill in
-                Text("\(skill.pictogram)")
+                ) { skill in
+                    Text("\(skill.pictogram)")
+                }
             }
 
         }
@@ -107,7 +107,7 @@ struct SkillsView: View {
 }
 
 #Preview {
-    SkillsView(
+    SkillsSection(
         player: Player(),
         selectedSoftware: .constant([]),
         selectedLicences: .constant([]),

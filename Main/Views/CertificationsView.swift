@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CertificationsTrainingView: View {
+struct CertificationsView: View {
     @EnvironmentObject private var player: Player
 
     @Binding var selectedCertifications: Set<Certification>
@@ -225,7 +225,7 @@ struct CertificationsTrainingView: View {
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
-                CertificationsTrainingView(
+                CertificationsView(
                     selectedCertifications: $selected,
                     selectedActivities: $acts
                 )

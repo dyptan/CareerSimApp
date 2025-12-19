@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct LicensesTrainingView: View {
+struct LicensesView: View {
     @EnvironmentObject private var player: Player
 
     @Binding var selectedLicences: Set<License>
@@ -10,23 +10,6 @@ struct LicensesTrainingView: View {
 
     private var sortedLicenses: [License] {
         License.allCases.sorted(by: { $0.rawValue < $1.rawValue })
-    }
-
-    private var counterRow: some View {
-        HStack(spacing: 6) {
-            Text("Activities this year:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(
-                    selectedActivities.count >= maxActivitiesPerYear ? .red : .primary
-                )
-            Spacer()
-            Text("Savings: $\(player.savings)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
     }
 
     private func requirementRow(
@@ -122,7 +105,6 @@ struct LicensesTrainingView: View {
     var body: some View {
         ScrollView {
 
-            Text("Licenses")
                 ForEach(sortedLicenses, id: \.self) { lic in
                     let isLocked = player.lockedLicenses.contains(lic)
                     let isSelected = selectedLicences.contains(lic)
@@ -144,7 +126,7 @@ struct LicensesTrainingView: View {
 
                     VStack(alignment: .leading, spacing: 6) {
                         Toggle(
-                            "\(lic.friendlyName) — \(priceText)",
+                            "\(lic.friendlyName)",
                             isOn: Binding(
                                 get: { isSelected },
                                 set: { isOn in
@@ -213,7 +195,7 @@ struct LicensesTrainingView: View {
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
-                LicensesTrainingView(
+                LicensesView(
                     selectedLicences: $selected,
                     selectedActivities: $acts
                 )

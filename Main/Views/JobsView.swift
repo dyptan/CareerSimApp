@@ -1,28 +1,29 @@
 import SwiftUI
 
-struct CareersSheet: View {
+struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
     func categories() -> [Category] {
-        Array(Set(availableJobs.map(\.category))).sorted { $0.rawValue < $1.rawValue }
+        Array(Set(availableJobs.map(\.category))).sorted {
+            $0.rawValue < $1.rawValue
+        }
     }
-    
+
     var body: some View {
         if #available(iOS 16, macOS 13, *) {
             NavigationStack {
                 content
-                    .navigationTitle("Jobs for you")
             }
         } else {
             NavigationView {
                 content
-                    .navigationTitle("Jobs for you")
             }
             #if os(iOS)
-            .navigationViewStyle(.stack)
+                .navigationViewStyle(.stack)
             #endif
         }
+//        .frame(minHeight: 500)
     }
 
     private var content: some View {
@@ -30,11 +31,9 @@ struct CareersSheet: View {
             ForEach(categories()) { category in
                 NavigationLink {
                     List {
-                        ForEach(
-                            availableJobs.filter { $0.category == category }
-                        ) { job in
+                        ForEach(availableJobs.filter { $0.category == category }) { job in
                             NavigationLink {
-                                JobView(
+                                JobDetail(
                                     job: job,
                                     player: player,
                                     showCareersSheet: $showCareersSheet
@@ -44,13 +43,16 @@ struct CareersSheet: View {
                             }
                         }
                     }
+                    .navigationTitle(category.rawValue.capitalized)
                 } label: {
                     CategoryRow(category: category)
+                        .padding(.vertical, 6)
                 }
             }
-            .listStyle(.plain)
         }
+        .navigationTitle("Jobs")
     }
+
 }
 
 private struct CareersSheetPreviewContainer: View {
@@ -59,7 +61,7 @@ private struct CareersSheetPreviewContainer: View {
     let player = Player()
 
     var body: some View {
-        CareersSheet(
+        JobsView(
             availableJobs: sampleJobs,
             player: player,
             showCareersSheet: $show
