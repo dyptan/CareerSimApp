@@ -183,7 +183,7 @@ struct LicensesView: View {
                     .padding(.vertical, 4)
                 }
             }
-        .padding(.horizontal)
+        .padding()
         
     }
 }

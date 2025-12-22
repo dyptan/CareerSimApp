@@ -15,7 +15,6 @@ struct CoursesView: View {
     var body: some View {
         ScrollView {
 
-            Text("Software")
             ForEach(sortedSoftware, id: \.self) { sw in
                 let isLocked = player.lockedSoftware.contains(sw)
                 let isSelected = selectedSoftware.contains(sw)
@@ -98,7 +97,7 @@ struct CoursesView: View {
                 .padding(.vertical, 4)
             }
         }
-        .padding(.horizontal)
+        .padding()
 
     }
 }

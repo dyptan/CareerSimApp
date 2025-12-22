@@ -8,7 +8,7 @@ struct MainView: View {
     @State var selectedActivities: Set<String> = []
     @State var selectedSoftware: Set<Software> = []
     @State var selectedLicences: Set<License> = []
-    @State var selectedPortfolio: Set<PortfolioItem> = []
+    @State var selectedProjects: Set<PortfolioItem> = []
     @State var selectedCertifications: Set<Certification> = []
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = ""
@@ -42,7 +42,7 @@ struct MainView: View {
                 selectedActivities: $selectedActivities,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
-                selectedPortfolio: $selectedPortfolio,
+                selectedPortfolio: $selectedProjects,
                 selectedCertifications: $selectedCertifications,
                 yearsLeftToGraduation: $yearsLeftToGraduation,
                 descisionText: $descisionText
@@ -52,7 +52,7 @@ struct MainView: View {
                 player: player,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
-                selectedPortfolio: $selectedPortfolio,
+                selectedPortfolio: $selectedProjects,
                 selectedCertifications: $selectedCertifications,
                 showCareersSheet: $showCareersSheet,
                 showTertiarySheet: $showTertiarySheet
@@ -86,6 +86,7 @@ struct MainView: View {
 
             }
             .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .sheet(isPresented: $showTertiarySheet) {
             EducationView(
@@ -234,7 +235,7 @@ struct MainView: View {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
                         ProjectsView(
-                            selectedPortfolio: $selectedPortfolio,
+                            selectedPortfolio: $selectedProjects,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
@@ -247,7 +248,7 @@ struct MainView: View {
                 } else {
                     NavigationView {
                         ProjectsView(
-                            selectedPortfolio: $selectedPortfolio,
+                            selectedPortfolio: $selectedProjects,
                             selectedActivities: $selectedActivities
                         )
                         .environmentObject(player)
@@ -271,7 +272,6 @@ struct MainView: View {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
                         activitiesView
-                            .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
                                     Button("Done") {
@@ -283,7 +283,6 @@ struct MainView: View {
                 } else {
                     NavigationView {
                         activitiesView
-                            .navigationTitle("Participate in activities: ")
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
                                     Button("Done") {
@@ -322,7 +321,7 @@ struct MainView: View {
                     selectedActivities = []
                     selectedSoftware = []
                     selectedLicences = []
-                    selectedPortfolio = []
+                    selectedProjects = []
                     selectedCertifications = []
                     yearsLeftToGraduation = nil
                     descisionText = "You're 18! What's your next step?"
@@ -348,6 +347,7 @@ struct MainView: View {
                 .padding(.top, 8)
             }
             .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
             #if os(macOS)
             .frame(minWidth: 700, minHeight: 400)
             #endif
@@ -404,17 +404,17 @@ struct MainView: View {
             player.age += 1
             player.hardSkills.certifications.formUnion(selectedCertifications)
             player.hardSkills.licenses.formUnion(selectedLicences)
-            player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
+            player.hardSkills.portfolioItems.formUnion(selectedProjects)
             player.hardSkills.software.formUnion(selectedSoftware)
 
             player.lockedCertifications.formUnion(selectedCertifications)
-            player.lockedPortfolio.formUnion(selectedPortfolio)
+            player.lockedPortfolio.formUnion(selectedProjects)
             player.lockedSoftware.formUnion(selectedSoftware)
 
             selectedActivities.removeAll()
             selectedSoftware.removeAll()
             selectedLicences.removeAll()
-            selectedPortfolio.removeAll()
+            selectedProjects.removeAll()
             selectedCertifications.removeAll()
 
             yearsLeftToGraduation? -= 1
@@ -444,7 +444,7 @@ struct MainView: View {
                 player: player,
                 selectedActivities: $selectedActivities,
                 selectedSoftware: $selectedSoftware,
-                selectedPortfolio: $selectedPortfolio
+                selectedPortfolio: $selectedProjects
             )
             .environmentObject(player)
             .padding()

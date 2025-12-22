@@ -111,7 +111,6 @@ struct CertificationsView: View {
 
     var body: some View {
         ScrollView {
-                Text("Certifications")
                 ForEach(sortedCertifications, id: \.self) { cert in
                     let isLocked = player.lockedCertifications.contains(cert)
                     let isSelected = selectedCertifications.contains(cert)
@@ -213,7 +212,7 @@ struct CertificationsView: View {
                 .padding(.vertical, 4)
             }
             .padding(.horizontal)
-        }
+        }.padding()
     }
 
 }
