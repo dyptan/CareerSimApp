@@ -8,7 +8,7 @@ struct MainView: View {
     @State var selectedActivities: Set<String> = []
     @State var selectedSoftware: Set<Software> = []
     @State var selectedLicences: Set<License> = []
-    @State var selectedProjects: Set<PortfolioItem> = []
+    @State var selectedProjects: Set<Project> = []
     @State var selectedCertifications: Set<Certification> = []
     @State var yearsLeftToGraduation: Int? = nil
     @State var descisionText = ""

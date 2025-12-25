@@ -11,7 +11,7 @@ struct HeaderView: View {
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
-    @Binding var selectedPortfolio: Set<PortfolioItem>
+    @Binding var selectedPortfolio: Set<Project>
     @Binding var selectedCertifications: Set<Certification>
 
     @Binding var yearsLeftToGraduation: Int?
@@ -76,7 +76,7 @@ struct HeaderView: View {
         selectedActivities: .constant(Set<String>()),
         selectedSoftware: .constant(Set<Software>()),
         selectedLicences: .constant(Set<License>()),
-        selectedPortfolio: .constant(Set<PortfolioItem>()),
+        selectedPortfolio: .constant(Set<Project>()),
         selectedCertifications: .constant(Set<Certification>()),
         yearsLeftToGraduation: .constant(nil),
         descisionText: .constant("sdf")

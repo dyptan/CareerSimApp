@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5506183E2ED2245200C56E99 /* Software.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183D2ED2245200C56E99 /* Software.swift */; };
-		550618402ED2245400C56E99 /* PortfolioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* PortfolioItem.swift */; };
+		550618402ED2245400C56E99 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* Project.swift */; };
 		550618422ED2245900C56E99 /* Certification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Certification.swift */; };
 		550618442ED2245D00C56E99 /* License.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618432ED2245D00C56E99 /* License.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
@@ -71,7 +71,7 @@
 
 /* Begin PBXFileReference section */
 		5506183D2ED2245200C56E99 /* Software.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Software.swift; sourceTree = "<group>"; };
-		5506183F2ED2245400C56E99 /* PortfolioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItem.swift; sourceTree = "<group>"; };
+		5506183F2ED2245400C56E99 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		550618412ED2245900C56E99 /* Certification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certification.swift; sourceTree = "<group>"; };
 		550618432ED2245D00C56E99 /* License.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = License.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
@@ -205,7 +205,7 @@
 				5596D81B2E9AE4EF00E98CEF /* Job.swift */,
 				84F851C82EA0F30F0066C41A /* Player.swift */,
 				5506183D2ED2245200C56E99 /* Software.swift */,
-				5506183F2ED2245400C56E99 /* PortfolioItem.swift */,
+				5506183F2ED2245400C56E99 /* Project.swift */,
 				550618412ED2245900C56E99 /* Certification.swift */,
 				550618432ED2245D00C56E99 /* License.swift */,
 			);
@@ -393,7 +393,7 @@
 				5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */,
 				5598FA2D2EE62F75006C4D36 /* CoursesView.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* Group.swift in Sources */,
-				550618402ED2245400C56E99 /* PortfolioItem.swift in Sources */,
+				550618402ED2245400C56E99 /* Project.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
 			);

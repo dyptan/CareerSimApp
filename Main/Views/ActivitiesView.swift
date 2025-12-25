@@ -4,7 +4,7 @@ struct ActivitiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
     @Binding var selectedSoftware: Set<Software>
-    @Binding var selectedPortfolio: Set<PortfolioItem>
+    @Binding var selectedPortfolio: Set<Project>
     var maxActivitiesPerYear = 3
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {

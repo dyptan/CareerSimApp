@@ -5,7 +5,7 @@ struct SkillsSection: View {
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
-    @Binding var selectedPortfolio: Set<PortfolioItem>
+    @Binding var selectedPortfolio: Set<Project>
     @Binding var selectedCertifications: Set<Certification>
     @Binding var showCareersSheet: Bool
     @Binding var showTertiarySheet: Bool

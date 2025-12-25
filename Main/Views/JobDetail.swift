@@ -55,8 +55,8 @@ struct JobDetail: View {
         }
     }
     
-    private func portfolioFrom(raw: String) -> PortfolioItem? {
-        PortfolioItem(rawValue: raw)
+    private func portfolioFrom(raw: String) -> Project? {
+        Project(rawValue: raw)
     }
 
     // MARK: - Requirement checks

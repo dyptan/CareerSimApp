@@ -12,7 +12,7 @@ final class Player: ObservableObject {
     @Published var savings: Int
     @Published var lockedCertifications: Set<Certification>
     @Published var lockedSoftware: Set<Software>
-    @Published var lockedPortfolio: Set<PortfolioItem>
+    @Published var lockedPortfolio: Set<Project>
     @Published var lockedLicenses: Set<License>
     @Published var lockedActivities: Set<String>
 
@@ -51,7 +51,7 @@ final class Player: ObservableObject {
         savings: Int = 0,
         lockedCertifications: Set<Certification> = [],
         lockedSoftware: Set<Software> = [],
-        lockedPortfolio: Set<PortfolioItem> = [],
+        lockedPortfolio: Set<Project> = [],
         lockedLicenses: Set<License> = [],
         lockedActivities: Set<String> = []
     ) {

@@ -39,13 +39,13 @@ enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Compa
 struct HardSkills: Codable, Hashable {
 
     // Internal leveled storage
-    private(set) var portfolioLevels: [PortfolioItem: ProficiencyLevel] = [:]
+    private(set) var portfolioLevels: [Project: ProficiencyLevel] = [:]
     private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
     private(set) var softwareLevels: [Software: ProficiencyLevel] = [:]
     private(set) var licenseLevels: [License: ProficiencyLevel] = [:]
 
 
-    var portfolioItems: Set<PortfolioItem> {
+    var portfolioItems: Set<Project> {
         get { Set(portfolioLevels.keys) }
         set {
             var next = portfolioLevels
@@ -104,7 +104,7 @@ struct HardSkills: Codable, Hashable {
     // MARK: - Initializer (keeps Player default working)
 
     init(
-        portfolioItems: Set<PortfolioItem> = [],
+        portfolioItems: Set<Project> = [],
         certifications: Set<Certification> = [],
         software: Set<Software> = [],
         licenses: Set<License> = []
@@ -118,7 +118,7 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Level accessors
 
-    func level(for item: PortfolioItem) -> ProficiencyLevel? { portfolioLevels[item] }
+    func level(for item: Project) -> ProficiencyLevel? { portfolioLevels[item] }
     func level(for cert: Certification) -> ProficiencyLevel? { certificationLevels[cert] }
     func level(for sw: Software) -> ProficiencyLevel? { softwareLevels[sw] }
     func level(for lic: License) -> ProficiencyLevel? { licenseLevels[lic] }
@@ -126,7 +126,7 @@ struct HardSkills: Codable, Hashable {
     // MARK: - Mutating setters
 
     
-    mutating func setLevel(_ level: ProficiencyLevel, for item: PortfolioItem) {
+    mutating func setLevel(_ level: ProficiencyLevel, for item: Project) {
         portfolioLevels[item] = level
     }
     mutating func setLevel(_ level: ProficiencyLevel, for cert: Certification) {
@@ -141,7 +141,7 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Promotion helpers (keeps highest)
 
-    mutating func promote(to level: ProficiencyLevel, for item: PortfolioItem) {
+    mutating func promote(to level: ProficiencyLevel, for item: Project) {
         portfolioLevels[item] = max(portfolioLevels[item] ?? .level1, level)
     }
     mutating func promote(to level: ProficiencyLevel, for cert: Certification) {
@@ -174,7 +174,7 @@ struct HardSkills: Codable, Hashable {
 
     // Whether the item can be trained this year (i.e., there exists a next level)
 
-    func canTrain(_ item: PortfolioItem) -> Bool {
+    func canTrain(_ item: Project) -> Bool {
         nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
     }
     func canTrain(_ cert: Certification) -> Bool {
@@ -189,7 +189,7 @@ struct HardSkills: Codable, Hashable {
 
 
     @discardableResult
-    mutating func trainOneYear(_ item: PortfolioItem) -> ProficiencyLevel? {
+    mutating func trainOneYear(_ item: Project) -> ProficiencyLevel? {
         let next = nextLevel(after: portfolioLevels[item])
         if let n = next {
             portfolioLevels[item] = n
@@ -223,7 +223,7 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Removal
 
-    mutating func remove(_ item: PortfolioItem) { portfolioLevels.removeValue(forKey: item) }
+    mutating func remove(_ item: Project) { portfolioLevels.removeValue(forKey: item) }
     mutating func remove(_ cert: Certification) { certificationLevels.removeValue(forKey: cert) }
     mutating func remove(_ sw: Software) { softwareLevels.removeValue(forKey: sw) }
     mutating func remove(_ lic: License) { licenseLevels.removeValue(forKey: lic) }
