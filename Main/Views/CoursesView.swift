@@ -15,7 +15,7 @@ struct CoursesView: View {
     var body: some View {
         ScrollView {
 
-            ForEach(sortedSoftware, id: \.self) { sw in
+            ForEach(sortedSoftware, id: \.self) { (sw: Software) in
                 let isLocked = player.lockedSoftware.contains(sw)
                 let isSelected = selectedSoftware.contains(sw)
                 let atLimit = selectedActivities.count >= maxActivitiesPerYear
@@ -27,12 +27,12 @@ struct CoursesView: View {
                     case .ok: return nil
                     }
                 }()
-
+//
                 VStack(alignment: .leading, spacing: 6) {
                     Toggle(
                         "\(sw.rawValue) \(sw.pictogram)",
-                        isOn: Binding(
-                            get: { isSelected },
+                        isOn: Binding<Bool>(
+                            get: { selectedSoftware.contains(sw) },
                             set: { isOn in
                                 guard !isLocked else { return }
                                 if isOn {
@@ -40,18 +40,14 @@ struct CoursesView: View {
                                     switch sw.softwareRequirements(player) {
                                     case .ok(let cost):
                                         selectedSoftware.insert(sw)
-                                        selectedActivities.insert(
-                                            "soft:\(sw.rawValue)"
-                                        )
+                                        selectedActivities.insert("soft:\(sw.rawValue)")
                                         player.savings -= cost
                                     case .blocked:
                                         break
                                     }
                                 } else {
                                     if selectedSoftware.remove(sw) != nil {
-                                        selectedActivities.remove(
-                                            "soft:\(sw.rawValue)"
-                                        )
+                                        selectedActivities.remove("soft:\(sw.rawValue)")
                                     }
                                 }
                             }
@@ -89,16 +85,13 @@ struct CoursesView: View {
                         emoji: SoftSkills.pictogram(
                             forKeyPath: \.analyticalReasoningAndProblemSolving
                         ) ?? "🧩",
-                        level: 1,
-                        playerLevel: player.softSkills
-                            .analyticalReasoningAndProblemSolving
+                        style: .meter(current: player.softSkills.analyticalReasoningAndProblemSolving, required: 0)
                     )
                 }
                 .padding(.vertical, 4)
             }
         }
         .padding()
-
     }
 }
 
@@ -119,3 +112,4 @@ struct CoursesView: View {
     }
     return Container()
 }
+

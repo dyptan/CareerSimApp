@@ -12,34 +12,23 @@ struct CertificationsView: View {
         Certification.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
-    private var counterRow: some View {
-        HStack(spacing: 6) {
-            Text("Activities this year:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(
-                    selectedActivities.count >= maxActivitiesPerYear
-                        ? .red : .primary
-                )
-            Spacer()
-            Text("Savings: $\(player.savings)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-    }
-
     private func certificationThresholds(_ cert: Certification) -> [(
         WritableKeyPath<SoftSkills, Int>, Int
     )] {
         switch cert {
-        case .aws, .azure, .google, .scrum, .security:
-            return [(\.analyticalReasoningAndProblemSolving, 5)]
+        case .aws, .azure, .google:
+            return [(\.analyticalReasoningAndProblemSolving, 3)]
+        case .scrum:
+            return [(\.communicationAndNetworking, 2)]
+        case .security:
+            return [
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
         case .cna:
             return [
                 (\.communicationAndNetworking, 2),
-                (\.physicalStrengthAndEndurance, 2),
+                (\.patienceAndPerseverance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
         case .dentalAssistant:
@@ -111,7 +100,7 @@ struct CertificationsView: View {
 
     var body: some View {
         ScrollView {
-                ForEach(sortedCertifications, id: \.self) { cert in
+                ForEach(Array(sortedCertifications), id: \.rawValue) { (cert: Certification) in
                     let isLocked = player.lockedCertifications.contains(cert)
                     let isSelected = selectedCertifications.contains(cert)
                     let atLimit =
@@ -124,16 +113,11 @@ struct CertificationsView: View {
                         case .ok: return nil
                         }
                     }()
-                    let priceText: String = {
-                        switch requirement {
-                        case .ok(let cost): return "$\(cost)"
-                        case .blocked: return "$\(cert.costForCertification)"
-                        }
-                    }()
+                
 
                     VStack(alignment: .leading, spacing: 6) {
                     Toggle(
-                        "\(cert.friendlyName) — \(priceText)",
+                        "\(cert.friendlyName)",
                         isOn: Binding(
                             get: { isSelected },
                             set: { isOn in
@@ -194,15 +178,12 @@ struct CertificationsView: View {
                     let thresholds = certificationThresholds(cert)
                     if !thresholds.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
-                            ForEach(0..<thresholds.count, id: \.self) { idx in
-                                let (kp, lvl) = thresholds[idx]
+                            ForEach(Array(thresholds.enumerated()), id: \.offset) { pair in
+                                let (kp, lvl) = pair.element
                                 RequirementRow(
-                                    label: SoftSkills.label(forKeyPath: kp)
-                                        ?? "",
-                                    emoji: SoftSkills.pictogram(forKeyPath: kp)
-                                        ?? "",
-                                    level: lvl,
-                                    playerLevel: player.softSkills[keyPath: kp]
+                                    label: SoftSkills.label(forKeyPath: kp) ?? "",
+                                    emoji: SoftSkills.pictogram(forKeyPath: kp) ?? "🧩",
+                                    style: .meter(current: player.softSkills[keyPath: kp], required: lvl)
                                 )
                             }
                         }

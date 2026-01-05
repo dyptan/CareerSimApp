@@ -19,41 +19,6 @@ struct ProjectsView: View {
         @Binding var selectedActivities: Set<String>
         let maxActivitiesPerYear: Int
 
-        private func requirementRow(label: String, emoji: String, level: Int, playerLevel: Int) -> some View {
-            let required = max(level, 0)
-            let meets = playerLevel >= required
-            return HStack {
-                Text(label)
-                Spacer()
-                HStack(spacing: 0) {
-                    ForEach(0..<required, id: \.self) { idx in
-                        Text(emoji)
-                            .opacity(idx < playerLevel ? 1.0 : 0.35)
-                    }
-                }
-                .font(.body)
-            }
-            .font(.body)
-            .foregroundStyle(meets ? .primary : .secondary)
-            .padding(.horizontal)
-        }
-
-        private func softRequirement(_ label: String, _ emoji: String, requiredLevel: Int, current: Int) -> some View {
-            requirementRow(label: label, emoji: emoji, level: requiredLevel, playerLevel: current)
-        }
-
-        private func hardRequirementRow(label: String, emoji: String, met: Bool) -> some View {
-            HStack {
-                Text(label)
-                Spacer()
-                Text(emoji)
-                    .opacity(met ? 1.0 : 0.35)
-            }
-            .font(.body)
-            .foregroundStyle(met ? .primary : .secondary)
-            .padding(.horizontal)
-        }
-
         var body: some View {
             let isLocked = player.lockedPortfolio.contains(item)
             let isSelected = selectedPortfolio.contains(item)
@@ -111,21 +76,16 @@ struct ProjectsView: View {
                           : ""
                       )
                 )
-                VStack(alignment: .leading, spacing: 8) {
-                    if !reqs.softSkills.isEmpty {
-                        ForEach(reqs.softSkills, id: \.label) { s in
-                            softRequirement(s.label, s.emoji, requiredLevel: s.required, current: s.current)
+                ProjectRequirementsView(
+                    requirements:
+                        reqs.softSkills.map { s in
+                            .init(label: s.label, emoji: s.emoji, style: .meter(current: s.current, required: s.required))
                         }
-                    }
-
-                    if !reqs.hardSkills.isEmpty {
-                        ForEach(reqs.hardSkills, id: \.label) { h in
-                            let met = h.current >= h.required
-                            hardRequirementRow(label: h.label, emoji: h.emoji, met: met)
+                        +
+                        reqs.hardSkills.map { h in
+                            .init(label: h.label, emoji: h.emoji, style: .badge(isMet: h.current >= h.required))
                         }
-                    }
-                }
-                .padding(.vertical, 4)
+                )
             }
         }
     }
