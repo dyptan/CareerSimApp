@@ -530,7 +530,6 @@ struct Education: Codable, Hashable, Identifiable {
     var requirements: Requirements {
         guard let p = profile else { return Requirements() }
 
-        // Baseline by profile (doubled cores + some non-essentials)
         var base = Education.baseRequirements(for: p)
 
         // Escalate by level, enforce minimums, and clamp to 0...5

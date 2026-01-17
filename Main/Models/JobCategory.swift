@@ -1,4 +1,4 @@
-enum Category: String, CaseIterable, Identifiable, Codable {
+enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case engineering = "Engineering"
     case arts = "Arts"
     case publicServices = "Public Services"
@@ -28,7 +28,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
-    static func icon(for category: Category) -> String {
+    static func icon(for category: JobCategory) -> String {
         switch category {
         case .engineering: return "🧰"
         case .technology: return "💻"
@@ -59,7 +59,7 @@ enum Category: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var persona: PersonaGroup {
+    var persona: JobGroup {
         switch self {
         case .publicServices, .education, .health, .service:
             return .people

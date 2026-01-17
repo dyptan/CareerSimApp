@@ -4,7 +4,7 @@ struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
-    func categories() -> [Category] {
+    func categories() -> [JobCategory] {
         Array(Set(availableJobs.map(\.category))).sorted {
             $0.rawValue < $1.rawValue
         }
@@ -23,7 +23,6 @@ struct JobsView: View {
                 .navigationViewStyle(.stack)
             #endif
         }
-//        .frame(minHeight: 500)
     }
 
     private var content: some View {

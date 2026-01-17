@@ -194,8 +194,20 @@ struct JobDetail: View {
             HStack(spacing: 12) {
                 Text("Income")
                 Text("\(job.income) $")
-                Spacer()
+                    .font(.caption.bold())
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.secondary.opacity(0.12))
+                    .foregroundStyle(.secondary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .font(.subheadline)
+            .frame(maxWidth: .infinity ,alignment: .leading)
+            .padding(.horizontal)
+            
+            HStack {
                 if let tier = job.companyTier {
+                    Text("Company tier")
                     Text(tier.displayName)
                         .font(.caption.bold())
                         .padding(.horizontal, 10)
@@ -206,15 +218,19 @@ struct JobDetail: View {
                 }
             }
             .font(.subheadline)
-            .frame(maxWidth: .infinity ,alignment: .leading)
-            .padding(.horizontal)
+                .frame(maxWidth: .infinity ,alignment: .leading)
+                .padding(.horizontal)
 
             Text("Requirements")
                 .font(.title3)
-                .padding()
-                .frame(maxWidth: .infinity ,alignment: .leading)
+                .frame(alignment: .leading)
 
             Divider()
+            
+            Text("Education:")
+                .font(.headline)
+                .frame(maxWidth: .infinity ,alignment: .leading)
+                .padding()
             
             requirementRow(
                 label: job.requirements.education.educationLabel(),
@@ -223,7 +239,7 @@ struct JobDetail: View {
                 playerLevel: player.degrees.last?.eqf ?? 0
             )
             
-            // Helpful soft skills (not gating)
+            
             if requiredSoft.analyticalReasoningAndProblemSolving
                 + requiredSoft.creativityAndInsightfulThinking
                 + requiredSoft.communicationAndNetworking
@@ -237,10 +253,10 @@ struct JobDetail: View {
                 + requiredSoft.coordinationAndBalance
                 + requiredSoft.resilienceAndEndurance > 0
             {
-                Text("Helpful skills")
-                    .font(.subheadline.bold())
+                Text("Skills:")
+                    .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
+                    .padding()
 
                 softRequirement(\.analyticalReasoningAndProblemSolving, requiredSoft.analyticalReasoningAndProblemSolving)
                 softRequirement(\.creativityAndInsightfulThinking, requiredSoft.creativityAndInsightfulThinking)
@@ -256,13 +272,12 @@ struct JobDetail: View {
                 softRequirement(\.physicalStrengthAndEndurance, requiredSoft.resilienceAndEndurance)
             }
 
-            Spacer()
-            // Certifications
+            
             if !requiredHard.certifications.isEmpty {
-                Text("Certifications")
-                    .font(.subheadline.bold())
+                Text("Certifications:")
+                    .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
+                    .padding()
                 
                 ForEach(requiredHard.certifications, id: \.self) { code in
                     let enumVal = certFrom(raw: code)
@@ -278,12 +293,12 @@ struct JobDetail: View {
                 }
             }
 
-            // Licenses
+            
             if !requiredHard.licenses.isEmpty {
-                Text("Licenses")
-                    .font(.subheadline.bold())
+                Text("Licenses:")
+                    .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
+                    .padding()
 
                 ForEach(requiredHard.licenses, id: \.self) { code in
                     let enumVal = licenseFrom(raw: code)
@@ -298,12 +313,12 @@ struct JobDetail: View {
                 }
             }
 
-            // Software
+            
             if !requiredHard.software.isEmpty {
-                Text("Software")
-                    .font(.subheadline.bold())
+                Text("Software:")
+                    .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
+                    .padding()
 
                 ForEach(requiredHard.software, id: \.self) { code in
                     let enumVal = softwareFrom(raw: code)
@@ -318,12 +333,12 @@ struct JobDetail: View {
                 }
             }
 
-            // Portfolio
+            
             if !requiredHard.portfolio.isEmpty {
-                Text("Portfolio")
-                    .font(.subheadline.bold())
+                Text("Portfolio:")
+                    .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
+                    .padding()
 
                 ForEach(requiredHard.portfolio, id: \.self) { code in
                     let enumVal = portfolioFrom(raw: code)

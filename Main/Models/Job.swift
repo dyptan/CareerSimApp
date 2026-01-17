@@ -2,7 +2,7 @@ import Foundation
 
 struct Job: Identifiable, Codable, Hashable {
     let id: String
-    let category: Category
+    let category: JobCategory
     let income: Int            // full dollars per year (e.g., 72000)
     let summary: String
     let icon: String

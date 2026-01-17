@@ -9,7 +9,6 @@ struct Activity {
 }
 
 let activities: [Activity] = [
-    // Physical / Outdoor
     Activity(
         label: "Sports and Athletics",
         abilities: [
@@ -48,7 +47,6 @@ let activities: [Activity] = [
         ]
     ),
 
-    // Creative / Media
     Activity(
         label: "Music Playing and Composing",
         abilities: [
@@ -150,7 +148,6 @@ let activities: [Activity] = [
         ]
     ),
 
-    // Social / Leadership
     Activity(
         label: "Journalism, Blogging, Podcasting",
         abilities: [
@@ -217,7 +214,6 @@ let activities: [Activity] = [
         ]
     ),
 
-    // Practical / Home
     Activity(
         label: "Cooking and Baking",
         abilities: [

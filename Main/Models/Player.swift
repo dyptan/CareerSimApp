@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 final class Player: ObservableObject {
     @Published var age: Int
@@ -72,6 +73,27 @@ final class Player: ObservableObject {
 
     func boostAbility(_ keyPath: WritableKeyPath<SoftSkills, Int>) {
         softSkills[keyPath: keyPath] += 1
+    }
+}
+
+extension Player {
+    @MainActor
+    func apply(selectedActivities: Set<String>, from activities: [Activity]) {
+        print("[Activities] Applying \(selectedActivities.count) activities: \(Array(selectedActivities))")
+        var updated = softSkills
+        var totalDelta = 0
+        for activity in activities where selectedActivities.contains(activity.label) {
+            for ability in activity.abilities {
+                updated[keyPath: ability.keyPath] += ability.weight
+                totalDelta += ability.weight
+            }
+        }
+        print("[Activities] Total skill delta: \(totalDelta)")
+        objectWillChange.send()
+        withAnimation {
+            softSkills = updated
+        }
+        print("[Activities] Applied. Soft skills updated.")
     }
 }
 

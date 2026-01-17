@@ -82,7 +82,7 @@ enum JobV6Adapter {
 
     // Map V6 into existing Job (compat mode)
     private static func mapToJob(_ src: JobV6) -> Job? {
-        guard let cat = Category(rawValue: src.category) else { return nil }
+        guard let cat = JobCategory(rawValue: src.category) else { return nil }
 
         // Education
         let acceptedProfiles: [TertiaryProfile]? = src.requirements.education.acceptedProfiles?

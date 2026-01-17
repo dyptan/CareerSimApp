@@ -99,7 +99,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
 
-            Button("Close") {
+            Button("Select") {
                 showTertiarySheet = false
             }
             .padding()
@@ -115,7 +115,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
 
-            Button("Close") {
+            Button("Select") {
                 showCareersSheet = false
             }.padding()
         }
@@ -130,7 +130,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showCertificationsSheet = false }
+                                Button("Select") { showCertificationsSheet = false }
                             }
                         }
                     }
@@ -143,7 +143,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showCertificationsSheet = false }
+                                Button("Select") { showCertificationsSheet = false }
                             }
                         }
                     }
@@ -167,7 +167,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showLicensesSheet = false }
+                                Button("Select") { showLicensesSheet = false }
                             }
                         }
                     }
@@ -180,7 +180,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showLicensesSheet = false }
+                                Button("Select") { showLicensesSheet = false }
                             }
                         }
                     }
@@ -204,7 +204,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showCourcesSheet = false }
+                                Button("Select") { showCourcesSheet = false }
                             }
                         }
                     }
@@ -217,7 +217,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showCourcesSheet = false }
+                                Button("Select") { showCourcesSheet = false }
                             }
                         }
                     }
@@ -241,7 +241,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showProjectsSheet = false }
+                                Button("Select") { showProjectsSheet = false }
                             }
                         }
                     }
@@ -254,7 +254,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Done") { showProjectsSheet = false }
+                                Button("Select") { showProjectsSheet = false }
                             }
                         }
                     }
@@ -274,7 +274,7 @@ struct MainView: View {
                         activitiesView
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
+                                    Button("Select") {
                                         showSoftSkillsSheet = false
                                     }
                                 }
@@ -285,7 +285,7 @@ struct MainView: View {
                         activitiesView
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Done") {
+                                    Button("Select") {
                                         showSoftSkillsSheet = false
                                     }
                                 }
@@ -410,6 +410,9 @@ struct MainView: View {
             player.lockedCertifications.formUnion(selectedCertifications)
             player.lockedPortfolio.formUnion(selectedProjects)
             player.lockedSoftware.formUnion(selectedSoftware)
+
+            player.apply(selectedActivities: selectedActivities, from: activities)
+            player.lockedActivities.formUnion(selectedActivities)
 
             selectedActivities.removeAll()
             selectedSoftware.removeAll()

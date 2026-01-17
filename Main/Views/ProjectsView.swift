@@ -23,11 +23,11 @@ struct ProjectsView: View {
             let isLocked = player.lockedPortfolio.contains(item)
             let isSelected = selectedPortfolio.contains(item)
             let atLimit = selectedActivities.count >= maxActivitiesPerYear
-            
+
             let reqs = item.requirements(for: player)
             let meetsAllRequirements =
-                reqs.softSkills.allSatisfy { $0.current >= $0.required } &&
-                reqs.hardSkills.allSatisfy { $0.current >= $0.required }
+                reqs.softSkills.allSatisfy { $0.current >= $0.required }
+                && reqs.hardSkills.allSatisfy { $0.current >= $0.required }
 
             VStack(alignment: .leading) {
                 Toggle(
@@ -52,40 +52,60 @@ struct ProjectsView: View {
                         }
                     )
                 )
-#if os(macOS)
-                .toggleStyle(.checkbox)
-#endif
-#if os(iOS)
-                .toggleStyle(.switch)
-#endif
+                #if os(macOS)
+                    .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                    .toggleStyle(.switch)
+                #endif
                 .disabled(
                     isLocked
-                    || (!isSelected && (atLimit || !meetsAllRequirements))
+                        || (!isSelected && (atLimit || !meetsAllRequirements))
                 )
                 .opacity(
-                    (isLocked || (!isSelected && (atLimit || !meetsAllRequirements))) ? 0.5 : 1.0
+                    (isLocked
+                        || (!isSelected && (atLimit || !meetsAllRequirements)))
+                        ? 0.5 : 1.0
                 )
                 .help(
                     isLocked
-                    ? "Locked after year end"
-                    : (
-                        (!isSelected && atLimit)
-                        ? "You can take up to \(maxActivitiesPerYear) activities this year."
-                        : (!isSelected && !meetsAllRequirements)
-                          ? "Requirements not met yet."
-                          : ""
-                      )
+                        ? "Locked after year end"
+                        : ((!isSelected && atLimit)
+                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            : (!isSelected && !meetsAllRequirements)
+                                ? "Requirements not met yet."
+                                : "")
                 )
-                ProjectRequirementsView(
-                    requirements:
-                        reqs.softSkills.map { s in
-                            .init(label: s.label, emoji: s.emoji, style: .meter(current: s.current, required: s.required))
-                        }
-                        +
-                        reqs.hardSkills.map { h in
-                            .init(label: h.label, emoji: h.emoji, style: .badge(isMet: h.current >= h.required))
-                        }
-                )
+                
+                let requirements =
+                    reqs.softSkills.map { s in
+                        Requirement(
+                            label: s.label,
+                            emoji: s.emoji,
+                            style: .meter(
+                                current: s.current,
+                                required: s.required
+                            )
+                        )
+                    }
+                    + reqs.hardSkills.map { h in
+                        Requirement(
+                            label: h.label,
+                            emoji: h.emoji,
+                            style: .badge(isMet: h.current >= h.required)
+                        )
+                    }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    ForEach(requirements) { req in
+                        RequirementRow(
+                            label: req.label,
+                            emoji: req.emoji,
+                            style: req.style
+                        )
+                    }
+
+                }
             }
         }
     }
@@ -125,4 +145,3 @@ struct ProjectsView: View {
     }
     return Container()
 }
-

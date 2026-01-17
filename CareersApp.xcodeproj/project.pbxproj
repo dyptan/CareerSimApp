@@ -32,12 +32,10 @@
 		55A6ED052E9542630033B674 /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED042E9542630033B674 /* Loader.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
 		55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */; };
-		55D6AEDE2F0086D500B2C113 /* ProjectRequirementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEDD2F0086D500B2C113 /* ProjectRequirementsView.swift */; };
-		55D6AEE22F01A8BB00B2C113 /* RequirementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEE12F01A8BB00B2C113 /* RequirementModel.swift */; };
+		55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEE12F01A8BB00B2C113 /* Requirement.swift */; };
 		55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F01AB22ECE3C3600EA9E4D /* EducationView.swift */; };
-		55FA2A6E2EF57FA7008084C7 /* ProjectRequirements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FA2A6D2EF57FA7008084C7 /* ProjectRequirements.swift */; };
-		84C2E8702E9C1C0F0093E507 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E86F2E9C1C0F0093E507 /* Category.swift */; };
-		84C2E8722E9C1C260093E507 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E8712E9C1C260093E507 /* Group.swift */; };
+		84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */; };
+		84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E8712E9C1C260093E507 /* JobGroup.swift */; };
 		84F851C52E9E8D710066C41A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 84F851C42E9E8D710066C41A /* AppIcon.icon */; };
 		84F851C92EA0F30F0066C41A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851C82EA0F30F0066C41A /* Player.swift */; };
 		84F851CB2EA0F3130066C41A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CA2EA0F3130066C41A /* MainView.swift */; };
@@ -97,12 +95,10 @@
 		55A6ED042E9542630033B674 /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
 		55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRow.swift; sourceTree = "<group>"; };
-		55D6AEDD2F0086D500B2C113 /* ProjectRequirementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRequirementsView.swift; sourceTree = "<group>"; };
-		55D6AEE12F01A8BB00B2C113 /* RequirementModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementModel.swift; sourceTree = "<group>"; };
+		55D6AEE12F01A8BB00B2C113 /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
 		55F01AB22ECE3C3600EA9E4D /* EducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationView.swift; sourceTree = "<group>"; };
-		55FA2A6D2EF57FA7008084C7 /* ProjectRequirements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRequirements.swift; sourceTree = "<group>"; };
-		84C2E86F2E9C1C0F0093E507 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
-		84C2E8712E9C1C260093E507 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCategory.swift; sourceTree = "<group>"; };
+		84C2E8712E9C1C260093E507 /* JobGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobGroup.swift; sourceTree = "<group>"; };
 		84F851C42E9E8D710066C41A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		84F851C82EA0F30F0066C41A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		84F851CA2EA0F3130066C41A /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -199,19 +195,18 @@
 		C20D780824B685C4002E7AEA /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				55D6AEE12F01A8BB00B2C113 /* RequirementModel.swift */,
+				55D6AEE12F01A8BB00B2C113 /* Requirement.swift */,
 				551B66F32EBFB89100092DC7 /* HobbiesAndActivities.swift */,
 				550C55022EAE6C1200887B96 /* Skills.swift */,
 				84F851CC2EA16C290066C41A /* Education.swift */,
-				84C2E8712E9C1C260093E507 /* Group.swift */,
-				84C2E86F2E9C1C0F0093E507 /* Category.swift */,
+				84C2E8712E9C1C260093E507 /* JobGroup.swift */,
+				84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */,
 				5596D81B2E9AE4EF00E98CEF /* Job.swift */,
 				84F851C82EA0F30F0066C41A /* Player.swift */,
 				5506183D2ED2245200C56E99 /* Software.swift */,
 				5506183F2ED2245400C56E99 /* Project.swift */,
 				550618412ED2245900C56E99 /* Certification.swift */,
 				550618432ED2245D00C56E99 /* License.swift */,
-				55FA2A6D2EF57FA7008084C7 /* ProjectRequirements.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -245,7 +240,6 @@
 				5598FA2C2EE62F75006C4D36 /* CoursesView.swift */,
 				5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
-				55D6AEDD2F0086D500B2C113 /* ProjectRequirementsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -382,21 +376,19 @@
 				5506183E2ED2245200C56E99 /* Software.swift in Sources */,
 				55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */,
 				550618442ED2245D00C56E99 /* License.swift in Sources */,
-				55D6AEDE2F0086D500B2C113 /* ProjectRequirementsView.swift in Sources */,
 				550C55032EAE6C1200887B96 /* Skills.swift in Sources */,
 				C20D77EE24B665D7002E7AEA /* Main.swift in Sources */,
 				84F851CB2EA0F3130066C41A /* MainView.swift in Sources */,
 				551B66F62EBFB91900092DC7 /* SkillsSection.swift in Sources */,
-				55D6AEE22F01A8BB00B2C113 /* RequirementModel.swift in Sources */,
+				55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */,
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,
-				55FA2A6E2EF57FA7008084C7 /* ProjectRequirements.swift in Sources */,
 				84F851CD2EA16C290066C41A /* Education.swift in Sources */,
 				55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */,
-				84C2E8702E9C1C0F0093E507 /* Category.swift in Sources */,
+				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Certification.swift in Sources */,
 				5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */,
 				5598FA2D2EE62F75006C4D36 /* CoursesView.swift in Sources */,
-				84C2E8722E9C1C260093E507 /* Group.swift in Sources */,
+				84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */,
 				550618402ED2245400C56E99 /* Project.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,

@@ -1,4 +1,4 @@
-enum PersonaGroup: String, CaseIterable, Identifiable, Codable {
+enum JobGroup: String, CaseIterable, Identifiable, Codable {
     case people = "People"
     case tools = "Tools"
     case creative = "Creative"

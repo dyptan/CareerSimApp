@@ -53,15 +53,8 @@ struct ActivitiesView: View {
                                 set: { isOn in
                                     if isOn && !atLimit {
                                         selectedActivities.insert(activity.label)
-                                        for ability in activity.abilities {
-                                            player.softSkills[keyPath: ability.keyPath] += ability.weight
-                                        }
                                     } else {
-                                        if selectedActivities.remove(activity.label) != nil {
-                                            for ability in activity.abilities {
-                                                player.softSkills[keyPath: ability.keyPath] -= ability.weight
-                                            }
-                                        }
+                                        _ = selectedActivities.remove(activity.label)
                                     }
                                 }
                             )
@@ -101,3 +94,4 @@ struct ActivitiesView: View {
     )
     .padding()
 }
+

@@ -1,5 +1,5 @@
 import Foundation
-public struct RequirementModel: Identifiable {
+public struct Requirement: Identifiable {
     public let id = UUID()
     public let label: String
     public let emoji: String

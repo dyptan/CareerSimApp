@@ -21,7 +21,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-//    // Software needed to reasonably complete this portfolio item
     var requiredSoftware: Set<Software> {
         switch self {
         case .app:
@@ -41,7 +40,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     }
 
     func requirements(for player: Player) -> ProjectRequirements {
-        // Map soft skills from Player.SoftSkills keyed properties
         func softSkillCurrent(_ label: String) -> Int {
             switch label {
             case "Creativity":
@@ -59,7 +57,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             }
         }
 
-        // Helper to build a soft requirement
         func soft(_ label: String, _ emoji: String, required: Int) -> ProjectRequirements.SoftRequirement {
             ProjectRequirements.SoftRequirement(
                 label: label,
@@ -69,7 +66,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             )
         }
 
-        // Helper to build a hard requirement based on Software possession
         func hard(_ software: Software, label: String, emoji: String, required: Int) -> ProjectRequirements.HardRequirement {
             let owned = player.hardSkills.software.contains(software) ? 1 : 0
             return ProjectRequirements.HardRequirement(
@@ -150,6 +146,43 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                 ]
             )
         }
+    }
+}
+
+public struct ProjectRequirements {
+    public struct SoftRequirement {
+        public let label: String
+        public let emoji: String
+        public let required: Int
+        public let current: Int
+        public init(label: String, emoji: String, required: Int, current: Int) {
+            self.label = label
+            self.emoji = emoji
+            self.required = required
+            self.current = current
+        }
+    }
+    public struct HardRequirement {
+        public let label: String
+        public let emoji: String
+        public let required: Int
+        public let current: Int
+        public init(label: String, emoji: String, required: Int, current: Int) {
+            self.label = label
+            self.emoji = emoji
+            self.required = required
+            self.current = current
+        }
+    }
+
+    public let minEQF: Int?
+    public let softSkills: [SoftRequirement]
+    public let hardSkills: [HardRequirement]
+
+    public init(minEQF: Int? = nil, softSkills: [SoftRequirement] = [], hardSkills: [HardRequirement] = []) {
+        self.minEQF = minEQF
+        self.softSkills = softSkills
+        self.hardSkills = hardSkills
     }
 }
 

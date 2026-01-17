@@ -38,7 +38,6 @@ enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Compa
 
 struct HardSkills: Codable, Hashable {
 
-    // Internal leveled storage
     private(set) var portfolioLevels: [Project: ProficiencyLevel] = [:]
     private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
     private(set) var softwareLevels: [Software: ProficiencyLevel] = [:]
@@ -156,7 +155,6 @@ struct HardSkills: Codable, Hashable {
 
     // MARK: - Sequential progression policy (1 level per year)
 
-    // Current level or default to level0 conceptually (nil)
     private func currentLevel<T: Hashable>(in dict: [T: ProficiencyLevel], for key: T) -> ProficiencyLevel? {
         dict[key]
     }
@@ -171,8 +169,6 @@ struct HardSkills: Codable, Hashable {
     func isMaxLevel<T: Hashable>(_ key: T, in dict: [T: ProficiencyLevel]) -> Bool {
         (dict[key] ?? .level1) == .level3
     }
-
-    // Whether the item can be trained this year (i.e., there exists a next level)
 
     func canTrain(_ item: Project) -> Bool {
         nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
@@ -263,7 +259,6 @@ struct SoftSkills: Codable, Hashable {
         (\.patienceAndPerseverance, "Perseverance", "🛡️"),
         (\.outdoorAndWeatherResilience, "Outdoor Resilience", "🌦️"),
 
-        // School-age / emotional skills (merged)
         (\.stressResistanceAndEmotionalRegulation, "Emotional Regulation", "🧘"),
         (\.collaborationAndTeamwork, "Collaboration", "🤝"),
         (\.timeManagementAndPlanning, "Time Management", "⏱️"),
