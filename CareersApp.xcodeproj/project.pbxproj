@@ -11,8 +11,10 @@
 		550618402ED2245400C56E99 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* Project.swift */; };
 		550618422ED2245900C56E99 /* Certification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Certification.swift */; };
 		550618442ED2245D00C56E99 /* License.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618432ED2245D00C56E99 /* License.swift */; };
+		550A724D2F218C4300B53E8B /* dataV7.json in Resources */ = {isa = PBXBuildFile; fileRef = 550A724C2F218C4300B53E8B /* dataV7.json */; };
+		550A72602F22D3CE00B53E8B /* GenerateDataJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550A725F2F22D3CE00B53E8B /* GenerateDataJSON.swift */; };
+		550A72622F22D4B300B53E8B /* JobsJSONExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550A72612F22D4B300B53E8B /* JobsJSONExporter.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
-		550C55052EAE7C5300887B96 /* migration.py in Resources */ = {isa = PBXBuildFile; fileRef = 550C55042EAE7C5300887B96 /* migration.py */; };
 		550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C550E2EB02BDE00887B96 /* HeaderView.swift */; };
 		550C55142EB16A9600887B96 /* JobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55132EB16A9600887B96 /* JobsView.swift */; };
 		551B66F42EBFB89100092DC7 /* HobbiesAndActivities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F32EBFB89100092DC7 /* HobbiesAndActivities.swift */; };
@@ -20,8 +22,6 @@
 		551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */; };
 		553578DE2EE39324003C8BD2 /* HardcodedJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */; };
 		553578E22EE4EC9E003C8BD2 /* PortfolioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */; };
-		559526BD2EDDDF59004D5BD8 /* JobV6Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */; };
-		559526C22EDDE77D004D5BD8 /* dataV6.json in Resources */ = {isa = PBXBuildFile; fileRef = 559526C12EDDE77D004D5BD8 /* dataV6.json */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* CertificationsView.swift */; };
 		5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */; };
@@ -31,6 +31,7 @@
 		55A6ED012E9542000033B674 /* JobDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobDetail.swift */; };
 		55A6ED052E9542630033B674 /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED042E9542630033B674 /* Loader.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
+		55BEF4E92F23D92F00F36D5D /* RequirementRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BEF4E82F23D92F00F36D5D /* RequirementRowView.swift */; };
 		55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */; };
 		55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEE12F01A8BB00B2C113 /* Requirement.swift */; };
 		55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F01AB22ECE3C3600EA9E4D /* EducationView.swift */; };
@@ -73,8 +74,10 @@
 		5506183F2ED2245400C56E99 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		550618412ED2245900C56E99 /* Certification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certification.swift; sourceTree = "<group>"; };
 		550618432ED2245D00C56E99 /* License.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = License.swift; sourceTree = "<group>"; };
+		550A724C2F218C4300B53E8B /* dataV7.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dataV7.json; sourceTree = "<group>"; };
+		550A725F2F22D3CE00B53E8B /* GenerateDataJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateDataJSON.swift; sourceTree = "<group>"; };
+		550A72612F22D4B300B53E8B /* JobsJSONExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsJSONExporter.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
-		550C55042EAE7C5300887B96 /* migration.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = migration.py; sourceTree = "<group>"; };
 		550C550E2EB02BDE00887B96 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		550C55132EB16A9600887B96 /* JobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsView.swift; sourceTree = "<group>"; };
 		551B66F32EBFB89100092DC7 /* HobbiesAndActivities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HobbiesAndActivities.swift; sourceTree = "<group>"; };
@@ -82,8 +85,6 @@
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardcodedJobs.swift; sourceTree = "<group>"; };
 		553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItem.swift; sourceTree = "<group>"; };
-		559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobV6Adapter.swift; sourceTree = "<group>"; };
-		559526C12EDDE77D004D5BD8 /* dataV6.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dataV6.json; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5596D86A2E9AF46B00E98CEF /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5598FA282EE62F57006C4D36 /* CertificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationsView.swift; sourceTree = "<group>"; };
@@ -94,6 +95,7 @@
 		55A6ED002E9542000033B674 /* JobDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetail.swift; sourceTree = "<group>"; };
 		55A6ED042E9542630033B674 /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
+		55BEF4E82F23D92F00F36D5D /* RequirementRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRowView.swift; sourceTree = "<group>"; };
 		55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRow.swift; sourceTree = "<group>"; };
 		55D6AEE12F01A8BB00B2C113 /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
 		55F01AB22ECE3C3600EA9E4D /* EducationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationView.swift; sourceTree = "<group>"; };
@@ -214,11 +216,11 @@
 		C20D780924B685CB002E7AEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				559526C12EDDE77D004D5BD8 /* dataV6.json */,
-				550C55042EAE7C5300887B96 /* migration.py */,
 				84F851C42E9E8D710066C41A /* AppIcon.icon */,
-				559526BC2EDDDF59004D5BD8 /* JobV6Adapter.swift */,
 				553578DD2EE39324003C8BD2 /* HardcodedJobs.swift */,
+				550A724C2F218C4300B53E8B /* dataV7.json */,
+				550A725F2F22D3CE00B53E8B /* GenerateDataJSON.swift */,
+				550A72612F22D4B300B53E8B /* JobsJSONExporter.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -240,6 +242,7 @@
 				5598FA2C2EE62F75006C4D36 /* CoursesView.swift */,
 				5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
+				55BEF4E82F23D92F00F36D5D /* RequirementRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -340,8 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */,
-				559526C22EDDE77D004D5BD8 /* dataV6.json in Resources */,
-				550C55052EAE7C5300887B96 /* migration.py in Resources */,
+				550A724D2F218C4300B53E8B /* dataV7.json in Resources */,
 				84F851C52E9E8D710066C41A /* AppIcon.icon in Resources */,
 				C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */,
 			);
@@ -365,13 +367,13 @@
 				5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */,
 				5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */,
+				550A72622F22D4B300B53E8B /* JobsJSONExporter.swift in Sources */,
 				55A6ED052E9542630033B674 /* Loader.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,
 				55A6ED012E9542000033B674 /* JobDetail.swift in Sources */,
 				551B66F42EBFB89100092DC7 /* HobbiesAndActivities.swift in Sources */,
 				84F851C92EA0F30F0066C41A /* Player.swift in Sources */,
 				553578DE2EE39324003C8BD2 /* HardcodedJobs.swift in Sources */,
-				559526BD2EDDDF59004D5BD8 /* JobV6Adapter.swift in Sources */,
 				550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */,
 				5506183E2ED2245200C56E99 /* Software.swift in Sources */,
 				55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */,
@@ -379,11 +381,13 @@
 				550C55032EAE6C1200887B96 /* Skills.swift in Sources */,
 				C20D77EE24B665D7002E7AEA /* Main.swift in Sources */,
 				84F851CB2EA0F3130066C41A /* MainView.swift in Sources */,
+				550A72602F22D3CE00B53E8B /* GenerateDataJSON.swift in Sources */,
 				551B66F62EBFB91900092DC7 /* SkillsSection.swift in Sources */,
 				55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */,
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,
 				84F851CD2EA16C290066C41A /* Education.swift in Sources */,
 				55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */,
+				55BEF4E92F23D92F00F36D5D /* RequirementRowView.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Certification.swift in Sources */,
 				5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */,

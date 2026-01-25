@@ -98,7 +98,7 @@ enum HardcodedJobs {
                     portfolio: ["Presentation", "Website"]
                 )
             ),
-            companyTier: .smb,
+            companyTier: .mid,
             version: 6
         )
 
@@ -131,7 +131,7 @@ enum HardcodedJobs {
                     portfolio: []
                 )
             ),
-            companyTier: .smb,
+            companyTier: .mid,
             version: 6
         )
 

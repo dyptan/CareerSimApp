@@ -1,0 +1,183 @@
+[
+  {
+    "requirements" : {
+      "education" : {
+        "minEQF" : 6,
+        "acceptedProfiles" : [
+          "health",
+          "science"
+        ]
+      },
+      "hardSkills" : {
+        "certifications" : [
+
+        ],
+        "portfolio" : [
+
+        ],
+        "software" : [
+          "Office"
+        ],
+        "licenses" : [
+          "RN"
+        ]
+      },
+      "softSkills" : {
+        "analyticalReasoningAndProblemSolving" : 3,
+        "leadershipAndInfluence" : 1,
+        "perseveranceAndGrit" : 4,
+        "courageAndRiskTolerance" : 1,
+        "carefulnessAndAttentionToDetail" : 5,
+        "spacialNavigation" : 0,
+        "tinkeringAndFingerPrecision" : 2,
+        "physicalStrength" : 3,
+        "coordinationAndBalance" : 2,
+        "resilienceAndEndurance" : 4,
+        "creativityAndInsightfulThinking" : 0,
+        "communicationAndNetworking" : 5
+      }
+    },
+    "companyTier" : "government",
+    "summary" : "Provides patient care, administers medication, and coordinates with medical teams.",
+    "category" : "Health",
+    "icon" : "🩺",
+    "id" : "Registered Nurse",
+    "version" : 6,
+    "income" : 72000
+  },
+  {
+    "requirements" : {
+      "education" : {
+        "minEQF" : 5,
+        "acceptedProfiles" : [
+          "technology",
+          "engineering",
+          "science"
+        ]
+      },
+      "hardSkills" : {
+        "portfolio" : [
+          "App",
+          "Website"
+        ],
+        "certifications" : [
+
+        ],
+        "licenses" : [
+
+        ],
+        "software" : [
+          "Programming",
+          "Office"
+        ]
+      },
+      "softSkills" : {
+        "physicalStrength" : 0,
+        "leadershipAndInfluence" : 0,
+        "analyticalReasoningAndProblemSolving" : 5,
+        "creativityAndInsightfulThinking" : 3,
+        "resilienceAndEndurance" : 2,
+        "carefulnessAndAttentionToDetail" : 4,
+        "courageAndRiskTolerance" : 1,
+        "tinkeringAndFingerPrecision" : 0,
+        "spacialNavigation" : 0,
+        "communicationAndNetworking" : 2,
+        "perseveranceAndGrit" : 4,
+        "coordinationAndBalance" : 0
+      }
+    },
+    "companyTier" : "enterprise",
+    "version" : 6,
+    "income" : 110000,
+    "id" : "Software Developer",
+    "summary" : "Designs and builds computer programs and applications.",
+    "category" : "Technology",
+    "icon" : "💻"
+  },
+  {
+    "requirements" : {
+      "hardSkills" : {
+        "portfolio" : [
+          "Presentation",
+          "Website"
+        ],
+        "software" : [
+          "Photo\/Video Editing",
+          "Office"
+        ],
+        "licenses" : [
+
+        ],
+        "certifications" : [
+
+        ]
+      },
+      "softSkills" : {
+        "analyticalReasoningAndProblemSolving" : 1,
+        "courageAndRiskTolerance" : 1,
+        "spacialNavigation" : 3,
+        "physicalStrength" : 0,
+        "leadershipAndInfluence" : 0,
+        "perseveranceAndGrit" : 3,
+        "communicationAndNetworking" : 2,
+        "resilienceAndEndurance" : 1,
+        "creativityAndInsightfulThinking" : 5,
+        "tinkeringAndFingerPrecision" : 2,
+        "coordinationAndBalance" : 0,
+        "carefulnessAndAttentionToDetail" : 4
+      },
+      "education" : {
+        "minEQF" : 4
+      }
+    },
+    "icon" : "🎨",
+    "summary" : "Creates visual concepts and designs for advertisements, publications, or digital media.",
+    "companyTier" : "mid",
+    "income" : 53000,
+    "version" : 6,
+    "id" : "Graphic Designer",
+    "category" : "Design"
+  },
+  {
+    "version" : 6,
+    "summary" : "Delivers goods locally using vans or small trucks.",
+    "icon" : "🚐",
+    "requirements" : {
+      "hardSkills" : {
+        "portfolio" : [
+
+        ],
+        "software" : [
+
+        ],
+        "licenses" : [
+          "B"
+        ],
+        "certifications" : [
+
+        ]
+      },
+      "softSkills" : {
+        "resilienceAndEndurance" : 3,
+        "creativityAndInsightfulThinking" : 0,
+        "leadershipAndInfluence" : 0,
+        "courageAndRiskTolerance" : 1,
+        "spacialNavigation" : 3,
+        "analyticalReasoningAndProblemSolving" : 1,
+        "tinkeringAndFingerPrecision" : 1,
+        "communicationAndNetworking" : 1,
+        "carefulnessAndAttentionToDetail" : 3,
+        "perseveranceAndGrit" : 3,
+        "physicalStrength" : 3,
+        "coordinationAndBalance" : 2
+      },
+      "education" : {
+        "minEQF" : 3
+      }
+    },
+    "companyTier" : "mid",
+    "id" : "Light Truck Delivery Driver",
+    "income" : 42000,
+    "category" : "Logistics"
+  }
+]

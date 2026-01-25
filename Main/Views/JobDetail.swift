@@ -1,21 +1,5 @@
 import SwiftUI
 
-extension SoftSkills {
-    static func pictogram(forLabel label: String) -> String? {
-        skillNames.first(where: { $0.label == label })?.pictogram
-    }
-    static func label(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>)
-        -> String?
-    {
-        skillNames.first(where: { $0.keyPath == keyPath })?.label
-    }
-    static func pictogram(forKeyPath keyPath: WritableKeyPath<SoftSkills, Int>)
-        -> String?
-    {
-        skillNames.first(where: { $0.keyPath == keyPath })?.pictogram
-    }
-}
-
 struct JobDetail: View {
     var job: Job
     @ObservedObject var player: Player
@@ -150,13 +134,47 @@ struct JobDetail: View {
         .padding(.horizontal)
     }
 
+    private func softLabel(for keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
+        switch keyPath {
+        case \.analyticalReasoningAndProblemSolving: return "Analytical reasoning"
+        case \.creativityAndInsightfulThinking: return "Creativity"
+        case \.communicationAndNetworking: return "Communication"
+        case \.leadershipAndInfluence: return "Leadership"
+        case \.courageAndRiskTolerance: return "Courage"
+        case \.spacialNavigationAndOrientation: return "Spatial navigation"
+        case \.carefulnessAndAttentionToDetail: return "Attention to detail"
+        case \.patienceAndPerseverance: return "Perseverance"
+        case \.tinkeringAndFingerPrecision: return "Finger precision"
+        case \.physicalStrengthAndEndurance: return "Strength & endurance"
+        case \.coordinationAndBalance: return "Coordination & balance"
+        default: return ""
+        }
+    }
+    
+    private func softPictogram(for keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
+        switch keyPath {
+        case \.analyticalReasoningAndProblemSolving: return "🧠"
+        case \.creativityAndInsightfulThinking: return "🎨"
+        case \.communicationAndNetworking: return "🗣️"
+        case \.leadershipAndInfluence: return "⭐️"
+        case \.courageAndRiskTolerance: return "⚡️"
+        case \.spacialNavigationAndOrientation: return "🧭"
+        case \.carefulnessAndAttentionToDetail: return "🔎"
+        case \.patienceAndPerseverance: return "⏳"
+        case \.tinkeringAndFingerPrecision: return "🛠️"
+        case \.physicalStrengthAndEndurance: return "💪"
+        case \.coordinationAndBalance: return "🤹"
+        default: return ""
+        }
+    }
+
     private func softRequirement(
         _ keyPath: WritableKeyPath<SoftSkills, Int>,
         _ requiredLevel: Int
     ) -> some View {
         requirementRow(
-            label: SoftSkills.label(forKeyPath: keyPath) ?? "",
-            emoji: SoftSkills.pictogram(forKeyPath: keyPath) ?? "",
+            label: softLabel(for: keyPath),
+            emoji: softPictogram(for: keyPath),
             level: requiredLevel,
             playerLevel: player.softSkills[keyPath: keyPath]
         )

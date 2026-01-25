@@ -21,7 +21,7 @@ struct MainView: View {
     @State var showSoftSkillsSheet = false
 
     private var availableJobs: [Job] {
-        HardcodedJobs.sampleJobs()
+        jobs
     }
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
@@ -99,7 +99,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
 
-            Button("Select") {
+            Button("Close") {
                 showTertiarySheet = false
             }
             .padding()
@@ -115,7 +115,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
 
-            Button("Select") {
+            Button("Close") {
                 showCareersSheet = false
             }.padding()
         }
@@ -130,7 +130,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showCertificationsSheet = false }
+                                Button("Close") { showCertificationsSheet = false }
                             }
                         }
                     }
@@ -143,7 +143,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showCertificationsSheet = false }
+                                Button("Close") { showCertificationsSheet = false }
                             }
                         }
                     }
@@ -167,7 +167,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showLicensesSheet = false }
+                                Button("Close") { showLicensesSheet = false }
                             }
                         }
                     }
@@ -180,7 +180,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showLicensesSheet = false }
+                                Button("Close") { showLicensesSheet = false }
                             }
                         }
                     }
@@ -204,7 +204,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showCourcesSheet = false }
+                                Button("Close") { showCourcesSheet = false }
                             }
                         }
                     }
@@ -217,7 +217,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showCourcesSheet = false }
+                                Button("Close") { showCourcesSheet = false }
                             }
                         }
                     }
@@ -241,7 +241,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showProjectsSheet = false }
+                                Button("Close") { showProjectsSheet = false }
                             }
                         }
                     }
@@ -254,7 +254,7 @@ struct MainView: View {
                         .environmentObject(player)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Select") { showProjectsSheet = false }
+                                Button("Close") { showProjectsSheet = false }
                             }
                         }
                     }
@@ -274,7 +274,7 @@ struct MainView: View {
                         activitiesView
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Select") {
+                                    Button("Close") {
                                         showSoftSkillsSheet = false
                                     }
                                 }
@@ -285,7 +285,7 @@ struct MainView: View {
                         activitiesView
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
-                                    Button("Select") {
+                                    Button("Close") {
                                         showSoftSkillsSheet = false
                                     }
                                 }

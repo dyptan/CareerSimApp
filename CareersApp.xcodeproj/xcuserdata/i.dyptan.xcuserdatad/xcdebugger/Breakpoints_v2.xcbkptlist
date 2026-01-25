@@ -7,17 +7,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "36AD9C3D-2FA2-4964-BB02-B696D08A8814"
+            uuid = "36E2E8A1-8446-4CCC-9F67-58C8CE405AC1"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Main/Views/EducationView.swift"
+            filePath = "Main/Utils/Loader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "366"
-            endingLineNumber = "366"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "7"
+            endingLineNumber = "7"
+            landmarkName = "load(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

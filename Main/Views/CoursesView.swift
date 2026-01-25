@@ -79,12 +79,8 @@ struct CoursesView: View {
                     )
 
                     RequirementRow(
-                        label: SoftSkills.label(
-                            forKeyPath: \.analyticalReasoningAndProblemSolving
-                        ) ?? "Problem Solving",
-                        emoji: SoftSkills.pictogram(
-                            forKeyPath: \.analyticalReasoningAndProblemSolving
-                        ) ?? "🧩",
+                        label: "Problem Solving",
+                        emoji: "🧩",
                         style: .meter(current: player.softSkills.analyticalReasoningAndProblemSolving, required: 0)
                     )
                 }

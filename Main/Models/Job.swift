@@ -1,5 +1,25 @@
 import Foundation
 
+/// Represents the general tier of a company for a given job.
+/// Adjust cases as needed to match your data set.
+enum CompanyTier: String, Codable, Hashable, CaseIterable {
+    case startup
+    case mid
+    case enterprise
+    case government
+
+    var displayName: String {
+        switch self {
+        case .startup: return "Startup"
+        case .government: return "Government"
+        case .mid:
+            return "Medium size company"
+        case .enterprise:
+            return "Large enterprise"
+        }
+    }
+}
+
 struct Job: Identifiable, Codable, Hashable {
     let id: String
     let category: JobCategory
@@ -14,7 +34,6 @@ struct Job: Identifiable, Codable, Hashable {
         let education: Education
         let softSkills: SoftSkillsBlock
         let hardSkills: HardSkillsBlock
-
         struct Education: Codable, Hashable {
             let minEQF: Int
             let acceptedProfiles: [TertiaryProfile]?
@@ -54,8 +73,8 @@ struct Job: Identifiable, Codable, Hashable {
                 case 2: return "Middle school"
                 case 3: return "High school"
                 case 4: return "College / Vocational"
-                case 5: return "University — Bachelor’s"
-                case 6: return "University — Master’s"
+                case 5: return "University — Bachelor's"
+                case 6: return "University — Master's"
                 case 7: return "Doctorate"
                 default: return "Doctorate+"
                 }
@@ -115,3 +134,4 @@ var jobExample = Job(
     companyTier: .startup,
     version: 5
 )
+

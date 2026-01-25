@@ -59,7 +59,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .flightAttendantCert: return "🧳"
         }
     }
-    
+
     var costForCertification: Int {
         switch self {
         case .aws: return 350
@@ -92,7 +92,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         var carefulnessAndAttentionToDetail: Int = 0
         var perseveranceAndGrit: Int = 0
         var tinkeringAndFingerPrecision: Int = 0
-        var physicalStrength: Int = 0
+        var physicalStrengthAndEndurance: Int = 0
         var coordinationAndBalance: Int = 0
         var resilienceAndEndurance: Int = 0
     }
@@ -100,7 +100,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     // Builds the threshold profile used by the UI, and evaluates if player meets it.
     func requirementsProfile(for player: Player) -> (profile: RequirementsProfile, meetsAll: Bool, cost: Int, message: String?) {
         var r = RequirementsProfile()
-
 
         switch self {
         case .cna:
@@ -149,14 +148,12 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             r.communicationAndNetworking = 2
             r.resilienceAndEndurance = 3
 
-        case .aws:
+        case .aws, .azure, .google:
             r.analyticalReasoningAndProblemSolving = 3
-        case .azure:
-            r.analyticalReasoningAndProblemSolving = 3
-        case .google:
-            r.analyticalReasoningAndProblemSolving = 3
+
         case .scrum:
             r.communicationAndNetworking = 2
+
         case .security:
             r.analyticalReasoningAndProblemSolving = 2
             r.carefulnessAndAttentionToDetail = 2
@@ -174,7 +171,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         meets = meets && s.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail
         meets = meets && s.patienceAndPerseverance >= r.perseveranceAndGrit
         meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
-        meets = meets && s.physicalStrengthAndEndurance >= r.physicalStrength
+        meets = meets && s.physicalStrengthAndEndurance >= r.physicalStrengthAndEndurance
         meets = meets && s.coordinationAndBalance >= r.coordinationAndBalance
         meets = meets && s.physicalStrengthAndEndurance >= r.resilienceAndEndurance
 
@@ -189,7 +186,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             if s.carefulnessAndAttentionToDetail < r.carefulnessAndAttentionToDetail { return "Needs more Carefulness" }
             if s.patienceAndPerseverance < r.perseveranceAndGrit { return "Needs more Perseverance" }
             if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
-            if s.physicalStrengthAndEndurance < r.physicalStrength { return "Needs more Strength" }
+            if s.physicalStrengthAndEndurance < r.physicalStrengthAndEndurance { return "Needs more Strength" }
             if s.coordinationAndBalance < r.coordinationAndBalance { return "Needs better Coordination" }
             if s.physicalStrengthAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
             return nil
@@ -201,7 +198,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     // Existing gating remains available for logic decisions
     func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
         let s = player.softSkills
-
 
         switch self {
         case .cna:

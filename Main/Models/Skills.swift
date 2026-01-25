@@ -244,7 +244,7 @@ struct SoftSkills: Codable, Hashable {
     var selfDisciplineAndStudyHabits: Int = 0
     var adaptabilityAndLearningAgility: Int = 0
     var presentationAndStorytelling: Int = 0
-
+    
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
         (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
         (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
@@ -258,7 +258,7 @@ struct SoftSkills: Codable, Hashable {
         (\.coordinationAndBalance, "Coordination", "🤸"),
         (\.patienceAndPerseverance, "Perseverance", "🛡️"),
         (\.outdoorAndWeatherResilience, "Outdoor Resilience", "🌦️"),
-
+        
         (\.stressResistanceAndEmotionalRegulation, "Emotional Regulation", "🧘"),
         (\.collaborationAndTeamwork, "Collaboration", "🤝"),
         (\.timeManagementAndPlanning, "Time Management", "⏱️"),
@@ -266,6 +266,26 @@ struct SoftSkills: Codable, Hashable {
         (\.adaptabilityAndLearningAgility, "Adaptability", "🔄"),
         (\.presentationAndStorytelling, "Presentation", "🎤")
     ]
+    
+    static func label(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
+        for entry in SoftSkills.skillNames {
+            let pkp = entry.keyPath as PartialKeyPath<SoftSkills>
+            if pkp == keyPath {
+                return entry.label
+            }
+        }
+        return nil
+    }
+
+    static func pictogram(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
+        for entry in SoftSkills.skillNames {
+            let pkp = entry.keyPath as PartialKeyPath<SoftSkills>
+            if pkp == keyPath {
+                return entry.pictogram
+            }
+        }
+        return nil
+    }
 }
 // MARK: - Optional: convenience display helpers for a skill + level
 
