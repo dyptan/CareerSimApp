@@ -42,13 +42,11 @@ struct LicensesView: View {
         case .drivers:
             return [
                 (\.spacialNavigationAndOrientation, 1),
-                (\.coordinationAndBalance, 1),
                 (\.physicalStrengthAndEndurance, 1),
             ]
         case .cdl:
             return [
                 (\.spacialNavigationAndOrientation, 2),
-                (\.coordinationAndBalance, 2),
                 (\.physicalStrengthAndEndurance, 2),
                 (\.patienceAndPerseverance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
@@ -56,14 +54,12 @@ struct LicensesView: View {
         case .pilot:
             return [
                 (\.spacialNavigationAndOrientation, 2),
-                (\.coordinationAndBalance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
                 (\.analyticalReasoningAndProblemSolving, 2),
             ]
         case .commercialPilot:
             return [
                 (\.spacialNavigationAndOrientation, 3),
-                (\.coordinationAndBalance, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.patienceAndPerseverance, 3),
                 (\.analyticalReasoningAndProblemSolving, 3),

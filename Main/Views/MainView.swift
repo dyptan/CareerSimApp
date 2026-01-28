@@ -375,70 +375,74 @@ struct MainView: View {
             Button("Courses") { showCourcesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
 
+           
+            Button("Activities") { showSoftSkillsSheet = true }
+                .buttonStyle(.bordered).font(.headline)
+        }
+
+        HStack {
+            
             Button("Certifications") { showCertificationsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
 
             Button("Licenses") { showLicensesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
-        }
 
+        }
+        
         HStack {
-            Button("Activities") { showSoftSkillsSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-            
             Button("Jobs") {
                 showCareersSheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
             )
+            
 
             Button("Education") {
                 showTertiarySheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
             )
+            
+            Button("Next year") {
+                player.age += 1
+                player.hardSkills.certifications.formUnion(selectedCertifications)
+                player.hardSkills.licenses.formUnion(selectedLicences)
+                player.hardSkills.portfolioItems.formUnion(selectedProjects)
+                player.hardSkills.software.formUnion(selectedSoftware)
 
-        }
-        
-        Button("To next year") {
-            player.age += 1
-            player.hardSkills.certifications.formUnion(selectedCertifications)
-            player.hardSkills.licenses.formUnion(selectedLicences)
-            player.hardSkills.portfolioItems.formUnion(selectedProjects)
-            player.hardSkills.software.formUnion(selectedSoftware)
+                player.lockedCertifications.formUnion(selectedCertifications)
+                player.lockedPortfolio.formUnion(selectedProjects)
+                player.lockedSoftware.formUnion(selectedSoftware)
 
-            player.lockedCertifications.formUnion(selectedCertifications)
-            player.lockedPortfolio.formUnion(selectedProjects)
-            player.lockedSoftware.formUnion(selectedSoftware)
+                player.apply(selectedActivities: selectedActivities, from: activities)
+                player.lockedActivities.formUnion(selectedActivities)
 
-            player.apply(selectedActivities: selectedActivities, from: activities)
-            player.lockedActivities.formUnion(selectedActivities)
+                selectedActivities.removeAll()
+                selectedSoftware.removeAll()
+                selectedLicences.removeAll()
+                selectedProjects.removeAll()
+                selectedCertifications.removeAll()
 
-            selectedActivities.removeAll()
-            selectedSoftware.removeAll()
-            selectedLicences.removeAll()
-            selectedProjects.removeAll()
-            selectedCertifications.removeAll()
-
-            yearsLeftToGraduation? -= 1
-            if yearsLeftToGraduation == 0 {
-                descisionText =
-                    "You're done with your degree! What's your next step?"
-                showDecisionSheet.toggle()
-                if let currentEducation = player.currentEducation {
-                    player.degrees.append(currentEducation)
+                yearsLeftToGraduation? -= 1
+                if yearsLeftToGraduation == 0 {
+                    descisionText =
+                        "You're done with your degree! What's your next step?"
+                    showDecisionSheet.toggle()
+                    if let currentEducation = player.currentEducation {
+                        player.degrees.append(currentEducation)
+                    }
+                    yearsLeftToGraduation = nil
+                    player.currentEducation = nil
                 }
-                yearsLeftToGraduation = nil
-                player.currentEducation = nil
-            }
 
-            if let income = player.currentOccupation?.income {
-                player.savings += income
+                if let income = player.currentOccupation?.income {
+                    player.savings += income
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .font(.headline)
         }
-        .buttonStyle(.borderedProminent)
-        .padding(.bottom, 8)
-        .font(.headline)
 
     }
 

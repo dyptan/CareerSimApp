@@ -13,7 +13,6 @@ let activities: [Activity] = [
         label: "Sports and Athletics",
         abilities: [
             .init(keyPath: \.physicalStrengthAndEndurance, weight: 2),
-            .init(keyPath: \.coordinationAndBalance, weight: 2),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
@@ -40,7 +39,6 @@ let activities: [Activity] = [
     Activity(
         label: "Dancing and Choreography",
         abilities: [
-            .init(keyPath: \.coordinationAndBalance, weight: 2),
             .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)

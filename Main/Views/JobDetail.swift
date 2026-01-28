@@ -77,7 +77,6 @@ struct JobDetail: View {
         if p.patienceAndPerseverance >= r.perseveranceAndGrit { score += 1 }
         if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
         if p.physicalStrengthAndEndurance >= r.physicalStrength { score += 1 }
-        if p.coordinationAndBalance >= r.coordinationAndBalance { score += 1 }
         if p.physicalStrengthAndEndurance >= r.resilienceAndEndurance { score += 1 }
         return score
     }
@@ -146,7 +145,6 @@ struct JobDetail: View {
         case \.patienceAndPerseverance: return "Perseverance"
         case \.tinkeringAndFingerPrecision: return "Finger precision"
         case \.physicalStrengthAndEndurance: return "Strength & endurance"
-        case \.coordinationAndBalance: return "Coordination & balance"
         default: return ""
         }
     }
@@ -163,7 +161,6 @@ struct JobDetail: View {
         case \.patienceAndPerseverance: return "⏳"
         case \.tinkeringAndFingerPrecision: return "🛠️"
         case \.physicalStrengthAndEndurance: return "💪"
-        case \.coordinationAndBalance: return "🤹"
         default: return ""
         }
     }
@@ -286,7 +283,6 @@ struct JobDetail: View {
                 softRequirement(\.patienceAndPerseverance, requiredSoft.perseveranceAndGrit)
                 softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
                 softRequirement(\.physicalStrengthAndEndurance, requiredSoft.physicalStrength)
-                softRequirement(\.coordinationAndBalance, requiredSoft.coordinationAndBalance)
                 softRequirement(\.physicalStrengthAndEndurance, requiredSoft.resilienceAndEndurance)
             }
 

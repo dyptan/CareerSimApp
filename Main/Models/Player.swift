@@ -29,7 +29,6 @@ final class Player: ObservableObject {
             tinkeringAndFingerPrecision: Int.random(in: 0...1),
             spacialNavigationAndOrientation: Int.random(in: 0...1),
             physicalStrengthAndEndurance: Int.random(in: 0...1),
-            coordinationAndBalance: Int.random(in: 0...1),
             stressResistanceAndEmotionalRegulation: Int.random(in: 0...1),
             outdoorAndWeatherResilience: Int.random(in: 0...1),
             patienceAndPerseverance: Int.random(in: 0...1),

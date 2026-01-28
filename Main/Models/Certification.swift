@@ -172,7 +172,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         meets = meets && s.patienceAndPerseverance >= r.perseveranceAndGrit
         meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
         meets = meets && s.physicalStrengthAndEndurance >= r.physicalStrengthAndEndurance
-        meets = meets && s.coordinationAndBalance >= r.coordinationAndBalance
         meets = meets && s.physicalStrengthAndEndurance >= r.resilienceAndEndurance
 
         // Derive a simple first unmet message (optional)
@@ -187,7 +186,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             if s.patienceAndPerseverance < r.perseveranceAndGrit { return "Needs more Perseverance" }
             if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
             if s.physicalStrengthAndEndurance < r.physicalStrengthAndEndurance { return "Needs more Strength" }
-            if s.coordinationAndBalance < r.coordinationAndBalance { return "Needs better Coordination" }
             if s.physicalStrengthAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
             return nil
         }()

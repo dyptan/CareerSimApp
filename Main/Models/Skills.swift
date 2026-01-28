@@ -235,7 +235,6 @@ struct SoftSkills: Codable, Hashable {
     var tinkeringAndFingerPrecision: Int = 0
     var spacialNavigationAndOrientation: Int = 0
     var physicalStrengthAndEndurance: Int = 0
-    var coordinationAndBalance: Int = 0
     var stressResistanceAndEmotionalRegulation: Int = 0
     var outdoorAndWeatherResilience: Int = 0
     var patienceAndPerseverance: Int = 0
@@ -246,25 +245,24 @@ struct SoftSkills: Codable, Hashable {
     var presentationAndStorytelling: Int = 0
     
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
-        (\.analyticalReasoningAndProblemSolving, "Problem Solving", "🧩"),
-        (\.creativityAndInsightfulThinking, "Creativity", "🎨"),
-        (\.communicationAndNetworking, "Communication", "💬"),
-        (\.leadershipAndInfluence, "Leadership", "👥"),
-        (\.courageAndRiskTolerance, "Risk Tolerance", "🎲"),
-        (\.carefulnessAndAttentionToDetail, "Attention To Detail", "🔎"),
-        (\.tinkeringAndFingerPrecision, "Tinkering", "🔧"),
-        (\.spacialNavigationAndOrientation, "Navigation", "🧭"),
-        (\.physicalStrengthAndEndurance, "Strength & Endurance", "💪"),
-        (\.coordinationAndBalance, "Coordination", "🤸"),
-        (\.patienceAndPerseverance, "Perseverance", "🛡️"),
-        (\.outdoorAndWeatherResilience, "Outdoor Resilience", "🌦️"),
+        (\.analyticalReasoningAndProblemSolving, "Solver", "💡"),
+        (\.creativityAndInsightfulThinking, "Creator", "🎨"),
+        (\.communicationAndNetworking, "Influencer", "📢"),
+        (\.leadershipAndInfluence, "Leader", "👑"),
+        (\.courageAndRiskTolerance, "Risk-taker", "🎲"),
+        (\.carefulnessAndAttentionToDetail, "Inspector", "🔍"),
+        (\.tinkeringAndFingerPrecision, "Fixer", "🛠️"),
+        (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
+        (\.physicalStrengthAndEndurance, "Athlete", "💪"),
+        (\.patienceAndPerseverance, "Striver", "🚀"),
+        (\.outdoorAndWeatherResilience, "Survivor", "🌱"),
         
-        (\.stressResistanceAndEmotionalRegulation, "Emotional Regulation", "🧘"),
-        (\.collaborationAndTeamwork, "Collaboration", "🤝"),
-        (\.timeManagementAndPlanning, "Time Management", "⏱️"),
-        (\.selfDisciplineAndStudyHabits, "Study Habits", "📚"),
-        (\.adaptabilityAndLearningAgility, "Adaptability", "🔄"),
-        (\.presentationAndStorytelling, "Presentation", "🎤")
+        (\.stressResistanceAndEmotionalRegulation, "Peacemaker", "🕊️"),
+        (\.collaborationAndTeamwork, "Coach", "🤝"),
+        (\.timeManagementAndPlanning, "Planner", "📅"),
+        (\.selfDisciplineAndStudyHabits, "Achiever", "🏆"),
+        (\.adaptabilityAndLearningAgility, "Adapter", "💡"),
+        (\.presentationAndStorytelling, "Storyteller", "📖")
     ]
     
     static func label(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
