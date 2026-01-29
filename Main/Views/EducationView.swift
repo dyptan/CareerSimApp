@@ -313,16 +313,7 @@ private struct DegreesSubmenuView: View {
                             level: r.selfDisciplineAndStudyHabits,
                             playerLevel: player.softSkills.selfDisciplineAndStudyHabits
                         )
-                        requirementRow(
-                            label: SoftSkills.label(
-                                forKeyPath: \.adaptabilityAndLearningAgility
-                            ) ?? "Adaptability",
-                            emoji: SoftSkills.pictogram(
-                                forKeyPath: \.adaptabilityAndLearningAgility
-                            ) ?? "🔄",
-                            level: r.adaptabilityAndLearningAgility,
-                            playerLevel: player.softSkills.adaptabilityAndLearningAgility
-                        )
+                        
                         requirementRow(
                             label: SoftSkills.label(
                                 forKeyPath: \.presentationAndStorytelling

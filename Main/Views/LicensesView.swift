@@ -100,7 +100,6 @@ struct LicensesView: View {
 
     var body: some View {
         ScrollView {
-
                 ForEach(sortedLicenses, id: \.self) { lic in
                     let isLocked = player.lockedLicenses.contains(lic)
                     let isSelected = selectedLicences.contains(lic)
@@ -113,12 +112,7 @@ struct LicensesView: View {
                         case .ok: return nil
                         }
                     }()
-                    let priceText: String = {
-                        switch requirement {
-                        case .ok(let cost): return "$\(cost)"
-                        case .blocked: return "$\(lic.costForLicense)"
-                        }
-                    }()
+                    
 
                     VStack(alignment: .leading, spacing: 6) {
                         Toggle(
@@ -173,10 +167,10 @@ struct LicensesView: View {
                                     )
                                 }
                             }
-                            .padding(.vertical, 4)
+                            .padding(4)
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(8)
                 }
             }
         .padding()

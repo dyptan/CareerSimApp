@@ -241,7 +241,6 @@ struct SoftSkills: Codable, Hashable {
     var collaborationAndTeamwork: Int = 0
     var timeManagementAndPlanning: Int = 0
     var selfDisciplineAndStudyHabits: Int = 0
-    var adaptabilityAndLearningAgility: Int = 0
     var presentationAndStorytelling: Int = 0
     
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
@@ -255,13 +254,11 @@ struct SoftSkills: Codable, Hashable {
         (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
         (\.physicalStrengthAndEndurance, "Athlete", "💪"),
         (\.patienceAndPerseverance, "Striver", "🚀"),
-        (\.outdoorAndWeatherResilience, "Survivor", "🌱"),
-        
+        (\.outdoorAndWeatherResilience, "Scout", "🌧️"),
         (\.stressResistanceAndEmotionalRegulation, "Peacemaker", "🕊️"),
         (\.collaborationAndTeamwork, "Coach", "🤝"),
         (\.timeManagementAndPlanning, "Planner", "📅"),
         (\.selfDisciplineAndStudyHabits, "Achiever", "🏆"),
-        (\.adaptabilityAndLearningAgility, "Adapter", "💡"),
         (\.presentationAndStorytelling, "Storyteller", "📖")
     ]
     

@@ -256,7 +256,6 @@ struct Education: Codable, Hashable, Identifiable {
         var collaborationAndTeamwork: Int = 0
         var timeManagementAndPlanning: Int = 0
         var selfDisciplineAndStudyHabits: Int = 0
-        var adaptabilityAndLearningAgility: Int = 0
         var presentationAndStorytelling: Int = 0
 
         init(minEQF: Int = 0) {
@@ -329,7 +328,6 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
         guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
         guard p.selfDisciplineAndStudyHabits >= r.selfDisciplineAndStudyHabits else { return false }
-        guard p.adaptabilityAndLearningAgility >= r.adaptabilityAndLearningAgility else { return false }
         guard p.presentationAndStorytelling >= r.presentationAndStorytelling else { return false }
 
         return true
@@ -472,7 +470,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 2
             // non-essential
             r.presentationAndStorytelling = 1
-            r.adaptabilityAndLearningAgility = 1
             r.communicationAndNetworking = 1
 
         case .engineering:
@@ -504,7 +501,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.patienceAndPerseverance = 2
             r.communicationAndNetworking = 2
             // non-essential
-            r.adaptabilityAndLearningAgility = 1
             r.selfDisciplineAndStudyHabits = 1
 
         case .design:
@@ -526,7 +522,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 2
             r.courageAndRiskTolerance = 2
             // non-essential
-            r.adaptabilityAndLearningAgility = 1
             r.patienceAndPerseverance = 1
             r.selfDisciplineAndStudyHabits = 1
 
@@ -538,7 +533,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.timeManagementAndPlanning = 2
             // non-essential
             r.collaborationAndTeamwork = 1
-            r.adaptabilityAndLearningAgility = 1
             r.selfDisciplineAndStudyHabits = 1
 
         case .health:
@@ -580,7 +574,6 @@ struct Education: Codable, Hashable, Identifiable {
             // non-essential
             r.selfDisciplineAndStudyHabits = 2
             r.timeManagementAndPlanning = 1
-            r.adaptabilityAndLearningAgility = 1
 
         case .law:
             r.analyticalReasoningAndProblemSolving = 4
@@ -602,7 +595,6 @@ struct Education: Codable, Hashable, Identifiable {
             // non-essential
             r.presentationAndStorytelling = 1
             r.courageAndRiskTolerance = 1
-            r.adaptabilityAndLearningAgility = 1
         }
 
         return r
@@ -628,7 +620,6 @@ struct Education: Codable, Hashable, Identifiable {
         x.collaborationAndTeamwork = bump(x.collaborationAndTeamwork)
         x.timeManagementAndPlanning = bump(x.timeManagementAndPlanning)
         x.selfDisciplineAndStudyHabits = bump(x.selfDisciplineAndStudyHabits)
-        x.adaptabilityAndLearningAgility = bump(x.adaptabilityAndLearningAgility)
         x.presentationAndStorytelling = bump(x.presentationAndStorytelling)
 
         return x
@@ -716,7 +707,6 @@ struct Education: Codable, Hashable, Identifiable {
         x.collaborationAndTeamwork = cap(x.collaborationAndTeamwork)
         x.timeManagementAndPlanning = cap(x.timeManagementAndPlanning)
         x.selfDisciplineAndStudyHabits = cap(x.selfDisciplineAndStudyHabits)
-        x.adaptabilityAndLearningAgility = cap(x.adaptabilityAndLearningAgility)
         x.presentationAndStorytelling = cap(x.presentationAndStorytelling)
 
         return x

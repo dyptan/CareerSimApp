@@ -38,18 +38,19 @@ struct HeaderView: View {
             }
                 
             if let lastlog = player.degrees.last {
-                Text("Last degree: \(lastlog.degreeName)")
+                Text("Degree: \(lastlog.degreeName)")
             }
             
-            Text("Bank balance: \(player.savings)$")
+            
             
             if player.savings > 0 {
-                Text(String(repeating: "💶", count: player.savings / 100000))
+                Text("Savings: \(player.savings) $")
+                Text(String(repeating: "💶", count: player.savings / 100000)).lineLimit(10)
             }
 
             if let currentOccupation = player.currentOccupation {
                 Text(
-                    "Occupation: \(currentOccupation.id) \(currentOccupation.icon)"
+                    "Working: \(currentOccupation.id) \(currentOccupation.icon)"
                 )
             }
             if let currentEducation = player.currentEducation {

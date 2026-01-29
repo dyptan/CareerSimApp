@@ -131,6 +131,7 @@ struct JobDetail: View {
         .font(.body)
         .foregroundStyle(meets ? .primary : .secondary)
         .padding(.horizontal)
+        .padding(0.5)
     }
 
     private func softLabel(for keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
@@ -267,6 +268,7 @@ struct JobDetail: View {
                 + requiredSoft.physicalStrength
                 + requiredSoft.coordinationAndBalance
                 + requiredSoft.resilienceAndEndurance > 0
+                
             {
                 Text("Skills:")
                     .font(.headline)

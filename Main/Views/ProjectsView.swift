@@ -31,7 +31,7 @@ struct ProjectsView: View {
 
             VStack(alignment: .leading) {
                 Toggle(
-                    "\(item.rawValue) \(item.pictogram)",
+                    "\(Text(item.rawValue).font(.title3)) \(item.pictogram)",
                     isOn: Binding(
                         get: { isSelected },
                         set: { isOn in
@@ -120,6 +120,7 @@ struct ProjectsView: View {
                         selectedActivities: $selectedActivities,
                         maxActivitiesPerYear: maxActivitiesPerYear
                     )
+                    .padding(8)
                     .environmentObject(player)
                 }
             }

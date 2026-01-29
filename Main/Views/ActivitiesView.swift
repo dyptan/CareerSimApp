@@ -47,7 +47,7 @@ struct ActivitiesView: View {
                         let isSelected = selectedActivities.contains(activity.label)
 
                         Toggle(
-                            "\(activity.label) \(pictos)",
+                            "\(activity.label) \n \(pictos)",
                             isOn: Binding(
                                 get: { isSelected },
                                 set: { isOn in
@@ -60,6 +60,7 @@ struct ActivitiesView: View {
                             )
                         )
                         .toggleStyle(.automatic)
+                        .padding(5)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .disabled(isLocked || (!isSelected && atLimit))
                         .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)

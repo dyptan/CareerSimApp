@@ -114,7 +114,7 @@ var jobExample = Job(
     summary: "sdf",
     icon: "🦸",
     requirements: Job.Requirements(
-        education: .init(minEQF: 0, acceptedProfiles: nil),
+        education: .init(minEQF: 5, acceptedProfiles: nil),
         softSkills: .init(
             analyticalReasoningAndProblemSolving: 2,
             creativityAndInsightfulThinking: 3,

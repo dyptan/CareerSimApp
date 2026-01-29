@@ -35,7 +35,6 @@ final class Player: ObservableObject {
             collaborationAndTeamwork: Int.random(in: 0...1),
             timeManagementAndPlanning: Int.random(in: 0...1),
             selfDisciplineAndStudyHabits: Int.random(in: 0...1),
-            adaptabilityAndLearningAgility: Int.random(in: 0...1),
             presentationAndStorytelling: Int.random(in: 0...1)
         ),
         hardSkills: HardSkills = HardSkills(

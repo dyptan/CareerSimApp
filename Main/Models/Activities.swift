@@ -77,7 +77,6 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.adaptabilityAndLearningAgility, weight: 1),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ]
@@ -179,7 +178,6 @@ let activities: [Activity] = [
             .init(keyPath: \.leadershipAndInfluence, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.adaptabilityAndLearningAgility, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ]
     ),
@@ -195,7 +193,6 @@ let activities: [Activity] = [
     Activity(
         label: "Hackathon / Maker Fair",
         abilities: [
-            .init(keyPath: \.adaptabilityAndLearningAgility, weight: 2),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1),

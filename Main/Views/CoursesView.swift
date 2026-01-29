@@ -11,6 +11,21 @@ struct CoursesView: View {
     private var sortedSoftware: [Software] {
         Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
+    
+    private func softwareThresholds(_ sw: Software) -> [(WritableKeyPath<SoftSkills, Int>, Int)] {
+        switch sw {
+        case .officeSuite:
+            return [(\.selfDisciplineAndStudyHabits, 2), (\.timeManagementAndPlanning, 1)]
+        case .programming:
+            return [(\.analyticalReasoningAndProblemSolving, 3), (\.patienceAndPerseverance, 2)]
+        case .mediaEditing:
+            return [(\.creativityAndInsightfulThinking, 3), (\.carefulnessAndAttentionToDetail, 2)]
+        case .gameEngine:
+            return [(\.analyticalReasoningAndProblemSolving, 2), (\.creativityAndInsightfulThinking, 3)]
+        default:
+            return []
+        }
+    }
 
     var body: some View {
         ScrollView {
@@ -77,14 +92,22 @@ struct CoursesView: View {
                                 ? "You can take up to \(maxActivitiesPerYear) activities this year."
                                 : (blockedReason ?? ""))
                     )
-
-                    RequirementRow(
-                        label: "Problem Solving",
-                        emoji: "🧩",
-                        style: .meter(current: player.softSkills.analyticalReasoningAndProblemSolving, required: 0)
-                    )
                 }
-                .padding(.vertical, 4)
+                
+                let thresholds = softwareThresholds(sw)
+                if !thresholds.isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(Array(thresholds.enumerated()), id: \.offset) { pair in
+                            let (kp, lvl) = pair.element
+                            RequirementRow(
+                                label: SoftSkills.label(forKeyPath: kp) ?? "",
+                                emoji: SoftSkills.pictogram(forKeyPath: kp) ?? "",
+                                style: .meter(current: player.softSkills[keyPath: kp], required: lvl)
+                            )
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
             }
         }
         .padding()
