@@ -100,7 +100,7 @@ private struct DegreesSubmenuView: View {
                 let meetsAll = education.meetsRequirements(player: player)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack {
+                    
                         VStack(alignment: .leading, spacing: 4) {
                             Text(education.degreeName)
                                 .font(.headline)
@@ -116,28 +116,24 @@ private struct DegreesSubmenuView: View {
                             showTertiarySheet = false
                         } label: {
                             Text(
-                                meetsAll ? "Choose" : "Requirements not met"
+                                "Apply"
                             )
                             .frame(maxWidth: 140)
                         }
                         .buttonStyle(.borderedProminent)
                         .disabled(!meetsAll)
                         .opacity(meetsAll ? 1.0 : 0.5)
-                        .accessibilityHint(
-                            meetsAll
-                            ? "All requirements met"
-                            : "Some requirements are not met"
-                        )
-                    }
+                        
+                    
                     
                     // Requirements block (now includes new school-age skills)
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("What do you need?")
+                        Text("Requirements:")
                             .font(.subheadline.bold())
                         
                         // Education prerequisite (EQF)
                         requirementRow(
-                            label: "Previous education",
+                            label: r.educationLabel(),
                             emoji: "🎓",
                             level: r.minEQF,
                             playerLevel: highestEQF
@@ -260,17 +256,7 @@ private struct DegreesSubmenuView: View {
                             level: r.physicalStrengthAndEndurance,
                             playerLevel: player.softSkills.physicalStrengthAndEndurance
                         )
-                        requirementRow(
-                            label: SoftSkills.label(
-                                forKeyPath: \.physicalStrengthAndEndurance
-                            ) ?? "Endurance",
-                            emoji: SoftSkills.pictogram(
-                                forKeyPath: \.physicalStrengthAndEndurance
-                            ) ?? "🌦️",
-                            level: r.physicalStrengthAndEndurance,
-                            playerLevel: player.softSkills
-                                .physicalStrengthAndEndurance
-                        )
+                    
                         
                         // New school-age soft skills
                         requirementRow(

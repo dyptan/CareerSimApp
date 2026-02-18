@@ -249,7 +249,7 @@ struct SoftSkills: Codable, Hashable {
         (\.communicationAndNetworking, "Influencer", "📢"),
         (\.leadershipAndInfluence, "Leader", "👑"),
         (\.courageAndRiskTolerance, "Risk-taker", "🎲"),
-        (\.carefulnessAndAttentionToDetail, "Inspector", "🔍"),
+        (\.carefulnessAndAttentionToDetail, "Detective", "🔍"),
         (\.tinkeringAndFingerPrecision, "Fixer", "🛠️"),
         (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
         (\.physicalStrengthAndEndurance, "Athlete", "💪"),
