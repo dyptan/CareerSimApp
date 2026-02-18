@@ -328,7 +328,6 @@ struct MainView: View {
                     showDecisionSheet = false
                     showTertiarySheet = false
                     showCareersSheet = true
-                    // Assign the new player last to trigger UI refresh
                     player.age = newPlayer.age
                     player.softSkills = newPlayer.softSkills
                     player.hardSkills = newPlayer.hardSkills
@@ -414,9 +413,6 @@ struct MainView: View {
                 player.lockedCertifications.formUnion(selectedCertifications)
                 player.lockedPortfolio.formUnion(selectedProjects)
                 player.lockedSoftware.formUnion(selectedSoftware)
-
-                player.apply(selectedActivities: selectedActivities, from: activities)
-                player.lockedActivities.formUnion(selectedActivities)
 
                 selectedActivities.removeAll()
                 selectedSoftware.removeAll()

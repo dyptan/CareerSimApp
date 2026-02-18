@@ -11,98 +11,139 @@ struct CoursesView: View {
     private var sortedSoftware: [Software] {
         Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
-    
-    private func softwareThresholds(_ sw: Software) -> [(WritableKeyPath<SoftSkills, Int>, Int)] {
-        switch sw {
-        case .officeSuite:
-            return [(\.selfDisciplineAndStudyHabits, 2), (\.timeManagementAndPlanning, 1)]
-        case .programming:
-            return [(\.analyticalReasoningAndProblemSolving, 3), (\.patienceAndPerseverance, 2)]
-        case .mediaEditing:
-            return [(\.creativityAndInsightfulThinking, 3), (\.carefulnessAndAttentionToDetail, 2)]
-        case .gameEngine:
-            return [(\.analyticalReasoningAndProblemSolving, 2), (\.creativityAndInsightfulThinking, 3)]
-        default:
-            return []
-        }
-    }
 
     var body: some View {
         ScrollView {
-
-            ForEach(sortedSoftware, id: \.self) { (sw: Software) in
-                let isLocked = player.lockedSoftware.contains(sw)
-                let isSelected = selectedSoftware.contains(sw)
-                let atLimit = selectedActivities.count >= maxActivitiesPerYear
-
-                let requirement = sw.softwareRequirements(player)
-                let blockedReason: String? = {
-                    switch requirement {
-                    case .blocked(let reason): return reason
-                    case .ok: return nil
-                    }
-                }()
-//
-                VStack(alignment: .leading, spacing: 6) {
-                    Toggle(
-                        "\(sw.rawValue) \(sw.pictogram)",
-                        isOn: Binding<Bool>(
-                            get: { selectedSoftware.contains(sw) },
-                            set: { isOn in
-                                guard !isLocked else { return }
-                                if isOn {
-                                    guard !atLimit else { return }
-                                    switch sw.softwareRequirements(player) {
-                                    case .ok(let cost):
-                                        selectedSoftware.insert(sw)
-                                        selectedActivities.insert("soft:\(sw.rawValue)")
-                                        player.savings -= cost
-                                    case .blocked:
-                                        break
-                                    }
-                                } else {
-                                    if selectedSoftware.remove(sw) != nil {
-                                        selectedActivities.remove("soft:\(sw.rawValue)")
-                                    }
-                                }
-                            }
-                        )
+            VStack(alignment: .leading) {
+                ForEach(sortedSoftware, id: \.self) { sw in
+                    SoftwareRow(
+                        item: sw,
+                        selectedSoftware: $selectedSoftware,
+                        selectedActivities: $selectedActivities,
+                        maxActivitiesPerYear: maxActivitiesPerYear
                     )
-                    #if os(macOS)
-                        .toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                        .toggleStyle(.switch)
-                    #endif
-                    .disabled(
-                        isLocked
-                            || (!isSelected
-                                && (atLimit || blockedReason != nil))
-                    )
-                    .opacity(
-                        (isLocked
-                            || (!isSelected
-                                && (atLimit || blockedReason != nil)))
-                            ? 0.5 : 1.0
-                    )
-                    .help(
-                        isLocked
-                            ? "Locked after year end"
-                            : ((!isSelected && atLimit)
-                                ? "You can take up to \(maxActivitiesPerYear) activities this year."
-                                : (blockedReason ?? ""))
-                    )
+                    .padding(8)
                 }
-                
-                let thresholds = softwareThresholds(sw)
+            }
+            .padding()
+        }
+    }
+}
+
+private extension CoursesView {
+    struct SoftwareRow: View {
+        @EnvironmentObject private var player: Player
+
+        let item: Software
+        @Binding var selectedSoftware: Set<Software>
+        @Binding var selectedActivities: Set<String>
+        let maxActivitiesPerYear: Int
+
+        private var isSelected: Bool {
+            selectedSoftware.contains(item)
+        }
+
+        private var isLocked: Bool {
+            player.lockedSoftware.contains(item)
+        }
+
+        private var atLimit: Bool {
+            selectedActivities.count >= maxActivitiesPerYear
+        }
+
+        private var requirement: TrainingRequirementResult {
+            item.softwareRequirements(player)
+        }
+
+        private var blockedReason: String? {
+            switch requirement {
+            case .blocked(let reason):
+                return reason
+            case .ok:
+                return nil
+            }
+        }
+
+        private func softwareThresholds(_ sw: Software) -> [(WritableKeyPath<SoftSkills, Int>, Int)] {
+            switch sw {
+            case .officeSuite:
+                return [
+                    (\.selfDisciplineAndStudyHabits, 2),
+                    (\.timeManagementAndPlanning, 1),
+                ]
+            case .programming:
+                return [
+                    (\.analyticalReasoningAndProblemSolving, 3),
+                    (\.patienceAndPerseverance, 2),
+                ]
+            case .mediaEditing:
+                return [
+                    (\.creativityAndInsightfulThinking, 3),
+                    (\.carefulnessAndAttentionToDetail, 2),
+                ]
+            case .gameEngine:
+                return [
+                    (\.analyticalReasoningAndProblemSolving, 2),
+                    (\.creativityAndInsightfulThinking, 3),
+                ]
+            default:
+                return []
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle(isOn: Binding<Bool>(
+                    get: { isSelected },
+                    set: { isOn in
+                        guard !isLocked else { return }
+                        if isOn {
+                            guard !atLimit else { return }
+                            switch item.softwareRequirements(player) {
+                            case .ok(let cost):
+                                selectedSoftware.insert(item)
+                                selectedActivities.insert("soft:\(item.rawValue)")
+                                player.savings -= cost
+                            case .blocked:
+                                break
+                            }
+                        } else {
+                            if selectedSoftware.remove(item) != nil {
+                                selectedActivities.remove("soft:\(item.rawValue)")
+                            }
+                        }
+                    }
+                )) {
+                    Text(item.rawValue)
+                        .font(.title3)
+                }
+                #if os(macOS)
+                    .toggleStyle(.checkbox)
+                #endif
+                #if os(iOS)
+                    .toggleStyle(.switch)
+                #endif
+                .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil)))
+                .opacity(isLocked || (!isSelected && (atLimit || blockedReason != nil)) ? 0.5 : 1.0)
+                .help(
+                    isLocked ? "Locked after year end" :
+                    (!isSelected && atLimit)
+                    ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                    : (blockedReason ?? "")
+                )
+
+                let thresholds = softwareThresholds(item)
                 if !thresholds.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 12) {
                         ForEach(Array(thresholds.enumerated()), id: \.offset) { pair in
                             let (kp, lvl) = pair.element
                             RequirementRow(
                                 label: SoftSkills.label(forKeyPath: kp) ?? "",
                                 emoji: SoftSkills.pictogram(forKeyPath: kp) ?? "",
-                                style: .meter(current: player.softSkills[keyPath: kp], required: lvl)
+                                style: .meter(
+                                    current: player.softSkills[keyPath: kp],
+                                    required: lvl
+                                )
                             )
                         }
                     }
@@ -110,7 +151,6 @@ struct CoursesView: View {
                 }
             }
         }
-        .padding()
     }
 }
 
@@ -119,6 +159,7 @@ struct CoursesView: View {
         @State var selected: Set<Software> = []
         @State var acts: Set<String> = []
         @StateObject var player = Player()
+
         var body: some View {
             NavigationView {
                 CoursesView(
@@ -131,4 +172,3 @@ struct CoursesView: View {
     }
     return Container()
 }
-
