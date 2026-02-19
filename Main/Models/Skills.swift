@@ -240,25 +240,24 @@ struct SoftSkills: Codable, Hashable {
     var patienceAndPerseverance: Int = 0
     var collaborationAndTeamwork: Int = 0
     var timeManagementAndPlanning: Int = 0
-    var selfDisciplineAndStudyHabits: Int = 0
+    var selfDisciplineAndPerseverance: Int = 0
     var presentationAndStorytelling: Int = 0
     
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String)] = [
-        (\.analyticalReasoningAndProblemSolving, "Solver", "💡"),
+        (\.analyticalReasoningAndProblemSolving, "Hacker", "💡"),
         (\.creativityAndInsightfulThinking, "Creator", "🎨"),
         (\.communicationAndNetworking, "Influencer", "📢"),
         (\.leadershipAndInfluence, "Leader", "👑"),
-        (\.courageAndRiskTolerance, "Risk-taker", "🎲"),
+        (\.courageAndRiskTolerance, "Gambler", "🎲"),
         (\.carefulnessAndAttentionToDetail, "Detective", "🔍"),
         (\.tinkeringAndFingerPrecision, "Fixer", "🛠️"),
         (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
         (\.physicalStrengthAndEndurance, "Strongman", "💪"),
-        (\.patienceAndPerseverance, "Rocky", "🥊"),
         (\.outdoorAndWeatherResilience, "Scout", "🌧️"),
         (\.stressResistanceAndEmotionalRegulation, "Joda", "☯️"),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝"),
         (\.timeManagementAndPlanning, "Planner", "📅"),
-        (\.selfDisciplineAndStudyHabits, "Achiever", "🏆"),
+        (\.selfDisciplineAndPerseverance, "Champion", "🏆"),
         (\.presentationAndStorytelling, "Storyteller", "📖")
     ]
     

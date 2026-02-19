@@ -39,7 +39,7 @@ let activities: [Activity] = [
     Activity(
         label: "Dancing and Choreography",
         abilities: [
-            .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 1),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ]
@@ -48,7 +48,7 @@ let activities: [Activity] = [
     Activity(
         label: "Music Playing and Composing",
         abilities: [
-            .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 2),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
@@ -106,7 +106,7 @@ let activities: [Activity] = [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
-            .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 1)
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ]
     ),
     Activity(
@@ -121,7 +121,7 @@ let activities: [Activity] = [
     Activity(
         label: "Language Learning",
         abilities: [
-            .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 2),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
@@ -140,7 +140,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.selfDisciplineAndStudyHabits, weight: 1),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ]
     ),

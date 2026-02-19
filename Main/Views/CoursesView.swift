@@ -68,7 +68,7 @@ private extension CoursesView {
             switch sw {
             case .officeSuite:
                 return [
-                    (\.selfDisciplineAndStudyHabits, 2),
+                    (\.selfDisciplineAndPerseverance, 2),
                     (\.timeManagementAndPlanning, 1),
                 ]
             case .programming:

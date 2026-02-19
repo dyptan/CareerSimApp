@@ -327,7 +327,7 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience else { return false }
         guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
         guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
-        guard p.selfDisciplineAndStudyHabits >= r.selfDisciplineAndStudyHabits else { return false }
+        guard p.selfDisciplineAndPerseverance >= r.selfDisciplineAndStudyHabits else { return false }
         guard p.presentationAndStorytelling >= r.presentationAndStorytelling else { return false }
 
         return true
