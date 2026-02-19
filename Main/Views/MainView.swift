@@ -148,29 +148,11 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        CertificationsView(
-                            selectedCertifications: $selectedCertifications,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showCertificationsSheet = false }
-                            }
-                        }
+                        certificationsContent
                     }
                 } else {
                     NavigationView {
-                        CertificationsView(
-                            selectedCertifications: $selectedCertifications,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showCertificationsSheet = false }
-                            }
-                        }
+                        certificationsContent
                     }
                     #if os(iOS)
                     .navigationViewStyle(.stack)
@@ -185,29 +167,11 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        LicensesView(
-                            selectedLicences: $selectedLicences,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showLicensesSheet = false }
-                            }
-                        }
+                        licensesContent
                     }
                 } else {
                     NavigationView {
-                        LicensesView(
-                            selectedLicences: $selectedLicences,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showLicensesSheet = false }
-                            }
-                        }
+                        licensesContent
                     }
                     #if os(iOS)
                     .navigationViewStyle(.stack)
@@ -222,29 +186,11 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        CoursesView(
-                            selectedSoftware: $selectedSoftware,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showCourcesSheet = false }
-                            }
-                        }
+                        coursesContent
                     }
                 } else {
                     NavigationView {
-                        CoursesView(
-                            selectedSoftware: $selectedSoftware,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showCourcesSheet = false }
-                            }
-                        }
+                        coursesContent
                     }
                     #if os(iOS)
                     .navigationViewStyle(.stack)
@@ -259,29 +205,11 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        ProjectsView(
-                            selectedPortfolio: $selectedProjects,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showProjectsSheet = false }
-                            }
-                        }
+                        projectsContent
                     }
                 } else {
                     NavigationView {
-                        ProjectsView(
-                            selectedPortfolio: $selectedProjects,
-                            selectedActivities: $selectedActivities
-                        )
-                        .environmentObject(player)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { showProjectsSheet = false }
-                            }
-                        }
+                        projectsContent
                     }
                     #if os(iOS)
                     .navigationViewStyle(.stack)
@@ -296,19 +224,11 @@ struct MainView: View {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
-                        activitiesView
-                        
+                        softSkillsContent
                     }
                 } else {
                     NavigationView {
-                        activitiesView
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Close") {
-                                        showSoftSkillsSheet = false
-                                    }
-                                }
-                            }
+                        softSkillsContent
                     }
                     #if os(iOS)
                         .navigationViewStyle(.stack)
@@ -388,22 +308,75 @@ struct MainView: View {
 
     }
 
-    private var activitiesView: some View {
-            ActivitiesView(
-                player: player,
-                selectedActivities: $selectedActivities,
-                selectedSoftware: $selectedSoftware,
-                selectedPortfolio: $selectedProjects
-            )
-            .environmentObject(player)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        showSoftSkillsSheet = false
-                    }
+
+    private var softSkillsContent: some View {
+        ActivitiesView(
+            player: player,
+            selectedActivities: $selectedActivities,
+            selectedSoftware: $selectedSoftware,
+            selectedPortfolio: $selectedProjects
+        )
+        .environmentObject(player)
+        .padding()
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") {
+                    showSoftSkillsSheet = false
                 }
             }
+        }
+    }
+
+    private var certificationsContent: some View {
+        CertificationsView(
+            selectedCertifications: $selectedCertifications,
+            selectedActivities: $selectedActivities
+        )
+        .environmentObject(player)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { showCertificationsSheet = false }
+            }
+        }
+    }
+
+    private var licensesContent: some View {
+        LicensesView(
+            selectedLicences: $selectedLicences,
+            selectedActivities: $selectedActivities
+        )
+        .environmentObject(player)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { showLicensesSheet = false }
+            }
+        }
+    }
+
+    private var coursesContent: some View {
+        CoursesView(
+            selectedSoftware: $selectedSoftware,
+            selectedActivities: $selectedActivities
+        )
+        .environmentObject(player)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { showCourcesSheet = false }
+            }
+        }
+    }
+
+    private var projectsContent: some View {
+        ProjectsView(
+            selectedPortfolio: $selectedProjects,
+            selectedActivities: $selectedActivities
+        )
+        .environmentObject(player)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { showProjectsSheet = false }
+            }
+        }
     }
 }
 
