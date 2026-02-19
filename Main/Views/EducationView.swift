@@ -108,25 +108,8 @@ private struct DegreesSubmenuView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        Spacer()
-                        Button {
-                            player.currentOccupation = nil
-                            player.currentEducation = education
-                            yearsLeftToGraduation = education.yearsToComplete
-                            showTertiarySheet = false
-                        } label: {
-                            Text(
-                                "Apply"
-                            )
-                            .frame(maxWidth: 140)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(!meetsAll)
-                        .opacity(meetsAll ? 1.0 : 0.5)
                         
-                    
-                    
-                    // Requirements block (now includes new school-age skills)
+
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Requirements:")
                             .font(.subheadline.bold())
@@ -310,10 +293,28 @@ private struct DegreesSubmenuView: View {
                             level: r.presentationAndStorytelling,
                             playerLevel: player.softSkills.presentationAndStorytelling
                         )
+                        
+                        
+                        
+                    
+                        
+                    }.padding(.top, 4)
+                    
+                    Button {
+                        player.currentOccupation = nil
+                        player.currentEducation = education
+                        yearsLeftToGraduation = education.yearsToComplete
+                        showTertiarySheet = false
+                    } label: {
+                        Text("Apply").frame(maxWidth: .infinity)
                     }
-                    .padding(.top, 4)
-                }
-                .padding(.vertical, 6)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!meetsAll)
+                    .opacity(meetsAll ? 1.0 : 0.5)
+                    .padding()
+                    
+                    
+                }.padding(.vertical, 6)
             }
         }
         .navigationTitle(profile.rawValue.capitalized)

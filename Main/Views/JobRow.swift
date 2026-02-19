@@ -22,22 +22,6 @@ struct JobRow: View {
             Text(detail.id)
                 .font(.headline)
             Spacer()
-            if let tier = detail.companyTier {
-                Text(tier.displayName)
-                    .font(.caption2.bold())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.secondary.opacity(0.12))
-                    .foregroundStyle(.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
-            Text(formattedIncome(detail.income))
-                .font(.caption2.bold())
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.green.opacity(0.15))
-                .foregroundStyle(.green)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
 
         }
         .padding()

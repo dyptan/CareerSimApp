@@ -223,7 +223,7 @@ struct JobDetail: View {
             
             HStack {
                 if let tier = job.companyTier {
-                    Text("Company tier")
+                    Text("Company")
                     Text(tier.displayName)
                         .font(.caption.bold())
                         .padding(.horizontal, 10)
@@ -237,11 +237,13 @@ struct JobDetail: View {
                 .frame(maxWidth: .infinity ,alignment: .leading)
                 .padding(.horizontal)
 
-            Text("Requirements")
-                .font(.title3)
-                .frame(alignment: .leading)
-
             Divider()
+            Text("Requirements")
+                .font(.title)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+
+            
             
             Text("Education:")
                 .font(.headline)
@@ -374,19 +376,12 @@ struct JobDetail: View {
                 player.currentOccupation = job
                 showCareersSheet.toggle()
             } label: {
-                Text(
-                    allRequirementsMet
-                        ? "Choose this job" : "Requirements not met"
-                )
+                Text("Apply")
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .disabled(!allRequirementsMet)
             .opacity(allRequirementsMet ? 1.0 : 0.5)
-            .accessibilityHint(
-                allRequirementsMet
-                    ? "All requirements met" : "Some requirements are not met"
-            )
             .padding()
 
         }

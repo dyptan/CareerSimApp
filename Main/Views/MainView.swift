@@ -32,7 +32,7 @@ struct MainView: View {
         )
     }
 
-    var body: some View {
+    var body: some View {           
         VStack(alignment: .leading) {
             HeaderView(
                 player: player,
@@ -48,6 +48,8 @@ struct MainView: View {
                 descisionText: $descisionText
             ).padding(.bottom)
 
+            Divider()
+            Spacer()
             SkillsSection(
                 player: player,
                 selectedSoftware: $selectedSoftware,
@@ -57,6 +59,29 @@ struct MainView: View {
                 showCareersSheet: $showCareersSheet,
                 showTertiarySheet: $showTertiarySheet
             )
+            
+            Spacer()
+            Divider()
+
+            FooterView(
+                player: player,
+                showDecisionSheet: $showDecisionSheet,
+                showTertiarySheet: $showTertiarySheet,
+                showCareersSheet: $showCareersSheet,
+                showProjectsSheet: $showProjectsSheet,
+                showCourcesSheet: $showCourcesSheet,
+                showSoftSkillsSheet: $showSoftSkillsSheet,
+                showCertificationsSheet: $showCertificationsSheet,
+                showLicencesSheet: $showLicensesSheet,
+                selectedActivities: $selectedActivities,
+                selectedSoftware: $selectedSoftware,
+                selectedLicences: $selectedLicences,
+                selectedPortfolio: $selectedProjects,
+                selectedCertifications:$selectedCertifications,
+                selectedProjects:$selectedProjects,
+                yearsLeftToGraduation: $yearsLeftToGraduation,
+                descisionText: $descisionText
+            ).padding(.bottom)
 
         }
         .sheet(isPresented: $showDecisionSheet) {
@@ -272,13 +297,7 @@ struct MainView: View {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
                         activitiesView
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Close") {
-                                        showSoftSkillsSheet = false
-                                    }
-                                }
-                            }
+                        
                     }
                 } else {
                     NavigationView {
@@ -365,80 +384,7 @@ struct MainView: View {
         }
         .padding()
 
-        Divider()
-        HStack {
         
-            Button("Projects") { showProjectsSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-
-            Button("Courses") { showCourcesSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-
-           
-            Button("Activities") { showSoftSkillsSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-        }
-
-        HStack {
-            
-            Button("Certifications") { showCertificationsSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-
-            Button("Licenses") { showLicensesSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-
-        }
-        
-        HStack {
-            Button("Jobs") {
-                showCareersSheet.toggle()
-            }.buttonStyle(.bordered).font(.headline).frame(
-                alignment: .trailing
-            )
-            
-
-            Button("Education") {
-                showTertiarySheet.toggle()
-            }.buttonStyle(.bordered).font(.headline).frame(
-                alignment: .trailing
-            )
-            
-            Button("Next year") {
-                player.age += 1
-                player.hardSkills.certifications.formUnion(selectedCertifications)
-                player.hardSkills.licenses.formUnion(selectedLicences)
-                player.hardSkills.portfolioItems.formUnion(selectedProjects)
-                player.hardSkills.software.formUnion(selectedSoftware)
-
-                player.lockedCertifications.formUnion(selectedCertifications)
-                player.lockedPortfolio.formUnion(selectedProjects)
-                player.lockedSoftware.formUnion(selectedSoftware)
-
-                selectedActivities.removeAll()
-                selectedSoftware.removeAll()
-                selectedLicences.removeAll()
-                selectedProjects.removeAll()
-                selectedCertifications.removeAll()
-
-                yearsLeftToGraduation? -= 1
-                if yearsLeftToGraduation == 0 {
-                    descisionText =
-                        "You're done with your degree! What's your next step?"
-                    showDecisionSheet.toggle()
-                    if let currentEducation = player.currentEducation {
-                        player.degrees.append(currentEducation)
-                    }
-                    yearsLeftToGraduation = nil
-                    player.currentEducation = nil
-                }
-
-                if let income = player.currentOccupation?.income {
-                    player.savings += income
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.headline)
-        }
 
     }
 
@@ -451,6 +397,13 @@ struct MainView: View {
             )
             .environmentObject(player)
             .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        showSoftSkillsSheet = false
+                    }
+                }
+            }
     }
 }
 
