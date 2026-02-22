@@ -54,6 +54,16 @@ private extension CoursesView {
         private var requirement: TrainingRequirementResult {
             item.softwareRequirements(player)
         }
+        
+        private var prerequisitesFulfilled: Bool {
+            let thresholds = softwareThresholds(item)
+            for (kp, lvl) in thresholds {
+                if player.softSkills[keyPath: kp] < lvl {
+                    return false
+                }
+            }
+            return true
+        }
 
         private var blockedReason: String? {
             switch requirement {
@@ -123,9 +133,10 @@ private extension CoursesView {
                 #if os(iOS)
                     .toggleStyle(.switch)
                 #endif
-                .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil)))
-                .opacity(isLocked || (!isSelected && (atLimit || blockedReason != nil)) ? 0.5 : 1.0)
+                .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesFulfilled)))
+                .opacity(isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesFulfilled)) ? 0.5 : 1.0)
                 .help(
+                    !prerequisitesFulfilled ? "You do not meet the prerequisites." :
                     isLocked ? "Locked after year end" :
                     (!isSelected && atLimit)
                     ? "You can take up to \(maxActivitiesPerYear) activities this year."
