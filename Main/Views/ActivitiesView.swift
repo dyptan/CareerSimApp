@@ -3,8 +3,7 @@ import SwiftUI
 struct ActivitiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
-    @Binding var selectedSoftware: Set<Software>
-    @Binding var selectedPortfolio: Set<Project>
+
     var maxActivitiesPerYear = 3
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
@@ -53,8 +52,20 @@ struct ActivitiesView: View {
                                 set: { isOn in
                                     if isOn && !atLimit {
                                         selectedActivities.insert(activity.label)
-                                    } else {
+                                        // Apply ability boosts
+                                        for ability in activity.abilities {
+                                            if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
+                                                player.softSkills[keyPath: writableKeyPath] += ability.weight
+                                            }
+                                        }
+                                    } else if !isOn {
                                         _ = selectedActivities.remove(activity.label)
+                                        // Remove ability boosts
+                                        for ability in activity.abilities {
+                                            if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
+                                                player.softSkills[keyPath: writableKeyPath] -= ability.weight
+                                            }
+                                        }
                                     }
                                 }
                             )
@@ -89,9 +100,7 @@ struct ActivitiesView: View {
 #Preview {
     ActivitiesView(
         player: Player(),
-        selectedActivities: .constant([]),
-        selectedSoftware: .constant([]),
-        selectedPortfolio: .constant([])
+        selectedActivities: .constant([])
     )
     .padding()
 }

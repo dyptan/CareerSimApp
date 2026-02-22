@@ -78,7 +78,6 @@ struct MainView: View {
                 selectedLicences: $selectedLicences,
                 selectedPortfolio: $selectedProjects,
                 selectedCertifications:$selectedCertifications,
-                selectedProjects:$selectedProjects,
                 yearsLeftToGraduation: $yearsLeftToGraduation,
                 descisionText: $descisionText
             ).padding(.bottom)
@@ -312,9 +311,7 @@ struct MainView: View {
     private var softSkillsContent: some View {
         ActivitiesView(
             player: player,
-            selectedActivities: $selectedActivities,
-            selectedSoftware: $selectedSoftware,
-            selectedPortfolio: $selectedProjects
+            selectedActivities: $selectedActivities
         )
         .environmentObject(player)
         .padding()

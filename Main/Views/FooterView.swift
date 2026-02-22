@@ -7,6 +7,7 @@
 //
 import SwiftUI
 
+
 struct FooterView: View {
     @ObservedObject var player: Player
     
@@ -18,15 +19,11 @@ struct FooterView: View {
     @Binding var showSoftSkillsSheet: Bool
     @Binding var showCertificationsSheet: Bool
     @Binding var showLicencesSheet: Bool
-    
     @Binding var selectedActivities: Set<String>
-    
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedLicences: Set<License>
     @Binding var selectedPortfolio: Set<Project>
     @Binding var selectedCertifications: Set<Certification>
-    @Binding var selectedProjects: Set<Project>
-    
     @Binding var yearsLeftToGraduation: Int?
     @Binding var descisionText: String
     
@@ -39,7 +36,6 @@ struct FooterView: View {
             
             Button("Courses") { showCourcesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
-            
             
             Button("Activities") { showSoftSkillsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
@@ -73,18 +69,14 @@ struct FooterView: View {
                 player.age += 1
                 player.hardSkills.certifications.formUnion(selectedCertifications)
                 player.hardSkills.licenses.formUnion(selectedLicences)
-                player.hardSkills.portfolioItems.formUnion(selectedProjects)
+                player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
                 player.hardSkills.software.formUnion(selectedSoftware)
-                
                 player.lockedCertifications.formUnion(selectedCertifications)
-                player.lockedPortfolio.formUnion(selectedProjects)
+                player.lockedPortfolio.formUnion(selectedPortfolio)
                 player.lockedSoftware.formUnion(selectedSoftware)
+                player.lockedLicenses.formUnion(selectedLicences)
                 
                 selectedActivities.removeAll()
-                selectedSoftware.removeAll()
-                selectedLicences.removeAll()
-                selectedProjects.removeAll()
-                selectedCertifications.removeAll()
                 
                 yearsLeftToGraduation? -= 1
                 if yearsLeftToGraduation == 0 {
@@ -107,3 +99,4 @@ struct FooterView: View {
         }
     }
 }
+
