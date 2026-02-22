@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SkillsSection: View {
+struct SkillsView: View {
     @ObservedObject var player: Player
 
     @Binding var selectedSoftware: Set<Software>
@@ -42,79 +42,82 @@ struct SkillsSection: View {
 
             Divider()
 
-            if !player.hardSkills.portfolioItems.isEmpty {
-                Text("Portfolio")
-            }
+            HStack {
+                Text("Portfolio:")
 
-            ForEach(
-                Array(
-                    player.hardSkills.portfolioItems.union(
-                        selectedPortfolio
-                    )
-                )
-            ) { skill in
-                Text("\(skill.id) \(skill.pictogram)")
-            }
-
-            if !player.hardSkills.certifications.isEmpty {
-                Text("Certifications")
-            }
-
-            ForEach(
-                Array(
-                    selectedCertifications.union(
-                        player.hardSkills.certifications
-                    )
-                )
-            ) { cert in
-                Text(cert.pictogram)
-            }
-
-            if !player.hardSkills.licenses.isEmpty {
-                Text("Licenses")
-            }
-            
-            ForEach(
-                Array(
-                    selectedLicences.union(
-                        player.hardSkills.licenses
-                    )
-                )
-            ) { lic in
-                Text(lic.pictogram)
-            }
-
-            if !player.hardSkills.software.isEmpty {
-                Text("Computer Skills")
-            }
-            
-
-            VStack(alignment: .leading){
                 ForEach(
                     Array(
-                        player.hardSkills.software.union(
-                            selectedSoftware
+                        player.hardSkills.portfolioItems.union(
+                            selectedPortfolio
                         )
                     )
                 ) { skill in
-                    Text("\(skill.pictogram)")
+                    Text("\(skill.id) \(skill.pictogram)")
                 }
+                
+                Spacer()
+
+            }
+            
+            HStack{
+                Text("Certifications:")
+
+                ForEach(
+                    Array(
+                        selectedCertifications.union(
+                            player.hardSkills.certifications
+                        )
+                    )
+                ) { cert in
+                    Text(cert.pictogram)
+                }
+                Spacer()
             }
 
+            HStack{
+                Text("Licenses:")
+                
+                ForEach(
+                    Array(
+                        selectedLicences.union(
+                            player.hardSkills.licenses
+                        )
+                    )
+                ) { lic in
+                    Text(lic.pictogram)
+                }
+                Spacer()
+            }
+
+            HStack{
+                Text("Software:")
+
+                VStack(alignment: .leading){
+                    ForEach(
+                        Array(
+                            player.hardSkills.software.union(
+                                selectedSoftware
+                            )
+                        )
+                    ) { skill in
+                        Text("\(skill.pictogram)")
+                    }
+                }
+                Spacer()
+            }
         }
     }
-
 }
 
 #Preview {
-    SkillsSection(
+    SkillsView(
         player: Player(),
         selectedSoftware: .constant([]),
         selectedLicences: .constant([]),
         selectedPortfolio: .constant([.app]),
         selectedCertifications: .constant([]),
-//        showHardSkillsSheet: .constant(false),
-//        showSoftSkillsSheet: .constant(false),
+        //        showHardSkillsSheet: .constant(false),
+        //        showSoftSkillsSheet: .constant(false),
         showCareersSheet: .constant(false),
         showTertiarySheet: .constant(false)
     )

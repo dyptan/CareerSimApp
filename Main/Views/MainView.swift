@@ -50,7 +50,7 @@ struct MainView: View {
 
             Divider()
             Spacer()
-            SkillsSection(
+            SkillsView(
                 player: player,
                 selectedSoftware: $selectedSoftware,
                 selectedLicences: $selectedLicences,
