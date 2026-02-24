@@ -1,10 +1,3 @@
-//
-//  FooterView.swift
-//  CareersApp
-//
-//  Created by Ivan Dyptan on 19.02.26.
-//  Copyright © 2026 Apple. All rights reserved.
-//
 import SwiftUI
 
 

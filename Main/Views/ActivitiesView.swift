@@ -52,7 +52,6 @@ struct ActivitiesView: View {
                                 set: { isOn in
                                     if isOn && !atLimit {
                                         selectedActivities.insert(activity.label)
-                                        // Apply ability boosts
                                         for ability in activity.abilities {
                                             if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
                                                 player.softSkills[keyPath: writableKeyPath] += ability.weight
@@ -60,7 +59,6 @@ struct ActivitiesView: View {
                                         }
                                     } else if !isOn {
                                         _ = selectedActivities.remove(activity.label)
-                                        // Remove ability boosts
                                         for ability in activity.abilities {
                                             if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
                                                 player.softSkills[keyPath: writableKeyPath] -= ability.weight
