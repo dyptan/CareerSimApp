@@ -53,16 +53,14 @@ struct ActivitiesView: View {
                                     if isOn && !atLimit {
                                         selectedActivities.insert(activity.label)
                                         for ability in activity.abilities {
-                                            if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
-                                                player.softSkills[keyPath: writableKeyPath] += ability.weight
-                                            }
+                                            let writableKeyPath = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+                                            player.softSkills[keyPath: writableKeyPath] += ability.weight
                                         }
                                     } else if !isOn {
                                         _ = selectedActivities.remove(activity.label)
                                         for ability in activity.abilities {
-                                            if let writableKeyPath = ability.keyPath as? WritableKeyPath<SoftSkills, Int> {
-                                                player.softSkills[keyPath: writableKeyPath] -= ability.weight
-                                            }
+                                            let writableKeyPath = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+                                            player.softSkills[keyPath: writableKeyPath] -= ability.weight
                                         }
                                     }
                                 }

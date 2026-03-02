@@ -3,83 +3,67 @@ import SwiftUI
 
 struct FooterView: View {
     @ObservedObject var player: Player
-    
-    @Binding var showDecisionSheet: Bool
-    @Binding var showTertiarySheet: Bool
-    @Binding var showCareersSheet: Bool
-    @Binding var showProjectsSheet: Bool
-    @Binding var showCourcesSheet: Bool
-    @Binding var showSoftSkillsSheet: Bool
-    @Binding var showCertificationsSheet: Bool
-    @Binding var showLicencesSheet: Bool
-    @Binding var selectedActivities: Set<String>
-    @Binding var selectedSoftware: Set<Software>
-    @Binding var selectedLicences: Set<License>
-    @Binding var selectedPortfolio: Set<Project>
-    @Binding var selectedCertifications: Set<Certification>
-    @Binding var yearsLeftToGraduation: Int?
-    @Binding var descisionText: String
-    
+    @ObservedObject var appUIState: AppUIState
         
     var body: some View {
         HStack {
             
-            Button("Projects") { showProjectsSheet = true }
+            Button("Projects") { appUIState.showProjectsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Courses") { showCourcesSheet = true }
+            Button("Courses") { appUIState.showCourcesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Activities") { showSoftSkillsSheet = true }
+            Button("Activities") { appUIState.showSoftSkillsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
         }
         
         HStack {
             
-            Button("Certifications") { showCertificationsSheet = true }
+            Button("Certifications") { appUIState.showCertificationsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Licenses") { showLicencesSheet = true }
+            Button("Licenses") { appUIState.showLicencesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
         }
         
         HStack {
             Button("Jobs") {
-                showCareersSheet.toggle()
+                appUIState.showCareersSheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
             )
             
             
             Button("Education") {
-                showTertiarySheet.toggle()
+                appUIState.showTertiarySheet.toggle()
             }.buttonStyle(.bordered).font(.headline).frame(
                 alignment: .trailing
             )
             
             Button("Next year") {
                 player.age += 1
-                player.hardSkills.certifications.formUnion(selectedCertifications)
-                player.hardSkills.licenses.formUnion(selectedLicences)
-                player.hardSkills.portfolioItems.formUnion(selectedPortfolio)
-                player.hardSkills.software.formUnion(selectedSoftware)
-                player.lockedCertifications.formUnion(selectedCertifications)
-                player.lockedPortfolio.formUnion(selectedPortfolio)
-                player.lockedSoftware.formUnion(selectedSoftware)
-                player.lockedLicenses.formUnion(selectedLicences)
+                player.hardSkills.certifications.formUnion(appUIState.selectedCertifications)
+                player.hardSkills.licenses.formUnion(appUIState.selectedLicences)
+                player.hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
+                player.hardSkills.software.formUnion(appUIState.selectedSoftware)
+                player.lockedCertifications.formUnion(appUIState.selectedCertifications)
+                player.lockedPortfolio.formUnion(appUIState.selectedPortfolio)
+                player.lockedSoftware.formUnion(appUIState.selectedSoftware)
+                player.lockedLicenses.formUnion(appUIState.selectedLicences)
                 
-                selectedActivities.removeAll()
+                appUIState.selectedActivities.removeAll()
                 
-                yearsLeftToGraduation? -= 1
-                if yearsLeftToGraduation == 0 {
-                    descisionText =
+                appUIState.yearsLeftToGraduation? -= 1
+                if appUIState.yearsLeftToGraduation == 0 {
+                    appUIState.decisionText =
                     "You're done with your degree! What's your next step?"
-                    showDecisionSheet.toggle()
+                    appUIState.showDecisionSheet.toggle()
                     if let currentEducation = player.currentEducation {
                         player.degrees.append(currentEducation)
                     }
-                    yearsLeftToGraduation = nil
+                    appUIState.yearsLeftToGraduation = nil
                     player.currentEducation = nil
                 }
                 
@@ -92,4 +76,3 @@ struct FooterView: View {
         }
     }
 }
-

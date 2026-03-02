@@ -2,24 +2,8 @@ import SwiftUI
 
 struct MainView: View {
     @StateObject var player = Player()
-    @State var showDecisionSheet = false
-    @State var showTertiarySheet = false
-    @State var showCareersSheet = false
-    @State var selectedActivities: Set<String> = []
-    @State var selectedSoftware: Set<Software> = []
-    @State var selectedLicences: Set<License> = []
-    @State var selectedProjects: Set<Project> = []
-    @State var selectedCertifications: Set<Certification> = []
-    @State var yearsLeftToGraduation: Int? = nil
-    @State var descisionText = ""
-    @State var showRetirementSheet = false
-    @State private var showCertificationsSheet = false
-    @State private var showLicensesSheet = false
-    @State private var showCourcesSheet = false
-    @State private var showProjectsSheet = false
-
-    @State var showSoftSkillsSheet = false
-
+    @StateObject var appUIState = AppUIState()
+    
     private var availableJobs: [Job] {
         jobs
     }
@@ -32,32 +16,18 @@ struct MainView: View {
         )
     }
 
-    var body: some View {           
+    var body: some View {
         VStack(alignment: .leading) {
             HeaderView(
                 player: player,
-                showDecisionSheet: $showDecisionSheet,
-                showTertiarySheet: $showTertiarySheet,
-                showCareersSheet: $showCareersSheet,
-                selectedActivities: $selectedActivities,
-                selectedSoftware: $selectedSoftware,
-                selectedLicences: $selectedLicences,
-                selectedPortfolio: $selectedProjects,
-                selectedCertifications: $selectedCertifications,
-                yearsLeftToGraduation: $yearsLeftToGraduation,
-                descisionText: $descisionText
+                appUIState: appUIState
             ).padding(.bottom)
 
             Divider()
             Spacer()
             SkillsView(
                 player: player,
-                selectedSoftware: $selectedSoftware,
-                selectedLicences: $selectedLicences,
-                selectedPortfolio: $selectedProjects,
-                selectedCertifications: $selectedCertifications,
-                showCareersSheet: $showCareersSheet,
-                showTertiarySheet: $showTertiarySheet
+                appUIState: appUIState
             )
             
             Spacer()
@@ -65,32 +35,18 @@ struct MainView: View {
 
             FooterView(
                 player: player,
-                showDecisionSheet: $showDecisionSheet,
-                showTertiarySheet: $showTertiarySheet,
-                showCareersSheet: $showCareersSheet,
-                showProjectsSheet: $showProjectsSheet,
-                showCourcesSheet: $showCourcesSheet,
-                showSoftSkillsSheet: $showSoftSkillsSheet,
-                showCertificationsSheet: $showCertificationsSheet,
-                showLicencesSheet: $showLicensesSheet,
-                selectedActivities: $selectedActivities,
-                selectedSoftware: $selectedSoftware,
-                selectedLicences: $selectedLicences,
-                selectedPortfolio: $selectedProjects,
-                selectedCertifications:$selectedCertifications,
-                yearsLeftToGraduation: $yearsLeftToGraduation,
-                descisionText: $descisionText
+                appUIState: appUIState
             ).padding(.bottom)
 
         }
-        .sheet(isPresented: $showDecisionSheet) {
+        .sheet(isPresented: $appUIState.showDecisionSheet) {
             VStack(spacing: 18) {
-                Text(descisionText)
+                Text(appUIState.decisionText)
                     .font(.title2)
                     .padding()
                 Button {
-                    showDecisionSheet = false
-                    showTertiarySheet = true
+                    appUIState.showDecisionSheet = false
+                    appUIState.showTertiarySheet = true
                 } label: {
                     Text("Enter College / University")
                         .font(.headline)
@@ -99,8 +55,8 @@ struct MainView: View {
                 .buttonStyle(.borderedProminent)
 
                 Button {
-                    showDecisionSheet = false
-                    showCareersSheet = true
+                    appUIState.showDecisionSheet = false
+                    appUIState.showCareersSheet = true
                 } label: {
                     Text("Find a Job")
                         .font(.headline)
@@ -112,27 +68,27 @@ struct MainView: View {
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .sheet(isPresented: $showTertiarySheet) {
+        .sheet(isPresented: $appUIState.showTertiarySheet) {
             EducationView(
                 player: player,
-                yearsLeftToGraduation: $yearsLeftToGraduation,
-                showTertiarySheet: $showTertiarySheet,
-                showCareersSheet: $showCareersSheet
+                yearsLeftToGraduation: $appUIState.yearsLeftToGraduation,
+                showTertiarySheet: $appUIState.showTertiarySheet,
+                showCareersSheet: $appUIState.showCareersSheet
             )
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
 
             Button("Close") {
-                showTertiarySheet = false
+                appUIState.showTertiarySheet = false
             }
             .padding()
         }
-        .sheet(isPresented: $showCareersSheet) {
+        .sheet(isPresented: $appUIState.showCareersSheet) {
             JobsView(
                 availableJobs: availableJobs,
                 player: player,
-                showCareersSheet: $showCareersSheet
+                showCareersSheet: $appUIState.showCareersSheet
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
@@ -140,10 +96,10 @@ struct MainView: View {
             #endif
 
             Button("Close") {
-                showCareersSheet = false
+                appUIState.showCareersSheet = false
             }.padding()
         }
-        .sheet(isPresented: $showCertificationsSheet) {
+        .sheet(isPresented: $appUIState.showCertificationsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
@@ -162,7 +118,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        .sheet(isPresented: $showLicensesSheet) {
+        .sheet(isPresented: $appUIState.showLicencesSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
@@ -181,7 +137,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        .sheet(isPresented: $showCourcesSheet) {
+        .sheet(isPresented: $appUIState.showCourcesSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
@@ -200,7 +156,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        .sheet(isPresented: $showProjectsSheet) {
+        .sheet(isPresented: $appUIState.showProjectsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
@@ -219,7 +175,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        .sheet(isPresented: $showSoftSkillsSheet) {
+        .sheet(isPresented: $appUIState.showSoftSkillsSheet) {
             Group {
                 if #available(iOS 16, macOS 13, *) {
                     NavigationStack {
@@ -238,7 +194,7 @@ struct MainView: View {
             .frame(minWidth: 800, minHeight: 500)
             #endif
         }
-        .sheet(isPresented: $showRetirementSheet) {
+        .sheet(isPresented: $appUIState.showRetirementSheet) {
             VStack(spacing: 16) {
                 Text("Retirement")
                     .font(.title2.bold())
@@ -254,18 +210,18 @@ struct MainView: View {
                     .foregroundStyle(.secondary)
 
                 Button {
-                    showRetirementSheet = false
                     let newPlayer = Player()
-                    selectedActivities = []
-                    selectedSoftware = []
-                    selectedLicences = []
-                    selectedProjects = []
-                    selectedCertifications = []
-                    yearsLeftToGraduation = nil
-                    descisionText = "You're 18! What's your next step?"
-                    showDecisionSheet = false
-                    showTertiarySheet = false
-                    showCareersSheet = true
+                    appUIState.showRetirementSheet = false
+                    appUIState.selectedActivities = []
+                    appUIState.selectedSoftware = []
+                    appUIState.selectedLicences = []
+                    appUIState.selectedPortfolio = []
+                    appUIState.selectedCertifications = []
+                    appUIState.yearsLeftToGraduation = nil
+                    appUIState.decisionText = "You're 18! What's your next step?"
+                    appUIState.showDecisionSheet = false
+                    appUIState.showTertiarySheet = false
+                    appUIState.showCareersSheet = true
                     player.age = newPlayer.age
                     player.softSkills = newPlayer.softSkills
                     player.hardSkills = newPlayer.hardSkills
@@ -294,10 +250,10 @@ struct MainView: View {
             case 10: player.degrees.append(Education(Level.Stage.PrimarySchool))
             case 14: player.degrees.append(Education(Level.Stage.MiddleSchool))
             case 18:
-                descisionText = "You're 18! What's your next step?"
+                appUIState.decisionText = "You're 18! What's your next step?"
                 player.degrees.append(Education(Level.Stage.HighSchool))
-                showDecisionSheet.toggle()
-            case 68: showRetirementSheet.toggle()
+                appUIState.showDecisionSheet.toggle()
+            case 68: appUIState.showRetirementSheet.toggle()
             default: break
             }
         }
@@ -311,14 +267,14 @@ struct MainView: View {
     private var softSkillsContent: some View {
         ActivitiesView(
             player: player,
-            selectedActivities: $selectedActivities
+            selectedActivities: $appUIState.selectedActivities
         )
         .environmentObject(player)
         .padding()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") {
-                    showSoftSkillsSheet = false
+                    appUIState.showSoftSkillsSheet = false
                 }
             }
         }
@@ -326,52 +282,52 @@ struct MainView: View {
 
     private var certificationsContent: some View {
         CertificationsView(
-            selectedCertifications: $selectedCertifications,
-            selectedActivities: $selectedActivities
+            selectedCertifications: $appUIState.selectedCertifications,
+            selectedActivities: $appUIState.selectedActivities
         )
         .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { showCertificationsSheet = false }
+                Button("Close") { appUIState.showCertificationsSheet = false }
             }
         }
     }
 
     private var licensesContent: some View {
         LicensesView(
-            selectedLicences: $selectedLicences,
-            selectedActivities: $selectedActivities
+            selectedLicences: $appUIState.selectedLicences,
+            selectedActivities: $appUIState.selectedActivities
         )
         .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { showLicensesSheet = false }
+                Button("Close") { appUIState.showLicencesSheet = false }
             }
         }
     }
 
     private var coursesContent: some View {
         CoursesView(
-            selectedSoftware: $selectedSoftware,
-            selectedActivities: $selectedActivities
+            selectedSoftware: $appUIState.selectedSoftware,
+            selectedActivities: $appUIState.selectedActivities
         )
         .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { showCourcesSheet = false }
+                Button("Close") { appUIState.showCourcesSheet = false }
             }
         }
     }
 
     private var projectsContent: some View {
         ProjectsView(
-            selectedPortfolio: $selectedProjects,
-            selectedActivities: $selectedActivities
+            selectedPortfolio: $appUIState.selectedPortfolio,
+            selectedActivities: $appUIState.selectedActivities
         )
         .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { showProjectsSheet = false }
+                Button("Close") { appUIState.showProjectsSheet = false }
             }
         }
     }
@@ -380,4 +336,3 @@ struct MainView: View {
 #Preview {
     MainView()
 }
-

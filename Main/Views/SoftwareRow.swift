@@ -72,7 +72,7 @@ struct SoftwareRow: View {
                 (\.analyticalReasoningAndProblemSolving, 2),
                 (\.creativityAndInsightfulThinking, 3),
             ]
-        default:
+        @unknown default:
             return []
         }
     }
@@ -154,3 +154,4 @@ struct SoftwareRow: View {
         }
     }
 }
+

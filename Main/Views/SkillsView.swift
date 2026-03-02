@@ -2,13 +2,8 @@ import SwiftUI
 
 struct SkillsView: View {
     @ObservedObject var player: Player
+    @ObservedObject var appUIState: AppUIState
 
-    @Binding var selectedSoftware: Set<Software>
-    @Binding var selectedLicences: Set<License>
-    @Binding var selectedPortfolio: Set<Project>
-    @Binding var selectedCertifications: Set<Certification>
-    @Binding var showCareersSheet: Bool
-    @Binding var showTertiarySheet: Bool
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -48,7 +43,7 @@ struct SkillsView: View {
                 ForEach(
                     Array(
                         player.hardSkills.portfolioItems.union(
-                            selectedPortfolio
+                            appUIState.selectedPortfolio
                         )
                     )
                 ) { skill in
@@ -64,7 +59,7 @@ struct SkillsView: View {
 
                 ForEach(
                     Array(
-                        selectedCertifications.union(
+                        appUIState.selectedCertifications.union(
                             player.hardSkills.certifications
                         )
                     )
@@ -79,7 +74,7 @@ struct SkillsView: View {
                 
                 ForEach(
                     Array(
-                        selectedLicences.union(
+                        appUIState.selectedLicences.union(
                             player.hardSkills.licenses
                         )
                     )
@@ -96,7 +91,7 @@ struct SkillsView: View {
                     ForEach(
                         Array(
                             player.hardSkills.software.union(
-                                selectedSoftware
+                                appUIState.selectedSoftware
                             )
                         )
                     ) { skill in
@@ -110,16 +105,11 @@ struct SkillsView: View {
 }
 
 #Preview {
-    SkillsView(
-        player: Player(),
-        selectedSoftware: .constant([]),
-        selectedLicences: .constant([]),
-        selectedPortfolio: .constant([.app]),
-        selectedCertifications: .constant([]),
-        //        showHardSkillsSheet: .constant(false),
-        //        showSoftSkillsSheet: .constant(false),
-        showCareersSheet: .constant(false),
-        showTertiarySheet: .constant(false)
+    let player = Player()
+    let appUIState = AppUIState()
+    return SkillsView(
+        player: player,
+        appUIState: appUIState
     )
     .padding()
 }

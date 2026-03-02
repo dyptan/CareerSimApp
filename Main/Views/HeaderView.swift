@@ -3,19 +3,7 @@ import SwiftUI
 struct HeaderView: View {
     @ObservedObject var player: Player
 
-    @Binding var showDecisionSheet: Bool
-    @Binding var showTertiarySheet: Bool
-    @Binding var showCareersSheet: Bool
-
-    @Binding var selectedActivities: Set<String>
-
-    @Binding var selectedSoftware: Set<Software>
-    @Binding var selectedLicences: Set<License>
-    @Binding var selectedPortfolio: Set<Project>
-    @Binding var selectedCertifications: Set<Certification>
-
-    @Binding var yearsLeftToGraduation: Int?
-    @Binding var descisionText: String
+    @ObservedObject var appUIState: AppUIState
 
     private let maxActivitiesPerYear = 1
 
@@ -38,7 +26,7 @@ struct HeaderView: View {
             }
                 
             if let lastlog = player.degrees.last {
-                Text("Degree: \(lastlog.degreeName)")
+                Text("Education: \(lastlog.degreeName)")
             }
             
             
@@ -71,16 +59,17 @@ struct HeaderView: View {
             degrees: [],
             currentOccupation: .none
         ),
-        showDecisionSheet: .constant(false),
-        showTertiarySheet: .constant(false),
-        showCareersSheet: .constant(false),
-        selectedActivities: .constant(Set<String>()),
-        selectedSoftware: .constant(Set<Software>()),
-        selectedLicences: .constant(Set<License>()),
-        selectedPortfolio: .constant(Set<Project>()),
-        selectedCertifications: .constant(Set<Certification>()),
-        yearsLeftToGraduation: .constant(nil),
-        descisionText: .constant("sdf")
+        appUIState: AppUIState(
+            showDecisionSheet: false,
+            showTertiarySheet: false,
+            showCareersSheet: false,
+            selectedActivities: [],
+            selectedSoftware: [],
+            selectedLicences: [],
+            selectedPortfolio: [],
+            selectedCertifications: [],
+            yearsLeftToGraduation: nil,
+            decisionText: "sdf"
+        )
     )
-
 }
