@@ -5,10 +5,10 @@ struct JobDetail: View {
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
 
-    private var requiredSoft: Job.Requirements.SoftSkillsBlock {
+    private var requiredSoft: SoftSkills {
         job.requirements.softSkills
     }
-    private var requiredHard: Job.Requirements.HardSkillsBlock {
+    private var requiredHard: HardSkills {
         job.requirements.hardSkills
     }
 
@@ -72,30 +72,30 @@ struct JobDetail: View {
         if p.communicationAndNetworking >= r.communicationAndNetworking { score += 1 }
         if p.leadershipAndInfluence >= r.leadershipAndInfluence { score += 1 }
         if p.courageAndRiskTolerance >= r.courageAndRiskTolerance { score += 1 }
-        if p.spacialNavigationAndOrientation >= r.spacialNavigation { score += 1 }
+        if p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation { score += 1 }
         if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
-        if p.patienceAndPerseverance >= r.perseveranceAndGrit { score += 1 }
+        if p.patienceAndPerseverance >= r.patienceAndPerseverance { score += 1 }
         if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
-        if p.physicalStrengthAndEndurance >= r.physicalStrength { score += 1 }
-        if p.physicalStrengthAndEndurance >= r.resilienceAndEndurance { score += 1 }
+        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
+        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
         return score
     }
 
     private var hardSkillsMet: Bool {
         let certsOK = requiredHard.certifications.allSatisfy { code in
-            guard let enumVal = certFrom(raw: code) else { return false }
+            guard let enumVal = certFrom(raw: code.rawValue) else { return false }
             return player.hardSkills.certifications.contains(enumVal)
         }
         let licensesOK = requiredHard.licenses.allSatisfy { code in
-            guard let enumVal = licenseFrom(raw: code) else { return false }
+            guard let enumVal = licenseFrom(raw: code.rawValue) else { return false }
             return player.hardSkills.licenses.contains(enumVal)
         }
         let softwareOK = requiredHard.software.allSatisfy { code in
-            guard let enumVal = softwareFrom(raw: code) else { return false }
+            guard let enumVal = softwareFrom(raw: code.rawValue) else { return false }
             return player.hardSkills.software.contains(enumVal)
         }
-        let portfolioOK = requiredHard.portfolio.allSatisfy { code in
-            guard let enumVal = portfolioFrom(raw: code) else { return false }
+        let portfolioOK = requiredHard.portfolioItems.allSatisfy { code in
+            guard let enumVal = portfolioFrom(raw: code.rawValue) else { return false }
             return player.hardSkills.portfolioItems.contains(enumVal)
         }
         return certsOK && licensesOK && softwareOK && portfolioOK
@@ -145,7 +145,7 @@ struct JobDetail: View {
         case \.carefulnessAndAttentionToDetail: return "Attention to detail"
         case \.patienceAndPerseverance: return "Perseverance"
         case \.tinkeringAndFingerPrecision: return "Finger precision"
-        case \.physicalStrengthAndEndurance: return "Strength & endurance"
+        case \.resilienceAndEndurance: return "Strength & endurance"
         default: return ""
         }
     }
@@ -161,7 +161,7 @@ struct JobDetail: View {
         case \.carefulnessAndAttentionToDetail: return "🔎"
         case \.patienceAndPerseverance: return "⏳"
         case \.tinkeringAndFingerPrecision: return "🛠️"
-        case \.physicalStrengthAndEndurance: return "💪"
+        case \.resilienceAndEndurance: return "💪"
         default: return ""
         }
     }
@@ -263,12 +263,10 @@ struct JobDetail: View {
                 + requiredSoft.communicationAndNetworking
                 + requiredSoft.leadershipAndInfluence
                 + requiredSoft.courageAndRiskTolerance
-                + requiredSoft.spacialNavigation
+                + requiredSoft.spacialNavigationAndOrientation
                 + requiredSoft.carefulnessAndAttentionToDetail
-                + requiredSoft.perseveranceAndGrit
                 + requiredSoft.tinkeringAndFingerPrecision
-                + requiredSoft.physicalStrength
-                + requiredSoft.coordinationAndBalance
+                + requiredSoft.stressResistanceAndEmotionalRegulation
                 + requiredSoft.resilienceAndEndurance > 0
                 
             {
@@ -282,12 +280,11 @@ struct JobDetail: View {
                 softRequirement(\.communicationAndNetworking, requiredSoft.communicationAndNetworking)
                 softRequirement(\.leadershipAndInfluence, requiredSoft.leadershipAndInfluence)
                 softRequirement(\.courageAndRiskTolerance, requiredSoft.courageAndRiskTolerance)
-                softRequirement(\.spacialNavigationAndOrientation, requiredSoft.spacialNavigation)
+                softRequirement(\.spacialNavigationAndOrientation, requiredSoft.spacialNavigationAndOrientation)
                 softRequirement(\.carefulnessAndAttentionToDetail, requiredSoft.carefulnessAndAttentionToDetail)
-                softRequirement(\.patienceAndPerseverance, requiredSoft.perseveranceAndGrit)
+                softRequirement(\.patienceAndPerseverance, requiredSoft.patienceAndPerseverance)
                 softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
-                softRequirement(\.physicalStrengthAndEndurance, requiredSoft.physicalStrength)
-                softRequirement(\.physicalStrengthAndEndurance, requiredSoft.resilienceAndEndurance)
+                softRequirement(\.resilienceAndEndurance, requiredSoft.resilienceAndEndurance)
             }
 
             
@@ -297,14 +294,14 @@ struct JobDetail: View {
                     .frame(maxWidth: .infinity ,alignment: .leading)
                     .padding()
                 
-                ForEach(requiredHard.certifications, id: \.self) { code in
-                    let enumVal = certFrom(raw: code)
+                ForEach(Array(requiredHard.certifications).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { code in
+                    let enumVal = certFrom(raw: code.rawValue)
                     let owned =
                         enumVal.map {
                             player.hardSkills.certifications.contains($0)
                         } ?? false
                     hardRequirementRow(
-                        label: enumVal?.friendlyName ?? code,
+                        label: enumVal?.friendlyName ?? code.rawValue,
                         emoji: enumVal?.pictogram ?? "🎓",
                         met: owned
                     )
@@ -318,14 +315,11 @@ struct JobDetail: View {
                     .frame(maxWidth: .infinity ,alignment: .leading)
                     .padding()
 
-                ForEach(requiredHard.licenses, id: \.self) { code in
-                    let enumVal = licenseFrom(raw: code)
-                    let owned =
-                        enumVal.map { player.hardSkills.licenses.contains($0) }
-                        ?? false
+                ForEach(Array(requiredHard.licenses).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { license in
+                    let owned = player.hardSkills.licenses.contains(license)
                     hardRequirementRow(
-                        label: enumVal?.friendlyName ?? code,
-                        emoji: enumVal?.pictogram ?? "📜",
+                        label: license.friendlyName,
+                        emoji: license.pictogram,
                         met: owned
                     )
                 }
@@ -338,35 +332,28 @@ struct JobDetail: View {
                     .frame(maxWidth: .infinity ,alignment: .leading)
                     .padding()
 
-                ForEach(requiredHard.software, id: \.self) { code in
-                    let enumVal = softwareFrom(raw: code)
-                    let owned =
-                        enumVal.map { player.hardSkills.software.contains($0) }
-                        ?? false
+                ForEach(Array(requiredHard.software).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { software in
+                    let owned = player.hardSkills.software.contains(software)
                     hardRequirementRow(
-                        label: enumVal?.rawValue ?? code,
-                        emoji: enumVal?.pictogram ?? "💻",
+                        label: software.rawValue,
+                        emoji: software.pictogram,
                         met: owned
                     )
                 }
             }
 
             
-            if !requiredHard.portfolio.isEmpty {
+            if !requiredHard.portfolioItems.isEmpty {
                 Text("Portfolio:")
                     .font(.headline)
                     .frame(maxWidth: .infinity ,alignment: .leading)
                     .padding()
 
-                ForEach(requiredHard.portfolio, id: \.self) { code in
-                    let enumVal = portfolioFrom(raw: code)
-                    let owned =
-                        enumVal.map {
-                            player.hardSkills.portfolioItems.contains($0)
-                        } ?? false
+                ForEach(Array(requiredHard.portfolioItems).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { project in
+                    let owned = player.hardSkills.portfolioItems.contains(project)
                     hardRequirementRow(
-                        label: enumVal?.rawValue ?? code,
-                        emoji: enumVal?.pictogram ?? "📁",
+                        label: project.rawValue,
+                        emoji: project.pictogram,
                         met: owned
                     )
                 }

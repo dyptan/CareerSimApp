@@ -171,8 +171,8 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         meets = meets && s.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail
         meets = meets && s.patienceAndPerseverance >= r.perseveranceAndGrit
         meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
-        meets = meets && s.physicalStrengthAndEndurance >= r.physicalStrengthAndEndurance
-        meets = meets && s.physicalStrengthAndEndurance >= r.resilienceAndEndurance
+        meets = meets && s.resilienceAndEndurance >= r.physicalStrengthAndEndurance
+        meets = meets && s.resilienceAndEndurance >= r.resilienceAndEndurance
 
         // Derive a simple first unmet message (optional)
         let message: String? = {
@@ -185,8 +185,8 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             if s.carefulnessAndAttentionToDetail < r.carefulnessAndAttentionToDetail { return "Needs more Carefulness" }
             if s.patienceAndPerseverance < r.perseveranceAndGrit { return "Needs more Perseverance" }
             if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
-            if s.physicalStrengthAndEndurance < r.physicalStrengthAndEndurance { return "Needs more Strength" }
-            if s.physicalStrengthAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
+            if s.resilienceAndEndurance < r.physicalStrengthAndEndurance { return "Needs more Strength" }
+            if s.resilienceAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
             return nil
         }()
 
@@ -200,7 +200,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .cna:
             guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.physicalStrengthAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
+            guard s.resilienceAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
             guard s.carefulnessAndAttentionToDetail >= 2 else { return .blocked(reason: "Needs more Carefulness") }
             return .ok(cost: costForCertification)
 
@@ -252,7 +252,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
 
         case .flightAttendantCert:
             guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.physicalStrengthAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
+            guard s.resilienceAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
             return .ok(cost: costForCertification)
 
         case .aws, .azure, .google, .scrum, .security:

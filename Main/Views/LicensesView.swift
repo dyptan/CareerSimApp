@@ -42,12 +42,12 @@ struct LicensesView: View {
         case .drivers:
             return [
                 (\.spacialNavigationAndOrientation, 1),
-                (\.physicalStrengthAndEndurance, 1),
+                (\.resilienceAndEndurance, 1),
             ]
         case .cdl:
             return [
                 (\.spacialNavigationAndOrientation, 2),
-                (\.physicalStrengthAndEndurance, 2),
+                (\.resilienceAndEndurance, 2),
                 (\.patienceAndPerseverance, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
@@ -68,7 +68,7 @@ struct LicensesView: View {
             return [
                 (\.communicationAndNetworking, 2),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.physicalStrengthAndEndurance, 2),
+                (\.resilienceAndEndurance, 2),
             ]
         case .electrician:
             return [
@@ -81,7 +81,7 @@ struct LicensesView: View {
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 2),
                 (\.patienceAndPerseverance, 2),
-                (\.physicalStrengthAndEndurance, 2),
+                (\.resilienceAndEndurance, 2),
             ]
         case .realEstateAgent:
             return [

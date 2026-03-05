@@ -322,7 +322,7 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail else { return false }
         guard p.patienceAndPerseverance >= r.patienceAndPerseverance else { return false }
         guard p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision else { return false }
-        guard p.physicalStrengthAndEndurance >= r.physicalStrengthAndEndurance else { return false }
+        guard p.resilienceAndEndurance >= r.physicalStrengthAndEndurance else { return false }
         guard p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation else { return false }
         guard p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience else { return false }
         guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }

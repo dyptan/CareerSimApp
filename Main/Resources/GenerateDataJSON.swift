@@ -20,7 +20,7 @@ struct DataJSONGenerator {
         // 1️⃣ Get the jobs from the existing HardcodedJobs helper.
         //    This assumes `HardcodedJobs.sampleJobs()` returns an
         //    encodable collection (e.g. `[Job]`).
-        let jobs = HardcodedJobs.sampleJobs()
+        let jobs = JobExamples.sampleJobs()
 
         // 2️⃣ Encode them as pretty‑printed JSON.
         let encoder = JSONEncoder()

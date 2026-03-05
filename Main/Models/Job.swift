@@ -32,8 +32,8 @@ struct Job: Identifiable, Codable, Hashable {
 
     struct Requirements: Codable, Hashable {
         let education: Education
-        let softSkills: SoftSkillsBlock
-        let hardSkills: HardSkillsBlock
+        let softSkills: SoftSkills
+        let hardSkills: HardSkills
         struct Education: Codable, Hashable {
             let minEQF: Int
             let acceptedProfiles: [TertiaryProfile]?
@@ -80,29 +80,6 @@ struct Job: Identifiable, Codable, Hashable {
                 }
             }
         }
-
-        // Matches keys from dataV5.json
-        struct SoftSkillsBlock: Codable, Hashable {
-            let analyticalReasoningAndProblemSolving: Int
-            let creativityAndInsightfulThinking: Int
-            let communicationAndNetworking: Int
-            let leadershipAndInfluence: Int
-            let courageAndRiskTolerance: Int
-            let spacialNavigation: Int
-            let carefulnessAndAttentionToDetail: Int
-            let perseveranceAndGrit: Int
-            let tinkeringAndFingerPrecision: Int
-            let physicalStrength: Int
-            let coordinationAndBalance: Int
-            let resilienceAndEndurance: Int
-        }
-
-        struct HardSkillsBlock: Codable, Hashable {
-            let certifications: [String]
-            let licenses: [String]
-            let software: [String]
-            let portfolio: [String]
-        }
     }
 }
 
@@ -121,15 +98,24 @@ var jobExample = Job(
             communicationAndNetworking: 4,
             leadershipAndInfluence: 2,
             courageAndRiskTolerance: 1,
-            spacialNavigation: 1,
             carefulnessAndAttentionToDetail: 1,
-            perseveranceAndGrit: 1,
             tinkeringAndFingerPrecision: 1,
-            physicalStrength: 1,
-            coordinationAndBalance: 1,
-            resilienceAndEndurance: 1
+            spacialNavigationAndOrientation: 1,
+            resilienceAndEndurance: 1,
+            stressResistanceAndEmotionalRegulation: 0,
+            outdoorAndWeatherResilience: 0,
+            patienceAndPerseverance: 0,
+            collaborationAndTeamwork: 0,
+            timeManagementAndPlanning: 0,
+            selfDisciplineAndPerseverance: 0,
+            presentationAndStorytelling: 0
         ),
-        hardSkills: .init(certifications: ["AWS"], licenses: ["C"], software: ["Office 365"], portfolio: [])
+        hardSkills: .init(
+            portfolioItems: [],
+            certifications: [],
+            software: [],
+            licenses: []
+        )
     ),
     companyTier: .startup,
     version: 5

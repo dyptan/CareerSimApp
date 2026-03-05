@@ -5,7 +5,7 @@ struct MainView: View {
     @StateObject var appUIState = AppUIState()
     
     private var availableJobs: [Job] {
-        jobs
+        JobExamples.sampleJobs()
     }
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {

@@ -6,7 +6,6 @@ enum PortfolioItem: String, CaseIterable, Codable, Hashable, Identifiable {
     case game = "Game"
     case website = "Website"
     case presentation = "Presentation"
-    case paper = "Paper"
     case library = "Library"
 
     var id: String { rawValue }
@@ -17,7 +16,6 @@ enum PortfolioItem: String, CaseIterable, Codable, Hashable, Identifiable {
         case .game: return "🎮"
         case .website: return "🕸️"
         case .presentation: return "🖼️"
-        case .paper: return "📄"
         case .library: return "📦"
         }
     }
@@ -33,12 +31,6 @@ enum PortfolioItem: String, CaseIterable, Codable, Hashable, Identifiable {
         case .presentation:
             if player.softSkills.presentationAndStorytelling < 1 {
                 return .blocked(reason: "Needs Presentation")
-            }
-            return .ok(cost: 0)
-        case .paper:
-            if player.softSkills.analyticalReasoningAndProblemSolving < 1
-                && player.softSkills.selfDisciplineAndStudyHabits < 1 {
-                return .blocked(reason: "Needs Study Habits or Problem Solving")
             }
             return .ok(cost: 0)
         }

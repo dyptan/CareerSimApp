@@ -14,7 +14,7 @@ struct JobsJSONExporter {
     /// - Throws: Any error that occurs during encoding or file writing.
     static func writeSampleJobsToFile() throws {
         // 1️⃣ Grab the sample jobs
-        let jobs = HardcodedJobs.sampleJobs()
+        let jobs = JobExamples.sampleJobs()
 
         // 2️⃣ Encode them to JSON
         let encoder = JSONEncoder()

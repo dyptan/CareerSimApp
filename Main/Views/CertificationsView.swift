@@ -80,7 +80,7 @@ struct CertificationsView: View {
         case .flightAttendantCert:
             return [
                 (\.communicationAndNetworking, 2),
-                (\.physicalStrengthAndEndurance, 3),
+                (\.resilienceAndEndurance, 3),
             ]
         }
     }

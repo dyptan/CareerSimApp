@@ -12,7 +12,7 @@ let activities: [Activity] = [
     Activity(
         label: "Sports and Athletics",
         abilities: [
-            .init(keyPath: \.physicalStrengthAndEndurance, weight: 2),
+            .init(keyPath: \.resilienceAndEndurance, weight: 2),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
@@ -22,7 +22,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.physicalStrengthAndEndurance, weight: 1),
+            .init(keyPath: \.resilienceAndEndurance, weight: 1),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1)
         ]
@@ -31,7 +31,7 @@ let activities: [Activity] = [
         label: "Outdoor Volunteering and Conservation",
         abilities: [
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.physicalStrengthAndEndurance, weight: 1),
+            .init(keyPath: \.resilienceAndEndurance, weight: 1),
             .init(keyPath: \.patienceAndPerseverance, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]

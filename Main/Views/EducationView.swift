@@ -231,13 +231,13 @@ private struct DegreesSubmenuView: View {
                         )
                         requirementRow(
                             label: SoftSkills.label(
-                                forKeyPath: \.physicalStrengthAndEndurance
+                                forKeyPath: \.resilienceAndEndurance
                             ) ?? "Strength",
                             emoji: SoftSkills.pictogram(
-                                forKeyPath: \.physicalStrengthAndEndurance
+                                forKeyPath: \.resilienceAndEndurance
                             ) ?? "💪",
                             level: r.physicalStrengthAndEndurance,
-                            playerLevel: player.softSkills.physicalStrengthAndEndurance
+                            playerLevel: player.softSkills.resilienceAndEndurance
                         )
                     
                         

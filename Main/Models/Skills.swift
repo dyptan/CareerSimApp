@@ -234,7 +234,7 @@ struct SoftSkills: Codable, Hashable {
     var carefulnessAndAttentionToDetail: Int = 0
     var tinkeringAndFingerPrecision: Int = 0
     var spacialNavigationAndOrientation: Int = 0
-    var physicalStrengthAndEndurance: Int = 0
+    var resilienceAndEndurance: Int = 0
     var stressResistanceAndEmotionalRegulation: Int = 0
     var outdoorAndWeatherResilience: Int = 0
     var patienceAndPerseverance: Int = 0
@@ -252,7 +252,7 @@ struct SoftSkills: Codable, Hashable {
         (\.carefulnessAndAttentionToDetail, "Detective", "🔍"),
         (\.tinkeringAndFingerPrecision, "Fixer", "🛠️"),
         (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
-        (\.physicalStrengthAndEndurance, "Strongman", "💪"),
+        (\.resilienceAndEndurance, "Strongman", "💪"),
         (\.outdoorAndWeatherResilience, "Scout", "🌧️"),
         (\.stressResistanceAndEmotionalRegulation, "Joda", "☯️"),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝"),
