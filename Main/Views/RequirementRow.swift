@@ -1,10 +1,5 @@
 import SwiftUI
 
-public enum Style {
-    case meter(current: Int, required: Int)
-    case badge(isMet: Bool)
-}
-
 public struct RequirementRow: View {
     let label: String
     let emoji: String

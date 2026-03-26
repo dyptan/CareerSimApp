@@ -7,7 +7,6 @@ final class Player: ObservableObject {
     @Published var jobExperiance: [(Job, Int)]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
-    @Published var hardSkillLevels: [Certification: Int]
     @Published var currentOccupation: Job?
     @Published var currentEducation: Education?
     @Published var savings: Int
@@ -37,13 +36,7 @@ final class Player: ObservableObject {
             selfDisciplineAndPerseverance: Int.random(in: 0...1),
             presentationAndStorytelling: Int.random(in: 0...1)
         ),
-        hardSkills: HardSkills = HardSkills(
-            portfolioItems: [],
-            certifications: [],
-            software: [],
-            licenses: []
-        ),
-        hardSkillLevels: [Certification: Int] = [:],
+        hardSkills: HardSkills = HardSkills(),
         degrees: [Education] = [],
         jobExperiance: [(Job, Int)] = [],
         currentOccupation: Job? = nil,
@@ -57,10 +50,10 @@ final class Player: ObservableObject {
         self.age = age
         self.softSkills = softSkills
         self.hardSkills = hardSkills
-        self.hardSkillLevels = hardSkillLevels
         self.degrees = degrees
         self.jobExperiance = jobExperiance
         self.currentOccupation = currentOccupation
+        self.currentEducation = nil
         self.savings = savings
         self.lockedCertifications = lockedCertifications
         self.lockedSoftware = lockedSoftware
@@ -69,29 +62,21 @@ final class Player: ObservableObject {
         self.lockedActivities = lockedActivities
     }
 
-    func boostAbility(_ keyPath: WritableKeyPath<SoftSkills, Int>) {
-        softSkills[keyPath: keyPath] += 1
-    }
-}
-
-extension Player {
-    @MainActor
-    func apply(selectedActivities: Set<String>, from activities: [Activity]) {
-        print("[Activities] Applying \(selectedActivities.count) activities: \(Array(selectedActivities))")
-        var updated = softSkills
-        var totalDelta = 0
-        for activity in activities where selectedActivities.contains(activity.label) {
-            for ability in activity.abilities {
-                updated[keyPath: ability.keyPath] += ability.weight
-                totalDelta += ability.weight
-            }
-        }
-        print("[Activities] Total skill delta: \(totalDelta)")
-        objectWillChange.send()
-        withAnimation {
-            softSkills = updated
-        }
-        print("[Activities] Applied. Soft skills updated.")
+    func reset() {
+        let fresh = Player()
+        age = fresh.age
+        softSkills = fresh.softSkills
+        hardSkills = fresh.hardSkills
+        degrees = fresh.degrees
+        jobExperiance = fresh.jobExperiance
+        currentOccupation = fresh.currentOccupation
+        currentEducation = fresh.currentEducation
+        savings = fresh.savings
+        lockedCertifications = fresh.lockedCertifications
+        lockedSoftware = fresh.lockedSoftware
+        lockedPortfolio = fresh.lockedPortfolio
+        lockedLicenses = fresh.lockedLicenses
+        lockedActivities = fresh.lockedActivities
     }
 }
 

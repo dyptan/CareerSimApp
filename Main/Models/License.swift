@@ -74,6 +74,67 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     }
 
     
+    var softSkillThresholds: [(WritableKeyPath<SoftSkills, Int>, Int)] {
+        switch self {
+        case .drivers:
+            return [
+                (\.spacialNavigationAndOrientation, 1),
+                (\.resilienceAndEndurance, 1),
+            ]
+        case .cdl:
+            return [
+                (\.spacialNavigationAndOrientation, 2),
+                (\.resilienceAndEndurance, 2),
+                (\.patienceAndPerseverance, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
+        case .pilot:
+            return [
+                (\.spacialNavigationAndOrientation, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+                (\.analyticalReasoningAndProblemSolving, 2),
+            ]
+        case .commercialPilot:
+            return [
+                (\.spacialNavigationAndOrientation, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.patienceAndPerseverance, 3),
+                (\.analyticalReasoningAndProblemSolving, 3),
+            ]
+        case .nurse:
+            return [
+                (\.communicationAndNetworking, 2),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.resilienceAndEndurance, 2),
+            ]
+        case .electrician:
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.patienceAndPerseverance, 2),
+            ]
+        case .plumber:
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.carefulnessAndAttentionToDetail, 2),
+                (\.patienceAndPerseverance, 2),
+                (\.resilienceAndEndurance, 2),
+            ]
+        case .realEstateAgent:
+            return [
+                (\.communicationAndNetworking, 3),
+                (\.presentationAndStorytelling, 2),
+                (\.analyticalReasoningAndProblemSolving, 2),
+            ]
+        case .insuranceAgent:
+            return [
+                (\.communicationAndNetworking, 3),
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
+        }
+    }
+
     func licenseRequirements(_ player: Player) -> TrainingRequirementResult {
         let age = player.age
         switch self {

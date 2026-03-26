@@ -11,10 +11,10 @@ struct FooterView: View {
             Button("Projects") { appUIState.showProjectsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Courses") { appUIState.showCourcesSheet = true }
+            Button("Courses") { appUIState.showCoursesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Activities") { appUIState.showSoftSkillsSheet = true }
+            Button("Activities") { appUIState.showActivitiesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
         }
         
@@ -23,7 +23,7 @@ struct FooterView: View {
             Button("Certifications") { appUIState.showCertificationsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
-            Button("Licenses") { appUIState.showLicencesSheet = true }
+            Button("Licenses") { appUIState.showLicensesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
             
         }
@@ -45,13 +45,13 @@ struct FooterView: View {
             Button("Next year") {
                 player.age += 1
                 player.hardSkills.certifications.formUnion(appUIState.selectedCertifications)
-                player.hardSkills.licenses.formUnion(appUIState.selectedLicences)
+                player.hardSkills.licenses.formUnion(appUIState.selectedLicenses)
                 player.hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
                 player.hardSkills.software.formUnion(appUIState.selectedSoftware)
                 player.lockedCertifications.formUnion(appUIState.selectedCertifications)
                 player.lockedPortfolio.formUnion(appUIState.selectedPortfolio)
                 player.lockedSoftware.formUnion(appUIState.selectedSoftware)
-                player.lockedLicenses.formUnion(appUIState.selectedLicences)
+                player.lockedLicenses.formUnion(appUIState.selectedLicenses)
                 
                 appUIState.selectedActivities.removeAll()
                 

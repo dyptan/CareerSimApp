@@ -7,16 +7,16 @@ final class AppUIState: ObservableObject {
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showProjectsSheet: Bool = false
-    @Published var showCourcesSheet: Bool = false
-    @Published var showSoftSkillsSheet: Bool = false
+    @Published var showCoursesSheet: Bool = false
+    @Published var showActivitiesSheet: Bool = false
     @Published var showCertificationsSheet: Bool = false
-    @Published var showLicencesSheet: Bool = false
+    @Published var showLicensesSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
     // Selections
     @Published var selectedActivities: Set<String>
     @Published var selectedSoftware: Set<Software>
-    @Published var selectedLicences: Set<License>
+    @Published var selectedLicenses: Set<License>
     @Published var selectedPortfolio: Set<Project>
     @Published var selectedCertifications: Set<Certification>
 
@@ -30,16 +30,16 @@ final class AppUIState: ObservableObject {
         showCareersSheet: Bool = false,
         selectedActivities: Set<String> = [],
         selectedSoftware: Set<Software> = [],
-        selectedLicences: Set<License> = [],
+        selectedLicenses: Set<License> = [],
         selectedPortfolio: Set<Project> = [],
         selectedCertifications: Set<Certification> = [],
         yearsLeftToGraduation: Int? = nil,
         decisionText: String = "",
         showProjectsSheet: Bool = false,
-        showCourcesSheet: Bool = false,
-        showSoftSkillsSheet: Bool = false,
+        showCoursesSheet: Bool = false,
+        showActivitiesSheet: Bool = false,
         showCertificationsSheet: Bool = false,
-        showLicencesSheet: Bool = false,
+        showLicensesSheet: Bool = false,
         showRetirementSheet: Bool = false
     ) {
         self.showDecisionSheet = showDecisionSheet
@@ -47,16 +47,16 @@ final class AppUIState: ObservableObject {
         self.showCareersSheet = showCareersSheet
         self.selectedActivities = selectedActivities
         self.selectedSoftware = selectedSoftware
-        self.selectedLicences = selectedLicences
+        self.selectedLicenses = selectedLicenses
         self.selectedPortfolio = selectedPortfolio
         self.selectedCertifications = selectedCertifications
         self.yearsLeftToGraduation = yearsLeftToGraduation
         self.decisionText = decisionText
         self.showProjectsSheet = showProjectsSheet
-        self.showCourcesSheet = showCourcesSheet
-        self.showSoftSkillsSheet = showSoftSkillsSheet
+        self.showCoursesSheet = showCoursesSheet
+        self.showActivitiesSheet = showActivitiesSheet
         self.showCertificationsSheet = showCertificationsSheet
-        self.showLicencesSheet = showLicencesSheet
+        self.showLicensesSheet = showLicensesSheet
         self.showRetirementSheet = showRetirementSheet
     }
 }
