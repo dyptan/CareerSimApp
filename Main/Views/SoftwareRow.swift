@@ -5,147 +5,66 @@ struct SoftwareRow: View {
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedActivities: Set<String>
-        
+
     let maxActivitiesPerYear: Int
     let item: Software
 
-    private var isSelected: Bool {
-        selectedSoftware.contains(item)
-    }
-
-    private var isLocked: Bool {
-        player.lockedSoftware.contains(item)
-    }
-
-    private var atLimit: Bool {
-        selectedActivities.count >= maxActivitiesPerYear
-    }
-
-    private var requirement: TrainingRequirementResult {
-        item.softwareRequirements(player)
-    }
-        
-    private var prerequisitesFulfilled: Bool {
-        let thresholds = softwareThresholds(item)
-        for (kp, lvl) in thresholds {
-            if player.softSkills[keyPath: kp] < lvl {
-                return false
-            }
-        }
-        return true
-    }
+    private var isSelected: Bool { selectedSoftware.contains(item) }
+    private var isLocked: Bool { player.lockedSoftware.contains(item) }
+    private var atLimit: Bool { selectedActivities.count >= maxActivitiesPerYear }
 
     private var blockedReason: String? {
-        switch requirement {
-        case .blocked(let reason):
-            return reason
-        case .ok:
-            return nil
-        }
+        if case .blocked(let reason) = item.softwareRequirements(player) { return reason }
+        return nil
     }
 
-    private func softwareThresholds(_ sw: Software) -> [(
-        WritableKeyPath<
-        SoftSkills,
-        Int
-        >,
-        Int
-    )] {
-        switch sw {
-        case .officeSuite:
-            return [
-                (\.selfDisciplineAndPerseverance, 2),
-                (\.timeManagementAndPlanning, 1),
-            ]
-        case .programming:
-            return [
-                (\.analyticalReasoningAndProblemSolving, 3),
-                (\.patienceAndPerseverance, 2),
-            ]
-        case .mediaEditing:
-            return [
-                (\.creativityAndInsightfulThinking, 3),
-                (\.carefulnessAndAttentionToDetail, 2),
-            ]
-        case .gameEngine:
-            return [
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.creativityAndInsightfulThinking, 3),
-            ]
-        @unknown default:
-            return []
-        }
+    private var prerequisitesMet: Bool {
+        item.softSkillThresholds.allSatisfy { player.softSkills[keyPath: $0.0] >= $0.1 }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle(isOn: Binding<Bool>(
+            Toggle(isOn: Binding(
                 get: { isSelected },
                 set: { isOn in
                     guard !isLocked else { return }
                     if isOn {
                         guard !atLimit else { return }
-                        switch item.softwareRequirements(player) {
-                        case .ok(let cost):
+                        if case .ok(let cost) = item.softwareRequirements(player) {
                             selectedSoftware.insert(item)
                             selectedActivities.insert("soft:\(item.rawValue)")
                             player.savings -= cost
-                        case .blocked:
-                            break
                         }
-                    } else {
-                        if selectedSoftware.remove(item) != nil {
-                            selectedActivities.remove("soft:\(item.rawValue)")
-                        }
+                    } else if selectedSoftware.remove(item) != nil {
+                        selectedActivities.remove("soft:\(item.rawValue)")
                     }
                 }
             )) {
-                Text(item.rawValue)
-                    .font(.title3)
+                Text(item.rawValue).font(.title3)
             }
-#if os(macOS)
+            #if os(macOS)
             .toggleStyle(.checkbox)
-#endif
-#if os(iOS)
+            #endif
+            #if os(iOS)
             .toggleStyle(.switch)
-#endif
-            .disabled(
-                isLocked || (
-                    !isSelected && (
-                        atLimit || blockedReason != nil || !prerequisitesFulfilled
-                    )
-                )
-            )
-            .opacity(
-                isLocked || (
-                    !isSelected && (
-                        atLimit || blockedReason != nil || !prerequisitesFulfilled
-                    )
-                ) ? 0.5 : 1.0
-            )
+            #endif
+            .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesMet)))
+            .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesMet))) ? 0.5 : 1.0)
             .help(
-                !prerequisitesFulfilled ? "You do not meet the prerequisites." :
-                    isLocked ? "Locked after year end" :
-                    (!isSelected && atLimit)
-                ? "You can take up to \(maxActivitiesPerYear) activities this year."
-                : (blockedReason ?? "")
+                !prerequisitesMet ? "You do not meet the prerequisites." :
+                isLocked ? "Locked after year end" :
+                (!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." :
+                (blockedReason ?? "")
             )
 
-            let thresholds = softwareThresholds(item)
+            let thresholds = item.softSkillThresholds
             if !thresholds.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    ForEach(
-                        Array(thresholds.enumerated()),
-                        id: \.offset
-                    ) { pair in
-                        let (kp, lvl) = pair.element
+                    ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
                         RequirementRow(
-                            label: SoftSkills.label(forKeyPath: kp) ?? "",
-                            emoji: SoftSkills.pictogram(forKeyPath: kp) ?? "",
-                            style: .meter(
-                                current: player.softSkills[keyPath: kp],
-                                required: lvl
-                            )
+                            label: SoftSkills.label(forKeyPath: pair.0) ?? "",
+                            emoji: SoftSkills.pictogram(forKeyPath: pair.0) ?? "",
+                            style: .meter(current: player.softSkills[keyPath: pair.0], required: pair.1)
                         )
                     }
                 }
@@ -154,4 +73,3 @@ struct SoftwareRow: View {
         }
     }
 }
-

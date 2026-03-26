@@ -17,9 +17,37 @@ enum Software: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
     
+    var softSkillThresholds: [(WritableKeyPath<SoftSkills, Int>, Int)] {
+        switch self {
+        case .officeSuite:
+            return [
+                (\.selfDisciplineAndPerseverance, 2),
+                (\.timeManagementAndPlanning, 1),
+            ]
+        case .programming:
+            return [
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.patienceAndPerseverance, 2),
+            ]
+        case .mediaEditing:
+            return [
+                (\.creativityAndInsightfulThinking, 3),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
+        case .gameEngine:
+            return [
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.creativityAndInsightfulThinking, 3),
+            ]
+        }
+    }
+
     func softwareRequirements(_ player: Player) -> TrainingRequirementResult {
-        if player.softSkills.analyticalReasoningAndProblemSolving < 1 {
-            return .blocked(reason: "Needs more Problem Solving")
+        for (kp, required) in softSkillThresholds {
+            guard player.softSkills[keyPath: kp] >= required else {
+                let name = SoftSkills.label(forKeyPath: kp) ?? "skill"
+                return .blocked(reason: "Needs more \(name)")
+            }
         }
         return .ok(cost: 0)
     }

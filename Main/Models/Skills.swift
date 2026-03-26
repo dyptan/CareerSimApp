@@ -46,61 +46,25 @@ struct HardSkills: Codable, Hashable {
 
     var portfolioItems: Set<Project> {
         get { Set(portfolioLevels.keys) }
-        set {
-            var next = portfolioLevels
-            for key in next.keys where !newValue.contains(key) {
-                next.removeValue(forKey: key)
-            }
-            for key in newValue where next[key] == nil {
-                next[key] = .level1
-            }
-            portfolioLevels = next
-        }
+        set { HardSkills.syncLevels(&portfolioLevels, to: newValue) }
     }
 
     var certifications: Set<Certification> {
         get { Set(certificationLevels.keys) }
-        set {
-            var next = certificationLevels
-            for key in next.keys where !newValue.contains(key) {
-                next.removeValue(forKey: key)
-            }
-            for key in newValue where next[key] == nil {
-                next[key] = .level1
-            }
-            certificationLevels = next
-        }
+        set { HardSkills.syncLevels(&certificationLevels, to: newValue) }
     }
 
     var software: Set<Software> {
         get { Set(softwareLevels.keys) }
-        set {
-            var next = softwareLevels
-            for key in next.keys where !newValue.contains(key) {
-                next.removeValue(forKey: key)
-            }
-            for key in newValue where next[key] == nil {
-                next[key] = .level1
-            }
-            softwareLevels = next
-        }
+        set { HardSkills.syncLevels(&softwareLevels, to: newValue) }
     }
 
     var licenses: Set<License> {
         get { Set(licenseLevels.keys) }
-        set {
-            var next = licenseLevels
-            for key in next.keys where !newValue.contains(key) {
-                next.removeValue(forKey: key)
-            }
-            for key in newValue where next[key] == nil {
-                next[key] = .level1
-            }
-            licenseLevels = next
-        }
+        set { HardSkills.syncLevels(&licenseLevels, to: newValue) }
     }
 
-    // MARK: - Initializer (keeps Player default working)
+    // MARK: - Initializer
 
     init(
         portfolioItems: Set<Project> = [],
@@ -108,11 +72,17 @@ struct HardSkills: Codable, Hashable {
         software: Set<Software> = [],
         licenses: Set<License> = []
     ) {
-        // Default all provided to level1
         self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
         self.certificationLevels = Dictionary(uniqueKeysWithValues: certifications.map { ($0, .level1) })
         self.softwareLevels = Dictionary(uniqueKeysWithValues: software.map { ($0, .level1) })
         self.licenseLevels = Dictionary(uniqueKeysWithValues: licenses.map { ($0, .level1) })
+    }
+
+    // MARK: - Private helper
+
+    private static func syncLevels<T: Hashable>(_ dict: inout [T: ProficiencyLevel], to newSet: Set<T>) {
+        for key in Array(dict.keys) where !newSet.contains(key) { dict.removeValue(forKey: key) }
+        for key in newSet where dict[key] == nil { dict[key] = .level1 }
     }
 
     // MARK: - Level accessors
@@ -255,6 +225,7 @@ struct SoftSkills: Codable, Hashable {
         (\.resilienceAndEndurance, "Strongman", "💪"),
         (\.outdoorAndWeatherResilience, "Scout", "🌧️"),
         (\.stressResistanceAndEmotionalRegulation, "Joda", "☯️"),
+        (\.patienceAndPerseverance, "Patient", "⏳"),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝"),
         (\.timeManagementAndPlanning, "Planner", "📅"),
         (\.selfDisciplineAndPerseverance, "Champion", "🏆"),

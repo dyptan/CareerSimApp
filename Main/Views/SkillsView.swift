@@ -5,14 +5,6 @@ struct SkillsView: View {
     @ObservedObject var appUIState: AppUIState
 
 
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-    }
-
     var body: some View {
 
         ScrollView {
@@ -74,7 +66,7 @@ struct SkillsView: View {
                 
                 ForEach(
                     Array(
-                        appUIState.selectedLicences.union(
+                        appUIState.selectedLicenses.union(
                             player.hardSkills.licenses
                         )
                     )

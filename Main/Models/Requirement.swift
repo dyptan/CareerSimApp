@@ -1,4 +1,10 @@
 import Foundation
+
+public enum Style {
+    case meter(current: Int, required: Int)
+    case badge(isMet: Bool)
+}
+
 public struct Requirement: Identifiable {
     public let id = UUID()
     public let label: String

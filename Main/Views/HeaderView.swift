@@ -65,7 +65,7 @@ struct HeaderView: View {
             showCareersSheet: false,
             selectedActivities: [],
             selectedSoftware: [],
-            selectedLicences: [],
+            selectedLicenses: [],
             selectedPortfolio: [],
             selectedCertifications: [],
             yearsLeftToGraduation: nil,

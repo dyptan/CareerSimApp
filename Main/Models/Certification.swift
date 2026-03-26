@@ -81,185 +81,82 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    // MARK: - Requirements profile for UI rendering (like Job requirements)
-    struct RequirementsProfile: Hashable {
-        var analyticalReasoningAndProblemSolving: Int = 0
-        var creativityAndInsightfulThinking: Int = 0
-        var communicationAndNetworking: Int = 0
-        var leadershipAndInfluence: Int = 0
-        var courageAndRiskTolerance: Int = 0
-        var spacialNavigation: Int = 0
-        var carefulnessAndAttentionToDetail: Int = 0
-        var perseveranceAndGrit: Int = 0
-        var tinkeringAndFingerPrecision: Int = 0
-        var physicalStrengthAndEndurance: Int = 0
-        var coordinationAndBalance: Int = 0
-        var resilienceAndEndurance: Int = 0
-    }
-
-    // Builds the threshold profile used by the UI, and evaluates if player meets it.
-    func requirementsProfile(for player: Player) -> (profile: RequirementsProfile, meetsAll: Bool, cost: Int, message: String?) {
-        var r = RequirementsProfile()
-
+    var softSkillThresholds: [(WritableKeyPath<SoftSkills, Int>, Int)] {
         switch self {
-        case .cna:
-            r.communicationAndNetworking = 2
-            r.resilienceAndEndurance = 2
-            r.carefulnessAndAttentionToDetail = 2
-
-        case .dentalAssistant:
-            r.carefulnessAndAttentionToDetail = 3
-            r.communicationAndNetworking = 2
-
-        case .medicalAssistant:
-            r.communicationAndNetworking = 2
-            r.carefulnessAndAttentionToDetail = 3
-            r.perseveranceAndGrit = 2
-
-        case .pharmacyTech:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.carefulnessAndAttentionToDetail = 3
-
-        case .cwi:
-            r.perseveranceAndGrit = 3
-            r.carefulnessAndAttentionToDetail = 3
-
-        case .epa608:
-            r.carefulnessAndAttentionToDetail = 3
-            r.analyticalReasoningAndProblemSolving = 2
-
-        case .nate:
-            r.tinkeringAndFingerPrecision = 3
-            r.perseveranceAndGrit = 2
-
-        case .faaAMP:
-            r.tinkeringAndFingerPrecision = 3
-            r.carefulnessAndAttentionToDetail = 3
-            r.perseveranceAndGrit = 3
-
-        case .cfp:
-            r.analyticalReasoningAndProblemSolving = 3
-            r.communicationAndNetworking = 2
-
-        case .series65:
-            r.analyticalReasoningAndProblemSolving = 3
-
-        case .flightAttendantCert:
-            r.communicationAndNetworking = 2
-            r.resilienceAndEndurance = 3
-
         case .aws, .azure, .google:
-            r.analyticalReasoningAndProblemSolving = 3
-
+            return [(\.analyticalReasoningAndProblemSolving, 3)]
         case .scrum:
-            r.communicationAndNetworking = 2
-
+            return [(\.communicationAndNetworking, 2)]
         case .security:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.carefulnessAndAttentionToDetail = 2
+            return [
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
+        case .cna:
+            return [
+                (\.communicationAndNetworking, 2),
+                (\.patienceAndPerseverance, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+            ]
+        case .dentalAssistant:
+            return [
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.communicationAndNetworking, 2),
+            ]
+        case .medicalAssistant:
+            return [
+                (\.communicationAndNetworking, 2),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.patienceAndPerseverance, 2),
+            ]
+        case .pharmacyTech:
+            return [
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.carefulnessAndAttentionToDetail, 3),
+            ]
+        case .cwi:
+            return [
+                (\.patienceAndPerseverance, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+            ]
+        case .epa608:
+            return [
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.analyticalReasoningAndProblemSolving, 2),
+            ]
+        case .nate:
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.patienceAndPerseverance, 2),
+            ]
+        case .faaAMP:
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.patienceAndPerseverance, 3),
+            ]
+        case .cfp:
+            return [
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.communicationAndNetworking, 2),
+            ]
+        case .series65:
+            return [(\.analyticalReasoningAndProblemSolving, 3)]
+        case .flightAttendantCert:
+            return [
+                (\.communicationAndNetworking, 2),
+                (\.resilienceAndEndurance, 3),
+            ]
         }
-
-        // Evaluate meetsAll
-        let s = player.softSkills
-        var meets = true
-        meets = meets && s.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving
-        meets = meets && s.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking
-        meets = meets && s.communicationAndNetworking >= r.communicationAndNetworking
-        meets = meets && s.leadershipAndInfluence >= r.leadershipAndInfluence
-        meets = meets && s.courageAndRiskTolerance >= r.courageAndRiskTolerance
-        meets = meets && s.spacialNavigationAndOrientation >= r.spacialNavigation
-        meets = meets && s.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail
-        meets = meets && s.patienceAndPerseverance >= r.perseveranceAndGrit
-        meets = meets && s.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision
-        meets = meets && s.resilienceAndEndurance >= r.physicalStrengthAndEndurance
-        meets = meets && s.resilienceAndEndurance >= r.resilienceAndEndurance
-
-        // Derive a simple first unmet message (optional)
-        let message: String? = {
-            if s.analyticalReasoningAndProblemSolving < r.analyticalReasoningAndProblemSolving { return "Needs more Problem Solving" }
-            if s.creativityAndInsightfulThinking < r.creativityAndInsightfulThinking { return "Needs more Creativity" }
-            if s.communicationAndNetworking < r.communicationAndNetworking { return "Needs better Communication" }
-            if s.leadershipAndInfluence < r.leadershipAndInfluence { return "Needs more Leadership" }
-            if s.courageAndRiskTolerance < r.courageAndRiskTolerance { return "Needs more Courage" }
-            if s.spacialNavigationAndOrientation < r.spacialNavigation { return "Needs better Navigation" }
-            if s.carefulnessAndAttentionToDetail < r.carefulnessAndAttentionToDetail { return "Needs more Carefulness" }
-            if s.patienceAndPerseverance < r.perseveranceAndGrit { return "Needs more Perseverance" }
-            if s.tinkeringAndFingerPrecision < r.tinkeringAndFingerPrecision { return "Needs more Tinkering" }
-            if s.resilienceAndEndurance < r.physicalStrengthAndEndurance { return "Needs more Strength" }
-            if s.resilienceAndEndurance < r.resilienceAndEndurance { return "Needs more Endurance" }
-            return nil
-        }()
-
-        return (r, meets, costForCertification, message)
     }
 
-    // Existing gating remains available for logic decisions
     func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
-        let s = player.softSkills
-
-        switch self {
-        case .cna:
-            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.resilienceAndEndurance >= 2 else { return .blocked(reason: "Needs more Endurance") }
-            guard s.carefulnessAndAttentionToDetail >= 2 else { return .blocked(reason: "Needs more Carefulness") }
-            return .ok(cost: costForCertification)
-
-        case .dentalAssistant:
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            return .ok(cost: costForCertification)
-
-        case .medicalAssistant:
-            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.patienceAndPerseverance >= 2 else { return .blocked(reason: "Needs more Perseverance") }
-            return .ok(cost: costForCertification)
-
-        case .pharmacyTech:
-            guard s.analyticalReasoningAndProblemSolving >= 2 else { return .blocked(reason: "Needs more Problem Solving") }
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            return .ok(cost: costForCertification)
-
-        case .cwi:
-            guard s.patienceAndPerseverance >= 3 else { return .blocked(reason: "Needs more Perseverance") }
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            return .ok(cost: costForCertification)
-
-        case .epa608:
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.analyticalReasoningAndProblemSolving >= 2 else { return .blocked(reason: "Needs more Problem Solving") }
-            return .ok(cost: costForCertification)
-
-        case .nate:
-            guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
-            guard s.patienceAndPerseverance >= 2 else { return .blocked(reason: "Needs more Perseverance") }
-            return .ok(cost: costForCertification)
-
-        case .faaAMP:
-            guard s.tinkeringAndFingerPrecision >= 3 else { return .blocked(reason: "Needs more Tinkering") }
-            guard s.carefulnessAndAttentionToDetail >= 3 else { return .blocked(reason: "Needs more Carefulness") }
-            guard s.patienceAndPerseverance >= 3 else { return .blocked(reason: "Needs more Perseverance") }
-            return .ok(cost: costForCertification)
-
-        case .cfp:
-            guard s.analyticalReasoningAndProblemSolving >= 3 else { return .blocked(reason: "Needs more Problem Solving") }
-            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            return .ok(cost: costForCertification)
-
-        case .series65:
-            guard s.analyticalReasoningAndProblemSolving >= 3 else { return .blocked(reason: "Needs more Problem Solving") }
-            return .ok(cost: costForCertification)
-
-        case .flightAttendantCert:
-            guard s.communicationAndNetworking >= 2 else { return .blocked(reason: "Needs better Communication") }
-            guard s.resilienceAndEndurance >= 3 else { return .blocked(reason: "Needs more Endurance") }
-            return .ok(cost: costForCertification)
-
-        case .aws, .azure, .google, .scrum, .security:
-            let prof = requirementsProfile(for: player)
-            guard prof.meetsAll else { return .blocked(reason: prof.message ?? "Requirements not met") }
-            return .ok(cost: costForCertification)
+        for (kp, required) in softSkillThresholds {
+            guard player.softSkills[keyPath: kp] >= required else {
+                let name = SoftSkills.label(forKeyPath: kp) ?? "skill"
+                return .blocked(reason: "Needs more \(name)")
+            }
         }
+        return .ok(cost: costForCertification)
     }
 }
-
