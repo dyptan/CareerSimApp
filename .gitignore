@@ -1,0 +1,25 @@
+# Xcode user-specific state
+xcuserdata/
+*.xcuserstate
+
+# Xcode SCM
+*.xccheckout
+*.moved-aside
+*.xcscmblueprint
+
+# Build artifacts
+DerivedData/
+build/
+*.o
+*.d
+
+# Swift Package Manager
+.build/
+.swiftpm/xcode/
+
+# CocoaPods
+Pods/
+*.xcworkspace
+
+# macOS
+.DS_Store
