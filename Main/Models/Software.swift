@@ -27,7 +27,7 @@ enum Software: String, CaseIterable, Codable, Hashable, Identifiable {
         case .programming:
             return [
                 (\.analyticalReasoningAndProblemSolving, 3),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .mediaEditing:
             return [

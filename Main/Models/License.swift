@@ -85,7 +85,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.spacialNavigationAndOrientation, 2),
                 (\.resilienceAndEndurance, 2),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
         case .pilot:
@@ -98,7 +98,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.spacialNavigationAndOrientation, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.patienceAndPerseverance, 3),
+                (\.stressResistanceAndEmotionalRegulation, 3),
                 (\.analyticalReasoningAndProblemSolving, 3),
             ]
         case .nurse:
@@ -111,13 +111,13 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .plumber:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 2),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
                 (\.resilienceAndEndurance, 2),
             ]
         case .realEstateAgent:

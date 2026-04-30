@@ -71,12 +71,10 @@ struct JobDetail: View {
         if p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking { score += 1 }
         if p.communicationAndNetworking >= r.communicationAndNetworking { score += 1 }
         if p.leadershipAndInfluence >= r.leadershipAndInfluence { score += 1 }
-        if p.courageAndRiskTolerance >= r.courageAndRiskTolerance { score += 1 }
+        if p.visionaryThinkingAndAmbition >= r.visionaryThinkingAndAmbition { score += 1 }
         if p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation { score += 1 }
         if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
-        if p.patienceAndPerseverance >= r.patienceAndPerseverance { score += 1 }
         if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
-        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
         if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
         return score
     }
