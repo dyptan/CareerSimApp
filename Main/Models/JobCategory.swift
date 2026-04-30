@@ -25,8 +25,30 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case fashion = "Fashion"
     case service = "Service"
     case manufacturing = "Manufacturing"
+    case finance = "Finance"
 
     var id: String { rawValue }
+
+    /// Maximum fractional swing above or below the base salary in a single year.
+    /// e.g. 0.5 means actual pay can range from 50 % to 150 % of the base.
+    var salaryVariance: Double {
+        switch self {
+        case .arts, .media, .fashion, .sports:
+            return 0.50   // heavily project-based / performance-driven
+        case .technology, .engineering, .aviation, .science:
+            return 0.40   // bonuses, stock, market swings
+        case .business, .law, .finance:
+            return 0.40
+        case .construction, .manufacturing, .automotive, .maritime:
+            return 0.30   // seasonal and contract variability
+        case .agriculture, .logistics, .retail, .service, .hospitality, .tourism:
+            return 0.30
+        case .health, .education, .publicServices, .humanities:
+            return 0.10   // salaried / regulated
+        default:
+            return 0.20
+        }
+    }
 
     static func icon(for category: JobCategory) -> String {
         switch category {
@@ -56,6 +78,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .fashion: return "👗"
         case .service: return "🛍️"
         case .manufacturing: return "🧪"
+        case .finance: return "💰"
         }
     }
 
@@ -103,6 +126,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return .people
         case .fashion:
             return .creative
+        case .finance:
+            return .people
         }
     }
 
@@ -160,8 +185,10 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "General service work: babysitting, cleaning, and doing errands."
         case .manufacturing:
             return "Make products from raw materials: factories, workshops, and artisans."
+        case .finance:
+            return "Manage money, investments, and financial risk: banks, markets, and accounting."
         }
-        
+
     }
 
     var examples: String {
@@ -218,6 +245,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Dog sitter, pet groomer, personal trainer"
         case .manufacturing:
             return "Plumber, electrician, welder"
+        case .finance:
+            return "Banker, financial analyst, accountant, trader, actuary"
         }
     }
 }

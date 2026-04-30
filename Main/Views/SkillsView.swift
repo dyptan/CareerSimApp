@@ -17,14 +17,9 @@ struct SkillsView: View {
                 HStack {
                     Text(skill.label)
                     Spacer()
-                    Text(
-                        String(
-                            repeating: skill.pictogram,
-                            count: player.softSkills[
-                                keyPath: skill.keyPath
-                            ]
-                        )
-                    )
+                    let count = player.softSkills[keyPath: skill.keyPath]
+                    Text(count == 0 ? " " : count <= 5 ? String(repeating: skill.pictogram, count: count) : "\(count)x\(skill.pictogram)")
+                        .monospacedDigit()
                 }
             }
 

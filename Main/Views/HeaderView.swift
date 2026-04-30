@@ -24,13 +24,17 @@ struct HeaderView: View {
             }
                 
             if let currentOccupation = player.currentOccupation {
-                Text(
-                    "Working: \(currentOccupation.id) \(currentOccupation.icon)"
-                )
+                Text("Working: \(currentOccupation.id) \(currentOccupation.icon)")
+                Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             if let currentEducation = player.currentEducation {
                 Text("Studying: \(currentEducation.degreeName)")
             }
+            Text("Savings: \(player.savings.formatted(.number)) $")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             
 

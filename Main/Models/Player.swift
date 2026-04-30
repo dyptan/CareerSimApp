@@ -15,6 +15,7 @@ final class Player: ObservableObject {
     @Published var lockedPortfolio: Set<Project>
     @Published var lockedLicenses: Set<License>
     @Published var lockedActivities: Set<String>
+    @Published var appliedJobIds: Set<String> = []
 
     init(
         age: Int = 7,
@@ -147,7 +148,12 @@ final class Player: ObservableObject {
             currentEducation = nil
         }
 
-        savings += currentOccupation?.income ?? 0
+        appliedJobIds.removeAll()
+
+        if let job = currentOccupation {
+            currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income)
+            savings += job.annualIncome
+        }
     }
 
     func reset() {
@@ -165,6 +171,7 @@ final class Player: ObservableObject {
         lockedPortfolio = fresh.lockedPortfolio
         lockedLicenses = fresh.lockedLicenses
         lockedActivities = fresh.lockedActivities
+        appliedJobIds = []
     }
 }
 

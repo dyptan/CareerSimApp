@@ -5,6 +5,14 @@ struct JobDetail: View {
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
 
+    @State private var requestedSalary: Double = 0
+    @State private var applicationResult: ApplicationResult? = nil
+
+    enum ApplicationResult { case hired, rejected }
+
+    private var sliderMin: Double { Double(job.income) * 0.5 }
+    private var sliderMax: Double { Double(job.income) * 2.0 }
+
     private var requiredSoft: SoftSkills {
         job.requirements.softSkills
     }
@@ -62,7 +70,6 @@ struct JobDetail: View {
         return true
     }
 
-    // Soft skills no longer gate jobs; keep computed but unused (for display)
     private var softSkillsHelpfulScore: Int {
         let p = player.softSkills
         let r = requiredSoft
@@ -76,7 +83,27 @@ struct JobDetail: View {
         if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
         if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
         if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
+        if p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience { score += 1 }
+        if p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation { score += 1 }
+        if p.collaborationAndTeamwork >= r.collaborationAndTeamwork { score += 1 }
+        if p.timeManagementAndPlanning >= r.timeManagementAndPlanning { score += 1 }
+        if p.selfDisciplineAndPerseverance >= r.selfDisciplineAndPerseverance { score += 1 }
+        if p.presentationAndStorytelling >= r.presentationAndStorytelling { score += 1 }
         return score
+    }
+
+    private var salaryAlignmentFactor: Double {
+        let ratio = requestedSalary / Double(job.annualIncome)
+        if ratio <= 1.0 { return 1.0 }
+        // asking more than company budget: probability drops steeply above 15% excess
+        return max(0.0, 1.0 - (ratio - 1.0) * 3.0)
+    }
+
+    private var hireProbability: Double {
+        guard allRequirementsMet else { return 0.0 }
+        let skillScore = Double(softSkillsHelpfulScore) / 15.0
+        let raw = (0.2 + skillScore * 0.7) * salaryAlignmentFactor
+        return max(0.05, min(0.95, raw))
     }
 
     private var hardSkillsMet: Bool {
@@ -108,6 +135,7 @@ struct JobDetail: View {
     var body: some View {
         ScrollView {
             Text(job.icon)
+
                 .font(.system(size: 96))
                 .padding(.top, 16)
 
@@ -121,7 +149,7 @@ struct JobDetail: View {
                 .frame(maxWidth: .infinity ,alignment: .leading)
 
             HStack(spacing: 12) {
-                Text("Income")
+                Text("Market median")
                 Text("\(job.income) $")
                     .font(.caption.bold())
                     .padding(.horizontal, 10)
@@ -131,20 +159,18 @@ struct JobDetail: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             .font(.subheadline)
-            .frame(maxWidth: .infinity ,alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
             HStack {
-                if let tier = job.companyTier {
-                    Text("Company")
-                    Text(tier.displayName)
-                        .font(.caption.bold())
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.secondary.opacity(0.12))
-                        .foregroundStyle(.secondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
+                Text("Company")
+                Text(job.companyTier.displayName)
+                    .font(.caption.bold())
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.secondary.opacity(0.12))
+                    .foregroundStyle(.secondary)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             .font(.subheadline)
                 .frame(maxWidth: .infinity ,alignment: .leading)
@@ -247,18 +273,76 @@ struct JobDetail: View {
                 }
             }
 
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Salary negotiation")
+                    .font(.title2.bold())
+                    .padding(.horizontal)
+
+                HStack {
+                    Text("Your ask:")
+                    Spacer()
+                    Text("\(Int(requestedSalary).formatted(.number)) $")
+                        .font(.headline)
+                }
+                .padding(.horizontal)
+
+                Slider(value: $requestedSalary, in: sliderMin...sliderMax, step: 500)
+                    .padding(.horizontal)
+
+                HStack {
+                    Text("\(Int(sliderMin).formatted(.number)) $")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(Int(sliderMax).formatted(.number)) $")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
+
+                HStack {
+                    Text("Hire probability:")
+                    Spacer()
+                    Text("\(Int(hireProbability * 100)) %")
+                        .font(.headline)
+                        .foregroundStyle(hireProbability >= 0.6 ? .green : hireProbability >= 0.3 ? .orange : .red)
+                }
+                .padding(.horizontal)
+                .padding(.top, 4)
+
+                if let result = applicationResult {
+                    Text(result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time.")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                }
+            }
+            .padding(.vertical)
+
             Button {
-                player.currentOccupation = job
-                showCareersSheet.toggle()
+                player.appliedJobIds.insert(job.id)
+                if Double.random(in: 0...1) < hireProbability {
+                    var hired = job
+                    hired.annualIncome = Int(requestedSalary)
+                    player.currentOccupation = hired
+                    applicationResult = .hired
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                        showCareersSheet.toggle()
+                    }
+                } else {
+                    applicationResult = .rejected
+                }
             } label: {
                 Text("Apply")
-                .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(!allRequirementsMet)
-            .opacity(allRequirementsMet ? 1.0 : 0.5)
+            .disabled(!allRequirementsMet || player.appliedJobIds.contains(job.id))
+            .opacity(allRequirementsMet && !player.appliedJobIds.contains(job.id) ? 1.0 : 0.5)
             .padding()
-
+        }
+        .onAppear {
+            requestedSalary = Double(job.income)
         }
     }
 }

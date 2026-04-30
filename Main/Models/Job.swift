@@ -36,6 +36,32 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
+    /// Randomly picks a plausible tier for a job given its category and income.
+    static func random(category: JobCategory, income: Int) -> CompanyTier {
+        switch category {
+        case .publicServices, .education:
+            return .government
+        case .arts, .media, .fashion:
+            return [CompanyTier.selfEmployed, .selfEmployed, .smallBusiness].randomElement()!
+        case .agriculture:
+            return income >= 60_000
+                ? [CompanyTier.mid, .smallBusiness].randomElement()!
+                : [CompanyTier.selfEmployed, .smallBusiness].randomElement()!
+        case .health:
+            return income >= 130_000
+                ? [CompanyTier.enterprise, .government].randomElement()!
+                : .government
+        case .service, 
+                .construction where income < 50_000:
+            return [CompanyTier.smallBusiness, .selfEmployed].randomElement()!
+        default:
+            if income >= 100_000 { return [CompanyTier.enterprise, .mid].randomElement()! }
+            if income >= 60_000  { return [CompanyTier.mid, .enterprise, .startup].randomElement()! }
+            if income >= 38_000  { return [CompanyTier.smallBusiness, .mid].randomElement()! }
+            return [CompanyTier.startup, .smallBusiness].randomElement()!
+        }
+    }
+
     /// Annual probability (0–1) that the player loses this job unexpectedly.
     /// Used each in-game year to roll for involuntary job loss.
     var riskFactor: Double {
@@ -54,12 +80,27 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
 struct Job: Identifiable, Codable, Hashable {
     let id: String
     let category: JobCategory
-    let income: Int            // full dollars per year (e.g., 72000)
+    let income: Int            // base/reference salary shown in job listings
     let summary: String
     let icon: String
     let requirements: Requirements
-    let companyTier: CompanyTier?   // NEW (optional for back-compat)
-    let version: Int
+    var companyTier: CompanyTier
+    var annualIncome: Int      // actual pay locked in when the job was taken
+
+    init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
+         requirements: Requirements) {
+        self.id = id
+        self.category = category
+        self.income = income
+        self.summary = summary
+        self.icon = icon
+        self.requirements = requirements
+        let tier = CompanyTier.random(category: category, income: income)
+        self.companyTier = tier
+        let variance = category.salaryVariance
+        let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
+        self.annualIncome = Int(Double(income) * tier.salaryMultiplier * factor)
+    }
 
     struct Requirements: Codable, Hashable {
         let education: Education
@@ -147,7 +188,5 @@ var jobExample = Job(
             licenses: []
         )
     ),
-    companyTier: .startup,
-    version: 5
 )
 

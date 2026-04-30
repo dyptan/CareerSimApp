@@ -32,9 +32,7 @@ enum JobExamples {
                     presentationAndStorytelling: 2
                 ),
                 hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
-            ),
-            companyTier: .government,
-            version: 6
+            )
         )
 
         let dev = Job(
@@ -63,9 +61,7 @@ enum JobExamples {
                     presentationAndStorytelling: 2
                 ),
                 hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
-            ),
-            companyTier: .enterprise,
-            version: 6
+            )
         )
 
         let designer = Job(
@@ -94,9 +90,7 @@ enum JobExamples {
                     presentationAndStorytelling: 4
                 ),
                 hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
-            ),
-            companyTier: .smallBusiness,
-            version: 6
+            )
         )
 
         let lightDriver = Job(
@@ -125,9 +119,7 @@ enum JobExamples {
                     presentationAndStorytelling: 0
                 ),
                 hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
-            ),
-            companyTier: .mid,
-            version: 6
+            )
         )
 
         // MARK: - Helpers
@@ -315,36 +307,12 @@ enum JobExamples {
             return .init(portfolioItems: [], certifications: [], software: [], licenses: [])
         }
 
-        func companyTierFor(income: Int, category: JobCategory) -> CompanyTier {
-            switch category {
-            case .publicServices, .education:
-                return .government
-            case .health:
-                // High-earning health roles (surgeons, dentists) may work privately
-                return income >= 130_000 ? .enterprise : .government
-            case .arts:
-                // Most artists and performers are self-employed or freelance
-                return .selfEmployed
-            case .agriculture:
-                // Farmers and fishers are typically self-employed or family operations
-                return income >= 60_000 ? .mid : .selfEmployed
-            case .service, .construction where income < 50_000:
-                // Local tradespeople and small service workers
-                return .smallBusiness
-            default:
-                if income >= 100_000 { return .enterprise }
-                if income >= 60_000  { return .mid }
-                if income >= 38_000  { return .smallBusiness }
-                return .startup
-            }
-        }
-
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int) -> Job {
             let soft = defaultSoft(for: category)
             let hard = defaultHard(for: id, category: category)
             let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: nil)
             let req = Job.Requirements(education: edu, softSkills: soft, hardSkills: hard)
-            return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req, companyTier: companyTierFor(income: income, category: category), version: 6)
+            return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req)
         }
 
         // MARK: - Job titles
