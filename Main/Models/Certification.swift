@@ -81,76 +81,133 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    // Minimum EQF level (education) required before pursuing this certification
+    var minEQF: Int {
+        switch self {
+        case .cfp:    return 5  // CFP Board mandates a bachelor's degree
+        case .faaAMP: return 4  // FAA requires 18 months of accredited aviation maintenance training
+        default:      return 3  // High school diploma for all others
+        }
+    }
+
     var softSkillThresholds: [(WritableKeyPath<SoftSkills, Int>, Int)] {
         switch self {
         case .aws, .azure, .google:
-            return [(\.analyticalReasoningAndProblemSolving, 3)]
-        case .scrum:
-            return [(\.communicationAndNetworking, 2)]
-        case .security:
+            // Cloud architecture exams: strong analytical ability + precision + serious self-study
             return [
-                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.analyticalReasoningAndProblemSolving, 3),
                 (\.carefulnessAndAttentionToDetail, 2),
+                (\.selfDisciplineAndPerseverance, 2),
+            ]
+        case .scrum:
+            // Scrum Master: facilitates ceremonies, manages sprint cadence, unblocks team
+            return [
+                (\.communicationAndNetworking, 3),
+                (\.leadershipAndInfluence, 2),
+                (\.collaborationAndTeamwork, 2),
+                (\.timeManagementAndPlanning, 2),
+            ]
+        case .security:
+            // CompTIA Security+: threat analysis, vulnerability assessment, technical depth
+            return [
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.selfDisciplineAndPerseverance, 2),
+            ]
+        case .cwi:
+            // Certified Welding Inspector: practical welding background + high-precision QA
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
+            ]
+        case .epa608:
+            // HVAC refrigerant handling: safe equipment operation + regulatory knowledge
+            return [
+                (\.carefulnessAndAttentionToDetail, 2),
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.tinkeringAndFingerPrecision, 2),
+            ]
+        case .nate:
+            // HVAC technician excellence: hands-on diagnostics + outdoor unit work
+            return [
+                (\.tinkeringAndFingerPrecision, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.outdoorAndWeatherResilience, 2),
+            ]
+        case .faaAMP:
+            // FAA Aircraft & Powerplant: aviation safety is life-critical — highest precision required
+            return [
+                (\.tinkeringAndFingerPrecision, 4),
+                (\.carefulnessAndAttentionToDetail, 4),
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .cna:
+            // Certified Nursing Assistant: daily patient care, physically and emotionally demanding
             return [
-                (\.communicationAndNetworking, 2),
+                (\.communicationAndNetworking, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
                 (\.stressResistanceAndEmotionalRegulation, 2),
-                (\.carefulnessAndAttentionToDetail, 2),
+                (\.resilienceAndEndurance, 2),
             ]
         case .dentalAssistant:
+            // Very fine motor work inside the mouth, patient anxiety management
             return [
+                (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.communicationAndNetworking, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .medicalAssistant:
+            // Clinical procedures (phlebotomy, vitals) + busy clinic communication
             return [
-                (\.communicationAndNetworking, 2),
+                (\.communicationAndNetworking, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
+                (\.tinkeringAndFingerPrecision, 2),
                 (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .pharmacyTech:
-            return [
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.carefulnessAndAttentionToDetail, 3),
-            ]
-        case .cwi:
-            return [
-                (\.stressResistanceAndEmotionalRegulation, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-            ]
-        case .epa608:
-            return [
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.analyticalReasoningAndProblemSolving, 2),
-            ]
-        case .nate:
-            return [
-                (\.tinkeringAndFingerPrecision, 3),
-                (\.stressResistanceAndEmotionalRegulation, 2),
-            ]
-        case .faaAMP:
-            return [
-                (\.tinkeringAndFingerPrecision, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.stressResistanceAndEmotionalRegulation, 3),
-            ]
-        case .cfp:
+            // Dosage calculations, drug interactions — wrong fill = serious patient harm
             return [
                 (\.analyticalReasoningAndProblemSolving, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
                 (\.communicationAndNetworking, 2),
             ]
-        case .series65:
-            return [(\.analyticalReasoningAndProblemSolving, 3)]
-        case .flightAttendantCert:
+        case .cfp:
+            // CFP requires bachelor's + 6000 h of experience + rigorous board exam
             return [
-                (\.communicationAndNetworking, 2),
-                (\.resilienceAndEndurance, 3),
+                (\.analyticalReasoningAndProblemSolving, 4),
+                (\.communicationAndNetworking, 3),
+                (\.selfDisciplineAndPerseverance, 3),
+                (\.timeManagementAndPlanning, 2),
+            ]
+        case .series65:
+            // Investment Adviser licensing: regulatory compliance + fiduciary accuracy
+            return [
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.selfDisciplineAndPerseverance, 2),
+            ]
+        case .flightAttendantCert:
+            // Emergency procedures + customer service + crew resource management
+            return [
+                (\.communicationAndNetworking, 3),
+                (\.stressResistanceAndEmotionalRegulation, 3),
+                (\.presentationAndStorytelling, 2),
+                (\.collaborationAndTeamwork, 2),
             ]
         }
     }
 
     func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
+        let highestEQF = player.degrees.map(\.eqf).max() ?? 0
+        if highestEQF < minEQF {
+            let label = Education.Requirements(minEQF: minEQF).educationLabel()
+            return .blocked(reason: "Requires \(label)")
+        }
         for (kp, required) in softSkillThresholds {
             guard player.softSkills[keyPath: kp] >= required else {
                 let name = SoftSkills.label(forKeyPath: kp) ?? "skill"

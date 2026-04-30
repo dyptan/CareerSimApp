@@ -23,26 +23,13 @@ struct HeaderView: View {
                     }
             }
                 
-            if let lastlog = player.degrees.last {
-                Text("Education: \(lastlog.degreeName)")
-            }
-            
-            
-            
-            if player.savings > 0 {
-                Text("Savings: \(player.savings) $")
-                Text(String(repeating: "💶", count: player.savings / 100000)).lineLimit(10)
-            }
-
             if let currentOccupation = player.currentOccupation {
                 Text(
                     "Working: \(currentOccupation.id) \(currentOccupation.icon)"
                 )
             }
             if let currentEducation = player.currentEducation {
-                if currentEducation.profile != nil {
-                    Text("Studying: \(currentEducation.degreeName)")
-                }
+                Text("Studying: \(currentEducation.degreeName)")
             }
 
             
