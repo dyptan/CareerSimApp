@@ -44,6 +44,18 @@ struct Level: Codable, Hashable, Identifiable {
         }
     }
 
+    var pictogram: String {
+        switch stage {
+        case .PrimarySchool: return "🧒"
+        case .MiddleSchool:  return "👦"
+        case .HighSchool:    return "🧑"
+        case .Vocational:    return "👷"
+        case .Bachelor:      return "👨‍🎓"
+        case .Master:        return "🎓"
+        case .Doctorate:     return "👨‍🔬"
+        }
+    }
+
     /// Human-readable generic degree label (US variant)
     var degreeUS: String {
         switch stage {
@@ -234,6 +246,7 @@ struct Education: Codable, Hashable, Identifiable {
 
     var eqf: Int { Level(stage: level).eqf }
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
+    var pictogram: String { Level(stage: level).pictogram }
 
     // Updated Requirements struct to match the Job model
     struct SoftSkillMapping: Identifiable {
@@ -291,7 +304,7 @@ struct Education: Codable, Hashable, Identifiable {
             .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
             .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
             .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
-            .init(id: "Strongman",   pictogram: "💪", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.physicalStrengthAndEndurance),
+            .init(id: "Athlete",     pictogram: "🏃", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.physicalStrengthAndEndurance),
             .init(id: "Zen",         pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
             .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
             .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
@@ -572,7 +585,7 @@ struct Education: Codable, Hashable, Identifiable {
 
         case .agriculture:
             r.physicalStrengthAndEndurance = 4
-            r.outdoorAndWeatherResilience = 4
+            r.outdoorAndWeatherResilience = 2
             r.timeManagementAndPlanning = 2
             // non-essential
             r.spacialNavigationAndOrientation = 1

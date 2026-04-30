@@ -139,7 +139,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.spacialNavigationAndOrientation, 2),
                 (\.resilienceAndEndurance, 2),
-                (\.outdoorAndWeatherResilience, 2),
+                (\.outdoorAndWeatherResilience, 1),
             ]
         case .realEstateAgent:
             // Showings, negotiation, market analysis

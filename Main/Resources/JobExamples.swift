@@ -95,7 +95,7 @@ enum JobExamples {
                 ),
                 hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
             ),
-            companyTier: .mid,
+            companyTier: .smallBusiness,
             version: 6
         )
 
@@ -118,7 +118,7 @@ enum JobExamples {
                     spacialNavigationAndOrientation: 3,
                     resilienceAndEndurance: 3,
                     stressResistanceAndEmotionalRegulation: 2,
-                    outdoorAndWeatherResilience: 2,
+                    outdoorAndWeatherResilience: 1,
                     collaborationAndTeamwork: 1,
                     timeManagementAndPlanning: 3,
                     selfDisciplineAndPerseverance: 2,
@@ -188,7 +188,7 @@ enum JobExamples {
                     spacialNavigationAndOrientation: 1,
                     resilienceAndEndurance: 3,
                     stressResistanceAndEmotionalRegulation: 3,
-                    outdoorAndWeatherResilience: 1,
+                    outdoorAndWeatherResilience: 0,
                     collaborationAndTeamwork: 3,
                     timeManagementAndPlanning: 2,
                     selfDisciplineAndPerseverance: 2,
@@ -207,7 +207,7 @@ enum JobExamples {
                     spacialNavigationAndOrientation: 3,
                     resilienceAndEndurance: 4,
                     stressResistanceAndEmotionalRegulation: 2,
-                    outdoorAndWeatherResilience: 3,
+                    outdoorAndWeatherResilience: 2,
                     collaborationAndTeamwork: 2,
                     timeManagementAndPlanning: 2,
                     selfDisciplineAndPerseverance: 2,
@@ -264,7 +264,7 @@ enum JobExamples {
                     spacialNavigationAndOrientation: 4,
                     resilienceAndEndurance: 3,
                     stressResistanceAndEmotionalRegulation: 2,
-                    outdoorAndWeatherResilience: 2,
+                    outdoorAndWeatherResilience: 1,
                     collaborationAndTeamwork: 2,
                     timeManagementAndPlanning: 3,
                     selfDisciplineAndPerseverance: 2,
@@ -283,7 +283,7 @@ enum JobExamples {
                     spacialNavigationAndOrientation: 2,
                     resilienceAndEndurance: 5,
                     stressResistanceAndEmotionalRegulation: 2,
-                    outdoorAndWeatherResilience: 5,
+                    outdoorAndWeatherResilience: 3,
                     collaborationAndTeamwork: 2,
                     timeManagementAndPlanning: 2,
                     selfDisciplineAndPerseverance: 3,
@@ -316,10 +316,27 @@ enum JobExamples {
         }
 
         func companyTierFor(income: Int, category: JobCategory) -> CompanyTier {
-            if category == .publicServices || category == .education || category == .health { return .government }
-            if income >= 100_000 { return .enterprise }
-            if income >= 60_000 { return .mid }
-            return .startup
+            switch category {
+            case .publicServices, .education:
+                return .government
+            case .health:
+                // High-earning health roles (surgeons, dentists) may work privately
+                return income >= 130_000 ? .enterprise : .government
+            case .arts:
+                // Most artists and performers are self-employed or freelance
+                return .selfEmployed
+            case .agriculture:
+                // Farmers and fishers are typically self-employed or family operations
+                return income >= 60_000 ? .mid : .selfEmployed
+            case .service, .construction where income < 50_000:
+                // Local tradespeople and small service workers
+                return .smallBusiness
+            default:
+                if income >= 100_000 { return .enterprise }
+                if income >= 60_000  { return .mid }
+                if income >= 38_000  { return .smallBusiness }
+                return .startup
+            }
         }
 
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int) -> Job {

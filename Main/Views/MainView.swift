@@ -75,11 +75,16 @@ struct MainView: View {
         }
         .onChange(of: player.age) { newValue in
             switch newValue {
-            case 10: player.degrees.append(Education(Level.Stage.PrimarySchool))
-            case 14: player.degrees.append(Education(Level.Stage.MiddleSchool))
+            case 10:
+                player.degrees.append(Education(Level.Stage.PrimarySchool))
+                player.currentEducation = Education(Level.Stage.MiddleSchool)
+            case 14:
+                player.degrees.append(Education(Level.Stage.MiddleSchool))
+                player.currentEducation = Education(Level.Stage.HighSchool)
             case 18:
                 appUIState.decisionText = "You're 18! What's your next step?"
                 player.degrees.append(Education(Level.Stage.HighSchool))
+                player.currentEducation = nil
                 appUIState.showDecisionSheet.toggle()
             case 68: appUIState.showRetirementSheet.toggle()
             default: break

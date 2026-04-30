@@ -1,21 +1,52 @@
 import Foundation
 
-/// Represents the general tier of a company for a given job.
-/// Adjust cases as needed to match your data set.
 enum CompanyTier: String, Codable, Hashable, CaseIterable {
-    case startup
-    case mid
-    case enterprise
-    case government
+    case selfEmployed   // freelancer, independent contractor, sole trader
+    case smallBusiness  // family-owned shop, local tradesperson, small restaurant
+    case startup        // early-stage, typically VC-backed or bootstrapped
+    case mid            // mid-market company, ~50–500 employees
+    case enterprise     // large corporation, 500+ employees
+    case government     // public sector, municipal, state, or federal
+    case nonprofit      // NGO, charity, foundation
 
     var displayName: String {
         switch self {
-        case .startup: return "Startup"
-        case .government: return "Government"
-        case .mid:
-            return "Medium size company"
-        case .enterprise:
-            return "Large enterprise"
+        case .selfEmployed:  return "Self-Employed"
+        case .smallBusiness: return "Small Business"
+        case .startup:       return "Startup"
+        case .mid:           return "Mid-Market"
+        case .enterprise:    return "Large Enterprise"
+        case .government:    return "Government"
+        case .nonprofit:     return "Nonprofit / NGO"
+        }
+    }
+
+    /// Multiplier applied to the job's base income.
+    /// Reflects how each employment context shifts actual take-home pay
+    /// relative to the published median (1.0 = no adjustment).
+    var salaryMultiplier: Double {
+        switch self {
+        case .selfEmployed:  return 0.85  // variable income, no benefits, dry spells
+        case .smallBusiness: return 0.90  // below-market pay, limited benefits
+        case .startup:       return 1.05  // competitive cash + equity upside
+        case .mid:           return 1.00  // baseline — median salaries are calibrated here
+        case .enterprise:    return 1.20  // top-of-market comp, bonuses, full benefits
+        case .government:    return 0.95  // slightly below market, offset by stability/pension
+        case .nonprofit:     return 0.78  // notoriously underpaid relative to skills required
+        }
+    }
+
+    /// Annual probability (0–1) that the player loses this job unexpectedly.
+    /// Used each in-game year to roll for involuntary job loss.
+    var riskFactor: Double {
+        switch self {
+        case .selfEmployed:  return 0.18  // contracts end, clients disappear, dry seasons
+        case .smallBusiness: return 0.12  // small firms close or downsize frequently
+        case .startup:       return 0.22  // high failure rate, funding rounds, pivots
+        case .mid:           return 0.06  // moderate stability, occasional restructuring
+        case .enterprise:    return 0.04  // large firms restructure slowly; layoffs are rare
+        case .government:    return 0.01  // near-permanent employment, very hard to lose
+        case .nonprofit:     return 0.09  // funding cuts can eliminate roles quickly
         }
     }
 }

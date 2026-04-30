@@ -52,7 +52,7 @@ final class Player: ObservableObject {
         self.degrees = degrees
         self.jobExperiance = jobExperiance
         self.currentOccupation = currentOccupation
-        self.currentEducation = nil
+        self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedCertifications = lockedCertifications
         self.lockedSoftware = lockedSoftware

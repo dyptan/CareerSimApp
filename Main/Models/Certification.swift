@@ -135,7 +135,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.analyticalReasoningAndProblemSolving, 2),
-                (\.outdoorAndWeatherResilience, 2),
+                (\.outdoorAndWeatherResilience, 1),
             ]
         case .faaAMP:
             // FAA Aircraft & Powerplant: aviation safety is life-critical — highest precision required

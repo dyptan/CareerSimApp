@@ -50,7 +50,7 @@ struct SkillsView: View {
             HStack {
                 Text("Degrees:")
                 ForEach(player.degrees, id: \.degreeName) { degree in
-                    Text(degree.degreeName)
+                    Text(degree.pictogram)
                 }
                 Spacer()
             }
