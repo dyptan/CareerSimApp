@@ -111,7 +111,6 @@ struct MainView: View {
 
     private var activitiesContent: some View {
         ActivitiesView(player: player, selectedActivities: $appUIState.selectedActivities)
-            .environmentObject(player)
             .padding()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -122,10 +121,10 @@ struct MainView: View {
 
     private var certificationsContent: some View {
         CertificationsView(
+            player: player,
             selectedCertifications: $appUIState.selectedCertifications,
             selectedActivities: $appUIState.selectedActivities
         )
-        .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { appUIState.showCertificationsSheet = false }
@@ -135,10 +134,10 @@ struct MainView: View {
 
     private var licensesContent: some View {
         LicensesView(
+            player: player,
             selectedLicenses: $appUIState.selectedLicenses,
             selectedActivities: $appUIState.selectedActivities
         )
-        .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { appUIState.showLicensesSheet = false }
@@ -148,10 +147,10 @@ struct MainView: View {
 
     private var coursesContent: some View {
         CoursesView(
+            player: player,
             selectedSoftware: $appUIState.selectedSoftware,
             selectedActivities: $appUIState.selectedActivities
         )
-        .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { appUIState.showCoursesSheet = false }
@@ -161,101 +160,15 @@ struct MainView: View {
 
     private var projectsContent: some View {
         ProjectsView(
+            player: player,
             selectedPortfolio: $appUIState.selectedPortfolio,
             selectedActivities: $appUIState.selectedActivities
         )
-        .environmentObject(player)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { appUIState.showProjectsSheet = false }
             }
         }
-    }
-}
-
-// MARK: - Decision sheet
-
-private struct DecisionView: View {
-    @ObservedObject var appUIState: AppUIState
-
-    var body: some View {
-        VStack(spacing: 18) {
-            Text(appUIState.decisionText)
-                .font(.title2)
-                .padding()
-
-            Button {
-                appUIState.showDecisionSheet = false
-                appUIState.showTertiarySheet = true
-            } label: {
-                Text("Enter College / University")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-
-            Button {
-                appUIState.showDecisionSheet = false
-                appUIState.showCareersSheet = true
-            } label: {
-                Text("Find a Job")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-// MARK: - Retirement sheet
-
-private struct RetirementView: View {
-    @ObservedObject var player: Player
-    @ObservedObject var appUIState: AppUIState
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Text("Retirement")
-                .font(.title2.bold())
-                .padding(.top)
-
-            Text("You've retired at age \(player.age).")
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-
-            Text("Money earned: \(player.savings)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Button {
-                player.reset()
-                appUIState.showRetirementSheet = false
-                appUIState.selectedActivities = []
-                appUIState.selectedSoftware = []
-                appUIState.selectedLicenses = []
-                appUIState.selectedPortfolio = []
-                appUIState.selectedCertifications = []
-                appUIState.yearsLeftToGraduation = nil
-                appUIState.decisionText = ""
-                appUIState.showDecisionSheet = false
-                appUIState.showTertiarySheet = false
-                appUIState.showCareersSheet = true
-            } label: {
-                Text("Restart")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.top, 8)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        #if os(macOS)
-        .frame(minWidth: 700, minHeight: 400)
-        #endif
     }
 }
 

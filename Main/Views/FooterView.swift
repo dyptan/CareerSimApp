@@ -43,33 +43,7 @@ struct FooterView: View {
             )
             
             Button("Next year") {
-                player.age += 1
-                player.hardSkills.certifications.formUnion(appUIState.selectedCertifications)
-                player.hardSkills.licenses.formUnion(appUIState.selectedLicenses)
-                player.hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
-                player.hardSkills.software.formUnion(appUIState.selectedSoftware)
-                player.lockedCertifications.formUnion(appUIState.selectedCertifications)
-                player.lockedPortfolio.formUnion(appUIState.selectedPortfolio)
-                player.lockedSoftware.formUnion(appUIState.selectedSoftware)
-                player.lockedLicenses.formUnion(appUIState.selectedLicenses)
-                
-                appUIState.selectedActivities.removeAll()
-                
-                appUIState.yearsLeftToGraduation? -= 1
-                if appUIState.yearsLeftToGraduation == 0 {
-                    appUIState.decisionText =
-                    "You're done with your degree! What's your next step?"
-                    appUIState.showDecisionSheet.toggle()
-                    if let currentEducation = player.currentEducation {
-                        player.degrees.append(currentEducation)
-                    }
-                    appUIState.yearsLeftToGraduation = nil
-                    player.currentEducation = nil
-                }
-                
-                if let income = player.currentOccupation?.income {
-                    player.savings += income
-                }
+                player.advanceYear(appUIState: appUIState)
             }
             .buttonStyle(.borderedProminent)
             .font(.headline)

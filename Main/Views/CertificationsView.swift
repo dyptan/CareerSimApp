@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct CertificationsView: View {
-    @EnvironmentObject private var player: Player
+    @ObservedObject var player: Player
 
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedActivities: Set<String>
-
-    let maxActivitiesPerYear = 1
 
     private var sortedCertifications: [Certification] {
         Certification.allCases.sorted { $0.rawValue < $1.rawValue }
@@ -17,7 +15,7 @@ struct CertificationsView: View {
             ForEach(sortedCertifications, id: \.rawValue) { cert in
                 let isLocked = player.lockedCertifications.contains(cert)
                 let isSelected = selectedCertifications.contains(cert)
-                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+                let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
 
                 let requirement = cert.certificationRequirements(player)
                 let blockedReason: String? = {
@@ -32,14 +30,9 @@ struct CertificationsView: View {
                             guard !isLocked else { return }
                             if isOn {
                                 guard !atLimit else { return }
-                                if case .ok(let cost) = cert.certificationRequirements(player) {
-                                    selectedCertifications.insert(cert)
-                                    selectedActivities.insert("cert:\(cert.rawValue)")
-                                    player.savings -= cost
-                                }
-                            } else if selectedCertifications.remove(cert) != nil {
-                                selectedActivities.remove("cert:\(cert.rawValue)")
-                                player.savings += cert.costForCertification
+                                player.purchaseCertification(cert, into: &selectedCertifications, activities: &selectedActivities)
+                            } else {
+                                player.refundCertification(cert, from: &selectedCertifications, activities: &selectedActivities)
                             }
                         }
                     ))
@@ -53,7 +46,7 @@ struct CertificationsView: View {
                     .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil))) ? 0.5 : 1.0)
                     .help(
                         isLocked ? "Locked after year end" :
-                        (!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." :
+                        (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
                         (blockedReason ?? "")
                     )
 
@@ -86,8 +79,7 @@ struct CertificationsView: View {
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
-                CertificationsView(selectedCertifications: $selected, selectedActivities: $acts)
-                    .environmentObject(player)
+                CertificationsView(player: player, selectedCertifications: $selected, selectedActivities: $acts)
             }
         }
     }

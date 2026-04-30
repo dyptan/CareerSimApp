@@ -5,8 +5,6 @@ struct HeaderView: View {
 
     @ObservedObject var appUIState: AppUIState
 
-    private let maxActivitiesPerYear = 1
-
     @State var didBumpAgeScale = false
 
     var body: some View {

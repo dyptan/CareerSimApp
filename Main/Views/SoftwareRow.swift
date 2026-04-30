@@ -1,17 +1,16 @@
 import SwiftUI
 
 struct SoftwareRow: View {
-    @EnvironmentObject private var player: Player
+    @ObservedObject var player: Player
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedActivities: Set<String>
 
-    let maxActivitiesPerYear: Int
     let item: Software
 
     private var isSelected: Bool { selectedSoftware.contains(item) }
     private var isLocked: Bool { player.lockedSoftware.contains(item) }
-    private var atLimit: Bool { selectedActivities.count >= maxActivitiesPerYear }
+    private var atLimit: Bool { selectedActivities.count >= GameConstants.trainingActivitySlotCost }
 
     private var blockedReason: String? {
         if case .blocked(let reason) = item.softwareRequirements(player) { return reason }
@@ -30,13 +29,9 @@ struct SoftwareRow: View {
                     guard !isLocked else { return }
                     if isOn {
                         guard !atLimit else { return }
-                        if case .ok(let cost) = item.softwareRequirements(player) {
-                            selectedSoftware.insert(item)
-                            selectedActivities.insert("soft:\(item.rawValue)")
-                            player.savings -= cost
-                        }
-                    } else if selectedSoftware.remove(item) != nil {
-                        selectedActivities.remove("soft:\(item.rawValue)")
+                        player.purchaseSoftware(item, into: &selectedSoftware, activities: &selectedActivities)
+                    } else {
+                        player.deselectSoftware(item, from: &selectedSoftware, activities: &selectedActivities)
                     }
                 }
             )) {
@@ -53,7 +48,7 @@ struct SoftwareRow: View {
             .help(
                 !prerequisitesMet ? "You do not meet the prerequisites." :
                 isLocked ? "Locked after year end" :
-                (!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." :
+                (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
                 (blockedReason ?? "")
             )
 

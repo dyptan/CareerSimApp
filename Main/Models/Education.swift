@@ -236,6 +236,13 @@ struct Education: Codable, Hashable, Identifiable {
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
 
     // Updated Requirements struct to match the Job model
+    struct SoftSkillMapping: Identifiable {
+        let id: String
+        let pictogram: String
+        let playerKeyPath: WritableKeyPath<SoftSkills, Int>
+        let requirementKeyPath: KeyPath<Education.Requirements, Int>
+    }
+
     struct Requirements: Codable, Hashable {
         var minEQF: Int = 0
 
@@ -275,6 +282,24 @@ struct Education: Codable, Hashable, Identifiable {
             default: return "Doctorate+"
             }
         }
+
+        static let softSkillMappings: [Education.SoftSkillMapping] = [
+            .init(id: "Hacker",      pictogram: "💡", playerKeyPath: \.analyticalReasoningAndProblemSolving, requirementKeyPath: \.analyticalReasoningAndProblemSolving),
+            .init(id: "Creator",     pictogram: "🎨", playerKeyPath: \.creativityAndInsightfulThinking,      requirementKeyPath: \.creativityAndInsightfulThinking),
+            .init(id: "Influencer",  pictogram: "📢", playerKeyPath: \.communicationAndNetworking,           requirementKeyPath: \.communicationAndNetworking),
+            .init(id: "Leader",      pictogram: "👑", playerKeyPath: \.leadershipAndInfluence,               requirementKeyPath: \.leadershipAndInfluence),
+            .init(id: "Gambler",     pictogram: "🎲", playerKeyPath: \.courageAndRiskTolerance,              requirementKeyPath: \.courageAndRiskTolerance),
+            .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
+            .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
+            .init(id: "Patient",     pictogram: "⏳", playerKeyPath: \.patienceAndPerseverance,              requirementKeyPath: \.patienceAndPerseverance),
+            .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
+            .init(id: "Strongman",   pictogram: "💪", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.physicalStrengthAndEndurance),
+            .init(id: "Joda",        pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
+            .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
+            .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
+            .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndStudyHabits),
+            .init(id: "Storyteller", pictogram: "📖", playerKeyPath: \.presentationAndStorytelling,          requirementKeyPath: \.presentationAndStorytelling),
+        ]
     }
 
     var requirements: Requirements {

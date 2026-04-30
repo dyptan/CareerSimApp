@@ -42,6 +42,10 @@
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
+		AA00000000000000000000A2 /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A1 /* GameConstants.swift */; };
+		AA00000000000000000000A4 /* DecisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A3 /* DecisionView.swift */; };
+		AA00000000000000000000A6 /* RetirementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A5 /* RetirementView.swift */; };
+		AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A7 /* DegreesSubmenuView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +109,10 @@
 		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AA00000000000000000000A1 /* GameConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
+		AA00000000000000000000A3 /* DecisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000A5 /* RetirementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000A7 /* DegreesSubmenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DegreesSubmenuView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +188,7 @@
 				550618412ED2245900C56E99 /* Certification.swift */,
 				550618432ED2245D00C56E99 /* License.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
+				AA00000000000000000000A1 /* GameConstants.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -212,6 +221,9 @@
 				55189E902F4DA61A005FAC2C /* SoftwareRow.swift */,
 				5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
+				AA00000000000000000000A3 /* DecisionView.swift */,
+				AA00000000000000000000A5 /* RetirementView.swift */,
+				AA00000000000000000000A7 /* DegreesSubmenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -360,6 +372,10 @@
 				55189E912F4DA61A005FAC2C /* SoftwareRow.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
+				AA00000000000000000000A2 /* GameConstants.swift in Sources */,
+				AA00000000000000000000A4 /* DecisionView.swift in Sources */,
+				AA00000000000000000000A6 /* RetirementView.swift in Sources */,
+				AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

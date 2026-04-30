@@ -62,6 +62,95 @@ final class Player: ObservableObject {
         self.lockedActivities = lockedActivities
     }
 
+    // MARK: - Activity selection
+
+    func selectActivity(_ activity: Activity, into selectedActivities: inout Set<String>) {
+        selectedActivities.insert(activity.label)
+        for ability in activity.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] += ability.weight
+        }
+    }
+
+    func deselectActivity(_ activity: Activity, from selectedActivities: inout Set<String>) {
+        guard selectedActivities.remove(activity.label) != nil else { return }
+        for ability in activity.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] -= ability.weight
+        }
+    }
+
+    // MARK: - Training purchase / refund
+
+    func purchaseCertification(_ cert: Certification, into selectedCertifications: inout Set<Certification>, activities selectedActivities: inout Set<String>) {
+        guard case .ok(let cost) = cert.certificationRequirements(self) else { return }
+        selectedCertifications.insert(cert)
+        selectedActivities.insert("cert:\(cert.rawValue)")
+        savings -= cost
+    }
+
+    func refundCertification(_ cert: Certification, from selectedCertifications: inout Set<Certification>, activities selectedActivities: inout Set<String>) {
+        guard selectedCertifications.remove(cert) != nil else { return }
+        selectedActivities.remove("cert:\(cert.rawValue)")
+        savings += cert.costForCertification
+    }
+
+    func purchaseLicense(_ lic: License, into selectedLicenses: inout Set<License>, activities selectedActivities: inout Set<String>) {
+        guard case .ok(let cost) = lic.licenseRequirements(self) else { return }
+        selectedLicenses.insert(lic)
+        selectedActivities.insert("lic:\(lic.rawValue)")
+        savings -= cost
+    }
+
+    func refundLicense(_ lic: License, from selectedLicenses: inout Set<License>, activities selectedActivities: inout Set<String>) {
+        guard selectedLicenses.remove(lic) != nil else { return }
+        selectedActivities.remove("lic:\(lic.rawValue)")
+        savings += lic.costForLicense
+    }
+
+    func purchaseSoftware(_ sw: Software, into selectedSoftware: inout Set<Software>, activities selectedActivities: inout Set<String>) {
+        guard case .ok(let cost) = sw.softwareRequirements(self) else { return }
+        selectedSoftware.insert(sw)
+        selectedActivities.insert("soft:\(sw.rawValue)")
+        savings -= cost
+    }
+
+    func deselectSoftware(_ sw: Software, from selectedSoftware: inout Set<Software>, activities selectedActivities: inout Set<String>) {
+        guard selectedSoftware.remove(sw) != nil else { return }
+        selectedActivities.remove("soft:\(sw.rawValue)")
+    }
+
+    // MARK: - Year progression
+
+    func advanceYear(appUIState: AppUIState) {
+        age += 1
+
+        hardSkills.certifications.formUnion(appUIState.selectedCertifications)
+        hardSkills.licenses.formUnion(appUIState.selectedLicenses)
+        hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
+        hardSkills.software.formUnion(appUIState.selectedSoftware)
+
+        lockedCertifications.formUnion(appUIState.selectedCertifications)
+        lockedPortfolio.formUnion(appUIState.selectedPortfolio)
+        lockedSoftware.formUnion(appUIState.selectedSoftware)
+        lockedLicenses.formUnion(appUIState.selectedLicenses)
+
+        appUIState.selectedActivities.removeAll()
+
+        appUIState.yearsLeftToGraduation? -= 1
+        if appUIState.yearsLeftToGraduation == 0 {
+            appUIState.decisionText = "You're done with your degree! What's your next step?"
+            appUIState.showDecisionSheet.toggle()
+            if let currentEducation {
+                degrees.append(currentEducation)
+            }
+            appUIState.yearsLeftToGraduation = nil
+            currentEducation = nil
+        }
+
+        savings += currentOccupation?.income ?? 0
+    }
+
     func reset() {
         let fresh = Player()
         age = fresh.age
