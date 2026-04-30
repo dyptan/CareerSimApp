@@ -13,7 +13,7 @@ let activities: [Activity] = [
         label: "Sports and Athletics",
         abilities: [
             .init(keyPath: \.resilienceAndEndurance, weight: 2),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
     ),
@@ -23,7 +23,7 @@ let activities: [Activity] = [
             .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
             .init(keyPath: \.resilienceAndEndurance, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1)
         ]
     ),
@@ -32,7 +32,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
             .init(keyPath: \.resilienceAndEndurance, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
     ),
@@ -69,7 +69,7 @@ let activities: [Activity] = [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1)
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ]
     ),
     Activity(
@@ -77,8 +77,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2)
         ]
     ),
     Activity(
@@ -87,7 +86,7 @@ let activities: [Activity] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.courageAndRiskTolerance, weight: 1)
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
         ]
     ),
 
@@ -97,7 +96,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1)
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ]
     ),
     Activity(
@@ -105,7 +104,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ]
     ),
@@ -114,7 +113,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
     ),
@@ -122,7 +121,7 @@ let activities: [Activity] = [
         label: "Language Learning",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
         ]
@@ -138,7 +137,7 @@ let activities: [Activity] = [
     Activity(
         label: "Reading Books",
         abilities: [
-            .init(keyPath: \.patienceAndPerseverance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
@@ -168,8 +167,8 @@ let activities: [Activity] = [
             .init(keyPath: \.timeManagementAndPlanning, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1),
-            .init(keyPath: \.courageAndRiskTolerance, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1)
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ]
     ),
     Activity(
@@ -185,7 +184,7 @@ let activities: [Activity] = [
         label: "Public Speaking Club",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.courageAndRiskTolerance, weight: 2),
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.leadershipAndInfluence, weight: 1)
         ]
@@ -204,7 +203,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.courageAndRiskTolerance, weight: 2),
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1)
         ]
     ),
@@ -216,7 +215,72 @@ let activities: [Activity] = [
             .init(keyPath: \.timeManagementAndPlanning, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-            .init(keyPath: \.patienceAndPerseverance, weight: 1)
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
+        ]
+    ),
+
+    // Discipline-specific competitions
+    Activity(
+        label: "Math Olympiad",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Science Fair",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Art Competition",
+        abilities: [
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
+            .init(keyPath: \.presentationAndStorytelling, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Creative Writing Contest",
+        abilities: [
+            .init(keyPath: \.presentationAndStorytelling, weight: 2),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Music Competition",
+        abilities: [
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
+            .init(keyPath: \.presentationAndStorytelling, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Geography Bee",
+        abilities: [
+            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Entrepreneurship Challenge",
+        abilities: [
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
+            .init(keyPath: \.leadershipAndInfluence, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Model UN",
+        abilities: [
+            .init(keyPath: \.communicationAndNetworking, weight: 2),
+            .init(keyPath: \.leadershipAndInfluence, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Programming Contest",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2)
         ]
     )
 ]

@@ -200,14 +200,13 @@ struct SoftSkills: Codable, Hashable {
     var creativityAndInsightfulThinking: Int = 0
     var communicationAndNetworking: Int = 0
     var leadershipAndInfluence: Int = 0
-    var courageAndRiskTolerance: Int = 0
+    var visionaryThinkingAndAmbition: Int = 0
     var carefulnessAndAttentionToDetail: Int = 0
     var tinkeringAndFingerPrecision: Int = 0
     var spacialNavigationAndOrientation: Int = 0
     var resilienceAndEndurance: Int = 0
     var stressResistanceAndEmotionalRegulation: Int = 0
     var outdoorAndWeatherResilience: Int = 0
-    var patienceAndPerseverance: Int = 0
     var collaborationAndTeamwork: Int = 0
     var timeManagementAndPlanning: Int = 0
     var selfDisciplineAndPerseverance: Int = 0
@@ -218,38 +217,30 @@ struct SoftSkills: Codable, Hashable {
         (\.creativityAndInsightfulThinking, "Creator", "🎨"),
         (\.communicationAndNetworking, "Influencer", "📢"),
         (\.leadershipAndInfluence, "Leader", "👑"),
-        (\.courageAndRiskTolerance, "Gambler", "🎲"),
+        (\.visionaryThinkingAndAmbition, "Visionary", "🔭"),
         (\.carefulnessAndAttentionToDetail, "Detective", "🔍"),
         (\.tinkeringAndFingerPrecision, "Fixer", "🛠️"),
         (\.spacialNavigationAndOrientation, "Navigator", "🧭"),
         (\.resilienceAndEndurance, "Strongman", "💪"),
         (\.outdoorAndWeatherResilience, "Scout", "🌧️"),
-        (\.stressResistanceAndEmotionalRegulation, "Joda", "☯️"),
-        (\.patienceAndPerseverance, "Patient", "⏳"),
+        (\.stressResistanceAndEmotionalRegulation, "Zen", "☯️"),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝"),
         (\.timeManagementAndPlanning, "Planner", "📅"),
         (\.selfDisciplineAndPerseverance, "Champion", "🏆"),
         (\.presentationAndStorytelling, "Storyteller", "📖")
     ]
     
+    private static let _labelMap: [AnyKeyPath: String] =
+        Dictionary(uniqueKeysWithValues: skillNames.map { ($0.keyPath as AnyKeyPath, $0.label) })
+    private static let _pictogramMap: [AnyKeyPath: String] =
+        Dictionary(uniqueKeysWithValues: skillNames.map { ($0.keyPath as AnyKeyPath, $0.pictogram) })
+
     static func label(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
-        for entry in SoftSkills.skillNames {
-            let pkp = entry.keyPath as PartialKeyPath<SoftSkills>
-            if pkp == keyPath {
-                return entry.label
-            }
-        }
-        return nil
+        _labelMap[keyPath]
     }
 
     static func pictogram(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
-        for entry in SoftSkills.skillNames {
-            let pkp = entry.keyPath as PartialKeyPath<SoftSkills>
-            if pkp == keyPath {
-                return entry.pictogram
-            }
-        }
-        return nil
+        _pictogramMap[keyPath]
     }
 }
 // MARK: - Optional: convenience display helpers for a skill + level

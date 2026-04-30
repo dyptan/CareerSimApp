@@ -9,6 +9,7 @@ struct SkillsView: View {
 
         ScrollView {
 
+            Text("Badges:")
             ForEach(
                 Array(SoftSkills.skillNames.enumerated()),
                 id: \.offset
@@ -29,9 +30,10 @@ struct SkillsView: View {
 
             Divider()
 
+            Text("Skills:")
             HStack {
                 Text("Portfolio:")
-
+                
                 ForEach(
                     Array(
                         player.hardSkills.portfolioItems.union(
@@ -45,7 +47,6 @@ struct SkillsView: View {
                 Spacer()
 
             }
-            
             HStack{
                 Text("Certifications:")
 

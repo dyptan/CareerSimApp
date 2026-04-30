@@ -95,7 +95,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .cna:
             return [
                 (\.communicationAndNetworking, 2),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
         case .dentalAssistant:
@@ -107,7 +107,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.communicationAndNetworking, 2),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .pharmacyTech:
             return [
@@ -116,7 +116,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             ]
         case .cwi:
             return [
-                (\.patienceAndPerseverance, 3),
+                (\.stressResistanceAndEmotionalRegulation, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
             ]
         case .epa608:
@@ -127,13 +127,13 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .nate:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
-                (\.patienceAndPerseverance, 2),
+                (\.stressResistanceAndEmotionalRegulation, 2),
             ]
         case .faaAMP:
             return [
                 (\.tinkeringAndFingerPrecision, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
-                (\.patienceAndPerseverance, 3),
+                (\.stressResistanceAndEmotionalRegulation, 3),
             ]
         case .cfp:
             return [

@@ -251,10 +251,9 @@ struct Education: Codable, Hashable, Identifiable {
         var creativityAndInsightfulThinking: Int = 0
         var communicationAndNetworking: Int = 0
         var leadershipAndInfluence: Int = 0
-        var courageAndRiskTolerance: Int = 0
+        var visionaryThinkingAndAmbition: Int = 0
         var spacialNavigationAndOrientation: Int = 0
         var carefulnessAndAttentionToDetail: Int = 0
-        var patienceAndPerseverance: Int = 0
         var tinkeringAndFingerPrecision: Int = 0
         var physicalStrengthAndEndurance: Int = 0
         var coordinationAndBalance: Int = 0
@@ -288,13 +287,12 @@ struct Education: Codable, Hashable, Identifiable {
             .init(id: "Creator",     pictogram: "🎨", playerKeyPath: \.creativityAndInsightfulThinking,      requirementKeyPath: \.creativityAndInsightfulThinking),
             .init(id: "Influencer",  pictogram: "📢", playerKeyPath: \.communicationAndNetworking,           requirementKeyPath: \.communicationAndNetworking),
             .init(id: "Leader",      pictogram: "👑", playerKeyPath: \.leadershipAndInfluence,               requirementKeyPath: \.leadershipAndInfluence),
-            .init(id: "Gambler",     pictogram: "🎲", playerKeyPath: \.courageAndRiskTolerance,              requirementKeyPath: \.courageAndRiskTolerance),
+            .init(id: "Visionary",   pictogram: "🔭", playerKeyPath: \.visionaryThinkingAndAmbition,         requirementKeyPath: \.visionaryThinkingAndAmbition),
             .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
             .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
-            .init(id: "Patient",     pictogram: "⏳", playerKeyPath: \.patienceAndPerseverance,              requirementKeyPath: \.patienceAndPerseverance),
             .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
             .init(id: "Strongman",   pictogram: "💪", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.physicalStrengthAndEndurance),
-            .init(id: "Joda",        pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
+            .init(id: "Zen",         pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
             .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
             .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
             .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndStudyHabits),
@@ -342,10 +340,9 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking else { return false }
         guard p.communicationAndNetworking >= r.communicationAndNetworking else { return false }
         guard p.leadershipAndInfluence >= r.leadershipAndInfluence else { return false }
-        guard p.courageAndRiskTolerance >= r.courageAndRiskTolerance else { return false }
+        guard p.visionaryThinkingAndAmbition >= r.visionaryThinkingAndAmbition else { return false }
         guard p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation else { return false }
         guard p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail else { return false }
-        guard p.patienceAndPerseverance >= r.patienceAndPerseverance else { return false }
         guard p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision else { return false }
         guard p.resilienceAndEndurance >= r.physicalStrengthAndEndurance else { return false }
         guard p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation else { return false }
@@ -488,7 +485,6 @@ struct Education: Codable, Hashable, Identifiable {
         case .technology:
             r.analyticalReasoningAndProblemSolving = 4
             r.carefulnessAndAttentionToDetail = 4
-            r.patienceAndPerseverance = 4
             r.selfDisciplineAndStudyHabits = 4
             r.tinkeringAndFingerPrecision = 2
             r.timeManagementAndPlanning = 2
@@ -500,7 +496,6 @@ struct Education: Codable, Hashable, Identifiable {
         case .engineering:
             r.analyticalReasoningAndProblemSolving = 4
             r.spacialNavigationAndOrientation = 4
-            r.patienceAndPerseverance = 4
             r.carefulnessAndAttentionToDetail = 2
             r.tinkeringAndFingerPrecision = 2
             r.timeManagementAndPlanning = 2
@@ -511,7 +506,6 @@ struct Education: Codable, Hashable, Identifiable {
 
         case .science:
             r.analyticalReasoningAndProblemSolving = 4
-            r.patienceAndPerseverance = 4
             r.selfDisciplineAndStudyHabits = 4
             r.timeManagementAndPlanning = 2
             r.presentationAndStorytelling = 2
@@ -523,7 +517,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.creativityAndInsightfulThinking = 5
             r.presentationAndStorytelling = 4
             r.carefulnessAndAttentionToDetail = 2
-            r.patienceAndPerseverance = 2
             r.communicationAndNetworking = 2
             // non-essential
             r.selfDisciplineAndStudyHabits = 1
@@ -545,16 +538,14 @@ struct Education: Codable, Hashable, Identifiable {
             r.timeManagementAndPlanning = 4
             r.presentationAndStorytelling = 4
             r.collaborationAndTeamwork = 2
-            r.courageAndRiskTolerance = 2
+            r.visionaryThinkingAndAmbition = 2
             // non-essential
-            r.patienceAndPerseverance = 1
             r.selfDisciplineAndStudyHabits = 1
 
         case .education:
             r.communicationAndNetworking = 4
             r.stressResistanceAndEmotionalRegulation = 4
             r.presentationAndStorytelling = 4
-            r.patienceAndPerseverance = 4
             r.timeManagementAndPlanning = 2
             // non-essential
             r.collaborationAndTeamwork = 1
@@ -565,7 +556,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.carefulnessAndAttentionToDetail = 4
             r.physicalStrengthAndEndurance = 4
             r.stressResistanceAndEmotionalRegulation = 4
-            r.patienceAndPerseverance = 2
             // non-essential
             r.coordinationAndBalance = 2
             r.timeManagementAndPlanning = 1
@@ -577,12 +567,10 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 4
             r.selfDisciplineAndStudyHabits = 4
             // non-essential
-            r.patienceAndPerseverance = 2
-            r.courageAndRiskTolerance = 1
+            r.visionaryThinkingAndAmbition = 1
             r.timeManagementAndPlanning = 1
 
         case .agriculture:
-            r.patienceAndPerseverance = 4
             r.physicalStrengthAndEndurance = 4
             r.outdoorAndWeatherResilience = 4
             r.timeManagementAndPlanning = 2
@@ -593,7 +581,6 @@ struct Education: Codable, Hashable, Identifiable {
 
         case .humanities:
             r.communicationAndNetworking = 4
-            r.patienceAndPerseverance = 4
             r.presentationAndStorytelling = 4
             r.analyticalReasoningAndProblemSolving = 2
             // non-essential
@@ -604,7 +591,6 @@ struct Education: Codable, Hashable, Identifiable {
             r.analyticalReasoningAndProblemSolving = 4
             r.communicationAndNetworking = 4
             r.carefulnessAndAttentionToDetail = 4
-            r.patienceAndPerseverance = 4
             r.presentationAndStorytelling = 4
             // non-essential
             r.timeManagementAndPlanning = 2
@@ -616,10 +602,9 @@ struct Education: Codable, Hashable, Identifiable {
             r.stressResistanceAndEmotionalRegulation = 4
             r.collaborationAndTeamwork = 4
             r.timeManagementAndPlanning = 2
-            r.patienceAndPerseverance = 2
             // non-essential
             r.presentationAndStorytelling = 1
-            r.courageAndRiskTolerance = 1
+            r.visionaryThinkingAndAmbition = 1
         }
 
         return r
@@ -633,10 +618,9 @@ struct Education: Codable, Hashable, Identifiable {
         x.creativityAndInsightfulThinking = bump(x.creativityAndInsightfulThinking)
         x.communicationAndNetworking = bump(x.communicationAndNetworking)
         x.leadershipAndInfluence = bump(x.leadershipAndInfluence)
-        x.courageAndRiskTolerance = bump(x.courageAndRiskTolerance)
+        x.visionaryThinkingAndAmbition = bump(x.visionaryThinkingAndAmbition)
         x.spacialNavigationAndOrientation = bump(x.spacialNavigationAndOrientation)
         x.carefulnessAndAttentionToDetail = bump(x.carefulnessAndAttentionToDetail)
-        x.patienceAndPerseverance = bump(x.patienceAndPerseverance)
         x.tinkeringAndFingerPrecision = bump(x.tinkeringAndFingerPrecision)
         x.physicalStrengthAndEndurance = bump(x.physicalStrengthAndEndurance)
         x.coordinationAndBalance = bump(x.coordinationAndBalance)
@@ -661,7 +645,6 @@ struct Education: Codable, Hashable, Identifiable {
             if profile.isSTEM {
                 x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
                 x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 2 : 0), 5)
-                x.patienceAndPerseverance = min(max(x.patienceAndPerseverance, x.patienceAndPerseverance > 0 ? 2 : 0), 5)
             }
         case .Master:
             if profile.isSTEM {
@@ -669,14 +652,12 @@ struct Education: Codable, Hashable, Identifiable {
             } else {
                 x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
             }
-            x.patienceAndPerseverance = min(max(x.patienceAndPerseverance, x.patienceAndPerseverance > 0 ? 3 : 0), 5)
         case .Doctorate:
             if profile.isSTEM {
                 x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 5 : 0), 5)
             } else {
                 x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
             }
-            x.patienceAndPerseverance = min(max(x.patienceAndPerseverance, x.patienceAndPerseverance > 0 ? 4 : 0), 5)
             x.selfDisciplineAndStudyHabits = min(max(x.selfDisciplineAndStudyHabits, x.selfDisciplineAndStudyHabits > 0 ? 3 : 0), 5)
         default:
             break
@@ -720,10 +701,9 @@ struct Education: Codable, Hashable, Identifiable {
         x.creativityAndInsightfulThinking = cap(x.creativityAndInsightfulThinking)
         x.communicationAndNetworking = cap(x.communicationAndNetworking)
         x.leadershipAndInfluence = cap(x.leadershipAndInfluence)
-        x.courageAndRiskTolerance = cap(x.courageAndRiskTolerance)
+        x.visionaryThinkingAndAmbition = cap(x.visionaryThinkingAndAmbition)
         x.spacialNavigationAndOrientation = cap(x.spacialNavigationAndOrientation)
         x.carefulnessAndAttentionToDetail = cap(x.carefulnessAndAttentionToDetail)
-        x.patienceAndPerseverance = cap(x.patienceAndPerseverance)
         x.tinkeringAndFingerPrecision = cap(x.tinkeringAndFingerPrecision)
         x.physicalStrengthAndEndurance = cap(x.physicalStrengthAndEndurance)
         x.coordinationAndBalance = cap(x.coordinationAndBalance)
