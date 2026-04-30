@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct CoursesView: View {
-    @EnvironmentObject private var player: Player
+    @ObservedObject var player: Player
 
     @Binding var selectedSoftware: Set<Software>
     @Binding var selectedActivities: Set<String>
-
-    let maxActivitiesPerYear = 1
 
     private var sortedSoftware: [Software] {
         Software.allCases.sorted(by: { $0.rawValue < $1.rawValue })
@@ -17,9 +15,9 @@ struct CoursesView: View {
             VStack(alignment: .leading) {
                 ForEach(sortedSoftware, id: \.self) { sw in
                     SoftwareRow(
+                        player: player,
                         selectedSoftware: $selectedSoftware,
                         selectedActivities: $selectedActivities,
-                        maxActivitiesPerYear: maxActivitiesPerYear,
                         item: sw
                     )
                     .padding(8)
@@ -43,10 +41,10 @@ struct CoursesView: View {
         var body: some View {
             NavigationView {
                 CoursesView(
+                    player: player,
                     selectedSoftware: $selected,
                     selectedActivities: $acts
                 )
-                .environmentObject(player)
             }
         }
     }

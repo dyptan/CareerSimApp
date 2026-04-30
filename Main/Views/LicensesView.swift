@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct LicensesView: View {
-    @EnvironmentObject private var player: Player
+    @ObservedObject var player: Player
 
     @Binding var selectedLicenses: Set<License>
     @Binding var selectedActivities: Set<String>
-
-    let maxActivitiesPerYear = 1
 
     private var sortedLicenses: [License] {
         License.allCases.sorted { $0.rawValue < $1.rawValue }
@@ -17,7 +15,7 @@ struct LicensesView: View {
             ForEach(sortedLicenses, id: \.self) { lic in
                 let isLocked = player.lockedLicenses.contains(lic)
                 let isSelected = selectedLicenses.contains(lic)
-                let atLimit = selectedActivities.count >= maxActivitiesPerYear
+                let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
 
                 let requirement = lic.licenseRequirements(player)
                 let blockedReason: String? = {
@@ -32,14 +30,9 @@ struct LicensesView: View {
                             guard !isLocked else { return }
                             if isOn {
                                 guard !atLimit else { return }
-                                if case .ok(let cost) = lic.licenseRequirements(player) {
-                                    selectedLicenses.insert(lic)
-                                    selectedActivities.insert("lic:\(lic.rawValue)")
-                                    player.savings -= cost
-                                }
-                            } else if selectedLicenses.remove(lic) != nil {
-                                selectedActivities.remove("lic:\(lic.rawValue)")
-                                player.savings += lic.costForLicense
+                                player.purchaseLicense(lic, into: &selectedLicenses, activities: &selectedActivities)
+                            } else {
+                                player.refundLicense(lic, from: &selectedLicenses, activities: &selectedActivities)
                             }
                         }
                     ))
@@ -53,7 +46,7 @@ struct LicensesView: View {
                     .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil))) ? 0.5 : 1.0)
                     .help(
                         isLocked ? "Locked after year end" :
-                        (!isSelected && atLimit) ? "You can take up to \(maxActivitiesPerYear) activities this year." :
+                        (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
                         (blockedReason ?? "")
                     )
 
@@ -85,8 +78,7 @@ struct LicensesView: View {
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
-                LicensesView(selectedLicenses: $selected, selectedActivities: $acts)
-                    .environmentObject(player)
+                LicensesView(player: player, selectedLicenses: $selected, selectedActivities: $acts)
             }
         }
     }

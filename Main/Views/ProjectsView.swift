@@ -1,28 +1,25 @@
 import SwiftUI
 
 struct ProjectsView: View {
-    @EnvironmentObject private var player: Player
+    @ObservedObject var player: Player
 
     @Binding var selectedPortfolio: Set<Project>
     @Binding var selectedActivities: Set<String>
-
-    let maxActivitiesPerYear = 1
 
     private var sortedPortfolio: [Project] {
         Project.allCases.sorted(by: { $0.rawValue < $1.rawValue })
     }
 
     private struct ProjectRow: View {
-        @EnvironmentObject private var player: Player
+        @ObservedObject var player: Player
         let item: Project
         @Binding var selectedPortfolio: Set<Project>
         @Binding var selectedActivities: Set<String>
-        let maxActivitiesPerYear: Int
 
         var body: some View {
             let isLocked = player.lockedPortfolio.contains(item)
             let isSelected = selectedPortfolio.contains(item)
-            let atLimit = selectedActivities.count >= maxActivitiesPerYear
+            let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
 
             let reqs = item.requirements(for: player)
             let meetsAllRequirements =
@@ -71,7 +68,7 @@ struct ProjectsView: View {
                     isLocked
                         ? "Locked after year end"
                         : ((!isSelected && atLimit)
-                            ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                            ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year."
                             : (!isSelected && !meetsAllRequirements)
                                 ? "Requirements not met yet."
                                 : "")
@@ -115,13 +112,12 @@ struct ProjectsView: View {
             VStack(alignment: .leading) {
                 ForEach(sortedPortfolio, id: \.self) { item in
                     ProjectRow(
+                        player: player,
                         item: item,
                         selectedPortfolio: $selectedPortfolio,
-                        selectedActivities: $selectedActivities,
-                        maxActivitiesPerYear: maxActivitiesPerYear
+                        selectedActivities: $selectedActivities
                     )
                     .padding(8)
-                    .environmentObject(player)
                 }
             }
         }
@@ -137,10 +133,10 @@ struct ProjectsView: View {
         var body: some View {
             NavigationView {
                 ProjectsView(
+                    player: player,
                     selectedPortfolio: $selected,
                     selectedActivities: $acts
                 )
-                .environmentObject(player)
             }
         }
     }

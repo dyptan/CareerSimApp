@@ -59,4 +59,23 @@ final class AppUIState: ObservableObject {
         self.showLicensesSheet = showLicensesSheet
         self.showRetirementSheet = showRetirementSheet
     }
+
+    func reset() {
+        showDecisionSheet = false
+        showTertiarySheet = false
+        showCareersSheet = true
+        showProjectsSheet = false
+        showCoursesSheet = false
+        showActivitiesSheet = false
+        showCertificationsSheet = false
+        showLicensesSheet = false
+        showRetirementSheet = false
+        selectedActivities = []
+        selectedSoftware = []
+        selectedLicenses = []
+        selectedPortfolio = []
+        selectedCertifications = []
+        yearsLeftToGraduation = nil
+        decisionText = ""
+    }
 }

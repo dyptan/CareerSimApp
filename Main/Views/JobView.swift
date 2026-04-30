@@ -106,91 +106,6 @@ struct JobDetail: View {
         educationMet && hardSkillsMet
     }
 
-    // MARK: - UI helpers
-
-    private func requirementRow(
-        label: String,
-        emoji: String,
-        level: Int,
-        playerLevel: Int
-    ) -> some View {
-        let required = max(level, 0)
-        let meets = playerLevel >= required
-
-        return HStack {
-            Text(label)
-            Spacer()
-            HStack(spacing: 0) {
-                ForEach(0..<required, id: \.self) { idx in
-                    Text(emoji)
-                        .opacity(idx < playerLevel ? 1.0 : 0.35)
-                }
-            }
-            .font(.body)
-        }
-        .font(.body)
-        .foregroundStyle(meets ? .primary : .secondary)
-        .padding(.horizontal)
-        .padding(0.5)
-    }
-
-    private func softLabel(for keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
-        switch keyPath {
-        case \.analyticalReasoningAndProblemSolving: return "Analytical reasoning"
-        case \.creativityAndInsightfulThinking: return "Creativity"
-        case \.communicationAndNetworking: return "Communication"
-        case \.leadershipAndInfluence: return "Leadership"
-        case \.courageAndRiskTolerance: return "Courage"
-        case \.spacialNavigationAndOrientation: return "Spatial navigation"
-        case \.carefulnessAndAttentionToDetail: return "Attention to detail"
-        case \.patienceAndPerseverance: return "Perseverance"
-        case \.tinkeringAndFingerPrecision: return "Finger precision"
-        case \.resilienceAndEndurance: return "Strength & endurance"
-        default: return ""
-        }
-    }
-    
-    private func softPictogram(for keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
-        switch keyPath {
-        case \.analyticalReasoningAndProblemSolving: return "🧠"
-        case \.creativityAndInsightfulThinking: return "🎨"
-        case \.communicationAndNetworking: return "🗣️"
-        case \.leadershipAndInfluence: return "⭐️"
-        case \.courageAndRiskTolerance: return "⚡️"
-        case \.spacialNavigationAndOrientation: return "🧭"
-        case \.carefulnessAndAttentionToDetail: return "🔎"
-        case \.patienceAndPerseverance: return "⏳"
-        case \.tinkeringAndFingerPrecision: return "🛠️"
-        case \.resilienceAndEndurance: return "💪"
-        default: return ""
-        }
-    }
-
-    private func softRequirement(
-        _ keyPath: WritableKeyPath<SoftSkills, Int>,
-        _ requiredLevel: Int
-    ) -> some View {
-        requirementRow(
-            label: softLabel(for: keyPath),
-            emoji: softPictogram(for: keyPath),
-            level: requiredLevel,
-            playerLevel: player.softSkills[keyPath: keyPath]
-        )
-    }
-
-    private func hardRequirementRow(label: String, emoji: String, met: Bool)
-        -> some View
-    {
-        HStack {
-            Text(label)
-            Spacer()
-            Text(emoji)
-                .opacity(met ? 1.0 : 0.35)
-        }
-        .font(.body)
-        .foregroundStyle(met ? .primary : .secondary)
-        .padding(.horizontal)
-    }
 
     var body: some View {
         ScrollView {
@@ -250,112 +165,87 @@ struct JobDetail: View {
                 .frame(maxWidth: .infinity ,alignment: .leading)
                 .padding()
             
-            requirementRow(
+            let eduPlayerLevel = player.degrees.last?.eqf ?? 0
+            let eduRequired = job.requirements.education.minEQF
+            RequirementRow(
                 label: job.requirements.education.educationLabel(),
                 emoji: "🎓",
-                level: job.requirements.education.minEQF,
-                playerLevel: player.degrees.last?.eqf ?? 0
+                style: .meter(current: eduPlayerLevel, required: eduRequired)
             )
-            
-            
-            if requiredSoft.analyticalReasoningAndProblemSolving
-                + requiredSoft.creativityAndInsightfulThinking
-                + requiredSoft.communicationAndNetworking
-                + requiredSoft.leadershipAndInfluence
-                + requiredSoft.courageAndRiskTolerance
-                + requiredSoft.spacialNavigationAndOrientation
-                + requiredSoft.carefulnessAndAttentionToDetail
-                + requiredSoft.tinkeringAndFingerPrecision
-                + requiredSoft.stressResistanceAndEmotionalRegulation
-                + requiredSoft.resilienceAndEndurance > 0
-                
-            {
+            .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
+            .padding(.horizontal)
+
+            let requiredSkills = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
+            if !requiredSkills.isEmpty {
                 Text("Skills:")
                     .font(.headline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
-                softRequirement(\.analyticalReasoningAndProblemSolving, requiredSoft.analyticalReasoningAndProblemSolving)
-                softRequirement(\.creativityAndInsightfulThinking, requiredSoft.creativityAndInsightfulThinking)
-                softRequirement(\.communicationAndNetworking, requiredSoft.communicationAndNetworking)
-                softRequirement(\.leadershipAndInfluence, requiredSoft.leadershipAndInfluence)
-                softRequirement(\.courageAndRiskTolerance, requiredSoft.courageAndRiskTolerance)
-                softRequirement(\.spacialNavigationAndOrientation, requiredSoft.spacialNavigationAndOrientation)
-                softRequirement(\.carefulnessAndAttentionToDetail, requiredSoft.carefulnessAndAttentionToDetail)
-                softRequirement(\.patienceAndPerseverance, requiredSoft.patienceAndPerseverance)
-                softRequirement(\.tinkeringAndFingerPrecision, requiredSoft.tinkeringAndFingerPrecision)
-                softRequirement(\.resilienceAndEndurance, requiredSoft.resilienceAndEndurance)
+                ForEach(requiredSkills, id: \.label) { skill in
+                    let required = requiredSoft[keyPath: skill.keyPath]
+                    let playerValue = player.softSkills[keyPath: skill.keyPath]
+                    RequirementRow(label: skill.label, emoji: skill.pictogram, style: .meter(current: playerValue, required: required))
+                        .foregroundStyle(playerValue >= required ? .primary : .secondary)
+                        .padding(.horizontal)
+                }
             }
 
             
             if !requiredHard.certifications.isEmpty {
                 Text("Certifications:")
                     .font(.headline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                
+
                 ForEach(Array(requiredHard.certifications).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { code in
                     let enumVal = certFrom(raw: code.rawValue)
-                    let owned =
-                        enumVal.map {
-                            player.hardSkills.certifications.contains($0)
-                        } ?? false
-                    hardRequirementRow(
-                        label: enumVal?.friendlyName ?? code.rawValue,
-                        emoji: enumVal?.pictogram ?? "🎓",
-                        met: owned
-                    )
+                    let owned = enumVal.map { player.hardSkills.certifications.contains($0) } ?? false
+                    RequirementRow(label: enumVal?.friendlyName ?? code.rawValue, emoji: enumVal?.pictogram ?? "🎓", style: .badge(isMet: owned))
+                        .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
                 }
             }
 
-            
             if !requiredHard.licenses.isEmpty {
                 Text("Licenses:")
                     .font(.headline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
                 ForEach(Array(requiredHard.licenses).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { license in
                     let owned = player.hardSkills.licenses.contains(license)
-                    hardRequirementRow(
-                        label: license.friendlyName,
-                        emoji: license.pictogram,
-                        met: owned
-                    )
+                    RequirementRow(label: license.friendlyName, emoji: license.pictogram, style: .badge(isMet: owned))
+                        .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
                 }
             }
 
-            
             if !requiredHard.software.isEmpty {
                 Text("Software:")
                     .font(.headline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
                 ForEach(Array(requiredHard.software).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { software in
                     let owned = player.hardSkills.software.contains(software)
-                    hardRequirementRow(
-                        label: software.rawValue,
-                        emoji: software.pictogram,
-                        met: owned
-                    )
+                    RequirementRow(label: software.rawValue, emoji: software.pictogram, style: .badge(isMet: owned))
+                        .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
                 }
             }
 
-            
             if !requiredHard.portfolioItems.isEmpty {
                 Text("Portfolio:")
                     .font(.headline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
                 ForEach(Array(requiredHard.portfolioItems).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { project in
                     let owned = player.hardSkills.portfolioItems.contains(project)
-                    hardRequirementRow(
-                        label: project.rawValue,
-                        emoji: project.pictogram,
-                        met: owned
-                    )
+                    RequirementRow(label: project.rawValue, emoji: project.pictogram, style: .badge(isMet: owned))
+                        .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
                 }
             }
 

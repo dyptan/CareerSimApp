@@ -4,8 +4,6 @@ struct ActivitiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
 
-    var maxActivitiesPerYear = 3
-
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
@@ -21,10 +19,10 @@ struct ActivitiesView: View {
                 Text("Activities this year:")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text("\(selectedActivities.count)/\(maxActivitiesPerYear)")
+                Text("\(selectedActivities.count)/\(GameConstants.maxSoftActivitiesPerYear)")
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(
-                        selectedActivities.count >= maxActivitiesPerYear
+                        selectedActivities.count >= GameConstants.maxSoftActivitiesPerYear
                             ? .red : .primary
                     )
             }
@@ -42,7 +40,7 @@ struct ActivitiesView: View {
                         }()
 
                         let isLocked = player.lockedActivities.contains(activity.label)
-                        let atLimit = selectedActivities.count >= maxActivitiesPerYear
+                        let atLimit = selectedActivities.count >= GameConstants.maxSoftActivitiesPerYear
                         let isSelected = selectedActivities.contains(activity.label)
 
                         Toggle(
@@ -51,17 +49,9 @@ struct ActivitiesView: View {
                                 get: { isSelected },
                                 set: { isOn in
                                     if isOn && !atLimit {
-                                        selectedActivities.insert(activity.label)
-                                        for ability in activity.abilities {
-                                            let writableKeyPath = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-                                            player.softSkills[keyPath: writableKeyPath] += ability.weight
-                                        }
+                                        player.selectActivity(activity, into: &selectedActivities)
                                     } else if !isOn {
-                                        _ = selectedActivities.remove(activity.label)
-                                        for ability in activity.abilities {
-                                            let writableKeyPath = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-                                            player.softSkills[keyPath: writableKeyPath] -= ability.weight
-                                        }
+                                        player.deselectActivity(activity, from: &selectedActivities)
                                     }
                                 }
                             )
@@ -75,7 +65,7 @@ struct ActivitiesView: View {
                             isLocked
                                 ? "Locked after year end"
                                 : ((!isSelected && atLimit)
-                                    ? "You can take up to \(maxActivitiesPerYear) activities this year."
+                                    ? "You can take up to \(GameConstants.maxSoftActivitiesPerYear) activities this year."
                                     : "")
                         )
                         #if os(macOS)
