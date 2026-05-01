@@ -47,8 +47,14 @@ struct EducationView: View {
                     )
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(profile.rawValue.capitalized)
-                            .font(.headline)
+                        HStack(spacing: 6) {
+                            Text(profile.rawValue.capitalized)
+                                .font(.headline)
+                            InfoHint(
+                                title: profile.rawValue.capitalized,
+                                message: "\(profile.degreeMeaning)\n\nLikely jobs: \(profile.helpfulJobs)."
+                            )
+                        }
                         Text(profile.description)
                             .font(.caption)
                             .foregroundStyle(.secondary)

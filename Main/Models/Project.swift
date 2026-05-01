@@ -7,8 +7,30 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     case library = "Library"
     case paper = "Paper"
     case presentation = "Presentation"
+    case paintingPortfolio = "Painting Portfolio"
+    case photoPortfolio = "Photo Portfolio"
+    case musicAlbum = "Music Album"
+    case recipeBook = "Recipe Book"
+    case lessonPlan = "Lesson Plan"
 
     var id: String { rawValue }
+
+    /// Plain-language explanation of the portfolio project type, for the in-game info popover.
+    var description: String {
+        switch self {
+        case .app: return "A small mobile or desktop app you build to show off in interviews. Demonstrates that you can ship working software end-to-end."
+        case .game: return "A playable video game project. Strong portfolio piece for game-developer roles — shows you can combine code, design, and visuals."
+        case .website: return "A real website you’ve designed and built. Most common portfolio piece for web developers and designers."
+        case .library: return "A reusable code library that other developers can install and use. Signals strong engineering and documentation skills."
+        case .paper: return "A written research paper or long-form article. Counts toward science, humanities, and academic careers."
+        case .presentation: return "A polished talk or pitch deck. Useful for business, marketing, design, and education roles."
+        case .paintingPortfolio: return "A collection of paintings or drawings to show galleries, art schools, and clients. The standard entry portfolio for visual artists."
+        case .photoPortfolio: return "A curated set of your best photos, edited and presented as a body of work. Required for photography and photojournalism jobs."
+        case .musicAlbum: return "A finished collection of recorded songs. Demonstrates writing, performing, and producing skills to record labels and venues."
+        case .recipeBook: return "A collection of original recipes, photographed and written up. Builds your reputation as a chef or food creator."
+        case .lessonPlan: return "A set of structured lessons with objectives, activities, and assessments. Required portfolio piece for teaching and tutoring jobs."
+        }
+    }
 
     var pictogram: String {
         switch self {
@@ -18,6 +40,11 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         case .library: return "📦"
         case .paper: return "📄"
         case .presentation: return "🖥️"
+        case .paintingPortfolio: return "🖼️"
+        case .photoPortfolio: return "📷"
+        case .musicAlbum: return "🎵"
+        case .recipeBook: return "🍳"
+        case .lessonPlan: return "🍎"
         }
     }
 
@@ -36,6 +63,16 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.officeSuite]
         case .presentation:
             return [.officeSuite, .mediaEditing]
+        case .paintingPortfolio:
+            return []
+        case .photoPortfolio:
+            return [.mediaEditing]
+        case .musicAlbum:
+            return [.musicProduction]
+        case .recipeBook:
+            return [.officeSuite]
+        case .lessonPlan:
+            return [.officeSuite]
         }
     }
 
@@ -52,6 +89,10 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                 return player.softSkills.timeManagementAndPlanning
             case "Attention to Detail":
                 return player.softSkills.carefulnessAndAttentionToDetail
+            case "Perseverance":
+                return player.softSkills.selfDisciplineAndPerseverance
+            case "Finger Precision":
+                return player.softSkills.tinkeringAndFingerPrecision
             default:
                 return 0
             }
@@ -143,6 +184,62 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                 hardSkills: [
                     hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1),
                     hard(.mediaEditing, label: "Media Editing", emoji: "🎨", required: 1)
+                ]
+            )
+
+        case .paintingPortfolio:
+            return ProjectRequirements(
+                softSkills: [
+                    soft("Creativity", "🎨", required: 4),
+                    soft("Attention to Detail", "🔎", required: 3),
+                    soft("Finger Precision", "🛠️", required: 2)
+                ],
+                hardSkills: []
+            )
+
+        case .photoPortfolio:
+            return ProjectRequirements(
+                softSkills: [
+                    soft("Creativity", "🎨", required: 3),
+                    soft("Attention to Detail", "🔎", required: 3)
+                ],
+                hardSkills: [
+                    hard(.mediaEditing, label: "Media Editing", emoji: "🎨", required: 1)
+                ]
+            )
+
+        case .musicAlbum:
+            return ProjectRequirements(
+                softSkills: [
+                    soft("Creativity", "🎨", required: 4),
+                    soft("Perseverance", "🏆", required: 3)
+                ],
+                hardSkills: [
+                    hard(.musicProduction, label: "Music Production", emoji: "🎚️", required: 1)
+                ]
+            )
+
+        case .recipeBook:
+            return ProjectRequirements(
+                softSkills: [
+                    soft("Creativity", "🎨", required: 3),
+                    soft("Attention to Detail", "🔎", required: 3),
+                    soft("Organization", "🗂️", required: 2)
+                ],
+                hardSkills: [
+                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1)
+                ]
+            )
+
+        case .lessonPlan:
+            return ProjectRequirements(
+                softSkills: [
+                    soft("Communication", "🗣️", required: 3),
+                    soft("Organization", "🗂️", required: 3),
+                    soft("Attention to Detail", "🔎", required: 2)
+                ],
+                hardSkills: [
+                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1)
                 ]
             )
         }

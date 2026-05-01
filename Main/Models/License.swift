@@ -10,6 +10,11 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     case plumber = "Plumber License"
     case realEstateAgent = "Real Estate Agent"
     case insuranceAgent = "Insurance Agent"
+    case bar = "Bar Admission"
+    case professionalEngineer = "Professional Engineer"
+    case architect = "Architect Licence"
+    case pesticideApplicator = "Pesticide Applicator"
+    case securityGuard = "Security Guard Licence"
 
     var id: String { rawValue }
 
@@ -24,6 +29,31 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .plumber: return "Plumber License"
         case .realEstateAgent: return "Real Estate Agent License"
         case .insuranceAgent: return "Insurance Agent License"
+        case .bar: return "Bar Admission (Lawyer)"
+        case .professionalEngineer: return "Professional Engineer (PE)"
+        case .architect: return "Architect Licence"
+        case .pesticideApplicator: return "Pesticide Applicator Licence"
+        case .securityGuard: return "Security Guard Licence"
+        }
+    }
+
+    /// Plain-language explanation of the licence, for the in-game info popover.
+    var description: String {
+        switch self {
+        case .drivers: return "Standard car licence. Needed for most jobs that involve any driving."
+        case .cdl: return "Commercial Driver’s Licence — required to drive trucks, buses, and large delivery vehicles for paid work."
+        case .pilot: return "Private pilot licence — lets you fly small planes for fun, but not for paid work."
+        case .commercialPilot: return "Lets you fly planes for paid work — required to be hired by airlines and freight carriers."
+        case .nurse: return "Government licence to work as a nurse. Earned after passing a national exam following a nursing degree."
+        case .electrician: return "Government licence to wire buildings safely. Earned after an apprenticeship and an exam."
+        case .plumber: return "Government licence to install and repair pipes, drains, and water systems."
+        case .realEstateAgent: return "Government licence to buy and sell property on behalf of clients."
+        case .insuranceAgent: return "Government licence to sell insurance policies — health, home, life, business."
+        case .bar: return "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practise as a lawyer in court."
+        case .professionalEngineer: return "Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles."
+        case .architect: return "State licence required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB)."
+        case .pesticideApplicator: return "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs."
+        case .securityGuard: return "State licence required to work as an unarmed security guard. Covers law, ethics, and basic emergency response."
         }
     }
 
@@ -38,6 +68,11 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .plumber: return "🔧"
         case .realEstateAgent: return "🏠"
         case .insuranceAgent: return "📄"
+        case .bar: return "⚖️"
+        case .professionalEngineer: return "🏗️"
+        case .architect: return "📐"
+        case .pesticideApplicator: return "🌱"
+        case .securityGuard: return "🛡️"
         }
     }
     
@@ -70,6 +105,21 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .insuranceAgent:
             // Pre-licensing course + exam + license
             return 600
+        case .bar:
+            // Bar exam + bar prep course (school is separate)
+            return 5000
+        case .professionalEngineer:
+            // FE + PE exam fees + state licensing
+            return 1500
+        case .architect:
+            // ARE multi-division exam + state licensing
+            return 2500
+        case .pesticideApplicator:
+            // State certification course + exam
+            return 300
+        case .securityGuard:
+            // Pre-licensing course + state guard card
+            return 250
         }
     }
 
@@ -77,8 +127,10 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     // Minimum EQF level (education) required before pursuing this license
     var minEQF: Int {
         switch self {
-        case .nurse, .electrician, .plumber: return 4  // vocational trade training required
-        default: return 0
+        case .bar:                                      return 7  // requires a Doctor of Law (J.D.)
+        case .architect, .professionalEngineer:         return 5  // requires a Bachelor in the field
+        case .nurse, .electrician, .plumber:            return 4  // vocational trade training required
+        default:                                        return 0
         }
     }
 
@@ -157,6 +209,47 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.analyticalReasoningAndProblemSolving, 2),
                 (\.carefulnessAndAttentionToDetail, 2),
             ]
+        case .bar:
+            // Bar exam: enormous study load + courtroom-grade analysis and communication
+            return [
+                (\.analyticalReasoningAndProblemSolving, 4),
+                (\.communicationAndNetworking, 4),
+                (\.selfDisciplineAndPerseverance, 4),
+                (\.presentationAndStorytelling, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+            ]
+        case .professionalEngineer:
+            // PE exam: deep technical mastery; signed plans must be defensible in court
+            return [
+                (\.analyticalReasoningAndProblemSolving, 4),
+                (\.spacialNavigationAndOrientation, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.selfDisciplineAndPerseverance, 3),
+            ]
+        case .architect:
+            // ARE: design judgement combined with code, structural, and project knowledge
+            return [
+                (\.creativityAndInsightfulThinking, 3),
+                (\.spacialNavigationAndOrientation, 3),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.communicationAndNetworking, 2),
+                (\.selfDisciplineAndPerseverance, 2),
+            ]
+        case .pesticideApplicator:
+            // Pesticide handling: chemical safety, label law, careful dosing
+            return [
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.outdoorAndWeatherResilience, 2),
+                (\.analyticalReasoningAndProblemSolving, 2),
+            ]
+        case .securityGuard:
+            // De-escalation, calm presence, clear reporting
+            return [
+                (\.stressResistanceAndEmotionalRegulation, 3),
+                (\.communicationAndNetworking, 2),
+                (\.carefulnessAndAttentionToDetail, 2),
+                (\.resilienceAndEndurance, 2),
+            ]
         }
     }
 
@@ -167,11 +260,12 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .drivers:
             if age < 16 { return .blocked(reason: "Requires age 16+") }
-        case .cdl, .realEstateAgent, .insuranceAgent, .nurse, .electrician, .plumber:
+        case .cdl, .realEstateAgent, .insuranceAgent, .nurse, .electrician, .plumber,
+             .pesticideApplicator, .securityGuard:
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         case .pilot:
             if age < 17 { return .blocked(reason: "Requires age 17+") }
-        case .commercialPilot:
+        case .commercialPilot, .bar, .professionalEngineer, .architect:
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         }
 

@@ -156,6 +156,21 @@ final class Player: ObservableObject {
         }
     }
 
+    /// Applies for a job at the given salary. Returns true if hired.
+    /// Side effects: marks the job as applied; if hired, sets currentOccupation with the agreed salary.
+    @discardableResult
+    func applyForJob(_ job: Job, requestedSalary: Int) -> Bool {
+        appliedJobIds.insert(job.id)
+        let probability = job.hireProbability(for: self, requestedSalary: Double(requestedSalary))
+        let hired = Double.random(in: 0...1) < probability
+        if hired {
+            var hiredJob = job
+            hiredJob.annualIncome = requestedSalary
+            currentOccupation = hiredJob
+        }
+        return hired
+    }
+
     func reset() {
         let fresh = Player()
         age = fresh.age

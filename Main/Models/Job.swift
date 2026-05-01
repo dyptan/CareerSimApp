@@ -155,6 +155,73 @@ struct Job: Identifiable, Codable, Hashable {
     }
 }
 
+// MARK: - Job evaluation (player fit, hire probability)
+
+extension Job {
+    /// Soft-skill keypaths counted by the hire-probability score.
+    /// 15 entries; do not change without updating hire-probability divisor.
+    private static let scoredSoftSkills: [WritableKeyPath<SoftSkills, Int>] = [
+        \.analyticalReasoningAndProblemSolving,
+        \.creativityAndInsightfulThinking,
+        \.communicationAndNetworking,
+        \.leadershipAndInfluence,
+        \.visionaryThinkingAndAmbition,
+        \.spacialNavigationAndOrientation,
+        \.carefulnessAndAttentionToDetail,
+        \.tinkeringAndFingerPrecision,
+        \.resilienceAndEndurance,
+        \.outdoorAndWeatherResilience,
+        \.stressResistanceAndEmotionalRegulation,
+        \.collaborationAndTeamwork,
+        \.timeManagementAndPlanning,
+        \.selfDisciplineAndPerseverance,
+        \.presentationAndStorytelling,
+    ]
+
+    func educationMet(for player: Player) -> Bool {
+        let playerEQF = player.degrees.last?.eqf ?? 0
+        guard playerEQF >= requirements.education.minEQF else { return false }
+        if let accepted = requirements.education.acceptedProfiles, !accepted.isEmpty {
+            let playerProfiles = player.degrees.compactMap { $0.profile }
+            if playerProfiles.isEmpty { return false }
+            return playerProfiles.contains(where: { accepted.contains($0) })
+        }
+        return true
+    }
+
+    func softSkillsHelpfulScore(for player: Player) -> Int {
+        Self.scoredSoftSkills.reduce(0) { score, kp in
+            score + (player.softSkills[keyPath: kp] >= requirements.softSkills[keyPath: kp] ? 1 : 0)
+        }
+    }
+
+    func hardSkillsMet(for player: Player) -> Bool {
+        requirements.hardSkills.certifications.isSubset(of: player.hardSkills.certifications)
+            && requirements.hardSkills.licenses.isSubset(of: player.hardSkills.licenses)
+            && requirements.hardSkills.software.isSubset(of: player.hardSkills.software)
+            && requirements.hardSkills.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+    }
+
+    func allRequirementsMet(for player: Player) -> Bool {
+        // Emphasize degree + hard skills; soft skills are helpful only.
+        educationMet(for: player) && hardSkillsMet(for: player)
+    }
+
+    func salaryAlignmentFactor(requestedSalary: Double) -> Double {
+        let ratio = requestedSalary / Double(annualIncome)
+        if ratio <= 1.0 { return 1.0 }
+        // Asking more than budget: probability drops steeply above 33% excess.
+        return max(0.0, 1.0 - (ratio - 1.0) * 3.0)
+    }
+
+    func hireProbability(for player: Player, requestedSalary: Double) -> Double {
+        guard allRequirementsMet(for: player) else { return 0.0 }
+        let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
+        let raw = (0.2 + skillScore * 0.7) * salaryAlignmentFactor(requestedSalary: requestedSalary)
+        return max(0.05, min(0.95, raw))
+    }
+}
+
 // Example remains only for previews if needed
 var jobExample = Job(
     id: "superman",

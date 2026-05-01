@@ -12,62 +12,69 @@ struct LicensesView: View {
 
     var body: some View {
         ScrollView {
-            ForEach(sortedLicenses, id: \.self) { lic in
-                let isLocked = player.lockedLicenses.contains(lic)
-                let isSelected = selectedLicenses.contains(lic)
-                let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
-
-                let requirement = lic.licenseRequirements(player)
-                let blockedReason: String? = {
-                    if case .blocked(let reason) = requirement { return reason }
-                    return nil
-                }()
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Toggle(lic.friendlyName, isOn: Binding(
-                        get: { isSelected },
-                        set: { isOn in
-                            guard !isLocked else { return }
-                            if isOn {
-                                guard !atLimit else { return }
-                                player.purchaseLicense(lic, into: &selectedLicenses, activities: &selectedActivities)
-                            } else {
-                                player.refundLicense(lic, from: &selectedLicenses, activities: &selectedActivities)
-                            }
-                        }
-                    ))
-                    #if os(macOS)
-                    .toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                    .toggleStyle(.switch)
-                    #endif
-                    .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil)))
-                    .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil))) ? 0.5 : 1.0)
-                    .help(
-                        isLocked ? "Locked after year end" :
-                        (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
-                        (blockedReason ?? "")
-                    )
-
-                    let thresholds = lic.softSkillThresholds
-                    if !thresholds.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
-                                RequirementRow(
-                                    label: SoftSkills.label(forKeyPath: pair.0) ?? "",
-                                    emoji: SoftSkills.pictogram(forKeyPath: pair.0) ?? "",
-                                    style: .meter(current: player.softSkills[keyPath: pair.0], required: pair.1)
-                                )
-                            }
-                        }
-                        .padding(4)
-                    }
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(sortedLicenses, id: \.self) { lic in
+                    row(for: lic).padding(8)
                 }
-                .padding(8)
             }
         }
         .padding()
+    }
+
+    @ViewBuilder
+    private func row(for lic: License) -> some View {
+        let isLocked = player.lockedLicenses.contains(lic)
+        let isSelected = selectedLicenses.contains(lic)
+        let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
+
+        let blockedReason: String? = {
+            if case .blocked(let reason) = lic.licenseRequirements(player) { return reason }
+            return nil
+        }()
+        let state = trainingRowState(isLocked: isLocked, isSelected: isSelected, atLimit: atLimit, blockedReason: blockedReason)
+
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                // InfoHint sits outside the Toggle so it stays tappable
+                // even when the toggle is disabled by missing requirements.
+                InfoHint(title: "\(lic.pictogram) \(lic.friendlyName)", message: lic.description)
+                Toggle(lic.friendlyName, isOn: Binding(
+                    get: { isSelected },
+                    set: { isOn in
+                        guard !isLocked else { return }
+                        if isOn {
+                            guard !atLimit else { return }
+                            player.purchaseLicense(lic, into: &selectedLicenses, activities: &selectedActivities)
+                        } else {
+                            player.refundLicense(lic, from: &selectedLicenses, activities: &selectedActivities)
+                        }
+                    }
+                ))
+                .platformToggleStyle()
+                .disabled(state.disabled)
+                .opacity(state.disabled ? 0.5 : 1.0)
+                .help(state.helpText)
+            }
+
+            Text("Costs $\(lic.costForLicense.formatted(.number))")
+                .font(.caption)
+                .foregroundStyle(player.savings >= lic.costForLicense ? Color.secondary : Color.red)
+                .padding(.leading, 8)
+
+            let thresholds = lic.softSkillThresholds
+            if !thresholds.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
+                        RequirementRow(
+                            label: SoftSkills.label(forKeyPath: pair.0) ?? "",
+                            emoji: SoftSkills.pictogram(forKeyPath: pair.0) ?? "",
+                            style: .meter(current: player.softSkills[keyPath: pair.0], required: pair.1)
+                        )
+                    }
+                }
+                .padding(4)
+            }
+        }
     }
 }
 

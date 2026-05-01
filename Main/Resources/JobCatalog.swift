@@ -1,8 +1,7 @@
-// HardcodedJobs.swift
 import Foundation
 
-enum JobExamples {
-    static func sampleJobs() -> [Job] {
+enum JobCatalog {
+    static func allJobs() -> [Job] {
 
         // MARK: - Detailed jobs (hand-tuned soft skills)
 

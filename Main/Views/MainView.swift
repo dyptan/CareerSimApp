@@ -5,7 +5,7 @@ struct MainView: View {
     @StateObject var appUIState = AppUIState()
 
     private var availableJobs: [Job] {
-        JobExamples.sampleJobs()
+        JobCatalog.allJobs()
     }
 
     var body: some View {

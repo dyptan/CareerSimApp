@@ -13,124 +13,12 @@ struct JobDetail: View {
     private var sliderMin: Double { Double(job.income) * 0.5 }
     private var sliderMax: Double { Double(job.income) * 2.0 }
 
-    private var requiredSoft: SoftSkills {
-        job.requirements.softSkills
-    }
-    private var requiredHard: HardSkills {
-        job.requirements.hardSkills
-    }
-
-    private func certFrom(raw: String) -> Certification? {
-        Certification(rawValue: raw)
-    }
-    private func licenseFrom(raw: String) -> License? {
-
-        switch raw {
-        case "B", "Driver's License": return .drivers
-        case "CE", "CDL": return .cdl
-        case "RN", "Nurse", "Nurse License": return .nurse
-        case "EL", "Electrician License": return .electrician
-        case "PL", "Plumber License": return .plumber
-        default:
-            return License(rawValue: raw)
-        }
-    }
-    
-    private func softwareFrom(raw: String) -> Software? {
-        switch raw {
-        case "Office": return .officeSuite
-        case "Programming": return .programming
-        case "Photo/Video Editing": return .mediaEditing
-        case "Game Engine": return .gameEngine
-        default:
-            return Software(rawValue: raw)
-        }
-    }
-    
-    private func portfolioFrom(raw: String) -> Project? {
-        Project(rawValue: raw)
-    }
-
-    // MARK: - Requirement checks
-
-    private var educationMet: Bool {
-        let playerEQF = player.degrees.last?.eqf ?? 0
-        guard playerEQF >= job.requirements.education.minEQF else {
-            return false
-        }
-
-        if let accepted = job.requirements.education.acceptedProfiles,
-            !accepted.isEmpty
-        {
-            let playerProfiles = player.degrees.compactMap { $0.profile }
-            if playerProfiles.isEmpty { return false }
-            return playerProfiles.contains(where: { accepted.contains($0) })
-        }
-
-        return true
-    }
-
-    private var softSkillsHelpfulScore: Int {
-        let p = player.softSkills
-        let r = requiredSoft
-        var score = 0
-        if p.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving { score += 1 }
-        if p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking { score += 1 }
-        if p.communicationAndNetworking >= r.communicationAndNetworking { score += 1 }
-        if p.leadershipAndInfluence >= r.leadershipAndInfluence { score += 1 }
-        if p.visionaryThinkingAndAmbition >= r.visionaryThinkingAndAmbition { score += 1 }
-        if p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation { score += 1 }
-        if p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail { score += 1 }
-        if p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision { score += 1 }
-        if p.resilienceAndEndurance >= r.resilienceAndEndurance { score += 1 }
-        if p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience { score += 1 }
-        if p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation { score += 1 }
-        if p.collaborationAndTeamwork >= r.collaborationAndTeamwork { score += 1 }
-        if p.timeManagementAndPlanning >= r.timeManagementAndPlanning { score += 1 }
-        if p.selfDisciplineAndPerseverance >= r.selfDisciplineAndPerseverance { score += 1 }
-        if p.presentationAndStorytelling >= r.presentationAndStorytelling { score += 1 }
-        return score
-    }
-
-    private var salaryAlignmentFactor: Double {
-        let ratio = requestedSalary / Double(job.annualIncome)
-        if ratio <= 1.0 { return 1.0 }
-        // asking more than company budget: probability drops steeply above 15% excess
-        return max(0.0, 1.0 - (ratio - 1.0) * 3.0)
-    }
-
+    private var requiredSoft: SoftSkills { job.requirements.softSkills }
+    private var requiredHard: HardSkills { job.requirements.hardSkills }
+    private var allRequirementsMet: Bool { job.allRequirementsMet(for: player) }
     private var hireProbability: Double {
-        guard allRequirementsMet else { return 0.0 }
-        let skillScore = Double(softSkillsHelpfulScore) / 15.0
-        let raw = (0.2 + skillScore * 0.7) * salaryAlignmentFactor
-        return max(0.05, min(0.95, raw))
+        job.hireProbability(for: player, requestedSalary: requestedSalary)
     }
-
-    private var hardSkillsMet: Bool {
-        let certsOK = requiredHard.certifications.allSatisfy { code in
-            guard let enumVal = certFrom(raw: code.rawValue) else { return false }
-            return player.hardSkills.certifications.contains(enumVal)
-        }
-        let licensesOK = requiredHard.licenses.allSatisfy { code in
-            guard let enumVal = licenseFrom(raw: code.rawValue) else { return false }
-            return player.hardSkills.licenses.contains(enumVal)
-        }
-        let softwareOK = requiredHard.software.allSatisfy { code in
-            guard let enumVal = softwareFrom(raw: code.rawValue) else { return false }
-            return player.hardSkills.software.contains(enumVal)
-        }
-        let portfolioOK = requiredHard.portfolioItems.allSatisfy { code in
-            guard let enumVal = portfolioFrom(raw: code.rawValue) else { return false }
-            return player.hardSkills.portfolioItems.contains(enumVal)
-        }
-        return certsOK && licensesOK && softwareOK && portfolioOK
-    }
-
-    private var allRequirementsMet: Bool {
-        // Emphasize degree + hard skills; soft skills are helpful only
-        educationMet && hardSkillsMet
-    }
-
 
     var body: some View {
         ScrollView {
@@ -222,10 +110,9 @@ struct JobDetail: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
-                ForEach(Array(requiredHard.certifications).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { code in
-                    let enumVal = certFrom(raw: code.rawValue)
-                    let owned = enumVal.map { player.hardSkills.certifications.contains($0) } ?? false
-                    RequirementRow(label: enumVal?.friendlyName ?? code.rawValue, emoji: enumVal?.pictogram ?? "🎓", style: .badge(isMet: owned))
+                ForEach(Array(requiredHard.certifications).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { cert in
+                    let owned = player.hardSkills.certifications.contains(cert)
+                    RequirementRow(label: cert.friendlyName, emoji: cert.pictogram, style: .badge(isMet: owned))
                         .foregroundStyle(owned ? .primary : .secondary)
                         .padding(.horizontal)
                 }
@@ -320,11 +207,7 @@ struct JobDetail: View {
             .padding(.vertical)
 
             Button {
-                player.appliedJobIds.insert(job.id)
-                if Double.random(in: 0...1) < hireProbability {
-                    var hired = job
-                    hired.annualIncome = Int(requestedSalary)
-                    player.currentOccupation = hired
+                if player.applyForJob(job, requestedSalary: Int(requestedSalary)) {
                     applicationResult = .hired
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                         showCareersSheet.toggle()

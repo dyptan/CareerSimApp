@@ -1,226 +1,7 @@
-// Education.swift
-
 import Foundation
 
-// Stage-only representation of education level
-struct Level: Codable, Hashable, Identifiable {
-    enum Stage: String, CaseIterable, Codable, Hashable {
-        case PrimarySchool
-        case MiddleSchool
-        case HighSchool
-        case Vocational
-        case Bachelor
-        case Master
-        case Doctorate
-    }
-
-    var stage: Stage
-
-    var id: String { stage.rawValue }
-
-    // EQF mapping by stage
-    var eqf: Int {
-        switch stage {
-        case .PrimarySchool: return 1
-        case .MiddleSchool: return 2
-        case .HighSchool: return 3
-        case .Vocational: return 4
-        case .Bachelor: return 5
-        case .Master: return 6
-        case .Doctorate: return 7
-        }
-    }
-
-    /// Human-readable generic degree label (EU default)
-    var degree: String {
-        switch stage {
-        case .PrimarySchool: return "Primary School"
-        case .MiddleSchool: return "Middle School"
-        case .HighSchool: return "High School"
-        case .Vocational: return "Vocational Diploma"
-        case .Bachelor: return "Bachelor"
-        case .Master: return "Master"
-        case .Doctorate: return "Doctorate"
-        }
-    }
-
-    var pictogram: String {
-        switch stage {
-        case .PrimarySchool: return "🧒"
-        case .MiddleSchool:  return "👦"
-        case .HighSchool:    return "🧑"
-        case .Vocational:    return "👷"
-        case .Bachelor:      return "👨‍🎓"
-        case .Master:        return "🎓"
-        case .Doctorate:     return "👨‍🔬"
-        }
-    }
-
-    /// Human-readable generic degree label (US variant)
-    var degreeUS: String {
-        switch stage {
-        case .PrimarySchool: return "Elementary School"
-        case .MiddleSchool: return "Middle School"
-        case .HighSchool: return "High School"
-        case .Vocational: return "Trade Certificate"
-        case .Bachelor: return "Bachelor’s Degree"
-        case .Master: return "Master’s Degree"
-        case .Doctorate: return "Doctoral Degree"
-        }
-    }
-
-    /// Number of in-game years typically needed to complete this level
-    func yearsToComplete() -> Int {
-        switch stage {
-        case .PrimarySchool: return 5
-        case .MiddleSchool: return 3
-        case .HighSchool: return 3
-        case .Vocational: return 2
-        case .Bachelor: return 3
-        case .Master: return 2
-        case .Doctorate: return 3
-        }
-    }
-}
-
-// Profiles for tertiary education
-enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
-    case business
-    case engineering
-    case health
-    case arts
-    case science
-    case education
-    case technology
-    case sports
-    case agriculture
-    case humanities
-    case law
-    case design
-    case service
-
-    var id: String { rawValue }
-
-    /// Human-readable description for each profile
-    var description: String {
-        switch self {
-        case .business: return "Business, management, and entrepreneurship."
-        case .engineering:
-            return "Design, build, and solve technical challenges."
-        case .health: return "Medical, care, and wellbeing professions."
-        case .arts: return "Visual, performing, and creative arts."
-        case .science: return "Research, discovery, and experiments."
-        case .education: return "Teaching and supporting learners."
-        case .technology: return "Computers, programming, and digital."
-        case .sports: return "Physical activity, coaching, and competition."
-        case .agriculture: return "Farming, food production, and animals."
-        case .humanities: return "Culture, history, and society."
-        case .law: return "Legal, justice, and social order."
-        case .design: return "Making things functional and beautiful."
-        case .service: return "Help, care, and support roles."
-        }
-    }
-
-    /// Short kid-friendly summary (very brief)
-    var shortKidSummary: String {
-        switch self {
-        case .business: return "Learn how to start, run, and grow a company."
-        case .engineering: return "Build cool things and solve real problems."
-        case .health: return "Help people feel better and stay healthy."
-        case .arts: return "Create music, drawings, and performances."
-        case .science: return "Explore how the world works with experiments."
-        case .education: return "Teach and guide students to learn."
-        case .technology: return "Make apps, games, and smart machines."
-        case .sports: return "Train bodies and minds to perform their best."
-        case .agriculture: return "Grow food and care for plants and animals."
-        case .humanities: return "Study people, cultures, and history."
-        case .law: return "Learn rules, rights, and justice systems to help people follow the law."
-        case .design: return "Make things useful and beautiful."
-        case .service: return "Help others with important everyday tasks."
-        }
-    }
-
-    /// What the degree means (plain language)
-    var degreeMeaning: String {
-        switch self {
-        case .business:
-            return "You learn how money, teams, and products work together to make a business succeed."
-        case .engineering:
-            return "You learn math, science, and design to make machines, bridges, and technologies work."
-        case .health:
-            return "You learn how the body works and how to care for people in clinics and hospitals."
-        case .arts:
-            return "You practice creative skills like drawing, music, acting, or cooking to express ideas."
-        case .science:
-            return "You learn to ask questions, test ideas, and discover new knowledge about nature and the universe."
-        case .education:
-            return "You learn how people learn, and how to teach different subjects to students."
-        case .technology:
-            return "You learn coding, systems, and security to build software and manage data."
-        case .sports:
-            return "You learn about movement, training, and health to improve athletic performance."
-        case .agriculture:
-            return "You learn how to grow crops, care for animals, and manage farms sustainably."
-        case .humanities:
-            return "You study language, culture, and history to understand people and societies."
-        case .law:
-            return "You learn rules, rights, and justice systems to help people follow the law."
-        case .design:
-            return "You learn to plan how things look and work so they’re easy and fun to use."
-        case .service:
-            return "You learn practical skills to support people in daily life and at work."
-        }
-    }
-
-    var helpfulJobs: String {
-        switch self {
-        case .business:
-            return "Manager, marketer, accountant, entrepreneur"
-        case .engineering:
-            return "Civil, mechanical, electrical, robotics engineer"
-        case .health:
-            return "Nurse, therapist, lab tech, clinic assistant"
-        case .arts:
-            return "Designer, musician, chef, actor"
-        case .science:
-            return "Researcher, lab technician, data analyst"
-        case .education:
-            return "Teacher, tutor, school counselor"
-        case .technology:
-            return "Developer, tester, cybersecurity, data engineer"
-        case .sports:
-            return "Coach, trainer, sports scientist, physiologist"
-        case .agriculture:
-            return "Farmer, agronomist, animal caretaker"
-        case .humanities:
-            return "Historian, writer, museum guide, analyst"
-        case .law:
-            return "Paralegal, legal assistant, compliance officer"
-        case .design:
-            return "Graphic, UX/UI, fashion, interior designer"
-        case .service:
-            return "Hospitality worker, customer support, operations"
-        }
-    }
-
-    var isSTEM: Bool {
-        switch self {
-        case .engineering, .science, .technology:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var allowsVocational: Bool {
-        switch self {
-        case .engineering, .technology, .health, .agriculture, .design, .service, .sports:
-            return true
-        case .business, .arts, .science, .education, .humanities, .law:
-            return false
-        }
-    }
-}
+// `Level` (with `Level.Stage`) lives in EducationLevel.swift.
+// `TertiaryProfile` lives in EducationProfile.swift.
 
 struct Education: Codable, Hashable, Identifiable {
     var level: Level.Stage
@@ -268,13 +49,13 @@ struct Education: Codable, Hashable, Identifiable {
         var spacialNavigationAndOrientation: Int = 0
         var carefulnessAndAttentionToDetail: Int = 0
         var tinkeringAndFingerPrecision: Int = 0
-        var physicalStrengthAndEndurance: Int = 0
+        var resilienceAndEndurance: Int = 0
         var coordinationAndBalance: Int = 0
         var stressResistanceAndEmotionalRegulation: Int = 0
         var outdoorAndWeatherResilience: Int = 0
         var collaborationAndTeamwork: Int = 0
         var timeManagementAndPlanning: Int = 0
-        var selfDisciplineAndStudyHabits: Int = 0
+        var selfDisciplineAndPerseverance: Int = 0
         var presentationAndStorytelling: Int = 0
 
         init(minEQF: Int = 0) {
@@ -304,11 +85,11 @@ struct Education: Codable, Hashable, Identifiable {
             .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
             .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
             .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
-            .init(id: "Athlete",     pictogram: "🏃", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.physicalStrengthAndEndurance),
+            .init(id: "Athlete",     pictogram: "🏃", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.resilienceAndEndurance),
             .init(id: "Zen",         pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
             .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
             .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
-            .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndStudyHabits),
+            .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndPerseverance),
             .init(id: "Storyteller", pictogram: "📖", playerKeyPath: \.presentationAndStorytelling,          requirementKeyPath: \.presentationAndStorytelling),
         ]
     }
@@ -357,12 +138,12 @@ struct Education: Codable, Hashable, Identifiable {
         guard p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation else { return false }
         guard p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail else { return false }
         guard p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision else { return false }
-        guard p.resilienceAndEndurance >= r.physicalStrengthAndEndurance else { return false }
+        guard p.resilienceAndEndurance >= r.resilienceAndEndurance else { return false }
         guard p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation else { return false }
         guard p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience else { return false }
         guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
         guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
-        guard p.selfDisciplineAndPerseverance >= r.selfDisciplineAndStudyHabits else { return false }
+        guard p.selfDisciplineAndPerseverance >= r.selfDisciplineAndPerseverance else { return false }
         guard p.presentationAndStorytelling >= r.presentationAndStorytelling else { return false }
 
         return true
@@ -498,7 +279,7 @@ struct Education: Codable, Hashable, Identifiable {
         case .technology:
             r.analyticalReasoningAndProblemSolving = 4
             r.carefulnessAndAttentionToDetail = 4
-            r.selfDisciplineAndStudyHabits = 4
+            r.selfDisciplineAndPerseverance = 4
             r.tinkeringAndFingerPrecision = 2
             r.timeManagementAndPlanning = 2
             r.collaborationAndTeamwork = 2
@@ -515,11 +296,11 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 2
             // non-essential
             r.presentationAndStorytelling = 1
-            r.selfDisciplineAndStudyHabits = 1
+            r.selfDisciplineAndPerseverance = 1
 
         case .science:
             r.analyticalReasoningAndProblemSolving = 4
-            r.selfDisciplineAndStudyHabits = 4
+            r.selfDisciplineAndPerseverance = 4
             r.timeManagementAndPlanning = 2
             r.presentationAndStorytelling = 2
             // non-essential
@@ -532,7 +313,7 @@ struct Education: Codable, Hashable, Identifiable {
             r.carefulnessAndAttentionToDetail = 2
             r.communicationAndNetworking = 2
             // non-essential
-            r.selfDisciplineAndStudyHabits = 1
+            r.selfDisciplineAndPerseverance = 1
 
         case .design:
             r.creativityAndInsightfulThinking = 5
@@ -553,7 +334,7 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 2
             r.visionaryThinkingAndAmbition = 2
             // non-essential
-            r.selfDisciplineAndStudyHabits = 1
+            r.selfDisciplineAndPerseverance = 1
 
         case .education:
             r.communicationAndNetworking = 4
@@ -562,12 +343,12 @@ struct Education: Codable, Hashable, Identifiable {
             r.timeManagementAndPlanning = 2
             // non-essential
             r.collaborationAndTeamwork = 1
-            r.selfDisciplineAndStudyHabits = 1
+            r.selfDisciplineAndPerseverance = 1
 
         case .health:
             r.communicationAndNetworking = 4
             r.carefulnessAndAttentionToDetail = 4
-            r.physicalStrengthAndEndurance = 4
+            r.resilienceAndEndurance = 4
             r.stressResistanceAndEmotionalRegulation = 4
             // non-essential
             r.coordinationAndBalance = 2
@@ -575,16 +356,16 @@ struct Education: Codable, Hashable, Identifiable {
             r.collaborationAndTeamwork = 1
 
         case .sports:
-            r.physicalStrengthAndEndurance = 4
+            r.resilienceAndEndurance = 4
             r.coordinationAndBalance = 4
             r.collaborationAndTeamwork = 4
-            r.selfDisciplineAndStudyHabits = 4
+            r.selfDisciplineAndPerseverance = 4
             // non-essential
             r.visionaryThinkingAndAmbition = 1
             r.timeManagementAndPlanning = 1
 
         case .agriculture:
-            r.physicalStrengthAndEndurance = 4
+            r.resilienceAndEndurance = 4
             r.outdoorAndWeatherResilience = 2
             r.timeManagementAndPlanning = 2
             // non-essential
@@ -597,7 +378,7 @@ struct Education: Codable, Hashable, Identifiable {
             r.presentationAndStorytelling = 4
             r.analyticalReasoningAndProblemSolving = 2
             // non-essential
-            r.selfDisciplineAndStudyHabits = 2
+            r.selfDisciplineAndPerseverance = 2
             r.timeManagementAndPlanning = 1
 
         case .law:
@@ -608,7 +389,7 @@ struct Education: Codable, Hashable, Identifiable {
             // non-essential
             r.timeManagementAndPlanning = 2
             r.leadershipAndInfluence = 1
-            r.selfDisciplineAndStudyHabits = 1
+            r.selfDisciplineAndPerseverance = 1
 
         case .service:
             r.communicationAndNetworking = 4
@@ -635,13 +416,13 @@ struct Education: Codable, Hashable, Identifiable {
         x.spacialNavigationAndOrientation = bump(x.spacialNavigationAndOrientation)
         x.carefulnessAndAttentionToDetail = bump(x.carefulnessAndAttentionToDetail)
         x.tinkeringAndFingerPrecision = bump(x.tinkeringAndFingerPrecision)
-        x.physicalStrengthAndEndurance = bump(x.physicalStrengthAndEndurance)
+        x.resilienceAndEndurance = bump(x.resilienceAndEndurance)
         x.coordinationAndBalance = bump(x.coordinationAndBalance)
         x.stressResistanceAndEmotionalRegulation = bump(x.stressResistanceAndEmotionalRegulation)
         x.outdoorAndWeatherResilience = bump(x.outdoorAndWeatherResilience)
         x.collaborationAndTeamwork = bump(x.collaborationAndTeamwork)
         x.timeManagementAndPlanning = bump(x.timeManagementAndPlanning)
-        x.selfDisciplineAndStudyHabits = bump(x.selfDisciplineAndStudyHabits)
+        x.selfDisciplineAndPerseverance = bump(x.selfDisciplineAndPerseverance)
         x.presentationAndStorytelling = bump(x.presentationAndStorytelling)
 
         return x
@@ -671,7 +452,7 @@ struct Education: Codable, Hashable, Identifiable {
             } else {
                 x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
             }
-            x.selfDisciplineAndStudyHabits = min(max(x.selfDisciplineAndStudyHabits, x.selfDisciplineAndStudyHabits > 0 ? 3 : 0), 5)
+            x.selfDisciplineAndPerseverance = min(max(x.selfDisciplineAndPerseverance, x.selfDisciplineAndPerseverance > 0 ? 3 : 0), 5)
         default:
             break
         }
@@ -692,7 +473,7 @@ struct Education: Codable, Hashable, Identifiable {
             if level == .Bachelor || level == .Master || level == .Doctorate {
                 x.communicationAndNetworking = min(max(x.communicationAndNetworking, x.communicationAndNetworking > 0 ? 3 : 0), 5)
                 x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 3 : 0), 5)
-                x.physicalStrengthAndEndurance = min(max(x.physicalStrengthAndEndurance, x.physicalStrengthAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.resilienceAndEndurance = min(max(x.resilienceAndEndurance, x.resilienceAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
                 x.stressResistanceAndEmotionalRegulation = min(max(x.stressResistanceAndEmotionalRegulation, x.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .business, .law, .humanities:
@@ -718,13 +499,13 @@ struct Education: Codable, Hashable, Identifiable {
         x.spacialNavigationAndOrientation = cap(x.spacialNavigationAndOrientation)
         x.carefulnessAndAttentionToDetail = cap(x.carefulnessAndAttentionToDetail)
         x.tinkeringAndFingerPrecision = cap(x.tinkeringAndFingerPrecision)
-        x.physicalStrengthAndEndurance = cap(x.physicalStrengthAndEndurance)
+        x.resilienceAndEndurance = cap(x.resilienceAndEndurance)
         x.coordinationAndBalance = cap(x.coordinationAndBalance)
         x.stressResistanceAndEmotionalRegulation = cap(x.stressResistanceAndEmotionalRegulation)
         x.outdoorAndWeatherResilience = cap(x.outdoorAndWeatherResilience)
         x.collaborationAndTeamwork = cap(x.collaborationAndTeamwork)
         x.timeManagementAndPlanning = cap(x.timeManagementAndPlanning)
-        x.selfDisciplineAndStudyHabits = cap(x.selfDisciplineAndStudyHabits)
+        x.selfDisciplineAndPerseverance = cap(x.selfDisciplineAndPerseverance)
         x.presentationAndStorytelling = cap(x.presentationAndStorytelling)
 
         return x

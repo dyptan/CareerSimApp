@@ -26,54 +26,49 @@ struct ProjectsView: View {
                 reqs.softSkills.allSatisfy { $0.current >= $0.required }
                 && reqs.hardSkills.allSatisfy { $0.current >= $0.required }
 
+            let isDisabled = isLocked || (!isSelected && (atLimit || !meetsAllRequirements))
+
             VStack(alignment: .leading) {
-                Toggle(
-                    "\(Text(item.rawValue).font(.title3)) \(item.pictogram)",
-                    isOn: Binding(
-                        get: { isSelected },
-                        set: { isOn in
-                            guard !isLocked else { return }
-                            if isOn {
-                                guard !atLimit else { return }
-                                selectedPortfolio.insert(item)
-                                selectedActivities.insert(
-                                    "port:\(item.rawValue)"
-                                )
-                            } else {
-                                if selectedPortfolio.remove(item) != nil {
-                                    selectedActivities.remove(
+                HStack(spacing: 6) {
+                    // InfoHint sits outside the Toggle so it stays tappable
+                    // even when the toggle is disabled by missing requirements.
+                    InfoHint(title: "\(item.pictogram) \(item.rawValue)", message: item.description)
+                    Toggle(
+                        "\(Text(item.rawValue).font(.title3)) \(item.pictogram)",
+                        isOn: Binding(
+                            get: { isSelected },
+                            set: { isOn in
+                                guard !isLocked else { return }
+                                if isOn {
+                                    guard !atLimit else { return }
+                                    selectedPortfolio.insert(item)
+                                    selectedActivities.insert(
                                         "port:\(item.rawValue)"
                                     )
+                                } else {
+                                    if selectedPortfolio.remove(item) != nil {
+                                        selectedActivities.remove(
+                                            "port:\(item.rawValue)"
+                                        )
+                                    }
                                 }
                             }
-                        }
+                        )
                     )
-                )
-                #if os(macOS)
-                    .toggleStyle(.checkbox)
-                #endif
-                #if os(iOS)
-                    .toggleStyle(.switch)
-                #endif
-                .disabled(
-                    isLocked
-                        || (!isSelected && (atLimit || !meetsAllRequirements))
-                )
-                .opacity(
-                    (isLocked
-                        || (!isSelected && (atLimit || !meetsAllRequirements)))
-                        ? 0.5 : 1.0
-                )
-                .help(
-                    isLocked
-                        ? "Locked after year end"
-                        : ((!isSelected && atLimit)
-                            ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year."
-                            : (!isSelected && !meetsAllRequirements)
-                                ? "Requirements not met yet."
-                                : "")
-                )
-                
+                    .platformToggleStyle()
+                    .disabled(isDisabled)
+                    .opacity(isDisabled ? 0.5 : 1.0)
+                    .help(
+                        isLocked
+                            ? "Locked after year end"
+                            : ((!isSelected && atLimit)
+                                ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year."
+                                : (!isSelected && !meetsAllRequirements)
+                                    ? "Requirements not met yet."
+                                    : "")
+                    )
+                }
+
                 let requirements =
                     reqs.softSkills.map { s in
                         Requirement(

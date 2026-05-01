@@ -27,8 +27,14 @@ struct DegreesSubmenuView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(education.degreeName)
-                            .font(.headline)
+                        HStack(spacing: 6) {
+                            Text(education.degreeName)
+                                .font(.headline)
+                            InfoHint(
+                                title: "\(education.pictogram) \(education.degreeName)",
+                                message: degreeHintBody(for: education)
+                            )
+                        }
                         Text("Takes \(education.yearsToComplete) years")
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -79,5 +85,14 @@ struct DegreesSubmenuView: View {
         }
         .navigationTitle(profile.rawValue.capitalized)
         .frame(minHeight: 400)
+    }
+
+    /// Combine the Stage explanation with what this profile actually teaches.
+    private func degreeHintBody(for education: Education) -> String {
+        let levelText = Level(stage: education.level).description
+        if let prof = education.profile {
+            return "\(levelText)\n\n\(prof.degreeMeaning)"
+        }
+        return levelText
     }
 }

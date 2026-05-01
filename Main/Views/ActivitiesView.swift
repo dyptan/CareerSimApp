@@ -68,12 +68,7 @@ struct ActivitiesView: View {
                                     ? "You can take up to \(GameConstants.maxSoftActivitiesPerYear) activities this year."
                                     : "")
                         )
-                        #if os(macOS)
-                            .toggleStyle(.checkbox)
-                        #endif
-                        #if os(iOS)
-                            .toggleStyle(.switch)
-                        #endif
+                        .platformToggleStyle()
                     }
 
                 }

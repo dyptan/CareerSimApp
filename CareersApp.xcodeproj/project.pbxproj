@@ -19,7 +19,7 @@
 		551B66F42EBFB89100092DC7 /* Activities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F32EBFB89100092DC7 /* Activities.swift */; };
 		551B66F62EBFB91900092DC7 /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F52EBFB91900092DC7 /* SkillsView.swift */; };
 		551B66F82EBFB9CD00092DC7 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */; };
-		553578DE2EE39324003C8BD2 /* JobExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578DD2EE39324003C8BD2 /* JobExamples.swift */; };
+		553578DE2EE39324003C8BD2 /* JobCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578DD2EE39324003C8BD2 /* JobCatalog.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* CertificationsView.swift */; };
 		5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */; };
@@ -46,6 +46,9 @@
 		AA00000000000000000000A4 /* DecisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A3 /* DecisionView.swift */; };
 		AA00000000000000000000A6 /* RetirementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A5 /* RetirementView.swift */; };
 		AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A7 /* DegreesSubmenuView.swift */; };
+		AA00000000000000000000B2 /* EducationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B1 /* EducationLevel.swift */; };
+		AA00000000000000000000B4 /* EducationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B3 /* EducationProfile.swift */; };
+		AA00000000000000000000B6 /* InfoHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B5 /* InfoHint.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,7 +87,7 @@
 		551B66F32EBFB89100092DC7 /* Activities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activities.swift; sourceTree = "<group>"; };
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
-		553578DD2EE39324003C8BD2 /* JobExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobExamples.swift; sourceTree = "<group>"; };
+		553578DD2EE39324003C8BD2 /* JobCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCatalog.swift; sourceTree = "<group>"; };
 		553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItem.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5596D86A2E9AF46B00E98CEF /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +116,9 @@
 		AA00000000000000000000A3 /* DecisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A5 /* RetirementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A7 /* DegreesSubmenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DegreesSubmenuView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000B1 /* EducationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationLevel.swift; sourceTree = "<group>"; };
+		AA00000000000000000000B3 /* EducationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationProfile.swift; sourceTree = "<group>"; };
+		AA00000000000000000000B5 /* InfoHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoHint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +185,8 @@
 				551B66F32EBFB89100092DC7 /* Activities.swift */,
 				550C55022EAE6C1200887B96 /* Skills.swift */,
 				84F851CC2EA16C290066C41A /* Education.swift */,
+				AA00000000000000000000B1 /* EducationLevel.swift */,
+				AA00000000000000000000B3 /* EducationProfile.swift */,
 				84C2E8712E9C1C260093E507 /* JobGroup.swift */,
 				84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */,
 				5596D81B2E9AE4EF00E98CEF /* Job.swift */,
@@ -197,7 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				84F851C42E9E8D710066C41A /* AppIcon.icon */,
-				553578DD2EE39324003C8BD2 /* JobExamples.swift */,
+				553578DD2EE39324003C8BD2 /* JobCatalog.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -224,6 +232,7 @@
 				AA00000000000000000000A3 /* DecisionView.swift */,
 				AA00000000000000000000A5 /* RetirementView.swift */,
 				AA00000000000000000000A7 /* DegreesSubmenuView.swift */,
+				AA00000000000000000000B5 /* InfoHint.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -348,7 +357,7 @@
 				55A6ED012E9542000033B674 /* JobView.swift in Sources */,
 				551B66F42EBFB89100092DC7 /* Activities.swift in Sources */,
 				84F851C92EA0F30F0066C41A /* Player.swift in Sources */,
-				553578DE2EE39324003C8BD2 /* JobExamples.swift in Sources */,
+				553578DE2EE39324003C8BD2 /* JobCatalog.swift in Sources */,
 				550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */,
 				5506183E2ED2245200C56E99 /* Software.swift in Sources */,
 				55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */,
@@ -376,6 +385,9 @@
 				AA00000000000000000000A4 /* DecisionView.swift in Sources */,
 				AA00000000000000000000A6 /* RetirementView.swift in Sources */,
 				AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */,
+				AA00000000000000000000B2 /* EducationLevel.swift in Sources */,
+				AA00000000000000000000B4 /* EducationProfile.swift in Sources */,
+				AA00000000000000000000B6 /* InfoHint.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

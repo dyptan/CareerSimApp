@@ -1,5 +1,39 @@
 import SwiftUI
 
+extension View {
+    /// Toggle style appropriate for the current platform (.checkbox on macOS, .switch on iOS).
+    @ViewBuilder
+    func platformToggleStyle() -> some View {
+        #if os(macOS)
+        self.toggleStyle(.checkbox)
+        #elseif os(iOS)
+        self.toggleStyle(.switch)
+        #else
+        self
+        #endif
+    }
+}
+
+/// Disabled/help-text state for a training-toggle row.
+/// Shared by CertificationsView, LicensesView, and any other "buy a thing this year" toggle.
+func trainingRowState(
+    isLocked: Bool,
+    isSelected: Bool,
+    atLimit: Bool,
+    blockedReason: String?
+) -> (disabled: Bool, helpText: String) {
+    let disabled = isLocked || (!isSelected && (atLimit || blockedReason != nil))
+    let helpText: String
+    if isLocked {
+        helpText = "Locked after year end"
+    } else if !isSelected && atLimit {
+        helpText = "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year."
+    } else {
+        helpText = blockedReason ?? ""
+    }
+    return (disabled, helpText)
+}
+
 struct CertificationsView: View {
     @ObservedObject var player: Player
 
@@ -12,63 +46,71 @@ struct CertificationsView: View {
 
     var body: some View {
         ScrollView {
-            ForEach(sortedCertifications, id: \.rawValue) { cert in
-                let isLocked = player.lockedCertifications.contains(cert)
-                let isSelected = selectedCertifications.contains(cert)
-                let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
-
-                let requirement = cert.certificationRequirements(player)
-                let blockedReason: String? = {
-                    if case .blocked(let reason) = requirement { return reason }
-                    return nil
-                }()
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Toggle(cert.friendlyName, isOn: Binding(
-                        get: { isSelected },
-                        set: { isOn in
-                            guard !isLocked else { return }
-                            if isOn {
-                                guard !atLimit else { return }
-                                player.purchaseCertification(cert, into: &selectedCertifications, activities: &selectedActivities)
-                            } else {
-                                player.refundCertification(cert, from: &selectedCertifications, activities: &selectedActivities)
-                            }
-                        }
-                    ))
-                    #if os(macOS)
-                    .toggleStyle(.checkbox)
-                    #endif
-                    #if os(iOS)
-                    .toggleStyle(.switch)
-                    #endif
-                    .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil)))
-                    .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil))) ? 0.5 : 1.0)
-                    .help(
-                        isLocked ? "Locked after year end" :
-                        (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
-                        (blockedReason ?? "")
-                    )
-
-                    let thresholds = cert.softSkillThresholds
-                    if !thresholds.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
-                                RequirementRow(
-                                    label: SoftSkills.label(forKeyPath: pair.0) ?? "",
-                                    emoji: SoftSkills.pictogram(forKeyPath: pair.0) ?? "🧩",
-                                    style: .meter(current: player.softSkills[keyPath: pair.0], required: pair.1)
-                                )
-                            }
-                        }
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(sortedCertifications, id: \.rawValue) { cert in
+                    row(for: cert)
                         .padding(.vertical, 4)
-                    }
                 }
-                .padding(.vertical, 4)
             }
             .padding(.horizontal)
         }
         .padding()
+    }
+
+    @ViewBuilder
+    private func row(for cert: Certification) -> some View {
+        let isLocked = player.lockedCertifications.contains(cert)
+        let isSelected = selectedCertifications.contains(cert)
+        let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
+
+        let blockedReason: String? = {
+            if case .blocked(let reason) = cert.certificationRequirements(player) { return reason }
+            return nil
+        }()
+        let state = trainingRowState(isLocked: isLocked, isSelected: isSelected, atLimit: atLimit, blockedReason: blockedReason)
+
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                // InfoHint sits outside the Toggle so it stays tappable
+                // even when the toggle is disabled by missing requirements.
+                InfoHint(title: "\(cert.pictogram) \(cert.friendlyName)", message: cert.description)
+                Toggle(cert.friendlyName, isOn: Binding(
+                    get: { isSelected },
+                    set: { isOn in
+                        guard !isLocked else { return }
+                        if isOn {
+                            guard !atLimit else { return }
+                            player.purchaseCertification(cert, into: &selectedCertifications, activities: &selectedActivities)
+                        } else {
+                            player.refundCertification(cert, from: &selectedCertifications, activities: &selectedActivities)
+                        }
+                    }
+                ))
+                .platformToggleStyle()
+                .disabled(state.disabled)
+                .opacity(state.disabled ? 0.5 : 1.0)
+                .help(state.helpText)
+            }
+
+            Text("Costs $\(cert.costForCertification.formatted(.number))")
+                .font(.caption)
+                .foregroundStyle(player.savings >= cert.costForCertification ? Color.secondary : Color.red)
+                .padding(.leading, 8)
+
+            let thresholds = cert.softSkillThresholds
+            if !thresholds.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
+                        RequirementRow(
+                            label: SoftSkills.label(forKeyPath: pair.0) ?? "",
+                            emoji: SoftSkills.pictogram(forKeyPath: pair.0) ?? "🧩",
+                            style: .meter(current: player.softSkills[keyPath: pair.0], required: pair.1)
+                        )
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        }
     }
 }
 

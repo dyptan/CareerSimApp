@@ -21,36 +21,40 @@ struct SoftwareRow: View {
         item.softSkillThresholds.allSatisfy { player.softSkills[keyPath: $0.0] >= $0.1 }
     }
 
+    private var isDisabled: Bool {
+        isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesMet))
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle(isOn: Binding(
-                get: { isSelected },
-                set: { isOn in
-                    guard !isLocked else { return }
-                    if isOn {
-                        guard !atLimit else { return }
-                        player.purchaseSoftware(item, into: &selectedSoftware, activities: &selectedActivities)
-                    } else {
-                        player.deselectSoftware(item, from: &selectedSoftware, activities: &selectedActivities)
+            HStack(spacing: 6) {
+                // InfoHint sits outside the Toggle so it stays tappable
+                // even when the toggle is disabled by missing requirements.
+                InfoHint(title: "\(item.pictogram) \(item.friendlyName)", message: item.description)
+                Toggle(isOn: Binding(
+                    get: { isSelected },
+                    set: { isOn in
+                        guard !isLocked else { return }
+                        if isOn {
+                            guard !atLimit else { return }
+                            player.purchaseSoftware(item, into: &selectedSoftware, activities: &selectedActivities)
+                        } else {
+                            player.deselectSoftware(item, from: &selectedSoftware, activities: &selectedActivities)
+                        }
                     }
+                )) {
+                    Text(item.friendlyName).font(.title3)
                 }
-            )) {
-                Text(item.rawValue).font(.title3)
+                .platformToggleStyle()
+                .disabled(isDisabled)
+                .opacity(isDisabled ? 0.5 : 1.0)
+                .help(
+                    !prerequisitesMet ? "You do not meet the prerequisites." :
+                    isLocked ? "Locked after year end" :
+                    (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
+                    (blockedReason ?? "")
+                )
             }
-            #if os(macOS)
-            .toggleStyle(.checkbox)
-            #endif
-            #if os(iOS)
-            .toggleStyle(.switch)
-            #endif
-            .disabled(isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesMet)))
-            .opacity((isLocked || (!isSelected && (atLimit || blockedReason != nil || !prerequisitesMet))) ? 0.5 : 1.0)
-            .help(
-                !prerequisitesMet ? "You do not meet the prerequisites." :
-                isLocked ? "Locked after year end" :
-                (!isSelected && atLimit) ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year." :
-                (blockedReason ?? "")
-            )
 
             let thresholds = item.softSkillThresholds
             if !thresholds.isEmpty {

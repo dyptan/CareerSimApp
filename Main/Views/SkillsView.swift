@@ -16,6 +16,7 @@ struct SkillsView: View {
             ) { (_, skill) in
                 HStack {
                     Text(skill.label)
+                    InfoHint(title: "\(skill.pictogram) \(skill.label)", message: skill.description)
                     Spacer()
                     let count = player.softSkills[keyPath: skill.keyPath]
                     Text(count == 0 ? " " : count <= 5 ? String(repeating: skill.pictogram, count: count) : "\(count)x\(skill.pictogram)")
