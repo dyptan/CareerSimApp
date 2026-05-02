@@ -27,7 +27,6 @@
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
 		55B4351C2F470E910022ACAA /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B4351B2F470E910022ACAA /* FooterView.swift */; };
 		55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */; };
-		55C1859C2F55F7D700E16385 /* PortfolioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */; };
 		55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEE12F01A8BB00B2C113 /* Requirement.swift */; };
 		55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F01AB22ECE3C3600EA9E4D /* EducationView.swift */; };
 		84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */; };
@@ -86,7 +85,6 @@
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		553578DD2EE39324003C8BD2 /* JobCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCatalog.swift; sourceTree = "<group>"; };
-		553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItem.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5596D86A2E9AF46B00E98CEF /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5598FA282EE62F57006C4D36 /* CertificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationsView.swift; sourceTree = "<group>"; };
@@ -180,7 +178,6 @@
 		C20D780824B685C4002E7AEA /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				553578E12EE4EC9E003C8BD2 /* PortfolioItem.swift */,
 				55D6AEE12F01A8BB00B2C113 /* Requirement.swift */,
 				551B66F32EBFB89100092DC7 /* Activities.swift */,
 				550C55022EAE6C1200887B96 /* Skills.swift */,
@@ -371,7 +368,6 @@
 				55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */,
 				55189E932F4DD9E9005FAC2C /* AppUIState.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
-				55C1859C2F55F7D700E16385 /* PortfolioItem.swift in Sources */,
 				550618422ED2245900C56E99 /* Certification.swift in Sources */,
 				5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */,
