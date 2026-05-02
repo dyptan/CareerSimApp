@@ -6,19 +6,11 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     case google = "Google"
     case scrum = "Scrum"
     case security = "Security"
-    case cwi = "CWI"
-    case epa608 = "EPA608"
-    case nate = "NATE"
-    case faaAMP = "FAA A&P"
     case cna = "CNA"
     case dentalAssistant = "Dental Assistant"
     case medicalAssistant = "Medical Assistant"
-    case pharmacyTech = "Pharmacy Tech"
-    case cfp = "CFP"
-    case series65 = "Series 65"
     case flightAttendantCert = "Flight Attendant"
     case teachingCertificate = "Teaching Certificate"
-    case personalTrainer = "Personal Trainer"
     case culinaryDiploma = "Culinary Diploma"
     case paralegal = "Paralegal Certificate"
     case cosmetology = "Cosmetology Licence"
@@ -40,19 +32,11 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .google: return "Google Cloud Certification"
         case .scrum: return "Scrum Master"
         case .security: return "Security Awareness"
-        case .cwi: return "Certified Welding Inspector"
-        case .epa608: return "EPA 608"
-        case .nate: return "NATE Certification"
-        case .faaAMP: return "FAA A&P"
         case .cna: return "Certified Nursing Assistant"
         case .dentalAssistant: return "Dental Assistant"
         case .medicalAssistant: return "Medical Assistant"
-        case .pharmacyTech: return "Pharmacy Technician"
-        case .cfp: return "Certified Financial Planner"
-        case .series65: return "Series 65"
         case .flightAttendantCert: return "Flight Attendant Certificate"
         case .teachingCertificate: return "Teaching Certificate"
-        case .personalTrainer: return "Personal Trainer Certification"
         case .culinaryDiploma: return "Culinary Diploma"
         case .paralegal: return "Paralegal Certificate"
         case .cosmetology: return "Cosmetology Licence"
@@ -75,19 +59,11 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .google: return "Cloud-computing certificate from Google. Shows you can build apps using Google’s online services."
         case .scrum: return "Project-management approach used by tech teams. Proves you can lead a small team building software in short, repeated cycles called sprints."
         case .security: return "Cybersecurity basics. Useful for any IT job; required for many tech roles that handle sensitive data."
-        case .cwi: return "Certified Welding Inspector. Lets you check that welds on bridges, ships, and pipelines are safe and meet building codes."
-        case .epa608: return "U.S. licence to handle the chemicals inside air conditioners and fridges. Required for HVAC technicians."
-        case .nate: return "North American Technician Excellence — proves you can install and repair heating and cooling systems."
-        case .faaAMP: return "FAA Airframe & Powerplant — U.S. licence to repair commercial aircraft. Mandatory for aviation mechanics."
         case .cna: return "Certified Nursing Assistant. The first step into nursing — basic patient care under a nurse’s supervision."
         case .dentalAssistant: return "Trained to help dentists during procedures, take X-rays, and prepare patients."
         case .medicalAssistant: return "Trained to help doctors with vitals, simple lab work, and patient records in clinics."
-        case .pharmacyTech: return "Trained to dispense medication under a pharmacist’s supervision."
-        case .cfp: return "Certified Financial Planner — U.S. credential for advising people on investments, retirement, and taxes."
-        case .series65: return "U.S. exam that lets you give paid investment advice as a registered investment adviser."
         case .flightAttendantCert: return "FAA-issued certificate proving you can keep passengers safe on commercial flights."
         case .teachingCertificate: return "State or country licence to teach in a public school. Earned after a teacher-training programme and supervised classroom hours."
-        case .personalTrainer: return "Industry credential (like NASM or ACE) qualifying you to design fitness programmes and coach clients in a gym or studio."
         case .culinaryDiploma: return "Diploma from a cooking school covering knife skills, recipes, and kitchen management. The standard credential for restaurant kitchens."
         case .paralegal: return "Trained to help lawyers research cases, draft documents, and prepare for trials. A common entry into the legal field without going to law school."
         case .cosmetology: return "State licence to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam."
@@ -107,19 +83,11 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .aws, .azure, .google: return "☁️"
         case .scrum: return "📈"
         case .security: return "🔐"
-        case .cwi: return "⚙️"
-        case .epa608: return "🌬️"
-        case .nate: return "🧰"
-        case .faaAMP: return "✈️"
         case .cna: return "🏥"
         case .dentalAssistant: return "🦷"
         case .medicalAssistant: return "🩺"
-        case .pharmacyTech: return "💊"
-        case .cfp: return "💼"
-        case .series65: return "📜"
         case .flightAttendantCert: return "🧳"
         case .teachingCertificate: return "📚"
-        case .personalTrainer: return "💪"
         case .culinaryDiploma: return "🧑‍🍳"
         case .paralegal: return "⚖️"
         case .cosmetology: return "💇"
@@ -141,45 +109,35 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .google: return 300
         case .scrum: return 600
         case .security: return 250
-        case .cwi: return 3000
-        case .epa608: return 200
-        case .nate: return 450
-        case .faaAMP: return 6000
         case .cna: return 1500
         case .dentalAssistant: return 2500
         case .medicalAssistant: return 3500
-        case .pharmacyTech: return 1200
-        case .cfp: return 7000
-        case .series65: return 500
         case .flightAttendantCert: return 1000
         case .teachingCertificate: return 2500
-        case .personalTrainer: return 700
         case .culinaryDiploma: return 5000
         case .paralegal: return 3000
         case .cosmetology: return 8000
-        case .emt: return 1500   // EMT-Basic course + state exam
-        case .cpa: return 3500   // exam fees + review course
-        case .cfa: return 5000   // 3 exam levels + study materials
-        case .pmp: return 1200   // PMI exam + prep
-        case .shrm: return 700   // exam + study materials
-        case .comptiaA: return 500  // 2 exams + voucher
-        case .ase: return 400    // multi-test mechanic certification
-        case .osha10: return 100 // short safety card course
+        case .emt: return 1500    // EMT-Basic course + state exam
+        case .cpa: return 3500    // exam fees + review course
+        case .cfa: return 5000    // 3 exam levels + study materials
+        case .pmp: return 1200    // PMI exam + prep
+        case .shrm: return 700    // exam + study materials
+        case .comptiaA: return 500   // 2 exams + voucher
+        case .ase: return 400     // multi-test mechanic certification
+        case .osha10: return 100  // short safety card course
         }
     }
 
     // Minimum EQF level (education) required before pursuing this certification
     var minEQF: Int {
         switch self {
-        case .cfp,
-             .teachingCertificate,  // most school systems require a Bachelor + teacher training
+        case .teachingCertificate,  // most school systems require a Bachelor + teacher training
              .cpa,                  // licensing typically requires 150 college credits (≈ Bachelor)
              .cfa,                  // CFA Institute requires Bachelor or final-year status
              .pmp,                  // 4-year degree + 36 months experience (or HS + 60 months)
              .shrm:                 // SHRM-CP commonly requires a Bachelor for full eligibility
             return 5
-        case .faaAMP,               // FAA requires 18 months of accredited aviation maintenance training
-             .paralegal:            // typically an associate degree or vocational diploma
+        case .paralegal:            // typically an associate degree or vocational diploma
             return 4
         case .osha10:               // safety card has no education prerequisite
             return 0
@@ -212,37 +170,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.selfDisciplineAndPerseverance, 2),
             ]
-        case .cwi:
-            // Certified Welding Inspector: practical welding background + high-precision QA
-            return [
-                (\.tinkeringAndFingerPrecision, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.stressResistanceAndEmotionalRegulation, 2),
-            ]
-        case .epa608:
-            // HVAC refrigerant handling: safe equipment operation + regulatory knowledge
-            return [
-                (\.carefulnessAndAttentionToDetail, 2),
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.tinkeringAndFingerPrecision, 2),
-            ]
-        case .nate:
-            // HVAC technician excellence: hands-on diagnostics + outdoor unit work
-            return [
-                (\.tinkeringAndFingerPrecision, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.outdoorAndWeatherResilience, 1),
-            ]
-        case .faaAMP:
-            // FAA Aircraft & Powerplant: aviation safety is life-critical — highest precision required
-            return [
-                (\.tinkeringAndFingerPrecision, 4),
-                (\.carefulnessAndAttentionToDetail, 4),
-                (\.analyticalReasoningAndProblemSolving, 3),
-                (\.stressResistanceAndEmotionalRegulation, 2),
-            ]
         case .cna:
             // Certified Nursing Assistant: daily patient care, physically and emotionally demanding
             return [
@@ -267,28 +194,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.tinkeringAndFingerPrecision, 2),
                 (\.stressResistanceAndEmotionalRegulation, 2),
             ]
-        case .pharmacyTech:
-            // Dosage calculations, drug interactions — wrong fill = serious patient harm
-            return [
-                (\.analyticalReasoningAndProblemSolving, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.communicationAndNetworking, 2),
-            ]
-        case .cfp:
-            // CFP requires bachelor's + 6000 h of experience + rigorous board exam
-            return [
-                (\.analyticalReasoningAndProblemSolving, 4),
-                (\.communicationAndNetworking, 3),
-                (\.selfDisciplineAndPerseverance, 3),
-                (\.timeManagementAndPlanning, 2),
-            ]
-        case .series65:
-            // Investment Adviser licensing: regulatory compliance + fiduciary accuracy
-            return [
-                (\.analyticalReasoningAndProblemSolving, 3),
-                (\.carefulnessAndAttentionToDetail, 3),
-                (\.selfDisciplineAndPerseverance, 2),
-            ]
         case .flightAttendantCert:
             // Emergency procedures + customer service + crew resource management
             return [
@@ -304,13 +209,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.stressResistanceAndEmotionalRegulation, 3),
                 (\.presentationAndStorytelling, 3),
                 (\.timeManagementAndPlanning, 2),
-            ]
-        case .personalTrainer:
-            // Personal training: leading clients through demanding sessions + coaching
-            return [
-                (\.resilienceAndEndurance, 4),
-                (\.communicationAndNetworking, 2),
-                (\.leadershipAndInfluence, 2),
             ]
         case .culinaryDiploma:
             // Culinary school: creative recipes under heavy time pressure

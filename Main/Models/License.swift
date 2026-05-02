@@ -8,8 +8,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     case nurse = "Nurse License"
     case electrician = "Electrician License"
     case plumber = "Plumber License"
-    case realEstateAgent = "Real Estate Agent"
-    case insuranceAgent = "Insurance Agent"
     case bar = "Bar Admission"
     case professionalEngineer = "Professional Engineer"
     case architect = "Architect Licence"
@@ -27,8 +25,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .nurse: return "Nursing License"
         case .electrician: return "Electrician License"
         case .plumber: return "Plumber License"
-        case .realEstateAgent: return "Real Estate Agent License"
-        case .insuranceAgent: return "Insurance Agent License"
         case .bar: return "Bar Admission (Lawyer)"
         case .professionalEngineer: return "Professional Engineer (PE)"
         case .architect: return "Architect Licence"
@@ -47,8 +43,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .nurse: return "Government licence to work as a nurse. Earned after passing a national exam following a nursing degree."
         case .electrician: return "Government licence to wire buildings safely. Earned after an apprenticeship and an exam."
         case .plumber: return "Government licence to install and repair pipes, drains, and water systems."
-        case .realEstateAgent: return "Government licence to buy and sell property on behalf of clients."
-        case .insuranceAgent: return "Government licence to sell insurance policies — health, home, life, business."
         case .bar: return "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practise as a lawyer in court."
         case .professionalEngineer: return "Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles."
         case .architect: return "State licence required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB)."
@@ -66,8 +60,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .nurse: return "🩺"
         case .electrician: return "⚡️"
         case .plumber: return "🔧"
-        case .realEstateAgent: return "🏠"
-        case .insuranceAgent: return "📄"
         case .bar: return "⚖️"
         case .professionalEngineer: return "🏗️"
         case .architect: return "📐"
@@ -99,12 +91,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .plumber:
             // Course + exam + license application
             return 1500
-        case .realEstateAgent:
-            // Pre-licensing course + exam + license
-            return 800
-        case .insuranceAgent:
-            // Pre-licensing course + exam + license
-            return 600
         case .bar:
             // Bar exam + bar prep course (school is separate)
             return 5000
@@ -193,22 +179,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.resilienceAndEndurance, 2),
                 (\.outdoorAndWeatherResilience, 1),
             ]
-        case .realEstateAgent:
-            // Showings, negotiation, market analysis
-            return [
-                (\.communicationAndNetworking, 3),
-                (\.presentationAndStorytelling, 3),
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.leadershipAndInfluence, 2),
-            ]
-        case .insuranceAgent:
-            // Client acquisition, coverage explanation, policy accuracy
-            return [
-                (\.communicationAndNetworking, 3),
-                (\.presentationAndStorytelling, 2),
-                (\.analyticalReasoningAndProblemSolving, 2),
-                (\.carefulnessAndAttentionToDetail, 2),
-            ]
         case .bar:
             // Bar exam: enormous study load + courtroom-grade analysis and communication
             return [
@@ -260,7 +230,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .drivers:
             if age < 16 { return .blocked(reason: "Requires age 16+") }
-        case .cdl, .realEstateAgent, .insuranceAgent, .nurse, .electrician, .plumber,
+        case .cdl, .nurse, .electrician, .plumber,
              .pesticideApplicator, .securityGuard:
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         case .pilot:

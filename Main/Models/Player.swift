@@ -15,6 +15,10 @@ final class Player: ObservableObject {
     @Published var lockedLicenses: Set<License>
     @Published var lockedActivities: Set<String>
     @Published var appliedJobIds: Set<String> = []
+    /// Jobs offered to the player this year. Re-shuffled (and re-rolled for
+    /// company tier / salary variance) every time `advanceYear` runs, so the
+    /// listing feels different each game year.
+    @Published var availableJobs: [Job] = []
 
     init(
         age: Int = 7,
@@ -57,6 +61,7 @@ final class Player: ObservableObject {
         self.lockedPortfolio = lockedPortfolio
         self.lockedLicenses = lockedLicenses
         self.lockedActivities = lockedActivities
+        self.availableJobs = JobCatalog.allJobs().shuffled()
     }
 
     // MARK: - Activity selection
@@ -140,6 +145,7 @@ final class Player: ObservableObject {
         }
 
         appliedJobIds.removeAll()
+        availableJobs = JobCatalog.allJobs().shuffled()
 
         if let job = currentOccupation {
             currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income)
@@ -177,6 +183,7 @@ final class Player: ObservableObject {
         lockedLicenses = fresh.lockedLicenses
         lockedActivities = fresh.lockedActivities
         appliedJobIds = []
+        availableJobs = fresh.availableJobs
     }
 }
 

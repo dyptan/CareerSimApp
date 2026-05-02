@@ -14,10 +14,16 @@ struct JobDetail: View {
     private var sliderMax: Double { Double(job.income) * 2.0 }
 
     private var requiredSoft: SoftSkills { job.requirements.softSkills }
-    private var requiredHard: HardSkills { job.requirements.hardSkills }
+    private var requiredHard: HardSkills { job.effectiveRequirements.hardSkills }
     private var allRequirementsMet: Bool { job.allRequirementsMet(for: player) }
     private var hireProbability: Double {
         job.hireProbability(for: player, requestedSalary: requestedSalary)
+    }
+
+    private var applyButtonLabel: String {
+        if player.appliedJobIds.contains(job.id) { return "Already applied" }
+        if !allRequirementsMet { return "Hard requirements not met" }
+        return "Apply"
     }
 
     /// Plain-language breakdown of the hire-probability formula with the
@@ -115,13 +121,13 @@ struct JobDetail: View {
                 .padding(.horizontal)
 
             Divider()
-            Text("Requirements")
+            Text("Hard requirements")
                 .font(.title)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
 
-            
-            
+
+
             Text("Education:")
                 .font(.headline)
                 .frame(maxWidth: .infinity ,alignment: .leading)
@@ -137,23 +143,6 @@ struct JobDetail: View {
             .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
             .padding(.horizontal)
 
-            let requiredSkills = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
-            if !requiredSkills.isEmpty {
-                Text("Skills:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(requiredSkills, id: \.label) { skill in
-                    let required = requiredSoft[keyPath: skill.keyPath]
-                    let playerValue = player.softSkills[keyPath: skill.keyPath]
-                    RequirementRow(label: skill.label, emoji: skill.pictogram, style: .meter(current: playerValue, required: required))
-                        .foregroundStyle(playerValue >= required ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-            }
-
-            
             if !requiredHard.certifications.isEmpty {
                 Text("Certifications:")
                     .font(.headline)
@@ -192,6 +181,28 @@ struct JobDetail: View {
                     let owned = player.hardSkills.portfolioItems.contains(project)
                     RequirementRow(label: project.rawValue, emoji: project.pictogram, style: .badge(isMet: owned))
                         .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
+                }
+            }
+
+            let requiredSkills = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
+            if !requiredSkills.isEmpty {
+                Text("Soft requirements")
+                    .font(.title)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+
+                Text("Helpful but not required — they boost your hire probability.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+
+                ForEach(requiredSkills, id: \.label) { skill in
+                    let required = requiredSoft[keyPath: skill.keyPath]
+                    let playerValue = player.softSkills[keyPath: skill.keyPath]
+                    RequirementRow(label: skill.label, emoji: skill.pictogram, style: .meter(current: playerValue, required: required))
+                        .foregroundStyle(playerValue >= required ? .primary : .secondary)
                         .padding(.horizontal)
                 }
             }
@@ -256,7 +267,7 @@ struct JobDetail: View {
                     applicationResult = .rejected
                 }
             } label: {
-                Text("Apply")
+                Text(applyButtonLabel)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)

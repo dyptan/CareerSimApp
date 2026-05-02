@@ -2,7 +2,6 @@ import Foundation
 
 enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     case app = "App"
-    case game = "Game"
     case website = "Website"
     case library = "Library"
     case paper = "Paper"
@@ -19,7 +18,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     var description: String {
         switch self {
         case .app: return "A small mobile or desktop app you build to show off in interviews. Demonstrates that you can ship working software end-to-end."
-        case .game: return "A playable video game project. Strong portfolio piece for game-developer roles — shows you can combine code, design, and visuals."
         case .website: return "A real website you’ve designed and built. Most common portfolio piece for web developers and designers."
         case .library: return "A reusable code library that other developers can install and use. Signals strong engineering and documentation skills."
         case .paper: return "A written research paper or long-form article. Counts toward science, humanities, and academic careers."
@@ -35,7 +33,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     var pictogram: String {
         switch self {
         case .app: return "📱"
-        case .game: return "🎮"
         case .website: return "🌐"
         case .library: return "📦"
         case .paper: return "📄"
@@ -85,15 +82,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                 softSkills: [
                     soft("Creativity", "🎨", required: 3),
                     soft("Communication", "🗣️", required: 2)
-                ],
-                hardSkills: []
-            )
-
-        case .game:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 4),
-                    soft("Problem Solving", "🧩", required: 3)
                 ],
                 hardSkills: []
             )

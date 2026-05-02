@@ -295,131 +295,95 @@ struct Education: Codable, Hashable, Identifiable {
     private static func baseRequirements(for profile: TertiaryProfile) -> Requirements {
         var r = Requirements(minEQF: 3)
 
-        // Core values doubled (capped at 5) + a few non-essential adds
+        // Modest baselines per profile. The level-elevation step (+1 / +2 / +3
+        // for Bachelor / Master / Doctorate) grows them into a gradient where
+        // primary traits hit 5 only at Master / Doctorate.
         switch profile {
         case .technology:
-            r.analyticalReasoningAndProblemSolving = 4
-            r.carefulnessAndAttentionToDetail = 4
-            r.selfDisciplineAndPerseverance = 4
-            r.tinkeringAndFingerPrecision = 2
-            r.timeManagementAndPlanning = 2
-            r.collaborationAndTeamwork = 2
-            // non-essential
-            r.presentationAndStorytelling = 1
-            r.communicationAndNetworking = 1
+            r.analyticalReasoningAndProblemSolving = 2
+            r.carefulnessAndAttentionToDetail = 2
+            r.selfDisciplineAndPerseverance = 2
+            r.tinkeringAndFingerPrecision = 1
+            r.timeManagementAndPlanning = 1
+            r.collaborationAndTeamwork = 1
 
         case .engineering:
-            r.analyticalReasoningAndProblemSolving = 4
-            r.spacialNavigationAndOrientation = 4
-            r.carefulnessAndAttentionToDetail = 2
-            r.tinkeringAndFingerPrecision = 2
-            r.timeManagementAndPlanning = 2
-            r.collaborationAndTeamwork = 2
-            // non-essential
-            r.presentationAndStorytelling = 1
-            r.selfDisciplineAndPerseverance = 1
+            r.analyticalReasoningAndProblemSolving = 2
+            r.spacialNavigationAndOrientation = 2
+            r.carefulnessAndAttentionToDetail = 1
+            r.tinkeringAndFingerPrecision = 1
+            r.timeManagementAndPlanning = 1
+            r.collaborationAndTeamwork = 1
 
         case .science:
-            r.analyticalReasoningAndProblemSolving = 4
-            r.selfDisciplineAndPerseverance = 4
-            r.timeManagementAndPlanning = 2
-            r.presentationAndStorytelling = 2
-            // non-essential
-            r.carefulnessAndAttentionToDetail = 1
-            r.collaborationAndTeamwork = 1
-
-        case .arts:
-            r.creativityAndInsightfulThinking = 5
-            r.presentationAndStorytelling = 4
-            r.carefulnessAndAttentionToDetail = 2
-            r.communicationAndNetworking = 2
-            // non-essential
-            r.selfDisciplineAndPerseverance = 1
-
-        case .design:
-            r.creativityAndInsightfulThinking = 5
-            r.carefulnessAndAttentionToDetail = 4
-            r.presentationAndStorytelling = 4
-            r.spacialNavigationAndOrientation = 2
-            // non-essential
-            r.analyticalReasoningAndProblemSolving = 1
-            r.collaborationAndTeamwork = 1
-            r.timeManagementAndPlanning = 1
-
-        case .business:
-            r.communicationAndNetworking = 4
-            r.leadershipAndInfluence = 4
             r.analyticalReasoningAndProblemSolving = 2
-            r.timeManagementAndPlanning = 4
-            r.presentationAndStorytelling = 4
-            r.collaborationAndTeamwork = 2
-            r.visionaryThinkingAndAmbition = 2
-            // non-essential
-            r.selfDisciplineAndPerseverance = 1
-
-        case .education:
-            r.communicationAndNetworking = 4
-            r.stressResistanceAndEmotionalRegulation = 4
-            r.presentationAndStorytelling = 4
-            r.timeManagementAndPlanning = 2
-            // non-essential
-            r.collaborationAndTeamwork = 1
-            r.selfDisciplineAndPerseverance = 1
-
-        case .health:
-            r.communicationAndNetworking = 4
-            r.carefulnessAndAttentionToDetail = 4
-            r.resilienceAndEndurance = 4
-            r.stressResistanceAndEmotionalRegulation = 4
-            // non-essential
-            r.coordinationAndBalance = 2
-            r.timeManagementAndPlanning = 1
-            r.collaborationAndTeamwork = 1
-
-        case .sports:
-            r.resilienceAndEndurance = 4
-            r.coordinationAndBalance = 4
-            r.collaborationAndTeamwork = 4
-            r.selfDisciplineAndPerseverance = 4
-            // non-essential
-            r.visionaryThinkingAndAmbition = 1
-            r.timeManagementAndPlanning = 1
-
-        case .agriculture:
-            r.resilienceAndEndurance = 4
-            r.outdoorAndWeatherResilience = 2
-            r.timeManagementAndPlanning = 2
-            // non-essential
-            r.spacialNavigationAndOrientation = 1
-            r.carefulnessAndAttentionToDetail = 1
-            r.collaborationAndTeamwork = 1
-
-        case .humanities:
-            r.communicationAndNetworking = 4
-            r.presentationAndStorytelling = 4
-            r.analyticalReasoningAndProblemSolving = 2
-            // non-essential
             r.selfDisciplineAndPerseverance = 2
             r.timeManagementAndPlanning = 1
+            r.presentationAndStorytelling = 1
 
-        case .law:
-            r.analyticalReasoningAndProblemSolving = 4
-            r.communicationAndNetworking = 4
-            r.carefulnessAndAttentionToDetail = 4
-            r.presentationAndStorytelling = 4
-            // non-essential
+        case .arts:
+            r.creativityAndInsightfulThinking = 3
+            r.presentationAndStorytelling = 2
+            r.carefulnessAndAttentionToDetail = 1
+            r.communicationAndNetworking = 1
+
+        case .design:
+            r.creativityAndInsightfulThinking = 3
+            r.carefulnessAndAttentionToDetail = 2
+            r.presentationAndStorytelling = 2
+            r.spacialNavigationAndOrientation = 1
+
+        case .business:
+            r.communicationAndNetworking = 2
+            r.leadershipAndInfluence = 2
+            r.analyticalReasoningAndProblemSolving = 1
             r.timeManagementAndPlanning = 2
-            r.leadershipAndInfluence = 1
+            r.presentationAndStorytelling = 2
+            r.collaborationAndTeamwork = 1
+            r.visionaryThinkingAndAmbition = 1
+
+        case .education:
+            r.communicationAndNetworking = 2
+            r.stressResistanceAndEmotionalRegulation = 2
+            r.presentationAndStorytelling = 2
+            r.timeManagementAndPlanning = 1
+
+        case .health:
+            r.communicationAndNetworking = 2
+            r.carefulnessAndAttentionToDetail = 2
+            r.resilienceAndEndurance = 2
+            r.stressResistanceAndEmotionalRegulation = 2
+            r.coordinationAndBalance = 1
+
+        case .sports:
+            r.resilienceAndEndurance = 2
+            r.coordinationAndBalance = 2
+            r.collaborationAndTeamwork = 2
+            r.selfDisciplineAndPerseverance = 2
+
+        case .agriculture:
+            r.resilienceAndEndurance = 2
+            r.outdoorAndWeatherResilience = 1
+            r.timeManagementAndPlanning = 1
+
+        case .humanities:
+            r.communicationAndNetworking = 2
+            r.presentationAndStorytelling = 2
+            r.analyticalReasoningAndProblemSolving = 1
             r.selfDisciplineAndPerseverance = 1
 
+        case .law:
+            r.analyticalReasoningAndProblemSolving = 2
+            r.communicationAndNetworking = 2
+            r.carefulnessAndAttentionToDetail = 2
+            r.presentationAndStorytelling = 2
+            r.timeManagementAndPlanning = 1
+
         case .service:
-            r.communicationAndNetworking = 4
-            r.stressResistanceAndEmotionalRegulation = 4
-            r.collaborationAndTeamwork = 4
-            r.timeManagementAndPlanning = 2
-            // non-essential
-            r.presentationAndStorytelling = 1
-            r.visionaryThinkingAndAmbition = 1
+            r.communicationAndNetworking = 2
+            r.stressResistanceAndEmotionalRegulation = 2
+            r.collaborationAndTeamwork = 2
+            r.timeManagementAndPlanning = 1
         }
 
         return r

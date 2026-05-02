@@ -8,30 +8,16 @@ struct Activity {
     let abilities: [WeightedAbility]
 }
 
+// Activities the player can pick each year. Pared to extracurriculars typically
+// available in US public middle/high schools — sports, arts, academic teams,
+// student government — so a player's options match what a real teen would face.
 let activities: [Activity] = [
+
+    // Physical
     Activity(
         label: "Sports and Athletics",
         abilities: [
             .init(keyPath: \.resilienceAndEndurance, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Scouting and Hiking",
-        abilities: [
-            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
-            .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Outdoor Volunteering and Conservation",
-        abilities: [
-            .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ]
@@ -45,20 +31,12 @@ let activities: [Activity] = [
         ]
     ),
 
+    // Performing arts / creative
     Activity(
         label: "Music Playing and Composing",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Photography and Cinematography",
-        abilities: [
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ]
@@ -81,16 +59,25 @@ let activities: [Activity] = [
         ]
     ),
     Activity(
-        label: "Debate Club",
+        label: "Photography and Cinematography",
+        abilities: [
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.presentationAndStorytelling, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Journalism, Blogging, Podcasting",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
+            .init(keyPath: \.communicationAndNetworking, weight: 2),
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ]
     ),
 
-    // Analytical / Academic
+    // Academic / analytical
     Activity(
         label: "Chess and Strategy Games",
         abilities: [
@@ -118,109 +105,6 @@ let activities: [Activity] = [
         ]
     ),
     Activity(
-        label: "Language Learning",
-        abilities: [
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "3D Puzzles and Model Building",
-        abilities: [
-            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Reading Books",
-        abilities: [
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ]
-    ),
-
-    Activity(
-        label: "Journalism, Blogging, Podcasting",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Hanging Out with Friends",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Organizing Events and Fundraising",
-        abilities: [
-            .init(keyPath: \.leadershipAndInfluence, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Student Council / Leadership",
-        abilities: [
-            .init(keyPath: \.leadershipAndInfluence, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Public Speaking Club",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Hackathon / Maker Fair",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Emergency Preparedness Training",
-        abilities: [
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
-            .init(keyPath: \.outdoorAndWeatherResilience, weight: 2),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ]
-    ),
-
-    Activity(
-        label: "Cooking and Baking",
-        abilities: [
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 2),
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ]
-    ),
-
-    // Discipline-specific competitions
-    Activity(
         label: "Math Olympiad",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
@@ -235,38 +119,41 @@ let activities: [Activity] = [
         ]
     ),
     Activity(
-        label: "Art Competition",
-        abilities: [
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Creative Writing Contest",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Music Competition",
+        label: "Language Learning",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ]
-    ),
-    Activity(
-        label: "Geography Bee",
-        abilities: [
-            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
+            .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
         ]
     ),
     Activity(
-        label: "Entrepreneurship Challenge",
+        label: "Reading Books",
         abilities: [
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1)
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
+            .init(keyPath: \.presentationAndStorytelling, weight: 1)
+        ]
+    ),
+
+    // Social / leadership
+    Activity(
+        label: "Debate Club",
+        abilities: [
+            .init(keyPath: \.presentationAndStorytelling, weight: 2),
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
+        ]
+    ),
+    Activity(
+        label: "Student Council / Leadership",
+        abilities: [
+            .init(keyPath: \.leadershipAndInfluence, weight: 2),
+            .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
+            .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ]
     ),
     Activity(
@@ -277,10 +164,10 @@ let activities: [Activity] = [
         ]
     ),
     Activity(
-        label: "Programming Contest",
+        label: "Hanging Out with Friends",
         abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2)
+            .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ]
     )
 ]

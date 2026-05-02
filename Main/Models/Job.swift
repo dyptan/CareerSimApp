@@ -255,17 +255,49 @@ extension Job {
     }
 
     func hardSkillsMet(for player: Player) -> Bool {
+        let req = effectiveRequirements.hardSkills
         // Licenses are always required (legally enforced regardless of employer).
-        guard requirements.hardSkills.licenses.isSubset(of: player.hardSkills.licenses) else {
+        guard req.licenses.isSubset(of: player.hardSkills.licenses) else {
             return false
         }
         // Big formal employers gate on certifications; smaller employers gate on portfolio.
         switch companyTier.hiringSignal {
         case .credentials:
-            return requirements.hardSkills.certifications.isSubset(of: player.hardSkills.certifications)
+            return req.certifications.isSubset(of: player.hardSkills.certifications)
         case .portfolio:
-            return requirements.hardSkills.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+            return req.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
         }
+    }
+
+    /// Extra certifications that enterprise / government employers layer on top
+    /// of the catalog baseline. Smaller employers don't bother with these.
+    static func enterpriseExtras(for category: JobCategory) -> Set<Certification> {
+        switch category {
+        case .technology:                                  return [.security, .scrum]
+        case .business:                                    return [.pmp, .shrm]
+        case .finance:                                     return [.cpa, .cfa]
+        case .engineering:                                 return [.pmp]
+        case .construction, .manufacturing, .automotive:   return [.osha10]
+        default:                                           return []
+        }
+    }
+
+    /// Requirements adjusted for the offer's company tier. Enterprise / government
+    /// listings layer in additional certifications on top of the catalog baseline;
+    /// other tiers see the unmodified requirements.
+    var effectiveRequirements: Requirements {
+        let extras = Self.enterpriseExtras(for: category)
+        guard companyTier.hiringSignal == .credentials, !extras.isEmpty else { return requirements }
+        let merged = requirements.hardSkills.certifications.union(extras)
+        return Requirements(
+            education: requirements.education,
+            softSkills: requirements.softSkills,
+            hardSkills: HardSkills(
+                portfolioItems: requirements.hardSkills.portfolioItems,
+                certifications: merged,
+                licenses: requirements.hardSkills.licenses
+            )
+        )
     }
 
     func allRequirementsMet(for player: Player) -> Bool {

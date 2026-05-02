@@ -4,6 +4,17 @@ struct SkillsView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
+    private var projects: [Project] {
+        Array(player.hardSkills.portfolioItems.union(appUIState.selectedPortfolio))
+    }
+
+    private var certifications: [Certification] {
+        Array(appUIState.selectedCertifications.union(player.hardSkills.certifications))
+    }
+
+    private var licenses: [License] {
+        Array(appUIState.selectedLicenses.union(player.hardSkills.licenses))
+    }
 
     var body: some View {
 
@@ -28,15 +39,11 @@ struct SkillsView: View {
 
             
             HStack {
-                Text("Projects:")
+                if !projects.isEmpty {
+                    Text("Projects:")
+                }
                 
-                ForEach(
-                    Array(
-                        player.hardSkills.portfolioItems.union(
-                            appUIState.selectedPortfolio
-                        )
-                    )
-                ) { skill in
+                ForEach(projects) { skill in
                     Text("\(skill.id) \(skill.pictogram)")
                 }
                 
@@ -44,7 +51,9 @@ struct SkillsView: View {
 
             }
             HStack {
-                Text("Education:")
+                if !player.degrees.isEmpty {
+                    Text("Education:")
+                }
                 ForEach(player.degrees, id: \.degreeName) { degree in
                     Text(degree.pictogram)
                 }
@@ -52,30 +61,22 @@ struct SkillsView: View {
             }
 
             HStack{
-                Text("Certifications:")
+                if !certifications.isEmpty {
+                    Text("Certifications:")
+                }
 
-                ForEach(
-                    Array(
-                        appUIState.selectedCertifications.union(
-                            player.hardSkills.certifications
-                        )
-                    )
-                ) { cert in
+                ForEach(certifications) { cert in
                     Text(cert.pictogram)
                 }
                 Spacer()
             }
 
             HStack{
-                Text("Licenses:")
+                if !licenses.isEmpty {
+                    Text("Licenses:")
+                }
                 
-                ForEach(
-                    Array(
-                        appUIState.selectedLicenses.union(
-                            player.hardSkills.licenses
-                        )
-                    )
-                ) { lic in
+                ForEach(licenses) { lic in
                     Text(lic.pictogram)
                 }
                 Spacer()

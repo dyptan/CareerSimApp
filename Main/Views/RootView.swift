@@ -4,9 +4,7 @@ struct RootView: View {
     @StateObject var player = Player()
     @StateObject var appUIState = AppUIState()
 
-    private var availableJobs: [Job] {
-        JobCatalog.allJobs()
-    }
+    private var availableJobs: [Job] { player.availableJobs }
 
     var body: some View {
         VStack(alignment: .leading) {
