@@ -75,6 +75,65 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         case .nonprofit:     return 0.09  // funding cuts can eliminate roles quickly
         }
     }
+
+    /// Big formal employers screen by paper credentials (certifications) — the role
+    /// only opens for applicants who hold the listed certs. Smaller organisations
+    /// hire on demonstrated work instead, so they look at the player's portfolio.
+    var hiringSignal: HiringSignal {
+        switch self {
+        case .enterprise, .government: return .credentials
+        default:                       return .portfolio
+        }
+    }
+
+    enum HiringSignal {
+        /// Certifications act as a hard gate (HR-driven hiring).
+        case credentials
+        /// Portfolio items act as a hard gate (work-driven hiring).
+        case portfolio
+    }
+
+    /// Hire-probability modifier: harder to land a job at selective tiers,
+    /// easier at small / self-employment tiers.
+    var hireDifficulty: Double {
+        switch self {
+        case .selfEmployed:  return 0.20
+        case .smallBusiness: return 0.10
+        case .nonprofit:     return 0.05
+        case .government:    return 0.00
+        case .mid:           return 0.00
+        case .startup:       return -0.05
+        case .enterprise:    return -0.10
+        }
+    }
+
+    /// Plausible tiers a player could realistically apply to for a given job category and salary.
+    /// Mirrors the heuristics in `random(category:income:)` but returns all candidates.
+    static func plausibleTiers(category: JobCategory, income: Int) -> [CompanyTier] {
+        switch category {
+        case .publicServices, .education:
+            return [.government, .nonprofit]
+        case .arts, .media, .fashion:
+            return [.selfEmployed, .smallBusiness, .startup]
+        case .agriculture:
+            return income >= 60_000
+                ? [.smallBusiness, .mid, .selfEmployed]
+                : [.selfEmployed, .smallBusiness]
+        case .health:
+            return income >= 130_000
+                ? [.enterprise, .government, .nonprofit]
+                : [.government, .nonprofit, .smallBusiness]
+        case .service:
+            return [.smallBusiness, .selfEmployed, .mid]
+        case .construction where income < 50_000:
+            return [.smallBusiness, .selfEmployed, .mid]
+        default:
+            if income >= 100_000 { return [.enterprise, .mid, .startup] }
+            if income >= 60_000  { return [.mid, .enterprise, .startup, .smallBusiness] }
+            if income >= 38_000  { return [.smallBusiness, .mid, .startup] }
+            return [.smallBusiness, .startup, .selfEmployed]
+        }
+    }
 }
 
 struct Job: Identifiable, Codable, Hashable {
@@ -196,10 +255,17 @@ extension Job {
     }
 
     func hardSkillsMet(for player: Player) -> Bool {
-        requirements.hardSkills.certifications.isSubset(of: player.hardSkills.certifications)
-            && requirements.hardSkills.licenses.isSubset(of: player.hardSkills.licenses)
-            && requirements.hardSkills.software.isSubset(of: player.hardSkills.software)
-            && requirements.hardSkills.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+        // Licenses are always required (legally enforced regardless of employer).
+        guard requirements.hardSkills.licenses.isSubset(of: player.hardSkills.licenses) else {
+            return false
+        }
+        // Big formal employers gate on certifications; smaller employers gate on portfolio.
+        switch companyTier.hiringSignal {
+        case .credentials:
+            return requirements.hardSkills.certifications.isSubset(of: player.hardSkills.certifications)
+        case .portfolio:
+            return requirements.hardSkills.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+        }
     }
 
     func allRequirementsMet(for player: Player) -> Bool {
@@ -217,8 +283,46 @@ extension Job {
     func hireProbability(for player: Player, requestedSalary: Double) -> Double {
         guard allRequirementsMet(for: player) else { return 0.0 }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
-        let raw = (0.2 + skillScore * 0.7) * salaryAlignmentFactor(requestedSalary: requestedSalary)
+        let prestige = relevantPrestigeBonus(for: player)
+        let tierDifficulty = companyTier.hireDifficulty
+        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty)
+            * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
+    }
+
+    /// Hire-probability bonus from the player's most prestigious *relevant* degree.
+    /// Prefers degrees in the job's accepted profiles when such a list is set.
+    func relevantPrestigeBonus(for player: Player) -> Double {
+        let eligible = player.degrees.filter { $0.eqf >= requirements.education.minEQF }
+        guard !eligible.isEmpty else { return 0.0 }
+
+        let matching: [Education]
+        if let accepted = requirements.education.acceptedProfiles, !accepted.isEmpty {
+            matching = eligible.filter { degree in
+                guard let p = degree.profile else { return false }
+                return accepted.contains(p)
+            }
+        } else {
+            matching = eligible
+        }
+        let pool = matching.isEmpty ? eligible : matching
+        let bestPrestige = pool.map { $0.tier.prestige }.max() ?? 0
+        switch bestPrestige {
+        case 3:  return 0.10  // Elite
+        case 2:  return 0.05  // State
+        default: return 0.0   // Community / unranked
+        }
+    }
+
+    /// Returns one Job per plausible employer tier, with deterministic salary
+    /// (no random variance) so the player can compare offers side-by-side.
+    func tieredOffers() -> [Job] {
+        CompanyTier.plausibleTiers(category: category, income: income).map { tier in
+            var copy = self
+            copy.companyTier = tier
+            copy.annualIncome = Int(Double(income) * tier.salaryMultiplier)
+            return copy
+        }
     }
 }
 
@@ -251,7 +355,6 @@ var jobExample = Job(
         hardSkills: .init(
             portfolioItems: [],
             certifications: [],
-            software: [],
             licenses: []
         )
     ),

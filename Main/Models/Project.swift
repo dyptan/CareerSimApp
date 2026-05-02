@@ -48,34 +48,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    var requiredSoftware: Set<Software> {
-        switch self {
-        case .app:
-            return [.programming]
-        case .game:
-            return [.programming, .gameEngine]
-        case .website:
-            // Graphic design represented by mediaEditing
-            return [.programming, .mediaEditing]
-        case .library:
-            return [.programming]
-        case .paper:
-            return [.officeSuite]
-        case .presentation:
-            return [.officeSuite, .mediaEditing]
-        case .paintingPortfolio:
-            return []
-        case .photoPortfolio:
-            return [.mediaEditing]
-        case .musicAlbum:
-            return [.musicProduction]
-        case .recipeBook:
-            return [.officeSuite]
-        case .lessonPlan:
-            return [.officeSuite]
-        }
-    }
-
     func requirements(for player: Player) -> ProjectRequirements {
         func softSkillCurrent(_ label: String) -> Int {
             switch label {
@@ -107,16 +79,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             )
         }
 
-        func hard(_ software: Software, label: String, emoji: String, required: Int) -> ProjectRequirements.HardRequirement {
-            let owned = player.hardSkills.software.contains(software) ? 1 : 0
-            return ProjectRequirements.HardRequirement(
-                label: label,
-                emoji: emoji,
-                required: required,
-                current: owned
-            )
-        }
-
         switch self {
         case .app:
             return ProjectRequirements(
@@ -124,9 +86,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Creativity", "🎨", required: 3),
                     soft("Communication", "🗣️", required: 2)
                 ],
-                hardSkills: [
-                    hard(.programming, label: "Programming", emoji: "💻", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .game:
@@ -135,10 +95,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Creativity", "🎨", required: 4),
                     soft("Problem Solving", "🧩", required: 3)
                 ],
-                hardSkills: [
-                    hard(.programming, label: "Programming", emoji: "💻", required: 1),
-                    hard(.gameEngine, label: "Game Engine", emoji: "🎮", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .website:
@@ -147,10 +104,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Communication", "🗣️", required: 3),
                     soft("Organization", "🗂️", required: 2)
                 ],
-                hardSkills: [
-                    hard(.programming, label: "Programming", emoji: "💻", required: 1),
-                    hard(.mediaEditing, label: "Media Editing", emoji: "🎨", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .library:
@@ -159,9 +113,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Problem Solving", "🧩", required: 4),
                     soft("Attention to Detail", "🔎", required: 3)
                 ],
-                hardSkills: [
-                    hard(.programming, label: "Programming", emoji: "💻", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .paper:
@@ -170,9 +122,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Communication", "🗣️", required: 4),
                     soft("Organization", "🗂️", required: 3)
                 ],
-                hardSkills: [
-                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .presentation:
@@ -181,10 +131,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Communication", "🗣️", required: 5),
                     soft("Creativity", "🎨", required: 2)
                 ],
-                hardSkills: [
-                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1),
-                    hard(.mediaEditing, label: "Media Editing", emoji: "🎨", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .paintingPortfolio:
@@ -203,9 +150,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Creativity", "🎨", required: 3),
                     soft("Attention to Detail", "🔎", required: 3)
                 ],
-                hardSkills: [
-                    hard(.mediaEditing, label: "Media Editing", emoji: "🎨", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .musicAlbum:
@@ -214,9 +159,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Creativity", "🎨", required: 4),
                     soft("Perseverance", "🏆", required: 3)
                 ],
-                hardSkills: [
-                    hard(.musicProduction, label: "Music Production", emoji: "🎚️", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .recipeBook:
@@ -226,9 +169,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Attention to Detail", "🔎", required: 3),
                     soft("Organization", "🗂️", required: 2)
                 ],
-                hardSkills: [
-                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1)
-                ]
+                hardSkills: []
             )
 
         case .lessonPlan:
@@ -238,9 +179,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
                     soft("Organization", "🗂️", required: 3),
                     soft("Attention to Detail", "🔎", required: 2)
                 ],
-                hardSkills: [
-                    hard(.officeSuite, label: "Office Suite", emoji: "📄", required: 1)
-                ]
+                hardSkills: []
             )
         }
     }

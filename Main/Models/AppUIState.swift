@@ -7,7 +7,6 @@ final class AppUIState: ObservableObject {
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showProjectsSheet: Bool = false
-    @Published var showCoursesSheet: Bool = false
     @Published var showActivitiesSheet: Bool = false
     @Published var showCertificationsSheet: Bool = false
     @Published var showLicensesSheet: Bool = false
@@ -15,7 +14,6 @@ final class AppUIState: ObservableObject {
 
     // Selections
     @Published var selectedActivities: Set<String>
-    @Published var selectedSoftware: Set<Software>
     @Published var selectedLicenses: Set<License>
     @Published var selectedPortfolio: Set<Project>
     @Published var selectedCertifications: Set<Certification>
@@ -29,14 +27,12 @@ final class AppUIState: ObservableObject {
         showTertiarySheet: Bool = false,
         showCareersSheet: Bool = false,
         selectedActivities: Set<String> = [],
-        selectedSoftware: Set<Software> = [],
         selectedLicenses: Set<License> = [],
         selectedPortfolio: Set<Project> = [],
         selectedCertifications: Set<Certification> = [],
         yearsLeftToGraduation: Int? = nil,
         decisionText: String = "",
         showProjectsSheet: Bool = false,
-        showCoursesSheet: Bool = false,
         showActivitiesSheet: Bool = false,
         showCertificationsSheet: Bool = false,
         showLicensesSheet: Bool = false,
@@ -46,14 +42,12 @@ final class AppUIState: ObservableObject {
         self.showTertiarySheet = showTertiarySheet
         self.showCareersSheet = showCareersSheet
         self.selectedActivities = selectedActivities
-        self.selectedSoftware = selectedSoftware
         self.selectedLicenses = selectedLicenses
         self.selectedPortfolio = selectedPortfolio
         self.selectedCertifications = selectedCertifications
         self.yearsLeftToGraduation = yearsLeftToGraduation
         self.decisionText = decisionText
         self.showProjectsSheet = showProjectsSheet
-        self.showCoursesSheet = showCoursesSheet
         self.showActivitiesSheet = showActivitiesSheet
         self.showCertificationsSheet = showCertificationsSheet
         self.showLicensesSheet = showLicensesSheet
@@ -65,13 +59,11 @@ final class AppUIState: ObservableObject {
         showTertiarySheet = false
         showCareersSheet = true
         showProjectsSheet = false
-        showCoursesSheet = false
         showActivitiesSheet = false
         showCertificationsSheet = false
         showLicensesSheet = false
         showRetirementSheet = false
         selectedActivities = []
-        selectedSoftware = []
         selectedLicenses = []
         selectedPortfolio = []
         selectedCertifications = []

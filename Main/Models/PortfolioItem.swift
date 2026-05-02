@@ -24,8 +24,8 @@ enum PortfolioItem: String, CaseIterable, Codable, Hashable, Identifiable {
     func portfolioRequirements(_ player: Player) -> TrainingRequirementResult {
         switch self {
         case .app, .game, .website, .library:
-            if !player.hardSkills.software.contains(.programming) {
-                return .blocked(reason: "Requires Programming")
+            if player.softSkills.analyticalReasoningAndProblemSolving < 2 {
+                return .blocked(reason: "Needs more Problem Solving")
             }
             return .ok(cost: 0)
         case .presentation:

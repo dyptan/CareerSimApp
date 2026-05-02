@@ -11,7 +11,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedCertifications: Set<Certification>
-    @Published var lockedSoftware: Set<Software>
     @Published var lockedPortfolio: Set<Project>
     @Published var lockedLicenses: Set<License>
     @Published var lockedActivities: Set<String>
@@ -42,7 +41,6 @@ final class Player: ObservableObject {
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedCertifications: Set<Certification> = [],
-        lockedSoftware: Set<Software> = [],
         lockedPortfolio: Set<Project> = [],
         lockedLicenses: Set<License> = [],
         lockedActivities: Set<String> = []
@@ -56,7 +54,6 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedCertifications = lockedCertifications
-        self.lockedSoftware = lockedSoftware
         self.lockedPortfolio = lockedPortfolio
         self.lockedLicenses = lockedLicenses
         self.lockedActivities = lockedActivities
@@ -108,18 +105,6 @@ final class Player: ObservableObject {
         savings += lic.costForLicense
     }
 
-    func purchaseSoftware(_ sw: Software, into selectedSoftware: inout Set<Software>, activities selectedActivities: inout Set<String>) {
-        guard case .ok(let cost) = sw.softwareRequirements(self) else { return }
-        selectedSoftware.insert(sw)
-        selectedActivities.insert("soft:\(sw.rawValue)")
-        savings -= cost
-    }
-
-    func deselectSoftware(_ sw: Software, from selectedSoftware: inout Set<Software>, activities selectedActivities: inout Set<String>) {
-        guard selectedSoftware.remove(sw) != nil else { return }
-        selectedActivities.remove("soft:\(sw.rawValue)")
-    }
-
     // MARK: - Year progression
 
     func advanceYear(appUIState: AppUIState) {
@@ -128,14 +113,20 @@ final class Player: ObservableObject {
         hardSkills.certifications.formUnion(appUIState.selectedCertifications)
         hardSkills.licenses.formUnion(appUIState.selectedLicenses)
         hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
-        hardSkills.software.formUnion(appUIState.selectedSoftware)
 
         lockedCertifications.formUnion(appUIState.selectedCertifications)
         lockedPortfolio.formUnion(appUIState.selectedPortfolio)
-        lockedSoftware.formUnion(appUIState.selectedSoftware)
         lockedLicenses.formUnion(appUIState.selectedLicenses)
 
         appUIState.selectedActivities.removeAll()
+
+        // Charge tuition for the year the player is enrolled in a tertiary program.
+        if let edu = currentEducation,
+           let yearsLeft = appUIState.yearsLeftToGraduation,
+           yearsLeft > 0,
+           edu.profile != nil {
+            savings -= edu.annualTuition
+        }
 
         appUIState.yearsLeftToGraduation? -= 1
         if appUIState.yearsLeftToGraduation == 0 {
@@ -182,7 +173,6 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         lockedCertifications = fresh.lockedCertifications
-        lockedSoftware = fresh.lockedSoftware
         lockedPortfolio = fresh.lockedPortfolio
         lockedLicenses = fresh.lockedLicenses
         lockedActivities = fresh.lockedActivities

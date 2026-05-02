@@ -9,7 +9,7 @@ struct SkillsView: View {
 
         ScrollView {
 
-            Text("Badges")
+            Text("Skills")
             ForEach(
                 Array(SoftSkills.skillNames.enumerated()),
                 id: \.offset
@@ -26,9 +26,9 @@ struct SkillsView: View {
 
             Divider()
 
-            Text("Achievements")
+            
             HStack {
-                Text("Portfolio:")
+                Text("Projects:")
                 
                 ForEach(
                     Array(
@@ -44,7 +44,7 @@ struct SkillsView: View {
 
             }
             HStack {
-                Text("Degrees:")
+                Text("Education:")
                 ForEach(player.degrees, id: \.degreeName) { degree in
                     Text(degree.pictogram)
                 }
@@ -81,22 +81,6 @@ struct SkillsView: View {
                 Spacer()
             }
 
-            HStack{
-                Text("Software:")
-
-                VStack(alignment: .leading){
-                    ForEach(
-                        Array(
-                            player.hardSkills.software.union(
-                                appUIState.selectedSoftware
-                            )
-                        )
-                    ) { skill in
-                        Text("\(skill.pictogram)")
-                    }
-                }
-                Spacer()
-            }
         }
     }
 }

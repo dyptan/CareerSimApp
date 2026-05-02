@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// Second level of the education nav stack — lists the degree levels available for a profile
+/// (Vocational / Bachelor / Master / Doctorate). Each row navigates into InstitutionTiersView.
 struct DegreesSubmenuView: View {
     @ObservedObject var player: Player
     let profile: TertiaryProfile
@@ -20,12 +22,16 @@ struct DegreesSubmenuView: View {
 
     var body: some View {
         List {
-            ForEach(Array(degrees.enumerated()), id: \.element.id) { index, education in
-                let r = education.requirements
-                let highestEQF = player.degrees.last?.eqf ?? 0
-                let meetsAll = education.meetsRequirements(player: player)
-
-                VStack(alignment: .leading, spacing: 8) {
+            ForEach(Array(degrees.enumerated()), id: \.element.id) { _, education in
+                NavigationLink {
+                    InstitutionTiersView(
+                        player: player,
+                        level: education.level,
+                        profile: profile,
+                        yearsLeftToGraduation: $yearsLeftToGraduation,
+                        showTertiarySheet: $showTertiarySheet
+                    )
+                } label: {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 6) {
                             Text(education.degreeName)
@@ -35,52 +41,12 @@ struct DegreesSubmenuView: View {
                                 message: degreeHintBody(for: education)
                             )
                         }
-                        Text("Takes \(education.yearsToComplete) years")
+                        Text("\(education.yearsToComplete) years • compare schools")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Requirements:")
-                            .font(.subheadline.bold())
-
-                        let eduMet = highestEQF >= r.minEQF
-                        RequirementRow(
-                            label: r.educationLabel(),
-                            emoji: "🎓",
-                            style: .meter(current: highestEQF, required: r.minEQF)
-                        )
-                        .foregroundStyle(eduMet ? .primary : .secondary)
-                        .padding(.horizontal)
-
-                        ForEach(Education.Requirements.softSkillMappings) { mapping in
-                            let required = r[keyPath: mapping.requirementKeyPath]
-                            if required > 0 {
-                                let playerValue = player.softSkills[keyPath: mapping.playerKeyPath]
-                                RequirementRow(
-                                    label: mapping.id,
-                                    emoji: mapping.pictogram,
-                                    style: .meter(current: playerValue, required: required)
-                                )
-                                .foregroundStyle(playerValue >= required ? .primary : .secondary)
-                                .padding(.horizontal)
-                            }
-                        }
-                    }.padding(.top, 4)
-
-                    Button {
-                        player.currentOccupation = nil
-                        player.currentEducation = education
-                        yearsLeftToGraduation = education.yearsToComplete
-                        showTertiarySheet = false
-                    } label: {
-                        Text("Apply").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!meetsAll)
-                    .opacity(meetsAll ? 1.0 : 0.5)
-                    .padding()
-                }.padding(.vertical, 6)
+                    .padding(.vertical, 6)
+                }
             }
         }
         .navigationTitle(profile.rawValue.capitalized)

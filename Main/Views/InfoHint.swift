@@ -27,7 +27,7 @@ struct InfoHint: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding()
-            .frame(width: 300, alignment: .leading)
+            .frame(idealWidth: 300, maxWidth: 320, alignment: .leading)
             .modifier(CompactPopoverAdaptation())
         }
     }

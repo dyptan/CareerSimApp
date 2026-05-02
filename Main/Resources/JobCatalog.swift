@@ -30,7 +30,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 3,
                     presentationAndStorytelling: 2
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
+                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [])
             )
         )
 
@@ -59,7 +59,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 4,
                     presentationAndStorytelling: 2
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
+                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [])
             )
         )
 
@@ -88,7 +88,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 3,
                     presentationAndStorytelling: 4
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
+                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [])
             )
         )
 
@@ -117,7 +117,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 2,
                     presentationAndStorytelling: 0
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], software: [], licenses: [])
+                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [])
             )
         )
 
@@ -303,7 +303,7 @@ enum JobCatalog {
         }
 
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
-            return .init(portfolioItems: [], certifications: [], software: [], licenses: [])
+            return .init(portfolioItems: [], certifications: [], licenses: [])
         }
 
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int) -> Job {

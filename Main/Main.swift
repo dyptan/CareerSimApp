@@ -6,11 +6,11 @@ struct Main: App {
         WindowGroup {
             if #available(macOS 13.0, iOS 16.0, *) {
                 NavigationStack {
-                    MainView()
+                    RootView()
                 }
             } else {
                 NavigationView {
-                    MainView()
+                    RootView()
                 }
             }
         }
@@ -23,12 +23,12 @@ struct Main: App {
 #Preview {
     if #available(macOS 13.0, iOS 16.0, *) {
         NavigationStack {
-            MainView()
+            RootView()
         }
         .frame(width: 1000, height: 700)
     } else {
         NavigationView {
-            MainView()
+            RootView()
         }
         .frame(width: 1000, height: 700)
     }

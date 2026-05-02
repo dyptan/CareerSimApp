@@ -132,20 +132,6 @@ struct JobDetail: View {
                 }
             }
 
-            if !requiredHard.software.isEmpty {
-                Text("Software:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(Array(requiredHard.software).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { software in
-                    let owned = player.hardSkills.software.contains(software)
-                    RequirementRow(label: software.rawValue, emoji: software.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-            }
-
             if !requiredHard.portfolioItems.isEmpty {
                 Text("Portfolio:")
                     .font(.headline)

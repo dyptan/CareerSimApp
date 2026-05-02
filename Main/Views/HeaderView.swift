@@ -53,7 +53,6 @@ struct HeaderView: View {
             showTertiarySheet: false,
             showCareersSheet: false,
             selectedActivities: [],
-            selectedSoftware: [],
             selectedLicenses: [],
             selectedPortfolio: [],
             selectedCertifications: [],

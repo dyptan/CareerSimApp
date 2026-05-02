@@ -6,10 +6,11 @@ import Foundation
 struct Education: Codable, Hashable, Identifiable {
     var level: Level.Stage
     var profile: TertiaryProfile?  // nil for early education
+    var tier: EducationTier        // institution tier; ignored for K-12
 
     var id: String {
         if let p = profile {
-            return "\(level.rawValue)-\(p.rawValue)"
+            return "\(level.rawValue)-\(p.rawValue)-\(tier.rawValue)"
         } else {
             return level.rawValue
         }
@@ -18,16 +19,27 @@ struct Education: Codable, Hashable, Identifiable {
     init(_ level: Level.Stage) {
         self.level = level
         self.profile = nil
+        self.tier = .state
     }
 
-    init(_ level: Level.Stage, profile: TertiaryProfile) {
+    init(_ level: Level.Stage, profile: TertiaryProfile, tier: EducationTier = .state) {
         self.level = level
         self.profile = profile
+        self.tier = tier
     }
 
     var eqf: Int { Level(stage: level).eqf }
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
     var pictogram: String { Level(stage: level).pictogram }
+
+    /// Per-year tuition for this institution tier at this degree level.
+    var annualTuition: Int { tier.annualTuition(for: level) }
+
+    /// Total tuition over the duration of the degree.
+    var totalTuition: Int { annualTuition * yearsToComplete }
+
+    /// Convenience accessor for tier prestige (1/2/3); 0 for K-12.
+    var prestige: Int { profile == nil ? 0 : tier.prestige }
 
     // Updated Requirements struct to match the Job model
     struct SoftSkillMapping: Identifiable {
@@ -100,28 +112,37 @@ struct Education: Codable, Hashable, Identifiable {
         var base = Education.baseRequirements(for: p)
 
         // Escalate by level, enforce minimums, and clamp to 0...5
+        var r: Requirements
         switch level {
         case .Vocational:
             base.minEQF = 3
-            return Education.clamped(base)
+            r = Education.clamped(base)
         case .Bachelor:
-            var r = Education.elevated(base, by: 1)
-            r.minEQF = 3
-            r = Education.enforceMinimums(r, for: .Bachelor, profile: p)
-            return Education.clamped(r)
+            var x = Education.elevated(base, by: 1)
+            x.minEQF = 3
+            x = Education.enforceMinimums(x, for: .Bachelor, profile: p)
+            r = Education.clamped(x)
         case .Master:
-            var r = Education.elevated(base, by: 2)
-            r.minEQF = 5
-            r = Education.enforceMinimums(r, for: .Master, profile: p)
-            return Education.clamped(r)
+            var x = Education.elevated(base, by: 2)
+            x.minEQF = 5
+            x = Education.enforceMinimums(x, for: .Master, profile: p)
+            r = Education.clamped(x)
         case .Doctorate:
-            var r = Education.elevated(base, by: 3)
-            r.minEQF = 6
-            r = Education.enforceMinimums(r, for: .Doctorate, profile: p)
-            return Education.clamped(r)
+            var x = Education.elevated(base, by: 3)
+            x.minEQF = 6
+            x = Education.enforceMinimums(x, for: .Doctorate, profile: p)
+            r = Education.clamped(x)
         default:
             return Requirements()
         }
+
+        // Tier raises the soft-skill admission bar for non-zero requirements.
+        let bonus = tier.requirementBonus
+        if bonus > 0 {
+            r = Education.elevated(r, by: bonus)
+            r = Education.clamped(r)
+        }
+        return r
     }
 
     func meetsRequirements(player: Player) -> Bool {

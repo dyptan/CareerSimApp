@@ -58,7 +58,7 @@ struct LicensesView: View {
 
             Text("Costs $\(lic.costForLicense.formatted(.number))")
                 .font(.caption)
-                .foregroundStyle(player.savings >= lic.costForLicense ? Color.secondary : Color.red)
+                .foregroundStyle(player.savings >= lic.costForLicense ? Color.secondary : Color.gray)
                 .padding(.leading, 8)
 
             let thresholds = lic.softSkillThresholds

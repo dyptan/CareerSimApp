@@ -10,10 +10,7 @@ struct FooterView: View {
             
             Button("Projects") { appUIState.showProjectsSheet = true }
                 .buttonStyle(.bordered).font(.headline)
-            
-            Button("Courses") { appUIState.showCoursesSheet = true }
-                .buttonStyle(.bordered).font(.headline)
-            
+
             Button("Activities") { appUIState.showActivitiesSheet = true }
                 .buttonStyle(.bordered).font(.headline)
         }

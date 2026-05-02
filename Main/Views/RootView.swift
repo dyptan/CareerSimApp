@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MainView: View {
+struct RootView: View {
     @StateObject var player = Player()
     @StateObject var appUIState = AppUIState()
 
@@ -60,9 +60,6 @@ struct MainView: View {
         }
         .sheet(isPresented: $appUIState.showLicensesSheet) {
             navigationSheet { licensesContent }
-        }
-        .sheet(isPresented: $appUIState.showCoursesSheet) {
-            navigationSheet { coursesContent }
         }
         .sheet(isPresented: $appUIState.showProjectsSheet) {
             navigationSheet { projectsContent }
@@ -150,19 +147,6 @@ struct MainView: View {
         }
     }
 
-    private var coursesContent: some View {
-        CoursesView(
-            player: player,
-            selectedSoftware: $appUIState.selectedSoftware,
-            selectedActivities: $appUIState.selectedActivities
-        )
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Close") { appUIState.showCoursesSheet = false }
-            }
-        }
-    }
-
     private var projectsContent: some View {
         ProjectsView(
             player: player,
@@ -178,5 +162,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    RootView()
 }

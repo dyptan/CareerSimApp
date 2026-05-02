@@ -32,7 +32,7 @@ struct JobsView: View {
                     List {
                         ForEach(availableJobs.filter { $0.category == category }) { job in
                             NavigationLink {
-                                JobDetail(
+                                JobOffersView(
                                     job: job,
                                     player: player,
                                     showCareersSheet: $showCareersSheet

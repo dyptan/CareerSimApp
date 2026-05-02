@@ -40,7 +40,6 @@ struct HardSkills: Codable, Hashable {
 
     private(set) var portfolioLevels: [Project: ProficiencyLevel] = [:]
     private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
-    private(set) var softwareLevels: [Software: ProficiencyLevel] = [:]
     private(set) var licenseLevels: [License: ProficiencyLevel] = [:]
 
 
@@ -54,11 +53,6 @@ struct HardSkills: Codable, Hashable {
         set { HardSkills.syncLevels(&certificationLevels, to: newValue) }
     }
 
-    var software: Set<Software> {
-        get { Set(softwareLevels.keys) }
-        set { HardSkills.syncLevels(&softwareLevels, to: newValue) }
-    }
-
     var licenses: Set<License> {
         get { Set(licenseLevels.keys) }
         set { HardSkills.syncLevels(&licenseLevels, to: newValue) }
@@ -69,12 +63,10 @@ struct HardSkills: Codable, Hashable {
     init(
         portfolioItems: Set<Project> = [],
         certifications: Set<Certification> = [],
-        software: Set<Software> = [],
         licenses: Set<License> = []
     ) {
         self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
         self.certificationLevels = Dictionary(uniqueKeysWithValues: certifications.map { ($0, .level1) })
-        self.softwareLevels = Dictionary(uniqueKeysWithValues: software.map { ($0, .level1) })
         self.licenseLevels = Dictionary(uniqueKeysWithValues: licenses.map { ($0, .level1) })
     }
 
@@ -89,20 +81,16 @@ struct HardSkills: Codable, Hashable {
 
     func level(for item: Project) -> ProficiencyLevel? { portfolioLevels[item] }
     func level(for cert: Certification) -> ProficiencyLevel? { certificationLevels[cert] }
-    func level(for sw: Software) -> ProficiencyLevel? { softwareLevels[sw] }
     func level(for lic: License) -> ProficiencyLevel? { licenseLevels[lic] }
 
     // MARK: - Mutating setters
 
-    
+
     mutating func setLevel(_ level: ProficiencyLevel, for item: Project) {
         portfolioLevels[item] = level
     }
     mutating func setLevel(_ level: ProficiencyLevel, for cert: Certification) {
         certificationLevels[cert] = level
-    }
-    mutating func setLevel(_ level: ProficiencyLevel, for sw: Software) {
-        softwareLevels[sw] = level
     }
     mutating func setLevel(_ level: ProficiencyLevel, for lic: License) {
         licenseLevels[lic] = level
@@ -115,9 +103,6 @@ struct HardSkills: Codable, Hashable {
     }
     mutating func promote(to level: ProficiencyLevel, for cert: Certification) {
         certificationLevels[cert] = max(certificationLevels[cert] ?? .level1, level)
-    }
-    mutating func promote(to level: ProficiencyLevel, for sw: Software) {
-        softwareLevels[sw] = max(softwareLevels[sw] ?? .level1, level)
     }
     mutating func promote(to level: ProficiencyLevel, for lic: License) {
         licenseLevels[lic] = max(licenseLevels[lic] ?? .level1, level)
@@ -146,9 +131,6 @@ struct HardSkills: Codable, Hashable {
     func canTrain(_ cert: Certification) -> Bool {
         nextLevel(after: currentLevel(in: certificationLevels, for: cert)) != nil
     }
-    func canTrain(_ sw: Software) -> Bool {
-        nextLevel(after: currentLevel(in: softwareLevels, for: sw)) != nil
-    }
     func canTrain(_ lic: License) -> Bool {
         nextLevel(after: currentLevel(in: licenseLevels, for: lic)) != nil
     }
@@ -171,14 +153,6 @@ struct HardSkills: Codable, Hashable {
         return certificationLevels[cert]
     }
     @discardableResult
-    mutating func trainOneYear(_ sw: Software) -> ProficiencyLevel? {
-        let next = nextLevel(after: softwareLevels[sw])
-        if let n = next {
-            softwareLevels[sw] = n
-        }
-        return softwareLevels[sw]
-    }
-    @discardableResult
     mutating func trainOneYear(_ lic: License) -> ProficiencyLevel? {
         let next = nextLevel(after: licenseLevels[lic])
         if let n = next {
@@ -191,7 +165,6 @@ struct HardSkills: Codable, Hashable {
 
     mutating func remove(_ item: Project) { portfolioLevels.removeValue(forKey: item) }
     mutating func remove(_ cert: Certification) { certificationLevels.removeValue(forKey: cert) }
-    mutating func remove(_ sw: Software) { softwareLevels.removeValue(forKey: sw) }
     mutating func remove(_ lic: License) { licenseLevels.removeValue(forKey: lic) }
 }
 
