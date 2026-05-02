@@ -20,6 +20,56 @@ struct JobDetail: View {
         job.hireProbability(for: player, requestedSalary: requestedSalary)
     }
 
+    /// Plain-language breakdown of the hire-probability formula with the
+    /// player's *current* numbers plugged in. Shown in the InfoHint popover.
+    private var hireProbabilityFormulaText: String {
+        guard allRequirementsMet else {
+            return "Hire chance is 0% until every required degree, license, and \(job.companyTier.hiringSignal == .credentials ? "certification" : "portfolio item") is in place."
+        }
+
+        let scoredCount = 15
+        let matched = job.softSkillsHelpfulScore(for: player)
+        let skillScore = Double(matched) / Double(scoredCount)
+        let skillContribution = skillScore * 0.7
+        let prestige = job.relevantPrestigeBonus(for: player)
+        let tier = job.companyTier.hireDifficulty
+        let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
+        let rawSum = 0.2 + skillContribution + prestige + tier
+        let raw = rawSum * salaryFit
+        let final = max(0.05, min(0.95, raw))
+
+        func pct(_ v: Double) -> String {
+            "\(Int((v * 100).rounded()))%"
+        }
+        func signed(_ v: Double) -> String {
+            let s = Int((v * 100).rounded())
+            return s >= 0 ? "+\(s)%" : "\(s)%"
+        }
+
+        let topPrestige = (player.degrees.map { $0.tier.prestige }.max() ?? 0)
+        let prestigeLabel: String = {
+            switch topPrestige {
+            case 3: return "Elite"
+            case 2: return "State"
+            case 1: return "Community"
+            default: return "no degree"
+            }
+        }()
+
+        return """
+        Formula: (Base 20% + Skill match × 70% + Degree prestige + Company tier) × Salary fit
+
+        Your numbers right now:
+        • Base: 20%
+        • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
+        • Degree prestige (\(prestigeLabel)): \(signed(prestige))
+        • Company tier (\(job.companyTier.displayName)): \(signed(tier))
+        • Salary fit: \(pct(salaryFit))
+        Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
+        Final (clamped 5–95%): \(pct(final))
+        """
+    }
+
     var body: some View {
         ScrollView {
             Text(job.icon)
@@ -173,8 +223,12 @@ struct JobDetail: View {
                 }
                 .padding(.horizontal)
 
-                HStack {
+                HStack(spacing: 6) {
                     Text("Hire probability:")
+                    InfoHint(
+                        title: "How hire probability is calculated",
+                        message: hireProbabilityFormulaText
+                    )
                     Spacer()
                     Text("\(Int(hireProbability * 100)) %")
                         .font(.headline)
