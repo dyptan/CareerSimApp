@@ -12,6 +12,12 @@ struct ActivitiesView: View {
         )
     }
 
+    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
+
+    private var stageActivities: [Activity] {
+        activities.filter { $0.stages.contains(currentStage) }
+    }
+
     var body: some View {
         VStack {
 
@@ -26,11 +32,14 @@ struct ActivitiesView: View {
                             ? .red : .primary
                     )
             }
+            Text("\(currentStage.displayName) — age \(player.age)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             Spacer()
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(activities, id: \.label) { activity in
+                    ForEach(stageActivities, id: \.label) { activity in
                         // Each ability rendered once, prefixed with a Nx multiplier
                         // when the boost is greater than 1 (e.g. "2x🧠 🪡 🎤").
                         let pictos: String = activity.abilities
