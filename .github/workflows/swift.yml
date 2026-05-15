@@ -5,6 +5,10 @@
 # Code signing is disabled because GitHub-hosted runners don't carry an
 # Apple developer certificate; signing the .app at the end of the build
 # would otherwise fail with exit code 65.
+#
+# xcodebuild output is piped through xcbeautify with the github-actions
+# renderer so Swift compile errors surface as ::error file=... line=...::
+# annotations on the run summary, instead of being buried in raw logs.
 
 name: Swift
 
@@ -24,6 +28,9 @@ jobs:
     - name: Show Xcode version
       run: xcodebuild -version
 
+    - name: Install xcbeautify
+      run: brew install xcbeautify
+
     - name: Build
       run: |
         set -o pipefail
@@ -35,7 +42,8 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          build
+          build \
+          | xcbeautify --renderer github-actions
 
     - name: Run tests
       run: |
@@ -48,4 +56,5 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          test
+          test \
+          | xcbeautify --renderer github-actions
