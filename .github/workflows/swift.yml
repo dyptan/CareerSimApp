@@ -1,10 +1,15 @@
-# This workflow builds and tests the CareersApp Xcode project.
+# This workflow builds the CareersApp Xcode project.
 # CareersApp is an Xcode app project, not a SwiftPM package, so it uses
-# xcodebuild rather than `swift build` / `swift test`.
+# xcodebuild rather than `swift build`.
 #
 # Code signing is disabled because GitHub-hosted runners don't carry an
 # Apple developer certificate; signing the .app at the end of the build
 # would otherwise fail with exit code 65.
+#
+# Tests are not run: the Tests target in the project is currently an
+# empty scaffold (no *Tests.swift sources), and its deployment target
+# is set to macOS 26.0 which doesn't match the runner's OS. Re-add a
+# test step once real tests exist and the deployment target is sane.
 #
 # xcodebuild output is teed to a log file and piped through xcbeautify
 # (github-actions renderer). On failure the tail of the log is emitted
@@ -55,35 +60,10 @@ jobs:
         echo "::endgroup::"
         echo "::error title=xcodebuild build failed::$(grep -E '^(error:|.*: error:)' build.log | tail -n 5 | tr '\n' ' ' || echo 'see log tail above')"
 
-    - name: Run tests
-      id: tests
-      run: |
-        set -o pipefail
-        xcodebuild \
-          -project CareersApp.xcodeproj \
-          -scheme CareersApp \
-          -destination 'platform=macOS' \
-          -configuration Debug \
-          CODE_SIGNING_ALLOWED=NO \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          test \
-          2>&1 | tee test.log | xcbeautify --renderer github-actions
-
-    - name: Surface test log tail on failure
-      if: failure() && steps.tests.conclusion == 'failure'
-      run: |
-        echo "::group::xcodebuild tail (test.log)"
-        tail -n 120 test.log || true
-        echo "::endgroup::"
-        echo "::error title=xcodebuild test failed::$(grep -E '^(error:|.*: error:)' test.log | tail -n 5 | tr '\n' ' ' || echo 'see log tail above')"
-
     - name: Upload logs on failure
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: xcodebuild-logs
-        path: |
-          build.log
-          test.log
+        path: build.log
         if-no-files-found: ignore
