@@ -110,6 +110,18 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     }
 
     
+    /// Life stages in which this licence is offered. Driver's and private pilot are
+    /// reachable at 16/17 so they surface in the teen sheet; everything else
+    /// requires age 18+ and only appears from young adulthood onward.
+    var stages: Set<LifeStage> {
+        switch self {
+        case .drivers, .pilot:
+            return [.teen, .youngAdult, .adult]
+        default:
+            return [.youngAdult, .adult]
+        }
+    }
+
     // Minimum EQF level (education) required before pursuing this license
     var minEQF: Int {
         switch self {

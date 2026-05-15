@@ -128,6 +128,13 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Life stages in which this certification is offered. All career certifications
+    /// presume the player is at least old enough to be pursuing post-secondary work
+    /// or vocational training, so the child and teen sheets stay empty.
+    var stages: Set<LifeStage> {
+        [.youngAdult, .adult]
+    }
+
     // Minimum EQF level (education) required before pursuing this certification
     var minEQF: Int {
         switch self {

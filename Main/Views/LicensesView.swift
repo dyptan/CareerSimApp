@@ -6,15 +6,26 @@ struct LicensesView: View {
     @Binding var selectedLicenses: Set<License>
     @Binding var selectedActivities: Set<String>
 
+    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
+
     private var sortedLicenses: [License] {
-        License.allCases.sorted { $0.rawValue < $1.rawValue }
+        License.allCases
+            .filter { $0.stages.contains(currentStage) }
+            .sorted { $0.rawValue < $1.rawValue }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(sortedLicenses, id: \.self) { lic in
-                    row(for: lic).padding(8)
+                if sortedLicenses.isEmpty {
+                    Text("Licences unlock once you're a teen — the earliest is a driver's licence at 16.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .padding()
+                } else {
+                    ForEach(sortedLicenses, id: \.self) { lic in
+                        row(for: lic).padding(8)
+                    }
                 }
             }
         }

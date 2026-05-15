@@ -45,6 +45,20 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Life stages in which this portfolio piece is offered. Creative kid-friendly
+    /// outputs (drawing, photos, music) are available from childhood; technical
+    /// and adult-career pieces (library, recipe book, lesson plan) unlock later.
+    var stages: Set<LifeStage> {
+        switch self {
+        case .paintingPortfolio, .photoPortfolio, .musicAlbum:
+            return [.child, .teen, .youngAdult, .adult]
+        case .app, .website, .paper, .presentation:
+            return [.teen, .youngAdult, .adult]
+        case .library, .recipeBook, .lessonPlan:
+            return [.youngAdult, .adult]
+        }
+    }
+
     func requirements(for player: Player) -> ProjectRequirements {
         func softSkillCurrent(_ label: String) -> Int {
             switch label {

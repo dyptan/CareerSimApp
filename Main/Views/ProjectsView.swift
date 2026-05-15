@@ -6,8 +6,12 @@ struct ProjectsView: View {
     @Binding var selectedPortfolio: Set<Project>
     @Binding var selectedActivities: Set<String>
 
+    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
+
     private var sortedPortfolio: [Project] {
-        Project.allCases.sorted(by: { $0.rawValue < $1.rawValue })
+        Project.allCases
+            .filter { $0.stages.contains(currentStage) }
+            .sorted(by: { $0.rawValue < $1.rawValue })
     }
 
     private struct ProjectRow: View {
@@ -105,14 +109,21 @@ struct ProjectsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                ForEach(sortedPortfolio, id: \.self) { item in
-                    ProjectRow(
-                        player: player,
-                        item: item,
-                        selectedPortfolio: $selectedPortfolio,
-                        selectedActivities: $selectedActivities
-                    )
-                    .padding(8)
+                if sortedPortfolio.isEmpty {
+                    Text("No portfolio projects available yet — come back when you're older.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .padding()
+                } else {
+                    ForEach(sortedPortfolio, id: \.self) { item in
+                        ProjectRow(
+                            player: player,
+                            item: item,
+                            selectedPortfolio: $selectedPortfolio,
+                            selectedActivities: $selectedActivities
+                        )
+                        .padding(8)
+                    }
                 }
             }
         }

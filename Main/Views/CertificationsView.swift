@@ -40,16 +40,27 @@ struct CertificationsView: View {
     @Binding var selectedCertifications: Set<Certification>
     @Binding var selectedActivities: Set<String>
 
+    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
+
     private var sortedCertifications: [Certification] {
-        Certification.allCases.sorted { $0.rawValue < $1.rawValue }
+        Certification.allCases
+            .filter { $0.stages.contains(currentStage) }
+            .sorted { $0.rawValue < $1.rawValue }
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(sortedCertifications, id: \.rawValue) { cert in
-                    row(for: cert)
-                        .padding(.vertical, 4)
+                if sortedCertifications.isEmpty {
+                    Text("Career certifications unlock after high school.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .padding()
+                } else {
+                    ForEach(sortedCertifications, id: \.rawValue) { cert in
+                        row(for: cert)
+                            .padding(.vertical, 4)
+                    }
                 }
             }
             .padding(.horizontal)
