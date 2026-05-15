@@ -6,9 +6,10 @@
 # Apple developer certificate; signing the .app at the end of the build
 # would otherwise fail with exit code 65.
 #
-# xcodebuild output is piped through xcbeautify with the github-actions
-# renderer so Swift compile errors surface as ::error file=... line=...::
-# annotations on the run summary, instead of being buried in raw logs.
+# xcodebuild output is teed to a log file and piped through xcbeautify
+# (github-actions renderer). On failure the tail of the log is emitted
+# as a ::error:: block so the real xcodebuild error surfaces on the run
+# summary even when the per-step logs aren't easily reachable.
 
 name: Swift
 
@@ -32,6 +33,7 @@ jobs:
       run: brew install xcbeautify
 
     - name: Build
+      id: build
       run: |
         set -o pipefail
         xcodebuild \
@@ -43,9 +45,18 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           build \
-          | xcbeautify --renderer github-actions
+          2>&1 | tee build.log | xcbeautify --renderer github-actions
+
+    - name: Surface build log tail on failure
+      if: failure() && steps.build.conclusion == 'failure'
+      run: |
+        echo "::group::xcodebuild tail (build.log)"
+        tail -n 120 build.log || true
+        echo "::endgroup::"
+        echo "::error title=xcodebuild build failed::$(grep -E '^(error:|.*: error:)' build.log | tail -n 5 | tr '\n' ' ' || echo 'see log tail above')"
 
     - name: Run tests
+      id: tests
       run: |
         set -o pipefail
         xcodebuild \
@@ -57,4 +68,22 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           test \
-          | xcbeautify --renderer github-actions
+          2>&1 | tee test.log | xcbeautify --renderer github-actions
+
+    - name: Surface test log tail on failure
+      if: failure() && steps.tests.conclusion == 'failure'
+      run: |
+        echo "::group::xcodebuild tail (test.log)"
+        tail -n 120 test.log || true
+        echo "::endgroup::"
+        echo "::error title=xcodebuild test failed::$(grep -E '^(error:|.*: error:)' test.log | tail -n 5 | tr '\n' ' ' || echo 'see log tail above')"
+
+    - name: Upload logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: xcodebuild-logs
+        path: |
+          build.log
+          test.log
+        if-no-files-found: ignore
