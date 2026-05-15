@@ -1,6 +1,10 @@
 # This workflow builds and tests the CareersApp Xcode project.
 # CareersApp is an Xcode app project, not a SwiftPM package, so it uses
 # xcodebuild rather than `swift build` / `swift test`.
+#
+# Code signing is disabled because GitHub-hosted runners don't carry an
+# Apple developer certificate; signing the .app at the end of the build
+# would otherwise fail with exit code 65.
 
 name: Swift
 
@@ -22,18 +26,26 @@ jobs:
 
     - name: Build
       run: |
+        set -o pipefail
         xcodebuild \
           -project CareersApp.xcodeproj \
           -scheme CareersApp \
-          -destination 'platform=macOS' \
+          -destination 'generic/platform=macOS' \
           -configuration Debug \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
           build
 
     - name: Run tests
       run: |
+        set -o pipefail
         xcodebuild \
           -project CareersApp.xcodeproj \
           -scheme CareersApp \
           -destination 'platform=macOS' \
           -configuration Debug \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
           test
