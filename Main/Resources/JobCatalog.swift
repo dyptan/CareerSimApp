@@ -403,11 +403,46 @@ enum JobCatalog {
             }
         }
 
+        // Years of prior industry experience an employer expects before
+        // even considering an applicant. Senior / management / regulated
+        // roles set this above zero; entry-level jobs leave it at the
+        // default of 0.
+        func defaultExperience(for title: String) -> Int {
+            switch title {
+            case "Hotel Manager", "Sales Manager", "Project Manager",
+                 "Event Planner", "Human Resources Specialist":
+                return 3
+            case "Business Analyst", "Financial Analyst", "Marketing Specialist":
+                return 2
+            case "Entrepreneur/Founder":
+                return 2
+            case "Judge":
+                return 10
+            case "Lawyer":
+                return 2
+            case "Physician", "Dentist", "Veterinarian", "Psychologist":
+                return 2
+            case "Pilot":
+                return 3
+            case "Research Scientist":
+                return 3
+            case "Architect":
+                return 4
+            default:
+                return 0
+            }
+        }
+
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int) -> Job {
             let soft = defaultSoft(for: category)
             let hard = defaultHard(for: id, category: category)
             let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: nil)
-            let req = Job.Requirements(education: edu, softSkills: soft, hardSkills: hard)
+            let req = Job.Requirements(
+                education: edu,
+                softSkills: soft,
+                hardSkills: hard,
+                minYearsExperience: defaultExperience(for: id)
+            )
             return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req)
         }
 

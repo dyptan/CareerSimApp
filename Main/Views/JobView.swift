@@ -30,7 +30,7 @@ struct JobDetail: View {
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
-            return "Hire chance is 0% until every required degree, license, and \(job.companyTier.hiringSignal == .credentials ? "certification" : "portfolio item") is in place."
+            return "Hire chance is 0% until every required degree, license, \(job.companyTier.hiringSignal == .credentials ? "certification" : "portfolio item"), and year of industry experience is in place."
         }
 
         let scoredCount = 15
@@ -142,6 +142,23 @@ struct JobDetail: View {
             )
             .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
             .padding(.horizontal)
+
+            let yearsRequired = job.requirements.minYearsExperience
+            if yearsRequired > 0 {
+                Text("Experience:")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+
+                let playerYears = player.experience[job.category] ?? 0
+                RequirementRow(
+                    label: "\(yearsRequired) yr in \(job.category.rawValue)",
+                    emoji: "📅",
+                    style: .meter(current: playerYears, required: yearsRequired)
+                )
+                .foregroundStyle(playerYears >= yearsRequired ? .primary : .secondary)
+                .padding(.horizontal)
+            }
 
             if !requiredHard.certifications.isEmpty {
                 Text("Certifications:")

@@ -165,6 +165,31 @@ struct Job: Identifiable, Codable, Hashable {
         let education: Education
         let softSkills: SoftSkills
         let hardSkills: HardSkills
+        /// Minimum years of prior experience in the job's industry (category).
+        let minYearsExperience: Int
+
+        init(education: Education,
+             softSkills: SoftSkills,
+             hardSkills: HardSkills,
+             minYearsExperience: Int = 0) {
+            self.education = education
+            self.softSkills = softSkills
+            self.hardSkills = hardSkills
+            self.minYearsExperience = minYearsExperience
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case education, softSkills, hardSkills, minYearsExperience
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            self.education = try c.decode(Education.self, forKey: .education)
+            self.softSkills = try c.decode(SoftSkills.self, forKey: .softSkills)
+            self.hardSkills = try c.decode(HardSkills.self, forKey: .hardSkills)
+            self.minYearsExperience = try c.decodeIfPresent(Int.self, forKey: .minYearsExperience) ?? 0
+        }
+
         struct Education: Codable, Hashable {
             let minEQF: Int
             let acceptedProfiles: [TertiaryProfile]?
@@ -254,6 +279,12 @@ extension Job {
         }
     }
 
+    func experienceMet(for player: Player) -> Bool {
+        let required = requirements.minYearsExperience
+        guard required > 0 else { return true }
+        return (player.experience[category] ?? 0) >= required
+    }
+
     func hardSkillsMet(for player: Player) -> Bool {
         let req = effectiveRequirements.hardSkills
         // Licenses are always required (legally enforced regardless of employer).
@@ -296,13 +327,14 @@ extension Job {
                 portfolioItems: requirements.hardSkills.portfolioItems,
                 certifications: merged,
                 licenses: requirements.hardSkills.licenses
-            )
+            ),
+            minYearsExperience: requirements.minYearsExperience
         )
     }
 
     func allRequirementsMet(for player: Player) -> Bool {
-        // Emphasize degree + hard skills; soft skills are helpful only.
-        educationMet(for: player) && hardSkillsMet(for: player)
+        // Emphasize degree + hard skills + experience; soft skills are helpful only.
+        educationMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
     }
 
     func salaryAlignmentFactor(requestedSalary: Double) -> Double {
