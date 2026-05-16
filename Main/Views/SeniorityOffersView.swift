@@ -48,6 +48,7 @@ struct SeniorityOffersView: View {
         let probColor: Color = prob >= 0.6 ? .green : prob >= 0.3 ? .orange : .red
         let yearsRequired = offer.requirements.minYearsExperience
         let playerYears = player.experience[offer.category] ?? 0
+        let yearsColor: Color = playerYears >= yearsRequired ? .secondary : .red
 
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -71,7 +72,7 @@ struct SeniorityOffersView: View {
                         systemImage: "calendar"
                     )
                     .font(.caption)
-                    .foregroundStyle(playerYears >= yearsRequired ? .secondary : .red)
+                    .foregroundStyle(yearsColor)
                 }
             }
 
