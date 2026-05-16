@@ -4,7 +4,9 @@ import SwiftUI
 final class Player: ObservableObject {
     @Published var age: Int
     @Published var degrees: [Education]
-    @Published var jobExperiance: [(Job, Int)]
+    /// Years of work experience per industry. Key is the job's `JobCategory`,
+    /// value is total years accumulated across all jobs in that industry.
+    @Published var experience: [JobCategory: Int]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
     @Published var currentOccupation: Job?
@@ -41,7 +43,7 @@ final class Player: ObservableObject {
         ),
         hardSkills: HardSkills = HardSkills(),
         degrees: [Education] = [],
-        jobExperiance: [(Job, Int)] = [],
+        experience: [JobCategory: Int] = [:],
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedCertifications: Set<Certification> = [],
@@ -53,7 +55,7 @@ final class Player: ObservableObject {
         self.softSkills = softSkills
         self.hardSkills = hardSkills
         self.degrees = degrees
-        self.jobExperiance = jobExperiance
+        self.experience = experience
         self.currentOccupation = currentOccupation
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
@@ -150,6 +152,7 @@ final class Player: ObservableObject {
         if let job = currentOccupation {
             currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income)
             savings += job.annualIncome
+            experience[job.category, default: 0] += 1
         }
     }
 
@@ -174,7 +177,7 @@ final class Player: ObservableObject {
         softSkills = fresh.softSkills
         hardSkills = fresh.hardSkills
         degrees = fresh.degrees
-        jobExperiance = fresh.jobExperiance
+        experience = fresh.experience
         currentOccupation = fresh.currentOccupation
         currentEducation = fresh.currentEducation
         savings = fresh.savings

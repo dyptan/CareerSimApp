@@ -306,8 +306,22 @@ enum JobCatalog {
         // licences or industry-standard certs every employer expects, regardless
         // of company tier. Tier-specific extras are layered on at runtime by
         // `Job.effectiveRequirements`.
+        // Strips known seniority prefixes so a "Senior Software Engineer"
+        // posting still inherits hard-skill expectations from "Software Engineer".
+        func baseTitle(_ title: String) -> String {
+            let prefixes = [
+                "Junior ", "Mid-Level ", "Senior ", "Lead ",
+                "Principal ", "Staff ", "Head ", "Sous ",
+                "Executive ", "Master ", "Charge ", "Postdoctoral "
+            ]
+            for p in prefixes where title.hasPrefix(p) {
+                return String(title.dropFirst(p.count))
+            }
+            return title
+        }
+
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
-            switch title {
+            switch baseTitle(title) {
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
                 return HardSkills(licenses: [.drivers])
@@ -403,11 +417,46 @@ enum JobCatalog {
             }
         }
 
-        func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int) -> Job {
+        // Years of prior industry experience an employer expects before
+        // even considering an applicant. Senior / management / regulated
+        // roles set this above zero; entry-level jobs leave it at the
+        // default of 0.
+        func defaultExperience(for title: String) -> Int {
+            switch title {
+            case "Hotel Manager", "Sales Manager", "Project Manager",
+                 "Event Planner", "Human Resources Specialist":
+                return 3
+            case "Business Analyst", "Financial Analyst", "Marketing Specialist":
+                return 2
+            case "Entrepreneur/Founder":
+                return 2
+            case "Judge":
+                return 10
+            case "Lawyer":
+                return 2
+            case "Physician", "Dentist", "Veterinarian", "Psychologist":
+                return 2
+            case "Pilot":
+                return 3
+            case "Research Scientist":
+                return 3
+            case "Architect":
+                return 4
+            default:
+                return 0
+            }
+        }
+
+        func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil) -> Job {
             let soft = defaultSoft(for: category)
             let hard = defaultHard(for: id, category: category)
             let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: nil)
-            let req = Job.Requirements(education: edu, softSkills: soft, hardSkills: hard)
+            let req = Job.Requirements(
+                education: edu,
+                softSkills: soft,
+                hardSkills: hard,
+                minYearsExperience: minYears ?? defaultExperience(for: id)
+            )
             return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req)
         }
 
@@ -425,7 +474,7 @@ enum JobCatalog {
             ("Security Guard",                  .service,      32_000, "🛡️", "Protects property and ensures safety.",                           3),
             ("Janitor/Cleaner",                 .service,      34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
             ("Receptionist",                    .service,      33_000, "📞", "Greets visitors and manages front-desk tasks.",                    3),
-            ("Chef/Cook",                       .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  4),
+            ("Chef/Cook",                       .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
             ("Baker",                           .service,      32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
@@ -544,6 +593,83 @@ enum JobCatalog {
         for (title, cat, income, icon, summary, eqf) in titles {
             if title == "Registered Nurse" || title == "Graphic Designer" { continue }
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf))
+        }
+
+        // MARK: - Seniority ladders
+        // Explicit (id, category, income, icon, summary, minEQF, minYears) so
+        // the same role appears at multiple seniority levels with realistic
+        // salary and experience progression. Hard-skill requirements are
+        // inherited from the base role via `baseTitle(...)`.
+        let seniorityTitles: [(String, JobCategory, Int, String, String, Int, Int)] = [
+            // Technology
+            ("Junior Software Engineer",     .technology,    78_000, "💻", "Entry-level developer learning the codebase and shipping small features.",        5, 0),
+            ("Senior Software Engineer",     .technology,   155_000, "💻", "Owns major systems, mentors peers, and drives technical direction.",             5, 5),
+            ("Staff Software Engineer",      .technology,   200_000, "💻", "Sets engineering strategy across teams and unblocks complex initiatives.",       6, 9),
+            ("Principal Software Engineer",  .technology,   245_000, "💻", "Top-of-ladder IC; defines architecture for the whole organization.",            6, 12),
+            ("Junior Data Analyst",          .technology,    62_000, "📊", "Builds basic dashboards and runs ad-hoc queries under supervision.",              4, 0),
+            ("Senior Data Analyst",          .technology,   118_000, "📊", "Owns analytical workstreams and partners with leadership on decisions.",          5, 4),
+            ("Senior Systems Administrator", .technology,   110_000, "🖧",  "Architects infrastructure and leads incident response.",                          4, 5),
+
+            // Design
+            ("Junior UX/UI Designer",        .design,        60_000, "🖥️", "Produces wireframes and visual assets under senior direction.",                  4, 0),
+            ("Senior UX/UI Designer",        .design,       120_000, "🖥️", "Leads end-to-end design of major product surfaces.",                              5, 5),
+            ("Lead UX/UI Designer",          .design,       155_000, "🖥️", "Sets design vision and mentors the design team.",                                 5, 8),
+            ("Junior Graphic Artist",        .design,        36_000, "🎨", "Produces assets to spec under art-director review.",                              3, 0),
+            ("Senior Graphic Artist",        .design,        72_000, "🎨", "Owns visual identity work and directs junior artists.",                           4, 4),
+
+            // Engineering disciplines
+            ("Junior Civil Engineer",        .engineering,   64_000, "🛣️", "Drafts plans and supports senior engineers on site.",                             5, 0),
+            ("Senior Civil Engineer",        .engineering,  125_000, "🛣️", "Leads infrastructure projects and signs off on designs.",                         5, 6),
+            ("Junior Mechanical Engineer",   .engineering,   62_000, "⚙️", "Assists in design and analysis of mechanical components.",                        5, 0),
+            ("Senior Mechanical Engineer",   .engineering,  120_000, "⚙️", "Owns mechanical design projects end-to-end.",                                     5, 6),
+            ("Junior Electrical Engineer",   .engineering,   64_000, "🔋", "Supports design and testing of electrical systems.",                              5, 0),
+            ("Senior Electrical Engineer",   .engineering,  122_000, "🔋", "Leads electrical-system architecture for complex products.",                      5, 6),
+
+            // Business / Finance
+            ("Junior Accountant",            .business,      52_000, "📒", "Books transactions and supports month-end close.",                                4, 0),
+            ("Senior Accountant",            .business,     105_000, "📒", "Owns ledger areas and supervises junior accountants.",                            5, 4),
+            ("Junior Financial Analyst",     .business,      68_000, "💹", "Builds forecasting models with senior oversight.",                                5, 0),
+            ("Senior Financial Analyst",     .business,     140_000, "💹", "Partners with executives on capital planning and strategy.",                      5, 5),
+            ("Junior Business Analyst",      .business,      58_000, "📈", "Gathers requirements and documents processes.",                                   4, 0),
+            ("Senior Business Analyst",      .business,     115_000, "📈", "Leads cross-functional analysis and drives recommendations.",                     5, 4),
+            ("Junior Marketing Specialist",  .business,      46_000, "📣", "Executes campaigns under direction from senior marketers.",                       4, 0),
+            ("Senior Marketing Specialist",  .business,      94_000, "📣", "Owns marketing programs and reports on impact.",                                  5, 4),
+            ("Marketing Director",           .business,     145_000, "📣", "Leads the marketing function and brand strategy.",                                5, 8),
+            ("Senior Project Manager",       .business,     145_000, "📋", "Manages portfolios of projects and senior stakeholders.",                         5, 7),
+            ("Senior Sales Manager",         .business,     150_000, "📈", "Runs regional sales orgs and hits aggressive targets.",                           5, 7),
+
+            // Law
+            ("Junior Paralegal",             .law,           38_000, "📑", "Files documents and supports research for senior staff.",                         3, 0),
+            ("Senior Paralegal",             .law,           65_000, "📑", "Manages caseload research and trains junior paralegals.",                         3, 4),
+            ("Senior Lawyer (Partner)",      .law,          220_000, "⚖️", "Equity partner driving client relationships and firm strategy.",                  7, 8),
+
+            // Health
+            ("Senior Registered Nurse",      .health,       110_000, "🩺", "Experienced floor nurse mentoring newer staff.",                                  5, 5),
+            ("Charge Nurse",                 .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
+
+            // Science
+            ("Postdoctoral Researcher",      .science,       62_000, "🔬", "Time-limited research role following doctoral studies.",                          7, 0),
+            ("Senior Research Scientist",    .science,      145_000, "🔬", "Leads research programs and publishes original work.",                            7, 6),
+            ("Principal Research Scientist", .science,      195_000, "🔬", "Sets research agenda for the lab and supervises projects.",                       7, 10),
+
+            // Hospitality (chef ladder)
+            ("Sous Chef",                    .service,       65_000, "👨‍🍳", "Second-in-command in the kitchen, runs daily service.",                          4, 3),
+            ("Head Chef",                    .service,       92_000, "👨‍🍳", "Owns menu, sourcing, and kitchen leadership.",                                   4, 6),
+            ("Executive Chef",               .service,      140_000, "👨‍🍳", "Oversees multiple kitchens and culinary brand.",                                 4, 10),
+
+            // Public services
+            ("Police Sergeant",              .publicServices, 88_000, "👮", "Supervises a squad of officers in the field.",                                    3, 5),
+            ("Police Lieutenant",            .publicServices,110_000, "👮", "Commands a precinct shift and oversees sergeants.",                               3, 10),
+            ("Fire Captain",                 .publicServices, 90_000, "🚒", "Leads a firefighting crew on emergency response.",                                3, 8),
+
+            // Construction trades
+            ("Master Electrician",           .construction,  92_000, "🔌", "Licensed master responsible for jobs and apprentices.",                            4, 5),
+            ("Master Plumber",               .construction,  88_000, "🚰", "Licensed master plumber leading complex installations.",                           4, 5),
+            ("Master Carpenter",             .construction,  76_000, "🪚", "Master tradesperson on bespoke and large-scale builds.",                           4, 6),
+        ]
+
+        for (title, cat, income, icon, summary, eqf, years) in seniorityTitles {
+            extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
         }
 
         var all: [Job] = [rn, dev, designer, lightDriver]
