@@ -394,6 +394,53 @@ extension Job {
             return copy
         }
     }
+
+    /// Returns the same job with its tier-specific deterministic salary applied.
+    func atTier(_ tier: CompanyTier) -> Job {
+        var copy = self
+        copy.companyTier = tier
+        copy.annualIncome = Int(Double(income) * tier.salaryMultiplier)
+        return copy
+    }
+}
+
+// MARK: - Seniority helpers
+
+extension Job {
+    /// Title prefixes that mark a seniority variant of a base role. Used to
+    /// group seniority ladders under a single base title and to label the
+    /// rung within that ladder. Order matters only for display.
+    static let seniorityPrefixes: [String] = [
+        "Junior ", "Mid-Level ", "Senior ", "Lead ",
+        "Principal ", "Staff ", "Head ", "Sous ",
+        "Executive ", "Master ", "Charge ", "Postdoctoral "
+    ]
+
+    /// Strips a recognised seniority prefix from `id`, returning the base role
+    /// title. Jobs with no recognised prefix are their own base title.
+    static func baseTitle(of id: String) -> String {
+        for p in seniorityPrefixes where id.hasPrefix(p) {
+            return String(id.dropFirst(p.count))
+        }
+        return id
+    }
+
+    var baseTitle: String { Job.baseTitle(of: id) }
+
+    /// The seniority prefix stripped from `id` (without the trailing space),
+    /// or `nil` for a job whose title has no recognised prefix.
+    var seniorityPrefix: String? {
+        for p in Job.seniorityPrefixes where id.hasPrefix(p) {
+            return String(p.dropLast())
+        }
+        return nil
+    }
+
+    /// Player-facing label for this seniority level. Falls back to "Standard"
+    /// when the job title carries no seniority prefix.
+    var seniorityLabel: String {
+        seniorityPrefix ?? "Standard"
+    }
 }
 
 // Example remains only for previews if needed

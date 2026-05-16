@@ -45,6 +45,7 @@
 		AA00000000000000000000C2 /* EducationTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* EducationTier.swift */; };
 		AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* InstitutionTiersView.swift */; };
 		AA00000000000000000000C6 /* JobOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* JobOffersView.swift */; };
+		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
@@ -102,6 +103,7 @@
 		AA00000000000000000000C1 /* EducationTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationTier.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C3 /* InstitutionTiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstitutionTiersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C5 /* JobOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOffersView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		C20D77EA24B665D7002E7AEA /* CareersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				AA00000000000000000000B5 /* InfoHint.swift */,
 				AA00000000000000000000C3 /* InstitutionTiersView.swift */,
 				AA00000000000000000000C5 /* JobOffersView.swift */,
+				AA00000000000000000000C7 /* SeniorityOffersView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -326,6 +329,7 @@
 				AA00000000000000000000C2 /* EducationTier.swift in Sources */,
 				AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */,
 				AA00000000000000000000C6 /* JobOffersView.swift in Sources */,
+				AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
