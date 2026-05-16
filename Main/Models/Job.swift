@@ -41,7 +41,9 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         switch category {
         case .publicServices, .education:
             return .government
-        case .arts, .media, .fashion:
+        case .arts:
+            return .selfEmployed
+        case .media, .fashion:
             return [CompanyTier.selfEmployed, .selfEmployed, .smallBusiness].randomElement()!
         case .agriculture:
             return income >= 60_000
@@ -113,8 +115,12 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         switch category {
         case .publicServices, .education:
             return [.government, .nonprofit]
-        case .arts, .media, .fashion:
-            return [.selfEmployed, .smallBusiness, .startup]
+        case .arts:
+            // Pure-creative work is freelance by nature — employer-tier choice
+            // isn't meaningful, so we only surface a single self-employed offer.
+            return [.selfEmployed]
+        case .media, .fashion:
+            return [.selfEmployed, .smallBusiness]
         case .agriculture:
             return income >= 60_000
                 ? [.smallBusiness, .mid, .selfEmployed]
