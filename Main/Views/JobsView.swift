@@ -4,10 +4,30 @@ struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+
     func categories() -> [JobCategory] {
         Array(Set(availableJobs.map(\.category))).sorted {
             $0.rawValue < $1.rawValue
         }
+    }
+
+    /// Groups the jobs in `category` by `baseTitle`, returning one entry per
+    /// role family. Each entry's `variants` are sorted from least to most
+    /// senior using `minYearsExperience` (with `income` as a tiebreaker).
+    private func roleGroups(in category: JobCategory) -> [(baseTitle: String, variants: [Job])] {
+        let inCategory = availableJobs.filter { $0.category == category }
+        let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
+        return grouped
+            .map { (key, value) in
+                let sorted = value.sorted {
+                    if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
+                        return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
+                    }
+                    return $0.income < $1.income
+                }
+                return (baseTitle: key, variants: sorted)
+            }
+            .sorted { $0.baseTitle < $1.baseTitle }
     }
 
     var body: some View {
@@ -30,15 +50,18 @@ struct JobsView: View {
             ForEach(categories()) { category in
                 NavigationLink {
                     List {
-                        ForEach(availableJobs.filter { $0.category == category }) { job in
+                        ForEach(roleGroups(in: category), id: \.baseTitle) { group in
                             NavigationLink {
                                 JobOffersView(
-                                    job: job,
+                                    variants: group.variants,
                                     player: player,
                                     showCareersSheet: $showCareersSheet
                                 )
                             } label: {
-                                JobRow(detail: job)
+                                RoleGroupRow(
+                                    baseTitle: group.baseTitle,
+                                    variants: group.variants
+                                )
                             }
                         }
                     }
@@ -52,6 +75,35 @@ struct JobsView: View {
         .navigationTitle("Jobs")
     }
 
+}
+
+private struct RoleGroupRow: View {
+    let baseTitle: String
+    let variants: [Job]
+
+    private var icon: String { variants.first?.icon ?? "" }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(icon)
+                .font(.system(size: 28))
+                .frame(width: 40, height: 40)
+                .background(Color(.systemGray))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(baseTitle)
+                    .font(.headline)
+                if variants.count > 1 {
+                    Text("\(variants.count) seniority levels")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+        }
+        .padding()
+    }
 }
 
 private struct CareersSheetPreviewContainer: View {

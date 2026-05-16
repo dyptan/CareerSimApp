@@ -306,22 +306,8 @@ enum JobCatalog {
         // licences or industry-standard certs every employer expects, regardless
         // of company tier. Tier-specific extras are layered on at runtime by
         // `Job.effectiveRequirements`.
-        // Strips known seniority prefixes so a "Senior Software Engineer"
-        // posting still inherits hard-skill expectations from "Software Engineer".
-        func baseTitle(_ title: String) -> String {
-            let prefixes = [
-                "Junior ", "Mid-Level ", "Senior ", "Lead ",
-                "Principal ", "Staff ", "Head ", "Sous ",
-                "Executive ", "Master ", "Charge ", "Postdoctoral "
-            ]
-            for p in prefixes where title.hasPrefix(p) {
-                return String(title.dropFirst(p.count))
-            }
-            return title
-        }
-
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
-            switch baseTitle(title) {
+            switch Job.baseTitle(of: title) {
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
                 return HardSkills(licenses: [.drivers])
