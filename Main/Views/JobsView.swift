@@ -14,18 +14,18 @@ struct JobsView: View {
     /// Groups the jobs in `category` by `baseTitle`, returning one entry per
     /// role family. Each entry's `variants` are sorted from least to most
     /// senior using `minYearsExperience` (with `income` as a tiebreaker).
-    private func roleGroups(in category: JobCategory) -> [(baseTitle: String, variants: [Job])] {
+    private func roleGroups(in category: JobCategory) -> [RoleGroup] {
         let inCategory = availableJobs.filter { $0.category == category }
         let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
         return grouped
-            .map { (key, value) in
+            .map { (key, value) -> RoleGroup in
                 let sorted = value.sorted {
                     if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
                         return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
                     }
                     return $0.income < $1.income
                 }
-                return (baseTitle: key, variants: sorted)
+                return RoleGroup(baseTitle: key, variants: sorted)
             }
             .sorted { $0.baseTitle < $1.baseTitle }
     }
@@ -50,7 +50,7 @@ struct JobsView: View {
             ForEach(categories()) { category in
                 NavigationLink {
                     List {
-                        ForEach(roleGroups(in: category), id: \.baseTitle) { group in
+                        ForEach(roleGroups(in: category)) { group in
                             NavigationLink {
                                 JobOffersView(
                                     variants: group.variants,
@@ -75,6 +75,12 @@ struct JobsView: View {
         .navigationTitle("Jobs")
     }
 
+}
+
+private struct RoleGroup: Identifiable {
+    let baseTitle: String
+    let variants: [Job]
+    var id: String { baseTitle }
 }
 
 private struct RoleGroupRow: View {
