@@ -186,20 +186,20 @@ struct SoftSkills: Codable, Hashable {
     var presentationAndStorytelling: Int = 0
     
     static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String, description: String)] = [
-        (\.analyticalReasoningAndProblemSolving, "Hacker", "💡", "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
+        (\.analyticalReasoningAndProblemSolving, "Inventor", "💡", "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
         (\.creativityAndInsightfulThinking, "Creator", "🎨", "Coming up with new ideas and seeing things in fresh ways. Helpful for design, art, music, marketing, and invention."),
         (\.communicationAndNetworking, "Influencer", "📢", "Talking, writing, listening, and meeting people. Most jobs need this — especially sales, teaching, business, and journalism."),
         (\.leadershipAndInfluence, "Leader", "👑", "Helping a group decide and act together. Used by managers, coaches, founders, and team captains."),
         (\.visionaryThinkingAndAmbition, "Visionary", "🔭", "Imagining big future goals and pulling people toward them. Useful for entrepreneurs, founders, and senior strategists."),
         (\.carefulnessAndAttentionToDetail, "Detective", "🔍", "Catching small mistakes and double-checking everything. Important for accountants, surgeons, editors, and lab work."),
         (\.tinkeringAndFingerPrecision, "Fixer", "🛠️", "Working steadily with your hands on small parts. Used by mechanics, surgeons, watchmakers, and artists."),
-        (\.spacialNavigationAndOrientation, "Navigator", "🧭", "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
+        (\.spacialNavigationAndOrientation, "Navigator", "🌐", "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
         (\.resilienceAndEndurance, "Athlete", "🏃", "Keeping going through tiredness or stress. Important for nurses, soldiers, athletes, and farmers."),
-        (\.stressResistanceAndEmotionalRegulation, "Zen", "☯️", "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
+        (\.stressResistanceAndEmotionalRegulation, "Supporter", "😌", "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝", "Sharing work and getting along with others. Almost every job needs this."),
         (\.timeManagementAndPlanning, "Planner", "📅", "Finishing things on time and organising your days. Useful everywhere; vital for project managers and freelancers."),
-        (\.selfDisciplineAndPerseverance, "Champion", "🏆", "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),
-        (\.presentationAndStorytelling, "Storyteller", "📖", "Explaining ideas so others get them. Useful for teaching, sales, journalism, and leadership."),
+        (\.selfDisciplineAndPerseverance, "Achiever", "🏆", "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),
+        (\.presentationAndStorytelling, "Storyteller", "🎤", "Explaining ideas so others get them. Useful for teaching, sales, journalism, and leadership."),
     ]
     
     private static let _labelMap: [AnyKeyPath: String] =
