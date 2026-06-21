@@ -203,8 +203,6 @@ struct SoftSkills: Codable, Hashable {
     var timeManagementAndPlanning: Int = 0
     var selfDisciplineAndPerseverance: Int = 0
     var presentationAndStorytelling: Int = 0
-
-    /// The single source of truth for soft-skill axes. Order is the display order.
     static let allAxes: [SoftSkillAxis] = [
         .init(keyPath: \.analyticalReasoningAndProblemSolving, label: "Hacker", pictogram: "💡", description: "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
         .init(keyPath: \.creativityAndInsightfulThinking, label: "Creator", pictogram: "🎨", description: "Coming up with new ideas and seeing things in fresh ways. Helpful for design, art, music, marketing, and invention."),
