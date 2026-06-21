@@ -28,13 +28,16 @@ final class Player: ObservableObject {
             analyticalReasoningAndProblemSolving: Int.random(in: 0...1),
             creativityAndInsightfulThinking: Int.random(in: 0...1),
             communicationAndNetworking: Int.random(in: 0...1),
+            persuasionAndNegotiation: Int.random(in: 0...1),
             leadershipAndInfluence: Int.random(in: 0...1),
             visionaryThinkingAndAmbition: Int.random(in: 0...1),
+            riskTakingAndInitiative: Int.random(in: 0...1),
             carefulnessAndAttentionToDetail: Int.random(in: 0...1),
             tinkeringAndFingerPrecision: Int.random(in: 0...1),
             spacialNavigationAndOrientation: Int.random(in: 0...1),
             resilienceAndEndurance: Int.random(in: 0...1),
             stressResistanceAndEmotionalRegulation: Int.random(in: 0...1),
+            empathyAndInterpersonalCare: Int.random(in: 0...1),
             outdoorAndWeatherResilience: Int.random(in: 0...1),
             collaborationAndTeamwork: Int.random(in: 0...1),
             timeManagementAndPlanning: Int.random(in: 0...1),
@@ -169,6 +172,25 @@ final class Player: ObservableObject {
             currentOccupation = hiredJob
         }
         return hired
+    }
+
+    /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
+    /// of the player's own savings. The stake is committed up front; success makes
+    /// the player a founder (earning the rung's income), while failure salvages
+    /// half the stake. Returns true on success.
+    @discardableResult
+    func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
+        appliedJobIds.insert(job.id)
+        let stake = min(max(0, investedCapital), savings)
+        let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
+        savings -= stake                       // commit the capital
+        let success = Double.random(in: 0...1) < probability
+        if success {
+            currentOccupation = job             // keeps the rung's annualIncome
+        } else {
+            savings += stake / 2                // salvage half of a failed venture
+        }
+        return success
     }
 
     func reset() {

@@ -71,9 +71,9 @@ struct InstitutionTiersView: View {
                 .foregroundStyle(eduMet ? .primary : .secondary)
 
                 ForEach(Education.Requirements.softSkillMappings) { mapping in
-                    let required = r[keyPath: mapping.requirementKeyPath]
+                    let required = r.soft[keyPath: mapping.keyPath]
                     if required > 0 {
-                        let playerValue = player.softSkills[keyPath: mapping.playerKeyPath]
+                        let playerValue = player.softSkills[keyPath: mapping.keyPath]
                         RequirementRow(
                             label: mapping.id,
                             emoji: mapping.pictogram,

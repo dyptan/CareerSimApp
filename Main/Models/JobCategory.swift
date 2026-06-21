@@ -26,6 +26,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case service = "Service"
     case manufacturing = "Manufacturing"
     case finance = "Finance"
+    case entrepreneurship = "Entrepreneurship"
 
     var id: String { rawValue }
 
@@ -33,6 +34,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// e.g. 0.5 means actual pay can range from 50 % to 150 % of the base.
     var salaryVariance: Double {
         switch self {
+        case .entrepreneurship:
+            return 0.55   // founder income swings wildly with the venture
         case .arts, .media, .fashion, .sports:
             return 0.50   // heavily project-based / performance-driven
         case .technology, .engineering, .aviation, .science:
@@ -79,6 +82,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .service: return "🛍️"
         case .manufacturing: return "🧪"
         case .finance: return "💰"
+        case .entrepreneurship: return "🚀"
         }
     }
 
@@ -127,6 +131,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .fashion:
             return .creative
         case .finance:
+            return .people
+        case .entrepreneurship:
             return .people
         }
     }
@@ -187,6 +193,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Make products from raw materials: factories, workshops, and artisans."
         case .finance:
             return "Manage money, investments, and financial risk: banks, markets, and accounting."
+        case .entrepreneurship:
+            return "Start your own business! Take a risk, build something new, and be your own boss."
         }
 
     }
@@ -247,6 +255,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Plumber, electrician, welder"
         case .finance:
             return "Banker, financial analyst, accountant, trader, actuary"
+        case .entrepreneurship:
+            return "Side hustler, small business owner, startup founder"
         }
     }
 }

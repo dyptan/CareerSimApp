@@ -41,34 +41,18 @@ struct Education: Codable, Hashable, Identifiable {
     /// Convenience accessor for tier prestige (1/2/3); 0 for K-12.
     var prestige: Int { profile == nil ? 0 : tier.prestige }
 
-    // Updated Requirements struct to match the Job model
+    // Admission requirements mirror the Job model: soft-skill thresholds reuse
+    // `SoftSkills` so the whole app shares one soft-skill field list.
     struct SoftSkillMapping: Identifiable {
         let id: String
         let pictogram: String
-        let playerKeyPath: WritableKeyPath<SoftSkills, Int>
-        let requirementKeyPath: KeyPath<Education.Requirements, Int>
+        let keyPath: WritableKeyPath<SoftSkills, Int>
     }
 
     struct Requirements: Codable, Hashable {
         var minEQF: Int = 0
-
-        // Soft skills thresholds matching the Job model
-        var analyticalReasoningAndProblemSolving: Int = 0
-        var creativityAndInsightfulThinking: Int = 0
-        var communicationAndNetworking: Int = 0
-        var leadershipAndInfluence: Int = 0
-        var visionaryThinkingAndAmbition: Int = 0
-        var spacialNavigationAndOrientation: Int = 0
-        var carefulnessAndAttentionToDetail: Int = 0
-        var tinkeringAndFingerPrecision: Int = 0
-        var resilienceAndEndurance: Int = 0
-        var coordinationAndBalance: Int = 0
-        var stressResistanceAndEmotionalRegulation: Int = 0
-        var outdoorAndWeatherResilience: Int = 0
-        var collaborationAndTeamwork: Int = 0
-        var timeManagementAndPlanning: Int = 0
-        var selfDisciplineAndPerseverance: Int = 0
-        var presentationAndStorytelling: Int = 0
+        /// Minimum soft-skill levels required for admission.
+        var soft = SoftSkills()
 
         init(minEQF: Int = 0) {
             self.minEQF = minEQF
@@ -88,22 +72,10 @@ struct Education: Codable, Hashable, Identifiable {
             }
         }
 
-        static let softSkillMappings: [Education.SoftSkillMapping] = [
-            .init(id: "Hacker",      pictogram: "💡", playerKeyPath: \.analyticalReasoningAndProblemSolving, requirementKeyPath: \.analyticalReasoningAndProblemSolving),
-            .init(id: "Creator",     pictogram: "🎨", playerKeyPath: \.creativityAndInsightfulThinking,      requirementKeyPath: \.creativityAndInsightfulThinking),
-            .init(id: "Influencer",  pictogram: "📢", playerKeyPath: \.communicationAndNetworking,           requirementKeyPath: \.communicationAndNetworking),
-            .init(id: "Leader",      pictogram: "👑", playerKeyPath: \.leadershipAndInfluence,               requirementKeyPath: \.leadershipAndInfluence),
-            .init(id: "Visionary",   pictogram: "🔭", playerKeyPath: \.visionaryThinkingAndAmbition,         requirementKeyPath: \.visionaryThinkingAndAmbition),
-            .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
-            .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
-            .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
-            .init(id: "Athlete",     pictogram: "🏃", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.resilienceAndEndurance),
-            .init(id: "Zen",         pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
-            .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
-            .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
-            .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndPerseverance),
-            .init(id: "Storyteller", pictogram: "📖", playerKeyPath: \.presentationAndStorytelling,          requirementKeyPath: \.presentationAndStorytelling),
-        ]
+        /// Derived from the single source of truth so the admissions UI lists
+        /// every axis automatically.
+        static let softSkillMappings: [Education.SoftSkillMapping] =
+            SoftSkills.allAxes.map { .init(id: $0.label, pictogram: $0.pictogram, keyPath: $0.keyPath) }
     }
 
     var requirements: Requirements {
@@ -151,22 +123,9 @@ struct Education: Codable, Hashable, Identifiable {
         let r = requirements
 
         guard highestEQF >= r.minEQF else { return false }
-        guard p.analyticalReasoningAndProblemSolving >= r.analyticalReasoningAndProblemSolving else { return false }
-        guard p.creativityAndInsightfulThinking >= r.creativityAndInsightfulThinking else { return false }
-        guard p.communicationAndNetworking >= r.communicationAndNetworking else { return false }
-        guard p.leadershipAndInfluence >= r.leadershipAndInfluence else { return false }
-        guard p.visionaryThinkingAndAmbition >= r.visionaryThinkingAndAmbition else { return false }
-        guard p.spacialNavigationAndOrientation >= r.spacialNavigationAndOrientation else { return false }
-        guard p.carefulnessAndAttentionToDetail >= r.carefulnessAndAttentionToDetail else { return false }
-        guard p.tinkeringAndFingerPrecision >= r.tinkeringAndFingerPrecision else { return false }
-        guard p.resilienceAndEndurance >= r.resilienceAndEndurance else { return false }
-        guard p.stressResistanceAndEmotionalRegulation >= r.stressResistanceAndEmotionalRegulation else { return false }
-        guard p.outdoorAndWeatherResilience >= r.outdoorAndWeatherResilience else { return false }
-        guard p.collaborationAndTeamwork >= r.collaborationAndTeamwork else { return false }
-        guard p.timeManagementAndPlanning >= r.timeManagementAndPlanning else { return false }
-        guard p.selfDisciplineAndPerseverance >= r.selfDisciplineAndPerseverance else { return false }
-        guard p.presentationAndStorytelling >= r.presentationAndStorytelling else { return false }
-
+        for kp in SoftSkills.allAxes.map(\.keyPath) {
+            guard p[keyPath: kp] >= r.soft[keyPath: kp] else { return false }
+        }
         return true
     }
 
@@ -300,90 +259,93 @@ struct Education: Codable, Hashable, Identifiable {
         // primary traits hit 5 only at Master / Doctorate.
         switch profile {
         case .technology:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.carefulnessAndAttentionToDetail = 2
-            r.selfDisciplineAndPerseverance = 2
-            r.tinkeringAndFingerPrecision = 1
-            r.timeManagementAndPlanning = 1
-            r.collaborationAndTeamwork = 1
+            r.soft.analyticalReasoningAndProblemSolving = 2
+            r.soft.carefulnessAndAttentionToDetail = 2
+            r.soft.selfDisciplineAndPerseverance = 2
+            r.soft.tinkeringAndFingerPrecision = 1
+            r.soft.timeManagementAndPlanning = 1
+            r.soft.collaborationAndTeamwork = 1
 
         case .engineering:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.spacialNavigationAndOrientation = 2
-            r.carefulnessAndAttentionToDetail = 1
-            r.tinkeringAndFingerPrecision = 1
-            r.timeManagementAndPlanning = 1
-            r.collaborationAndTeamwork = 1
+            r.soft.analyticalReasoningAndProblemSolving = 2
+            r.soft.spacialNavigationAndOrientation = 2
+            r.soft.carefulnessAndAttentionToDetail = 1
+            r.soft.tinkeringAndFingerPrecision = 1
+            r.soft.timeManagementAndPlanning = 1
+            r.soft.collaborationAndTeamwork = 1
 
         case .science:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.selfDisciplineAndPerseverance = 2
-            r.timeManagementAndPlanning = 1
-            r.presentationAndStorytelling = 1
+            r.soft.analyticalReasoningAndProblemSolving = 2
+            r.soft.selfDisciplineAndPerseverance = 2
+            r.soft.timeManagementAndPlanning = 1
+            r.soft.presentationAndStorytelling = 1
 
         case .arts:
-            r.creativityAndInsightfulThinking = 3
-            r.presentationAndStorytelling = 2
-            r.carefulnessAndAttentionToDetail = 1
-            r.communicationAndNetworking = 1
+            r.soft.creativityAndInsightfulThinking = 3
+            r.soft.presentationAndStorytelling = 2
+            r.soft.carefulnessAndAttentionToDetail = 1
+            r.soft.communicationAndNetworking = 1
 
         case .design:
-            r.creativityAndInsightfulThinking = 3
-            r.carefulnessAndAttentionToDetail = 2
-            r.presentationAndStorytelling = 2
-            r.spacialNavigationAndOrientation = 1
+            r.soft.creativityAndInsightfulThinking = 3
+            r.soft.carefulnessAndAttentionToDetail = 2
+            r.soft.presentationAndStorytelling = 2
+            r.soft.spacialNavigationAndOrientation = 1
 
         case .business:
-            r.communicationAndNetworking = 2
-            r.leadershipAndInfluence = 2
-            r.analyticalReasoningAndProblemSolving = 1
-            r.timeManagementAndPlanning = 2
-            r.presentationAndStorytelling = 2
-            r.collaborationAndTeamwork = 1
-            r.visionaryThinkingAndAmbition = 1
+            r.soft.communicationAndNetworking = 2
+            r.soft.persuasionAndNegotiation = 2
+            r.soft.leadershipAndInfluence = 2
+            r.soft.analyticalReasoningAndProblemSolving = 1
+            r.soft.timeManagementAndPlanning = 2
+            r.soft.presentationAndStorytelling = 2
+            r.soft.collaborationAndTeamwork = 1
+            r.soft.visionaryThinkingAndAmbition = 1
 
         case .education:
-            r.communicationAndNetworking = 2
-            r.stressResistanceAndEmotionalRegulation = 2
-            r.presentationAndStorytelling = 2
-            r.timeManagementAndPlanning = 1
+            r.soft.communicationAndNetworking = 2
+            r.soft.empathyAndInterpersonalCare = 2
+            r.soft.stressResistanceAndEmotionalRegulation = 2
+            r.soft.presentationAndStorytelling = 2
+            r.soft.timeManagementAndPlanning = 1
 
         case .health:
-            r.communicationAndNetworking = 2
-            r.carefulnessAndAttentionToDetail = 2
-            r.resilienceAndEndurance = 2
-            r.stressResistanceAndEmotionalRegulation = 2
-            r.coordinationAndBalance = 1
+            r.soft.communicationAndNetworking = 2
+            r.soft.empathyAndInterpersonalCare = 2
+            r.soft.carefulnessAndAttentionToDetail = 2
+            r.soft.resilienceAndEndurance = 2
+            r.soft.stressResistanceAndEmotionalRegulation = 2
 
         case .sports:
-            r.resilienceAndEndurance = 2
-            r.coordinationAndBalance = 2
-            r.collaborationAndTeamwork = 2
-            r.selfDisciplineAndPerseverance = 2
+            r.soft.resilienceAndEndurance = 2
+            r.soft.collaborationAndTeamwork = 2
+            r.soft.selfDisciplineAndPerseverance = 2
 
         case .agriculture:
-            r.resilienceAndEndurance = 2
-            r.outdoorAndWeatherResilience = 1
-            r.timeManagementAndPlanning = 1
+            r.soft.resilienceAndEndurance = 2
+            r.soft.outdoorAndWeatherResilience = 1
+            r.soft.timeManagementAndPlanning = 1
 
         case .humanities:
-            r.communicationAndNetworking = 2
-            r.presentationAndStorytelling = 2
-            r.analyticalReasoningAndProblemSolving = 1
-            r.selfDisciplineAndPerseverance = 1
+            r.soft.communicationAndNetworking = 2
+            r.soft.presentationAndStorytelling = 2
+            r.soft.analyticalReasoningAndProblemSolving = 1
+            r.soft.selfDisciplineAndPerseverance = 1
 
         case .law:
-            r.analyticalReasoningAndProblemSolving = 2
-            r.communicationAndNetworking = 2
-            r.carefulnessAndAttentionToDetail = 2
-            r.presentationAndStorytelling = 2
-            r.timeManagementAndPlanning = 1
+            r.soft.analyticalReasoningAndProblemSolving = 2
+            r.soft.communicationAndNetworking = 2
+            r.soft.persuasionAndNegotiation = 2
+            r.soft.carefulnessAndAttentionToDetail = 2
+            r.soft.presentationAndStorytelling = 2
+            r.soft.timeManagementAndPlanning = 1
 
         case .service:
-            r.communicationAndNetworking = 2
-            r.stressResistanceAndEmotionalRegulation = 2
-            r.collaborationAndTeamwork = 2
-            r.timeManagementAndPlanning = 1
+            r.soft.communicationAndNetworking = 2
+            r.soft.empathyAndInterpersonalCare = 1
+            r.soft.stressResistanceAndEmotionalRegulation = 2
+            r.soft.collaborationAndTeamwork = 2
+            r.soft.timeManagementAndPlanning = 1
         }
 
         return r
@@ -393,23 +355,9 @@ struct Education: Codable, Hashable, Identifiable {
         var x = r
         func bump(_ v: Int) -> Int { v > 0 ? min(v + delta, 5) : 0 }
 
-        x.analyticalReasoningAndProblemSolving = bump(x.analyticalReasoningAndProblemSolving)
-        x.creativityAndInsightfulThinking = bump(x.creativityAndInsightfulThinking)
-        x.communicationAndNetworking = bump(x.communicationAndNetworking)
-        x.leadershipAndInfluence = bump(x.leadershipAndInfluence)
-        x.visionaryThinkingAndAmbition = bump(x.visionaryThinkingAndAmbition)
-        x.spacialNavigationAndOrientation = bump(x.spacialNavigationAndOrientation)
-        x.carefulnessAndAttentionToDetail = bump(x.carefulnessAndAttentionToDetail)
-        x.tinkeringAndFingerPrecision = bump(x.tinkeringAndFingerPrecision)
-        x.resilienceAndEndurance = bump(x.resilienceAndEndurance)
-        x.coordinationAndBalance = bump(x.coordinationAndBalance)
-        x.stressResistanceAndEmotionalRegulation = bump(x.stressResistanceAndEmotionalRegulation)
-        x.outdoorAndWeatherResilience = bump(x.outdoorAndWeatherResilience)
-        x.collaborationAndTeamwork = bump(x.collaborationAndTeamwork)
-        x.timeManagementAndPlanning = bump(x.timeManagementAndPlanning)
-        x.selfDisciplineAndPerseverance = bump(x.selfDisciplineAndPerseverance)
-        x.presentationAndStorytelling = bump(x.presentationAndStorytelling)
-
+        for kp in SoftSkills.allAxes.map(\.keyPath) {
+            x.soft[keyPath: kp] = bump(x.soft[keyPath: kp])
+        }
         return x
     }
 
@@ -422,22 +370,22 @@ struct Education: Codable, Hashable, Identifiable {
             break
         case .Bachelor:
             if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
-                x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 2 : 0), 5)
+                x.soft.analyticalReasoningAndProblemSolving = min(max(x.soft.analyticalReasoningAndProblemSolving, x.soft.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
+                x.soft.carefulnessAndAttentionToDetail = min(max(x.soft.carefulnessAndAttentionToDetail, x.soft.carefulnessAndAttentionToDetail > 0 ? 2 : 0), 5)
             }
         case .Master:
             if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
+                x.soft.analyticalReasoningAndProblemSolving = min(max(x.soft.analyticalReasoningAndProblemSolving, x.soft.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
             } else {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
+                x.soft.analyticalReasoningAndProblemSolving = min(max(x.soft.analyticalReasoningAndProblemSolving, x.soft.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
             }
         case .Doctorate:
             if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 5 : 0), 5)
+                x.soft.analyticalReasoningAndProblemSolving = min(max(x.soft.analyticalReasoningAndProblemSolving, x.soft.analyticalReasoningAndProblemSolving > 0 ? 5 : 0), 5)
             } else {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
+                x.soft.analyticalReasoningAndProblemSolving = min(max(x.soft.analyticalReasoningAndProblemSolving, x.soft.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
             }
-            x.selfDisciplineAndPerseverance = min(max(x.selfDisciplineAndPerseverance, x.selfDisciplineAndPerseverance > 0 ? 3 : 0), 5)
+            x.soft.selfDisciplineAndPerseverance = min(max(x.soft.selfDisciplineAndPerseverance, x.soft.selfDisciplineAndPerseverance > 0 ? 3 : 0), 5)
         default:
             break
         }
@@ -446,24 +394,24 @@ struct Education: Codable, Hashable, Identifiable {
         switch profile {
         case .arts, .design:
             if level == .Master || level == .Doctorate {
-                x.creativityAndInsightfulThinking = min(max(x.creativityAndInsightfulThinking, x.creativityAndInsightfulThinking > 0 ? (level == .Doctorate ? 5 : 4) : 0), 5)
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.creativityAndInsightfulThinking = min(max(x.soft.creativityAndInsightfulThinking, x.soft.creativityAndInsightfulThinking > 0 ? (level == .Doctorate ? 5 : 4) : 0), 5)
+                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .education:
             if level == .Bachelor || level == .Master || level == .Doctorate {
-                x.stressResistanceAndEmotionalRegulation = min(max(x.stressResistanceAndEmotionalRegulation, x.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.stressResistanceAndEmotionalRegulation = min(max(x.soft.stressResistanceAndEmotionalRegulation, x.soft.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .health:
             if level == .Bachelor || level == .Master || level == .Doctorate {
-                x.communicationAndNetworking = min(max(x.communicationAndNetworking, x.communicationAndNetworking > 0 ? 3 : 0), 5)
-                x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 3 : 0), 5)
-                x.resilienceAndEndurance = min(max(x.resilienceAndEndurance, x.resilienceAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-                x.stressResistanceAndEmotionalRegulation = min(max(x.stressResistanceAndEmotionalRegulation, x.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.communicationAndNetworking = min(max(x.soft.communicationAndNetworking, x.soft.communicationAndNetworking > 0 ? 3 : 0), 5)
+                x.soft.carefulnessAndAttentionToDetail = min(max(x.soft.carefulnessAndAttentionToDetail, x.soft.carefulnessAndAttentionToDetail > 0 ? 3 : 0), 5)
+                x.soft.resilienceAndEndurance = min(max(x.soft.resilienceAndEndurance, x.soft.resilienceAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.stressResistanceAndEmotionalRegulation = min(max(x.soft.stressResistanceAndEmotionalRegulation, x.soft.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .business, .law, .humanities:
             if level == .Master || level == .Doctorate {
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         default:
             break
@@ -476,23 +424,9 @@ struct Education: Codable, Hashable, Identifiable {
         var x = r
         func cap(_ v: Int) -> Int { min(max(0, v), 5) }
 
-        x.analyticalReasoningAndProblemSolving = cap(x.analyticalReasoningAndProblemSolving)
-        x.creativityAndInsightfulThinking = cap(x.creativityAndInsightfulThinking)
-        x.communicationAndNetworking = cap(x.communicationAndNetworking)
-        x.leadershipAndInfluence = cap(x.leadershipAndInfluence)
-        x.visionaryThinkingAndAmbition = cap(x.visionaryThinkingAndAmbition)
-        x.spacialNavigationAndOrientation = cap(x.spacialNavigationAndOrientation)
-        x.carefulnessAndAttentionToDetail = cap(x.carefulnessAndAttentionToDetail)
-        x.tinkeringAndFingerPrecision = cap(x.tinkeringAndFingerPrecision)
-        x.resilienceAndEndurance = cap(x.resilienceAndEndurance)
-        x.coordinationAndBalance = cap(x.coordinationAndBalance)
-        x.stressResistanceAndEmotionalRegulation = cap(x.stressResistanceAndEmotionalRegulation)
-        x.outdoorAndWeatherResilience = cap(x.outdoorAndWeatherResilience)
-        x.collaborationAndTeamwork = cap(x.collaborationAndTeamwork)
-        x.timeManagementAndPlanning = cap(x.timeManagementAndPlanning)
-        x.selfDisciplineAndPerseverance = cap(x.selfDisciplineAndPerseverance)
-        x.presentationAndStorytelling = cap(x.presentationAndStorytelling)
-
+        for kp in SoftSkills.allAxes.map(\.keyPath) {
+            x.soft[keyPath: kp] = cap(x.soft[keyPath: kp])
+        }
         return x
     }
 }

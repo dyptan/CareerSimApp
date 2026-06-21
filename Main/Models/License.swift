@@ -170,6 +170,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             // 12-hour shifts, physical patient care, high-stakes clinical decisions
             return [
                 (\.communicationAndNetworking, 3),
+                (\.empathyAndInterpersonalCare, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.stressResistanceAndEmotionalRegulation, 3),
                 (\.resilienceAndEndurance, 3),
@@ -196,6 +197,7 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.analyticalReasoningAndProblemSolving, 4),
                 (\.communicationAndNetworking, 4),
+                (\.persuasionAndNegotiation, 3),
                 (\.selfDisciplineAndPerseverance, 4),
                 (\.presentationAndStorytelling, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
