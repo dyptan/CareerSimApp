@@ -516,10 +516,11 @@ extension Job {
         "Director", "Partner", "Chief", "Superintendent"
     ]
 
-    /// Management capstones whose titles contain "Manager" — listed explicitly
-    /// so they don't sweep in mid-level managers (Hotel/Sales/Project Manager).
+    /// Track apexes listed explicitly because their titles carry no leadership
+    /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
+    /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
-        "Store Manager", "Operations Manager", "Farm Manager"
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
     ]
 
     /// True for the top management role of a career track — the win condition
