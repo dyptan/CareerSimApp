@@ -24,6 +24,7 @@ enum JobCatalog {
                     spacialNavigationAndOrientation: 0,
                     resilienceAndEndurance: 3,
                     stressResistanceAndEmotionalRegulation: 3,
+                    empathyAndInterpersonalCare: 3,
                     outdoorAndWeatherResilience: 0,
                     collaborationAndTeamwork: 3,
                     timeManagementAndPlanning: 2,
@@ -102,6 +103,7 @@ enum JobCatalog {
                     spacialNavigationAndOrientation: 0,
                     resilienceAndEndurance: 3,
                     stressResistanceAndEmotionalRegulation: 3,
+                    empathyAndInterpersonalCare: 3,
                     outdoorAndWeatherResilience: 0,
                     collaborationAndTeamwork: 3,
                     timeManagementAndPlanning: 2,
@@ -114,6 +116,7 @@ enum JobCatalog {
                     analyticalReasoningAndProblemSolving: 0,
                     creativityAndInsightfulThinking: 1,
                     communicationAndNetworking: 3,
+                    persuasionAndNegotiation: 1,
                     leadershipAndInfluence: 0,
                     visionaryThinkingAndAmbition: 0,
                     carefulnessAndAttentionToDetail: 1,
@@ -121,6 +124,7 @@ enum JobCatalog {
                     spacialNavigationAndOrientation: 0,
                     resilienceAndEndurance: 2,
                     stressResistanceAndEmotionalRegulation: 2,
+                    empathyAndInterpersonalCare: 2,
                     outdoorAndWeatherResilience: 0,
                     collaborationAndTeamwork: 2,
                     timeManagementAndPlanning: 1,
@@ -152,6 +156,7 @@ enum JobCatalog {
                     analyticalReasoningAndProblemSolving: 1,
                     creativityAndInsightfulThinking: 4,
                     communicationAndNetworking: 2,
+                    persuasionAndNegotiation: 1,
                     leadershipAndInfluence: 0,
                     visionaryThinkingAndAmbition: 2,
                     carefulnessAndAttentionToDetail: 2,
@@ -171,6 +176,7 @@ enum JobCatalog {
                     analyticalReasoningAndProblemSolving: 3,
                     creativityAndInsightfulThinking: 1,
                     communicationAndNetworking: 3,
+                    persuasionAndNegotiation: 1,
                     leadershipAndInfluence: 2,
                     visionaryThinkingAndAmbition: 1,
                     carefulnessAndAttentionToDetail: 2,
@@ -223,6 +229,25 @@ enum JobCatalog {
                     presentationAndStorytelling: 0
                 )
 
+            case .sports:
+                return .init(
+                    analyticalReasoningAndProblemSolving: 0,
+                    creativityAndInsightfulThinking: 0,
+                    communicationAndNetworking: 1,
+                    leadershipAndInfluence: 1,
+                    visionaryThinkingAndAmbition: 0,
+                    carefulnessAndAttentionToDetail: 1,
+                    tinkeringAndFingerPrecision: 0,
+                    spacialNavigationAndOrientation: 1,
+                    resilienceAndEndurance: 4,
+                    stressResistanceAndEmotionalRegulation: 3,
+                    outdoorAndWeatherResilience: 1,
+                    collaborationAndTeamwork: 3,
+                    timeManagementAndPlanning: 1,
+                    selfDisciplineAndPerseverance: 4,
+                    presentationAndStorytelling: 0
+                )
+
             default:
                 return .init(
                     analyticalReasoningAndProblemSolving: 0,
@@ -242,6 +267,79 @@ enum JobCatalog {
                     presentationAndStorytelling: 0
                 )
             }
+        }
+
+        // Per-title soft-skill overrides, keyed by base title (so seniority
+        // variants inherit via `Job.baseTitle`). These refine roles where the
+        // broad category default is clearly wrong — e.g. a Sales Manager needs
+        // persuasion an Accountant doesn't, and a Counselor needs empathy a
+        // Bookkeeper doesn't. Titles not listed fall back to `defaultSoft`.
+        let perTitleSoft: [String: SoftSkills] = [
+            // Sales / persuasion
+            "Retail Salesperson":             .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, presentationAndStorytelling: 1),
+            "Customer Service Representative": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1),
+            "Sales Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 4, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+            "Marketing Specialist":           .init(analyticalReasoningAndProblemSolving: 1, creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
+            "Recruiter":                      .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+            // Entrepreneurial ladder (no degree gate; success is capital-backed)
+            "Side Hustler":                   .init(persuasionAndNegotiation: 1, riskTakingAndInitiative: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 1),
+            "Small Business Owner":           .init(communicationAndNetworking: 2, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, visionaryThinkingAndAmbition: 1, riskTakingAndInitiative: 2, carefulnessAndAttentionToDetail: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+            "Startup Founder":                .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, persuasionAndNegotiation: 3, leadershipAndInfluence: 2, visionaryThinkingAndAmbition: 3, riskTakingAndInitiative: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 3),
+            "Serial Entrepreneur":            .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, persuasionAndNegotiation: 3, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 4, riskTakingAndInitiative: 4, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+
+            // Management / coordination
+            "Project Manager":                .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
+            "Event Planner":                  .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 4),
+            "Hotel Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3),
+            "Human Resources Specialist":     .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+
+            // Finance / detail (low persuasion, high carefulness)
+            "Business Analyst":               .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+            "Accountant":                     .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 1, carefulnessAndAttentionToDetail: 4, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+            "Bookkeeper":                     .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+            "Financial Analyst":              .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+
+            // Care / empathy
+            "Counselor":                      .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
+            "Social Worker":                  .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+            "Psychologist":                   .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, presentationAndStorytelling: 1),
+            "Nursing Aide":                   .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2),
+            "Personal Care Aide":             .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3),
+            "Flight Attendant":               .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, presentationAndStorytelling: 1),
+            "Waiter/Waitress":                .init(communicationAndNetworking: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
+            "Receptionist":                   .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 1),
+            "Hairdresser/Barber":             .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, empathyAndInterpersonalCare: 2),
+            "Beautician/Cosmetologist":       .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, empathyAndInterpersonalCare: 2),
+
+            // Law (persuasion + analysis)
+            "Lawyer":                         .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 3, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 3),
+            "Judge":                          .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, leadershipAndInfluence: 2, carefulnessAndAttentionToDetail: 4, stressResistanceAndEmotionalRegulation: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+
+            // Creative self-employed (freelance hustle on top of the craft)
+            "Content Creator":                .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 2, visionaryThinkingAndAmbition: 1, riskTakingAndInitiative: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
+            "Novelist":                       .init(creativityAndInsightfulThinking: 4, riskTakingAndInitiative: 1, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Fashion Designer":               .init(creativityAndInsightfulThinking: 4, persuasionAndNegotiation: 1, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, presentationAndStorytelling: 2),
+
+            // Sports (physical resilience + discipline; coaches/refs add their own demands)
+            "Athlete":                        .init(communicationAndNetworking: 1, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 3, selfDisciplineAndPerseverance: 4),
+            "Athletic Coach":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
+            "Referee/Umpire":                 .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 2, leadershipAndInfluence: 2, carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 4, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+            "Athletic Director":              .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 4, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 2),
+
+            // Tech academia (deep analysis, teaching, grant-winning, coding)
+            "Computer Science Lecturer":               .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
+            "Assistant Professor (Computer Science)":  .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Professor (Computer Science)":            .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 3),
+            "AI Research Scientist":                   .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Machine Learning Researcher":             .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 1, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 1),
+        ]
+
+        // Resolves a title's soft-skill requirements: per-title override if one
+        // exists, otherwise the broad category default.
+        func softSkills(for title: String, category: JobCategory) -> SoftSkills {
+            perTitleSoft[Job.baseTitle(of: title)] ?? defaultSoft(for: category)
         }
 
         // Hard requirements that are intrinsic to the role — legally required
@@ -297,7 +395,7 @@ enum JobCatalog {
                 return HardSkills(certifications: [.cosmetology])
             case "Flight Attendant":
                 return HardSkills(certifications: [.flightAttendantCert])
-            case "Chef":
+            case "Chef/Cook":
                 return HardSkills(portfolioItems: [.recipeBook], certifications: [.culinaryDiploma])
 
             // Education — small/private schools want to see a sample lesson plan
@@ -340,6 +438,24 @@ enum JobCatalog {
             case "Farmer":
                 return HardSkills(licenses: [.pesticideApplicator])
 
+            // Creative freelance — hired on a body of work
+            case "Illustrator", "Tattoo Artist", "Animator", "Fashion Designer":
+                return HardSkills(portfolioItems: [.paintingPortfolio])
+            case "Voice Actor":
+                return HardSkills(portfolioItems: [.musicAlbum])
+            case "Content Creator":
+                return HardSkills(portfolioItems: [.photoPortfolio])
+            case "Novelist":
+                return HardSkills(portfolioItems: [.paper])
+            case "Interior Designer":
+                return HardSkills(portfolioItems: [.presentation])
+
+            // Tech academia — published research (ML/AI researchers also ship code)
+            case "Computer Science Lecturer", "Assistant Professor (Computer Science)", "Professor (Computer Science)":
+                return HardSkills(portfolioItems: [.paper])
+            case "AI Research Scientist", "Machine Learning Researcher":
+                return HardSkills(portfolioItems: [.paper, .library])
+
             default:
                 return HardSkills()
             }
@@ -355,8 +471,6 @@ enum JobCatalog {
                  "Event Planner", "Human Resources Specialist":
                 return 3
             case "Business Analyst", "Financial Analyst", "Marketing Specialist":
-                return 2
-            case "Entrepreneur/Founder":
                 return 2
             case "Judge":
                 return 10
@@ -396,8 +510,8 @@ enum JobCatalog {
             }
         }
 
-        func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil) -> Job {
-            let soft = defaultSoft(for: category)
+        func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil, targetCapital: Int? = nil) -> Job {
+            let soft = softSkills(for: id, category: category)
             let hard = defaultHard(for: id, category: category)
             let profiles = minEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
             let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: profiles)
@@ -407,7 +521,7 @@ enum JobCatalog {
                 hardSkills: hard,
                 minYearsExperience: minYears ?? defaultExperience(for: id)
             )
-            return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req)
+            return Job(id: id, category: category, income: income, summary: summary, icon: icon, requirements: req, targetCapital: targetCapital)
         }
 
         // MARK: - Job titles
@@ -424,7 +538,7 @@ enum JobCatalog {
             ("Security Guard",                  .service,      32_000, "🛡️", "Protects property and ensures safety.",                           3),
             ("Janitor/Cleaner",                 .service,      34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
             ("Receptionist",                    .service,      33_000, "📞", "Greets visitors and manages front-desk tasks.",                    3),
-            ("Chef",                            .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
+            ("Chef/Cook",                       .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
             ("Baker",                           .service,      32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
@@ -472,7 +586,6 @@ enum JobCatalog {
             ("Recruiter",                       .business,     58_000, "🔎", "Finds and screens candidates for roles.",                          3),
             ("Project Manager",                 .business,     98_000, "📋", "Plans and oversees projects to completion.",                       5),
             ("Business Analyst",                .business,     80_000, "📈", "Analyzes business needs and recommends solutions.",                 5),
-            ("Entrepreneur/Founder",            .business,     65_000, "🚀", "Starts and grows new businesses.",                                 4),
 
             // Construction / Trades
             ("Construction Laborer",            .construction, 36_000, "🏗️", "Performs physical tasks on construction sites.",                   2),
@@ -524,6 +637,11 @@ enum JobCatalog {
             ("Journalist",                      .media,        48_000, "📰", "Reports news and stories for media outlets.",                      5),
             ("Photographer",                    .media,        40_000, "📷", "Takes photos for commercial and personal use.",                    3),
 
+            // Sports / Fitness
+            ("Personal Trainer",                .sports,       40_000, "🏋️", "Coaches clients one-on-one toward their fitness goals.",            3),
+            ("Fitness Instructor",              .sports,       34_000, "🤸", "Leads group exercise and gym classes.",                            2),
+            ("Referee/Umpire",                  .sports,       44_000, "🟨", "Officiates matches and enforces the rules of play.",                3),
+
             // Agriculture
             ("Landscaper",                      .agriculture,  30_000, "🌿", "Maintains gardens and outdoor spaces.",                            1),
             ("Farmer",                          .agriculture,  32_000, "🚜", "Operates agricultural production and livestock.",                  2),
@@ -533,6 +651,16 @@ enum JobCatalog {
             ("Painter (Artist)",                .arts,         32_000, "🎨", "Creates original artwork for sale or exhibition.",                 1),
             ("Musician",                        .arts,         34_000, "🎵", "Performs or composes music professionally.",                       1),
             ("Actor",                           .arts,         38_000, "🎭", "Performs in theater, film, or television.",                        1),
+
+            // Creative — self-employed / freelance
+            ("Illustrator",                     .arts,         40_000, "🖍️", "Draws illustrations for books, games, and brands as a freelancer.", 3),
+            ("Voice Actor",                     .arts,         42_000, "🎙️", "Records voices for ads, animation, and audiobooks.",               1),
+            ("Tattoo Artist",                   .arts,         46_000, "🖋️", "Designs and inks custom tattoos for clients.",                     2),
+            ("Novelist",                        .media,        42_000, "📖", "Writes and self-publishes novels and stories.",                    1),
+            ("Content Creator",                 .media,        45_000, "🎥", "Builds an audience with videos, posts, and streams.",              1),
+            ("Animator",                        .design,       65_000, "🎞️", "Creates 2D/3D animation for studios and clients.",                 4),
+            ("Interior Designer",               .design,       60_000, "🛋️", "Designs and styles indoor spaces for clients.",                    4),
+            ("Fashion Designer",                .fashion,      55_000, "👗", "Designs clothing collections and sells to buyers.",                4),
         ]
 
         // MARK: - Compose final list
@@ -588,14 +716,14 @@ enum JobCatalog {
             // Law
             ("Junior Paralegal",             .law,           38_000, "📑", "Files documents and supports research for senior staff.",                         3, 0),
             ("Senior Paralegal",             .law,           65_000, "📑", "Manages caseload research and trains junior paralegals.",                         3, 4),
-            ("Senior Lawyer",                .law,          220_000, "⚖️", "Seasoned attorney owning major client relationships and cases.",                  7, 8),
+            ("Senior Lawyer (Partner)",      .law,          220_000, "⚖️", "Equity partner driving client relationships and firm strategy.",                  7, 8),
 
             // Health
             ("Senior Registered Nurse",      .health,       110_000, "🩺", "Experienced floor nurse mentoring newer staff.",                                  5, 5),
-            ("Charge Registered Nurse",      .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
+            ("Charge Nurse",                 .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
 
             // Science
-            ("Postdoctoral Research Scientist", .science,    62_000, "🔬", "Time-limited research role following doctoral studies — the entry rung of the research-scientist track.", 7, 0),
+            ("Postdoctoral Research Scientist", .science,     62_000, "🔬", "Time-limited research role following doctoral studies — the entry rung of the research-scientist track.", 7, 0),
             ("Senior Research Scientist",    .science,      145_000, "🔬", "Leads research programs and publishes original work.",                            7, 6),
             ("Principal Research Scientist", .science,      195_000, "🔬", "Sets research agenda for the lab and supervises projects.",                       7, 10),
 
@@ -613,41 +741,40 @@ enum JobCatalog {
             ("Master Electrician",           .construction,  92_000, "🔌", "Licensed master responsible for jobs and apprentices.",                            4, 5),
             ("Master Plumber",               .construction,  88_000, "🚰", "Licensed master plumber leading complex installations.",                           4, 5),
             ("Master Carpenter",             .construction,  76_000, "🪚", "Master tradesperson on bespoke and large-scale builds.",                           4, 6),
+
+            // Sports — performance-gated athlete ladder + coaching track (no degree needed)
+            ("Amateur Athlete",              .sports,        22_000, "🏃", "Competes semi-professionally while building a track record.",                     1, 0),
+            ("Professional Athlete",         .sports,        80_000, "🏅", "Earns a living competing at the professional level.",                             1, 3),
+            ("Elite Athlete",                .sports,       190_000, "🥇", "Top-tier competitor with sponsorships and championship stakes.",                  1, 7),
+            ("Athletic Coach",               .sports,        48_000, "🧑‍🏫", "Trains athletes and plans practices and game strategy.",                          3, 2),
+            ("Head Athletic Coach",          .sports,        95_000, "📋", "Leads a club or team program and its coaching staff.",                            4, 6),
+            ("Athletic Director",            .sports,       110_000, "🏟️", "Runs a sports organization's teams, budgets, and facilities.",                    5, 8),
+
+            // Academia — tech / computer-science research track (degree-gated)
+            ("Computer Science Lecturer",            .science,  78_000, "🧑‍🏫", "Teaches programming and CS courses at a university.",                       6, 2),
+            ("Assistant Professor (Computer Science)", .science, 105_000, "🎓", "Tenure-track CS academic balancing teaching and research.",                 7, 3),
+            ("Professor (Computer Science)",         .science, 160_000, "🏛️", "Senior CS academic leading a lab, students, and grant funding.",            7, 10),
+            ("AI Research Scientist",                .science, 175_000, "🤖", "Publishes novel AI research at a university or industry lab.",               7, 3),
+            ("Machine Learning Researcher",          .science, 125_000, "🧮", "Designs and evaluates ML models and publishes results.",                    7, 2),
         ]
 
         for (title, cat, income, icon, summary, eqf, years) in seniorityTitles {
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
         }
 
-        // MARK: - Career capstones (top management of each track)
-        // The apex role of every populated track — the "Make it to the top"
-        // goal in simplified mode. Reached through accumulated years of industry
-        // experience (per category). Office tracks top out at a chief/director;
-        // hands-on and entry-level tracks top out at a manager.
-        let capstoneRoles: [(String, JobCategory, Int, String, String, Int, Int)] = [
-            // Corporate / professional → chief or director
-            ("Chief Technology Officer",  .technology,    300_000, "🧑‍💼", "Owns the company's entire technology strategy and all of engineering.", 6, 12),
-            ("Chief Executive Officer",   .business,       320_000, "🧑‍💼", "Runs the whole company and answers to the board.",                     5, 12),
-            ("Chief Engineer",            .engineering,    200_000, "📐", "Leads engineering across the firm and signs off on major designs.",     6, 10),
-            ("Chief Medical Officer",     .health,         300_000, "🩺", "The top doctor setting clinical policy for the whole hospital.",         7, 10),
-            ("Chief Scientist",           .science,        210_000, "🔬", "Directs the research agenda for the entire organization.",               7, 10),
-            ("Managing Partner",          .law,            300_000, "⚖️", "Runs the law firm and leads its partnership.",                          7, 12),
-            ("School Superintendent",     .education,      135_000, "🏫", "Oversees every school in the district.",                                 6, 10),
-            ("Creative Director",         .design,         160_000, "🎨", "Sets the creative vision and leads the whole design team.",              5,  9),
-            ("Editor-in-Chief",           .media,          140_000, "📰", "Leads the newsroom and owns all editorial decisions.",                   5,  9),
-            ("Artistic Director",         .arts,            95_000, "🎭", "Leads a company's artistic program and casting.",                        4,  8),
-            ("Chief Pilot",               .aviation,       220_000, "✈️", "Heads the airline's flight operations and pilot corps.",                5, 10),
-            ("Police Chief",              .publicServices, 145_000, "👮", "Commands the entire police department.",                                 3, 12),
-            ("Fire Chief",                .publicServices, 135_000, "🚒", "Commands the entire fire department.",                                   3, 12),
-            // Hands-on / entry-level → manager or master
-            ("Store Manager",             .service,         68_000, "🏪", "Runs a retail store and its whole staff.",                               3,  6),
-            ("Operations Manager",        .logistics,       98_000, "📦", "Runs an entire warehouse or distribution operation.",                    3,  7),
-            ("Farm Manager",              .agriculture,     70_000, "🚜", "Runs a farm's operations, crews, and budget.",                           3,  6),
-            ("Master Mechanic",           .manufacturing,   80_000, "🔧", "Top-certified mechanic who runs the shop floor.",                        4,  6),
+        // MARK: - Entrepreneurial ladder
+        // Founders aren't gated on degrees; success is a capital-backed bet
+        // (see `Job.founderSuccessProbability`). Each rung needs prior
+        // entrepreneurship experience, so the ladder is climbed in order.
+        // (id, income, icon, summary, minYears, targetCapital)
+        let founderTitles: [(String, Int, String, String, Int, Int)] = [
+            ("Side Hustler",          28_000, "🛒", "Sells homemade goods or services on the side to test an idea.",     0,   2_000),
+            ("Small Business Owner",  55_000, "🏪", "Runs a local shop, café, or trade business of their own.",          1,  25_000),
+            ("Startup Founder",       95_000, "🚀", "Builds a high-growth company, raising money and hiring a team.",    2,  60_000),
+            ("Serial Entrepreneur",  180_000, "🏢", "Launches venture after venture, scaling and selling companies.",    5, 200_000),
         ]
-
-        for (title, cat, income, icon, summary, eqf, years) in capstoneRoles {
-            extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
+        for (title, income, icon, summary, years, capital) in founderTitles {
+            extras.append(fullJob(id: title, category: .entrepreneurship, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
         }
 
         var all: [Job] = [rn, lightDriver]

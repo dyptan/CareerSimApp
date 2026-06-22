@@ -97,6 +97,7 @@ let activities: [Activity] = [
         label: "Pet Care",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
             .init(keyPath: \.resilienceAndEndurance, weight: 1)
         ],
@@ -251,6 +252,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
         ],
@@ -260,6 +262,7 @@ let activities: [Activity] = [
         label: "Student Council / Leadership",
         abilities: [
             .init(keyPath: \.leadershipAndInfluence, weight: 2),
+            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
@@ -270,14 +273,26 @@ let activities: [Activity] = [
         label: "Model UN",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
+            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
             .init(keyPath: \.leadershipAndInfluence, weight: 1)
         ],
         stages: [.teen, .youngAdult]
     ),
     Activity(
+        label: "Lemonade Stand & Selling",
+        abilities: [
+            .init(keyPath: \.persuasionAndNegotiation, weight: 2),
+            .init(keyPath: \.riskTakingAndInitiative, weight: 1),
+            .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
+        ],
+        stages: [.child, .teen]
+    ),
+    Activity(
         label: "Hanging Out with Friends",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult]
@@ -307,6 +322,7 @@ let activities: [Activity] = [
         label: "Professional Networking Events",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
+            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
             .init(keyPath: \.leadershipAndInfluence, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
@@ -326,6 +342,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
+            .init(keyPath: \.riskTakingAndInitiative, weight: 2),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
         ],
@@ -335,6 +352,7 @@ let activities: [Activity] = [
         label: "Mentoring Juniors",
         abilities: [
             .init(keyPath: \.leadershipAndInfluence, weight: 2),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1),
             .init(keyPath: \.communicationAndNetworking, weight: 1)
         ],
@@ -344,10 +362,20 @@ let activities: [Activity] = [
         label: "Volunteering in the Community",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 1),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1),
             .init(keyPath: \.leadershipAndInfluence, weight: 1)
         ],
         stages: [.youngAdult, .adult]
+    ),
+    Activity(
+        label: "Babysitting & Caregiving",
+        abilities: [
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 2),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
+            .init(keyPath: \.resilienceAndEndurance, weight: 1)
+        ],
+        stages: [.teen, .youngAdult]
     ),
     Activity(
         label: "Personal Finance & Investing",
@@ -363,6 +391,7 @@ let activities: [Activity] = [
         label: "Parenting",
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
             .init(keyPath: \.leadershipAndInfluence, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.resilienceAndEndurance, weight: 1)

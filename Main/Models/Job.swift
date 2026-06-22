@@ -39,6 +39,10 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
     /// Randomly picks a plausible tier for a job given its category and income.
     static func random(category: JobCategory, income: Int) -> CompanyTier {
         switch category {
+        case .entrepreneurship:
+            // Founders aren't employees — low rungs are self-employed, scaled
+            // ventures are startups.
+            return income >= 80_000 ? .startup : .selfEmployed
         case .publicServices, .education:
             return .government
         case .arts:
@@ -113,6 +117,9 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
     /// Mirrors the heuristics in `random(category:income:)` but returns all candidates.
     static func plausibleTiers(category: JobCategory, income: Int) -> [CompanyTier] {
         switch category {
+        case .entrepreneurship:
+            // A founder is the company; surface a single self-employed/startup offer.
+            return income >= 80_000 ? [.startup] : [.selfEmployed]
         case .publicServices, .education:
             return [.government, .nonprofit]
         case .arts:
@@ -151,15 +158,20 @@ struct Job: Identifiable, Codable, Hashable {
     let requirements: Requirements
     var companyTier: CompanyTier
     var annualIncome: Int      // actual pay locked in when the job was taken
+    /// For entrepreneurial roles: the capital a founder ideally puts up to launch
+    /// this venture. Drives success odds (see `founderSuccessProbability`).
+    /// `nil` for ordinary employee jobs.
+    let targetCapital: Int?
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
-         requirements: Requirements) {
+         requirements: Requirements, targetCapital: Int? = nil) {
         self.id = id
         self.category = category
         self.income = income
         self.summary = summary
         self.icon = icon
         self.requirements = requirements
+        self.targetCapital = targetCapital
         let tier = CompanyTier.random(category: category, income: income)
         self.companyTier = tier
         let variance = category.salaryVariance
@@ -248,25 +260,11 @@ struct Job: Identifiable, Codable, Hashable {
 // MARK: - Job evaluation (player fit, hire probability)
 
 extension Job {
-    /// Soft-skill keypaths counted by the hire-probability score.
-    /// 15 entries; do not change without updating hire-probability divisor.
-    private static let scoredSoftSkills: [WritableKeyPath<SoftSkills, Int>] = [
-        \.analyticalReasoningAndProblemSolving,
-        \.creativityAndInsightfulThinking,
-        \.communicationAndNetworking,
-        \.leadershipAndInfluence,
-        \.visionaryThinkingAndAmbition,
-        \.spacialNavigationAndOrientation,
-        \.carefulnessAndAttentionToDetail,
-        \.tinkeringAndFingerPrecision,
-        \.resilienceAndEndurance,
-        \.outdoorAndWeatherResilience,
-        \.stressResistanceAndEmotionalRegulation,
-        \.collaborationAndTeamwork,
-        \.timeManagementAndPlanning,
-        \.selfDisciplineAndPerseverance,
-        \.presentationAndStorytelling,
-    ]
+    /// Soft-skill keypaths counted by the hire-probability score, derived from
+    /// the single source of truth (`SoftSkills.allAxes`). The hire-probability
+    /// divisor uses `.count`, so new axes are scored automatically.
+    private static let scoredSoftSkills: [WritableKeyPath<SoftSkills, Int>] =
+        SoftSkills.allAxes.filter(\.isScored).map(\.keyPath)
 
     func educationMet(for player: Player) -> Bool {
         let playerEQF = player.degrees.last?.eqf ?? 0
@@ -363,6 +361,11 @@ extension Job {
     }
 
     func hireProbability(for player: Player, requestedSalary: Double) -> Double {
+        // Founders aren't "hired" — their odds come from capital + founder grit.
+        // Preview the odds as if the target capital were fully funded.
+        if isEntrepreneurial {
+            return founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
+        }
         guard allRequirementsMet(for: player) else { return 0.0 }
         // Simplified mode: meeting the gate (degree + experience) is a sure hire.
         // No skill score, prestige, tier, or salary-fit adjustments.
@@ -373,6 +376,40 @@ extension Job {
         let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
+    }
+
+    // MARK: - Entrepreneurial path
+
+    /// True for founder roles, which are gated on capital + grit rather than
+    /// credentials.
+    var isEntrepreneurial: Bool { category == .entrepreneurship }
+
+    /// Probability that a founding attempt succeeds. Driven mainly by how well
+    /// the invested capital covers the venture's target, with a smaller bump
+    /// from the founder skill set (Risk-Taker / Visionary / Persuader). The
+    /// experience gate still applies — you can't skip rungs of the ladder.
+    func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
+        guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
+        guard experienceMet(for: player) else { return 0.0 }
+        let capitalRatio = Double(investedCapital) / Double(target)
+        let capitalTerm = min(capitalRatio, 1.0) * 0.55          // up to +55% at full funding
+        let overfundBonus = min(max(capitalRatio - 1.0, 0.0), 1.0) * 0.10  // a little more for a fat war chest
+        let skillTerm = founderSkillFit(for: player) * 0.30      // up to +30%
+        return max(0.03, min(0.92, 0.03 + capitalTerm + overfundBonus + skillTerm))
+    }
+
+    /// 0...1 fit of the player against this venture's founder skills.
+    private func founderSkillFit(for player: Player) -> Double {
+        let keys: [WritableKeyPath<SoftSkills, Int>] = [
+            \.riskTakingAndInitiative, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
+        ]
+        let req = requirements.softSkills
+        let p = player.softSkills
+        let total = keys.reduce(0.0) { acc, kp in
+            let need = max(req[keyPath: kp], 1)
+            return acc + min(Double(p[keyPath: kp]) / Double(need), 1.0)
+        }
+        return total / Double(keys.count)
     }
 
     /// Hire-probability bonus from the player's most prestigious *relevant* degree.
@@ -436,7 +473,8 @@ extension Job {
     static let seniorityPrefixes: [String] = [
         "Junior ", "Mid-Level ", "Senior ", "Lead ",
         "Principal ", "Staff ", "Head ", "Sous ",
-        "Executive ", "Master ", "Charge ", "Postdoctoral "
+        "Executive ", "Master ", "Charge ", "Postdoctoral ",
+        "Amateur ", "Professional ", "Elite "
     ]
 
     /// Strips a recognised seniority prefix from `id`, returning the base role

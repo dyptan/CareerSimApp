@@ -168,47 +168,72 @@ struct HardSkills: Codable, Hashable {
     mutating func remove(_ lic: License) { licenseLevels.removeValue(forKey: lic) }
 }
 
+/// One soft-skill axis and its player-facing metadata. `SoftSkills.allAxes`
+/// is the single source of truth: the struct's stored properties, the hire
+/// scorer, the education admission machinery, and every UI list are all derived
+/// from it. To add a new soft skill: add a stored property to `SoftSkills`,
+/// add one entry here, and add one `Int.random` line to `Player.init`.
+struct SoftSkillAxis: Identifiable {
+    let keyPath: WritableKeyPath<SoftSkills, Int>
+    let label: String
+    let pictogram: String
+    let description: String
+    /// Whether this axis counts toward a job's hire-probability "fit" score.
+    var isScored: Bool = true
+
+    var id: String { label }
+}
+
 struct SoftSkills: Codable, Hashable {
     var analyticalReasoningAndProblemSolving: Int = 0
     var creativityAndInsightfulThinking: Int = 0
     var communicationAndNetworking: Int = 0
+    var persuasionAndNegotiation: Int = 0
     var leadershipAndInfluence: Int = 0
     var visionaryThinkingAndAmbition: Int = 0
+    var riskTakingAndInitiative: Int = 0
     var carefulnessAndAttentionToDetail: Int = 0
     var tinkeringAndFingerPrecision: Int = 0
     var spacialNavigationAndOrientation: Int = 0
     var resilienceAndEndurance: Int = 0
     var stressResistanceAndEmotionalRegulation: Int = 0
+    var empathyAndInterpersonalCare: Int = 0
     var outdoorAndWeatherResilience: Int = 0
     var collaborationAndTeamwork: Int = 0
     var timeManagementAndPlanning: Int = 0
     var selfDisciplineAndPerseverance: Int = 0
     var presentationAndStorytelling: Int = 0
-    
-    static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String, description: String)] = [
-        (\.analyticalReasoningAndProblemSolving, "Inventor", "💡", "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
-        (\.creativityAndInsightfulThinking, "Creator", "🎨", "Coming up with new ideas and seeing things in fresh ways. Helpful for design, art, music, marketing, and invention."),
-        (\.communicationAndNetworking, "Influencer", "📢", "Talking, writing, listening, and meeting people. Most jobs need this — especially sales, teaching, business, and journalism."),
-        (\.leadershipAndInfluence, "Leader", "👑", "Helping a group decide and act together. Used by managers, coaches, founders, and team captains."),
-        (\.visionaryThinkingAndAmbition, "Visionary", "🔭", "Imagining big future goals and pulling people toward them. Useful for entrepreneurs, founders, and senior strategists."),
-        (\.carefulnessAndAttentionToDetail, "Detective", "🔍", "Catching small mistakes and double-checking everything. Important for accountants, surgeons, editors, and lab work."),
-        (\.tinkeringAndFingerPrecision, "Fixer", "🛠️", "Working steadily with your hands on small parts. Used by mechanics, surgeons, watchmakers, and artists."),
-        (\.spacialNavigationAndOrientation, "Navigator", "🌐", "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
-        (\.resilienceAndEndurance, "Athlete", "🏃", "Keeping going through tiredness or stress. Important for nurses, soldiers, athletes, and farmers."),
-        (\.stressResistanceAndEmotionalRegulation, "Supporter", "😌", "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
-        (\.outdoorAndWeatherResilience, "Adventurer", "🏕️", "Coping with heat, cold, rain, and rough terrain. Important for farmers, sailors, builders, and field researchers."),
-        (\.collaborationAndTeamwork, "Teamplayer", "🤝", "Sharing work and getting along with others. Almost every job needs this."),
-        (\.timeManagementAndPlanning, "Planner", "📅", "Finishing things on time and organising your days. Useful everywhere; vital for project managers and freelancers."),
-        (\.selfDisciplineAndPerseverance, "Achiever", "🏆", "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),
-        (\.presentationAndStorytelling, "Storyteller", "🎤", "Explaining ideas so others get them. Useful for teaching, sales, journalism, and leadership."),
+    static let allAxes: [SoftSkillAxis] = [
+        .init(keyPath: \.analyticalReasoningAndProblemSolving, label: "Inventor", pictogram: "💡", description: "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
+        .init(keyPath: \.creativityAndInsightfulThinking, label: "Creator", pictogram: "🎨", description: "Coming up with new ideas and seeing things in fresh ways. Helpful for design, art, music, marketing, and invention."),
+        .init(keyPath: \.communicationAndNetworking, label: "Influencer", pictogram: "📢", description: "Talking, writing, listening, and meeting people. Most jobs need this — especially teaching, business, and journalism."),
+        .init(keyPath: \.persuasionAndNegotiation, label: "Persuader", pictogram: "💬", description: "Convincing people, negotiating deals, and closing a sale. Vital for sales, marketing, recruiting, founders, and lawyers."),
+        .init(keyPath: \.leadershipAndInfluence, label: "Leader", pictogram: "👑", description: "Helping a group decide and act together. Used by managers, coaches, founders, and team captains."),
+        .init(keyPath: \.visionaryThinkingAndAmbition, label: "Visionary", pictogram: "🔭", description: "Imagining big future goals and pulling people toward them. Useful for entrepreneurs, founders, and senior strategists."),
+        .init(keyPath: \.riskTakingAndInitiative, label: "Risk-Taker", pictogram: "🎲", description: "Comfort with uncertainty — betting on yourself, acting before you have a playbook, and bouncing back from failure. The defining trait of founders and entrepreneurs."),
+        .init(keyPath: \.carefulnessAndAttentionToDetail, label: "Detective", pictogram: "🔍", description: "Catching small mistakes and double-checking everything. Important for accountants, surgeons, editors, and lab work."),
+        .init(keyPath: \.tinkeringAndFingerPrecision, label: "Fixer", pictogram: "🛠️", description: "Working steadily with your hands on small parts. Used by mechanics, surgeons, watchmakers, and artists."),
+        .init(keyPath: \.spacialNavigationAndOrientation, label: "Navigator", pictogram: "🧭", description: "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
+        .init(keyPath: \.resilienceAndEndurance, label: "Athlete", pictogram: "🏃", description: "Keeping going through tiredness or stress. Important for nurses, soldiers, athletes, and farmers."),
+        .init(keyPath: \.stressResistanceAndEmotionalRegulation, label: "Zen", pictogram: "☯️", description: "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
+        .init(keyPath: \.empathyAndInterpersonalCare, label: "Empath", pictogram: "🫶", description: "Sensing how others feel and responding with care. Key for nursing, counseling, teaching, customer service, and hospitality."),
+        .init(keyPath: \.outdoorAndWeatherResilience, label: "Explorer", pictogram: "🏕️", description: "Working outdoors through heat, cold, and rough weather. Useful for farming, construction, fishing, and field work."),
+        .init(keyPath: \.collaborationAndTeamwork, label: "Teamplayer", pictogram: "🤝", description: "Sharing work and getting along with others. Almost every job needs this."),
+        .init(keyPath: \.timeManagementAndPlanning, label: "Planner", pictogram: "📅", description: "Finishing things on time and organising your days. Useful everywhere; vital for project managers and freelancers."),
+        .init(keyPath: \.selfDisciplineAndPerseverance, label: "Champion", pictogram: "🏆", description: "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),
+        .init(keyPath: \.presentationAndStorytelling, label: "Storyteller", pictogram: "📖", description: "Explaining ideas so others get them. Useful for teaching, sales, journalism, and leadership."),
     ]
-    
+
+    /// Back-compat tuple view of `allAxes` used by views that iterate skills.
+    static let skillNames: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String, description: String)] =
+        allAxes.map { ($0.keyPath, $0.label, $0.pictogram, $0.description) }
+
     private static let _labelMap: [AnyKeyPath: String] =
-        Dictionary(uniqueKeysWithValues: skillNames.map { ($0.keyPath as AnyKeyPath, $0.label) })
+        Dictionary(uniqueKeysWithValues: allAxes.map { ($0.keyPath as AnyKeyPath, $0.label) })
     private static let _pictogramMap: [AnyKeyPath: String] =
-        Dictionary(uniqueKeysWithValues: skillNames.map { ($0.keyPath as AnyKeyPath, $0.pictogram) })
+        Dictionary(uniqueKeysWithValues: allAxes.map { ($0.keyPath as AnyKeyPath, $0.pictogram) })
     private static let _descriptionMap: [AnyKeyPath: String] =
-        Dictionary(uniqueKeysWithValues: skillNames.map { ($0.keyPath as AnyKeyPath, $0.description) })
+        Dictionary(uniqueKeysWithValues: allAxes.map { ($0.keyPath as AnyKeyPath, $0.description) })
 
     static func label(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
         _labelMap[keyPath]

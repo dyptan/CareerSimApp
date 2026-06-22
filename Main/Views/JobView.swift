@@ -6,6 +6,7 @@ struct JobDetail: View {
     @Binding var showCareersSheet: Bool
 
     @State private var requestedSalary: Double = 0
+    @State private var investedCapital: Double = 0
     @State private var applicationResult: ApplicationResult? = nil
 
     enum ApplicationResult { case hired, rejected }
@@ -22,8 +23,13 @@ struct JobDetail: View {
     }
 
     private var applyButtonLabel: String {
-        if player.appliedJobIds.contains(job.id) { return "Already applied" }
-        if !allRequirementsMet { return "Requirements not met" }
+        if player.appliedJobIds.contains(job.id) { return isFounder ? "Already attempted this year" : "Already applied" }
+        if isFounder {
+            if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
+            if player.savings <= 0 { return "No savings to invest" }
+            return "Launch venture 🚀"
+        }
+        if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
         return "Apply"
     }
 
@@ -34,7 +40,7 @@ struct JobDetail: View {
             return "Hire chance is 0% until every required degree, license, \(job.companyTier.hiringSignal == .credentials ? "certification" : "portfolio item"), and year of industry experience is in place."
         }
 
-        let scoredCount = 15
+        let scoredCount = SoftSkills.allAxes.count
         let matched = job.softSkillsHelpfulScore(for: player)
         let skillScore = Double(matched) / Double(scoredCount)
         let skillContribution = skillScore * 0.7
@@ -241,8 +247,10 @@ struct JobDetail: View {
 
             Divider()
 
-            VStack(alignment: .leading, spacing: 8) {
-                if isSimplified {
+            if isFounder {
+                founderInvestmentSection
+            } else if isSimplified {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Salary:")
                             .font(.title2.bold())
@@ -259,76 +267,192 @@ struct JobDetail: View {
                         Spacer()
                     }
                     .padding(.horizontal)
-                } else {
-                    Text("Salary negotiation")
-                        .font(.title2.bold())
-                        .padding(.horizontal)
-
-                    HStack {
-                        Text("Your ask:")
-                        Spacer()
-                        Text("\(Int(requestedSalary).formatted(.number)) $")
-                            .font(.headline)
-                    }
-                    .padding(.horizontal)
-
-                    Slider(value: $requestedSalary, in: sliderMin...sliderMax, step: 500)
-                        .padding(.horizontal)
-
-                    HStack {
-                        Text("\(Int(sliderMin).formatted(.number)) $")
-                            .font(.caption).foregroundStyle(.secondary)
-                        Spacer()
-                        Text("\(Int(sliderMax).formatted(.number)) $")
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
-                    .padding(.horizontal)
-
-                    HStack(spacing: 6) {
-                        Text("Hire probability:")
-                        InfoHint(
-                            title: "How hire probability is calculated",
-                            message: hireProbabilityFormulaText
-                        )
-                        Spacer()
-                        Text("\(Int(hireProbability * 100)) %")
-                            .font(.headline)
-                            .foregroundStyle(hireProbability >= 0.6 ? .green : hireProbability >= 0.3 ? .orange : .red)
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 4)
                 }
-
-                if let result = applicationResult {
-                    Text(result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time.")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                }
+            } else {
+                salaryNegotiationSection
             }
-            .padding(.vertical)
 
-            Button {
-                if player.applyForJob(job, requestedSalary: Int(requestedSalary)) {
-                    applicationResult = .hired
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                        showCareersSheet.toggle()
-                    }
-                } else {
-                    applicationResult = .rejected
-                }
-            } label: {
-                Text(applyButtonLabel)
+            if let result = applicationResult {
+                Text(resultMessage(result))
+                    .font(.headline)
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(!allRequirementsMet || player.appliedJobIds.contains(job.id))
-            .opacity(allRequirementsMet && !player.appliedJobIds.contains(job.id) ? 1.0 : 0.5)
-            .padding()
+
+            applyButton
         }
         .onAppear {
             requestedSalary = Double(job.income)
+            if isFounder {
+                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.savings))
+            }
         }
+    }
+
+    // MARK: - Employee application (salary negotiation)
+
+    private var salaryNegotiationSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Salary negotiation")
+                .font(.title2.bold())
+                .padding(.horizontal)
+
+            HStack {
+                Text("Your ask:")
+                Spacer()
+                Text("\(Int(requestedSalary).formatted(.number)) $")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+
+            Slider(value: $requestedSalary, in: sliderMin...sliderMax, step: 500)
+                .padding(.horizontal)
+
+            HStack {
+                Text("\(Int(sliderMin).formatted(.number)) $")
+                    .font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Text("\(Int(sliderMax).formatted(.number)) $")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+
+            HStack(spacing: 6) {
+                Text("Hire probability:")
+                InfoHint(
+                    title: "How hire probability is calculated",
+                    message: hireProbabilityFormulaText
+                )
+                Spacer()
+                Text("\(Int(hireProbability * 100)) %")
+                    .font(.headline)
+                    .foregroundStyle(hireProbability >= 0.6 ? .green : hireProbability >= 0.3 ? .orange : .red)
+            }
+            .padding(.horizontal)
+            .padding(.top, 4)
+        }
+        .padding(.vertical)
+    }
+
+    // MARK: - Founder launch (capital investment)
+
+    private var isFounder: Bool { job.isEntrepreneurial }
+
+    private var founderProbability: Double {
+        job.founderSuccessProbability(for: player, investedCapital: Int(investedCapital))
+    }
+
+    private var founderInvestmentSection: some View {
+        let target = job.targetCapital ?? 0
+        let canInvest = player.savings > 0
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("Launch your venture")
+                .font(.title2.bold())
+                .padding(.horizontal)
+
+            HStack {
+                Text("Capital to invest:")
+                Spacer()
+                Text("\(Int(investedCapital).formatted(.number)) $")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+
+            if canInvest {
+                Slider(value: $investedCapital, in: 0...Double(player.savings), step: 500)
+                    .padding(.horizontal)
+                HStack {
+                    Text("0 $")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Spacer()
+                    Text("your savings: \(player.savings.formatted(.number)) $")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
+            } else {
+                Text("You have no savings to invest yet. Earn and save first, then come back to launch.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .padding(.horizontal)
+            }
+
+            HStack {
+                Text("Recommended capital:")
+                    .font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                Text("\(target.formatted(.number)) $")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+
+            HStack(spacing: 6) {
+                Text("Success chance:")
+                InfoHint(
+                    title: "How founding works",
+                    message: founderFormulaText
+                )
+                Spacer()
+                Text("\(Int(founderProbability * 100)) %")
+                    .font(.headline)
+                    .foregroundStyle(founderProbability >= 0.6 ? .green : founderProbability >= 0.3 ? .orange : .red)
+            }
+            .padding(.horizontal)
+            .padding(.top, 4)
+
+            Text("If the venture fails, you keep half of what you put in.")
+                .font(.caption2).foregroundStyle(.secondary)
+                .padding(.horizontal)
+        }
+        .padding(.vertical)
+    }
+
+    private var founderFormulaText: String {
+        guard job.experienceMet(for: player) else {
+            return "You need more years as an entrepreneur before you can take on this venture. Start with a smaller one first."
+        }
+        let target = (job.targetCapital ?? 0).formatted(.number)
+        return """
+        Your odds come mostly from how much capital you put in versus the \(target) $ this venture really needs, plus your founder skills (Risk-Taker 🎲, Visionary 🔭, Persuader 💬).
+
+        Invest more to raise your odds. Succeed and you're in business; fail and you keep half your stake.
+        """
+    }
+
+    // MARK: - Shared apply button
+
+    private func resultMessage(_ result: ApplicationResult) -> String {
+        if isFounder {
+            return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you kept half your stake."
+        }
+        return result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time."
+    }
+
+    private var applyDisabled: Bool {
+        if player.appliedJobIds.contains(job.id) { return true }
+        if isFounder { return !job.experienceMet(for: player) || player.savings <= 0 }
+        return !allRequirementsMet
+    }
+
+    private var applyButton: some View {
+        Button {
+            let success = isFounder
+                ? player.foundVenture(job, investedCapital: Int(investedCapital))
+                : player.applyForJob(job, requestedSalary: Int(requestedSalary))
+            if success {
+                applicationResult = .hired
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    showCareersSheet.toggle()
+                }
+            } else {
+                applicationResult = .rejected
+            }
+        } label: {
+            Text(applyButtonLabel)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(applyDisabled)
+        .opacity(applyDisabled ? 0.5 : 1.0)
+        .padding()
     }
 }
 
