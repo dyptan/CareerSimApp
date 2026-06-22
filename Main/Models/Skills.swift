@@ -196,6 +196,7 @@ struct SoftSkills: Codable, Hashable {
         (\.spacialNavigationAndOrientation, "Navigator", "🌐", "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
         (\.resilienceAndEndurance, "Athlete", "🏃", "Keeping going through tiredness or stress. Important for nurses, soldiers, athletes, and farmers."),
         (\.stressResistanceAndEmotionalRegulation, "Supporter", "😌", "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
+        (\.outdoorAndWeatherResilience, "Adventurer", "🏕️", "Coping with heat, cold, rain, and rough terrain. Important for farmers, sailors, builders, and field researchers."),
         (\.collaborationAndTeamwork, "Teamplayer", "🤝", "Sharing work and getting along with others. Almost every job needs this."),
         (\.timeManagementAndPlanning, "Planner", "📅", "Finishing things on time and organising your days. Useful everywhere; vital for project managers and freelancers."),
         (\.selfDisciplineAndPerseverance, "Achiever", "🏆", "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),

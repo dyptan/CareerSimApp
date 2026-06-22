@@ -471,9 +471,11 @@ extension Job {
     ]
 
     /// Title keywords that mark a top leadership role even without a seniority
-    /// prefix (e.g. "Marketing Director", "Managing Partner", chiefs).
+    /// prefix (e.g. "Marketing Director", "Managing Partner", chiefs). Deliberately
+    /// excludes mid-rank titles (Captain, Lieutenant) and entry founders, so the
+    /// apex of public-service and business tracks stays at Chief / CEO.
     private static let leadershipKeywords: [String] = [
-        "Director", "Partner", "Chief", "President", "Lieutenant", "Captain", "Founder", "Superintendent"
+        "Director", "Partner", "Chief", "Superintendent"
     ]
 
     /// Management capstones whose titles contain "Manager" — listed explicitly

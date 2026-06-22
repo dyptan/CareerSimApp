@@ -43,10 +43,15 @@ struct Education: Codable, Hashable, Identifiable {
 
     // Updated Requirements struct to match the Job model
     struct SoftSkillMapping: Identifiable {
-        let id: String
-        let pictogram: String
         let playerKeyPath: WritableKeyPath<SoftSkills, Int>
         let requirementKeyPath: KeyPath<Education.Requirements, Int>
+
+        // Label and pictogram are pulled from the single source of truth
+        // (`SoftSkills.skillNames`), so education requirements show the exact
+        // same badge as the main screen, activities, and job details.
+        var id: String { SoftSkills.label(forKeyPath: playerKeyPath) ?? "" }
+        var label: String { id }
+        var pictogram: String { SoftSkills.pictogram(forKeyPath: playerKeyPath) ?? "" }
     }
 
     struct Requirements: Codable, Hashable {
@@ -62,7 +67,6 @@ struct Education: Codable, Hashable, Identifiable {
         var carefulnessAndAttentionToDetail: Int = 0
         var tinkeringAndFingerPrecision: Int = 0
         var resilienceAndEndurance: Int = 0
-        var coordinationAndBalance: Int = 0
         var stressResistanceAndEmotionalRegulation: Int = 0
         var outdoorAndWeatherResilience: Int = 0
         var collaborationAndTeamwork: Int = 0
@@ -88,21 +92,25 @@ struct Education: Codable, Hashable, Identifiable {
             }
         }
 
+        // Bridges each Education requirement field to its player-skill counterpart.
+        // Display label + pictogram are NOT stored here — they come from
+        // `SoftSkills.skillNames` via the mapping's computed properties.
         static let softSkillMappings: [Education.SoftSkillMapping] = [
-            .init(id: "Hacker",      pictogram: "💡", playerKeyPath: \.analyticalReasoningAndProblemSolving, requirementKeyPath: \.analyticalReasoningAndProblemSolving),
-            .init(id: "Creator",     pictogram: "🎨", playerKeyPath: \.creativityAndInsightfulThinking,      requirementKeyPath: \.creativityAndInsightfulThinking),
-            .init(id: "Influencer",  pictogram: "📢", playerKeyPath: \.communicationAndNetworking,           requirementKeyPath: \.communicationAndNetworking),
-            .init(id: "Leader",      pictogram: "👑", playerKeyPath: \.leadershipAndInfluence,               requirementKeyPath: \.leadershipAndInfluence),
-            .init(id: "Visionary",   pictogram: "🔭", playerKeyPath: \.visionaryThinkingAndAmbition,         requirementKeyPath: \.visionaryThinkingAndAmbition),
-            .init(id: "Navigator",   pictogram: "🧭", playerKeyPath: \.spacialNavigationAndOrientation,      requirementKeyPath: \.spacialNavigationAndOrientation),
-            .init(id: "Detective",   pictogram: "🔍", playerKeyPath: \.carefulnessAndAttentionToDetail,      requirementKeyPath: \.carefulnessAndAttentionToDetail),
-            .init(id: "Fixer",       pictogram: "🛠️", playerKeyPath: \.tinkeringAndFingerPrecision,          requirementKeyPath: \.tinkeringAndFingerPrecision),
-            .init(id: "Athlete",     pictogram: "🏃", playerKeyPath: \.resilienceAndEndurance,               requirementKeyPath: \.resilienceAndEndurance),
-            .init(id: "Zen",         pictogram: "☯️", playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
-            .init(id: "Teamplayer",  pictogram: "🤝", playerKeyPath: \.collaborationAndTeamwork,             requirementKeyPath: \.collaborationAndTeamwork),
-            .init(id: "Planner",     pictogram: "📅", playerKeyPath: \.timeManagementAndPlanning,            requirementKeyPath: \.timeManagementAndPlanning),
-            .init(id: "Champion",    pictogram: "🏆", playerKeyPath: \.selfDisciplineAndPerseverance,        requirementKeyPath: \.selfDisciplineAndPerseverance),
-            .init(id: "Storyteller", pictogram: "📖", playerKeyPath: \.presentationAndStorytelling,          requirementKeyPath: \.presentationAndStorytelling),
+            .init(playerKeyPath: \.analyticalReasoningAndProblemSolving,   requirementKeyPath: \.analyticalReasoningAndProblemSolving),
+            .init(playerKeyPath: \.creativityAndInsightfulThinking,        requirementKeyPath: \.creativityAndInsightfulThinking),
+            .init(playerKeyPath: \.communicationAndNetworking,             requirementKeyPath: \.communicationAndNetworking),
+            .init(playerKeyPath: \.leadershipAndInfluence,                 requirementKeyPath: \.leadershipAndInfluence),
+            .init(playerKeyPath: \.visionaryThinkingAndAmbition,           requirementKeyPath: \.visionaryThinkingAndAmbition),
+            .init(playerKeyPath: \.spacialNavigationAndOrientation,        requirementKeyPath: \.spacialNavigationAndOrientation),
+            .init(playerKeyPath: \.carefulnessAndAttentionToDetail,        requirementKeyPath: \.carefulnessAndAttentionToDetail),
+            .init(playerKeyPath: \.tinkeringAndFingerPrecision,            requirementKeyPath: \.tinkeringAndFingerPrecision),
+            .init(playerKeyPath: \.resilienceAndEndurance,                 requirementKeyPath: \.resilienceAndEndurance),
+            .init(playerKeyPath: \.stressResistanceAndEmotionalRegulation, requirementKeyPath: \.stressResistanceAndEmotionalRegulation),
+            .init(playerKeyPath: \.outdoorAndWeatherResilience,            requirementKeyPath: \.outdoorAndWeatherResilience),
+            .init(playerKeyPath: \.collaborationAndTeamwork,               requirementKeyPath: \.collaborationAndTeamwork),
+            .init(playerKeyPath: \.timeManagementAndPlanning,              requirementKeyPath: \.timeManagementAndPlanning),
+            .init(playerKeyPath: \.selfDisciplineAndPerseverance,          requirementKeyPath: \.selfDisciplineAndPerseverance),
+            .init(playerKeyPath: \.presentationAndStorytelling,            requirementKeyPath: \.presentationAndStorytelling),
         ]
     }
 
@@ -354,11 +362,9 @@ struct Education: Codable, Hashable, Identifiable {
             r.carefulnessAndAttentionToDetail = 2
             r.resilienceAndEndurance = 2
             r.stressResistanceAndEmotionalRegulation = 2
-            r.coordinationAndBalance = 1
 
         case .sports:
             r.resilienceAndEndurance = 2
-            r.coordinationAndBalance = 2
             r.collaborationAndTeamwork = 2
             r.selfDisciplineAndPerseverance = 2
 
@@ -403,7 +409,6 @@ struct Education: Codable, Hashable, Identifiable {
         x.carefulnessAndAttentionToDetail = bump(x.carefulnessAndAttentionToDetail)
         x.tinkeringAndFingerPrecision = bump(x.tinkeringAndFingerPrecision)
         x.resilienceAndEndurance = bump(x.resilienceAndEndurance)
-        x.coordinationAndBalance = bump(x.coordinationAndBalance)
         x.stressResistanceAndEmotionalRegulation = bump(x.stressResistanceAndEmotionalRegulation)
         x.outdoorAndWeatherResilience = bump(x.outdoorAndWeatherResilience)
         x.collaborationAndTeamwork = bump(x.collaborationAndTeamwork)
@@ -428,7 +433,6 @@ struct Education: Codable, Hashable, Identifiable {
         x.carefulnessAndAttentionToDetail = cap(x.carefulnessAndAttentionToDetail)
         x.tinkeringAndFingerPrecision = cap(x.tinkeringAndFingerPrecision)
         x.resilienceAndEndurance = cap(x.resilienceAndEndurance)
-        x.coordinationAndBalance = cap(x.coordinationAndBalance)
         x.stressResistanceAndEmotionalRegulation = cap(x.stressResistanceAndEmotionalRegulation)
         x.outdoorAndWeatherResilience = cap(x.outdoorAndWeatherResilience)
         x.collaborationAndTeamwork = cap(x.collaborationAndTeamwork)
