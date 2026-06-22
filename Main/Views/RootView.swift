@@ -7,6 +7,14 @@ struct RootView: View {
     private var availableJobs: [Job] { player.availableJobs }
 
     var body: some View {
+        if appUIState.hasSelectedMode {
+            gameView
+        } else {
+            ModeSelectionView(player: player, appUIState: appUIState)
+        }
+    }
+
+    private var gameView: some View {
         VStack(alignment: .leading) {
             HeaderView(player: player, appUIState: appUIState)
                 .padding(.bottom)
@@ -68,6 +76,11 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
         }
+        .sheet(isPresented: $appUIState.showGoalSheet) {
+            GoalView(player: player, appUIState: appUIState)
+        }
+        .onChange(of: player.savings) { _ in checkGoalReached() }
+        .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
         .onChange(of: player.age) { newValue in
             switch newValue {
             case 10:
@@ -86,6 +99,15 @@ struct RootView: View {
             }
         }
         .padding()
+    }
+
+    // MARK: - Goal tracking
+
+    /// Pops the celebration sheet the first time the active mode's goal is met.
+    private func checkGoalReached() {
+        guard !appUIState.hasShownGoal, player.goalMet else { return }
+        appUIState.hasShownGoal = true
+        appUIState.showGoalSheet = true
     }
 
     // MARK: - Navigation sheet wrapper
@@ -114,7 +136,13 @@ struct RootView: View {
             .padding()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { appUIState.showActivitiesSheet = false }
+                    Button("Do something else") { appUIState.showActivitiesSheet = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Next year") {
+                        appUIState.showActivitiesSheet = false
+                        player.advanceYear(appUIState: appUIState)
+                    }
                 }
             }
     }
@@ -159,6 +187,60 @@ struct RootView: View {
     }
 }
 
+/// Launch screen: asks the player to pick a game mode before the game starts.
+/// Shown whenever `appUIState.hasSelectedMode` is false (initial launch and
+/// after a restart).
+struct ModeSelectionView: View {
+    @ObservedObject var player: Player
+    @ObservedObject var appUIState: AppUIState
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Text("Career Sim")
+                .font(.largeTitle.bold())
+            Text("How do you want to play?")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+
+            ForEach(GameMode.allCases) { mode in
+                Button {
+                    player.gameMode = mode
+                    appUIState.hasSelectedMode = true
+                } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("\(mode.icon)  \(mode.title)")
+                            .font(.title2.bold())
+                        Text(mode.tagline)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("🎯 Goal: \(mode.goalHeadline)")
+                            .font(.callout.bold())
+                            .padding(.top, 2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(Color.secondary.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer()
+        }
+        .padding()
+        .frame(maxWidth: 520)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 #Preview {
     RootView()
+}
+
+#Preview("Mode selection") {
+    ModeSelectionView(player: Player(), appUIState: AppUIState())
 }

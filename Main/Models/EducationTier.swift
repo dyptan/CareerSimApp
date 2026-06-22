@@ -45,32 +45,34 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     }
 
     /// Extra soft-skill threshold added on top of the profile's base requirements.
+    /// Only elite schools raise the admission bar; state matches community.
     var requirementBonus: Int {
         switch self {
         case .community: return 0
-        case .state:     return 1
-        case .elite:     return 2
+        case .state:     return 0
+        case .elite:     return 1
         }
     }
 
     /// Annual tuition in USD for the given degree level.
-    /// Reflects rough US 2025 averages: community ≪ state ≪ private elite.
+    /// Reflects rough US averages: community ≪ state ≪ private elite. Doctorates
+    /// are largely funded (assistantships/stipends), so they cost little to nothing.
     func annualTuition(for level: Level.Stage) -> Int {
         switch (self, level) {
-        case (.community, .Vocational): return 3_000
-        case (.community, .Bachelor):   return 5_000
+        case (.community, .Vocational): return 4_000
+        case (.community, .Bachelor):   return 4_000
         case (.community, .Master):     return 7_000
-        case (.community, .Doctorate):  return 10_000
+        case (.community, .Doctorate):  return 0       // funded
 
         case (.state, .Vocational):     return 8_000
-        case (.state, .Bachelor):       return 20_000
-        case (.state, .Master):         return 30_000
-        case (.state, .Doctorate):      return 40_000
+        case (.state, .Bachelor):       return 12_000
+        case (.state, .Master):         return 22_000
+        case (.state, .Doctorate):      return 3_000   // mostly funded; nominal fees
 
-        case (.elite, .Vocational):     return 20_000
-        case (.elite, .Bachelor):       return 60_000
-        case (.elite, .Master):         return 80_000
-        case (.elite, .Doctorate):      return 100_000
+        case (.elite, .Vocational):     return 18_000
+        case (.elite, .Bachelor):       return 58_000
+        case (.elite, .Master):         return 55_000
+        case (.elite, .Doctorate):      return 8_000   // funded; some private fees
 
         default:                        return 0  // K-12 is free in this sim
         }

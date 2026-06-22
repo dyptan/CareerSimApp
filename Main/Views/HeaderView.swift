@@ -36,7 +36,9 @@ struct HeaderView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            
+            Text("\(player.gameMode.goalIcon) Goal: \(player.gameMode.goalHeadline)")
+                .font(.caption.bold())
+                .foregroundStyle(.secondary)
 
         }
     }

@@ -109,34 +109,35 @@ struct Education: Codable, Hashable, Identifiable {
     var requirements: Requirements {
         guard let p = profile else { return Requirements() }
 
-        var base = Education.baseRequirements(for: p)
+        let base = Education.baseRequirements(for: p)
 
-        // Escalate by level, enforce minimums, and clamp to 0...5
+        // Escalate the admission bar by level, then clamp. Bars stay modest — a
+        // degree asks for some aptitude in its core traits, not a maxed-out skill
+        // sheet (`clamped` caps requirements at 4, so nothing demands a perfect 5).
         var r: Requirements
         switch level {
         case .Vocational:
-            base.minEQF = 3
-            r = Education.clamped(base)
-        case .Bachelor:
-            var x = Education.elevated(base, by: 1)
+            // Trade school is near open-access — a notch below the bachelor bar.
+            var x = Education.elevated(base, by: -1)
             x.minEQF = 3
-            x = Education.enforceMinimums(x, for: .Bachelor, profile: p)
+            r = Education.clamped(x)
+        case .Bachelor:
+            var x = base
+            x.minEQF = 3
             r = Education.clamped(x)
         case .Master:
-            var x = Education.elevated(base, by: 2)
+            var x = Education.elevated(base, by: 1)
             x.minEQF = 5
-            x = Education.enforceMinimums(x, for: .Master, profile: p)
             r = Education.clamped(x)
         case .Doctorate:
-            var x = Education.elevated(base, by: 3)
+            var x = Education.elevated(base, by: 2)
             x.minEQF = 6
-            x = Education.enforceMinimums(x, for: .Doctorate, profile: p)
             r = Education.clamped(x)
         default:
             return Requirements()
         }
 
-        // Tier raises the soft-skill admission bar for non-zero requirements.
+        // Only elite schools raise the bar (by one), reflecting selective admissions.
         let bonus = tier.requirementBonus
         if bonus > 0 {
             r = Education.elevated(r, by: bonus)
@@ -413,68 +414,10 @@ struct Education: Codable, Hashable, Identifiable {
         return x
     }
 
-    private static func enforceMinimums(_ r: Requirements, for level: Level.Stage, profile: TertiaryProfile) -> Requirements {
-        var x = r
-
-        // General escalation by level (keep within 5)
-        switch level {
-        case .Vocational:
-            break
-        case .Bachelor:
-            if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
-                x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 2 : 0), 5)
-            }
-        case .Master:
-            if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
-            } else {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 3 : 0), 5)
-            }
-        case .Doctorate:
-            if profile.isSTEM {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 5 : 0), 5)
-            } else {
-                x.analyticalReasoningAndProblemSolving = min(max(x.analyticalReasoningAndProblemSolving, x.analyticalReasoningAndProblemSolving > 0 ? 4 : 0), 5)
-            }
-            x.selfDisciplineAndPerseverance = min(max(x.selfDisciplineAndPerseverance, x.selfDisciplineAndPerseverance > 0 ? 3 : 0), 5)
-        default:
-            break
-        }
-
-        // Profile-specific tuning (keep within 5)
-        switch profile {
-        case .arts, .design:
-            if level == .Master || level == .Doctorate {
-                x.creativityAndInsightfulThinking = min(max(x.creativityAndInsightfulThinking, x.creativityAndInsightfulThinking > 0 ? (level == .Doctorate ? 5 : 4) : 0), 5)
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-            }
-        case .education:
-            if level == .Bachelor || level == .Master || level == .Doctorate {
-                x.stressResistanceAndEmotionalRegulation = min(max(x.stressResistanceAndEmotionalRegulation, x.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-            }
-        case .health:
-            if level == .Bachelor || level == .Master || level == .Doctorate {
-                x.communicationAndNetworking = min(max(x.communicationAndNetworking, x.communicationAndNetworking > 0 ? 3 : 0), 5)
-                x.carefulnessAndAttentionToDetail = min(max(x.carefulnessAndAttentionToDetail, x.carefulnessAndAttentionToDetail > 0 ? 3 : 0), 5)
-                x.resilienceAndEndurance = min(max(x.resilienceAndEndurance, x.resilienceAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-                x.stressResistanceAndEmotionalRegulation = min(max(x.stressResistanceAndEmotionalRegulation, x.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-            }
-        case .business, .law, .humanities:
-            if level == .Master || level == .Doctorate {
-                x.presentationAndStorytelling = min(max(x.presentationAndStorytelling, x.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-            }
-        default:
-            break
-        }
-
-        return x
-    }
-
     private static func clamped(_ r: Requirements) -> Requirements {
         var x = r
-        func cap(_ v: Int) -> Int { min(max(0, v), 5) }
+        // Admission requirements top out at 4 — no degree demands a perfect 5.
+        func cap(_ v: Int) -> Int { min(max(0, v), 4) }
 
         x.analyticalReasoningAndProblemSolving = cap(x.analyticalReasoningAndProblemSolving)
         x.creativityAndInsightfulThinking = cap(x.creativityAndInsightfulThinking)

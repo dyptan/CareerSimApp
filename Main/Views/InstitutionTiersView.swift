@@ -11,7 +11,12 @@ struct InstitutionTiersView: View {
     @Binding var showTertiarySheet: Bool
 
     private var tiers: [Education] {
-        EducationTier.allCases.map { Education(level, profile: profile, tier: $0) }
+        // Simplified mode has no institution tiers — a single neutral school
+        // (community tier: no prestige bonus, lowest tuition, base admission bar).
+        if player.isSimplified {
+            return [Education(level, profile: profile, tier: .community)]
+        }
+        return EducationTier.allCases.map { Education(level, profile: profile, tier: $0) }
     }
 
     var body: some View {
@@ -23,7 +28,7 @@ struct InstitutionTiersView: View {
             }
             .padding()
         }
-        .navigationTitle("Compare schools")
+        .navigationTitle(player.isSimplified ? "Enroll" : "Compare schools")
     }
 
     @ViewBuilder
@@ -34,15 +39,23 @@ struct InstitutionTiersView: View {
         let canAfford = player.savings >= education.totalTuition
 
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 6) {
-                Text("\(education.tier.pictogram) \(education.tier.friendlyName)")
-                    .font(.headline)
-                InfoHint(
-                    title: "\(education.tier.pictogram) \(education.tier.friendlyName)",
-                    message: education.tier.description
-                )
-                Spacer()
-                prestigeBadge(education.tier.prestige)
+            if player.isSimplified {
+                HStack(spacing: 6) {
+                    Text("\(education.pictogram) \(education.degreeName)")
+                        .font(.headline)
+                    Spacer()
+                }
+            } else {
+                HStack(spacing: 6) {
+                    Text("\(education.tier.pictogram) \(education.tier.friendlyName)")
+                        .font(.headline)
+                    InfoHint(
+                        title: "\(education.tier.pictogram) \(education.tier.friendlyName)",
+                        message: education.tier.description
+                    )
+                    Spacer()
+                    prestigeBadge(education.tier.prestige)
+                }
             }
 
             HStack(spacing: 10) {

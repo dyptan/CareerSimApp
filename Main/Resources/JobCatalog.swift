@@ -355,7 +355,7 @@ enum JobCatalog {
                 return HardSkills(certifications: [.cosmetology])
             case "Flight Attendant":
                 return HardSkills(certifications: [.flightAttendantCert])
-            case "Chef/Cook":
+            case "Chef":
                 return HardSkills(portfolioItems: [.recipeBook], certifications: [.culinaryDiploma])
 
             // Education — small/private schools want to see a sample lesson plan
@@ -433,10 +433,32 @@ enum JobCatalog {
             }
         }
 
+        // Degree fields a role's industry accepts. Only applied to jobs that
+        // require a university degree (EQF ≥ 5); lower-EQF jobs accept any
+        // background (nil), since trades and entry roles aren't field-specific.
+        func defaultAcceptedProfiles(for category: JobCategory) -> [TertiaryProfile]? {
+            switch category {
+            case .technology:  return [.technology, .engineering, .science]
+            case .engineering: return [.engineering, .science, .technology]
+            case .science:     return [.science, .engineering, .technology]
+            case .health:      return [.health, .science]
+            case .business:    return [.business]
+            case .law:         return [.law]
+            case .education:   return [.education, .humanities, .science]
+            case .design:      return [.design, .arts]
+            case .arts:        return [.arts, .design]
+            case .media:       return [.humanities, .arts, .design]
+            case .service:     return [.service, .business, .humanities]
+            case .agriculture: return [.agriculture, .science]
+            default:           return nil
+            }
+        }
+
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil) -> Job {
             let soft = defaultSoft(for: category)
             let hard = defaultHard(for: id, category: category)
-            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: nil)
+            let profiles = minEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
+            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: profiles)
             let req = Job.Requirements(
                 education: edu,
                 softSkills: soft,
@@ -460,7 +482,7 @@ enum JobCatalog {
             ("Security Guard",                  .service,      32_000, "🛡️", "Protects property and ensures safety.",                           3),
             ("Janitor/Cleaner",                 .service,      34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
             ("Receptionist",                    .service,      33_000, "📞", "Greets visitors and manages front-desk tasks.",                    3),
-            ("Chef/Cook",                       .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
+            ("Chef",                            .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
             ("Baker",                           .service,      32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
@@ -627,11 +649,11 @@ enum JobCatalog {
             // Law
             ("Junior Paralegal",             .law,           38_000, "📑", "Files documents and supports research for senior staff.",                         3, 0),
             ("Senior Paralegal",             .law,           65_000, "📑", "Manages caseload research and trains junior paralegals.",                         3, 4),
-            ("Senior Lawyer (Partner)",      .law,          220_000, "⚖️", "Equity partner driving client relationships and firm strategy.",                  7, 8),
+            ("Senior Lawyer",                .law,          220_000, "⚖️", "Seasoned attorney owning major client relationships and cases.",                  7, 8),
 
             // Health
             ("Senior Registered Nurse",      .health,       110_000, "🩺", "Experienced floor nurse mentoring newer staff.",                                  5, 5),
-            ("Charge Nurse",                 .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
+            ("Charge Registered Nurse",      .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
 
             // Science
             ("Postdoctoral Researcher",      .science,       62_000, "🔬", "Time-limited research role following doctoral studies.",                          7, 0),
@@ -655,6 +677,37 @@ enum JobCatalog {
         ]
 
         for (title, cat, income, icon, summary, eqf, years) in seniorityTitles {
+            extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
+        }
+
+        // MARK: - Career capstones (top management of each track)
+        // The apex role of every populated track — the "Make it to the top"
+        // goal in simplified mode. Reached through accumulated years of industry
+        // experience (per category). Office tracks top out at a chief/director;
+        // hands-on and entry-level tracks top out at a manager.
+        let capstoneRoles: [(String, JobCategory, Int, String, String, Int, Int)] = [
+            // Corporate / professional → chief or director
+            ("Chief Technology Officer",  .technology,    300_000, "🧑‍💼", "Owns the company's entire technology strategy and all of engineering.", 6, 12),
+            ("Chief Executive Officer",   .business,       320_000, "🧑‍💼", "Runs the whole company and answers to the board.",                     5, 12),
+            ("Chief Engineer",            .engineering,    200_000, "📐", "Leads engineering across the firm and signs off on major designs.",     6, 10),
+            ("Chief Medical Officer",     .health,         300_000, "🩺", "The top doctor setting clinical policy for the whole hospital.",         7, 10),
+            ("Chief Scientist",           .science,        210_000, "🔬", "Directs the research agenda for the entire organization.",               7, 10),
+            ("Managing Partner",          .law,            300_000, "⚖️", "Runs the law firm and leads its partnership.",                          7, 12),
+            ("School Superintendent",     .education,      135_000, "🏫", "Oversees every school in the district.",                                 6, 10),
+            ("Creative Director",         .design,         160_000, "🎨", "Sets the creative vision and leads the whole design team.",              5,  9),
+            ("Editor-in-Chief",           .media,          140_000, "📰", "Leads the newsroom and owns all editorial decisions.",                   5,  9),
+            ("Artistic Director",         .arts,            95_000, "🎭", "Leads a company's artistic program and casting.",                        4,  8),
+            ("Chief Pilot",               .aviation,       220_000, "✈️", "Heads the airline's flight operations and pilot corps.",                5, 10),
+            ("Police Chief",              .publicServices, 145_000, "👮", "Commands the entire police department.",                                 3, 12),
+            ("Fire Chief",                .publicServices, 135_000, "🚒", "Commands the entire fire department.",                                   3, 12),
+            // Hands-on / entry-level → manager or master
+            ("Store Manager",             .service,         68_000, "🏪", "Runs a retail store and its whole staff.",                               3,  6),
+            ("Operations Manager",        .logistics,       98_000, "📦", "Runs an entire warehouse or distribution operation.",                    3,  7),
+            ("Farm Manager",              .agriculture,     70_000, "🚜", "Runs a farm's operations, crews, and budget.",                           3,  6),
+            ("Master Mechanic",           .manufacturing,   80_000, "🔧", "Top-certified mechanic who runs the shop floor.",                        4,  6),
+        ]
+
+        for (title, cat, income, icon, summary, eqf, years) in capstoneRoles {
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
         }
 

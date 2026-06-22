@@ -41,7 +41,9 @@ struct DegreesSubmenuView: View {
                                 message: degreeHintBody(for: education)
                             )
                         }
-                        Text("\(education.yearsToComplete) years • compare schools")
+                        Text(player.isSimplified
+                             ? "\(education.yearsToComplete) years"
+                             : "\(education.yearsToComplete) years • compare schools")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
