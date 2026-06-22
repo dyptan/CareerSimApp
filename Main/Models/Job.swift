@@ -286,6 +286,13 @@ extension Job {
     func experienceMet(for player: Player) -> Bool {
         let required = requirements.minYearsExperience
         guard required > 0 else { return true }
+        if seniorityPrefix != nil {
+            // A rung on a seniority ladder — only years in this same role count,
+            // so unrelated jobs in the industry don't qualify you for a promotion.
+            return (player.experienceByRole[baseTitle] ?? 0) >= required
+        }
+        // A standalone role (entry-level, or a top capstone with no junior rung)
+        // — counts accumulated years across the whole industry.
         return (player.experience[category] ?? 0) >= required
     }
 
@@ -337,8 +344,13 @@ extension Job {
     }
 
     func allRequirementsMet(for player: Player) -> Bool {
+        // Simplified mode hires on the degree plus years in the field alone —
+        // no hard-skill gate, no company-tier credential layering.
+        if player.gameMode == .simplified {
+            return educationMet(for: player) && experienceMet(for: player)
+        }
         // Emphasize degree + hard skills + experience; soft skills are helpful only.
-        educationMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
+        return educationMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
     }
 
     func salaryAlignmentFactor(requestedSalary: Double) -> Double {
@@ -355,6 +367,9 @@ extension Job {
             return founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
         }
         guard allRequirementsMet(for: player) else { return 0.0 }
+        // Simplified mode: meeting the gate (degree + experience) is a sure hire.
+        // No skill score, prestige, tier, or salary-fit adjustments.
+        if player.gameMode == .simplified { return 1.0 }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
         let tierDifficulty = companyTier.hireDifficulty
@@ -439,6 +454,14 @@ extension Job {
         copy.annualIncome = Int(Double(income) * tier.salaryMultiplier)
         return copy
     }
+
+    /// The job priced at its published median, with no employer-tier multiplier
+    /// or random variance. Used by simplified mode, which has no company tiers.
+    func atBaseSalary() -> Job {
+        var copy = self
+        copy.annualIncome = income
+        return copy
+    }
 }
 
 // MARK: - Seniority helpers
@@ -478,6 +501,39 @@ extension Job {
     /// when the job title carries no seniority prefix.
     var seniorityLabel: String {
         seniorityPrefix ?? "Standard"
+    }
+
+    /// Apex seniority prefixes that represent the top rung of a career ladder.
+    private static let leadershipPrefixes: Set<String> = [
+        "Lead", "Principal", "Staff", "Head", "Executive", "Master", "Charge", "Chief"
+    ]
+
+    /// Title keywords that mark a top leadership role even without a seniority
+    /// prefix (e.g. "Marketing Director", "Managing Partner", chiefs). Deliberately
+    /// excludes mid-rank titles (Captain, Lieutenant) and entry founders, so the
+    /// apex of public-service and business tracks stays at Chief / CEO.
+    private static let leadershipKeywords: [String] = [
+        "Director", "Partner", "Chief", "Superintendent"
+    ]
+
+    /// Track apexes listed explicitly because their titles carry no leadership
+    /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
+    /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
+    private static let capstoneTitles: Set<String> = [
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
+    ]
+
+    /// True for the top management role of a career track — the win condition
+    /// ("Make it to the top") for the simplified game mode. Covers apex seniority
+    /// rungs, chief/director titles, and the explicit manager capstones.
+    var isTopLeadership: Bool {
+        if let prefix = seniorityPrefix, Job.leadershipPrefixes.contains(prefix) {
+            return true
+        }
+        if Job.capstoneTitles.contains(id) {
+            return true
+        }
+        return Job.leadershipKeywords.contains { id.contains($0) }
     }
 }
 

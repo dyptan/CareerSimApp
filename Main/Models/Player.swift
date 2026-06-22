@@ -1,12 +1,85 @@
 import Foundation
 import SwiftUI
 
+/// How much of the simulation's complexity is in play. Chosen once at launch.
+enum GameMode: String, Codable, CaseIterable, Identifiable {
+    /// Kid-friendly: getting hired needs only the right degree plus enough years
+    /// in the field. No soft-skill hiring score, hard skills, company tiers,
+    /// education tiers, or salary negotiation. Junior→senior still progresses
+    /// through years of experience.
+    case simplified
+    /// The full model: skills, certifications, company tiers, education tiers,
+    /// prestige, and salary negotiation all feed the hire probability.
+    case realistic
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .simplified: return "Simple"
+        case .realistic:  return "Realistic"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .simplified: return "🧸"
+        case .realistic:  return "💼"
+        }
+    }
+
+    var tagline: String {
+        switch self {
+        case .simplified:
+            return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
+        case .realistic:
+            return "Build skills, earn certifications, compare employers and schools, and negotiate your salary."
+        }
+    }
+
+    /// Short name of this mode's win condition, shown in the picker and header.
+    var goalHeadline: String {
+        switch self {
+        case .simplified: return "Make it to the top"
+        case .realistic:  return "Earn your first million"
+        }
+    }
+
+    var goalIcon: String {
+        switch self {
+        case .simplified: return "👔"
+        case .realistic:  return "💰"
+        }
+    }
+}
+
 final class Player: ObservableObject {
+    /// Which rule set the game runs under. Set from the launch mode picker.
+    @Published var gameMode: GameMode = .realistic
+    /// Convenience: true when only the basic (degree + experience) rules apply.
+    var isSimplified: Bool { gameMode == .simplified }
+
+    /// Whether the player has met the current mode's win condition:
+    /// a top leadership ("C-suite") role in simplified mode, or a million in
+    /// savings in realistic mode.
+    var goalMet: Bool {
+        switch gameMode {
+        case .simplified: return currentOccupation?.isTopLeadership ?? false
+        case .realistic:  return savings >= GameConstants.millionGoal
+        }
+    }
+
     @Published var age: Int
     @Published var degrees: [Education]
     /// Years of work experience per industry. Key is the job's `JobCategory`,
     /// value is total years accumulated across all jobs in that industry.
+    /// Used by standalone roles (entry-level jobs and top capstones that have
+    /// no junior rung to climb).
     @Published var experience: [JobCategory: Int]
+    /// Years of experience per role family (the job's base title, e.g.
+    /// "Financial Analyst"). Drives seniority progression: a senior rung only
+    /// counts years spent in that same role, not unrelated jobs in the industry.
+    @Published var experienceByRole: [String: Int] = [:]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
     @Published var currentOccupation: Job?
@@ -156,6 +229,7 @@ final class Player: ObservableObject {
             currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income)
             savings += job.annualIncome
             experience[job.category, default: 0] += 1
+            experienceByRole[job.baseTitle, default: 0] += 1
         }
     }
 
@@ -195,11 +269,13 @@ final class Player: ObservableObject {
 
     func reset() {
         let fresh = Player()
+        gameMode = fresh.gameMode
         age = fresh.age
         softSkills = fresh.softSkills
         hardSkills = fresh.hardSkills
         degrees = fresh.degrees
         experience = fresh.experience
+        experienceByRole = fresh.experienceByRole
         currentOccupation = fresh.currentOccupation
         currentEducation = fresh.currentEducation
         savings = fresh.savings

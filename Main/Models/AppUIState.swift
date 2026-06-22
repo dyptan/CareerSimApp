@@ -22,6 +22,15 @@ final class AppUIState: ObservableObject {
     @Published var yearsLeftToGraduation: Int?
     @Published var decisionText: String
 
+    /// Whether the player has picked a game mode yet. Until true, RootView shows
+    /// the mode picker instead of the game. Reset to false on restart.
+    @Published var hasSelectedMode: Bool = false
+
+    /// Drives the goal-reached celebration sheet. `hasShownGoal` guards it so
+    /// the celebration only appears once per game.
+    @Published var showGoalSheet: Bool = false
+    @Published var hasShownGoal: Bool = false
+
     init(
         showDecisionSheet: Bool = false,
         showTertiarySheet: Bool = false,
@@ -63,6 +72,9 @@ final class AppUIState: ObservableObject {
         showCertificationsSheet = false
         showLicensesSheet = false
         showRetirementSheet = false
+        hasSelectedMode = false
+        showGoalSheet = false
+        hasShownGoal = false
         selectedActivities = []
         selectedLicenses = []
         selectedPortfolio = []

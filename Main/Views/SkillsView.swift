@@ -25,8 +25,8 @@ struct SkillsView: View {
         SoftSkills.skillNames.filter { player.softSkills[keyPath: $0.keyPath] > 0 }
     }
 
-    private var experienceEntries: [(category: JobCategory, years: Int)] {
-        player.experience
+    private var experienceEntries: [(role: String, years: Int)] {
+        player.experienceByRole
             .filter { $0.value > 0 }
             .map { ($0.key, $0.value) }
             .sorted { $0.years > $1.years }
@@ -37,8 +37,11 @@ struct SkillsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 softSkillsSection
                 Divider()
-                hardSkillsSection
-                Divider()
+                // Hard skills (certs/licenses/portfolio) don't apply in simplified mode.
+                if !player.isSimplified {
+                    hardSkillsSection
+                    Divider()
+                }
                 educationSection
                 Divider()
                 experienceSection
@@ -167,23 +170,15 @@ struct SkillsView: View {
     private var experienceSection: some View {
         DisclosureGroup(isExpanded: $experienceExpanded) {
             VStack(alignment: .leading, spacing: 4) {
-                if let job = player.currentOccupation {
-                    HStack {
-                        Text(job.icon)
-                        Text("Currently: \(job.id)")
-                        Spacer()
-                    }
-                    .font(.subheadline)
-                }
                 if experienceEntries.isEmpty {
                     Text("No work experience yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(experienceEntries, id: \.category) { entry in
+                    ForEach(experienceEntries, id: \.role) { entry in
                         HStack {
-                            Text(JobCategory.icon(for: entry.category))
-                            Text(entry.category.rawValue)
+                            Text("💼")
+                            Text(entry.role)
                             Spacer()
                             Text("\(entry.years) yr\(entry.years == 1 ? "" : "s")")
                                 .monospacedDigit()
@@ -197,7 +192,7 @@ struct SkillsView: View {
             HStack {
                 Text("Work Experience").font(.headline)
                 Spacer()
-                summaryPictograms(experienceEntries.map { JobCategory.icon(for: $0.category) })
+                summaryPictograms(experienceEntries.map { _ in "💼" })
             }
         }
     }

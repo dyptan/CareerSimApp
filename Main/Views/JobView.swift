@@ -14,6 +14,7 @@ struct JobDetail: View {
     private var sliderMin: Double { Double(job.income) * 0.5 }
     private var sliderMax: Double { Double(job.income) * 2.0 }
 
+    private var isSimplified: Bool { player.isSimplified }
     private var requiredSoft: SoftSkills { job.requirements.softSkills }
     private var requiredHard: HardSkills { job.effectiveRequirements.hardSkills }
     private var allRequirementsMet: Bool { job.allRequirementsMet(for: player) }
@@ -28,7 +29,7 @@ struct JobDetail: View {
             if player.savings <= 0 { return "No savings to invest" }
             return "Launch venture 🚀"
         }
-        if !allRequirementsMet { return "Hard requirements not met" }
+        if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
         return "Apply"
     }
 
@@ -112,22 +113,24 @@ struct JobDetail: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
-            HStack {
-                Text("Company")
-                Text(job.companyTier.displayName)
-                    .font(.caption.bold())
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Color.secondary.opacity(0.12))
-                    .foregroundStyle(.secondary)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            if !isSimplified {
+                HStack {
+                    Text("Company")
+                    Text(job.companyTier.displayName)
+                        .font(.caption.bold())
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.secondary.opacity(0.12))
+                        .foregroundStyle(.secondary)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .font(.subheadline)
+                    .frame(maxWidth: .infinity ,alignment: .leading)
+                    .padding(.horizontal)
             }
-            .font(.subheadline)
-                .frame(maxWidth: .infinity ,alignment: .leading)
-                .padding(.horizontal)
 
             Divider()
-            Text("Hard requirements")
+            Text("Requirements")
                 .font(.title)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
@@ -149,6 +152,18 @@ struct JobDetail: View {
             .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
             .padding(.horizontal)
 
+            if let acceptedProfiles = job.requirements.education.acceptedProfiles, !acceptedProfiles.isEmpty {
+                let playerProfiles = Set(player.degrees.compactMap { $0.profile })
+                let fieldMet = playerProfiles.contains { acceptedProfiles.contains($0) }
+                RequirementRow(
+                    label: "Field: " + acceptedProfiles.map { $0.rawValue.capitalized }.joined(separator: " / "),
+                    emoji: "📚",
+                    style: .badge(isMet: fieldMet)
+                )
+                .foregroundStyle(fieldMet ? .primary : .secondary)
+                .padding(.horizontal)
+            }
+
             let yearsRequired = job.requirements.minYearsExperience
             if yearsRequired > 0 {
                 Text("Experience:")
@@ -166,7 +181,7 @@ struct JobDetail: View {
                 .padding(.horizontal)
             }
 
-            if !requiredHard.certifications.isEmpty {
+            if !isSimplified && !requiredHard.certifications.isEmpty {
                 Text("Certifications:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -180,7 +195,7 @@ struct JobDetail: View {
                 }
             }
 
-            if !requiredHard.licenses.isEmpty {
+            if !isSimplified && !requiredHard.licenses.isEmpty {
                 Text("Licenses:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -194,7 +209,7 @@ struct JobDetail: View {
                 }
             }
 
-            if !requiredHard.portfolioItems.isEmpty {
+            if !isSimplified && !requiredHard.portfolioItems.isEmpty {
                 Text("Portfolio:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -209,7 +224,7 @@ struct JobDetail: View {
             }
 
             let requiredSkills = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
-            if !requiredSkills.isEmpty {
+            if !isSimplified && !requiredSkills.isEmpty {
                 Text("Soft requirements")
                     .font(.title)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -234,6 +249,25 @@ struct JobDetail: View {
 
             if isFounder {
                 founderInvestmentSection
+            } else if isSimplified {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Salary:")
+                            .font(.title2.bold())
+                        Spacer()
+                        Text("\(job.income.formatted(.number)) $/yr")
+                            .font(.headline)
+                    }
+                    .padding(.horizontal)
+
+                    HStack(spacing: 6) {
+                        Text(allRequirementsMet ? "✓ You qualify for this role." : "🔒 Get the degree and experience first.")
+                            .font(.subheadline)
+                            .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                }
             } else {
                 salaryNegotiationSection
             }

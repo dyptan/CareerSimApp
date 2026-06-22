@@ -35,64 +35,6 @@ enum JobCatalog {
             )
         )
 
-        let dev = Job(
-            id: "Software Developer",
-            category: .technology,
-            income: 110_000,
-            summary: "Designs and builds computer programs and applications.",
-            icon: "💻",
-            requirements: .init(
-                education: .init(minEQF: 5, acceptedProfiles: [.technology, .engineering, .science]),
-                softSkills: .init(
-                    analyticalReasoningAndProblemSolving: 3,
-                    creativityAndInsightfulThinking: 2,
-                    communicationAndNetworking: 2,
-                    leadershipAndInfluence: 0,
-                    visionaryThinkingAndAmbition: 1,
-                    carefulnessAndAttentionToDetail: 3,
-                    tinkeringAndFingerPrecision: 1,
-                    spacialNavigationAndOrientation: 0,
-                    resilienceAndEndurance: 1,
-                    stressResistanceAndEmotionalRegulation: 2,
-                    outdoorAndWeatherResilience: 0,
-                    collaborationAndTeamwork: 3,
-                    timeManagementAndPlanning: 2,
-                    selfDisciplineAndPerseverance: 3,
-                    presentationAndStorytelling: 1
-                ),
-                hardSkills: .init(portfolioItems: [.app], certifications: [], licenses: [])
-            )
-        )
-
-        let designer = Job(
-            id: "Graphic Designer",
-            category: .design,
-            income: 53_000,
-            summary: "Creates visual concepts and designs for advertisements, publications, or digital media.",
-            icon: "🎨",
-            requirements: .init(
-                education: .init(minEQF: 4, acceptedProfiles: [.design, .arts]),
-                softSkills: .init(
-                    analyticalReasoningAndProblemSolving: 1,
-                    creativityAndInsightfulThinking: 4,
-                    communicationAndNetworking: 2,
-                    leadershipAndInfluence: 0,
-                    visionaryThinkingAndAmbition: 2,
-                    carefulnessAndAttentionToDetail: 3,
-                    tinkeringAndFingerPrecision: 1,
-                    spacialNavigationAndOrientation: 2,
-                    resilienceAndEndurance: 1,
-                    stressResistanceAndEmotionalRegulation: 1,
-                    outdoorAndWeatherResilience: 0,
-                    collaborationAndTeamwork: 2,
-                    timeManagementAndPlanning: 2,
-                    selfDisciplineAndPerseverance: 2,
-                    presentationAndStorytelling: 3
-                ),
-                hardSkills: .init(portfolioItems: [.paintingPortfolio], certifications: [], licenses: [])
-            )
-        )
-
         let lightDriver = Job(
             id: "Light Truck Delivery Driver",
             category: .logistics,
@@ -423,7 +365,7 @@ enum JobCatalog {
                 return HardSkills(licenses: [.architect])
             case "Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Chemical Engineer":
                 return HardSkills(licenses: [.professionalEngineer])
-            case "Mechanic", "Automotive Technician":
+            case "Mechanic":
                 return HardSkills(certifications: [.ase])
 
             // Health — licences + entry-level certs
@@ -547,10 +489,32 @@ enum JobCatalog {
             }
         }
 
+        // Degree fields a role's industry accepts. Only applied to jobs that
+        // require a university degree (EQF ≥ 5); lower-EQF jobs accept any
+        // background (nil), since trades and entry roles aren't field-specific.
+        func defaultAcceptedProfiles(for category: JobCategory) -> [TertiaryProfile]? {
+            switch category {
+            case .technology:  return [.technology, .engineering, .science]
+            case .engineering: return [.engineering, .science, .technology]
+            case .science:     return [.science, .engineering, .technology]
+            case .health:      return [.health, .science]
+            case .business:    return [.business]
+            case .law:         return [.law]
+            case .education:   return [.education, .humanities, .science]
+            case .design:      return [.design, .arts]
+            case .arts:        return [.arts, .design]
+            case .media:       return [.humanities, .arts, .design]
+            case .service:     return [.service, .business, .humanities]
+            case .agriculture: return [.agriculture, .science]
+            default:           return nil
+            }
+        }
+
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil, targetCapital: Int? = nil) -> Job {
             let soft = softSkills(for: id, category: category)
             let hard = defaultHard(for: id, category: category)
-            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: nil)
+            let profiles = minEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
+            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: profiles)
             let req = Job.Requirements(
                 education: edu,
                 softSkills: soft,
@@ -581,8 +545,7 @@ enum JobCatalog {
             ("Hotel Manager",                   .service,      72_000, "🏨", "Oversees hotel operations and staff.",                             5),
             ("Event Planner",                   .service,      55_000, "🎉", "Organizes events and logistics.",                                  5),
             ("Flight Attendant",                .service,      48_000, "🛫", "Ensures passenger safety and comfort.",                            3),
-            ("Translator",                      .service,      48_000, "🌐", "Converts text between languages.",                                 5),
-            ("Interpreter",                     .service,      52_000, "🗣️", "Provides live language interpretation.",                           5),
+            ("Translator/Interpreter",          .service,      50_000, "🌐", "Converts text between languages and provides live interpretation.", 5),
 
             // Education
             ("Elementary School Teacher",       .education,    47_000, "🏫", "Teaches basic subjects to children.",                              5),
@@ -631,7 +594,6 @@ enum JobCatalog {
             ("Carpenter",                       .construction, 52_000, "🪚", "Builds and repairs wooden structures.",                            4),
             ("Painter (Construction)",          .construction, 36_000, "🎨", "Paints buildings and interior spaces.",                            2),
             ("Mechanic",                        .manufacturing,52_000, "🔧", "Repairs vehicles and machinery.",                                  4),
-            ("Automotive Technician",           .manufacturing,50_000, "🚗", "Diagnoses and services vehicles.",                                 4),
 
             // Logistics / Transport
             ("Truck Driver",                    .logistics,    50_000, "🚚", "Transports goods over long distances.",                            3),
@@ -705,7 +667,6 @@ enum JobCatalog {
 
         var extras: [Job] = []
         for (title, cat, income, icon, summary, eqf) in titles {
-            if title == "Registered Nurse" || title == "Graphic Designer" { continue }
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf))
         }
 
@@ -762,7 +723,7 @@ enum JobCatalog {
             ("Charge Nurse",                 .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
 
             // Science
-            ("Postdoctoral Researcher",      .science,       62_000, "🔬", "Time-limited research role following doctoral studies.",                          7, 0),
+            ("Postdoctoral Research Scientist", .science,     62_000, "🔬", "Time-limited research role following doctoral studies — the entry rung of the research-scientist track.", 7, 0),
             ("Senior Research Scientist",    .science,      145_000, "🔬", "Leads research programs and publishes original work.",                            7, 6),
             ("Principal Research Scientist", .science,      195_000, "🔬", "Sets research agenda for the lab and supervises projects.",                       7, 10),
 
@@ -816,7 +777,7 @@ enum JobCatalog {
             extras.append(fullJob(id: title, category: .entrepreneurship, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
         }
 
-        var all: [Job] = [rn, dev, designer, lightDriver]
+        var all: [Job] = [rn, lightDriver]
         all.append(contentsOf: extras)
 
         var counter = 1
