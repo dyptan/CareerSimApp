@@ -70,6 +70,7 @@ final class Player: ObservableObject {
     }
 
     @Published var age: Int
+
     @Published var degrees: [Education]
     /// Years of work experience per industry. Key is the job's `JobCategory`,
     /// value is total years accumulated across all jobs in that industry.
@@ -96,7 +97,7 @@ final class Player: ObservableObject {
     @Published var availableJobs: [Job] = []
 
     init(
-        age: Int = 7,
+        age: Int = GameConstants.startingAge,
         softSkills: SoftSkills = SoftSkills(
             analyticalReasoningAndProblemSolving: Int.random(in: 0...1),
             creativityAndInsightfulThinking: Int.random(in: 0...1),
@@ -140,6 +141,12 @@ final class Player: ObservableObject {
         self.lockedLicenses = lockedLicenses
         self.lockedActivities = lockedActivities
         self.availableJobs = JobCatalog.allJobs().shuffled()
+    }
+
+    /// Rebuilds and reshuffles `availableJobs`. Call when the game year advances
+    /// or the mode is chosen, so the listing feels fresh each year.
+    func regenerateAvailableJobs() {
+        availableJobs = JobCatalog.allJobs().shuffled()
     }
 
     // MARK: - Activity selection
@@ -223,14 +230,60 @@ final class Player: ObservableObject {
         }
 
         appliedJobIds.removeAll()
-        availableJobs = JobCatalog.allJobs().shuffled()
+        // Re-roll the job market for the new year (fresh tiers and salaries).
+        regenerateAvailableJobs()
 
+        // Economic turmoil (realistic mode only): a downturn can cost the player
+        // their current job and freezes hiring at unstable employers this year.
+        if !isSimplified, Double.random(in: 0...1) < GameConstants.turmoilChance {
+            applyEconomicTurmoil(appUIState: appUIState)
+        }
+
+        // Investment growth (realistic mode only): the accumulated balance
+        // compounds each year at a market-like return, whether or not the player
+        // is employed. Skipped while in the red — no returns on a negative balance.
+        if !isSimplified, savings > 0 {
+            savings += Int((Double(savings) * GameConstants.investmentReturn).rounded())
+        }
+
+        // Bank the year's pay and experience — skipped if a layoff just cleared
+        // the occupation, since an unemployed year earns nothing. Realistic mode
+        // saves only the personal-saving-rate share of income (the rest is taxes
+        // and living costs); simplified mode banks the whole paycheck.
         if let job = currentOccupation {
-            currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income)
-            savings += job.annualIncome
+            currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income, isEntrepreneurial: job.isEntrepreneurial)
+            let saved = isSimplified
+                ? job.annualIncome
+                : Int((Double(job.annualIncome) * GameConstants.savingsRate).rounded())
+            savings += saved
             experience[job.category, default: 0] += 1
             experienceByRole[job.baseTitle, default: 0] += 1
         }
+    }
+
+    /// Resolves an economic downturn for the year: pulls risky offers from the
+    /// market and rolls the player's current job against its tier's job-loss
+    /// risk. Surfaces the outcome through the turmoil alert on `appUIState`.
+    private func applyEconomicTurmoil(appUIState: AppUIState) {
+        // Unstable employers stop hiring — drop their offers from this year's list.
+        availableJobs = availableJobs.filter {
+            $0.companyTier.riskFactor < GameConstants.turmoilUnstableTierRisk
+        }
+
+        // Only an employed player is affected by — and notified of — the downturn.
+        guard let job = currentOccupation else { return }
+
+        // Job-loss probability is the occupation's company-tier risk: a
+        // government post barely flinches (1%), a startup is in real danger (22%).
+        if Double.random(in: 0...1) < job.companyTier.riskFactor {
+            currentOccupation = nil
+            appUIState.turmoilMessage =
+                "📉 A downturn hit and you lost your job as \(job.id). Riskier employers have frozen hiring this year."
+        } else {
+            appUIState.turmoilMessage =
+                "📉 A downturn shook the economy, but your position held. Riskier employers have frozen hiring this year."
+        }
+        appUIState.showTurmoilAlert = true
     }
 
     /// Applies for a job at the given salary. Returns true if hired.

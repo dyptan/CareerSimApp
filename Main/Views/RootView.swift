@@ -79,6 +79,11 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
         }
+        .alert("Economic Turmoil", isPresented: $appUIState.showTurmoilAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(appUIState.turmoilMessage)
+        }
         .onChange(of: player.savings) { _ in checkGoalReached() }
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
         .onChange(of: player.age) { newValue in
@@ -136,10 +141,10 @@ struct RootView: View {
             .padding()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Do something else") { appUIState.showActivitiesSheet = false }
+                    Button("Back") { appUIState.showActivitiesSheet = false }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Next year") {
+                    Button("Next") {
                         appUIState.showActivitiesSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
@@ -200,14 +205,25 @@ struct ModeSelectionView: View {
 
             Text("Career Sim")
                 .font(.largeTitle.bold())
+
+            modeChooser
+
+            Spacer()
+        }
+        .padding()
+        .frame(maxWidth: 520)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var modeChooser: some View {
+        VStack(spacing: 20) {
             Text("How do you want to play?")
                 .font(.title3)
                 .foregroundStyle(.secondary)
 
             ForEach(GameMode.allCases) { mode in
                 Button {
-                    player.gameMode = mode
-                    appUIState.hasSelectedMode = true
+                    start(mode)
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("\(mode.icon)  \(mode.title)")
@@ -228,12 +244,14 @@ struct ModeSelectionView: View {
                 }
                 .buttonStyle(.plain)
             }
-
-            Spacer()
         }
-        .padding()
-        .frame(maxWidth: 520)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Locks in the chosen mode and starts the game.
+    private func start(_ mode: GameMode) {
+        player.gameMode = mode
+        player.regenerateAvailableJobs()
+        appUIState.hasSelectedMode = true
     }
 }
 

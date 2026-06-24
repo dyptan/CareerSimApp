@@ -37,12 +37,16 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
     }
 
     /// Randomly picks a plausible tier for a job given its category and income.
-    static func random(category: JobCategory, income: Int) -> CompanyTier {
-        switch category {
-        case .entrepreneurship:
+    static func random(category: JobCategory, income: Int, isEntrepreneurial: Bool = false) -> CompanyTier {
+        if isEntrepreneurial {
             // Founders aren't employees — low rungs are self-employed, scaled
             // ventures are startups.
             return income >= 80_000 ? .startup : .selfEmployed
+        }
+        switch category {
+        case .transportation:
+            // Drivers/mechanics: local operators, fleets, or independent.
+            return [CompanyTier.smallBusiness, .mid, .selfEmployed].randomElement()!
         case .publicServices, .education:
             return .government
         case .arts:
@@ -115,11 +119,14 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
 
     /// Plausible tiers a player could realistically apply to for a given job category and salary.
     /// Mirrors the heuristics in `random(category:income:)` but returns all candidates.
-    static func plausibleTiers(category: JobCategory, income: Int) -> [CompanyTier] {
-        switch category {
-        case .entrepreneurship:
+    static func plausibleTiers(category: JobCategory, income: Int, isEntrepreneurial: Bool = false) -> [CompanyTier] {
+        if isEntrepreneurial {
             // A founder is the company; surface a single self-employed/startup offer.
             return income >= 80_000 ? [.startup] : [.selfEmployed]
+        }
+        switch category {
+        case .transportation:
+            return [.smallBusiness, .mid, .selfEmployed]
         case .publicServices, .education:
             return [.government, .nonprofit]
         case .arts:
@@ -172,7 +179,7 @@ struct Job: Identifiable, Codable, Hashable {
         self.icon = icon
         self.requirements = requirements
         self.targetCapital = targetCapital
-        let tier = CompanyTier.random(category: category, income: income)
+        let tier = CompanyTier.random(category: category, income: income, isEntrepreneurial: targetCapital != nil)
         self.companyTier = tier
         let variance = category.salaryVariance
         let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
@@ -381,8 +388,9 @@ extension Job {
     // MARK: - Entrepreneurial path
 
     /// True for founder roles, which are gated on capital + grit rather than
-    /// credentials.
-    var isEntrepreneurial: Bool { category == .entrepreneurship }
+    /// credentials. Identified by carrying a `targetCapital` (rather than by
+    /// category) so founder roles can live under the Business category.
+    var isEntrepreneurial: Bool { targetCapital != nil }
 
     /// Probability that a founding attempt succeeds. Driven mainly by how well
     /// the invested capital covers the venture's target, with a smaller bump
@@ -439,7 +447,7 @@ extension Job {
     /// Returns one Job per plausible employer tier, with deterministic salary
     /// (no random variance) so the player can compare offers side-by-side.
     func tieredOffers() -> [Job] {
-        CompanyTier.plausibleTiers(category: category, income: income).map { tier in
+        CompanyTier.plausibleTiers(category: category, income: income, isEntrepreneurial: isEntrepreneurial).map { tier in
             var copy = self
             copy.companyTier = tier
             copy.annualIncome = Int(Double(income) * tier.salaryMultiplier)

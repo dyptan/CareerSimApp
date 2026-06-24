@@ -31,6 +31,11 @@ final class AppUIState: ObservableObject {
     @Published var showGoalSheet: Bool = false
     @Published var hasShownGoal: Bool = false
 
+    /// Drives the economic-turmoil alert raised by `Player.advanceYear` when a
+    /// downturn strikes (realistic mode). `turmoilMessage` carries the outcome.
+    @Published var showTurmoilAlert: Bool = false
+    @Published var turmoilMessage: String = ""
+
     init(
         showDecisionSheet: Bool = false,
         showTertiarySheet: Bool = false,
@@ -75,6 +80,8 @@ final class AppUIState: ObservableObject {
         hasSelectedMode = false
         showGoalSheet = false
         hasShownGoal = false
+        showTurmoilAlert = false
+        turmoilMessage = ""
         selectedActivities = []
         selectedLicenses = []
         selectedPortfolio = []

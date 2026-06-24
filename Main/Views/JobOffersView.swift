@@ -22,7 +22,7 @@ struct JobOffersView: View {
         var seen: Set<CompanyTier> = []
         var ordered: [CompanyTier] = []
         for v in variants {
-            for tier in CompanyTier.plausibleTiers(category: v.category, income: v.income) {
+            for tier in CompanyTier.plausibleTiers(category: v.category, income: v.income, isEntrepreneurial: v.isEntrepreneurial) {
                 if seen.insert(tier).inserted { ordered.append(tier) }
             }
         }

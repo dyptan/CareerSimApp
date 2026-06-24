@@ -27,6 +27,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case manufacturing = "Manufacturing"
     case finance = "Finance"
     case entrepreneurship = "Entrepreneurship"
+    case transportation = "Transportation"
+    case administration = "Administration"
 
     var id: String { rawValue }
 
@@ -44,7 +46,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return 0.40
         case .construction, .manufacturing, .automotive, .maritime:
             return 0.30   // seasonal and contract variability
-        case .agriculture, .logistics, .retail, .service, .hospitality, .tourism:
+        case .agriculture, .logistics, .transportation, .retail, .service, .hospitality, .tourism:
             return 0.30
         case .health, .education, .publicServices, .humanities:
             return 0.10   // salaried / regulated
@@ -83,6 +85,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .manufacturing: return "🧪"
         case .finance: return "💰"
         case .entrepreneurship: return "🚀"
+        case .transportation: return "🚚"
+        case .administration: return "🗂️"
         }
     }
 
@@ -133,6 +137,10 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .finance:
             return .people
         case .entrepreneurship:
+            return .people
+        case .transportation:
+            return .tools
+        case .administration:
             return .people
         }
     }
@@ -195,6 +203,10 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Manage money, investments, and financial risk: banks, markets, and accounting."
         case .entrepreneurship:
             return "Start your own business! Take a risk, build something new, and be your own boss."
+        case .transportation:
+            return "Move people and goods by road and air: drive, fly, operate, and keep vehicles running safely."
+        case .administration:
+            return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
         }
 
     }
@@ -257,6 +269,10 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Banker, financial analyst, accountant, trader, actuary"
         case .entrepreneurship:
             return "Side hustler, small business owner, startup founder"
+        case .transportation:
+            return "Driver, pilot, aircraft mechanic, air traffic controller"
+        case .administration:
+            return "Accountant, HR specialist, recruiter, office manager"
         }
     }
 }

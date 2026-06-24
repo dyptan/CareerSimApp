@@ -22,7 +22,7 @@ struct HeaderView: View {
                         }
                     }
             }
-                
+
             if let currentOccupation = player.currentOccupation {
                 Text("Working: \(currentOccupation.id) \(currentOccupation.icon)")
                 Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
@@ -35,6 +35,12 @@ struct HeaderView: View {
             Text("Savings: \(player.savings.formatted(.number)) $")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+            if !player.isSimplified {
+                Text("Topped up with \(Int(GameConstants.savingsRate * 100))% of gross income each year")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
 
             Text("\(player.gameMode.goalIcon) Goal: \(player.gameMode.goalHeadline)")
                 .font(.caption.bold())
