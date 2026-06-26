@@ -55,6 +55,19 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Cyclical, discretionary-spending sectors that are hit hardest in a bear
+    /// market: travel, dining, entertainment, and consumer retail are the first
+    /// budgets households and advertisers cut. Used to freeze hiring in these
+    /// industries during an economic downturn (see `Player.applyEconomicTurmoil`).
+    var isCyclical: Bool {
+        switch self {
+        case .hospitality, .tourism, .retail, .arts, .media, .fashion, .sports, .entrepreneurship:
+            return true
+        default:
+            return false
+        }
+    }
+
     static func icon(for category: JobCategory) -> String {
         switch category {
         case .engineering: return "🧰"

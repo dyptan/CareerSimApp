@@ -37,6 +37,10 @@ struct InstitutionTiersView: View {
         let highestEQF = player.degrees.last?.eqf ?? 0
         let meetsAll = education.meetsRequirements(player: player)
         let canAfford = player.savings >= education.totalTuition
+        // Realistic mode: admission is a roll based on soft-skill fit + selectivity.
+        let eqfMet = highestEQF >= r.minEQF
+        let admission = education.admissionProbability(player: player)
+        let alreadyApplied = player.appliedSchoolIds.contains(education.id)
 
         VStack(alignment: .leading, spacing: 10) {
             if player.isSimplified {
@@ -97,23 +101,78 @@ struct InstitutionTiersView: View {
                 }
             }
 
-            Button {
-                player.currentOccupation = nil
-                player.currentEducation = education
-                yearsLeftToGraduation = education.yearsToComplete
-                showTertiarySheet = false
-            } label: {
-                Text(meetsAll ? "Enroll" : "Requirements not met")
-                    .frame(maxWidth: .infinity)
+            if player.isSimplified {
+                // Simplified mode keeps a deterministic gate — kid-friendly, no
+                // chance of a surprise rejection.
+                Button {
+                    enroll(in: education)
+                } label: {
+                    Text(meetsAll ? "Enroll" : "Requirements not met")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!meetsAll)
+                .opacity(meetsAll ? 1.0 : 0.5)
+                .padding(.top, 4)
+            } else {
+                // Realistic mode: admission is probabilistic. Strong soft skills
+                // raise the odds; meeting every bar still isn't a guarantee at a
+                // selective school.
+                HStack(spacing: 6) {
+                    Text("Admission chance:")
+                    InfoHint(
+                        title: "How admission works",
+                        message: "Your odds rise with how well your soft skills match this school's admission bar and fall with how selective the school is. Meeting every bar makes you fully qualified, but elite schools still turn away strong applicants. Build the skills below through activities to improve your chances. You get one application per school each year."
+                    )
+                    Spacer()
+                    Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
+                        .font(.headline)
+                        .foregroundStyle(admission >= 0.6 ? .green : admission >= 0.3 ? .orange : .red)
+                }
+                .font(.subheadline)
+                .padding(.top, 4)
+
+                Button {
+                    if player.applyToSchool(education) {
+                        // Beating long odds is worth a celebration.
+                        if admission <= GameConstants.luckyAdmissionThreshold {
+                            player.celebrationTrigger += 1
+                        }
+                        enroll(in: education)
+                    }
+                } label: {
+                    Text(applyLabel(eqfMet: eqfMet, alreadyApplied: alreadyApplied, education: education))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!eqfMet || alreadyApplied)
+                .opacity(!eqfMet || alreadyApplied ? 0.5 : 1.0)
+                .padding(.top, 4)
+
+                if alreadyApplied {
+                    Text("❌ Not admitted this year — improve your skills or try another school.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(!meetsAll)
-            .opacity(meetsAll ? 1.0 : 0.5)
-            .padding(.top, 4)
         }
         .padding()
         .background(Color.secondary.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    /// Locks in the chosen school: drops any job, starts the degree, closes sheet.
+    private func enroll(in education: Education) {
+        player.currentOccupation = nil
+        player.currentEducation = education
+        yearsLeftToGraduation = education.yearsToComplete
+        showTertiarySheet = false
+    }
+
+    private func applyLabel(eqfMet: Bool, alreadyApplied: Bool, education: Education) -> String {
+        if !eqfMet { return "Need \(education.requirements.educationLabel()) first" }
+        if alreadyApplied { return "Applied — not admitted this year" }
+        return "Apply"
     }
 
     @ViewBuilder

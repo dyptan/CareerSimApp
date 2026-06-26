@@ -110,7 +110,7 @@ struct ProjectsView: View {
         ScrollView {
             VStack(alignment: .leading) {
                 if sortedPortfolio.isEmpty {
-                    Text("No portfolio projects available yet — come back when you're older.")
+                    Text("No side projects available yet — come back when you're older.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .padding()

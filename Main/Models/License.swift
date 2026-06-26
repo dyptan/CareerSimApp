@@ -13,6 +13,9 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
     case architect = "Architect Licence"
     case pesticideApplicator = "Pesticide Applicator"
     case securityGuard = "Security Guard Licence"
+    case masterElectrician = "Master Electrician License"
+    case masterPlumber = "Master Plumber License"
+    case airlineTransportPilot = "ATP"
 
     var id: String { rawValue }
 
@@ -30,6 +33,9 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "Architect Licence"
         case .pesticideApplicator: return "Pesticide Applicator Licence"
         case .securityGuard: return "Security Guard Licence"
+        case .masterElectrician: return "Master Electrician License"
+        case .masterPlumber: return "Master Plumber License"
+        case .airlineTransportPilot: return "Airline Transport Pilot (ATP)"
         }
     }
 
@@ -48,6 +54,9 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "State licence required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB)."
         case .pesticideApplicator: return "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs."
         case .securityGuard: return "State licence required to work as an unarmed security guard. Covers law, ethics, and basic emergency response."
+        case .masterElectrician: return "The senior electrician licence. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician."
+        case .masterPlumber: return "The senior plumbing licence. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber."
+        case .airlineTransportPilot: return "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner."
         }
     }
 
@@ -65,9 +74,12 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "📐"
         case .pesticideApplicator: return "🌱"
         case .securityGuard: return "🛡️"
+        case .masterElectrician: return "⚡️"
+        case .masterPlumber: return "🔧"
+        case .airlineTransportPilot: return "✈️"
         }
     }
-    
+
     var costForLicense: Int {
         switch self {
         case .drivers:
@@ -106,6 +118,15 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .securityGuard:
             // Pre-licensing course + state guard card
             return 250
+        case .masterElectrician:
+            // Master exam + licensing (after journeyman experience)
+            return 2500
+        case .masterPlumber:
+            // Master exam + licensing
+            return 2500
+        case .airlineTransportPilot:
+            // ATP: extra hours, type rating, and checkride (rough incremental)
+            return 30000
         }
     }
 
@@ -127,7 +148,9 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .bar:                                      return 7  // requires a Doctor of Law (J.D.)
         case .architect, .professionalEngineer:         return 5  // requires a Bachelor in the field
-        case .nurse, .electrician, .plumber:            return 4  // vocational trade training required
+        case .airlineTransportPilot:                    return 5  // builds on a commercial pilot career
+        case .nurse, .electrician, .plumber,
+             .masterElectrician, .masterPlumber:        return 4  // vocational trade training required
         default:                                        return 0
         }
     }
@@ -234,6 +257,31 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.carefulnessAndAttentionToDetail, 2),
                 (\.resilienceAndEndurance, 2),
             ]
+        case .masterElectrician:
+            // Beyond journeyman skill: running jobs and supervising apprentices
+            return [
+                (\.tinkeringAndFingerPrecision, 4),
+                (\.carefulnessAndAttentionToDetail, 4),
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.leadershipAndInfluence, 2),
+            ]
+        case .masterPlumber:
+            // Beyond journeyman skill: system design and crew leadership
+            return [
+                (\.tinkeringAndFingerPrecision, 4),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.analyticalReasoningAndProblemSolving, 2),
+                (\.leadershipAndInfluence, 2),
+            ]
+        case .airlineTransportPilot:
+            // Pilot-in-command of an airliner: the highest bar in aviation
+            return [
+                (\.spacialNavigationAndOrientation, 4),
+                (\.carefulnessAndAttentionToDetail, 3),
+                (\.stressResistanceAndEmotionalRegulation, 4),
+                (\.analyticalReasoningAndProblemSolving, 3),
+                (\.leadershipAndInfluence, 3),
+            ]
         }
     }
 
@@ -245,11 +293,13 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .drivers:
             if age < 16 { return .blocked(reason: "Requires age 16+") }
         case .cdl, .nurse, .electrician, .plumber,
-             .pesticideApplicator, .securityGuard:
+             .pesticideApplicator, .securityGuard,
+             .masterElectrician, .masterPlumber:
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         case .pilot:
             if age < 17 { return .blocked(reason: "Requires age 17+") }
-        case .commercialPilot, .bar, .professionalEngineer, .architect:
+        case .commercialPilot, .bar, .professionalEngineer, .architect,
+             .airlineTransportPilot:
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         }
 
@@ -262,6 +312,18 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         case .commercialPilot:
             guard player.hardSkills.licenses.contains(.pilot) else {
                 return .blocked(reason: "Requires Private Pilot License first")
+            }
+        case .masterElectrician:
+            guard player.hardSkills.licenses.contains(.electrician) else {
+                return .blocked(reason: "Requires Electrician License first")
+            }
+        case .masterPlumber:
+            guard player.hardSkills.licenses.contains(.plumber) else {
+                return .blocked(reason: "Requires Plumber License first")
+            }
+        case .airlineTransportPilot:
+            guard player.hardSkills.licenses.contains(.commercialPilot) else {
+                return .blocked(reason: "Requires Commercial Pilot License first")
             }
         default:
             break

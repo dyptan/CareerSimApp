@@ -350,7 +350,61 @@ enum JobCatalog {
         // of company tier. Tier-specific extras are layered on at runtime by
         // `Job.effectiveRequirements`.
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
+            // Senior-grade credentials matched on the *full* title so they gate
+            // only the senior/standalone rung, not a ladder's entry rung (a junior
+            // analyst shouldn't need the CFA). These certs only bite at
+            // credentials-tier employers (enterprise / government); smaller firms
+            // still hire these roles on portfolio.
+            switch title {
+            case "Accountant", "Senior Accountant":
+                return HardSkills(certifications: [.cpa])
+            case "Senior Financial Analyst", "Investment Banker":
+                return HardSkills(certifications: [.cfa])
+            // Trade apprentices work *toward* the licence, so the entry rung
+            // carries none — even though the journeyman base role (Electrician /
+            // Plumber, same base title) requires it.
+            case "Apprentice Electrician", "Apprentice Plumber", "Apprentice Carpenter":
+                return HardSkills()
+            // Promotions that demand a *senior* credential on top of the base
+            // role's licence: master trade licences and the airline transport
+            // pilot certificate. Listed on the full title so only the top rung
+            // is gated, not the journeyman/first-officer rungs below it.
+            case "Master Electrician":
+                return HardSkills(licenses: [.electrician, .masterElectrician])
+            case "Master Plumber":
+                return HardSkills(licenses: [.plumber, .masterPlumber])
+            case "Airline Captain":
+                return HardSkills(licenses: [.commercialPilot, .airlineTransportPilot])
+            // The PE licence is what lets a senior engineer stamp and sign off on
+            // designs — juniors work under a PE as engineers-in-training, so the
+            // licence gates the senior rung, not the entry rungs.
+            case "Senior Civil Engineer", "Senior Mechanical Engineer", "Senior Electrical Engineer":
+                return HardSkills(licenses: [.professionalEngineer])
+            // Attending physicians and medical leadership are board-certified in
+            // their specialty after residency.
+            case "Senior Physician", "Chief Medical Officer":
+                return HardSkills(certifications: [.boardCertified])
+            // Senior engineers/designers are hired on a deeper body of work than
+            // the entry rung's single piece (gates at portfolio-tier employers).
+            case "Senior Software Engineer", "Staff Software Engineer", "Principal Software Engineer":
+                return HardSkills(portfolioItems: [.library, .app])
+            case "Senior UX/UI Designer", "Lead UX/UI Designer":
+                return HardSkills(portfolioItems: [.website, .presentation])
+            case "Senior Graphic Artist":
+                return HardSkills(portfolioItems: [.paintingPortfolio, .presentation])
+            default:
+                break
+            }
+
             switch Job.baseTitle(of: title) {
+            // Cloud platforms — vendor certs on the roles that run on them
+            case "Cloud Architect":
+                return HardSkills(certifications: [.aws])
+            case "Systems Administrator":
+                return HardSkills(certifications: [.azure])
+            case "Data Scientist":
+                return HardSkills(certifications: [.google])
+
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
                 return HardSkills(licenses: [.drivers])
@@ -366,8 +420,6 @@ enum JobCatalog {
                 return HardSkills(licenses: [.plumber])
             case "Architect":
                 return HardSkills(licenses: [.architect])
-            case "Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Chemical Engineer":
-                return HardSkills(licenses: [.professionalEngineer])
             case "Mechanic":
                 return HardSkills(certifications: [.ase])
 
@@ -384,7 +436,7 @@ enum JobCatalog {
                 return HardSkills(certifications: [.cna])
 
             // Law / public services
-            case "Lawyer", "Judge":
+            case "Lawyer", "Judge", "Managing Partner":
                 return HardSkills(licenses: [.bar])
             case "Paralegal":
                 return HardSkills(certifications: [.paralegal])
@@ -398,7 +450,7 @@ enum JobCatalog {
                 return HardSkills(certifications: [.cosmetology])
             case "Flight Attendant":
                 return HardSkills(certifications: [.flightAttendantCert])
-            case "Chef/Cook":
+            case "Chef":
                 return HardSkills(portfolioItems: [.recipeBook], certifications: [.culinaryDiploma])
 
             // Education — small/private schools want to see a sample lesson plan
@@ -529,8 +581,19 @@ enum JobCatalog {
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil, targetCapital: Int? = nil) -> Job {
             let soft = softSkills(for: id, category: category)
             let hard = defaultHard(for: id, category: category)
-            let profiles = minEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
-            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: profiles)
+            // A role can't sensibly demand a licence or certification the player
+            // couldn't have earned at its listed education level. Raise the floor
+            // to the toughest education prerequisite of any credential the role
+            // mandates, so the stated requirement reflects what the player must
+            // genuinely already hold (e.g. a Paralegal needs the vocational-level
+            // Paralegal Certificate, not just high school).
+            let credentialEQF = max(
+                hard.certifications.map(\.minEQF).max() ?? 0,
+                hard.licenses.map(\.minEQF).max() ?? 0
+            )
+            let effectiveEQF = max(minEQF, credentialEQF)
+            let profiles = effectiveEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
+            let edu = Job.Requirements.Education(minEQF: effectiveEQF, acceptedProfiles: profiles)
             let req = Job.Requirements(
                 education: edu,
                 softSkills: soft,
@@ -555,7 +618,7 @@ enum JobCatalog {
             ("Housekeeper",                     .service,      27_000, "🧺", "Cleans and tidies rooms in homes, hotels, and facilities.",        1),
             ("Security Guard",                  .service,      32_000, "🛡️", "Protects property and ensures safety.",                           3),
             ("Janitor/Cleaner",                 .service,      34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
-            ("Chef/Cook",                       .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions.",                  3),
+            ("Chef",                            .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", 3),
             ("Baker",                           .service,      32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
@@ -794,11 +857,11 @@ enum JobCatalog {
             // Law
             ("Junior Paralegal",             .law,           38_000, "📑", "Files documents and supports research for senior staff.",                         3, 0),
             ("Senior Paralegal",             .law,           65_000, "📑", "Manages caseload research and trains junior paralegals.",                         3, 4),
-            ("Senior Lawyer (Partner)",      .law,          220_000, "⚖️", "Equity partner driving client relationships and firm strategy.",                  7, 8),
+            ("Managing Partner",             .law,          220_000, "⚖️", "Equity partner driving client relationships and firm strategy — the top of the law track.", 7, 8),
 
             // Health
             ("Senior Registered Nurse",      .health,       110_000, "🩺", "Experienced floor nurse mentoring newer staff.",                                  5, 5),
-            ("Charge Nurse",                 .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations.",                          5, 8),
+            ("Charge Registered Nurse",      .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations — the top of the nursing ladder.", 5, 8),
 
             // Science
             ("Postdoctoral Research Scientist", .science,     62_000, "🔬", "Time-limited research role following doctoral studies — the entry rung of the research-scientist track.", 7, 0),
@@ -852,6 +915,26 @@ enum JobCatalog {
             ("Chief Medical Officer",        .health,        300_000, "🏥", "Sets clinical strategy and quality across a health system.",                      7, 12),
             ("Chief Technology Officer",     .technology,    320_000, "🧠", "Owns technology strategy for the whole organization.",                            6, 12),
             ("Chief Executive Officer",      .business,      400_000, "👔", "Leads the entire company and answers to the board.",                              6, 15),
+
+            // MARK: Added rungs so every professional track has ≥3 levels.
+            // Prefixed rungs gate on same-track (per-role) experience; the
+            // Director/Partner capstones stay reachable on broad industry years.
+            // Tech — junior entry beneath the Systems Administrator ladder
+            ("Junior Systems Administrator", .technology,    62_000, "🖧",  "Maintains servers and accounts under senior guidance.",                           4, 0),
+            // Business — top rung / sales leadership capstone
+            ("Lead Project Manager",         .business,     175_000, "📋", "Heads the PMO and the organization's most critical programs.",                    5, 10),
+            ("Sales Director",               .business,     175_000, "📈", "Owns the entire sales organization and revenue strategy.",                        5, 10),
+            // Law — associate → senior associate → partner
+            ("Senior Lawyer",                .law,          170_000, "⚖️", "Senior associate leading cases and mentoring junior lawyers.",                    7, 6),
+            // Trades — apprentice entry beneath the journeyman base role and master
+            ("Apprentice Electrician",       .construction,  40_000, "🔌", "Trains on the job toward a journeyman electrician licence.",                       3, 0),
+            ("Apprentice Plumber",           .construction,  40_000, "🚰", "Learns the plumbing trade under a licensed plumber.",                             3, 0),
+            ("Apprentice Carpenter",         .construction,  34_000, "🪚", "Learns carpentry on site under a master carpenter.",                              3, 0),
+            // Education — classroom progression beneath school leadership
+            ("Senior Elementary School Teacher", .education, 62_000, "🏫", "Experienced teacher mentoring staff and leading a grade level.",                  5, 6),
+            ("Senior Secondary School Teacher",  .education, 66_000, "📚", "Veteran subject teacher heading a department.",                                   5, 6),
+            // Medicine — attending rung between resident physician and CMO
+            ("Senior Physician",             .health,       280_000, "🩺", "Attending physician supervising residents and complex cases.",                    7, 5),
         ]
 
         for (title, cat, income, icon, summary, eqf, years) in seniorityTitles {

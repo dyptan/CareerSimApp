@@ -37,9 +37,35 @@ struct HeaderView: View {
                 .foregroundStyle(.secondary)
 
             if !player.isSimplified {
-                Text("Topped up with \(Int(GameConstants.savingsRate * 100))% of gross income each year")
+                Text("\(player.difficulty.icon) \(player.difficulty.title) — saving \(Int(player.difficulty.savingsRate * 100))% of gross income each year")
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
+
+                if player.economyInRecession {
+                    Text(player.turmoilYearsRemaining > 0
+                         ? "📉 Recession ongoing (~\(player.turmoilYearsRemaining) yr left) — hiring & raises frozen"
+                         : "📉 Recession this year — hiring & raises frozen")
+                        .font(.caption2)
+                        .foregroundStyle(.red)
+                }
+
+                if player.lostJobThisYear {
+                    Text("💼 You were laid off last year — find a new job")
+                        .font(.caption2)
+                        .foregroundStyle(.red)
+                }
+
+                if player.lastSideHustleEarnings != 0 {
+                    Text("🛠️ Side hustles \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
+                        .font(.caption2)
+                        .foregroundStyle(player.lastSideHustleEarnings >= 0 ? .green : .red)
+                }
+
+                if player.lastPromotionRaisePct > 0 {
+                    Text("⬆️ Promoted last year — pay up \(player.lastPromotionRaisePct)%")
+                        .font(.caption2)
+                        .foregroundStyle(.green)
+                }
             }
 
             Text("\(player.gameMode.goalIcon) Goal: \(player.gameMode.goalHeadline)")

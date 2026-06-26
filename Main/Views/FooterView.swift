@@ -17,7 +17,7 @@ struct FooterView: View {
         } else {
             HStack {
 
-                Button("Projects") { appUIState.showProjectsSheet = true }
+                Button("Side Projects") { appUIState.showProjectsSheet = true }
                     .buttonStyle(.bordered).font(.headline)
 
                 Button("Activities") { appUIState.showActivitiesSheet = true }
@@ -30,6 +30,9 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
 
                 Button("Licenses") { appUIState.showLicensesSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+
+                Button("Side Hustles") { appUIState.showSideHustlesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
 
             }

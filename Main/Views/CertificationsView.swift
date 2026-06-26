@@ -70,46 +70,85 @@ struct CertificationsView: View {
 
     @ViewBuilder
     private func row(for cert: Certification) -> some View {
-        let isLocked = player.lockedCertifications.contains(cert)
-        let isSelected = selectedCertifications.contains(cert)
+        // Owned if already earned (locked / in hard skills) or passed this year.
+        let isOwned = player.lockedCertifications.contains(cert)
+            || player.hardSkills.certifications.contains(cert)
+            || selectedCertifications.contains(cert)
+        let attemptedThisYear = player.attemptedCertificationIds.contains(cert.rawValue)
         let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
+        let cost = cert.costForCertification
+        let canAfford = player.savings >= cost
 
         let blockedReason: String? = {
             if case .blocked(let reason) = cert.certificationRequirements(player) { return reason }
             return nil
         }()
-        let state = trainingRowState(isLocked: isLocked, isSelected: isSelected, atLimit: atLimit, blockedReason: blockedReason)
+        let eqfMet = blockedReason == nil
+        let passChance = cert.passProbability(for: player)
+        // Can sit the exam: eligible, not already owned/attempted, slot free.
+        // Affordability is NOT a gate — an unaffordable fee just goes into debt.
+        let canAttempt = eqfMet && !isOwned && !attemptedThisYear && !atLimit
 
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
-                // InfoHint sits outside the Toggle so it stays tappable
-                // even when the toggle is disabled by missing requirements.
                 InfoHint(title: "\(cert.pictogram) \(cert.friendlyName)", message: cert.description)
-                Toggle(cert.friendlyName, isOn: Binding(
-                    get: { isSelected },
-                    set: { isOn in
-                        guard !isLocked else { return }
-                        if isOn {
-                            guard !atLimit else { return }
-                            player.purchaseCertification(cert, into: &selectedCertifications, activities: &selectedActivities)
-                        } else {
-                            player.refundCertification(cert, from: &selectedCertifications, activities: &selectedActivities)
-                        }
-                    }
-                ))
-                .platformToggleStyle()
-                .disabled(state.disabled)
-                .opacity(state.disabled ? 0.5 : 1.0)
-                .help(state.helpText)
+                Text(cert.friendlyName)
+                    .font(.body)
+                Spacer()
+                if isOwned {
+                    Text("✓ Certified")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.green)
+                }
             }
 
-            Text("Costs $\(cert.costForCertification.formatted(.number))")
+            Text(canAfford
+                 ? "Exam fee $\(cost.formatted(.number))"
+                 : "Exam fee $\(cost.formatted(.number)) — paid on credit")
                 .font(.caption)
-                .foregroundStyle(player.savings >= cert.costForCertification ? Color.secondary : Color.red)
+                .foregroundStyle(canAfford ? Color.secondary : Color.orange)
                 .padding(.leading, 8)
 
+            // Pass odds (realistic mode only — simplified is a guaranteed pass).
+            if !player.isSimplified && !isOwned {
+                HStack(spacing: 6) {
+                    Text("Pass chance:")
+                    Spacer()
+                    Text(eqfMet ? "\(Int((passChance * 100).rounded())) %" : "—")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(passChance >= 0.6 ? .green : passChance >= 0.3 ? .orange : .red)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+            }
+
+            if !isOwned {
+                Button {
+                    let passed = player.attemptCertification(cert, into: &selectedCertifications, activities: &selectedActivities)
+                    // Passing against long odds is worth a celebration.
+                    if passed, passChance <= GameConstants.luckyAdmissionThreshold {
+                        player.celebrationTrigger += 1
+                    }
+                } label: {
+                    Text(attemptButtonLabel(attempted: attemptedThisYear, atLimit: atLimit, blockedReason: blockedReason))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!canAttempt)
+                .opacity(canAttempt ? 1.0 : 0.5)
+                .padding(.top, 2)
+
+                if attemptedThisYear {
+                    Text("❌ Didn't pass this year — build the skills below and retry next year.")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .padding(.leading, 8)
+                }
+            }
+
             let thresholds = cert.softSkillThresholds
-            if !thresholds.isEmpty {
+            if !thresholds.isEmpty && !isOwned {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(Array(thresholds.enumerated()), id: \.offset) { _, pair in
                         RequirementRow(
@@ -122,6 +161,13 @@ struct CertificationsView: View {
                 .padding(.vertical, 4)
             }
         }
+    }
+
+    private func attemptButtonLabel(attempted: Bool, atLimit: Bool, blockedReason: String?) -> String {
+        if let reason = blockedReason { return reason }
+        if attempted { return "Attempted this year" }
+        if atLimit { return "Only \(GameConstants.trainingActivitySlotCost) activity per year" }
+        return player.isSimplified ? "Take Certification" : "Sit Exam"
     }
 }
 

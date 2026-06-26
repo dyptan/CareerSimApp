@@ -54,6 +54,17 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
+    /// Selectivity modifier folded into the admission-probability calculation
+    /// (see `Education.admissionProbability`). Community runs near-open admission;
+    /// elite turns away even well-qualified applicants.
+    var admissionSelectivity: Double {
+        switch self {
+        case .community: return 0.10
+        case .state:     return 0.0
+        case .elite:     return -0.18
+        }
+    }
+
     /// Annual tuition in USD for the given degree level.
     /// Reflects rough US averages: community ≪ state ≪ private elite. Doctorates
     /// are largely funded (assistantships/stipends), so they cost little to nothing.

@@ -49,6 +49,10 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             return [CompanyTier.smallBusiness, .mid, .selfEmployed].randomElement()!
         case .publicServices, .education:
             return .government
+        case .law:
+            // Conservative, regulated sector: boutique firm, regional firm, or
+            // BigLaw — no startups or freelancing.
+            return [CompanyTier.smallBusiness, .mid, .enterprise].randomElement()!
         case .arts:
             return .selfEmployed
         case .media, .fashion:
@@ -103,6 +107,36 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         case portfolio
     }
 
+    /// Base annual probability that the employer promotes the player, before the
+    /// player's own promotion-readiness soft skills scale it. Flat, fast-growing
+    /// startups promote aggressively; rigid enterprises and seniority-bound
+    /// government move slowly. The self-employed have no employer to promote them.
+    var promotionBaseChance: Double {
+        switch self {
+        case .startup:       return 0.30
+        case .mid:           return 0.18
+        case .smallBusiness: return 0.16
+        case .nonprofit:     return 0.12
+        case .enterprise:    return 0.10
+        case .government:    return 0.06
+        case .selfEmployed:  return 0.0
+        }
+    }
+
+    /// Salary bump applied on a promotion, as a fraction of current pay (overall
+    /// 5–30%). Startups reward with big jumps; steady tiers give measured raises.
+    var promotionRaise: ClosedRange<Double> {
+        switch self {
+        case .startup:       return 0.15...0.30
+        case .mid:           return 0.10...0.20
+        case .smallBusiness: return 0.07...0.15
+        case .nonprofit:     return 0.05...0.12
+        case .enterprise:    return 0.06...0.12
+        case .government:    return 0.05...0.08
+        case .selfEmployed:  return 0.05...0.15
+        }
+    }
+
     /// Hire-probability modifier: harder to land a job at selective tiers,
     /// easier at small / self-employment tiers.
     var hireDifficulty: Double {
@@ -129,6 +163,10 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             return [.smallBusiness, .mid, .selfEmployed]
         case .publicServices, .education:
             return [.government, .nonprofit]
+        case .law:
+            // Conservative, regulated sector: boutique firm → regional firm →
+            // BigLaw. Deliberately omits startup/self-employed.
+            return [.smallBusiness, .mid, .enterprise]
         case .arts:
             // Pure-creative work is freelance by nature — employer-tier choice
             // isn't meaningful, so we only surface a single self-employed offer.
@@ -380,7 +418,7 @@ extension Job {
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
         let tierDifficulty = companyTier.hireDifficulty
-        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty)
+        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty + player.difficulty.opportunityBonus)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
     }
@@ -455,6 +493,12 @@ extension Job {
         }
     }
 
+    /// Identifies a *specific* offer — this role at this employer tier — for
+    /// tracking one application per year. The same role is offered at several
+    /// company tiers (see `atTier`), each a distinct position, so the key folds
+    /// in the tier; applying to the startup doesn't lock out the enterprise.
+    var applicationKey: String { "\(id)#\(companyTier.rawValue)" }
+
     /// Returns the same job with its tier-specific deterministic salary applied.
     func atTier(_ tier: CompanyTier) -> Job {
         var copy = self
@@ -479,7 +523,7 @@ extension Job {
     /// group seniority ladders under a single base title and to label the
     /// rung within that ladder. Order matters only for display.
     static let seniorityPrefixes: [String] = [
-        "Junior ", "Mid-Level ", "Senior ", "Lead ",
+        "Apprentice ", "Junior ", "Mid-Level ", "Senior ", "Lead ",
         "Principal ", "Staff ", "Head ", "Sous ",
         "Executive ", "Master ", "Charge ", "Postdoctoral ",
         "Amateur ", "Professional ", "Elite "
@@ -528,7 +572,8 @@ extension Job {
     /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
     /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
-        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur",
+        "Elite Athlete", "School Principal"
     ]
 
     /// True for the top management role of a career track — the win condition
