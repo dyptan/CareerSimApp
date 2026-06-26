@@ -14,19 +14,22 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Plain-language explanation of the portfolio project type, for the in-game info popover.
+    /// Plain-language explanation of the side/hobby project, for the in-game
+    /// info popover. Projects are personal passion projects you build in your
+    /// own time — not work deliverables — but a strong body of work catches an
+    /// employer's eye when you go job-hunting.
     var description: String {
         switch self {
-        case .app: return "A small mobile or desktop app you build to show off in interviews. Demonstrates that you can ship working software end-to-end."
-        case .website: return "A real website you’ve designed and built. Most common portfolio piece for web developers and designers."
-        case .library: return "A reusable code library that other developers can install and use. Signals strong engineering and documentation skills."
-        case .paper: return "A written research paper or long-form article. Counts toward science, humanities, and academic careers."
-        case .presentation: return "A polished talk or pitch deck. Useful for business, marketing, design, and education roles."
-        case .paintingPortfolio: return "A collection of paintings or drawings to show galleries, art schools, and clients. The standard entry portfolio for visual artists."
-        case .photoPortfolio: return "A curated set of your best photos, edited and presented as a body of work. Required for photography and photojournalism jobs."
-        case .musicAlbum: return "A finished collection of recorded songs. Demonstrates writing, performing, and producing skills to record labels and venues."
-        case .recipeBook: return "A collection of original recipes, photographed and written up. Builds your reputation as a chef or food creator."
-        case .lessonPlan: return "A set of structured lessons with objectives, activities, and assessments. Required portfolio piece for teaching and tutoring jobs."
+        case .app: return "A little mobile or desktop app you build in your spare time — to scratch an itch or just to learn. A working side project speaks louder than a résumé when you look for software work."
+        case .website: return "A personal site you design and build on the side — a blog, a fan page, a favour for a friend. Hands-on proof you can ship for the web."
+        case .library: return "An open-source code library you make in your free time and share for other tinkerers to use. A passion project that quietly shows real engineering chops."
+        case .paper: return "A long-form article or deep-dive you write out of pure curiosity. Finishing one shows you can dig into a subject and explain it clearly."
+        case .presentation: return "A talk or slide deck you put together for a meetup, club, or hobby community. Great practice at making an idea land in front of a room."
+        case .paintingPortfolio: return "A collection of paintings and drawings you make for the love of it. A body of work that speaks for your eye and craft."
+        case .photoPortfolio: return "A curated set of your favourite shots, taken and edited in your own time. Your personal best, gathered into one body of work."
+        case .musicAlbum: return "A set of songs you write, record, and produce as a labour of love — proof you can take music from idea to finished tracks."
+        case .recipeBook: return "A personal collection of recipes you've cooked, photographed, and written up — a foodie passion project."
+        case .lessonPlan: return "A set of lessons you design for fun — to tutor a sibling, run a club, or teach something you love. Shows you can structure and explain a topic."
         }
     }
 

@@ -22,6 +22,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     case comptiaA = "CompTIA A+"
     case ase = "ASE"
     case osha10 = "OSHA 10"
+    case boardCertified = "Board Certification"
 
     var id: String { rawValue }
 
@@ -48,6 +49,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .comptiaA: return "CompTIA A+"
         case .ase: return "ASE Mechanic Certification"
         case .osha10: return "OSHA 10 Safety Card"
+        case .boardCertified: return "Medical Board Certification"
         }
     }
 
@@ -75,6 +77,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .comptiaA: return "Entry-level IT certification covering hardware, networking, and troubleshooting. Standard credential for help-desk and IT-support jobs."
         case .ase: return "Automotive Service Excellence — the trade certification that proves you can diagnose and repair vehicles to dealership standards. Common requirement for senior mechanic roles."
         case .osha10: return "A 10-hour construction-safety training card recognised across U.S. job sites. Often required before you can step onto a building site as a labourer or carpenter."
+        case .boardCertified: return "Specialty board certification earned after residency — the standard credential for attending physicians and medical leadership. Verifies mastery of a medical specialty."
         }
     }
 
@@ -99,6 +102,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .comptiaA: return "🖥️"
         case .ase: return "🔧"
         case .osha10: return "🦺"
+        case .boardCertified: return "⚕️"
         }
     }
 
@@ -125,6 +129,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
         case .comptiaA: return 500   // 2 exams + voucher
         case .ase: return 400     // multi-test mechanic certification
         case .osha10: return 100  // short safety card course
+        case .boardCertified: return 4000  // specialty board exam + prep
         }
     }
 
@@ -144,6 +149,8 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
              .pmp,                  // 4-year degree + 36 months experience (or HS + 60 months)
              .shrm:                 // SHRM-CP commonly requires a Bachelor for full eligibility
             return 5
+        case .boardCertified:       // requires a completed medical doctorate
+            return 7
         case .paralegal:            // typically an associate degree or vocational diploma
             return 4
         case .osha10:               // safety card has no education prerequisite
@@ -297,21 +304,46 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.carefulnessAndAttentionToDetail, 1),
             ]
+        case .boardCertified:
+            // Specialty boards: deep clinical mastery, judgement under pressure, care
+            return [
+                (\.analyticalReasoningAndProblemSolving, 4),
+                (\.carefulnessAndAttentionToDetail, 4),
+                (\.stressResistanceAndEmotionalRegulation, 3),
+                (\.empathyAndInterpersonalCare, 2),
+                (\.selfDisciplineAndPerseverance, 3),
+            ]
         }
     }
 
+    /// Education (EQF) is a hard prerequisite for sitting the exam. Soft skills
+    /// are no longer a pass/fail gate here — they set the odds of passing (see
+    /// `passProbability`), so meeting the bar isn't required to attempt, just
+    /// to have a good chance.
     func certificationRequirements(_ player: Player) -> TrainingRequirementResult {
         let highestEQF = player.degrees.map(\.eqf).max() ?? 0
         if highestEQF < minEQF {
             let label = Education.Requirements(minEQF: minEQF).educationLabel()
             return .blocked(reason: "Requires \(label)")
         }
-        for (kp, required) in softSkillThresholds {
-            guard player.softSkills[keyPath: kp] >= required else {
-                let name = SoftSkills.label(forKeyPath: kp) ?? "skill"
-                return .blocked(reason: "Needs more \(name)")
-            }
-        }
         return .ok(cost: costForCertification)
+    }
+
+    /// Probability (0.05…0.98) of passing this exam, from how well the player's
+    /// soft skills meet the certification's thresholds — the industry-specific
+    /// requirements for the credential. Mirrors `Education.admissionProbability`:
+    /// strong, relevant soft skills make a pass likely but never certain.
+    /// Simplified mode stays deterministic (always passes).
+    func passProbability(for player: Player) -> Double {
+        if player.gameMode == .simplified { return 1.0 }
+        let thresholds = softSkillThresholds
+        guard !thresholds.isEmpty else { return 0.95 }
+        var fitSum = 0.0
+        for (kp, need) in thresholds {
+            fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(need), 1.0)
+        }
+        let fit = fitSum / Double(thresholds.count)
+        let raw = 0.1 + 0.9 * fit + player.difficulty.opportunityBonus
+        return max(0.05, min(0.98, raw))
     }
 }

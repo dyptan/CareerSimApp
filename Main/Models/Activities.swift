@@ -253,8 +253,7 @@ let activities: [Activity] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
+            .init(keyPath: \.communicationAndNetworking, weight: 1)
         ],
         stages: [.teen, .youngAdult]
     ),
@@ -323,7 +322,6 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
             .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
         stages: [.youngAdult, .adult]
@@ -363,8 +361,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 1),
             .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1)
+            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ],
         stages: [.youngAdult, .adult]
     ),
@@ -382,8 +379,7 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
         ],
         stages: [.youngAdult, .adult]
     ),
@@ -392,7 +388,6 @@ let activities: [Activity] = [
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
             .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.resilienceAndEndurance, weight: 1)
         ],

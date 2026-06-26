@@ -1,7 +1,11 @@
 import CoreGraphics
 
 enum GameConstants {
-    static let maxSoftActivitiesPerYear: Int = 3
+    /// One spare-time slot per year, shared across activities, projects,
+    /// certifications, and licenses (they all draw from `selectedActivities`).
+    /// The player commits to a single self-improvement each year, whatever
+    /// their life stage — kept deliberately simple.
+    static let maxSoftActivitiesPerYear: Int = 1
     static let trainingActivitySlotCost: Int = 1
 
     /// Realistic mode: how many side hustles the player can take on in one year.

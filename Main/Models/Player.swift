@@ -129,6 +129,11 @@ final class Player: ObservableObject {
     /// One admission attempt per school per year, so a rejection can't be
     /// brute-forced — the player must try another school or wait a year.
     @Published var appliedSchoolIds: Set<String> = []
+    /// Certifications whose exam has been attempted this year (by `rawValue`).
+    /// One attempt per cert per year — a failed exam can't be brute-forced;
+    /// the player must improve their skills and retry next year. Cleared in
+    /// `advanceYear`.
+    @Published var attemptedCertificationIds: Set<String> = []
     /// Jobs offered to the player this year. Re-shuffled (and re-rolled for
     /// company tier / salary variance) every time `advanceYear` runs, so the
     /// listing feels different each game year.
@@ -207,17 +212,23 @@ final class Player: ObservableObject {
 
     // MARK: - Training purchase / refund
 
-    func purchaseCertification(_ cert: Certification, into selectedCertifications: inout Set<Certification>, activities selectedActivities: inout Set<String>) {
-        guard case .ok(let cost) = cert.certificationRequirements(self) else { return }
-        selectedCertifications.insert(cert)
+    /// Sits this year's certification exam: pays the fee and consumes the
+    /// training slot (win or lose), then rolls a pass against the cert's
+    /// `passProbability`. A pass selects the cert (committed at year end); a
+    /// fail leaves the player out the fee. One attempt per cert per year — a
+    /// fail means studying again next year. Returns whether the exam was passed.
+    @discardableResult
+    func attemptCertification(_ cert: Certification, into selectedCertifications: inout Set<Certification>, activities selectedActivities: inout Set<String>) -> Bool {
+        guard case .ok(let cost) = cert.certificationRequirements(self) else { return false }
+        guard !attemptedCertificationIds.contains(cert.rawValue) else { return false }
+        attemptedCertificationIds.insert(cert.rawValue)
         selectedActivities.insert("cert:\(cert.rawValue)")
         savings -= cost
-    }
-
-    func refundCertification(_ cert: Certification, from selectedCertifications: inout Set<Certification>, activities selectedActivities: inout Set<String>) {
-        guard selectedCertifications.remove(cert) != nil else { return }
-        selectedActivities.remove("cert:\(cert.rawValue)")
-        savings += cert.costForCertification
+        let passed = Double.random(in: 0...1) < cert.passProbability(for: self)
+        if passed {
+            selectedCertifications.insert(cert)
+        }
+        return passed
     }
 
     func purchaseLicense(_ lic: License, into selectedLicenses: inout Set<License>, activities selectedActivities: inout Set<String>) {
@@ -302,6 +313,7 @@ final class Player: ObservableObject {
 
         appliedJobIds.removeAll()
         appliedSchoolIds.removeAll()
+        attemptedCertificationIds.removeAll()
         // Re-roll the job market for the new year (fresh tiers and salaries).
         regenerateAvailableJobs()
 
@@ -363,11 +375,12 @@ final class Player: ObservableObject {
         }
 
         // Side hustles: resolve every venture taken on this year. Each stakes its
-        // capital up front; success pays out — banked in full, unlike salary — and
-        // a flop salvages half the stake. The year's net is surfaced in the header.
+        // capital up front — paid even if it pushes savings into debt — success
+        // pays out (banked in full, unlike salary) and a flop salvages half the
+        // stake. The year's net is surfaced in the header.
         var sideHustleNet = 0
         for id in appUIState.selectedSideHustles {
-            guard let hustle = SideHustleCatalog.byId[id], savings >= hustle.startupCost else { continue }
+            guard let hustle = SideHustleCatalog.byId[id] else { continue }
             savings -= hustle.startupCost
             let outcome = hustle.resolve(for: softSkills)
             savings += outcome.credit
@@ -476,6 +489,7 @@ final class Player: ObservableObject {
         lockedActivities = fresh.lockedActivities
         appliedJobIds = []
         appliedSchoolIds = []
+        attemptedCertificationIds = []
         availableJobs = fresh.availableJobs
     }
 }

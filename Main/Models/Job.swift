@@ -49,6 +49,10 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             return [CompanyTier.smallBusiness, .mid, .selfEmployed].randomElement()!
         case .publicServices, .education:
             return .government
+        case .law:
+            // Conservative, regulated sector: boutique firm, regional firm, or
+            // BigLaw — no startups or freelancing.
+            return [CompanyTier.smallBusiness, .mid, .enterprise].randomElement()!
         case .arts:
             return .selfEmployed
         case .media, .fashion:
@@ -159,6 +163,10 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             return [.smallBusiness, .mid, .selfEmployed]
         case .publicServices, .education:
             return [.government, .nonprofit]
+        case .law:
+            // Conservative, regulated sector: boutique firm → regional firm →
+            // BigLaw. Deliberately omits startup/self-employed.
+            return [.smallBusiness, .mid, .enterprise]
         case .arts:
             // Pure-creative work is freelance by nature — employer-tier choice
             // isn't meaningful, so we only surface a single self-employed offer.
@@ -410,7 +418,7 @@ extension Job {
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
         let tierDifficulty = companyTier.hireDifficulty
-        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty)
+        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty + player.difficulty.opportunityBonus)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
     }
@@ -515,7 +523,7 @@ extension Job {
     /// group seniority ladders under a single base title and to label the
     /// rung within that ladder. Order matters only for display.
     static let seniorityPrefixes: [String] = [
-        "Junior ", "Mid-Level ", "Senior ", "Lead ",
+        "Apprentice ", "Junior ", "Mid-Level ", "Senior ", "Lead ",
         "Principal ", "Staff ", "Head ", "Sous ",
         "Executive ", "Master ", "Charge ", "Postdoctoral ",
         "Amateur ", "Professional ", "Elite "
@@ -564,7 +572,8 @@ extension Job {
     /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
     /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
-        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur",
+        "Elite Athlete", "School Principal"
     ]
 
     /// True for the top management role of a career track — the win condition

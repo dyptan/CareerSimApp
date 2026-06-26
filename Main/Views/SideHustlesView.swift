@@ -60,10 +60,11 @@ struct SideHustlesView: View {
     private func row(for hustle: SideHustle) -> some View {
         let isSelected = selectedSideHustles.contains(hustle.id)
         let atLimit = selectedSideHustles.count >= GameConstants.maxSideHustlesPerYear
-        // Affordable when the stake fits the savings still free after the other
-        // ventures already picked this year.
+        // Whether the stake fits the savings still free after the other ventures
+        // already picked this year. NOT a gate — an over-budget stake is taken on
+        // credit (into debt); this only flags the stake label.
         let canAfford = player.savings - committedStake >= hustle.startupCost
-        let isDisabled = !isSelected && (atLimit || !canAfford)
+        let isDisabled = !isSelected && atLimit
 
         let odds = Int((hustle.successProbability(for: player.softSkills) * 100).rounded())
         let upside = hustle.projectedPayout(for: player.softSkills)
@@ -86,7 +87,7 @@ struct SideHustlesView: View {
                     get: { isSelected },
                     set: { isOn in
                         if isOn {
-                            guard !atLimit, canAfford else { return }
+                            guard !atLimit else { return }
                             selectedSideHustles.insert(hustle.id)
                         } else {
                             selectedSideHustles.remove(hustle.id)
@@ -107,7 +108,10 @@ struct SideHustlesView: View {
                     HStack(spacing: 10) {
                         Text(hustle.startupCost == 0
                              ? "💵 No stake"
-                             : "💵 Stake \(hustle.startupCost.formatted(.number)) $")
+                             : (canAfford
+                                ? "💵 Stake \(hustle.startupCost.formatted(.number)) $"
+                                : "💵 Stake \(hustle.startupCost.formatted(.number)) $ (on credit)"))
+                            .foregroundStyle(canAfford ? Color.secondary : Color.orange)
                         Text("🎲 ~\(odds)%")
                         Text("📈 up to \(upside.formatted(.number)) $")
                     }
@@ -122,7 +126,7 @@ struct SideHustlesView: View {
             .help(
                 atLimit && !isSelected
                     ? "You can take up to \(GameConstants.maxSideHustlesPerYear) side hustles this year."
-                    : (!canAfford && !isSelected ? "Not enough savings for the stake." : "")
+                    : ""
             )
 
             InfoHint(

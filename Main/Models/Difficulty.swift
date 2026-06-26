@@ -6,15 +6,20 @@ import Foundation
 /// economy is: how often downturns strike and how likely a downturn is to drag
 /// on for years rather than clear after one. Has no effect in simplified mode.
 enum Difficulty: String, Codable, CaseIterable, Identifiable {
-    /// High-income family, steady economy. A large share of income is saved and
-    /// downturns are rare and usually brief.
+    // NOTE: the raw case names are persisted (Codable) and referenced across the
+    // app, so they stay fixed. Only the player-facing `title`/`blurb` were renamed
+    // (Relaxed / Real Life / Disadvantaged).
+
+    /// "Relaxed". High-income family, no recessions, and opportunities tilted in
+    /// the player's favour — a large share of income is saved, the economy never
+    /// falters, and hiring and college admission come easier.
     case comfortable
-    /// Middle-income household, baseline volatility. The original realistic-mode
-    /// balance.
+    /// "Real Life". Middle-income household, baseline volatility. The original
+    /// realistic-mode balance.
     case middleClass
-    /// Low-income family, turbulent economy. Living costs eat most of each
-    /// paycheck, downturns hit often, and they frequently turn into multi-year
-    /// recessions.
+    /// "Disadvantaged". Low-income family, turbulent economy. Living costs eat
+    /// most of each paycheck, downturns hit often, and they frequently turn into
+    /// multi-year recessions.
     case paycheckToPaycheck
 
     var id: String { rawValue }
@@ -24,9 +29,9 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .comfortable:        return "Comfortable"
-        case .middleClass:        return "Middle Class"
-        case .paycheckToPaycheck: return "Paycheck to Paycheck"
+        case .comfortable:        return "Relaxed"
+        case .middleClass:        return "Real Life"
+        case .paycheckToPaycheck: return "Disadvantaged"
         }
     }
 
@@ -41,7 +46,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     var blurb: String {
         switch self {
         case .comfortable:
-            return "High-income family. You keep a large share of every paycheck and the economy rarely falters."
+            return "High-income family. You keep a large share of every paycheck, the economy never falters, and doors open more easily at work and school."
         case .middleClass:
             return "A typical household budget and an ordinary, occasionally shaky economy."
         case .paycheckToPaycheck:
@@ -63,9 +68,20 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// Annual chance that a fresh economic downturn begins.
     var turmoilChance: Double {
         switch self {
-        case .comfortable:        return 0.05
+        case .comfortable:        return 0.0
         case .middleClass:        return 0.10
         case .paycheckToPaycheck: return 0.18
+        }
+    }
+
+    /// Additive boost to hiring and college-admission odds in realistic mode.
+    /// "Relaxed" tilts opportunities in the player's favour; the other settings
+    /// leave the underlying odds untouched.
+    var opportunityBonus: Double {
+        switch self {
+        case .comfortable:        return 0.15
+        case .middleClass:        return 0.0
+        case .paycheckToPaycheck: return 0.0
         }
     }
 

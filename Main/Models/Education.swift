@@ -148,7 +148,7 @@ struct Education: Codable, Hashable, Identifiable {
             fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(need), 1.0)
         }
         let fit = requiredAxes == 0 ? 1.0 : fitSum / Double(requiredAxes)
-        let raw = 0.1 + 0.9 * fit + tier.admissionSelectivity
+        let raw = 0.1 + 0.9 * fit + tier.admissionSelectivity + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
     }
 
