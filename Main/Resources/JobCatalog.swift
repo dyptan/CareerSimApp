@@ -350,7 +350,29 @@ enum JobCatalog {
         // of company tier. Tier-specific extras are layered on at runtime by
         // `Job.effectiveRequirements`.
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
+            // Senior-grade credentials matched on the *full* title so they gate
+            // only the senior/standalone rung, not a ladder's entry rung (a junior
+            // analyst shouldn't need the CFA). These certs only bite at
+            // credentials-tier employers (enterprise / government); smaller firms
+            // still hire these roles on portfolio.
+            switch title {
+            case "Accountant", "Senior Accountant":
+                return HardSkills(certifications: [.cpa])
+            case "Senior Financial Analyst", "Investment Banker":
+                return HardSkills(certifications: [.cfa])
+            default:
+                break
+            }
+
             switch Job.baseTitle(of: title) {
+            // Cloud platforms — vendor certs on the roles that run on them
+            case "Cloud Architect":
+                return HardSkills(certifications: [.aws])
+            case "Systems Administrator":
+                return HardSkills(certifications: [.azure])
+            case "Data Scientist":
+                return HardSkills(certifications: [.google])
+
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
                 return HardSkills(licenses: [.drivers])
@@ -529,8 +551,19 @@ enum JobCatalog {
         func fullJob(id: String, category: JobCategory, income: Int, icon: String, summary: String, minEQF: Int, minYears: Int? = nil, targetCapital: Int? = nil) -> Job {
             let soft = softSkills(for: id, category: category)
             let hard = defaultHard(for: id, category: category)
-            let profiles = minEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
-            let edu = Job.Requirements.Education(minEQF: minEQF, acceptedProfiles: profiles)
+            // A role can't sensibly demand a licence or certification the player
+            // couldn't have earned at its listed education level. Raise the floor
+            // to the toughest education prerequisite of any credential the role
+            // mandates, so the stated requirement reflects what the player must
+            // genuinely already hold (e.g. a Paralegal needs the vocational-level
+            // Paralegal Certificate, not just high school).
+            let credentialEQF = max(
+                hard.certifications.map(\.minEQF).max() ?? 0,
+                hard.licenses.map(\.minEQF).max() ?? 0
+            )
+            let effectiveEQF = max(minEQF, credentialEQF)
+            let profiles = effectiveEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
+            let edu = Job.Requirements.Education(minEQF: effectiveEQF, acceptedProfiles: profiles)
             let req = Job.Requirements(
                 education: edu,
                 softSkills: soft,

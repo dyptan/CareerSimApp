@@ -103,6 +103,36 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         case portfolio
     }
 
+    /// Base annual probability that the employer promotes the player, before the
+    /// player's own promotion-readiness soft skills scale it. Flat, fast-growing
+    /// startups promote aggressively; rigid enterprises and seniority-bound
+    /// government move slowly. The self-employed have no employer to promote them.
+    var promotionBaseChance: Double {
+        switch self {
+        case .startup:       return 0.30
+        case .mid:           return 0.18
+        case .smallBusiness: return 0.16
+        case .nonprofit:     return 0.12
+        case .enterprise:    return 0.10
+        case .government:    return 0.06
+        case .selfEmployed:  return 0.0
+        }
+    }
+
+    /// Salary bump applied on a promotion, as a fraction of current pay (overall
+    /// 5–30%). Startups reward with big jumps; steady tiers give measured raises.
+    var promotionRaise: ClosedRange<Double> {
+        switch self {
+        case .startup:       return 0.15...0.30
+        case .mid:           return 0.10...0.20
+        case .smallBusiness: return 0.07...0.15
+        case .nonprofit:     return 0.05...0.12
+        case .enterprise:    return 0.06...0.12
+        case .government:    return 0.05...0.08
+        case .selfEmployed:  return 0.05...0.15
+        }
+    }
+
     /// Hire-probability modifier: harder to land a job at selective tiers,
     /// easier at small / self-employment tiers.
     var hireDifficulty: Double {
@@ -454,6 +484,12 @@ extension Job {
             return copy
         }
     }
+
+    /// Identifies a *specific* offer — this role at this employer tier — for
+    /// tracking one application per year. The same role is offered at several
+    /// company tiers (see `atTier`), each a distinct position, so the key folds
+    /// in the tier; applying to the startup doesn't lock out the enterprise.
+    var applicationKey: String { "\(id)#\(companyTier.rawValue)" }
 
     /// Returns the same job with its tier-specific deterministic salary applied.
     func atTier(_ tier: CompanyTier) -> Job {

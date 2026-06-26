@@ -32,6 +32,9 @@ struct FooterView: View {
                 Button("Licenses") { appUIState.showLicensesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
 
+                Button("Side Hustles") { appUIState.showSideHustlesSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+
             }
         }
 

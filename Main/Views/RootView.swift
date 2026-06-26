@@ -1,4 +1,5 @@
 import SwiftUI
+import ConfettiSwiftUI
 
 struct RootView: View {
     @StateObject var player = Player()
@@ -30,6 +31,11 @@ struct RootView: View {
             FooterView(player: player, appUIState: appUIState)
                 .padding(.bottom)
         }
+        #if os(macOS)
+        // Resizable game window with a sensible default; min keeps it usable.
+        .frame(minWidth: 900, idealWidth: 1000, maxWidth: .infinity,
+               minHeight: 600, idealHeight: 700, maxHeight: .infinity)
+        #endif
         .sheet(isPresented: $appUIState.showDecisionSheet) {
             DecisionView(appUIState: appUIState)
         }
@@ -73,16 +79,14 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showActivitiesSheet) {
             navigationSheet { activitiesContent }
         }
+        .sheet(isPresented: $appUIState.showSideHustlesSheet) {
+            navigationSheet { sideHustlesContent }
+        }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
         }
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
-        }
-        .alert("Economic Turmoil", isPresented: $appUIState.showTurmoilAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(appUIState.turmoilMessage)
         }
         .onChange(of: player.savings) { _ in checkGoalReached() }
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
@@ -104,6 +108,22 @@ struct RootView: View {
             }
         }
         .padding()
+        // A layoff is a major setback, so it interrupts with a pop-up. The
+        // header note (player.lostJobThisYear) lingers for the year afterward.
+        .alert("Laid Off", isPresented: $player.showLayoffAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("A downturn hit your employer and your position was cut. You'll need to find a new job — open Careers to start applying.")
+        }
+        // Celebrates a lucky break — a promotion or a long-shot college
+        // admission — fired by bumping `player.celebrationTrigger`. Anchored
+        // top-centre so the burst rains over the game view.
+        .confettiCannon(
+            counter: $player.celebrationTrigger,
+            num: 60,
+            confettiSize: 12,
+            radius: 420
+        )
     }
 
     // MARK: - Goal tracking
@@ -146,6 +166,22 @@ struct RootView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
                         appUIState.showActivitiesSheet = false
+                        player.advanceYear(appUIState: appUIState)
+                    }
+                }
+            }
+    }
+
+    private var sideHustlesContent: some View {
+        SideHustlesView(player: player, selectedSideHustles: $appUIState.selectedSideHustles)
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") { appUIState.showSideHustlesSheet = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Next") {
+                        appUIState.showSideHustlesSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
                 }
@@ -199,6 +235,10 @@ struct ModeSelectionView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
+    /// Once Realistic is picked, the chooser advances to its difficulty step.
+    /// Simplified starts immediately, so it never sets this.
+    @State private var pendingRealistic = false
+
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -206,13 +246,22 @@ struct ModeSelectionView: View {
             Text("Career Sim")
                 .font(.largeTitle.bold())
 
-            modeChooser
+            if pendingRealistic {
+                difficultyChooser
+            } else {
+                modeChooser
+            }
 
             Spacer()
         }
         .padding()
-        .frame(maxWidth: 520)
+        #if os(macOS)
+        // Fixed width so the window (bound to content size) doesn't stretch.
+        .frame(width: 500)
+        #else
+        .frame(maxWidth: 500)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #endif
     }
 
     private var modeChooser: some View {
@@ -223,7 +272,11 @@ struct ModeSelectionView: View {
 
             ForEach(GameMode.allCases) { mode in
                 Button {
-                    start(mode)
+                    if mode == .realistic {
+                        pendingRealistic = true
+                    } else {
+                        start(mode)
+                    }
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("\(mode.icon)  \(mode.title)")
@@ -247,9 +300,53 @@ struct ModeSelectionView: View {
         }
     }
 
-    /// Locks in the chosen mode and starts the game.
-    private func start(_ mode: GameMode) {
+    private var difficultyChooser: some View {
+        VStack(spacing: 20) {
+            Text("Pick your starting point")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+
+            Text("Your family's income sets how much of each paycheck you can save, and a tougher economy means more frequent — and longer — downturns.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            ForEach(Difficulty.allCases) { difficulty in
+                Button {
+                    start(.realistic, difficulty: difficulty)
+                } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("\(difficulty.icon)  \(difficulty.title)")
+                            .font(.title2.bold())
+                        Text(difficulty.blurb)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("💵 Save \(Int(difficulty.savingsRate * 100))% of income · 📉 \(Int(difficulty.turmoilChance * 100))% downturn risk/yr")
+                            .font(.caption.bold())
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(Color.secondary.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button("← Back") { pendingRealistic = false }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Locks in the chosen mode (and difficulty, for realistic) and starts the game.
+    private func start(_ mode: GameMode, difficulty: Difficulty = .default) {
         player.gameMode = mode
+        player.difficulty = difficulty
         player.regenerateAvailableJobs()
         appUIState.hasSelectedMode = true
     }

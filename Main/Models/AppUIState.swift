@@ -10,6 +10,7 @@ final class AppUIState: ObservableObject {
     @Published var showActivitiesSheet: Bool = false
     @Published var showCertificationsSheet: Bool = false
     @Published var showLicensesSheet: Bool = false
+    @Published var showSideHustlesSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
     // Selections
@@ -17,6 +18,9 @@ final class AppUIState: ObservableObject {
     @Published var selectedLicenses: Set<License>
     @Published var selectedPortfolio: Set<Project>
     @Published var selectedCertifications: Set<Certification>
+    /// Ids of the side hustles the player is attempting this year (see
+    /// `SideHustleCatalog`). Resolved and cleared by `Player.advanceYear`.
+    @Published var selectedSideHustles: Set<String> = []
 
     // Misc
     @Published var yearsLeftToGraduation: Int?
@@ -31,10 +35,6 @@ final class AppUIState: ObservableObject {
     @Published var showGoalSheet: Bool = false
     @Published var hasShownGoal: Bool = false
 
-    /// Drives the economic-turmoil alert raised by `Player.advanceYear` when a
-    /// downturn strikes (realistic mode). `turmoilMessage` carries the outcome.
-    @Published var showTurmoilAlert: Bool = false
-    @Published var turmoilMessage: String = ""
 
     init(
         showDecisionSheet: Bool = false,
@@ -76,16 +76,16 @@ final class AppUIState: ObservableObject {
         showActivitiesSheet = false
         showCertificationsSheet = false
         showLicensesSheet = false
+        showSideHustlesSheet = false
         showRetirementSheet = false
         hasSelectedMode = false
         showGoalSheet = false
         hasShownGoal = false
-        showTurmoilAlert = false
-        turmoilMessage = ""
         selectedActivities = []
         selectedLicenses = []
         selectedPortfolio = []
         selectedCertifications = []
+        selectedSideHustles = []
         yearsLeftToGraduation = nil
         decisionText = ""
     }

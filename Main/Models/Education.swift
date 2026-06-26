@@ -129,6 +129,29 @@ struct Education: Codable, Hashable, Identifiable {
         return true
     }
 
+    /// Probability (0.02...0.98) that an application here is accepted, in realistic
+    /// mode. The prior-degree (EQF) prerequisite is a hard structural gate; beyond
+    /// that, the odds rise with how well the player's soft skills match the
+    /// admission bar and fall with the institution's selectivity. Meeting every
+    /// bar is "fully qualified" (per-axis fit caps at 1.0), but an elite school can
+    /// still turn a fully-qualified applicant away.
+    func admissionProbability(player: Player) -> Double {
+        let highestEQF = player.degrees.last?.eqf ?? 0
+        guard highestEQF >= requirements.minEQF else { return 0 }
+
+        var requiredAxes = 0
+        var fitSum = 0.0
+        for kp in SoftSkills.allAxes.map(\.keyPath) {
+            let need = requirements.soft[keyPath: kp]
+            guard need > 0 else { continue }
+            requiredAxes += 1
+            fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(need), 1.0)
+        }
+        let fit = requiredAxes == 0 ? 1.0 : fitSum / Double(requiredAxes)
+        let raw = 0.1 + 0.9 * fit + tier.admissionSelectivity
+        return max(0.02, min(0.98, raw))
+    }
+
     var degreeName: String {
         switch (level, profile) {
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
