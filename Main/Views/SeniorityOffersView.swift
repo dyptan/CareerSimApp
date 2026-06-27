@@ -67,9 +67,9 @@ struct SeniorityOffersView: View {
         let prob = offer.hireProbability(for: player, requestedSalary: Double(offer.annualIncome))
         let probColor: Color = prob >= 0.6 ? .green : prob >= 0.3 ? .orange : .red
         let qualifies = offer.allRequirementsMet(for: player)
-        let yearsRequired = offer.requirements.minYearsExperience
-        let playerYears = player.experience[offer.category] ?? 0
-        let yearsColor: Color = playerYears >= yearsRequired ? .secondary : .red
+        let yearsExpected = player.isSimplified ? offer.requirements.minYearsExperience : offer.expectedYearsExperience
+        let playerYears = offer.relevantYears(for: player)
+        let yearsColor: Color = playerYears >= yearsExpected ? .secondary : (player.isSimplified ? .red : .orange)
 
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -87,9 +87,9 @@ struct SeniorityOffersView: View {
             HStack(spacing: 14) {
                 Label("\(offer.annualIncome.formatted(.number)) $/yr", systemImage: "dollarsign.circle")
                     .font(.subheadline)
-                if yearsRequired > 0 {
+                if yearsExpected > 0 {
                     Label(
-                        "\(yearsRequired) yr exp.",
+                        "\(yearsExpected) yr exp.",
                         systemImage: "calendar"
                     )
                     .font(.caption)

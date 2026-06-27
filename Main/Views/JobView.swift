@@ -37,7 +37,7 @@ struct JobDetail: View {
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
-            return "Hire chance is 0% until every required degree, license, \(job.companyTier.hiringSignal == .credentials ? "certification" : "portfolio item"), and year of industry experience is in place."
+            return "Hire chance is 0% until every required degree, license, \(job.companyTier.hiringSignal == .credentials || job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place."
         }
 
         let scoredCount = SoftSkills.allAxes.count
@@ -46,8 +46,12 @@ struct JobDetail: View {
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
         let tier = job.companyTier.hireDifficulty
+        let opportunity = player.difficulty.opportunityBonus
+        let network = player.networkBonus(for: job.category)
+        let experience = job.experienceFitTerm(for: player)
+        let fame = job.category == .showBusiness ? player.achievementHireBonus : 0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let rawSum = 0.2 + skillContribution + prestige + tier
+        let rawSum = 0.2 + skillContribution + prestige + tier + opportunity + network + experience + fame
         let raw = rawSum * salaryFit
         let final = max(0.05, min(0.95, raw))
 
@@ -69,14 +73,20 @@ struct JobDetail: View {
             }
         }()
 
+        let expYears = job.expectedYearsExperience
+        let playerYears = job.relevantYears(for: player)
+
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Company tier) × Salary fit
+        Formula: (Base 20% + Skill match × 70% + Degree prestige + Company tier + Experience fit + Network\(job.category == .showBusiness ? " + Fame" : "") + Difficulty) × Salary fit
 
         Your numbers right now:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
         • Degree prestige (\(prestigeLabel)): \(signed(prestige))
         • Company tier (\(job.companyTier.displayName)): \(signed(tier))
+        • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
+        • Network (\(job.category.rawValue)): \(signed(network))\(job.category == .showBusiness ? "\n        • Fame (\(player.achievements.count) achievement\(player.achievements.count == 1 ? "" : "s")): \(signed(fame))" : "")
+        • Difficulty bonus: \(signed(opportunity))
         • Salary fit: \(pct(salaryFit))
         Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
         Final (clamped 5–95%): \(pct(final))
@@ -164,21 +174,34 @@ struct JobDetail: View {
                 .padding(.horizontal)
             }
 
-            let yearsRequired = job.requirements.minYearsExperience
-            if yearsRequired > 0 {
+            // Experience is a hard gate at the role's baseline; above that, the
+            // employer's tier-scaled preference shapes the hire probability.
+            let baseYears = job.requirements.minYearsExperience
+            if baseYears > 0 {
                 Text("Experience:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
-                let playerYears = player.experience[job.category] ?? 0
+                let playerYears = job.relevantYears(for: player)
+                let expLabel = job.seniorityPrefix != nil
+                    ? "\(baseYears) yr as \(job.baseTitle)"
+                    : "\(baseYears) yr in \(job.category.rawValue)"
                 RequirementRow(
-                    label: "\(yearsRequired) yr in \(job.category.rawValue)",
+                    label: expLabel,
                     emoji: "📅",
-                    style: .meter(current: playerYears, required: yearsRequired)
+                    style: .meter(current: playerYears, required: baseYears)
                 )
-                .foregroundStyle(playerYears >= yearsRequired ? .primary : .secondary)
+                .foregroundStyle(playerYears >= baseYears ? .primary : .secondary)
                 .padding(.horizontal)
+
+                if !isSimplified {
+                    Text("\(baseYears) yr required to qualify. \(job.companyTier.displayName) values about \(job.expectedYearsExperience) yr — every extra year raises your hire chance.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                }
             }
 
             if !isSimplified && !requiredHard.certifications.isEmpty {

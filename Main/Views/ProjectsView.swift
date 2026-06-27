@@ -4,7 +4,6 @@ struct ProjectsView: View {
     @ObservedObject var player: Player
 
     @Binding var selectedPortfolio: Set<Project>
-    @Binding var selectedActivities: Set<String>
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
@@ -18,19 +17,20 @@ struct ProjectsView: View {
         @ObservedObject var player: Player
         let item: Project
         @Binding var selectedPortfolio: Set<Project>
-        @Binding var selectedActivities: Set<String>
 
         var body: some View {
             let isLocked = player.lockedPortfolio.contains(item)
             let isSelected = selectedPortfolio.contains(item)
-            let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
 
             let reqs = item.requirements(for: player)
             let meetsAllRequirements =
                 reqs.softSkills.allSatisfy { $0.current >= $0.required }
                 && reqs.hardSkills.allSatisfy { $0.current >= $0.required }
 
-            let isDisabled = isLocked || (!isSelected && (atLimit || !meetsAllRequirements))
+            // Side projects are free — no fee and no spare-time slot. They're
+            // gated only by the player's skills and lock in after year end, so
+            // the player can build as many as they qualify for each year.
+            let isDisabled = isLocked || (!isSelected && !meetsAllRequirements)
 
             VStack(alignment: .leading) {
                 HStack(spacing: 6) {
@@ -44,17 +44,9 @@ struct ProjectsView: View {
                             set: { isOn in
                                 guard !isLocked else { return }
                                 if isOn {
-                                    guard !atLimit else { return }
                                     selectedPortfolio.insert(item)
-                                    selectedActivities.insert(
-                                        "port:\(item.rawValue)"
-                                    )
                                 } else {
-                                    if selectedPortfolio.remove(item) != nil {
-                                        selectedActivities.remove(
-                                            "port:\(item.rawValue)"
-                                        )
-                                    }
+                                    selectedPortfolio.remove(item)
                                 }
                             }
                         )
@@ -65,11 +57,9 @@ struct ProjectsView: View {
                     .help(
                         isLocked
                             ? "Locked after year end"
-                            : ((!isSelected && atLimit)
-                                ? "You can take up to \(GameConstants.trainingActivitySlotCost) activities this year."
-                                : (!isSelected && !meetsAllRequirements)
-                                    ? "Requirements not met yet."
-                                    : "")
+                            : ((!isSelected && !meetsAllRequirements)
+                                ? "Requirements not met yet."
+                                : "")
                     )
                 }
 
@@ -119,8 +109,7 @@ struct ProjectsView: View {
                         ProjectRow(
                             player: player,
                             item: item,
-                            selectedPortfolio: $selectedPortfolio,
-                            selectedActivities: $selectedActivities
+                            selectedPortfolio: $selectedPortfolio
                         )
                         .padding(8)
                     }
@@ -134,14 +123,12 @@ struct ProjectsView: View {
 #Preview {
     struct Container: View {
         @State var selected: Set<Project> = []
-        @State var acts: Set<String> = []
         @StateObject var player = Player()
         var body: some View {
             NavigationView {
                 ProjectsView(
                     player: player,
-                    selectedPortfolio: $selected,
-                    selectedActivities: $acts
+                    selectedPortfolio: $selected
                 )
             }
         }

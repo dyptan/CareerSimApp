@@ -1,16 +1,26 @@
 import CoreGraphics
 
 enum GameConstants {
-    /// One spare-time slot per year, shared across activities, projects,
-    /// certifications, and licenses (they all draw from `selectedActivities`).
-    /// The player commits to a single self-improvement each year, whatever
-    /// their life stage — kept deliberately simple.
-    static let maxSoftActivitiesPerYear: Int = 1
+    /// One spare-time slot per year, shared across hobbies, certifications, and
+    /// licenses (they all draw from `selectedActivities`). The player commits to
+    /// a single self-improvement each year, whatever their life stage — kept
+    /// deliberately simple. (Side projects are free and no longer use this slot.)
+    static let maxHobbiesPerYear: Int = 1
     static let trainingActivitySlotCost: Int = 1
+
+    /// Realistic mode: how many professional events (summits, conferences,
+    /// networking mixers) the player can attend in one year. Separate from the
+    /// hobby/training slot — events cost money rather than the spare-time slot.
+    static let maxEventsPerYear: Int = 2
 
     /// Realistic mode: how many side hustles the player can take on in one year.
     /// Spare time is limited, so monetizing talents competes for the same hours.
     static let maxSideHustlesPerYear: Int = 2
+
+    /// Realistic mode: how many competitions (athletic or e-sports) the player
+    /// can enter in one year. Each costs an entry fee and is a skill-based shot
+    /// at prize money and a reputation-building achievement.
+    static let maxCompetitionsPerYear: Int = 2
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700
 

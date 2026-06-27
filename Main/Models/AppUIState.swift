@@ -7,10 +7,12 @@ final class AppUIState: ObservableObject {
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showProjectsSheet: Bool = false
-    @Published var showActivitiesSheet: Bool = false
+    @Published var showHobbiesSheet: Bool = false
     @Published var showCertificationsSheet: Bool = false
     @Published var showLicensesSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
+    @Published var showEventsSheet: Bool = false
+    @Published var showCompetitionsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
     // Selections
@@ -21,6 +23,13 @@ final class AppUIState: ObservableObject {
     /// Ids of the side hustles the player is attempting this year (see
     /// `SideHustleCatalog`). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
+    /// Ids of the professional events the player is attending this year (see
+    /// `EventCatalog`). Their cost/effects apply on attendance; cleared by
+    /// `Player.advanceYear`.
+    @Published var selectedEvents: Set<String> = []
+    /// Ids of the competitions the player is entering this year (see
+    /// `CompetitionCatalog`). Resolved and cleared by `Player.advanceYear`.
+    @Published var selectedCompetitions: Set<String> = []
 
     // Misc
     @Published var yearsLeftToGraduation: Int?
@@ -47,7 +56,7 @@ final class AppUIState: ObservableObject {
         yearsLeftToGraduation: Int? = nil,
         decisionText: String = "",
         showProjectsSheet: Bool = false,
-        showActivitiesSheet: Bool = false,
+        showHobbiesSheet: Bool = false,
         showCertificationsSheet: Bool = false,
         showLicensesSheet: Bool = false,
         showRetirementSheet: Bool = false
@@ -62,7 +71,7 @@ final class AppUIState: ObservableObject {
         self.yearsLeftToGraduation = yearsLeftToGraduation
         self.decisionText = decisionText
         self.showProjectsSheet = showProjectsSheet
-        self.showActivitiesSheet = showActivitiesSheet
+        self.showHobbiesSheet = showHobbiesSheet
         self.showCertificationsSheet = showCertificationsSheet
         self.showLicensesSheet = showLicensesSheet
         self.showRetirementSheet = showRetirementSheet
@@ -73,10 +82,12 @@ final class AppUIState: ObservableObject {
         showTertiarySheet = false
         showCareersSheet = true
         showProjectsSheet = false
-        showActivitiesSheet = false
+        showHobbiesSheet = false
         showCertificationsSheet = false
         showLicensesSheet = false
         showSideHustlesSheet = false
+        showEventsSheet = false
+        showCompetitionsSheet = false
         showRetirementSheet = false
         hasSelectedMode = false
         showGoalSheet = false
@@ -86,6 +97,8 @@ final class AppUIState: ObservableObject {
         selectedPortfolio = []
         selectedCertifications = []
         selectedSideHustles = []
+        selectedEvents = []
+        selectedCompetitions = []
         yearsLeftToGraduation = nil
         decisionText = ""
     }

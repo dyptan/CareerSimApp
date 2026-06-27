@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ActivitiesView: View {
+struct HobbiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
 
@@ -14,21 +14,21 @@ struct ActivitiesView: View {
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
-    private var stageActivities: [Activity] {
-        activities.filter { $0.stages.contains(currentStage) }
+    private var stageHobbies: [Hobby] {
+        hobbies.filter { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
         VStack {
 
             HStack(spacing: 6) {
-                Text("Activities this year:")
+                Text("Hobbies this year:")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text("\(selectedActivities.count)/\(GameConstants.maxSoftActivitiesPerYear)")
+                Text("\(selectedActivities.count)/\(GameConstants.maxHobbiesPerYear)")
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(
-                        selectedActivities.count >= GameConstants.maxSoftActivitiesPerYear
+                        selectedActivities.count >= GameConstants.maxHobbiesPerYear
                             ? .red : .primary
                     )
             }
@@ -39,10 +39,10 @@ struct ActivitiesView: View {
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(stageActivities, id: \.label) { activity in
+                    ForEach(stageHobbies, id: \.label) { hobby in
                         // Each ability rendered once, prefixed with a Nx multiplier
                         // when the boost is greater than 1 (e.g. "2x🧠 🪡 🎤").
-                        let pictos: String = activity.abilities
+                        let pictos: String = hobby.abilities
                             .compactMap { ability -> String? in
                                 let kp = ability.keyPath as PartialKeyPath<SoftSkills>
                                 guard let pic = skillPictogramByKeyPath[kp] else { return nil }
@@ -50,9 +50,9 @@ struct ActivitiesView: View {
                             }
                             .joined(separator: " ")
 
-                        // One line per soft skill the activity boosts, with the
+                        // One line per soft skill the hobby boosts, with the
                         // exact +N gain so the player knows what they're getting.
-                        let hintMessage: String = activity.abilities
+                        let hintMessage: String = hobby.abilities
                             .map { ability -> String in
                                 let kp = ability.keyPath as PartialKeyPath<SoftSkills>
                                 let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
@@ -61,20 +61,20 @@ struct ActivitiesView: View {
                             }
                             .joined(separator: "\n")
 
-                        let isLocked = player.lockedActivities.contains(activity.label)
-                        let atLimit = selectedActivities.count >= GameConstants.maxSoftActivitiesPerYear
-                        let isSelected = selectedActivities.contains(activity.label)
+                        let isLocked = player.lockedHobbies.contains(hobby.label)
+                        let atLimit = selectedActivities.count >= GameConstants.maxHobbiesPerYear
+                        let isSelected = selectedActivities.contains(hobby.label)
 
                         HStack(spacing: 8) {
                             Toggle(
-                                "\(activity.label) \n \(pictos)",
+                                "\(hobby.label) \n \(pictos)",
                                 isOn: Binding(
                                     get: { isSelected },
                                     set: { isOn in
                                         if isOn && !atLimit {
-                                            player.selectActivity(activity, into: &selectedActivities)
+                                            player.selectHobby(hobby, into: &selectedActivities)
                                         } else if !isOn {
-                                            player.deselectActivity(activity, from: &selectedActivities)
+                                            player.deselectHobby(hobby, from: &selectedActivities)
                                         }
                                     }
                                 )
@@ -87,13 +87,13 @@ struct ActivitiesView: View {
                                 isLocked
                                     ? "Locked after year end"
                                     : ((!isSelected && atLimit)
-                                        ? "You can take up to \(GameConstants.maxSoftActivitiesPerYear) activities this year."
+                                        ? "You can take up to \(GameConstants.maxHobbiesPerYear) hobbies this year."
                                         : "")
                             )
                             .platformToggleStyle()
 
                             InfoHint(
-                                title: activity.label,
+                                title: hobby.label,
                                 message: "Builds:\n\n\(hintMessage)"
                             )
                         }
@@ -108,7 +108,7 @@ struct ActivitiesView: View {
 }
 
 #Preview {
-    ActivitiesView(
+    HobbiesView(
         player: Player(),
         selectedActivities: .constant([])
     )

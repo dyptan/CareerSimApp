@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Lets the player pick which side hustles to attempt this year — monetizing the
-/// talents they've built through hobbies and activities. Mirrors `ActivitiesView`:
+/// talents they've built through hobbies and activities. Mirrors `HobbiesView`:
 /// the catalogue is filtered by life stage and capped per year, but here each row
 /// also shows the upfront stake, the talent-driven success odds, and the upside.
 struct SideHustlesView: View {
@@ -135,6 +135,39 @@ struct SideHustlesView: View {
             )
         }
         .padding(5)
+    }
+}
+
+/// Combined spare-time sheet that joins the money-making **Side Hustles** with
+/// the free, skill-gated **Side Projects** (portfolio) under one roof, switched
+/// by a segmented control.
+struct SideWorkView: View {
+    @ObservedObject var player: Player
+    @Binding var selectedSideHustles: Set<String>
+    @Binding var selectedPortfolio: Set<Project>
+
+    enum Section: String, CaseIterable, Identifiable {
+        case hustles = "Side Hustles"
+        case projects = "Side Projects"
+        var id: String { rawValue }
+    }
+    @State private var section: Section = .hustles
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Picker("", selection: $section) {
+                ForEach(Section.allCases) { Text($0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .padding([.horizontal, .top])
+
+            switch section {
+            case .hustles:
+                SideHustlesView(player: player, selectedSideHustles: $selectedSideHustles)
+            case .projects:
+                ProjectsView(player: player, selectedPortfolio: $selectedPortfolio)
+            }
+        }
     }
 }
 

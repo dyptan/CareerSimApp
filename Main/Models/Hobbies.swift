@@ -3,9 +3,10 @@ struct WeightedAbility {
     let weight: Int
 }
 
-// Age-driven life stages that gate which activities a player can pick.
-// Tagged on each Activity; ActivitiesView filters the catalogue by the
-// player's current stage.
+// Age-driven life stages that gate which hobbies a player can pick.
+// Tagged on each Hobby; HobbiesView filters the catalogue by the
+// player's current stage. (Paid professional networking — summits,
+// conferences — lives separately in `Event` / `EventCatalog`.)
 enum LifeStage: String, CaseIterable, Hashable {
     case child       // 7–10  (primary school)
     case teen        // 11–17 (middle / high school)
@@ -32,23 +33,23 @@ enum LifeStage: String, CaseIterable, Hashable {
     }
 }
 
-struct Activity {
+struct Hobby {
     let label: String
     let abilities: [WeightedAbility]
-    /// Stages in which this activity is offered. Most options are stage-specific
-    /// (Math Olympiad only in school, Networking Events only after college),
-    /// but a few classics (Reading Books, Sports) span the whole life.
+    /// Stages in which this hobby is offered. Most options are stage-specific
+    /// (Math Olympiad only in school), but a few classics (Reading Books,
+    /// Sports) span the whole life.
     let stages: Set<LifeStage>
 }
 
-// Master catalogue. ActivitiesView filters by `LifeStage.forAge(player.age)`
-// so a 7-year-old sees playground games while a 30-year-old sees networking
-// events and gym sessions.
-let activities: [Activity] = [
+// Master catalogue. HobbiesView filters by `LifeStage.forAge(player.age)`
+// so a 7-year-old sees playground games while a 30-year-old sees the gym
+// and home-DIY options. Professional networking is handled by `Event`.
+let hobbies: [Hobby] = [
 
     // MARK: - Childhood-specific (7–10)
 
-    Activity(
+    Hobby(
         label: "Playground & Outdoor Games",
         abilities: [
             .init(keyPath: \.resilienceAndEndurance, weight: 2),
@@ -57,7 +58,7 @@ let activities: [Activity] = [
         ],
         stages: [.child]
     ),
-    Activity(
+    Hobby(
         label: "Building Blocks & LEGO",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
@@ -66,7 +67,7 @@ let activities: [Activity] = [
         ],
         stages: [.child]
     ),
-    Activity(
+    Hobby(
         label: "Pretend Play & Make-Believe",
         abilities: [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
@@ -75,7 +76,7 @@ let activities: [Activity] = [
         ],
         stages: [.child]
     ),
-    Activity(
+    Hobby(
         label: "Helping Around the House",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
@@ -84,7 +85,7 @@ let activities: [Activity] = [
         ],
         stages: [.child]
     ),
-    Activity(
+    Hobby(
         label: "Family Board Games",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -93,7 +94,7 @@ let activities: [Activity] = [
         ],
         stages: [.child]
     ),
-    Activity(
+    Hobby(
         label: "Pet Care",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -106,7 +107,7 @@ let activities: [Activity] = [
 
     // MARK: - Physical (mostly all-stage)
 
-    Activity(
+    Hobby(
         label: "Sports and Athletics",
         abilities: [
             .init(keyPath: \.resilienceAndEndurance, weight: 2),
@@ -115,7 +116,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Dancing and Choreography",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
@@ -127,7 +128,7 @@ let activities: [Activity] = [
 
     // MARK: - Performing arts / creative
 
-    Activity(
+    Hobby(
         label: "Music Playing and Composing",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
@@ -137,7 +138,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Drawing and Sketching",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
@@ -147,7 +148,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Theatre and Acting",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
@@ -156,7 +157,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Photography and Cinematography",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
@@ -166,7 +167,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Journalism, Blogging, Podcasting",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
@@ -179,7 +180,7 @@ let activities: [Activity] = [
 
     // MARK: - Academic / analytical
 
-    Activity(
+    Hobby(
         label: "Chess and Strategy Games",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
@@ -188,7 +189,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Coding and Programming",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
@@ -198,7 +199,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Robotics Club",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
@@ -208,7 +209,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult]
     ),
-    Activity(
+    Hobby(
         label: "Math Olympiad",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
@@ -216,7 +217,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen]
     ),
-    Activity(
+    Hobby(
         label: "Science Fair",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
@@ -224,7 +225,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen]
     ),
-    Activity(
+    Hobby(
         label: "Language Learning",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
@@ -234,7 +235,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Reading Books",
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
@@ -247,7 +248,7 @@ let activities: [Activity] = [
 
     // MARK: - Social / leadership (school-era)
 
-    Activity(
+    Hobby(
         label: "Debate Club",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
@@ -257,7 +258,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult]
     ),
-    Activity(
+    Hobby(
         label: "Student Council / Leadership",
         abilities: [
             .init(keyPath: \.leadershipAndInfluence, weight: 2),
@@ -268,7 +269,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult]
     ),
-    Activity(
+    Hobby(
         label: "Model UN",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
@@ -277,7 +278,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult]
     ),
-    Activity(
+    Hobby(
         label: "Lemonade Stand & Selling",
         abilities: [
             .init(keyPath: \.persuasionAndNegotiation, weight: 2),
@@ -287,7 +288,7 @@ let activities: [Activity] = [
         ],
         stages: [.child, .teen]
     ),
-    Activity(
+    Hobby(
         label: "Hanging Out with Friends",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 1),
@@ -299,7 +300,7 @@ let activities: [Activity] = [
 
     // MARK: - Young Adult & Working Life
 
-    Activity(
+    Hobby(
         label: "Gym & Personal Fitness",
         abilities: [
             .init(keyPath: \.resilienceAndEndurance, weight: 2),
@@ -308,7 +309,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Yoga & Meditation",
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
@@ -317,25 +318,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
-        label: "Professional Networking Events",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 2),
-            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Activity(
-        label: "Conference Attendance",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Activity(
+    Hobby(
         label: "Side Project / Freelance Gig",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -346,7 +329,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Mentoring Juniors",
         abilities: [
             .init(keyPath: \.leadershipAndInfluence, weight: 2),
@@ -356,7 +339,7 @@ let activities: [Activity] = [
         ],
         stages: [.adult]
     ),
-    Activity(
+    Hobby(
         label: "Volunteering in the Community",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 1),
@@ -365,7 +348,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Babysitting & Caregiving",
         abilities: [
             .init(keyPath: \.empathyAndInterpersonalCare, weight: 2),
@@ -374,7 +357,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult]
     ),
-    Activity(
+    Hobby(
         label: "Personal Finance & Investing",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -383,7 +366,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Parenting",
         abilities: [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
@@ -393,7 +376,7 @@ let activities: [Activity] = [
         ],
         stages: [.adult]
     ),
-    Activity(
+    Hobby(
         label: "Travelling Abroad",
         abilities: [
             .init(keyPath: \.outdoorAndWeatherResilience, weight: 1),
@@ -403,7 +386,7 @@ let activities: [Activity] = [
         ],
         stages: [.youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Cooking & Culinary Arts",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
@@ -412,7 +395,7 @@ let activities: [Activity] = [
         ],
         stages: [.teen, .youngAdult, .adult]
     ),
-    Activity(
+    Hobby(
         label: "Home DIY & Repairs",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),

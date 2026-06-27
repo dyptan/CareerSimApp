@@ -335,7 +335,7 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
     /// strong, relevant soft skills make a pass likely but never certain.
     /// Simplified mode stays deterministic (always passes).
     func passProbability(for player: Player) -> Double {
-        if player.gameMode == .simplified { return 1.0 }
+        if player.isSimplified { return 1.0 }
         let thresholds = softSkillThresholds
         guard !thresholds.isEmpty else { return 0.95 }
         var fitSum = 0.0

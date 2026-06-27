@@ -6,17 +6,21 @@ struct RetirementView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Retirement")
+            Text("Game Over")
                 .font(.title2.bold())
                 .padding(.top)
 
-            Text("You've retired at age \(player.age).")
+            Text("You wrapped up your career at age \(player.age).")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Text("Money earned: \(player.savings)")
+            Text("Money earned: \(player.savings.formatted(.number)) $")
                 .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text("🏅 Score: \(player.leaderboardScore.formatted(.number)) (savings ÷ age)")
+                .font(.subheadline.bold())
                 .foregroundStyle(.secondary)
 
             Button {
@@ -35,6 +39,7 @@ struct RetirementView: View {
         #if os(macOS)
         .frame(minWidth: 700, minHeight: 400)
         #endif
+        .onAppear { GameCenterManager.shared.submit(score: player.leaderboardScore) }
     }
 }
 
@@ -45,13 +50,11 @@ struct GoalView: View {
     @ObservedObject var appUIState: AppUIState
 
     private var achievementText: String {
-        switch player.gameMode {
-        case .simplified:
+        if player.isSimplified {
             let role = player.currentOccupation?.id ?? "a top leadership role"
             return "You climbed all the way to the top — you're now \(role)! 👔"
-        case .realistic:
-            return "You banked your first million! 💰\nSavings: \(player.savings.formatted(.number)) $"
         }
+        return "You banked your first million! 💰\nSavings: \(player.savings.formatted(.number)) $"
     }
 
     var body: some View {
@@ -60,7 +63,7 @@ struct GoalView: View {
                 .font(.largeTitle.bold())
                 .padding(.top)
 
-            Text(player.gameMode.goalHeadline)
+            Text(player.difficulty.goalHeadline)
                 .font(.title3)
                 .foregroundStyle(.secondary)
 
@@ -97,5 +100,6 @@ struct GoalView: View {
         #if os(macOS)
         .frame(minWidth: 700, minHeight: 400)
         #endif
+        .onAppear { GameCenterManager.shared.submit(score: player.leaderboardScore) }
     }
 }
