@@ -43,6 +43,9 @@
 		AA00000000000000000000B4 /* EducationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B3 /* EducationProfile.swift */; };
 		AA00000000000000000000B6 /* InfoHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B5 /* InfoHint.swift */; };
 		AA00000000000000000000C2 /* EducationTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* EducationTier.swift */; };
+		AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* InstitutionTiersView.swift */; };
+		AA00000000000000000000C6 /* JobOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* JobOffersView.swift */; };
+		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		AA00000000000000000000D2 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D1 /* Difficulty.swift */; };
 		AA00000000000000000000E2 /* SideHustle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E1 /* SideHustle.swift */; };
 		AA00000000000000000000E4 /* SideHustlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E3 /* SideHustlesView.swift */; };
@@ -52,9 +55,6 @@
 		AA00000000000000000000EC /* CompetitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000EB /* CompetitionsView.swift */; };
 		AA00000000000000000000EE /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000ED /* GameCenterManager.swift */; };
 		AA00000000000000000000F3 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000F2 /* ConfettiSwiftUI */; };
-		AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* InstitutionTiersView.swift */; };
-		AA00000000000000000000C6 /* JobOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* JobOffersView.swift */; };
-		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
@@ -85,6 +85,7 @@
 		551B66F52EBFB91900092DC7 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
 		551B66F72EBFB9CD00092DC7 /* HobbiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HobbiesView.swift; sourceTree = "<group>"; };
 		553578DD2EE39324003C8BD2 /* JobCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCatalog.swift; sourceTree = "<group>"; };
+		555CC1092FEFF9CC00426E7E /* CareersApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CareersApp.entitlements; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5598FA282EE62F57006C4D36 /* CertificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationsView.swift; sourceTree = "<group>"; };
 		5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesView.swift; sourceTree = "<group>"; };
@@ -110,6 +111,9 @@
 		AA00000000000000000000B3 /* EducationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationProfile.swift; sourceTree = "<group>"; };
 		AA00000000000000000000B5 /* InfoHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoHint.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C1 /* EducationTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationTier.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C3 /* InstitutionTiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstitutionTiersView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C5 /* JobOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOffersView.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000D1 /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E1 /* SideHustle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustle.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E3 /* SideHustlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustlesView.swift; sourceTree = "<group>"; };
@@ -118,9 +122,6 @@
 		AA00000000000000000000E9 /* Competition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Competition.swift; sourceTree = "<group>"; };
 		AA00000000000000000000EB /* CompetitionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompetitionsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000ED /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
-		AA00000000000000000000C3 /* InstitutionTiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstitutionTiersView.swift; sourceTree = "<group>"; };
-		AA00000000000000000000C5 /* JobOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOffersView.swift; sourceTree = "<group>"; };
-		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		C20D77EA24B665D7002E7AEA /* CareersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -142,6 +143,7 @@
 		C20D77E124B665D7002E7AEA = {
 			isa = PBXGroup;
 			children = (
+				555CC1092FEFF9CC00426E7E /* CareersApp.entitlements */,
 				C20D77EC24B665D7002E7AEA /* Main */,
 				C20D77EB24B665D7002E7AEA /* Products */,
 			);
@@ -304,25 +306,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		AA00000000000000000000F1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		AA00000000000000000000F2 /* ConfettiSwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AA00000000000000000000F1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
-			productName = ConfettiSwiftUI;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
 		C20D77E824B665D7002E7AEA /* Resources */ = {
@@ -533,6 +516,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = CareersApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 0;
 				DEAD_CODE_STRIPPING = YES;
@@ -582,6 +566,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = CareersApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 0;
 				DEAD_CODE_STRIPPING = YES;
@@ -647,6 +632,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA00000000000000000000F1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AA00000000000000000000F2 /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000000000000000000F1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C20D77E224B665D7002E7AEA /* Project object */;
 }
