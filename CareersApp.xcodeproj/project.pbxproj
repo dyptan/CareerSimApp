@@ -21,7 +21,6 @@
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* CertificationsView.swift */; };
 		5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */; };
-		5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
@@ -44,7 +43,6 @@
 		AA00000000000000000000B6 /* InfoHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B5 /* InfoHint.swift */; };
 		AA00000000000000000000C2 /* EducationTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* EducationTier.swift */; };
 		AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* InstitutionTiersView.swift */; };
-		AA00000000000000000000C6 /* JobOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* JobOffersView.swift */; };
 		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		AA00000000000000000000D2 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D1 /* Difficulty.swift */; };
 		AA00000000000000000000E2 /* SideHustle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E1 /* SideHustle.swift */; };
@@ -89,7 +87,6 @@
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5598FA282EE62F57006C4D36 /* CertificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationsView.swift; sourceTree = "<group>"; };
 		5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesView.swift; sourceTree = "<group>"; };
-		5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
 		55A6ED002E9542000033B674 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
@@ -112,7 +109,6 @@
 		AA00000000000000000000B5 /* InfoHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoHint.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C1 /* EducationTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationTier.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C3 /* InstitutionTiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstitutionTiersView.swift; sourceTree = "<group>"; };
-		AA00000000000000000000C5 /* JobOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOffersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000D1 /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E1 /* SideHustle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustle.swift; sourceTree = "<group>"; };
@@ -233,14 +229,12 @@
 				AA00000000000000000000EB /* CompetitionsView.swift */,
 				5598FA282EE62F57006C4D36 /* CertificationsView.swift */,
 				5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */,
-				5598FA2E2EE62F7E006C4D36 /* ProjectsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
 				AA00000000000000000000A3 /* DecisionView.swift */,
 				AA00000000000000000000A5 /* RetirementView.swift */,
 				AA00000000000000000000A7 /* DegreesSubmenuView.swift */,
 				AA00000000000000000000B5 /* InfoHint.swift */,
 				AA00000000000000000000C3 /* InstitutionTiersView.swift */,
-				AA00000000000000000000C5 /* JobOffersView.swift */,
 				AA00000000000000000000C7 /* SeniorityOffersView.swift */,
 			);
 			path = Views;
@@ -348,7 +342,6 @@
 				55189E932F4DD9E9005FAC2C /* AppUIState.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Certification.swift in Sources */,
-				5598FA2F2EE62F7E006C4D36 /* ProjectsView.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */,
 				550618402ED2245400C56E99 /* Project.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
@@ -370,7 +363,6 @@
 				AA00000000000000000000EC /* CompetitionsView.swift in Sources */,
 				AA00000000000000000000EE /* GameCenterManager.swift in Sources */,
 				AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */,
-				AA00000000000000000000C6 /* JobOffersView.swift in Sources */,
 				AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

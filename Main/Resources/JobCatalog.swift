@@ -2,8 +2,7 @@ import Foundation
 
 enum JobCatalog {
     /// Builds the full job database. Salaries are the present-day published
-    /// figures; a company tier and a small random variance are applied per
-    /// offer when each `Job` is constructed.
+    /// figures; a small random variance is applied when each `Job` is constructed.
     static func allJobs() -> [Job] {
 
         // MARK: - Detailed jobs (hand-tuned soft skills)
@@ -261,7 +260,6 @@ enum JobCatalog {
         let perTitleSoft: [String: SoftSkills] = [
             // Sales / persuasion
             "Retail Salesperson":             .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, presentationAndStorytelling: 1),
-            "Customer Service Representative": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1),
             "Sales Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 4, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
             "Marketing Specialist":           .init(analyticalReasoningAndProblemSolving: 1, creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
             "Recruiter":                      .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
@@ -284,11 +282,9 @@ enum JobCatalog {
             "Financial Analyst":              .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
 
             // Care / empathy
-            "Counselor":                      .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
             "Social Worker":                  .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
             "Psychologist":                   .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, presentationAndStorytelling: 1),
             "Nursing Aide":                   .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2),
-            "Personal Care Aide":             .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3),
             "Flight Attendant":               .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, presentationAndStorytelling: 1),
             "Waiter/Waitress":                .init(communicationAndNetworking: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
             "Receptionist":                   .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 1),
@@ -317,13 +313,6 @@ enum JobCatalog {
             "Streamer":                       .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 1, stressResistanceAndEmotionalRegulation: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
             "Esports Caster":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, stressResistanceAndEmotionalRegulation: 1, presentationAndStorytelling: 4),
             "Esports Coach":                  .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
-
-            // Tech academia (deep analysis, teaching, grant-winning, coding)
-            "Computer Science Lecturer":               .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
-            "Assistant Professor (Computer Science)":  .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
-            "Professor (Computer Science)":            .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 3),
-            "AI Research Scientist":                   .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
-            "Machine Learning Researcher":             .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 1, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 1),
         ]
 
         // Resolves a title's soft-skill requirements: per-title override if one
@@ -333,15 +322,12 @@ enum JobCatalog {
         }
 
         // Hard requirements that are intrinsic to the role — legally required
-        // licences or industry-standard certs every employer expects, regardless
-        // of company tier. Tier-specific extras are layered on at runtime by
-        // `Job.effectiveRequirements`.
+        // licences or industry-standard certs the field expects.
         func defaultHard(for title: String, category: JobCategory) -> HardSkills {
-            // Senior-grade credentials matched on the *full* title so they gate
-            // only the senior/standalone rung, not a ladder's entry rung (a junior
-            // analyst shouldn't need the CFA). These certs only bite at
-            // credentials-tier employers (enterprise / government); smaller firms
-            // still hire these roles on portfolio.
+            // Senior-grade credentials matched on the *full* title so they attach
+            // only to the senior/standalone rung, not a ladder's entry rung (a
+            // junior analyst shouldn't need the CFA). In regulated fields these
+            // certs hard-gate hiring; elsewhere they're a helpful signal only.
             switch title {
             case "Accountant", "Senior Accountant":
                 return HardSkills(certifications: [.cpa])
@@ -419,7 +405,7 @@ enum JobCatalog {
                 return HardSkills(certifications: [.medicalAssistant])
             case "Dental Assistant":
                 return HardSkills(certifications: [.dentalAssistant])
-            case "Nursing Aide", "Personal Care Aide":
+            case "Nursing Aide":
                 return HardSkills(certifications: [.cna])
 
             // Law / public services
@@ -427,7 +413,7 @@ enum JobCatalog {
                 return HardSkills(licenses: [.bar])
             case "Paralegal":
                 return HardSkills(certifications: [.paralegal])
-            case "Firefighter":
+            case "Firefighter", "Senior Firefighter", "Lead Firefighter":
                 return HardSkills(certifications: [.emt])
             case "Security Guard":
                 return HardSkills(licenses: [.securityGuard])
@@ -440,8 +426,9 @@ enum JobCatalog {
             case "Chef":
                 return HardSkills(portfolioItems: [.recipeBook], certifications: [.culinaryDiploma])
 
-            // Education — small/private schools want to see a sample lesson plan
-            case "Elementary School Teacher", "Secondary School Teacher":
+            // Education — teachers are hired on a sample lesson plan (the cert is
+            // a helpful extra, not a hard gate in this non-regulated field).
+            case "Teacher", "Senior Teacher", "Lead Teacher":
                 return HardSkills(portfolioItems: [.lessonPlan], certifications: [.teachingCertificate])
 
             // Tech / IT — entry roles realistically open with a cert; agencies also expect a portfolio
@@ -455,10 +442,6 @@ enum JobCatalog {
             // Design — smaller studios hire on portfolio
             case "UX/UI Designer":
                 return HardSkills(portfolioItems: [.website])
-            case "UX Researcher":
-                return HardSkills(portfolioItems: [.presentation])
-            case "Industrial Designer":
-                return HardSkills(portfolioItems: [.presentation])
             case "Graphic Artist":
                 return HardSkills(portfolioItems: [.paintingPortfolio])
 
@@ -473,7 +456,7 @@ enum JobCatalog {
             // Writing / research — clips, drafts, published papers
             case "Content Writer", "Journalist":
                 return HardSkills(portfolioItems: [.paper])
-            case "Research Scientist":
+            case "Research Scientist", "Senior Research Scientist", "Principal Research Scientist":
                 return HardSkills(portfolioItems: [.paper])
 
             // Agriculture — pesticides require a state applicator licence
@@ -483,20 +466,12 @@ enum JobCatalog {
             // Creative freelance — hired on a body of work
             case "Illustrator", "Tattoo Artist", "Animator", "Fashion Designer":
                 return HardSkills(portfolioItems: [.paintingPortfolio])
-            case "Voice Actor":
-                return HardSkills(portfolioItems: [.musicAlbum])
             case "Content Creator":
                 return HardSkills(portfolioItems: [.photoPortfolio])
             case "Novelist":
                 return HardSkills(portfolioItems: [.paper])
             case "Interior Designer":
                 return HardSkills(portfolioItems: [.presentation])
-
-            // Tech academia — published research (ML/AI researchers also ship code)
-            case "Computer Science Lecturer", "Assistant Professor (Computer Science)", "Professor (Computer Science)":
-                return HardSkills(portfolioItems: [.paper])
-            case "AI Research Scientist", "Machine Learning Researcher":
-                return HardSkills(portfolioItems: [.paper, .library])
 
             default:
                 return HardSkills()
@@ -514,6 +489,13 @@ enum JobCatalog {
                 return 3
             case "Business Analyst", "Financial Analyst", "Marketing Specialist":
                 return 2
+            // Security is a second-career field — hired out of IT/networking, not
+            // straight from school.
+            case "Cybersecurity Analyst":
+                return 2
+            // Anchors are promoted after years of on-air reporting.
+            case "News Anchor":
+                return 3
             case "Judge":
                 return 10
             case "Lawyer":
@@ -593,34 +575,32 @@ enum JobCatalog {
         // (id, category, income, icon, summary, minEQF)
         // EQF: 1=Primary, 2=Middle, 3=High School, 4=Vocational, 5=Bachelor, 6=Master, 7=Doctorate
         let titles: [(String, JobCategory, Int, String, String, Int)] = [
-            // Service / Retail / Hospitality
-            ("Retail Salesperson",              .service,      30_000, "🛍️", "Sells products directly to customers.",                           3),
-            ("Cashier",                         .service,      26_000, "💳", "Handles customer payments and transactions.",                      2),
-            ("Customer Service Representative", .service,      36_000, "☎️", "Assists customers with inquiries and support.",                    3),
-            ("Waiter/Waitress",                 .service,      24_000, "🍽️", "Serves food and beverages to customers.",                          2),
-            ("Food Preparation Worker",         .service,      25_000, "🍳", "Prepares ingredients and supports kitchen staff.",                  2),
-            ("Dishwasher",                      .service,      23_000, "🧽", "Cleans dishes and kitchenware in food-service settings.",          1),
-            ("Fast Food Worker",                .service,      24_000, "🍔", "Takes orders and prepares food at quick-service counters.",        1),
-            ("Housekeeper",                     .service,      27_000, "🧺", "Cleans and tidies rooms in homes, hotels, and facilities.",        1),
-            ("Security Guard",                  .service,      32_000, "🛡️", "Protects property and ensures safety.",                           3),
-            ("Janitor/Cleaner",                 .service,      34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
-            ("Chef",                            .service,      52_000, "👨‍🍳", "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", 3),
-            ("Baker",                           .service,      32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
+            // Retail
+            ("Retail Salesperson",              .retail,       30_000, "🛍️", "Sells products directly to customers.",                           3),
+            ("Cashier",                         .retail,       26_000, "💳", "Handles customer payments and transactions.",                      2),
+
+            // Hospitality — restaurants, hotels, and events
+            ("Waiter/Waitress",                 .hospitality,  24_000, "🍽️", "Serves food and beverages to customers.",                          2),
+            ("Food Preparation Worker",         .hospitality,  25_000, "🍳", "Prepares ingredients and supports kitchen staff.",                  2),
+            ("Dishwasher",                      .hospitality,  23_000, "🧽", "Cleans dishes and kitchenware in food-service settings.",          1),
+            ("Fast Food Worker",                .hospitality,  24_000, "🍔", "Takes orders and prepares food at quick-service counters.",        1),
+            ("Housekeeper",                     .hospitality,  27_000, "🧺", "Cleans and tidies rooms in hotels and facilities.",                1),
+            ("Janitor/Cleaner",                 .hospitality,  34_000, "🧹", "Maintains cleanliness of buildings and facilities.",               1),
+            ("Flight Attendant",                .hospitality,  48_000, "🛫", "Ensures passenger safety and comfort.",                            3),
+            ("Baker",                           .hospitality,  32_000, "🥐", "Bakes bread, pastries, and other goods.",                          3),
+            ("Chef",                            .hospitality,  52_000, "👨‍🍳", "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", 3),
+            ("Hotel Manager",                   .hospitality,  72_000, "🏨", "Oversees hotel operations and staff.",                             5),
+            ("Event Planner",                   .hospitality,  55_000, "🎉", "Organizes events and logistics.",                                  5),
+
+            // Personal Services — personal and general services
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
-            ("Hotel Manager",                   .service,      72_000, "🏨", "Oversees hotel operations and staff.",                             5),
-            ("Event Planner",                   .service,      55_000, "🎉", "Organizes events and logistics.",                                  5),
-            ("Flight Attendant",                .service,      48_000, "🛫", "Ensures passenger safety and comfort.",                            3),
-            ("Translator/Interpreter",          .service,      50_000, "🌐", "Converts text between languages and provides live interpretation.", 5),
 
-            // Education
-            ("Teaching Assistant",              .education,    30_000, "✏️", "Supports a classroom teacher with small groups and prep.",         2),
-            ("Tutor",                           .education,    36_000, "📖", "Coaches students one-on-one in specific subjects.",                3),
-            ("Preschool Teacher",               .education,    38_000, "🧸", "Teaches and cares for children before grade school.",              4),
-            ("Elementary School Teacher",       .education,    47_000, "🏫", "Teaches basic subjects to children.",                              5),
-            ("Secondary School Teacher",        .education,    50_000, "📚", "Teaches specialized subjects to teens.",                           5),
-            ("Special Education Teacher",       .education,    58_000, "🤟", "Teaches students with diverse learning needs.",                    5),
-            ("Librarian",                       .education,    60_000, "📕", "Curates collections and helps patrons find information.",          6),
+            // Education — two tracks: an accessible Tutor ladder and a
+            // degree-gated Teacher ladder (Senior/Lead rungs in the seniority
+            // ladders below).
+            ("Tutor",                           .education,    34_000, "📖", "Coaches students one-on-one in specific subjects.",                3),
+            ("Teacher",                         .education,    48_000, "🏫", "Teaches a class of students their core subjects.",                 5),
 
             // Health
             ("Physician",                       .health,      220_000, "🩺", "Diagnoses and treats illnesses.",                                  7),
@@ -629,18 +609,15 @@ enum JobCatalog {
             ("Pharmacist",                      .health,      132_000, "💊", "Dispenses medications and advises patients.",                      6),
             ("Medical Assistant",               .health,       37_000, "🩺", "Supports clinical staff with patient care.",                       3),
             ("Nursing Aide",                    .health,       30_000, "🛏️", "Assists patients with daily living tasks.",                        3),
-            ("Personal Care Aide",              .health,       29_000, "🧑‍⚕️", "Assists clients with daily living activities.",                 3),
             ("Dental Assistant",                .health,       38_000, "🦷", "Supports dental professionals during procedures.",                  3),
             ("Dentist",                         .health,      160_000, "🦷", "Diagnoses and treats dental conditions.",                          7),
             ("Physiotherapist",                 .health,       65_000, "🤸", "Provides rehabilitation and physical therapy.",                    6),
-            ("Occupational Therapist",          .health,       62_000, "🧰", "Helps patients regain daily living skills.",                       6),
             ("Psychologist",                    .health,       90_000, "🧠", "Studies behavior and provides therapy.",                           7),
             ("Paramedic",                       .health,       52_000, "🚑", "Provides emergency medical care.",                                 4),
             ("Veterinarian",                    .health,      105_000, "🐾", "Cares for animal health and treatments.",                          7),
 
             // Social
-            ("Social Worker",                   .service,      48_000, "🤝", "Supports vulnerable individuals and families.",                    5),
-            ("Counselor",                       .service,      56_000, "🗣️", "Provides mental health and guidance services.",                    6),
+            ("Social Worker",                   .publicServices,48_000, "🤝", "Supports vulnerable individuals and families.",                    5),
 
             // Technology
             ("Software Engineer",               .technology,  115_000, "💻", "Designs and implements software systems.",                         5),
@@ -660,6 +637,7 @@ enum JobCatalog {
             ("Business Analyst",                .business,     80_000, "📈", "Analyzes business needs and recommends solutions.",                 5),
             ("Management Consultant",           .business,    140_000, "🧠", "Advises companies on strategy and operations.",                    6),
             ("Investment Banker",               .business,    175_000, "🏦", "Structures deals, raises capital, and advises on M&A.",            6),
+            ("Translator/Interpreter",          .business,     50_000, "🌐", "Converts text between languages and provides live interpretation.", 5),
 
             // Administration — back-office functions common to every business
             ("Office Clerk",                    .administration, 33_000, "🗂️", "Performs general administrative duties.",                        3),
@@ -715,22 +693,21 @@ enum JobCatalog {
             ("Lawyer",                          .law,         125_000, "⚖️", "Provides legal advice and represents clients.",                    7),
             ("Paralegal",                       .law,          48_000, "📑", "Assists lawyers with research and documentation.",                  3),
             ("Judge",                           .law,         155_000, "👨‍⚖️", "Presides over court proceedings and rulings.",                   7),
-            ("Sanitation Worker",               .publicServices,42_000,"🗑️", "Collects and disposes of municipal waste.",                        1),
-            ("Mail Carrier",                    .publicServices,50_000,"📮", "Delivers mail and packages along a postal route.",                 2),
-            ("Correctional Officer",            .publicServices,50_000,"🔑", "Supervises inmates and maintains order in facilities.",            3),
-            ("Police Officer",                  .publicServices,67_000,"👮", "Enforces laws and protects the public.",                           3),
-            ("Firefighter",                     .publicServices,57_000,"🔥", "Responds to fires and emergencies.",                               3),
+            // Public Services — three tracks, each climbed by seniority:
+            // Law Enforcement (Police Officer), Firefighting/Rescue (Firefighter),
+            // and Municipal Services (Municipal Worker). Entry rungs here; the
+            // Senior/Lead rungs live in the seniority ladders below.
+            ("Police Officer",                  .publicServices,67_000,"👮", "Enforces laws and protects the public on patrol.",                3),
+            ("Firefighter",                     .publicServices,57_000,"🔥", "Responds to fires, accidents, and rescue emergencies.",            3),
+            ("Municipal Worker",                .publicServices,40_000,"🧹", "Keeps the city running — sanitation, parks, roads, and facilities.", 2),
+            ("Security Guard",                  .publicServices,32_000,"🛡️", "Protects property and ensures public safety.",                     3),
 
             // Science
-            ("Lab Assistant",                   .science,      35_000, "🥼", "Preps samples and equipment and records results.",                 3),
-            ("Research Scientist",              .science,      95_000, "🔬", "Conducts scientific experiments and studies.",                     7),
-            ("Lab Technician",                  .science,      44_000, "🧪", "Supports laboratory testing and analysis.",                        4),
-            ("Biotechnologist",                 .science,      82_000, "🧬", "Works on biological product development.",                         6),
-            ("Chemist",                         .science,      72_000, "⚗️", "Performs chemical analyses and research.",                         5),
-            ("Environmental Scientist",         .science,      68_000, "🌍", "Studies environmental systems and impacts.",                       5),
-            ("Statistician",                    .science,     100_000, "📐", "Designs studies and analyzes data for sound conclusions.",         6),
-            ("Astronomer",                      .science,     120_000, "🔭", "Studies celestial bodies and cosmic phenomena.",                   7),
-            ("Physicist",                       .science,     130_000, "🧲", "Investigates matter, energy, and the laws of nature.",             7),
+            // Science — two tracks: a Lab Technician trade ladder and a
+            // doctorate-gated Research Scientist ladder (Senior/Lead/Principal
+            // rungs live in the seniority ladders below).
+            ("Lab Technician",                  .science,      42_000, "🧪", "Runs lab tests, preps samples, and records results.",              4),
+            ("Research Scientist",              .science,      90_000, "🔬", "Designs and runs experiments to answer scientific questions.",     7),
 
             // Engineering
             ("Architect",                       .engineering,  88_000, "📐", "Designs building plans and structures.",                           6),
@@ -743,8 +720,6 @@ enum JobCatalog {
             // Design
             ("Graphic Artist",                  .design,       50_000, "🎨", "Creates visual artwork for media.",                                4),
             ("UX/UI Designer",                  .design,       82_000, "🖥️", "Designs user interfaces and experiences.",                         5),
-            ("Industrial Designer",             .design,       72_000, "🛠️", "Designs physical products and systems.",                           5),
-            ("UX Researcher",                   .design,       75_000, "🔎", "Studies user behavior to inform design.",                          5),
             ("Fashion Designer",                .design,       55_000, "👗", "Designs clothing collections and sells to buyers.",                4),
             ("Fashion Stylist",                 .design,       45_000, "🧥", "Styles outfits and looks for clients, shoots, and brands.",        3),
 
@@ -768,8 +743,6 @@ enum JobCatalog {
             // Agriculture
             ("Farmhand",                        .agriculture,  28_000, "🧑‍🌾", "Plants, harvests, and tends crops and livestock.",               1),
             ("Farmer",                          .agriculture,  32_000, "🚜", "Operates agricultural production and livestock.",                  2),
-            ("Agricultural Equipment Operator", .agriculture,  40_000, "🛻", "Operates tractors and harvesters on large farms.",                 2),
-            ("Agronomist",                      .agriculture,  75_000, "🌱", "Applies soil and crop science to improve yields.",                 5),
 
             // Arts / Creative
             ("Painter (Artist)",                .showBusiness,         32_000, "🎨", "Creates original artwork for sale or exhibition.",                 1),
@@ -777,12 +750,10 @@ enum JobCatalog {
             ("Actor",                           .showBusiness,         38_000, "🎭", "Performs in theater, film, or television.",                        1),
             ("Dancer",                          .showBusiness,         35_000, "💃", "Performs choreographed routines on stage and screen.",             1),
             ("DJ",                              .showBusiness,         45_000, "🎧", "Mixes and performs music for clubs, events, and radio.",           1),
-            ("Sculptor",                        .showBusiness,         33_000, "🗿", "Creates three-dimensional artwork from various materials.",        1),
             ("Composer",                        .showBusiness,         60_000, "🎼", "Writes original scores for film, games, and ensembles.",           5),
 
             // Creative — self-employed / freelance
             ("Illustrator",                     .showBusiness,         40_000, "🖍️", "Draws illustrations for books, games, and brands as a freelancer.", 3),
-            ("Voice Actor",                     .showBusiness,         42_000, "🎙️", "Records voices for ads, animation, and audiobooks.",               1),
             ("Tattoo Artist",                   .showBusiness,         46_000, "🖋️", "Designs and inks custom tattoos for clients.",                     2),
             ("Novelist",                        .showBusiness,        42_000, "📖", "Writes and self-publishes novels and stories.",                    1),
             ("Content Creator",                 .showBusiness,        45_000, "🎥", "Builds an audience with videos, posts, and streams.",              1),
@@ -849,20 +820,27 @@ enum JobCatalog {
             ("Senior Registered Nurse",      .health,       110_000, "🩺", "Experienced floor nurse mentoring newer staff.",                                  5, 5),
             ("Charge Registered Nurse",      .health,       130_000, "🩺", "Coordinates the nursing shift and triages escalations — the top of the nursing ladder.", 5, 8),
 
-            // Science
-            ("Postdoctoral Research Scientist", .science,     62_000, "🔬", "Time-limited research role following doctoral studies — the entry rung of the research-scientist track.", 7, 0),
+            // Science — Laboratory track (base "Lab Technician")
+            ("Senior Lab Technician",        .science,       58_000, "🧪", "Leads lab testing and trains junior technicians.",                                4, 5),
+            ("Lead Lab Technician",          .science,       74_000, "🔬", "Runs the lab's daily operations, safety, and quality.",                           5, 9),
+            // Science — Research track (base "Research Scientist", doctorate-gated)
             ("Senior Research Scientist",    .science,      145_000, "🔬", "Leads research programs and publishes original work.",                            7, 6),
             ("Principal Research Scientist", .science,      195_000, "🔬", "Sets research agenda for the lab and supervises projects.",                       7, 10),
 
             // Hospitality (chef ladder)
-            ("Sous Chef",                    .service,       65_000, "👨‍🍳", "Second-in-command in the kitchen, runs daily service.",                          4, 3),
-            ("Head Chef",                    .service,       92_000, "👨‍🍳", "Owns menu, sourcing, and kitchen leadership.",                                   4, 6),
-            ("Executive Chef",               .service,      140_000, "👨‍🍳", "Oversees multiple kitchens and culinary brand.",                                 4, 10),
+            ("Sous Chef",                    .hospitality,   65_000, "👨‍🍳", "Second-in-command in the kitchen, runs daily service.",                          4, 3),
+            ("Head Chef",                    .hospitality,   92_000, "👨‍🍳", "Owns menu, sourcing, and kitchen leadership.",                                   4, 6),
+            ("Executive Chef",               .hospitality,  140_000, "👨‍🍳", "Oversees multiple kitchens and culinary brand.",                                 4, 10),
 
-            // Public services
-            ("Police Sergeant",              .publicServices, 88_000, "👮", "Supervises a squad of officers in the field.",                                    3, 5),
-            ("Police Lieutenant",            .publicServices,110_000, "👮", "Commands a precinct shift and oversees sergeants.",                               3, 10),
-            ("Fire Captain",                 .publicServices, 90_000, "🚒", "Leads a firefighting crew on emergency response.",                                3, 8),
+            // Public Services — Law Enforcement track (base "Police Officer")
+            ("Senior Police Officer",        .publicServices, 95_000, "👮", "Veteran officer leading patrols and mentoring recruits.",                         3, 5),
+            ("Lead Police Officer",          .publicServices,130_000, "🚓", "Commands a precinct and sets policing strategy.",                                 4, 12),
+            // Public Services — Firefighting / Rescue track (base "Firefighter")
+            ("Senior Firefighter",           .publicServices, 85_000, "🚒", "Experienced firefighter leading a crew on emergency calls.",                      3, 6),
+            ("Lead Firefighter",             .publicServices,120_000, "🚒", "Commands a fire station and emergency operations.",                               4, 12),
+            // Public Services — Municipal Services track (base "Municipal Worker")
+            ("Senior Municipal Worker",      .publicServices, 55_000, "🧰", "Seasoned public-works hand running crews and equipment.",                         2, 5),
+            ("Lead Municipal Worker",        .publicServices, 72_000, "🏛️", "Supervises municipal crews, budgets, and city services.",                         3, 10),
 
             // Construction trades
             ("Master Electrician",           .construction,  92_000, "🔌", "Licensed master responsible for jobs and apprentices.",                            4, 5),
@@ -885,21 +863,13 @@ enum JobCatalog {
             ("Esports Caster",               .showBusiness,        52_000, "🎙️", "Casts and commentates competitive matches for the crowd.",                        3, 2),
             ("Esports Coach",                .showBusiness,        58_000, "🎧", "Drills a competitive team's strategy, drafts, and practice.",                      3, 3),
 
-            // Academia — tech / computer-science research track (degree-gated)
-            ("Computer Science Lecturer",            .science,  78_000, "🧑‍🏫", "Teaches programming and CS courses at a university.",                       6, 2),
-            ("Assistant Professor (Computer Science)", .science, 105_000, "🎓", "Tenure-track CS academic balancing teaching and research.",                 7, 3),
-            ("Professor (Computer Science)",         .science, 160_000, "🏛️", "Senior CS academic leading a lab, students, and grant funding.",            7, 10),
-            ("AI Research Scientist",                .science, 175_000, "🤖", "Publishes novel AI research at a university or industry lab.",               7, 3),
-            ("Machine Learning Researcher",          .science, 125_000, "🧮", "Designs and evaluates ML models and publishes results.",                    7, 2),
 
-            // Public services — field progression + chief capstones
-            ("Detective",                    .publicServices, 86_000, "🕵️", "Investigates crimes and builds cases for prosecution.",                            3, 5),
-            ("Police Chief",                 .publicServices,135_000, "🚓", "Commands a police department and sets its strategy.",                              4, 14),
-            ("Fire Chief",                   .publicServices,125_000, "🚒", "Commands a fire department and emergency operations.",                             4, 14),
-
-            // Education — school leadership capstones
-            ("School Principal",             .education,     110_000, "🍎", "Leads a school's staff, students, and academic program.",                          6, 8),
-            ("School Superintendent",        .education,     155_000, "🎓", "Runs an entire school district and its principals.",                              7, 12),
+            // Education — Tutor track (base "Tutor", accessible)
+            ("Senior Tutor",                 .education,      46_000, "📖", "Experienced tutor running group sessions and mentoring tutors.",                  4, 5),
+            ("Lead Tutor",                   .education,      60_000, "📖", "Runs a tutoring center's staff, curriculum, and clients.",                        5, 9),
+            // Education — Teacher track (base "Teacher", degree-gated)
+            ("Senior Teacher",               .education,      66_000, "📚", "Veteran teacher mentoring staff and leading a department.",                       5, 6),
+            ("Lead Teacher",                 .education,      92_000, "🍎", "Heads the school's academics and leads the teaching staff.",                      6, 11),
 
             // Creative leadership
             ("Art Director",                 .showBusiness,          100_000, "🖼️", "Sets the visual direction for campaigns, films, or publications.",                5, 8),
@@ -924,9 +894,6 @@ enum JobCatalog {
             ("Apprentice Electrician",       .construction,  40_000, "🔌", "Trains on the job toward a journeyman electrician licence.",                       3, 0),
             ("Apprentice Plumber",           .construction,  40_000, "🚰", "Learns the plumbing trade under a licensed plumber.",                             3, 0),
             ("Apprentice Carpenter",         .construction,  34_000, "🪚", "Learns carpentry on site under a master carpenter.",                              3, 0),
-            // Education — classroom progression beneath school leadership
-            ("Senior Elementary School Teacher", .education, 62_000, "🏫", "Experienced teacher mentoring staff and leading a grade level.",                  5, 6),
-            ("Senior Secondary School Teacher",  .education, 66_000, "📚", "Veteran subject teacher heading a department.",                                   5, 6),
             // Medicine — attending rung between resident physician and CMO
             ("Senior Physician",             .health,       280_000, "🩺", "Attending physician supervising residents and complex cases.",                    7, 5),
         ]
@@ -935,12 +902,12 @@ enum JobCatalog {
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
         }
 
-        // MARK: - Entrepreneurial ladder (lives under Business)
+        // MARK: - Entrepreneurial ladder (its own Entrepreneurship category)
         // Founders aren't gated on degrees; success is a capital-backed bet
         // (see `Job.founderSuccessProbability`). Each rung needs prior
         // entrepreneurship experience, so the ladder is climbed in order. They
         // carry a `targetCapital`, which is what flags them as founder roles
-        // (`Job.isEntrepreneurial`) regardless of the Business category.
+        // (`Job.isEntrepreneurial`).
         // (id, income, icon, summary, minYears, targetCapital)
         let founderTitles: [(String, Int, String, String, Int, Int)] = [
             ("Side Hustler",          28_000, "🛒", "Sells homemade goods or services on the side to test an idea.",     0,   2_000),
@@ -949,7 +916,7 @@ enum JobCatalog {
             ("Serial Entrepreneur",  180_000, "🏢", "Launches venture after venture, scaling and selling companies.",    5, 200_000),
         ]
         for (title, income, icon, summary, years, capital) in founderTitles {
-            extras.append(fullJob(id: title, category: .business, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
+            extras.append(fullJob(id: title, category: .entrepreneurship, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
         }
 
         var all: [Job] = [rn, lightDriver]

@@ -62,168 +62,32 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    func requirements(for player: Player) -> ProjectRequirements {
-        func softSkillCurrent(_ label: String) -> Int {
-            switch label {
-            case "Creativity":
-                return player.softSkills.creativityAndInsightfulThinking
-            case "Communication":
-                return player.softSkills.communicationAndNetworking
-            case "Problem Solving":
-                return player.softSkills.analyticalReasoningAndProblemSolving
-            case "Organization":
-                return player.softSkills.timeManagementAndPlanning
-            case "Attention to Detail":
-                return player.softSkills.carefulnessAndAttentionToDetail
-            case "Perseverance":
-                return player.softSkills.selfDisciplineAndPerseverance
-            case "Finger Precision":
-                return player.softSkills.tinkeringAndFingerPrecision
-            default:
-                return 0
-            }
-        }
-
-        func soft(_ label: String, _ emoji: String, required: Int) -> ProjectRequirements.SoftRequirement {
-            ProjectRequirements.SoftRequirement(
-                label: label,
-                emoji: emoji,
-                required: required,
-                current: softSkillCurrent(label)
-            )
-        }
-
+    /// The soft-skill axes this portfolio project draws on. As a private project
+    /// it resolves like a side hustle: the player's levels in these talents drive
+    /// the odds that the project comes together into a usable portfolio piece.
+    var talents: [WritableKeyPath<SoftSkills, Int>] {
         switch self {
         case .app:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 3),
-                    soft("Communication", "🗣️", required: 2)
-                ],
-                hardSkills: []
-            )
-
+            return [\.creativityAndInsightfulThinking, \.communicationAndNetworking]
         case .website:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Communication", "🗣️", required: 3),
-                    soft("Organization", "🗂️", required: 2)
-                ],
-                hardSkills: []
-            )
-
+            return [\.communicationAndNetworking, \.timeManagementAndPlanning]
         case .library:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Problem Solving", "🧩", required: 4),
-                    soft("Attention to Detail", "🔎", required: 3)
-                ],
-                hardSkills: []
-            )
-
+            return [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail]
         case .paper:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Communication", "🗣️", required: 4),
-                    soft("Organization", "🗂️", required: 3)
-                ],
-                hardSkills: []
-            )
-
+            return [\.communicationAndNetworking, \.timeManagementAndPlanning]
         case .presentation:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Communication", "🗣️", required: 5),
-                    soft("Creativity", "🎨", required: 2)
-                ],
-                hardSkills: []
-            )
-
+            return [\.communicationAndNetworking, \.creativityAndInsightfulThinking]
         case .paintingPortfolio:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 4),
-                    soft("Attention to Detail", "🔎", required: 3),
-                    soft("Finger Precision", "🛠️", required: 2)
-                ],
-                hardSkills: []
-            )
-
+            return [\.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail, \.tinkeringAndFingerPrecision]
         case .photoPortfolio:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 3),
-                    soft("Attention to Detail", "🔎", required: 3)
-                ],
-                hardSkills: []
-            )
-
+            return [\.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail]
         case .musicAlbum:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 4),
-                    soft("Perseverance", "🏆", required: 3)
-                ],
-                hardSkills: []
-            )
-
+            return [\.creativityAndInsightfulThinking, \.selfDisciplineAndPerseverance]
         case .recipeBook:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Creativity", "🎨", required: 3),
-                    soft("Attention to Detail", "🔎", required: 3),
-                    soft("Organization", "🗂️", required: 2)
-                ],
-                hardSkills: []
-            )
-
+            return [\.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail, \.timeManagementAndPlanning]
         case .lessonPlan:
-            return ProjectRequirements(
-                softSkills: [
-                    soft("Communication", "🗣️", required: 3),
-                    soft("Organization", "🗂️", required: 3),
-                    soft("Attention to Detail", "🔎", required: 2)
-                ],
-                hardSkills: []
-            )
+            return [\.communicationAndNetworking, \.timeManagementAndPlanning, \.carefulnessAndAttentionToDetail]
         }
-    }
-}
-
-public struct ProjectRequirements {
-    public struct SoftRequirement {
-        public let label: String
-        public let emoji: String
-        public let required: Int
-        public let current: Int
-        public init(label: String, emoji: String, required: Int, current: Int) {
-            self.label = label
-            self.emoji = emoji
-            self.required = required
-            self.current = current
-        }
-    }
-    public struct HardRequirement {
-        public let label: String
-        public let emoji: String
-        public let required: Int
-        public let current: Int
-        public init(label: String, emoji: String, required: Int, current: Int) {
-            self.label = label
-            self.emoji = emoji
-            self.required = required
-            self.current = current
-        }
-    }
-
-    public let minEQF: Int?
-    public let softSkills: [SoftRequirement]
-    public let hardSkills: [HardRequirement]
-
-    public init(minEQF: Int? = nil, softSkills: [SoftRequirement] = [], hardSkills: [HardRequirement] = []) {
-        self.minEQF = minEQF
-        self.softSkills = softSkills
-        self.hardSkills = hardSkills
     }
 }
 
