@@ -20,6 +20,12 @@ build/
 # CocoaPods
 Pods/
 *.xcworkspace
+# ...but keep the SPM resolved file from the project's embedded workspace,
+# so CI can resolve dependencies without automatic resolution.
+!CareersApp.xcodeproj/project.xcworkspace/
+!CareersApp.xcodeproj/project.xcworkspace/xcshareddata/
+!CareersApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+!CareersApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # macOS
 .DS_Store
