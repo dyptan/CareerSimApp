@@ -8,7 +8,7 @@ struct FooterView: View {
     @State private var showFinishConfirm = false
 
     var body: some View {
-        // Projects, Certifications, Licenses, Side Hustles, and Events are
+        // Private Projects, Certifications, Licenses, and Events are
         // realistic-mode features, so hide them in simplified mode. Hobbies
         // stay — they build the soft skills that gate school admission.
         if player.isSimplified {
@@ -38,7 +38,7 @@ struct FooterView: View {
                 Button("Licenses") { appUIState.showLicensesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
 
-                Button("Hustles & Projects") { appUIState.showSideHustlesSheet = true }
+                Button("Private Projects") { appUIState.showSideHustlesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
 
                 // Competitions are a teen-onward pursuit (athletic / e-sports).

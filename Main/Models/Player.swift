@@ -52,6 +52,14 @@ final class Player: ObservableObject {
     /// player wasn't promoted). Surfaced in the header alongside the confetti.
     @Published var lastPromotionRaisePct: Int = 0
 
+    /// One-shot trigger for the promotion congratulations pop-up, set the moment a
+    /// raise is earned; the alert clears it when dismissed (the header note,
+    /// driven by `lastPromotionRaisePct`, lingers for the rest of the year).
+    @Published var showPromotionAlert: Bool = false
+
+    /// The promotion pop-up's message, capturing the raise and the new pay.
+    @Published var promotionMessage: String = ""
+
     /// Whether a downturn cost the player their job in the year just advanced.
     /// Drives the header layoff notice so a sudden firing doesn't go unnoticed.
     @Published var lostJobThisYear: Bool = false
@@ -118,8 +126,8 @@ final class Player: ObservableObject {
     /// `advanceYear`.
     @Published var attemptedCertificationIds: Set<String> = []
     /// Jobs offered to the player this year. Re-shuffled (and re-rolled for
-    /// company tier / salary variance) every time `advanceYear` runs, so the
-    /// listing feels different each game year.
+    /// salary variance) every time `advanceYear` runs, so the listing feels
+    /// different each game year.
     @Published var availableJobs: [Job] = []
 
     init(
@@ -331,15 +339,18 @@ final class Player: ObservableObject {
         return total / Double(Player.promotionSkills.count)
     }
 
-    /// Annual promotion probability for a job: the employer tier's base chance
-    /// scaled by promotion readiness (40%–100% of the base, so soft skills move
-    /// the odds while the tier keeps startups ahead of enterprises), plus a
+    /// Annual promotion probability for a job: a flat base chance
+    /// (`GameConstants.promotionBaseChance`) scaled by promotion readiness
+    /// (40%–100% of the base, so soft skills move the odds), plus a
     /// professional-network bonus for the job's industry — attending that
     /// field's summits and conferences makes a raise more likely — and a tenure
     /// bonus for years already spent in the role.
     func promotionChance(for job: Job) -> Double {
-        let base = job.companyTier.promotionBaseChance
-        guard base > 0 else { return 0 }
+        // Unskilled jobs don't promote in place — in real life a raise-and-title
+        // bump rarely lands in work needing no post-secondary training; the
+        // player advances by applying upward instead.
+        guard !job.isLowSkilled else { return 0 }
+        let base = GameConstants.promotionBaseChance
         let core = base * (0.4 + 0.6 * promotionReadiness)
         // Tenure in the current role makes a promotion more likely — seasoned
         // employees are next in line — with diminishing returns (capped +0.10).
@@ -358,10 +369,11 @@ final class Player: ObservableObject {
 
         hardSkills.certifications.formUnion(appUIState.selectedCertifications)
         hardSkills.licenses.formUnion(appUIState.selectedLicenses)
-        hardSkills.portfolioItems.formUnion(appUIState.selectedPortfolio)
+        // Portfolio pieces are no longer granted up front — they're earned by
+        // successfully resolving portfolio projects in the private-projects loop
+        // below (see "Private projects").
 
         lockedCertifications.formUnion(appUIState.selectedCertifications)
-        lockedPortfolio.formUnion(appUIState.selectedPortfolio)
         lockedLicenses.formUnion(appUIState.selectedLicenses)
 
         appUIState.selectedActivities.removeAll()
@@ -428,7 +440,6 @@ final class Player: ObservableObject {
         // saves only the personal-saving-rate share of income (the rest is taxes
         // and living costs); simplified mode banks the whole paycheck.
         if let job = currentOccupation {
-            currentOccupation?.companyTier = CompanyTier.random(category: job.category, income: job.income, isEntrepreneurial: job.isEntrepreneurial)
             let saved = isSimplified
                 ? job.annualIncome
                 : Int((Double(job.annualIncome) * difficulty.savingsRate).rounded())
@@ -437,24 +448,28 @@ final class Player: ObservableObject {
             experienceByRole[job.baseTitle, default: 0] += 1
 
             // Promotion (realistic mode): a yearly shot at a raise, its odds set
-            // by the player's promotion-readiness soft skills and the employer
-            // tier (startups promote fast, enterprises slowly). A win bumps pay
-            // and fires the celebration confetti. Frozen during a downturn — no
-            // raises while the economy is in a recession.
+            // by the player's promotion-readiness soft skills, tenure, and network.
+            // A win bumps pay and fires the celebration confetti. Frozen during a
+            // downturn — no raises while the economy is in a recession.
             if !isSimplified, !recessionThisYear, let current = currentOccupation,
                Double.random(in: 0...1) < promotionChance(for: current) {
-                let raise = Double.random(in: current.companyTier.promotionRaise)
+                let raise = Double.random(in: GameConstants.promotionRaise)
                 let newIncome = Int((Double(current.annualIncome) * (1 + raise)).rounded())
                 currentOccupation?.annualIncome = newIncome
                 lastPromotionRaisePct = Int((raise * 100).rounded())
                 celebrationTrigger += 1
+                showPromotionAlert = true
+                promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
             }
         }
 
-        // Side hustles: resolve every venture taken on this year. Each stakes its
-        // capital up front — paid even if it pushes savings into debt — success
-        // pays out (banked in full, unlike salary) and a flop salvages half the
-        // stake. The year's net is surfaced in the header.
+        // Private projects: resolve every venture taken on this year. Money
+        // ventures stake capital up front — paid even if it pushes savings into
+        // debt — and a success pays out (banked in full, unlike salary) while a
+        // flop salvages half the stake; the year's net is surfaced in the header.
+        // Portfolio projects risk no money: a success grants the portfolio piece,
+        // a flop simply yields nothing. A successful show-business venture also
+        // banks a fame trophy (reputation that helps land Show Business roles).
         var sideHustleNet = 0
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id] else { continue }
@@ -462,6 +477,14 @@ final class Player: ObservableObject {
             let outcome = hustle.resolve(for: softSkills)
             savings += outcome.credit
             sideHustleNet += outcome.credit - hustle.startupCost
+            if let earned = outcome.grantedPortfolio {
+                hardSkills.portfolioItems.insert(earned)
+                lockedPortfolio.insert(earned)
+            }
+            if let fame = outcome.grantedFame {
+                achievements.append(fame)
+                celebrationTrigger += 1
+            }
         }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
@@ -485,28 +508,21 @@ final class Player: ObservableObject {
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
-    /// market and rolls the player's current job against its tier's job-loss
-    /// risk. The downturn is surfaced to the player only through the header
-    /// recession note (see `economyInRecession`), not a pop-up.
+    /// market and rolls the player's current job against the base job-loss risk.
+    /// The downturn is surfaced to the player only through the header recession
+    /// note (see `economyInRecession`), not a pop-up.
     private func applyEconomicTurmoil() {
-        // Hiring freezes for this year's list on two fronts:
-        //  • Unstable employers (startups and freelance/self-employment, whose
-        //    job-loss risk clears the bar) stop hiring entirely.
-        //  • Cyclical, discretionary-spending sectors (travel, dining,
-        //    entertainment, retail) are first to pull postings in a bear market.
-        availableJobs = availableJobs.filter { job in
-            job.companyTier.riskFactor < GameConstants.turmoilUnstableTierRisk
-                && !job.category.isCyclical
-        }
+        // Hiring freezes for this year's list in cyclical, discretionary-spending
+        // sectors (travel, dining, entertainment, retail) — first to pull postings
+        // in a bear market.
+        availableJobs = availableJobs.filter { !$0.category.isCyclical }
 
-        guard let job = currentOccupation else { return }
-        // Job-loss probability is the occupation's calm-economy company-tier risk
-        // amplified by how severe the downturn is on this difficulty: a startup on
-        // the harshest setting is in grave danger (0.22 × 6, capped), while a
-        // government post barely flinches (0.01 × 6 ≈ 6%).
+        guard currentOccupation != nil else { return }
+        // Job-loss probability is the calm-economy base risk amplified by how
+        // severe the downturn is on this difficulty (e.g. 0.08 × 6, capped).
         let lossChance = min(
             GameConstants.turmoilMaxLayoffChance,
-            job.companyTier.riskFactor * difficulty.layoffSeverity
+            GameConstants.baseLayoffRisk * difficulty.layoffSeverity
         )
         if Double.random(in: 0...1) < lossChance {
             currentOccupation = nil
@@ -568,6 +584,8 @@ final class Player: ObservableObject {
         economyInRecession = fresh.economyInRecession
         lastSideHustleEarnings = fresh.lastSideHustleEarnings
         lastPromotionRaisePct = fresh.lastPromotionRaisePct
+        showPromotionAlert = fresh.showPromotionAlert
+        promotionMessage = fresh.promotionMessage
         lostJobThisYear = fresh.lostJobThisYear
         showLayoffAlert = fresh.showLayoffAlert
         age = fresh.age

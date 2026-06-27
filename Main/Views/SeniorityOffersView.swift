@@ -1,36 +1,23 @@
 import SwiftUI
 
-/// Fourth level of the careers nav stack — once the player has picked a base
-/// role and an employer tier, this screen lets them choose a seniority rung
-/// (Junior, Senior, Staff, Principal, ...) before drilling into the
-/// application screen. Only shown when a base role has multiple seniority
-/// variants.
+/// Third level of the careers nav stack — once the player has picked a base
+/// role, this screen lets them choose a seniority rung (Junior, Senior, Staff,
+/// Principal, ...) before drilling into the application screen. Only shown when
+/// a base role has multiple seniority variants.
 struct SeniorityOffersView: View {
     let variants: [Job]
-    /// The chosen employer tier, or `nil` in simplified mode (no company tiers).
-    let tier: CompanyTier?
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
 
     private var baseTitle: String { variants.first?.baseTitle ?? "" }
 
-    private var headerText: String {
-        if let tier {
-            return "Choose a seniority level at \(tier.displayName)."
-        }
-        return "Choose a seniority level."
-    }
+    private var headerText: String { "Choose a seniority level." }
 
-    private var navTitle: String {
-        if let tier { return "\(baseTitle) — \(tier.displayName)" }
-        return baseTitle
-    }
+    private var navTitle: String { baseTitle }
 
-    /// The given variant priced for this screen's context: tier-adjusted in
-    /// realistic mode, or at base salary in simplified mode.
+    /// The given variant priced at its base salary (deterministic, comparable).
     private func offer(for variant: Job) -> Job {
-        if let tier { return variant.atTier(tier) }
-        return variant.atBaseSalary()
+        variant.atBaseSalary()
     }
 
     var body: some View {

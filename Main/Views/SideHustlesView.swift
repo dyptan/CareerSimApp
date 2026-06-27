@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// Lets the player pick which side hustles to attempt this year — monetizing the
-/// talents they've built through hobbies and activities. Mirrors `HobbiesView`:
-/// the catalogue is filtered by life stage and capped per year, but here each row
-/// also shows the upfront stake, the talent-driven success odds, and the upside.
-struct SideHustlesView: View {
+/// The unified **Private Projects** page. It lists money-making ventures
+/// alongside portfolio projects in a single scroll. Both resolve as talent-fit
+/// gambles — the only difference is that a portfolio project risks no money and,
+/// on success, grants a portfolio piece instead of cash. Mirrors `HobbiesView`:
+/// the catalogue is filtered by life stage and capped per year; each row shows
+/// the talent-driven odds and, for money ventures, the upfront stake and upside.
+struct PrivateProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
 
@@ -18,11 +20,19 @@ struct SideHustlesView: View {
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
-    private var stageHustles: [SideHustle] {
-        SideHustleCatalog.all.filter { $0.stages.contains(currentStage) }
+    /// Projects offered this stage. Portfolio pieces the player has already built
+    /// are dropped — a finished piece can't be earned twice.
+    private var stageProjects: [SideHustle] {
+        SideHustleCatalog.all.filter { hustle in
+            guard hustle.stages.contains(currentStage) else { return false }
+            if let reward = hustle.portfolioReward, player.lockedPortfolio.contains(reward) {
+                return false
+            }
+            return true
+        }
     }
 
-    /// Capital already committed to the hustles picked this year.
+    /// Capital already committed to the money ventures picked this year.
     private var committedStake: Int {
         selectedSideHustles.reduce(0) { $0 + (SideHustleCatalog.byId[$1]?.startupCost ?? 0) }
     }
@@ -30,7 +40,7 @@ struct SideHustlesView: View {
     var body: some View {
         VStack {
             HStack(spacing: 6) {
-                Text("Side hustles this year:")
+                Text("Projects this year:")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Text("\(selectedSideHustles.count)/\(GameConstants.maxSideHustlesPerYear)")
@@ -40,14 +50,14 @@ struct SideHustlesView: View {
                             ? .red : .primary
                     )
             }
-            Text("Monetize your talents · savings: \(player.savings.formatted(.number)) $")
+            Text("Make money or build your portfolio · savings: \(player.savings.formatted(.number)) $")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(stageHustles) { hustle in
+                    ForEach(stageProjects) { hustle in
                         row(for: hustle)
                     }
                 }
@@ -106,14 +116,23 @@ struct SideHustlesView: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 10) {
-                        Text(hustle.startupCost == 0
-                             ? "💵 No stake"
-                             : (canAfford
-                                ? "💵 Stake \(hustle.startupCost.formatted(.number)) $"
-                                : "💵 Stake \(hustle.startupCost.formatted(.number)) $ (on credit)"))
-                            .foregroundStyle(canAfford ? Color.secondary : Color.orange)
-                        Text("🎲 ~\(odds)%")
-                        Text("📈 up to \(upside.formatted(.number)) $")
+                        if hustle.isPortfolioProject {
+                            Text("💼 No stake · builds portfolio")
+                            Text("🎲 ~\(odds)%")
+                        } else {
+                            Text(hustle.startupCost == 0
+                                 ? "💵 No stake"
+                                 : (canAfford
+                                    ? "💵 Stake \(hustle.startupCost.formatted(.number)) $"
+                                    : "💵 Stake \(hustle.startupCost.formatted(.number)) $ (on credit)"))
+                                .foregroundStyle(canAfford ? Color.secondary : Color.orange)
+                            Text("🎲 ~\(odds)%")
+                            Text("📈 up to \(upside.formatted(.number)) $")
+                        }
+                        if hustle.buildsFame {
+                            Text("🌟 Fame")
+                                .foregroundStyle(.purple)
+                        }
                     }
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
@@ -125,54 +144,26 @@ struct SideHustlesView: View {
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
                 atLimit && !isSelected
-                    ? "You can take up to \(GameConstants.maxSideHustlesPerYear) side hustles this year."
+                    ? "You can take up to \(GameConstants.maxSideHustlesPerYear) projects this year."
                     : ""
             )
 
             InfoHint(
                 title: "\(hustle.icon) \(hustle.label)",
-                message: "Monetizes:\n\n\(hintMessage)\n\nBuild these talents through activities and hobbies to raise your odds and payout."
+                message: (hustle.isPortfolioProject
+                    ? "Builds on:\n\n\(hintMessage)\n\nA private project risks no money — build these talents through activities and hobbies to raise the odds it comes together into a portfolio piece."
+                    : "Monetizes:\n\n\(hintMessage)\n\nBuild these talents through activities and hobbies to raise your odds and payout.")
+                    + (hustle.buildsFame
+                        ? "\n\n🌟 A successful year earns the “\(hustle.fameAward ?? "")” trophy — fame that boosts your hire odds across Show Business (ad, TV, music, sport, e-sports)."
+                        : "")
             )
         }
         .padding(5)
     }
 }
 
-/// Combined spare-time sheet that joins the money-making **Side Hustles** with
-/// the free, skill-gated **Side Projects** (portfolio) under one roof, switched
-/// by a segmented control.
-struct SideWorkView: View {
-    @ObservedObject var player: Player
-    @Binding var selectedSideHustles: Set<String>
-    @Binding var selectedPortfolio: Set<Project>
-
-    enum Section: String, CaseIterable, Identifiable {
-        case hustles = "Side Hustles"
-        case projects = "Side Projects"
-        var id: String { rawValue }
-    }
-    @State private var section: Section = .hustles
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Picker("", selection: $section) {
-                ForEach(Section.allCases) { Text($0.rawValue).tag($0) }
-            }
-            .pickerStyle(.segmented)
-            .padding([.horizontal, .top])
-
-            switch section {
-            case .hustles:
-                SideHustlesView(player: player, selectedSideHustles: $selectedSideHustles)
-            case .projects:
-                ProjectsView(player: player, selectedPortfolio: $selectedPortfolio)
-            }
-        }
-    }
-}
-
 #Preview {
-    SideHustlesView(
+    PrivateProjectsView(
         player: Player(),
         selectedSideHustles: .constant([])
     )

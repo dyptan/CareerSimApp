@@ -52,26 +52,17 @@ struct JobsView: View {
                     List {
                         ForEach(roleGroups(in: category)) { group in
                             NavigationLink {
-                                if player.isSimplified {
-                                    // No company tiers in simplified mode: go straight
-                                    // to the seniority ladder (or the single role).
-                                    if group.variants.count > 1 {
-                                        SeniorityOffersView(
-                                            variants: group.variants,
-                                            tier: nil,
-                                            player: player,
-                                            showCareersSheet: $showCareersSheet
-                                        )
-                                    } else {
-                                        JobDetail(
-                                            job: group.variants[0].atBaseSalary(),
-                                            player: player,
-                                            showCareersSheet: $showCareersSheet
-                                        )
-                                    }
-                                } else {
-                                    JobOffersView(
+                                // Pick a role, then a seniority rung (or go straight
+                                // to the single role) — no company-tier step.
+                                if group.variants.count > 1 {
+                                    SeniorityOffersView(
                                         variants: group.variants,
+                                        player: player,
+                                        showCareersSheet: $showCareersSheet
+                                    )
+                                } else {
+                                    JobDetail(
+                                        job: group.variants[0].atBaseSalary(),
                                         player: player,
                                         showCareersSheet: $showCareersSheet
                                     )

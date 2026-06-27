@@ -118,6 +118,13 @@ struct RootView: View {
         } message: {
             Text("A downturn hit your employer and your position was cut. You'll need to find a new job — open Careers to start applying.")
         }
+        // Congratulates the player on a promotion — a milestone worth a pop-up.
+        // The header note (player.lastPromotionRaisePct) lingers for the year.
+        .alert("Congratulations! 🎉", isPresented: $player.showPromotionAlert) {
+            Button("Thanks!", role: .cancel) { }
+        } message: {
+            Text(player.promotionMessage)
+        }
         // Celebrates a lucky break — a promotion or a long-shot college
         // admission — fired by bumping `player.celebrationTrigger`. Anchored
         // top-centre so the burst rains over the game view.
@@ -208,10 +215,9 @@ struct RootView: View {
     }
 
     private var sideHustlesContent: some View {
-        SideWorkView(
+        PrivateProjectsView(
             player: player,
-            selectedSideHustles: $appUIState.selectedSideHustles,
-            selectedPortfolio: $appUIState.selectedPortfolio
+            selectedSideHustles: $appUIState.selectedSideHustles
         )
             .padding()
             .toolbar {

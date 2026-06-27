@@ -23,7 +23,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case humanities = "Humanities"
     case hospitality = "Hospitality"
     case fashion = "Fashion"
-    case service = "Service"
+    case service = "Personal Services"
     case manufacturing = "Manufacturing"
     case finance = "Finance"
     case entrepreneurship = "Entrepreneurship"
@@ -72,12 +72,27 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// role's certifications are a HARD hiring requirement at *every* employer
     /// (not just formal ones) — you can't legally or safely practise without the
     /// credential. Required licences are always enforced regardless; this adds
-    /// the certification gate for these fields. Other fields only gate on
-    /// certifications at formal employers (see `CompanyTier.hiringSignal`).
+    /// the certification gate for these fields. Other fields hire on demonstrated
+    /// portfolio work instead (see `Job.hardSkillsMet`).
     var requiresCredentials: Bool {
         switch self {
         case .health, .transportation, .aviation, .maritime,
              .law, .publicServices, .construction:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Professions where a formal degree is legally or practically mandatory to
+    /// practise — you can't be a doctor, lawyer, engineer, scientist, or teacher
+    /// without the qualification, so education stays a HARD hiring gate here. In
+    /// every other field a degree only improves the odds (it's folded into the
+    /// hire-probability score via `Job.educationFitTerm`) but never blocks an
+    /// application — talent, portfolio, and experience can stand in for it.
+    var educationIsMandatory: Bool {
+        switch self {
+        case .health, .law, .engineering, .science, .education:
             return true
         default:
             return false
@@ -108,7 +123,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .humanities: return "🏛️"
         case .hospitality: return "🍽️"
         case .fashion: return "👗"
-        case .service: return "🛍️"
+        case .service: return "🛎️"
         case .manufacturing: return "🧪"
         case .finance: return "💰"
         case .entrepreneurship: return "🚀"
@@ -171,7 +186,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     var description: String {
         switch self {
         case .publicServices:
-            return "Helping your town and country! This can be government, police, firefighters, mail carriers, and more."
+            return "Keeping your town safe and running: police, firefighters, city services, security, and support for families."
         case .education:
             return "Teaching and learning with students, making school fun and helping minds grow."
         case .health:
@@ -193,7 +208,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .law:
             return "Protect rights and follow rules: lawyers, judges, and helpers who know the law."
         case .business:
-            return "Start and run companies, manage money, sell products, and help teams succeed."
+            return "Manage money, sell products, advise companies, and lead teams to succeed."
         case .construction:
             return "Build homes, roads, and cities with tools, machines, and teamwork."
         case .automotive:
@@ -211,11 +226,11 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .humanities:
             return "Study people, history, and culture to understand our world better."
         case .hospitality:
-            return "Welcome guests in hotels, restaurants, and events to make their day great."
+            return "Welcome and care for guests in hotels, restaurants, flights, and events to make their day great."
         case .fashion:
             return "Create clothing and styles, follow trends, and help people express themselves."
         case .service:
-            return "General service work: babysitting, cleaning, and doing errands."
+            return "Personal grooming and beauty services that help people look and feel their best."
         case .manufacturing:
             return "Make products from raw materials: factories, workshops, and artisans."
         case .finance:
@@ -233,9 +248,9 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     var examples: String {
         switch self {
         case .publicServices:
-            return "Government, military, police, firefighters, mail carriers"
+            return "Police, firefighter, municipal worker, security guard, social worker"
         case .education:
-            return "Teacher, librarian, tutor, school counselor"
+            return "Tutor, teacher, department head"
         case .health:
             return "Doctor, nurse, dentist, paramedic, therapist"
         case .engineering:
@@ -255,7 +270,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .law:
             return "Lawyer, paralegal, judge, legal assistant"
         case .business:
-            return "Manager, marketer, accountant, entrepreneur"
+            return "Analyst, sales manager, consultant, translator"
         case .construction:
             return "Carpenter, electrician, plumber, site manager"
         case .automotive:
@@ -269,15 +284,15 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .retail:
             return "Sales associate, merchandiser, store manager"
         case .science:
-            return "Biologist, chemist, physicist, researcher"
+            return "Lab technician, research scientist"
         case .humanities:
             return "Historian, anthropologist, philosopher"
         case .hospitality:
-            return "Hotel staff, chef, server, concierge"
+            return "Chef, server, housekeeper, flight attendant, hotel manager"
         case .fashion:
             return "Fashion designer, stylist, tailor, merchandiser"
         case .service:
-            return "Dog sitter, pet groomer, personal trainer"
+            return "Hairdresser, barber, beautician"
         case .manufacturing:
             return "Plumber, electrician, welder"
         case .finance:

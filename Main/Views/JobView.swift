@@ -16,7 +16,7 @@ struct JobDetail: View {
 
     private var isSimplified: Bool { player.isSimplified }
     private var requiredSoft: SoftSkills { job.requirements.softSkills }
-    private var requiredHard: HardSkills { job.effectiveRequirements.hardSkills }
+    private var requiredHard: HardSkills { job.requirements.hardSkills }
     private var allRequirementsMet: Bool { job.allRequirementsMet(for: player) }
     private var hireProbability: Double {
         job.hireProbability(for: player, requestedSalary: requestedSalary)
@@ -37,7 +37,8 @@ struct JobDetail: View {
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
-            return "Hire chance is 0% until every required degree, license, \(job.companyTier.hiringSignal == .credentials || job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place."
+            let degreeClause = job.educationIsMandatory ? "degree, " : ""
+            return "Hire chance is 0% until every required \(degreeClause)license, \(job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place."
         }
 
         let scoredCount = SoftSkills.allAxes.count
@@ -45,13 +46,13 @@ struct JobDetail: View {
         let skillScore = Double(matched) / Double(scoredCount)
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
-        let tier = job.companyTier.hireDifficulty
+        let education = job.educationFitTerm(for: player)
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
         let experience = job.experienceFitTerm(for: player)
         let fame = job.category == .showBusiness ? player.achievementHireBonus : 0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let rawSum = 0.2 + skillContribution + prestige + tier + opportunity + network + experience + fame
+        let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame
         let raw = rawSum * salaryFit
         let final = max(0.05, min(0.95, raw))
 
@@ -77,13 +78,12 @@ struct JobDetail: View {
         let playerYears = job.relevantYears(for: player)
 
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Company tier + Experience fit + Network\(job.category == .showBusiness ? " + Fame" : "") + Difficulty) × Salary fit
+        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(job.category == .showBusiness ? " + Fame" : "") + Difficulty) × Salary fit
 
         Your numbers right now:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
-        • Degree prestige (\(prestigeLabel)): \(signed(prestige))
-        • Company tier (\(job.companyTier.displayName)): \(signed(tier))
+        • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
         • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
         • Network (\(job.category.rawValue)): \(signed(network))\(job.category == .showBusiness ? "\n        • Fame (\(player.achievements.count) achievement\(player.achievements.count == 1 ? "" : "s")): \(signed(fame))" : "")
         • Difficulty bonus: \(signed(opportunity))
@@ -123,22 +123,6 @@ struct JobDetail: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
-            if !isSimplified {
-                HStack {
-                    Text("Company")
-                    Text(job.companyTier.displayName)
-                        .font(.caption.bold())
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.secondary.opacity(0.12))
-                        .foregroundStyle(.secondary)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .font(.subheadline)
-                    .frame(maxWidth: .infinity ,alignment: .leading)
-                    .padding(.horizontal)
-            }
-
             Divider()
             Text("Requirements")
                 .font(.title)
@@ -147,11 +131,11 @@ struct JobDetail: View {
 
 
 
-            Text("Education:")
+            Text(job.educationIsMandatory ? "Education:" : "Education (preferred):")
                 .font(.headline)
                 .frame(maxWidth: .infinity ,alignment: .leading)
                 .padding()
-            
+
             let eduPlayerLevel = player.degrees.last?.eqf ?? 0
             let eduRequired = job.requirements.education.minEQF
             RequirementRow(
@@ -161,6 +145,14 @@ struct JobDetail: View {
             )
             .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
             .padding(.horizontal)
+
+            if !job.educationIsMandatory && eduRequired > 0 {
+                Text("Not required for this role — but a relevant degree improves your hire chances.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+            }
 
             if let acceptedProfiles = job.requirements.education.acceptedProfiles, !acceptedProfiles.isEmpty {
                 let playerProfiles = Set(player.degrees.compactMap { $0.profile })
@@ -196,7 +188,7 @@ struct JobDetail: View {
                 .padding(.horizontal)
 
                 if !isSimplified {
-                    Text("\(baseYears) yr required to qualify. \(job.companyTier.displayName) values about \(job.expectedYearsExperience) yr — every extra year raises your hire chance.")
+                    Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -284,7 +276,7 @@ struct JobDetail: View {
                     .padding(.horizontal)
 
                     HStack(spacing: 6) {
-                        Text(allRequirementsMet ? "✓ You qualify for this role." : "🔒 Get the degree and experience first.")
+                        Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
                             .font(.subheadline)
                             .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
                         Spacer()
@@ -461,11 +453,14 @@ struct JobDetail: View {
                 ? player.foundVenture(job, investedCapital: Int(investedCapital))
                 : player.applyForJob(job, requestedSalary: Int(requestedSalary))
             if success {
+                // Hired (or venture launched): close the careers dialog right away
+                // so the player lands back on the game view — the header shows the
+                // new job and the celebration plays there.
                 applicationResult = .hired
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                    showCareersSheet.toggle()
-                }
+                showCareersSheet = false
             } else {
+                // Rejected: keep the dialog open and show the outcome inline so the
+                // player can adjust their salary ask or try a different role.
                 applicationResult = .rejected
             }
         } label: {

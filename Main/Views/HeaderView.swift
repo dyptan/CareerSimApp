@@ -58,7 +58,7 @@ struct HeaderView: View {
                 }
 
                 if player.lastSideHustleEarnings != 0 {
-                    Text("🛠️ Side hustles \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
+                    Text("🛠️ Private projects \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
                         .font(.caption2)
                         .foregroundStyle(player.lastSideHustleEarnings >= 0 ? .green : .red)
                 }
@@ -96,7 +96,6 @@ struct HeaderView: View {
             showCareersSheet: false,
             selectedActivities: [],
             selectedLicenses: [],
-            selectedPortfolio: [],
             selectedCertifications: [],
             yearsLeftToGraduation: nil,
             decisionText: "sdf"

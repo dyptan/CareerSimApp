@@ -11,11 +11,11 @@ enum GameConstants {
     /// Realistic mode: how many professional events (summits, conferences,
     /// networking mixers) the player can attend in one year. Separate from the
     /// hobby/training slot — events cost money rather than the spare-time slot.
-    static let maxEventsPerYear: Int = 2
+    static let maxEventsPerYear: Int = 1
 
     /// Realistic mode: how many side hustles the player can take on in one year.
     /// Spare time is limited, so monetizing talents competes for the same hours.
-    static let maxSideHustlesPerYear: Int = 2
+    static let maxSideHustlesPerYear: Int = 1
 
     /// Realistic mode: how many competitions (athletic or e-sports) the player
     /// can enter in one year. Each costs an entry fee and is a skill-based shot
@@ -39,13 +39,7 @@ enum GameConstants {
     /// Realistic mode: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.
-    static let prolongedTurmoilExtraYears: ClosedRange<Int> = 2...4
-
-    /// During a downturn, job offers at company tiers whose annual job-loss risk
-    /// is at or above this level are pulled from the market for that year
-    /// (unstable employers freeze hiring). selfEmployed (0.18) and startup (0.22)
-    /// clear this bar; small businesses and steadier tiers do not.
-    static let turmoilUnstableTierRisk: Double = 0.15
+    static let prolongedTurmoilExtraYears: ClosedRange<Int> = 2...3
 
     /// Ceiling on the amplified job-loss probability during a downturn, so that
     /// even on the harshest difficulty no job is an outright guaranteed layoff.
@@ -55,4 +49,28 @@ enum GameConstants {
     /// Admission odds at or below this count as a long shot: getting in anyway is
     /// celebrated with confetti. See `InstitutionTiersView`.
     static let luckyAdmissionThreshold: Double = 0.35
+
+    /// Lowest education level (EQF) a role can require and still offer in-place
+    /// promotions. Roles below this — unskilled work needing no post-secondary
+    /// training (EQF 1–3: primary/middle/high school) — are never promoted, since
+    /// raise-in-place promotions rarely happen in such jobs in real life; the
+    /// player advances out of them by applying upward instead. EQF 4 = vocational.
+    /// See `Job.isLowSkilled` / `Player.promotionChance`.
+    static let promotionMinEQF: Int = 4
+
+    /// Base annual probability that an employer promotes the player, before the
+    /// player's promotion-readiness soft skills, tenure, and network scale it.
+    /// Flat across all jobs now that company tiers are gone. See
+    /// `Player.promotionChance`.
+    static let promotionBaseChance: Double = 0.15
+
+    /// Salary bump applied on a promotion, as a fraction of current pay. Flat
+    /// across all jobs now that company tiers are gone. See `Player.advanceYear`.
+    static let promotionRaise: ClosedRange<Double> = 0.06...0.18
+
+    /// Calm-economy annual probability that a job is lost involuntarily. Used as
+    /// the base layoff risk during a downturn (scaled by `Difficulty.layoffSeverity`).
+    /// Flat across all jobs now that company tiers are gone. See
+    /// `Player.applyEconomicTurmoil`.
+    static let baseLayoffRisk: Double = 0.08
 }

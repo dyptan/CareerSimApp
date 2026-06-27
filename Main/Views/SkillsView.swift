@@ -10,7 +10,7 @@ struct SkillsView: View {
     @State private var experienceExpanded: Bool = false
 
     private var projects: [Project] {
-        Array(player.hardSkills.portfolioItems.union(appUIState.selectedPortfolio))
+        Array(player.hardSkills.portfolioItems)
     }
 
     private var certifications: [Certification] {

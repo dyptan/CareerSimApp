@@ -119,12 +119,10 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Multiplier applied to a job's baseline annual job-loss risk during a
-    /// downturn. A company tier's `riskFactor` is the *calm-economy* layoff
-    /// chance; in a recession layoffs spike, and the harsher the economy the
-    /// harder they hit. Risky employers (startups, self-employment) are devastated
-    /// while genuinely stable posts (government) still mostly hold. Capped by
-    /// `GameConstants.turmoilMaxLayoffChance`.
+    /// Multiplier applied to the baseline annual job-loss risk during a downturn.
+    /// `GameConstants.baseLayoffRisk` is the *calm-economy* layoff chance; in a
+    /// recession layoffs spike, and the harsher the economy the harder they hit.
+    /// Capped by `GameConstants.turmoilMaxLayoffChance`.
     var layoffSeverity: Double {
         switch self {
         case .simplified:  return 0.0
