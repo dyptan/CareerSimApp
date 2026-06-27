@@ -154,7 +154,7 @@ enum JobCatalog {
                     presentationAndStorytelling: 0
                 )
 
-            case .design, .arts, .media, .fashion:
+            case .design, .showBusiness, .fashion:
                 return .init(
                     analyticalReasoningAndProblemSolving: 1,
                     creativityAndInsightfulThinking: 4,
@@ -229,25 +229,6 @@ enum JobCatalog {
                     collaborationAndTeamwork: 1,
                     timeManagementAndPlanning: 1,
                     selfDisciplineAndPerseverance: 2,
-                    presentationAndStorytelling: 0
-                )
-
-            case .sports:
-                return .init(
-                    analyticalReasoningAndProblemSolving: 0,
-                    creativityAndInsightfulThinking: 0,
-                    communicationAndNetworking: 1,
-                    leadershipAndInfluence: 1,
-                    visionaryThinkingAndAmbition: 0,
-                    carefulnessAndAttentionToDetail: 1,
-                    tinkeringAndFingerPrecision: 0,
-                    spacialNavigationAndOrientation: 1,
-                    resilienceAndEndurance: 4,
-                    stressResistanceAndEmotionalRegulation: 3,
-                    outdoorAndWeatherResilience: 1,
-                    collaborationAndTeamwork: 3,
-                    timeManagementAndPlanning: 1,
-                    selfDisciplineAndPerseverance: 4,
                     presentationAndStorytelling: 0
                 )
 
@@ -330,6 +311,12 @@ enum JobCatalog {
             "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
             "Referee/Umpire":                 .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 2, leadershipAndInfluence: 2, carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 4, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
             "Athletic Director":              .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 4, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 2),
+
+            // E-sports (reflexes + analysis + composure; streamers/casters perform)
+            "Gamer":                          .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 3, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 3),
+            "Streamer":                       .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 1, stressResistanceAndEmotionalRegulation: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
+            "Esports Caster":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, stressResistanceAndEmotionalRegulation: 1, presentationAndStorytelling: 4),
+            "Esports Coach":                  .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
 
             // Tech academia (deep analysis, teaching, grant-winning, coding)
             "Computer Science Lecturer":               .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
@@ -570,8 +557,7 @@ enum JobCatalog {
             case .law:         return [.law]
             case .education:   return [.education, .humanities, .science]
             case .design:      return [.design, .arts]
-            case .arts:        return [.arts, .design]
-            case .media:       return [.humanities, .arts, .design]
+            case .showBusiness: return [.arts, .design, .humanities, .sports]
             case .service:     return [.service, .business, .humanities]
             case .agriculture: return [.agriculture, .science]
             default:           return nil
@@ -763,21 +749,21 @@ enum JobCatalog {
             ("Fashion Stylist",                 .design,       45_000, "🧥", "Styles outfits and looks for clients, shoots, and brands.",        3),
 
             // Media / Writing / Broadcast
-            ("Content Writer",                  .media,        44_000, "✍️", "Creates written content for various channels.",                    4),
-            ("Journalist",                      .media,        48_000, "📰", "Reports news and stories for media outlets.",                      5),
-            ("Photographer",                    .media,        40_000, "📷", "Takes photos for commercial and personal use.",                    3),
-            ("Radio Host",                      .media,        45_000, "📻", "Hosts live radio shows and segments.",                             3),
-            ("TV Presenter",                    .media,        70_000, "📺", "Presents television programs and live segments.",                  5),
-            ("News Anchor",                     .media,        95_000, "🎙️", "Anchors television news broadcasts.",                              5),
-            ("Video Editor",                    .media,        55_000, "🎬", "Cuts and assembles footage for film, TV, and online.",             4),
-            ("Blogger",                         .media,        35_000, "📝", "Writes and monetizes a personal blog or newsletter.",              1),
-            ("Podcaster",                       .media,        40_000, "🎧", "Produces and hosts an audio show for an audience.",                1),
-            ("Social Media Manager",            .media,        58_000, "📱", "Runs brand presence and campaigns across social platforms.",       5),
+            ("Content Writer",                  .showBusiness,        44_000, "✍️", "Creates written content for various channels.",                    4),
+            ("Journalist",                      .showBusiness,        48_000, "📰", "Reports news and stories for media outlets.",                      5),
+            ("Photographer",                    .showBusiness,        40_000, "📷", "Takes photos for commercial and personal use.",                    3),
+            ("Radio Host",                      .showBusiness,        45_000, "📻", "Hosts live radio shows and segments.",                             3),
+            ("TV Presenter",                    .showBusiness,        70_000, "📺", "Presents television programs and live segments.",                  5),
+            ("News Anchor",                     .showBusiness,        95_000, "🎙️", "Anchors television news broadcasts.",                              5),
+            ("Video Editor",                    .showBusiness,        55_000, "🎬", "Cuts and assembles footage for film, TV, and online.",             4),
+            ("Blogger",                         .showBusiness,        35_000, "📝", "Writes and monetizes a personal blog or newsletter.",              1),
+            ("Podcaster",                       .showBusiness,        40_000, "🎧", "Produces and hosts an audio show for an audience.",                1),
+            ("Social Media Manager",            .showBusiness,        58_000, "📱", "Runs brand presence and campaigns across social platforms.",       5),
 
             // Sports / Fitness
-            ("Personal Trainer",                .sports,       40_000, "🏋️", "Coaches clients one-on-one toward their fitness goals.",            3),
-            ("Fitness Instructor",              .sports,       34_000, "🤸", "Leads group exercise and gym classes.",                            2),
-            ("Referee/Umpire",                  .sports,       44_000, "🟨", "Officiates matches and enforces the rules of play.",                3),
+            ("Personal Trainer",                .showBusiness,       40_000, "🏋️", "Coaches clients one-on-one toward their fitness goals.",            3),
+            ("Fitness Instructor",              .showBusiness,       34_000, "🤸", "Leads group exercise and gym classes.",                            2),
+            ("Referee/Umpire",                  .showBusiness,       44_000, "🟨", "Officiates matches and enforces the rules of play.",                3),
 
             // Agriculture
             ("Farmhand",                        .agriculture,  28_000, "🧑‍🌾", "Plants, harvests, and tends crops and livestock.",               1),
@@ -786,20 +772,20 @@ enum JobCatalog {
             ("Agronomist",                      .agriculture,  75_000, "🌱", "Applies soil and crop science to improve yields.",                 5),
 
             // Arts / Creative
-            ("Painter (Artist)",                .arts,         32_000, "🎨", "Creates original artwork for sale or exhibition.",                 1),
-            ("Musician",                        .arts,         34_000, "🎵", "Performs or composes music professionally.",                       1),
-            ("Actor",                           .arts,         38_000, "🎭", "Performs in theater, film, or television.",                        1),
-            ("Dancer",                          .arts,         35_000, "💃", "Performs choreographed routines on stage and screen.",             1),
-            ("DJ",                              .arts,         45_000, "🎧", "Mixes and performs music for clubs, events, and radio.",           1),
-            ("Sculptor",                        .arts,         33_000, "🗿", "Creates three-dimensional artwork from various materials.",        1),
-            ("Composer",                        .arts,         60_000, "🎼", "Writes original scores for film, games, and ensembles.",           5),
+            ("Painter (Artist)",                .showBusiness,         32_000, "🎨", "Creates original artwork for sale or exhibition.",                 1),
+            ("Musician",                        .showBusiness,         34_000, "🎵", "Performs or composes music professionally.",                       1),
+            ("Actor",                           .showBusiness,         38_000, "🎭", "Performs in theater, film, or television.",                        1),
+            ("Dancer",                          .showBusiness,         35_000, "💃", "Performs choreographed routines on stage and screen.",             1),
+            ("DJ",                              .showBusiness,         45_000, "🎧", "Mixes and performs music for clubs, events, and radio.",           1),
+            ("Sculptor",                        .showBusiness,         33_000, "🗿", "Creates three-dimensional artwork from various materials.",        1),
+            ("Composer",                        .showBusiness,         60_000, "🎼", "Writes original scores for film, games, and ensembles.",           5),
 
             // Creative — self-employed / freelance
-            ("Illustrator",                     .arts,         40_000, "🖍️", "Draws illustrations for books, games, and brands as a freelancer.", 3),
-            ("Voice Actor",                     .arts,         42_000, "🎙️", "Records voices for ads, animation, and audiobooks.",               1),
-            ("Tattoo Artist",                   .arts,         46_000, "🖋️", "Designs and inks custom tattoos for clients.",                     2),
-            ("Novelist",                        .media,        42_000, "📖", "Writes and self-publishes novels and stories.",                    1),
-            ("Content Creator",                 .media,        45_000, "🎥", "Builds an audience with videos, posts, and streams.",              1),
+            ("Illustrator",                     .showBusiness,         40_000, "🖍️", "Draws illustrations for books, games, and brands as a freelancer.", 3),
+            ("Voice Actor",                     .showBusiness,         42_000, "🎙️", "Records voices for ads, animation, and audiobooks.",               1),
+            ("Tattoo Artist",                   .showBusiness,         46_000, "🖋️", "Designs and inks custom tattoos for clients.",                     2),
+            ("Novelist",                        .showBusiness,        42_000, "📖", "Writes and self-publishes novels and stories.",                    1),
+            ("Content Creator",                 .showBusiness,        45_000, "🎥", "Builds an audience with videos, posts, and streams.",              1),
             ("Animator",                        .design,       65_000, "🎞️", "Creates 2D/3D animation for studios and clients.",                 4),
             ("Interior Designer",               .design,       60_000, "🛋️", "Designs and styles indoor spaces for clients.",                    4),
         ]
@@ -884,12 +870,20 @@ enum JobCatalog {
             ("Master Carpenter",             .construction,  76_000, "🪚", "Master tradesperson on bespoke and large-scale builds.",                           4, 6),
 
             // Sports — performance-gated athlete ladder + coaching track (no degree needed)
-            ("Amateur Athlete",              .sports,        22_000, "🏃", "Competes semi-professionally while building a track record.",                     1, 0),
-            ("Professional Athlete",         .sports,        80_000, "🏅", "Earns a living competing at the professional level.",                             1, 3),
-            ("Elite Athlete",                .sports,       190_000, "🥇", "Top-tier competitor with sponsorships and championship stakes.",                  1, 7),
-            ("Athletic Coach",               .sports,        48_000, "🧑‍🏫", "Trains athletes and plans practices and game strategy.",                          3, 2),
-            ("Head Athletic Coach",          .sports,        95_000, "📋", "Leads a club or team program and its coaching staff.",                            4, 6),
-            ("Athletic Director",            .sports,       110_000, "🏟️", "Runs a sports organization's teams, budgets, and facilities.",                    5, 8),
+            ("Amateur Athlete",              .showBusiness,        22_000, "🏃", "Competes semi-professionally while building a track record.",                     1, 0),
+            ("Professional Athlete",         .showBusiness,        80_000, "🏅", "Earns a living competing at the professional level.",                             1, 3),
+            ("Elite Athlete",                .showBusiness,       190_000, "🥇", "Top-tier competitor with sponsorships and championship stakes.",                  1, 7),
+            ("Athletic Coach",               .showBusiness,        48_000, "🧑‍🏫", "Trains athletes and plans practices and game strategy.",                          3, 2),
+            ("Head Athletic Coach",          .showBusiness,        95_000, "📋", "Leads a club or team program and its coaching staff.",                            4, 6),
+            ("Athletic Director",            .showBusiness,       110_000, "🏟️", "Runs a sports organization's teams, budgets, and facilities.",                    5, 8),
+
+            // E-sports — competitive gaming ladder plus casting/coaching (no degree needed)
+            ("Amateur Gamer",                .showBusiness,        20_000, "🎮", "Grinds online ladders and local tournaments to make a name.",                     1, 0),
+            ("Professional Gamer",           .showBusiness,        75_000, "🕹️", "Competes for salary and winnings in a pro e-sports league.",                       1, 3),
+            ("Elite Gamer",                  .showBusiness,       180_000, "🏆", "World-class pro with sponsorships and championship stakes.",                      1, 7),
+            ("Streamer",                     .showBusiness,        45_000, "📡", "Entertains a live audience while gaming, funded by subs and ads.",                 1, 0),
+            ("Esports Caster",               .showBusiness,        52_000, "🎙️", "Casts and commentates competitive matches for the crowd.",                        3, 2),
+            ("Esports Coach",                .showBusiness,        58_000, "🎧", "Drills a competitive team's strategy, drafts, and practice.",                      3, 3),
 
             // Academia — tech / computer-science research track (degree-gated)
             ("Computer Science Lecturer",            .science,  78_000, "🧑‍🏫", "Teaches programming and CS courses at a university.",                       6, 2),
@@ -908,8 +902,8 @@ enum JobCatalog {
             ("School Superintendent",        .education,     155_000, "🎓", "Runs an entire school district and its principals.",                              7, 12),
 
             // Creative leadership
-            ("Art Director",                 .arts,          100_000, "🖼️", "Sets the visual direction for campaigns, films, or publications.",                5, 8),
-            ("Editor-in-Chief",              .media,         135_000, "🗞️", "Leads a publication's editorial vision and newsroom.",                            5, 10),
+            ("Art Director",                 .showBusiness,          100_000, "🖼️", "Sets the visual direction for campaigns, films, or publications.",                5, 8),
+            ("Editor-in-Chief",              .showBusiness,         135_000, "🗞️", "Leads a publication's editorial vision and newsroom.",                            5, 10),
 
             // C-suite — the top of the business, tech, and medical tracks
             ("Chief Medical Officer",        .health,        300_000, "🏥", "Sets clinical strategy and quality across a health system.",                      7, 12),

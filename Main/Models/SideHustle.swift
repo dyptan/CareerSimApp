@@ -148,6 +148,16 @@ enum SideHustleCatalog {
             stages: [.youngAdult, .adult]
         ),
         SideHustle(
+            id: "freelancePerformer",
+            label: "Freelance Artist & Performer",
+            icon: "🎭",
+            blurb: "Go independent in show business — sell your art, gig as a musician, dancer, or actor, and take commissions. The self-employed creative path: feast or famine.",
+            talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
+            startupCost: 800,
+            payoutRange: 0...40_000,
+            stages: [.teen, .youngAdult, .adult]
+        ),
+        SideHustle(
             id: "releaseAlbum",
             label: "Record & Release an Album",
             icon: "🎵",

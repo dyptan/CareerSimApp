@@ -7,6 +7,7 @@ struct Main: App {
             NavigationStack {
                 RootView()
             }
+            .onAppear { GameCenterManager.shared.authenticate() }
         }
         #if os(macOS)
         // Bind the macOS window to its content's size so the mode-selection

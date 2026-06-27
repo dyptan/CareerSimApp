@@ -11,6 +11,8 @@ struct HeaderView: View {
         VStack(alignment: .leading) {
             
             HStack{
+                Text(player.avatar)
+                    .font(.title2)
                 Text("Age:")
                 Text("\(player.age)")
                     .scaleEffect(didBumpAgeScale ? 2 : 1)
@@ -66,9 +68,15 @@ struct HeaderView: View {
                         .font(.caption2)
                         .foregroundStyle(.green)
                 }
+
+                if player.lastCompetitionWins > 0 {
+                    Text("🏆 Won \(player.lastCompetitionWins) competition\(player.lastCompetitionWins == 1 ? "" : "s") last year")
+                        .font(.caption2)
+                        .foregroundStyle(.green)
+                }
             }
 
-            Text("\(player.gameMode.goalIcon) Goal: \(player.gameMode.goalHeadline)")
+            Text("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)")
                 .font(.caption.bold())
                 .foregroundStyle(.secondary)
 

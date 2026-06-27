@@ -1,66 +1,38 @@
 import Foundation
 import SwiftUI
 
-/// How much of the simulation's complexity is in play. Chosen once at launch.
-enum GameMode: String, Codable, CaseIterable, Identifiable {
-    /// Kid-friendly: getting hired needs only the right degree plus enough years
-    /// in the field. No soft-skill hiring score, hard skills, company tiers,
-    /// education tiers, or salary negotiation. Junior→senior still progresses
-    /// through years of experience.
-    case simplified
-    /// The full model: skills, certifications, company tiers, education tiers,
-    /// prestige, and salary negotiation all feed the hire probability.
-    case realistic
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .simplified: return "Simple"
-        case .realistic:  return "Realistic"
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .simplified: return "🧸"
-        case .realistic:  return "💼"
-        }
-    }
-
-    var tagline: String {
-        switch self {
-        case .simplified:
-            return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
-        case .realistic:
-            return "Build skills, earn certifications, compare employers and schools, and negotiate your salary."
-        }
-    }
-
-    /// Short name of this mode's win condition, shown in the picker and header.
-    var goalHeadline: String {
-        switch self {
-        case .simplified: return "Make it to the top"
-        case .realistic:  return "Earn your first million"
-        }
-    }
-
-    var goalIcon: String {
-        switch self {
-        case .simplified: return "👔"
-        case .realistic:  return "💰"
-        }
-    }
-}
-
 final class Player: ObservableObject {
-    /// Which rule set the game runs under. Set from the launch mode picker.
-    @Published var gameMode: GameMode = .realistic
-    /// Realistic-mode difficulty: savings rate (income background) and economic
-    /// volatility. Set from the launch picker; ignored in simplified mode.
+    /// The single difficulty choice the game runs under: how much complexity is
+    /// in play (Simplified strips skills, tiers, negotiation, and the economy)
+    /// plus, for the realistic settings, savings rate and economic volatility.
+    /// Set from the launch picker.
     @Published var difficulty: Difficulty = .default
     /// Convenience: true when only the basic (degree + experience) rules apply.
-    var isSimplified: Bool { gameMode == .simplified }
+    var isSimplified: Bool { difficulty.isSimplified }
+
+    /// The player's chosen avatar emoji, picked on the launch screen. Shown in
+    /// the header. Purely cosmetic.
+    @Published var avatar: String = Player.avatarOptions[0]
+
+    /// Selectable launch-screen avatars.
+    static let avatarOptions: [String] = [
+        "🧒", "👦", "👧", "🧑", "👨", "👩", "🧑‍🦱", "🧑‍🦰",
+        "🦸", "🧑‍🎤", "🧑‍🚀", "🤖", "🦊", "🐱", "🐵", "🦄"
+    ]
+
+    /// Titled trophies won in `Competition`s. Each win appends its achievement
+    /// title; the count drives `achievementHireBonus`. Cosmetic titles double as
+    /// a fame score that helps land Show Business roles.
+    @Published var achievements: [String] = []
+
+    /// Number of competitions won in the year just advanced (0 when none).
+    /// Surfaced in the header alongside the confetti.
+    @Published var lastCompetitionWins: Int = 0
+
+    /// Additive hire-probability boost for fame-driven Show Business roles from
+    /// the player's competition achievements. Diminishing, capped at +0.20 — a
+    /// decorated competitor is a draw for casting directors and sponsors.
+    var achievementHireBonus: Double { min(0.20, Double(achievements.count) * 0.04) }
 
     /// Years a prolonged recession still has to run. While positive, each
     /// `advanceYear` keeps the downturn in force (hiring freeze + layoff risk)
@@ -93,17 +65,21 @@ final class Player: ObservableObject {
     /// college admission); the game view watches it to fire the confetti cannon.
     @Published var celebrationTrigger: Int = 0
 
-    /// Whether the player has met the current mode's win condition:
-    /// a top leadership ("C-suite") role in simplified mode, or a million in
-    /// savings in realistic mode.
+    /// Whether the player has met the current setting's win condition:
+    /// a top leadership ("C-suite") role in Simplified, or a million in
+    /// savings in the realistic settings.
     var goalMet: Bool {
-        switch gameMode {
-        case .simplified: return currentOccupation?.isTopLeadership ?? false
-        case .realistic:  return savings >= GameConstants.millionGoal
+        if isSimplified {
+            return currentOccupation?.isTopLeadership ?? false
         }
+        return savings >= GameConstants.millionGoal
     }
 
     @Published var age: Int
+
+    /// Game Center leaderboard score: "wealth velocity" — savings per year of
+    /// life. Reaching wealth younger scores higher. Floored at 0.
+    var leaderboardScore: Int { age > 0 ? max(0, savings) / age : 0 }
 
     @Published var degrees: [Education]
     /// Years of work experience per industry. Key is the job's `JobCategory`,
@@ -123,7 +99,14 @@ final class Player: ObservableObject {
     @Published var lockedCertifications: Set<Certification>
     @Published var lockedPortfolio: Set<Project>
     @Published var lockedLicenses: Set<License>
-    @Published var lockedActivities: Set<String>
+    @Published var lockedHobbies: Set<String>
+    /// Professional network built by attending industry `CareerEvent`s, keyed by
+    /// the event's industry. Improves hiring odds on that field's postings and
+    /// the chance of promotion while working in it (see `networkBonus`).
+    @Published var networkByCategory: [JobCategory: Int] = [:]
+    /// Network from cross-industry events (`CareerEvent.category == nil`). Counts
+    /// toward every field on top of the industry-specific totals.
+    @Published var generalNetwork: Int = 0
     @Published var appliedJobIds: Set<String> = []
     /// Schools (by `Education.id`) the player has already applied to this year.
     /// One admission attempt per school per year, so a rejection can't be
@@ -169,7 +152,7 @@ final class Player: ObservableObject {
         lockedCertifications: Set<Certification> = [],
         lockedPortfolio: Set<Project> = [],
         lockedLicenses: Set<License> = [],
-        lockedActivities: Set<String> = []
+        lockedHobbies: Set<String> = []
     ) {
         self.age = age
         self.softSkills = softSkills
@@ -182,7 +165,7 @@ final class Player: ObservableObject {
         self.lockedCertifications = lockedCertifications
         self.lockedPortfolio = lockedPortfolio
         self.lockedLicenses = lockedLicenses
-        self.lockedActivities = lockedActivities
+        self.lockedHobbies = lockedHobbies
         self.availableJobs = JobCatalog.allJobs().shuffled()
     }
 
@@ -192,22 +175,104 @@ final class Player: ObservableObject {
         availableJobs = JobCatalog.allJobs().shuffled()
     }
 
-    // MARK: - Activity selection
+    /// Sets `age` and seeds the K-12 record to match a chosen starting age
+    /// (7–18), so the player begins with the EQF level they'd have reached by
+    /// then: each schooling stage already finished is banked as a degree, and
+    /// the stage in progress (if any) becomes `currentEducation`. Mirrors the
+    /// age-10/14/18 transitions in `RootView`. Returns true when the player
+    /// starts old enough (18) that the post-high-school decision should fire.
+    @discardableResult
+    func configureStart(age startAge: Int) -> Bool {
+        age = startAge
+        var earned: [Education] = []
+        if startAge >= 10 { earned.append(Education(Level.Stage.PrimarySchool)) }
+        if startAge >= 14 { earned.append(Education(Level.Stage.MiddleSchool)) }
+        if startAge >= 18 { earned.append(Education(Level.Stage.HighSchool)) }
+        degrees = earned
+        if startAge < 10 {
+            currentEducation = Education(Level.Stage.PrimarySchool)
+        } else if startAge < 14 {
+            currentEducation = Education(Level.Stage.MiddleSchool)
+        } else if startAge < 18 {
+            currentEducation = Education(Level.Stage.HighSchool)
+        } else {
+            currentEducation = nil
+        }
+        return startAge >= 18
+    }
 
-    func selectActivity(_ activity: Activity, into selectedActivities: inout Set<String>) {
-        selectedActivities.insert(activity.label)
-        for ability in activity.abilities {
+    // MARK: - Hobby selection
+
+    func selectHobby(_ hobby: Hobby, into selectedActivities: inout Set<String>) {
+        selectedActivities.insert(hobby.label)
+        for ability in hobby.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] += ability.weight
         }
     }
 
-    func deselectActivity(_ activity: Activity, from selectedActivities: inout Set<String>) {
-        guard selectedActivities.remove(activity.label) != nil else { return }
-        for ability in activity.abilities {
+    func deselectHobby(_ hobby: Hobby, from selectedActivities: inout Set<String>) {
+        guard selectedActivities.remove(hobby.label) != nil else { return }
+        for ability in hobby.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] -= ability.weight
         }
+    }
+
+    // MARK: - Professional events & network
+
+    /// Attends a professional event: charges its cost, applies its soft-skill
+    /// nudges, and banks its network points (per-industry, or general for a
+    /// cross-industry event). Mirror of `dropEvent` so a selection toggled off
+    /// before the year advances is fully reversed.
+    func attendEvent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
+        guard !selectedEvents.contains(event.id) else { return }
+        selectedEvents.insert(event.id)
+        savings -= event.cost
+        for ability in event.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] += ability.weight
+        }
+        if let category = event.category {
+            networkByCategory[category, default: 0] += event.networkWeight
+        } else {
+            generalNetwork += event.networkWeight
+        }
+    }
+
+    func dropEvent(_ event: CareerEvent, from selectedEvents: inout Set<String>) {
+        guard selectedEvents.remove(event.id) != nil else { return }
+        savings += event.cost
+        for ability in event.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] -= ability.weight
+        }
+        if let category = event.category {
+            networkByCategory[category, default: 0] -= event.networkWeight
+        } else {
+            generalNetwork -= event.networkWeight
+        }
+    }
+
+    /// Total professional-network points relevant to a field: its industry
+    /// network plus the general (cross-industry) network.
+    func networkPoints(for category: JobCategory) -> Int {
+        networkByCategory[category, default: 0] + generalNetwork
+    }
+
+    /// Additive boost to a job's realistic-mode hire probability from the
+    /// player's network in that field. Diminishing — each point adds 1.5% up to
+    /// a 0.12 ceiling, so a network helps without ever guaranteeing an offer.
+    func networkBonus(for category: JobCategory) -> Double {
+        min(0.12, Double(networkPoints(for: category)) * 0.015)
+    }
+
+    /// Additive boost to the annual promotion probability from the player's
+    /// network in their current field. Smaller than the hiring bonus (0.6% per
+    /// point, capped at 0.05) — knowing the right people helps you move up, but
+    /// performance (soft skills) still carries most of the weight.
+    func networkPromotionBonus(for category: JobCategory) -> Double {
+        min(0.05, Double(networkPoints(for: category)) * 0.006)
     }
 
     // MARK: - Training purchase / refund
@@ -268,11 +333,19 @@ final class Player: ObservableObject {
 
     /// Annual promotion probability for a job: the employer tier's base chance
     /// scaled by promotion readiness (40%–100% of the base, so soft skills move
-    /// the odds while the tier keeps startups ahead of enterprises).
+    /// the odds while the tier keeps startups ahead of enterprises), plus a
+    /// professional-network bonus for the job's industry — attending that
+    /// field's summits and conferences makes a raise more likely — and a tenure
+    /// bonus for years already spent in the role.
     func promotionChance(for job: Job) -> Double {
         let base = job.companyTier.promotionBaseChance
         guard base > 0 else { return 0 }
-        return base * (0.4 + 0.6 * promotionReadiness)
+        let core = base * (0.4 + 0.6 * promotionReadiness)
+        // Tenure in the current role makes a promotion more likely — seasoned
+        // employees are next in line — with diminishing returns (capped +0.10).
+        let tenure = experienceByRole[job.baseTitle, default: 0]
+        let tenureBoost = min(0.10, Double(tenure) * 0.02)
+        return min(1.0, core + networkPromotionBonus(for: job.category) + tenureBoost)
     }
 
     // MARK: - Year progression
@@ -280,6 +353,7 @@ final class Player: ObservableObject {
     func advanceYear(appUIState: AppUIState) {
         age += 1
         lastPromotionRaisePct = 0
+        lastCompetitionWins = 0
         lostJobThisYear = false
 
         hardSkills.certifications.formUnion(appUIState.selectedCertifications)
@@ -291,6 +365,9 @@ final class Player: ObservableObject {
         lockedLicenses.formUnion(appUIState.selectedLicenses)
 
         appUIState.selectedActivities.removeAll()
+        // Events were charged and their network/soft-skill effects applied when
+        // attended; just clear this year's picks so next year starts fresh.
+        appUIState.selectedEvents.removeAll()
 
         // Charge tuition for the year the player is enrolled in a tertiary program.
         if let edu = currentEducation,
@@ -388,6 +465,23 @@ final class Player: ObservableObject {
         }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
+
+        // Competitions: resolve every contest entered this year. The entry fee is
+        // staked up front (even into debt); a win pays the prize and banks a
+        // lasting achievement (reputation that helps land Show Business roles).
+        var competitionWins = 0
+        for id in appUIState.selectedCompetitions {
+            guard let competition = CompetitionCatalog.byId[id] else { continue }
+            savings -= competition.entryFee
+            if Double.random(in: 0...1) < competition.winProbability(for: softSkills) {
+                savings += competition.prize
+                achievements.append(competition.achievement)
+                competitionWins += 1
+            }
+        }
+        lastCompetitionWins = competitionWins
+        if competitionWins > 0 { celebrationTrigger += 1 }
+        appUIState.selectedCompetitions.removeAll()
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -466,8 +560,10 @@ final class Player: ObservableObject {
 
     func reset() {
         let fresh = Player()
-        gameMode = fresh.gameMode
         difficulty = fresh.difficulty
+        avatar = fresh.avatar
+        achievements = fresh.achievements
+        lastCompetitionWins = fresh.lastCompetitionWins
         turmoilYearsRemaining = fresh.turmoilYearsRemaining
         economyInRecession = fresh.economyInRecession
         lastSideHustleEarnings = fresh.lastSideHustleEarnings
@@ -486,7 +582,9 @@ final class Player: ObservableObject {
         lockedCertifications = fresh.lockedCertifications
         lockedPortfolio = fresh.lockedPortfolio
         lockedLicenses = fresh.lockedLicenses
-        lockedActivities = fresh.lockedActivities
+        lockedHobbies = fresh.lockedHobbies
+        networkByCategory = fresh.networkByCategory
+        generalNetwork = fresh.generalNetwork
         appliedJobIds = []
         appliedSchoolIds = []
         attemptedCertificationIds = []

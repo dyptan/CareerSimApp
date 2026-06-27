@@ -53,9 +53,13 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             // Conservative, regulated sector: boutique firm, regional firm, or
             // BigLaw — no startups or freelancing.
             return [CompanyTier.smallBusiness, .mid, .enterprise].randomElement()!
-        case .arts:
-            return .selfEmployed
-        case .media, .fashion:
+        case .showBusiness:
+            // Employed spotlight work sits at studios, labels, and networks; the
+            // independent/freelance route lives in Side Hustles, not a tier here.
+            return income >= 90_000
+                ? [CompanyTier.enterprise, .mid].randomElement()!
+                : [CompanyTier.smallBusiness, .smallBusiness, .mid].randomElement()!
+        case .fashion:
             return [CompanyTier.selfEmployed, .selfEmployed, .smallBusiness].randomElement()!
         case .agriculture:
             return income >= 60_000
@@ -151,6 +155,23 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
+    /// Multiplier on a role's baseline required years of experience. Formal,
+    /// seniority-bound employers expect more seasoning before they'll hire;
+    /// nimble or small ones make do with less. Applied as a *soft* expectation
+    /// (see `Job.experienceFitTerm`), not a hard gate — falling short lowers the
+    /// hire odds rather than ruling the applicant out.
+    var experienceExpectation: Double {
+        switch self {
+        case .selfEmployed:  return 0.5   // strike out on your own with little tenure
+        case .startup:       return 0.7   // hire for potential, move fast
+        case .smallBusiness: return 0.7   // pragmatic, hands-on hiring
+        case .nonprofit:     return 0.9
+        case .mid:           return 1.0   // baseline — catalog years calibrated here
+        case .enterprise:    return 1.4   // want seasoned, proven hires
+        case .government:    return 1.5   // rigid, seniority-bound experience ladders
+        }
+    }
+
     /// Plausible tiers a player could realistically apply to for a given job category and salary.
     /// Mirrors the heuristics in `random(category:income:)` but returns all candidates.
     static func plausibleTiers(category: JobCategory, income: Int, isEntrepreneurial: Bool = false) -> [CompanyTier] {
@@ -167,11 +188,9 @@ enum CompanyTier: String, Codable, Hashable, CaseIterable {
             // Conservative, regulated sector: boutique firm → regional firm →
             // BigLaw. Deliberately omits startup/self-employed.
             return [.smallBusiness, .mid, .enterprise]
-        case .arts:
-            // Pure-creative work is freelance by nature — employer-tier choice
-            // isn't meaningful, so we only surface a single self-employed offer.
-            return [.selfEmployed]
-        case .media, .fashion:
+        case .showBusiness:
+            return income >= 90_000 ? [.enterprise, .mid] : [.smallBusiness, .mid]
+        case .fashion:
             return [.selfEmployed, .smallBusiness]
         case .agriculture:
             return income >= 60_000
@@ -328,17 +347,50 @@ extension Job {
         }
     }
 
+    /// Years of the player's experience relevant to this role: same-role tenure
+    /// for a rung on a seniority ladder (so unrelated jobs in the industry don't
+    /// qualify you for a promotion), or accumulated whole-industry years for a
+    /// standalone role (entry-level, or a top capstone with no junior rung).
+    func relevantYears(for player: Player) -> Int {
+        if seniorityPrefix != nil {
+            return player.experienceByRole[baseTitle] ?? 0
+        }
+        return player.experience[category] ?? 0
+    }
+
+    /// Years of experience this *offer* expects, scaling the role's catalog
+    /// baseline (`minYearsExperience`) by the employer tier. Zero when the role
+    /// has no experience baseline.
+    var expectedYearsExperience: Int {
+        let base = requirements.minYearsExperience
+        guard base > 0 else { return 0 }
+        return Int((Double(base) * companyTier.experienceExpectation).rounded())
+    }
+
+    /// Whether the player meets the role's *baseline* experience
+    /// (`minYearsExperience`). A hard gate in every mode — you can't be hired (or
+    /// found a venture) below the baseline. Above it, the tier-scaled
+    /// `experienceFitTerm` rewards extra years probabilistically.
     func experienceMet(for player: Player) -> Bool {
         let required = requirements.minYearsExperience
         guard required > 0 else { return true }
-        if seniorityPrefix != nil {
-            // A rung on a seniority ladder — only years in this same role count,
-            // so unrelated jobs in the industry don't qualify you for a promotion.
-            return (player.experienceByRole[baseTitle] ?? 0) >= required
+        return relevantYears(for: player) >= required
+    }
+
+    /// Additive hire-probability adjustment from how the player's relevant
+    /// experience compares with what this employer expects — a *soft* factor,
+    /// not a gate. Meeting the (tier-scaled) expectation is neutral; falling
+    /// short penalises, down to −0.45 with no experience at all for a senior
+    /// posting; a seasoned, over-experienced applicant earns a small edge
+    /// (up to +0.10).
+    func experienceFitTerm(for player: Player) -> Double {
+        let expected = expectedYearsExperience
+        guard expected > 0 else { return 0.0 }
+        let ratio = Double(relevantYears(for: player)) / Double(expected)
+        if ratio >= 1.0 {
+            return min(0.10, (ratio - 1.0) * 0.10)
         }
-        // A standalone role (entry-level, or a top capstone with no junior rung)
-        // — counts accumulated years across the whole industry.
-        return (player.experience[category] ?? 0) >= required
+        return (ratio - 1.0) * 0.45
     }
 
     func hardSkillsMet(for player: Player) -> Bool {
@@ -347,7 +399,14 @@ extension Job {
         guard req.licenses.isSubset(of: player.hardSkills.licenses) else {
             return false
         }
-        // Big formal employers gate on certifications; smaller employers gate on portfolio.
+        // Safety-critical / regulated fields (health, transportation, law, …)
+        // gate on their certifications at every employer — you can't practise
+        // without the credential.
+        if category.requiresCredentials {
+            return req.certifications.isSubset(of: player.hardSkills.certifications)
+        }
+        // Elsewhere the employer type decides: big formal employers gate on
+        // certifications, smaller ones on demonstrated portfolio work.
         switch companyTier.hiringSignal {
         case .credentials:
             return req.certifications.isSubset(of: player.hardSkills.certifications)
@@ -391,10 +450,13 @@ extension Job {
     func allRequirementsMet(for player: Player) -> Bool {
         // Simplified mode hires on the degree plus years in the field alone —
         // no hard-skill gate, no company-tier credential layering.
-        if player.gameMode == .simplified {
+        if player.isSimplified {
             return educationMet(for: player) && experienceMet(for: player)
         }
-        // Emphasize degree + hard skills + experience; soft skills are helpful only.
+        // Hard gates: degree, hard skills (licences/certs/portfolio per field &
+        // employer), and a baseline of experience (`minYearsExperience`). Beyond
+        // that baseline, additional years further lift the hire probability (see
+        // `experienceFitTerm`); soft skills are helpful only.
         return educationMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
     }
 
@@ -414,11 +476,20 @@ extension Job {
         guard allRequirementsMet(for: player) else { return 0.0 }
         // Simplified mode: meeting the gate (degree + experience) is a sure hire.
         // No skill score, prestige, tier, or salary-fit adjustments.
-        if player.gameMode == .simplified { return 1.0 }
+        if player.isSimplified { return 1.0 }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
         let tierDifficulty = companyTier.hireDifficulty
-        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty + player.difficulty.opportunityBonus)
+        // A professional network in this field — built by attending its summits
+        // and conferences — tilts the odds in the applicant's favour.
+        let network = player.networkBonus(for: category)
+        // Experience the employer expects (tier-scaled): a shortfall drags the
+        // odds down, a seasoned applicant nudges them up.
+        let experience = experienceFitTerm(for: player)
+        // Fame from competition achievements opens doors in Show Business (ad,
+        // TV, music, sport, e-sports) — casting directors and sponsors chase it.
+        let fame = category == .showBusiness ? player.achievementHireBonus : 0
+        let raw = (0.2 + skillScore * 0.7 + prestige + tierDifficulty + player.difficulty.opportunityBonus + network + experience + fame)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
     }

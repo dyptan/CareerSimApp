@@ -1,15 +1,15 @@
 enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case engineering = "Engineering"
-    case arts = "Arts"
+    /// Entertainment and the spotlight: performing arts, media/creators, and
+    /// professional sports — merged from the former Arts, Media, and Sports.
+    case showBusiness = "Show Business"
     case publicServices = "Public Services"
-    case sports = "Sports"
     case health = "Health"
     case technology = "Technology"
     case education = "Education"
     case agriculture = "Agriculture"
     case design = "Design"
     case language = "Language"
-    case media = "Media"
     case tourism = "Tourism"
     case law = "Law"
     case business = "Business"
@@ -38,7 +38,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .entrepreneurship:
             return 0.55   // founder income swings wildly with the venture
-        case .arts, .media, .fashion, .sports:
+        case .showBusiness, .fashion:
             return 0.50   // heavily project-based / performance-driven
         case .technology, .engineering, .aviation, .science:
             return 0.40   // bonuses, stock, market swings
@@ -61,7 +61,23 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// industries during an economic downturn (see `Player.applyEconomicTurmoil`).
     var isCyclical: Bool {
         switch self {
-        case .hospitality, .tourism, .retail, .arts, .media, .fashion, .sports, .entrepreneurship:
+        case .hospitality, .tourism, .retail, .showBusiness, .fashion, .entrepreneurship:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Safety-critical / regulated fields with a low tolerance for risk, where a
+    /// role's certifications are a HARD hiring requirement at *every* employer
+    /// (not just formal ones) — you can't legally or safely practise without the
+    /// credential. Required licences are always enforced regardless; this adds
+    /// the certification gate for these fields. Other fields only gate on
+    /// certifications at formal employers (see `CompanyTier.hiringSignal`).
+    var requiresCredentials: Bool {
+        switch self {
+        case .health, .transportation, .aviation, .maritime,
+             .law, .publicServices, .construction:
             return true
         default:
             return false
@@ -72,15 +88,13 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         switch category {
         case .engineering: return "🧰"
         case .technology: return "💻"
-        case .arts: return "🎭"
+        case .showBusiness: return "🎬"
         case .publicServices: return "🛟"
-        case .sports: return "🏆"
         case .health: return "🩺"
         case .education: return "📚"
         case .agriculture: return "🌾"
         case .design: return "🖌️"
         case .language: return "🗣️"
-        case .media: return "🎬"
         case .tourism: return "🧳"
         case .law: return "⚖️"
         case .business: return "💼"
@@ -109,18 +123,14 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return .people
         case .engineering, .technology, .manufacturing:
             return .tools
-        case .arts:
+        case .showBusiness:
             return .creative
         case .agriculture:
             return .outdoors
-        case .sports:
-            return .sports
         case .design:
             return .creative
         case .language:
             return .people
-        case .media:
-            return .creative
         case .tourism:
             return .people
         case .law:
@@ -170,18 +180,14 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Designing and building things like bridges, machines, and robots. Lots of problem solving!"
         case .technology:
             return "Making apps, games, and computers work. Code, test, and create cool digital tools."
-        case .arts:
-            return "Drawing, music, dance, cooking, and creating beautiful things that make people smile."
-        case .sports:
-            return "Playing and coaching sports, staying active, and working as a team to reach goals."
+        case .showBusiness:
+            return "Lights, camera, action! Performing, creating, and competing in the spotlight — acting, music, dance, film, TV, social media, and pro sports."
         case .agriculture:
             return "Farming, growing food, and taking care of animals. It's all about nurturing life."
         case .design:
             return "Make things look great and work well—like logos, apps, clothes, and rooms."
         case .language:
             return "Use words to connect people: translate, teach languages, write, and communicate."
-        case .media:
-            return "Create videos, podcasts, news, and social posts that inform and entertain."
         case .tourism:
             return "Help people explore new places: plan trips, guide tours, and make travel fun."
         case .law:
@@ -236,18 +242,14 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Civil, mechanical, electrical, robotics"
         case .technology:
             return "Developer, tester, security, data"
-        case .arts:
-            return "Artist, musician, chef, designer, actor"
-        case .sports:
-            return "Athlete, coach, trainer, referee"
+        case .showBusiness:
+            return "Actor, musician, athlete, TV host, content creator, coach"
         case .agriculture:
             return "Agriculturist, horticulturist, livestock"
         case .design:
             return "Graphic, UI/UX, fashion, interior"
         case .language:
             return "Translator, interpreter, language teacher"
-        case .media:
-            return "Journalist, videographer, editor, social media"
         case .tourism:
             return "Tour guide, travel agent, event planner"
         case .law:

@@ -1,15 +1,21 @@
 import Foundation
 
-/// Realistic-mode difficulty. Bundles the player's economic starting point —
-/// how much of each paycheck is left to save after living costs (a low-income
-/// family keeps far less than a high-income one) — with how turbulent the
-/// economy is: how often downturns strike and how likely a downturn is to drag
-/// on for years rather than clear after one. Has no effect in simplified mode.
+/// The single difficulty choice made once at launch. It rolls together how much
+/// of the simulation's complexity is in play (the kid-friendly "Simplified"
+/// setting strips skills, tiers, negotiation, and the economy entirely) with —
+/// for the realistic settings — the player's economic starting point: how much
+/// of each paycheck is left to save after living costs, and how turbulent the
+/// economy is (how often downturns strike and how likely they are to drag on).
 enum Difficulty: String, Codable, CaseIterable, Identifiable {
     // NOTE: the raw case names are persisted (Codable) and referenced across the
-    // app, so they stay fixed. Only the player-facing `title`/`blurb` were renamed
-    // (Relaxed / Real Life / Disadvantaged).
+    // app, so they stay fixed. Only the player-facing `title`/`blurb` track the
+    // displayed names (Simplified / Relaxed / Real Life).
 
+    /// "Simplified". Kid-friendly: getting hired needs only the right degree plus
+    /// enough years in the field. No soft-skill hiring score, hard skills, company
+    /// tiers, education tiers, salary negotiation, or economy simulation.
+    /// Junior→senior still progresses through years of experience.
+    case simplified
     /// "Relaxed". High-income family, no recessions, and opportunities tilted in
     /// the player's favour — a large share of income is saved, the economy never
     /// falters, and hiring and college admission come easier.
@@ -17,71 +23,88 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// "Real Life". Middle-income household, baseline volatility. The original
     /// realistic-mode balance.
     case middleClass
-    /// "Disadvantaged". Low-income family, turbulent economy. Living costs eat
-    /// most of each paycheck, downturns hit often, and they frequently turn into
-    /// multi-year recessions.
-    case paycheckToPaycheck
 
     var id: String { rawValue }
 
     /// The default when a game starts before a difficulty is chosen.
     static let `default`: Difficulty = .middleClass
 
+    /// True when only the basic (degree + experience) rules apply — no skills,
+    /// tiers, negotiation, or economy simulation.
+    var isSimplified: Bool { self == .simplified }
+
     var title: String {
         switch self {
-        case .comfortable:        return "Relaxed"
-        case .middleClass:        return "Real Life"
-        case .paycheckToPaycheck: return "Disadvantaged"
+        case .simplified:  return "Simplified"
+        case .comfortable: return "Relaxed"
+        case .middleClass: return "Real Life"
         }
     }
 
     var icon: String {
         switch self {
-        case .comfortable:        return "🛟"
-        case .middleClass:        return "⚖️"
-        case .paycheckToPaycheck: return "🔥"
+        case .simplified:  return "🧸"
+        case .comfortable: return "🛟"
+        case .middleClass: return "⚖️"
         }
     }
 
     var blurb: String {
         switch self {
+        case .simplified:
+            return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
         case .comfortable:
             return "High-income family. You keep a large share of every paycheck, the economy never falters, and doors open more easily at work and school."
         case .middleClass:
             return "A typical household budget and an ordinary, occasionally shaky economy."
-        case .paycheckToPaycheck:
-            return "Low-income family. Living costs swallow most of your pay, downturns hit often, and recessions drag on."
+        }
+    }
+
+    /// Short name of this setting's win condition, shown in the picker and header.
+    var goalHeadline: String {
+        switch self {
+        case .simplified:             return "Make it to the top"
+        case .comfortable, .middleClass: return "Earn your first million"
+        }
+    }
+
+    var goalIcon: String {
+        switch self {
+        case .simplified:             return "👔"
+        case .comfortable, .middleClass: return "💰"
         }
     }
 
     /// Share of gross income that actually becomes savings after taxes and
     /// living costs. Low-income households must spend a larger fraction just to
-    /// get by, so far less is left to bank (and compound) each year.
+    /// get by, so far less is left to bank (and compound) each year. Unused in
+    /// Simplified, which banks the whole paycheck.
     var savingsRate: Double {
         switch self {
-        case .comfortable:        return 0.12
-        case .middleClass:        return 0.05
-        case .paycheckToPaycheck: return 0.02
+        case .simplified:  return 1.0
+        case .comfortable: return 0.12
+        case .middleClass: return 0.05
         }
     }
 
-    /// Annual chance that a fresh economic downturn begins.
+    /// Annual chance that a fresh economic downturn begins. No economy in
+    /// Simplified.
     var turmoilChance: Double {
         switch self {
-        case .comfortable:        return 0.0
-        case .middleClass:        return 0.10
-        case .paycheckToPaycheck: return 0.18
+        case .simplified:  return 0.0
+        case .comfortable: return 0.0
+        case .middleClass: return 0.10
         }
     }
 
-    /// Additive boost to hiring and college-admission odds in realistic mode.
-    /// "Relaxed" tilts opportunities in the player's favour; the other settings
-    /// leave the underlying odds untouched.
+    /// Additive boost to hiring and college-admission odds in realistic settings.
+    /// "Relaxed" tilts opportunities in the player's favour; the others leave the
+    /// underlying odds untouched.
     var opportunityBonus: Double {
         switch self {
-        case .comfortable:        return 0.15
-        case .middleClass:        return 0.0
-        case .paycheckToPaycheck: return 0.0
+        case .simplified:  return 0.0
+        case .comfortable: return 0.15
+        case .middleClass: return 0.0
         }
     }
 
@@ -90,9 +113,9 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// instead of clearing after the year it strikes.
     var prolongedTurmoilChance: Double {
         switch self {
-        case .comfortable:        return 0.15
-        case .middleClass:        return 0.30
-        case .paycheckToPaycheck: return 0.50
+        case .simplified:  return 0.0
+        case .comfortable: return 0.15
+        case .middleClass: return 0.30
         }
     }
 
@@ -100,13 +123,13 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// downturn. A company tier's `riskFactor` is the *calm-economy* layoff
     /// chance; in a recession layoffs spike, and the harsher the economy the
     /// harder they hit. Risky employers (startups, self-employment) are devastated
-    /// on the toughest setting while genuinely stable posts (government) still
-    /// mostly hold. Capped by `GameConstants.turmoilMaxLayoffChance`.
+    /// while genuinely stable posts (government) still mostly hold. Capped by
+    /// `GameConstants.turmoilMaxLayoffChance`.
     var layoffSeverity: Double {
         switch self {
-        case .comfortable:        return 2.0
-        case .middleClass:        return 3.5
-        case .paycheckToPaycheck: return 6.0
+        case .simplified:  return 0.0
+        case .comfortable: return 2.0
+        case .middleClass: return 3.5
         }
     }
 }
