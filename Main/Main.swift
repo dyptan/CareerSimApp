@@ -2,6 +2,18 @@ import SwiftUI
 
 @main
 struct Main: App {
+    init() {
+        #if DEBUG
+        // Catalogue integrity check — runs on every debug launch since the
+        // project has no XCTest target. Fails loudly if a project is orphaned,
+        // a licence chain forms a cycle, or a job requires something unbuildable.
+        // O(catalogue size): reachability, not a combinatorial player sweep.
+        let issues = CareerGraph.validateCatalogue()
+        for issue in issues { print("⚠️ CareerGraph: \(issue)") }
+        assert(issues.isEmpty, "Career graph validation failed (\(issues.count) issue(s)) — see console.")
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             NavigationStack {

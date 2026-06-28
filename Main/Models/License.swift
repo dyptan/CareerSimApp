@@ -143,6 +143,22 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Licences that must already be held before this one can be pursued — the
+    /// licence prerequisite chain (a CDL needs a Driver's License first, an ATP
+    /// builds on a Commercial Pilot License, and so on). This is the declarative
+    /// source of truth: `licenseRequirements` enforces it at runtime and
+    /// `CareerGraph` reads it to validate the chain stays acyclic.
+    var prerequisiteLicenses: [License] {
+        switch self {
+        case .cdl: return [.drivers]
+        case .commercialPilot: return [.pilot]
+        case .masterElectrician: return [.electrician]
+        case .masterPlumber: return [.plumber]
+        case .airlineTransportPilot: return [.commercialPilot]
+        default: return []
+        }
+    }
+
     // Minimum EQF level (education) required before pursuing this license
     var minEQF: Int {
         switch self {
@@ -298,30 +314,11 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             if age < 18 { return .blocked(reason: "Requires age 18+") }
         }
 
-        // Prerequisite license checks
-        switch self {
-        case .cdl:
-            guard player.hardSkills.licenses.contains(.drivers) else {
-                return .blocked(reason: "Requires Driver's License first")
+        // Prerequisite license checks (declared in `prerequisiteLicenses`).
+        for prereq in prerequisiteLicenses {
+            guard player.hardSkills.licenses.contains(prereq) else {
+                return .blocked(reason: "Requires \(prereq.friendlyName) first")
             }
-        case .commercialPilot:
-            guard player.hardSkills.licenses.contains(.pilot) else {
-                return .blocked(reason: "Requires Private Pilot License first")
-            }
-        case .masterElectrician:
-            guard player.hardSkills.licenses.contains(.electrician) else {
-                return .blocked(reason: "Requires Electrician License first")
-            }
-        case .masterPlumber:
-            guard player.hardSkills.licenses.contains(.plumber) else {
-                return .blocked(reason: "Requires Plumber License first")
-            }
-        case .airlineTransportPilot:
-            guard player.hardSkills.licenses.contains(.commercialPilot) else {
-                return .blocked(reason: "Requires Commercial Pilot License first")
-            }
-        default:
-            break
         }
 
         // Education prerequisite
