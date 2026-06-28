@@ -20,6 +20,9 @@ struct RootView: View {
             HeaderView(player: player, appUIState: appUIState)
                 .padding(.bottom)
 
+            StatusBarView(player: player)
+                .padding(.bottom, 4)
+
             Divider()
             Spacer()
 
@@ -85,27 +88,51 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showCompetitionsSheet) {
             navigationSheet { competitionsContent }
         }
+        .sheet(isPresented: $appUIState.showSportsSheet) {
+            navigationSheet { sportsContent }
+        }
+        .sheet(isPresented: $appUIState.showClubsSheet) {
+            navigationSheet { clubsContent }
+        }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
         }
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
         }
+        .sheet(isPresented: $player.showStartupOfferSheet) {
+            StartupOfferView(player: player)
+        }
+        .alert("Bankruptcy", isPresented: $player.showStartupBankruptcyAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("A downturn forced you to liquidate your startup. You walked away with \(player.lastBankruptcySalvage.formatted(.number)) $ from the fire-sale.")
+        }
         .onChange(of: player.savings) { _ in checkGoalReached() }
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
         .onChange(of: player.age) { newValue in
             switch newValue {
             case 10:
-                player.degrees.append(Education(Level.Stage.PrimarySchool))
+                let degree = Education(Level.Stage.PrimarySchool)
+                player.degrees.append(degree)
+                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
                 player.currentEducation = Education(Level.Stage.MiddleSchool)
             case 14:
-                player.degrees.append(Education(Level.Stage.MiddleSchool))
+                let degree = Education(Level.Stage.MiddleSchool)
+                player.degrees.append(degree)
+                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
                 player.currentEducation = Education(Level.Stage.HighSchool)
             case 18:
+                // Stage the decision prompt; the graduation alert's dismiss
+                // button will present it once the congrats has been seen.
                 appUIState.decisionText = "You're 18! What's your next step?"
-                player.degrees.append(Education(Level.Stage.HighSchool))
+                let degree = Education(Level.Stage.HighSchool)
+                player.degrees.append(degree)
+                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+                player.graduationMessage = "Congratulations! You finished \(degree.degreeName). Time to figure out the next step — university, vocational training, or straight into work."
+                player.showGraduationAlert = true
+                player.celebrationTrigger += 1
                 player.currentEducation = nil
-                appUIState.showDecisionSheet.toggle()
             case 68: appUIState.showRetirementSheet.toggle()
             default: break
             }
@@ -124,6 +151,20 @@ struct RootView: View {
             Button("Thanks!", role: .cancel) { }
         } message: {
             Text(player.promotionMessage)
+        }
+        // Marks the end of a degree with a congrats pop-up. The same milestone
+        // is also banked into the StatusBar history so the player can revisit
+        // it later. Dismissing the alert reveals the "what's next?" decision
+        // sheet — staged at graduation time but deferred so the congrats lands
+        // first.
+        .alert("Congratulations! 🎓", isPresented: $player.showGraduationAlert) {
+            Button("Thanks!", role: .cancel) {
+                if !appUIState.decisionText.isEmpty {
+                    appUIState.showDecisionSheet = true
+                }
+            }
+        } message: {
+            Text(player.graduationMessage)
         }
         // Celebrates a lucky break — a promotion or a long-shot college
         // admission — fired by bumping `player.celebrationTrigger`. Anchored
@@ -208,6 +249,42 @@ struct RootView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
                         appUIState.showCompetitionsSheet = false
+                        player.advanceYear(appUIState: appUIState)
+                    }
+                }
+            }
+    }
+
+    private var sportsContent: some View {
+        SportsView(
+            player: player,
+            selectedActivities: $appUIState.selectedActivities,
+            selectedSports: $appUIState.selectedSports
+        )
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") { appUIState.showSportsSheet = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Next") {
+                        appUIState.showSportsSheet = false
+                        player.advanceYear(appUIState: appUIState)
+                    }
+                }
+            }
+    }
+
+    private var clubsContent: some View {
+        ClubsView(player: player, selectedActivities: $appUIState.selectedActivities)
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") { appUIState.showClubsSheet = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Next") {
+                        appUIState.showClubsSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
                 }

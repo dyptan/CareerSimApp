@@ -15,7 +15,10 @@ struct HobbiesView: View {
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     private var stageHobbies: [Hobby] {
-        hobbies.filter { $0.stages.contains(currentStage) }
+        hobbies.filter {
+            $0.stages.contains(currentStage)
+                && (!$0.isElite || player.difficulty == .comfortable)
+        }
     }
 
     var body: some View {

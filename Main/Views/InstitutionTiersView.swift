@@ -16,7 +16,13 @@ struct InstitutionTiersView: View {
         if player.isSimplified {
             return [Education(level, profile: profile, tier: .community)]
         }
-        return EducationTier.allCases.map { Education(level, profile: profile, tier: $0) }
+        // Elite-tier institutions exist only for white-collar profiles —
+        // their prestige is the currency of knowledge-economy careers. Blue-
+        // collar / service / athletic tracks top out at the State tier.
+        let availableTiers = EducationTier.allCases.filter {
+            $0 != .elite || profile.isWhiteCollar
+        }
+        return availableTiers.map { Education(level, profile: profile, tier: $0) }
     }
 
     var body: some View {

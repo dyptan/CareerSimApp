@@ -173,7 +173,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             // Scrum Master: facilitates ceremonies, manages sprint cadence, unblocks team
             return [
                 (\.communicationAndNetworking, 3),
-                (\.leadershipAndInfluence, 2),
                 (\.collaborationAndTeamwork, 2),
                 (\.timeManagementAndPlanning, 2),
             ]
@@ -273,7 +272,6 @@ enum Certification: String, CaseIterable, Codable, Hashable, Identifiable {
             // PMP: managing scope, schedule, budget, and stakeholders across complex projects
             return [
                 (\.timeManagementAndPlanning, 4),
-                (\.leadershipAndInfluence, 3),
                 (\.communicationAndNetworking, 3),
                 (\.collaborationAndTeamwork, 2),
             ]

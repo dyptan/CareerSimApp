@@ -20,7 +20,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case logistics = "Logistics"
     case retail = "Retail"
     case science = "Science"
-    case humanities = "Humanities"
     case hospitality = "Hospitality"
     case fashion = "Fashion"
     case service = "Personal Services"
@@ -48,7 +47,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return 0.30   // seasonal and contract variability
         case .agriculture, .logistics, .transportation, .retail, .service, .hospitality, .tourism:
             return 0.30
-        case .health, .education, .publicServices, .humanities:
+        case .health, .education, .publicServices:
             return 0.10   // salaried / regulated
         default:
             return 0.20
@@ -120,7 +119,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .logistics: return "📦"
         case .retail: return "🛒"
         case .science: return "🔬"
-        case .humanities: return "🏛️"
         case .hospitality: return "🍽️"
         case .fashion: return "👗"
         case .service: return "🛎️"
@@ -166,8 +164,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return .people
         case .science:
             return .science
-        case .humanities:
-            return .people
         case .hospitality:
             return .people
         case .fashion:
@@ -223,8 +219,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Help customers find what they need in stores and online."
         case .science:
             return "Discover how the world works: labs, experiments, and new inventions."
-        case .humanities:
-            return "Study people, history, and culture to understand our world better."
         case .hospitality:
             return "Welcome and care for guests in hotels, restaurants, flights, and events to make their day great."
         case .fashion:
@@ -285,8 +279,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Sales associate, merchandiser, store manager"
         case .science:
             return "Lab technician, research scientist"
-        case .humanities:
-            return "Historian, anthropologist, philosopher"
         case .hospitality:
             return "Chef, server, housekeeper, flight attendant, hotel manager"
         case .fashion:

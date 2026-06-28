@@ -39,8 +39,7 @@ enum EventCatalog {
             cost: 1_500,
             category: .technology,
             abilities: [
-                .init(keyPath: \.communicationAndNetworking, weight: 1),
-                .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2)
+                .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
         ),
@@ -52,8 +51,6 @@ enum EventCatalog {
             cost: 800,
             category: .business,
             abilities: [
-                .init(keyPath: \.persuasionAndNegotiation, weight: 2),
-                .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
@@ -67,8 +64,7 @@ enum EventCatalog {
             category: .finance,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-                .init(keyPath: \.communicationAndNetworking, weight: 1),
-                .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
         ),
@@ -94,7 +90,6 @@ enum EventCatalog {
             category: .science,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-                .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
@@ -133,7 +128,6 @@ enum EventCatalog {
             cost: 1_800,
             category: .law,
             abilities: [
-                .init(keyPath: \.persuasionAndNegotiation, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
@@ -173,8 +167,6 @@ enum EventCatalog {
             cost: 2_200,
             category: nil,
             abilities: [
-                .init(keyPath: \.leadershipAndInfluence, weight: 2),
-                .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2
@@ -187,8 +179,6 @@ enum EventCatalog {
             cost: 4_000,
             category: nil,
             abilities: [
-                .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2),
-                .init(keyPath: \.leadershipAndInfluence, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 2)
             ],
             networkWeight: 3

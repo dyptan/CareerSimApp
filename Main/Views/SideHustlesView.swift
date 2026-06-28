@@ -76,7 +76,7 @@ struct PrivateProjectsView: View {
         let canAfford = player.savings - committedStake >= hustle.startupCost
         let isDisabled = !isSelected && atLimit
 
-        let odds = Int((hustle.successProbability(for: player.softSkills) * 100).rounded())
+        let odds = Int((hustle.successProbability(for: player.softSkills, fameScore: player.fameScore) * 100).rounded())
         let upside = hustle.projectedPayout(for: player.softSkills)
 
         let pictos: String = hustle.talents

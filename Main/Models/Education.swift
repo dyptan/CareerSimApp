@@ -169,7 +169,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Bachelor of Education"
             case .technology: return "Bachelor of Science in Information Technology"
             case .agriculture: return "Bachelor of Agriculture"
-            case .humanities: return "Bachelor of Arts in Humanities"
             case .law: return "Bachelor of Laws"
             case .design: return "Bachelor of Design"
             case .service: return "Bachelor of Science in Service Management"
@@ -185,7 +184,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Master of Education"
             case .technology: return "Master of Science in Information Technology"
             case .agriculture: return "Master of Agriculture"
-            case .humanities: return "Master of Philosophy in Humanities"
             case .law: return "Master of Laws"
             case .design: return "Master of Design"
             case .service: return "Master of Science in Service Management"
@@ -201,7 +199,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Doctor of Education"
             case .technology: return "Doctor of Philosophy in Information Technology"
             case .agriculture: return "Doctor of Philosophy in Agriculture"
-            case .humanities: return "Doctor of Philosophy in Humanities"
             case .law: return "Doctor of Juridical Science"
             case .design: return "Doctor of Design"
             case .service: return "Doctor of Philosophy in Service Management"
@@ -229,7 +226,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Bachelor of Education"
             case .technology: return "Bachelor of Science in Information Technology"
             case .agriculture: return "Bachelor of Science in Agriculture"
-            case .humanities: return "Bachelor of Arts in Humanities"
             case .law: return "Bachelor of Arts in Law"
             case .design: return "Bachelor of Arts in Design"
             case .service: return "Bachelor of Science in Service Management"
@@ -245,7 +241,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Master of Education"
             case .technology: return "Master of Science in Information Technology"
             case .agriculture: return "Master of Science in Agriculture"
-            case .humanities: return "Master of Arts in Humanities"
             case .law: return "Master of Laws"
             case .design: return "Master of Arts in Design"
             case .service: return "Master of Science in Service Management"
@@ -261,7 +256,6 @@ struct Education: Codable, Hashable, Identifiable {
             case .education: return "Doctor of Education"
             case .technology: return "Doctor of Philosophy in Information Technology"
             case .agriculture: return "Doctor of Philosophy in Agriculture"
-            case .humanities: return "Doctor of Philosophy in Humanities"
             case .law: return "Doctor of Juridical Science"
             case .design: return "Doctor of Design"
             case .service: return "Doctor of Philosophy in Service Management"
@@ -317,13 +311,10 @@ struct Education: Codable, Hashable, Identifiable {
 
         case .business:
             r.soft.communicationAndNetworking = 2
-            r.soft.persuasionAndNegotiation = 2
-            r.soft.leadershipAndInfluence = 2
             r.soft.analyticalReasoningAndProblemSolving = 1
             r.soft.timeManagementAndPlanning = 2
             r.soft.presentationAndStorytelling = 2
             r.soft.collaborationAndTeamwork = 1
-            r.soft.visionaryThinkingAndAmbition = 1
 
         case .education:
             r.soft.communicationAndNetworking = 2
@@ -349,16 +340,9 @@ struct Education: Codable, Hashable, Identifiable {
             r.soft.outdoorAndWeatherResilience = 1
             r.soft.timeManagementAndPlanning = 1
 
-        case .humanities:
-            r.soft.communicationAndNetworking = 2
-            r.soft.presentationAndStorytelling = 2
-            r.soft.analyticalReasoningAndProblemSolving = 1
-            r.soft.selfDisciplineAndPerseverance = 1
-
         case .law:
             r.soft.analyticalReasoningAndProblemSolving = 2
             r.soft.communicationAndNetworking = 2
-            r.soft.persuasionAndNegotiation = 2
             r.soft.carefulnessAndAttentionToDetail = 2
             r.soft.presentationAndStorytelling = 2
             r.soft.timeManagementAndPlanning = 1
@@ -432,7 +416,7 @@ struct Education: Codable, Hashable, Identifiable {
                 x.soft.resilienceAndEndurance = min(max(x.soft.resilienceAndEndurance, x.soft.resilienceAndEndurance > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
                 x.soft.stressResistanceAndEmotionalRegulation = min(max(x.soft.stressResistanceAndEmotionalRegulation, x.soft.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
-        case .business, .law, .humanities:
+        case .business, .law:
             if level == .Master || level == .Doctorate {
                 x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }

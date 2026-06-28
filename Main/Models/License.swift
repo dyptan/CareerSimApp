@@ -187,7 +187,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.stressResistanceAndEmotionalRegulation, 3),
                 (\.analyticalReasoningAndProblemSolving, 3),
-                (\.leadershipAndInfluence, 2),
             ]
         case .nurse:
             // 12-hour shifts, physical patient care, high-stakes clinical decisions
@@ -220,7 +219,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
             return [
                 (\.analyticalReasoningAndProblemSolving, 4),
                 (\.communicationAndNetworking, 4),
-                (\.persuasionAndNegotiation, 3),
                 (\.selfDisciplineAndPerseverance, 4),
                 (\.presentationAndStorytelling, 3),
                 (\.carefulnessAndAttentionToDetail, 3),
@@ -263,7 +261,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.tinkeringAndFingerPrecision, 4),
                 (\.carefulnessAndAttentionToDetail, 4),
                 (\.analyticalReasoningAndProblemSolving, 3),
-                (\.leadershipAndInfluence, 2),
             ]
         case .masterPlumber:
             // Beyond journeyman skill: system design and crew leadership
@@ -271,7 +268,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.tinkeringAndFingerPrecision, 4),
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.analyticalReasoningAndProblemSolving, 2),
-                (\.leadershipAndInfluence, 2),
             ]
         case .airlineTransportPilot:
             // Pilot-in-command of an airliner: the highest bar in aviation
@@ -280,7 +276,6 @@ enum License: String, CaseIterable, Codable, Hashable, Identifiable {
                 (\.carefulnessAndAttentionToDetail, 3),
                 (\.stressResistanceAndEmotionalRegulation, 4),
                 (\.analyticalReasoningAndProblemSolving, 3),
-                (\.leadershipAndInfluence, 3),
             ]
         }
     }

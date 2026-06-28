@@ -173,7 +173,7 @@ enum JobCatalog {
                     presentationAndStorytelling: 3
                 )
 
-            case .business, .administration, .law, .humanities, .science:
+            case .business, .administration, .law, .science:
                 return .init(
                     analyticalReasoningAndProblemSolving: 3,
                     creativityAndInsightfulThinking: 1,
@@ -537,10 +537,10 @@ enum JobCatalog {
             case .business:    return [.business]
             case .administration: return [.business]
             case .law:         return [.law]
-            case .education:   return [.education, .humanities, .science]
+            case .education:   return [.education, .science]
             case .design:      return [.design, .arts]
-            case .showBusiness: return [.arts, .design, .humanities, .sports]
-            case .service:     return [.service, .business, .humanities]
+            case .showBusiness: return [.arts, .design, .sports]
+            case .service:     return [.service, .business]
             case .agriculture: return [.agriculture, .science]
             default:           return nil
             }

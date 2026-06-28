@@ -36,6 +36,12 @@ enum GameConstants {
     /// advances by one with each in-game year.
     static let startingAge: Int = 7
 
+    /// Minimum age at which a player can take an unskilled job (one that
+    /// requires no formal education). Reflects real-world child-labour rules
+    /// that permit limited teenage work from around 14 onward. Jobs with any
+    /// education requirement clear this gate implicitly via schooling time.
+    static let minimumWorkingAge: Int = 14
+
     /// Realistic mode: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.

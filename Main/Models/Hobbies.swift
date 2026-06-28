@@ -40,94 +40,25 @@ struct Hobby {
     /// (Math Olympiad only in school), but a few classics (Reading Books,
     /// Sports) span the whole life.
     let stages: Set<LifeStage>
+    /// Gear-heavy or class-marker hobbies (private music lessons + instruments,
+    /// camera gear) that only appear in `.comfortable` ("Relaxed", well-off
+    /// family) runs. `HobbiesView` hides them on every other difficulty.
+    var isElite: Bool = false
 }
 
-// Master catalogue. HobbiesView filters by `LifeStage.forAge(player.age)`
-// so a 7-year-old sees playground games while a 30-year-old sees the gym
-// and home-DIY options. Professional networking is handled by `Event`.
+// Master catalogue. Curated to the rule that every hobby must have a clearly
+// corresponding `Project` (portfolio piece) — practising the hobby builds
+// toward the deliverable. Pure-experience pastimes (board games, travel) and
+// athletic pursuits live elsewhere (Sports dialog). Professional networking
+// is handled by `Event`. Stage filtering is unchanged: HobbiesView shows the
+// subset whose `stages` includes `LifeStage.forAge(player.age)`.
 let hobbies: [Hobby] = [
 
-    // MARK: - Childhood-specific (7–10)
+    // MARK: - Creative output
 
-    Hobby(
-        label: "Playground & Outdoor Games",
-        abilities: [
-            .init(keyPath: \.resilienceAndEndurance, weight: 2),
-            .init(keyPath: \.outdoorAndWeatherResilience, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
-        ],
-        stages: [.child]
-    ),
-    Hobby(
-        label: "Building Blocks & LEGO",
-        abilities: [
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
-            .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ],
-        stages: [.child]
-    ),
-    Hobby(
-        label: "Pretend Play & Make-Believe",
-        abilities: [
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1)
-        ],
-        stages: [.child]
-    ),
-    Hobby(
-        label: "Helping Around the House",
-        abilities: [
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ],
-        stages: [.child]
-    ),
-    Hobby(
-        label: "Family Board Games",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ],
-        stages: [.child]
-    ),
-    Hobby(
-        label: "Pet Care",
-        abilities: [
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1)
-        ],
-        stages: [.child]
-    ),
-
-    // MARK: - Physical (mostly all-stage)
-
-    Hobby(
-        label: "Sports and Athletics",
-        abilities: [
-            .init(keyPath: \.resilienceAndEndurance, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Dancing and Choreography",
-        abilities: [
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
-
-    // MARK: - Performing arts / creative
-
+    // → musicAlbum
+    // Elite: instruments and private lessons are out of reach for average
+    // families.
     Hobby(
         label: "Music Playing and Composing",
         abilities: [
@@ -136,8 +67,10 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult]
+        stages: [.child, .teen, .youngAdult, .adult],
+        isElite: true
     ),
+    // → paintingPortfolio
     Hobby(
         label: "Drawing and Sketching",
         abilities: [
@@ -148,15 +81,8 @@ let hobbies: [Hobby] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Hobby(
-        label: "Theatre and Acting",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2)
-        ],
-        stages: [.teen, .youngAdult, .adult]
-    ),
+    // → photoPortfolio
+    // Elite: camera gear, lenses, and editing software add up fast.
     Hobby(
         label: "Photography and Cinematography",
         abilities: [
@@ -165,8 +91,20 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
+        stages: [.teen, .youngAdult, .adult],
+        isElite: true
+    ),
+    // → recipeBook
+    Hobby(
+        label: "Cooking & Culinary Arts",
+        abilities: [
+            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+        ],
         stages: [.teen, .youngAdult, .adult]
     ),
+    // → paper / website
     Hobby(
         label: "Journalism, Blogging, Podcasting",
         abilities: [
@@ -178,17 +116,9 @@ let hobbies: [Hobby] = [
         stages: [.teen, .youngAdult, .adult]
     ),
 
-    // MARK: - Academic / analytical
+    // MARK: - Technical / analytical output
 
-    Hobby(
-        label: "Chess and Strategy Games",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
+    // → app / library / website
     Hobby(
         label: "Coding and Programming",
         abilities: [
@@ -198,210 +128,5 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Robotics Club",
-        abilities: [
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
-        ],
-        stages: [.teen, .youngAdult]
-    ),
-    Hobby(
-        label: "Math Olympiad",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
-        ],
-        stages: [.child, .teen]
-    ),
-    Hobby(
-        label: "Science Fair",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ],
-        stages: [.child, .teen]
-    ),
-    Hobby(
-        label: "Language Learning",
-        abilities: [
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Reading Books",
-        abilities: [
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
-
-    // MARK: - Social / leadership (school-era)
-
-    Hobby(
-        label: "Debate Club",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1)
-        ],
-        stages: [.teen, .youngAdult]
-    ),
-    Hobby(
-        label: "Student Council / Leadership",
-        abilities: [
-            .init(keyPath: \.leadershipAndInfluence, weight: 2),
-            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1)
-        ],
-        stages: [.teen, .youngAdult]
-    ),
-    Hobby(
-        label: "Model UN",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 2),
-            .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-            .init(keyPath: \.leadershipAndInfluence, weight: 1)
-        ],
-        stages: [.teen, .youngAdult]
-    ),
-    Hobby(
-        label: "Lemonade Stand & Selling",
-        abilities: [
-            .init(keyPath: \.persuasionAndNegotiation, weight: 2),
-            .init(keyPath: \.riskTakingAndInitiative, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ],
-        stages: [.child, .teen]
-    ),
-    Hobby(
-        label: "Hanging Out with Friends",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ],
-        stages: [.child, .teen, .youngAdult, .adult]
-    ),
-
-    // MARK: - Young Adult & Working Life
-
-    Hobby(
-        label: "Gym & Personal Fitness",
-        abilities: [
-            .init(keyPath: \.resilienceAndEndurance, weight: 2),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Yoga & Meditation",
-        abilities: [
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Side Project / Freelance Gig",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-            .init(keyPath: \.riskTakingAndInitiative, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Mentoring Juniors",
-        abilities: [
-            .init(keyPath: \.leadershipAndInfluence, weight: 2),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.presentationAndStorytelling, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1)
-        ],
-        stages: [.adult]
-    ),
-    Hobby(
-        label: "Volunteering in the Community",
-        abilities: [
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.collaborationAndTeamwork, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Babysitting & Caregiving",
-        abilities: [
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1)
-        ],
-        stages: [.teen, .youngAdult]
-    ),
-    Hobby(
-        label: "Personal Finance & Investing",
-        abilities: [
-            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Parenting",
-        abilities: [
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 2),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.resilienceAndEndurance, weight: 1)
-        ],
-        stages: [.adult]
-    ),
-    Hobby(
-        label: "Travelling Abroad",
-        abilities: [
-            .init(keyPath: \.outdoorAndWeatherResilience, weight: 1),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-            .init(keyPath: \.communicationAndNetworking, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ],
-        stages: [.youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Cooking & Culinary Arts",
-        abilities: [
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
-        ],
-        stages: [.teen, .youngAdult, .adult]
-    ),
-    Hobby(
-        label: "Home DIY & Repairs",
-        abilities: [
-            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
-            .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
-        ],
-        stages: [.adult]
     )
 ]
