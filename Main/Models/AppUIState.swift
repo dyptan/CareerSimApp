@@ -10,6 +10,7 @@ final class AppUIState: ObservableObject {
     @Published var showCertificationsSheet: Bool = false
     @Published var showLicensesSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
+    @Published var showProjectsSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showCompetitionsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
@@ -23,6 +24,9 @@ final class AppUIState: ObservableObject {
     /// Ids of the side hustles the player is attempting this year (see
     /// `SideHustleCatalog`). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
+    /// Raw values of the `Project`s the player is attempting this year (see
+    /// `Project` / `ProjectsView`). Resolved and cleared by `Player.advanceYear`.
+    @Published var selectedProjects: Set<String> = []
     /// Ids of the professional events the player is attending this year (see
     /// `EventCatalog`). Their cost/effects apply on attendance; cleared by
     /// `Player.advanceYear`.
@@ -84,6 +88,7 @@ final class AppUIState: ObservableObject {
         showCertificationsSheet = false
         showLicensesSheet = false
         showSideHustlesSheet = false
+        showProjectsSheet = false
         showEventsSheet = false
         showCompetitionsSheet = false
         showSportsSheet = false
@@ -96,6 +101,7 @@ final class AppUIState: ObservableObject {
         selectedLicenses = []
         selectedCertifications = []
         selectedSideHustles = []
+        selectedProjects = []
         selectedEvents = []
         selectedCompetitions = []
         selectedSports = []

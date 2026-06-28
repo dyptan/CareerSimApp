@@ -17,6 +17,12 @@ enum GameConstants {
     /// Spare time is limited, so monetizing talents competes for the same hours.
     static let maxSideHustlesPerYear: Int = 1
 
+    /// How many personal projects (portfolio pieces) the player can commit a
+    /// year to. Like a hobby, a project is one spare-time pursuit at a time —
+    /// but it spends soft skills rather than building them, and gambles on a
+    /// portfolio piece, founder growth, and fame (see `Project` / `ProjectsView`).
+    static let maxProjectsPerYear: Int = 1
+
     /// Realistic mode: how many competitions (athletic or e-sports) the player
     /// can enter in one year. Each costs an entry fee and is a skill-based shot
     /// at prize money and a reputation-building achievement.

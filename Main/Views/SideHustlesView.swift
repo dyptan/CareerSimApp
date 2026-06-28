@@ -40,7 +40,7 @@ struct PrivateProjectsView: View {
     var body: some View {
         VStack {
             HStack(spacing: 6) {
-                Text("Projects this year:")
+                Text("Side hustles this year:")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Text("\(selectedSideHustles.count)/\(GameConstants.maxSideHustlesPerYear)")
@@ -50,7 +50,7 @@ struct PrivateProjectsView: View {
                             ? .red : .primary
                     )
             }
-            Text("Make money or build your portfolio · savings: \(player.savings.formatted(.number)) $")
+            Text("Monetize your talents for cash · savings: \(player.savings.formatted(.number)) $")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
@@ -144,7 +144,7 @@ struct PrivateProjectsView: View {
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
                 atLimit && !isSelected
-                    ? "You can take up to \(GameConstants.maxSideHustlesPerYear) projects this year."
+                    ? "You can take up to \(GameConstants.maxSideHustlesPerYear) side hustle(s) this year."
                     : ""
             )
 
