@@ -268,26 +268,14 @@ enum SideHustleCatalog {
         ),
     ]
 
-    /// Portfolio projects, generated from `Project`. No money is staked or paid —
-    /// they "risk not money", only the year's attempt — and a successful one grants
-    /// the matching portfolio piece, a hiring signal at portfolio-tier employers.
-    static let portfolioProjects: [SideHustle] = Project.allCases.map { project in
-        SideHustle(
-            id: "project-\(project.rawValue)",
-            label: project.rawValue,
-            icon: project.pictogram,
-            blurb: project.description,
-            talents: project.talents,
-            payoff: .portfolio(project),
-            stages: project.stages
-        )
-    }
+    /// Every side hustle on offer. Portfolio projects used to live here too, but
+    /// they are now a standalone, hobby-style feature (see `Project` /
+    /// `ProjectsView`): gated by soft-skill requirements, they probabilistically
+    /// grant a portfolio piece and fame rather than money. This catalogue is
+    /// therefore the money-making ventures only.
+    static let all: [SideHustle] = moneyVentures
 
-    /// Every private project on offer: money ventures first, portfolio projects
-    /// after, shown as a single list.
-    static let all: [SideHustle] = moneyVentures + portfolioProjects
-
-    /// Lookup by stable id, used when resolving the year's selected projects.
+    /// Lookup by stable id, used when resolving the year's selected hustles.
     static let byId: [String: SideHustle] =
         Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
 }

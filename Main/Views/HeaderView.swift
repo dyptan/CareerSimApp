@@ -113,7 +113,7 @@ struct HeaderView: View {
                 lines.append("💼 You were laid off last year — find a new job")
             }
             if player.lastSideHustleEarnings != 0 {
-                lines.append("🛠️ Private projects \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
+                lines.append("🛠️ Side hustles \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
             }
             if player.lastPromotionRaisePct > 0 {
                 lines.append("⬆️ Promoted last year — pay up \(player.lastPromotionRaisePct)%")

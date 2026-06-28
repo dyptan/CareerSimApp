@@ -105,6 +105,11 @@ final class Player: ObservableObject {
                 map[award] = (h.icon, h.fameWeight)
             }
         }
+        for p in Project.allCases {
+            if let award = p.fameAward {
+                map[award] = (p.pictogram, p.fameWeight)
+            }
+        }
         return map
     }()
 
@@ -681,6 +686,41 @@ final class Player: ObservableObject {
         }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
+
+        // Personal projects: spare-time creative work the player commits a year
+        // to. Unlike a hobby — which reliably hands out soft skills — a project
+        // is a gamble gated by the soft skills already built: its odds scale
+        // with how well the player meets its requirements (Project.successProbability).
+        // When it comes together it yields what hobbies never can — a portfolio
+        // piece (a professional credential), founder-cluster growth (axes no
+        // hobby touches), and, for marquee pieces, a fame trophy. A flop simply
+        // yields nothing.
+        var shippedProjects = 0
+        for raw in appUIState.selectedProjects {
+            guard let project = Project(rawValue: raw) else { continue }
+            // A finished piece can't be earned twice.
+            if lockedPortfolio.contains(project) { continue }
+            let succeeded = Double.random(in: 0...1) < project.successProbability(for: softSkills)
+            guard succeeded else {
+                recordStatus("📁", "\(project.rawValue) didn't come together this year")
+                continue
+            }
+            hardSkills.portfolioItems.insert(project)
+            lockedPortfolio.insert(project)
+            // Shipping a project sharpens the founder cluster — these axes are
+            // reserved for project boosts only (see Project.boosts).
+            for (keyPath, delta) in project.boosts {
+                softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 5)
+            }
+            shippedProjects += 1
+            recordStatus("📁", "Shipped \(project.rawValue)")
+            if let fame = project.fameAward {
+                achievements.append(fame)
+                recordStatus("🏆", "Earned achievement: \(fame)")
+            }
+        }
+        if shippedProjects > 0 { celebrationTrigger += 1 }
+        appUIState.selectedProjects.removeAll()
 
         // Competitions: resolve every contest entered this year. The entry fee is
         // staked up front (even into debt); a win pays the prize and banks a

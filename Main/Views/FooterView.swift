@@ -97,8 +97,13 @@ struct FooterView: View {
     private var hasCompetitions: Bool {
         CompetitionCatalog.all.contains { $0.stages.contains(currentStage) }
     }
-    private var hasProjects: Bool {
+    private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
+    }
+    private var hasProjects: Bool {
+        Project.allCases.contains {
+            $0.stages.contains(currentStage) && !player.lockedPortfolio.contains($0)
+        }
     }
     private var hasCertifications: Bool {
         Certification.allCases.contains { $0.stages.contains(currentStage) }
@@ -160,7 +165,12 @@ struct FooterView: View {
             }.buttonStyle(.bordered).font(.headline)
 
             if hasProjects {
-                Button("Projects") { appUIState.showSideHustlesSheet = true }
+                Button("Projects") { appUIState.showProjectsSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+            }
+
+            if hasSideHustles {
+                Button("Side Hustles") { appUIState.showSideHustlesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 
