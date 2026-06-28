@@ -554,6 +554,15 @@ final class Player: ObservableObject {
         lockedCertifications.formUnion(appUIState.selectedCertifications)
         lockedLicenses.formUnion(appUIState.selectedLicenses)
 
+        // Bank this year's hobbies into the player's practised-hobby history.
+        // It both locks a hobby from being retaken (HobbiesView) and unlocks the
+        // matching portfolio projects (ProjectsView). `selectedActivities` also
+        // carries sports/clubs/cert:/lic: entries, so intersect with the hobby
+        // catalogue to keep only real hobby labels.
+        lockedHobbies.formUnion(
+            appUIState.selectedActivities.intersection(Set(hobbies.map(\.label)))
+        )
+
         appUIState.selectedActivities.removeAll()
         // Events were charged and their network/soft-skill effects applied when
         // attended; just clear this year's picks so next year starts fresh.

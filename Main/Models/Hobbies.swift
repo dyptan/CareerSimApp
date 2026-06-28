@@ -44,6 +44,11 @@ struct Hobby {
     /// camera gear) that only appear in `.comfortable` ("Relaxed", well-off
     /// family) runs. `HobbiesView` hides them on every other difficulty.
     var isElite: Bool = false
+    /// The portfolio `Project`s this hobby unlocks. A project only appears in
+    /// `ProjectsView` once the player has practised at least one hobby that
+    /// unlocks it — you can't ship a photo portfolio without ever picking up
+    /// photography. See `Project.unlocked(byPractisedHobbies:)`.
+    var unlocks: [Project] = []
 }
 
 // Master catalogue. Curated to the rule that every hobby must have a clearly
@@ -68,7 +73,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult],
-        isElite: true
+        isElite: true,
+        unlocks: [.musicAlbum]
     ),
     // → paintingPortfolio
     Hobby(
@@ -79,7 +85,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult]
+        stages: [.child, .teen, .youngAdult, .adult],
+        unlocks: [.paintingPortfolio]
     ),
     // → photoPortfolio
     // Elite: camera gear, lenses, and editing software add up fast.
@@ -92,7 +99,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult],
-        isElite: true
+        isElite: true,
+        unlocks: [.photoPortfolio]
     ),
     // → recipeBook
     Hobby(
@@ -102,9 +110,10 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult]
+        stages: [.teen, .youngAdult, .adult],
+        unlocks: [.recipeBook]
     ),
-    // → paper / website
+    // → paper / website / presentation / lessonPlan
     Hobby(
         label: "Journalism, Blogging, Podcasting",
         abilities: [
@@ -113,7 +122,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult]
+        stages: [.teen, .youngAdult, .adult],
+        unlocks: [.paper, .website, .presentation, .lessonPlan]
     ),
 
     // MARK: - Technical / analytical output
@@ -127,6 +137,21 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult]
+        stages: [.teen, .youngAdult, .adult],
+        unlocks: [.app, .library, .website]
     )
 ]
+
+extension Project {
+    /// The set of projects unlocked by a player who has practised the hobbies in
+    /// `practisedHobbies` (their labels). A project unlocks the moment the player
+    /// has taken *any* hobby that lists it in `Hobby.unlocks` — practise the
+    /// craft first, then you can turn it into a portfolio piece.
+    static func unlocked(byPractisedHobbies practisedHobbies: Set<String>) -> Set<Project> {
+        var result: Set<Project> = []
+        for hobby in hobbies where practisedHobbies.contains(hobby.label) {
+            result.formUnion(hobby.unlocks)
+        }
+        return result
+    }
+}
