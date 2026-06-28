@@ -89,5 +89,33 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             return [\.communicationAndNetworking, \.timeManagementAndPlanning, \.carefulnessAndAttentionToDetail]
         }
     }
+
+    /// Soft-skill bumps granted when a project ships. Reserved for the
+    /// "founder cluster" — Risk-Taker, Visionary, Persuader, Leader — axes
+    /// you can only sharpen by actually putting your own work into the world.
+    /// Each delta is applied (and capped at 5) inside `Player.advanceYear`
+    /// when a side hustle grants the portfolio piece.
+    var boosts: [(WritableKeyPath<SoftSkills, Int>, Int)] {
+        switch self {
+        case .app:
+            return [(\.riskTakingAndInitiative, 1), (\.visionaryThinkingAndAmbition, 1)]
+        case .website:
+            return [(\.persuasionAndNegotiation, 1)]
+        case .library:
+            return [(\.leadershipAndInfluence, 1), (\.visionaryThinkingAndAmbition, 1)]
+        case .paper:
+            return [(\.visionaryThinkingAndAmbition, 1)]
+        case .presentation:
+            return [(\.persuasionAndNegotiation, 2)]
+        case .paintingPortfolio, .photoPortfolio:
+            return [(\.visionaryThinkingAndAmbition, 1)]
+        case .musicAlbum:
+            return [(\.visionaryThinkingAndAmbition, 1), (\.riskTakingAndInitiative, 1)]
+        case .recipeBook:
+            return [(\.persuasionAndNegotiation, 1)]
+        case .lessonPlan:
+            return [(\.leadershipAndInfluence, 1)]
+        }
+    }
 }
 

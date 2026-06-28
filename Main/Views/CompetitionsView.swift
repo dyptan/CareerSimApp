@@ -20,8 +20,16 @@ struct CompetitionsView: View {
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
+    /// Stage-eligible competitions further filtered to ones the player
+    /// qualifies for — at least one of their practised sports must overlap
+    /// the competition's `sports` set (sport-agnostic competitions, with a
+    /// nil `sports`, are always shown).
     private var stageCompetitions: [Competition] {
-        CompetitionCatalog.all.filter { $0.stages.contains(currentStage) }
+        CompetitionCatalog.all.filter { competition in
+            guard competition.stages.contains(currentStage) else { return false }
+            guard let sports = competition.sports else { return true }
+            return sports.contains { player.sportYears[$0, default: 0] > 0 }
+        }
     }
 
     /// Entry fees already committed to the competitions picked this year.
@@ -65,7 +73,7 @@ struct CompetitionsView: View {
         let isDisabled = !isSelected && atLimit
         // A flag, not a gate — an unaffordable entry is taken on credit.
         let canAfford = player.savings - committedFees >= competition.entryFee
-        let odds = Int((competition.winProbability(for: player.softSkills) * 100).rounded())
+        let odds = Int((competition.winProbability(for: player.softSkills, sportYears: player.sportYears) * 100).rounded())
 
         let pictos: String = competition.skills
             .compactMap { skillPictogramByKeyPath[$0 as PartialKeyPath<SoftSkills>] }

@@ -11,7 +11,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
     case technology
     case sports
     case agriculture
-    case humanities
     case law
     case design
     case service
@@ -31,7 +30,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         case .technology: return "Computers, programming, and digital."
         case .sports: return "Physical activity, coaching, and competition."
         case .agriculture: return "Farming, food production, and animals."
-        case .humanities: return "Culture, history, and society."
         case .law: return "Legal, justice, and social order."
         case .design: return "Making things functional and beautiful."
         case .service: return "Help, care, and support roles."
@@ -50,7 +48,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         case .technology: return "Make apps, games, and smart machines."
         case .sports: return "Train bodies and minds to perform their best."
         case .agriculture: return "Grow food and care for plants and animals."
-        case .humanities: return "Study people, cultures, and history."
         case .law: return "Learn rules, rights, and justice systems to help people follow the law."
         case .design: return "Make things useful and beautiful."
         case .service: return "Help others with important everyday tasks."
@@ -78,8 +75,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
             return "You learn about movement, training, and health to improve athletic performance."
         case .agriculture:
             return "You learn how to grow crops, care for animals, and manage farms sustainably."
-        case .humanities:
-            return "You study language, culture, and history to understand people and societies."
         case .law:
             return "You learn rules, rights, and justice systems to help people follow the law."
         case .design:
@@ -109,8 +104,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
             return "Coach, trainer, sports scientist, physiologist"
         case .agriculture:
             return "Farmer, agronomist, animal caretaker"
-        case .humanities:
-            return "Historian, writer, museum guide, analyst"
         case .law:
             return "Paralegal, legal assistant, compliance officer"
         case .design:
@@ -129,11 +122,25 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Whether the profile leads primarily into white-collar work — the
+    /// knowledge-economy and professional fields where an elite-tier
+    /// institution's prestige actually opens doors. Blue-collar / service /
+    /// athletic paths are hidden from elite tier in `InstitutionTiersView`.
+    var isWhiteCollar: Bool {
+        switch self {
+        case .business, .engineering, .health, .arts, .science, .education,
+             .technology, .law, .design:
+            return true
+        case .sports, .agriculture, .service:
+            return false
+        }
+    }
+
     var allowsVocational: Bool {
         switch self {
         case .engineering, .technology, .health, .agriculture, .design, .service, .sports:
             return true
-        case .business, .arts, .science, .education, .humanities, .law:
+        case .business, .arts, .science, .education, .law:
             return false
         }
     }

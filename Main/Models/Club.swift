@@ -11,6 +11,10 @@ struct Club {
     let abilities: [WeightedAbility]
     /// Stages in which the club is offered (mirrors `Hobby.stages`).
     let stages: Set<LifeStage>
+    /// Fee- or travel-heavy clubs (robotics kits, Model UN conference fees)
+    /// that only appear in `.comfortable` ("Relaxed", well-off family) runs.
+    /// `ClubsView` hides them on every other difficulty.
+    var isElite: Bool = false
 }
 
 /// Catalogue of clubs. `ClubsView` filters by life stage; with most options
@@ -43,6 +47,7 @@ let clubs: [Club] = [
     // MARK: - School clubs
 
     // Skill-building, no portfolio output
+    // Elite: kits, parts, and competition travel are pay-to-play.
     Club(
         label: "Robotics Club",
         abilities: [
@@ -51,7 +56,8 @@ let clubs: [Club] = [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1)
         ],
-        stages: [.teen, .youngAdult]
+        stages: [.teen, .youngAdult],
+        isElite: true
     ),
     // → presentation (debates are structured talks)
     Club(
@@ -64,12 +70,14 @@ let clubs: [Club] = [
         stages: [.teen, .youngAdult]
     ),
     // Skill-building, no portfolio output
+    // Elite: registration fees plus travel to conferences price most families out.
     Club(
         label: "Model UN",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2)
         ],
-        stages: [.teen, .youngAdult]
+        stages: [.teen, .youngAdult],
+        isElite: true
     ),
     // Skill-building, no portfolio output
     Club(

@@ -42,6 +42,11 @@ struct SideHustle: Identifiable, Hashable {
     /// doors across Show Business careers, the same currency a competition win
     /// earns (see `Player.achievements` / `achievementHireBonus`).
     var fameAward: String? = nil
+    /// Reputation weight this trophy carries when totalled into the player's
+    /// fame score (see `Player.fameScore`). Only meaningful for fame-building
+    /// ventures; marquee outcomes (album, TV) are tuned higher than a single
+    /// viral upload.
+    var fameWeight: Double = 1.0
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -80,8 +85,16 @@ struct SideHustle: Identifiable, Hashable {
     }
 
     /// Probability (0.1...0.9) that the venture pays off in a given year.
-    func successProbability(for soft: SoftSkills) -> Double {
-        max(0.1, min(0.9, 0.2 + talentFit(for: soft) * 0.65))
+    /// Fame-building social-media ventures (influencer, album, performer, TV,
+    /// self-published book) snowball with reputation — every banked
+    /// achievement (a competition win or earlier fame hustle) lifts the odds
+    /// by +0.03 per weighted point of fame, capped at +0.15 so the climb still
+    /// feels earned. `fameScore` is the weighted sum of the player's trophies
+    /// (see `Player.fameScore`).
+    func successProbability(for soft: SoftSkills, fameScore: Double = 0) -> Double {
+        let base = 0.2 + talentFit(for: soft) * 0.65
+        let fameLift = buildsFame ? min(fameScore * 0.03, 0.15) : 0.0
+        return max(0.1, min(0.9, base + fameLift))
     }
 
     /// The payout a successful year would yield at the player's current talent
@@ -97,9 +110,10 @@ struct SideHustle: Identifiable, Hashable {
     /// Rolls a single year of this venture. Money ventures return the takings
     /// (banked in full) on success or a half-stake salvage on a flop; the caller
     /// charges `startupCost` separately. Portfolio projects return the granted
-    /// piece on success and nothing on a flop.
-    func resolve(for soft: SoftSkills) -> Outcome {
-        let succeeded = Double.random(in: 0...1) < successProbability(for: soft)
+    /// piece on success and nothing on a flop. `fameScore` lets a fame-building
+    /// venture's odds rise with the player's reputation (see `successProbability`).
+    func resolve(for soft: SoftSkills, fameScore: Double = 0) -> Outcome {
+        let succeeded = Double.random(in: 0...1) < successProbability(for: soft, fameScore: fameScore)
         // Fame is banked only on a successful year, whatever the payoff kind.
         let fame = succeeded ? fameAward : nil
         switch payoff {
@@ -159,7 +173,7 @@ enum SideHustleCatalog {
             blurb: "Turn a making hobby into an online storefront of handmade goods.",
             talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.carefulnessAndAttentionToDetail],
             payoff: .money(startupCost: 1_500, payoutRange: 500...16_000),
-            stages: [.teen, .youngAdult, .adult]
+            stages: [.youngAdult, .adult]
         ),
         SideHustle(
             id: "influencer",
@@ -168,8 +182,9 @@ enum SideHustleCatalog {
             blurb: "Build an audience and chase brand deals. Most channels fizzle — a viral one prints money.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
             payoff: .money(startupCost: 1_000, payoutRange: 0...45_000),
-            stages: [.teen, .youngAdult, .adult],
-            fameAward: "Viral Creator"
+            stages: [.youngAdult, .adult],
+            fameAward: "Viral Creator",
+            fameWeight: 1.0
         ),
         SideHustle(
             id: "freelanceConsulting",
@@ -197,7 +212,8 @@ enum SideHustleCatalog {
             talents: [\.presentationAndStorytelling, \.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking],
             payoff: .money(startupCost: 1_000, payoutRange: 0...28_000),
             stages: [.youngAdult, .adult],
-            fameAward: "Published Author"
+            fameAward: "Published Author",
+            fameWeight: 1.5
         ),
         SideHustle(
             id: "freelancePerformer",
@@ -206,8 +222,9 @@ enum SideHustleCatalog {
             blurb: "Go independent in show business — sell your art, gig as a musician, dancer, or actor, and take commissions. The self-employed creative path: feast or famine.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
             payoff: .money(startupCost: 800, payoutRange: 0...40_000),
-            stages: [.teen, .youngAdult, .adult],
-            fameAward: "Rising Performer"
+            stages: [.youngAdult, .adult],
+            fameAward: "Rising Performer",
+            fameWeight: 1.0
         ),
         SideHustle(
             id: "releaseAlbum",
@@ -217,7 +234,8 @@ enum SideHustleCatalog {
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
             payoff: .money(startupCost: 6_000, payoutRange: 0...55_000),
             stages: [.youngAdult, .adult],
-            fameAward: "Recording Artist"
+            fameAward: "Recording Artist",
+            fameWeight: 2.0
         ),
         SideHustle(
             id: "tvShow",
@@ -227,7 +245,8 @@ enum SideHustleCatalog {
             talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.stressResistanceAndEmotionalRegulation],
             payoff: .money(startupCost: 500, payoutRange: 0...70_000),
             stages: [.youngAdult, .adult],
-            fameAward: "TV Personality"
+            fameAward: "TV Personality",
+            fameWeight: 2.0
         ),
         SideHustle(
             id: "smallBusiness",

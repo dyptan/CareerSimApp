@@ -68,6 +68,17 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Gear- or coaching-heavy sports that only appear in `.comfortable`
+    /// ("Relaxed", well-off family) runs — court fees, club memberships, and
+    /// private coaching put them out of reach for average families.
+    /// `SportsView` hides them on every other difficulty.
+    var isElite: Bool {
+        switch self {
+        case .tennis, .gymnastics: return true
+        default:                   return false
+        }
+    }
+
     /// Soft-skill bumps applied each year the player trains in this sport.
     /// Mirrors `Hobby.abilities` so `Player.selectSport` / `deselectSport` can
     /// reuse the bump-and-reverse pattern.

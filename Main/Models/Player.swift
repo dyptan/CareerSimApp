@@ -1,6 +1,32 @@
 import Foundation
 import SwiftUI
 
+/// A milestone entry shown in the `StatusBarView` event log: a player-facing
+/// note tagged with the age at which it happened. Identifiable so SwiftUI can
+/// diff the list when new entries arrive.
+struct StatusEvent: Identifiable, Hashable {
+    let id = UUID()
+    let age: Int
+    let icon: String
+    let message: String
+}
+
+/// The player's currently-active startup (realistic mode only). Founded by
+/// taking on a founder Job; each year `advanceYear` rolls for a buyout offer
+/// and — on a hit — sets `Player.pendingStartupOffer` so the UI can present a
+/// Sell-or-Hold dialog. Holding advances `rungIndex` to the next founder rung
+/// (and updates `currentOccupation` accordingly); selling banks the offer and
+/// clears `activeStartup`. A recession forces a fire-sale liquidation.
+///
+/// `rungIndex` corresponds to the four founder rungs declared in `JobCatalog`
+/// (0 = Side Hustler … 3 = Serial Entrepreneur). `yearsHeld` is the count of
+/// year-rolls since the venture was founded (or last grew), purely informational
+/// for the dialog copy.
+struct ActiveStartup: Hashable {
+    var rungIndex: Int
+    var yearsHeld: Int
+}
+
 final class Player: ObservableObject {
     /// The single difficulty choice the game runs under: how much complexity is
     /// in play (Simplified strips skills, tiers, negotiation, and the economy)
@@ -20,19 +46,74 @@ final class Player: ObservableObject {
         "🦸", "🧑‍🎤", "🧑‍🚀", "🤖", "🦊", "🐱", "🐵", "🦄"
     ]
 
-    /// Titled trophies won in `Competition`s. Each win appends its achievement
-    /// title; the count drives `achievementHireBonus`. Cosmetic titles double as
-    /// a fame score that helps land Show Business roles.
+    /// Titled trophies won in `Competition`s or banked from fame-building side
+    /// hustles. Each entry is the trophy title; weights and icons are resolved
+    /// through `Player.fameMetadata(for:)`. Cosmetic titles double as a fame
+    /// score (see `fameScore`) that helps land Show Business roles.
     @Published var achievements: [String] = []
 
     /// Number of competitions won in the year just advanced (0 when none).
     /// Surfaced in the header alongside the confetti.
     @Published var lastCompetitionWins: Int = 0
 
+    /// The player's current startup if they're operating one (realistic mode
+    /// only). Created when a founder Job is launched via `foundVenture`;
+    /// resolved annually by `advanceYear` into either a buyout dialog or a
+    /// recession-driven bankruptcy. `nil` outside the startup loop.
+    @Published var activeStartup: ActiveStartup?
+
+    /// Buyout amount waiting on a Sell-or-Hold decision from the player. Set
+    /// by `advanceYear` when the annual roll lands an offer; cleared the moment
+    /// the player resolves the offer via `acceptStartupOffer` or `holdStartup`.
+    @Published var pendingStartupOffer: Int?
+
+    /// One-shot trigger for the buyout-offer sheet. Bound by `RootView`; the
+    /// `Sell` / `Hold & grow` buttons flip it off.
+    @Published var showStartupOfferSheet: Bool = false
+
+    /// One-shot trigger for the bankruptcy notice that fires when a recession
+    /// forces a fire-sale of the player's startup.
+    @Published var showStartupBankruptcyAlert: Bool = false
+
+    /// Salvage value paid out by the most recent forced bankruptcy. Used by
+    /// the bankruptcy alert message; not a header note.
+    @Published var lastBankruptcySalvage: Int = 0
+
+    /// Weighted sum of every banked trophy, where each title's contribution
+    /// comes from its source's `fameWeight` (a local 5K is worth less than an
+    /// Olympic medal). Drives both `achievementHireBonus` and the fame lift on
+    /// Show Business side hustles.
+    var fameScore: Double {
+        achievements.reduce(0.0) { $0 + Player.fameMetadata(for: $1).weight }
+    }
+
     /// Additive hire-probability boost for fame-driven Show Business roles from
-    /// the player's competition achievements. Diminishing, capped at +0.20 — a
-    /// decorated competitor is a draw for casting directors and sponsors.
-    var achievementHireBonus: Double { min(0.20, Double(achievements.count) * 0.04) }
+    /// the player's trophies. Diminishing, capped at +0.20 — a decorated
+    /// competitor is a draw for casting directors and sponsors.
+    var achievementHireBonus: Double { min(0.20, fameScore * 0.04) }
+
+    /// Source-of-truth registry mapping each trophy title to its visual icon
+    /// and reputation weight. Built once from the competition and side-hustle
+    /// catalogues so the catalogues remain the single place to tune both.
+    private static let fameRegistry: [String: (icon: String, weight: Double)] = {
+        var map: [String: (icon: String, weight: Double)] = [:]
+        for c in CompetitionCatalog.all {
+            map[c.achievement] = (c.icon, c.fameWeight)
+        }
+        for h in SideHustleCatalog.all {
+            if let award = h.fameAward {
+                map[award] = (h.icon, h.fameWeight)
+            }
+        }
+        return map
+    }()
+
+    /// Resolves the display icon and reputation weight for a banked trophy
+    /// title. Falls back to a generic trophy emoji and unit weight when a
+    /// title has no catalogue match (legacy saves, removed entries).
+    static func fameMetadata(for title: String) -> (icon: String, weight: Double) {
+        fameRegistry[title] ?? ("🏆", 1.0)
+    }
 
     /// Years a prolonged recession still has to run. While positive, each
     /// `advanceYear` keeps the downturn in force (hiring freeze + layoff risk)
@@ -60,6 +141,15 @@ final class Player: ObservableObject {
     /// The promotion pop-up's message, capturing the raise and the new pay.
     @Published var promotionMessage: String = ""
 
+    /// One-shot trigger for the graduation congratulations pop-up. Set the
+    /// moment a degree finishes (whether through the tertiary-track timer or
+    /// the school-age transitions in `RootView`). The alert clears it on
+    /// dismiss; `StatusBarView` still keeps the milestone in its history.
+    @Published var showGraduationAlert: Bool = false
+
+    /// The graduation pop-up's message, capturing the degree just earned.
+    @Published var graduationMessage: String = ""
+
     /// Whether a downturn cost the player their job in the year just advanced.
     /// Drives the header layoff notice so a sudden firing doesn't go unnoticed.
     @Published var lostJobThisYear: Bool = false
@@ -72,6 +162,20 @@ final class Player: ObservableObject {
     /// Incremented on a celebratory stroke of luck (a promotion, or a long-shot
     /// college admission); the game view watches it to fire the confetti cannon.
     @Published var celebrationTrigger: Int = 0
+
+    /// Running log of player-facing milestones — completions, promotions, hires,
+    /// layoffs, unlocked credentials — surfaced by `StatusBarView` (collapsed
+    /// shows the latest, expanded shows the full history). Append-only inside
+    /// `Player`; cleared on `reset()`.
+    @Published var statusEvents: [StatusEvent] = []
+
+    /// Appends a milestone to `statusEvents`, tagged with the player's current
+    /// age. Called from year-progression hooks and from the few mutating
+    /// helpers (hiring, founding a venture, graduating) that don't pass
+    /// through `advanceYear`.
+    func recordStatus(_ icon: String, _ message: String) {
+        statusEvents.append(StatusEvent(age: age, icon: icon, message: message))
+    }
 
     /// Whether the player has met the current setting's win condition:
     /// a top leadership ("C-suite") role in Simplified, or a million in
@@ -115,6 +219,12 @@ final class Player: ObservableObject {
     /// Network from cross-industry events (`CareerEvent.category == nil`). Counts
     /// toward every field on top of the industry-specific totals.
     @Published var generalNetwork: Int = 0
+
+    /// Total years trained in each `Sport`. A new year is added at year-end for
+    /// every sport the player committed their spare-time slot to. Drives the
+    /// competition sport gate (a sport must have ≥1 year for its tagged
+    /// competitions to appear) and the `sportFit` bonus inside `winProbability`.
+    @Published var sportYears: [Sport: Int] = [:]
     @Published var appliedJobIds: Set<String> = []
     /// Schools (by `Education.id`) the player has already applied to this year.
     /// One admission attempt per school per year, so a rejection can't be
@@ -136,10 +246,6 @@ final class Player: ObservableObject {
             analyticalReasoningAndProblemSolving: Int.random(in: 0...1),
             creativityAndInsightfulThinking: Int.random(in: 0...1),
             communicationAndNetworking: Int.random(in: 0...1),
-            persuasionAndNegotiation: Int.random(in: 0...1),
-            leadershipAndInfluence: Int.random(in: 0...1),
-            visionaryThinkingAndAmbition: Int.random(in: 0...1),
-            riskTakingAndInitiative: Int.random(in: 0...1),
             carefulnessAndAttentionToDetail: Int.random(in: 0...1),
             tinkeringAndFingerPrecision: Int.random(in: 0...1),
             spacialNavigationAndOrientation: Int.random(in: 0...1),
@@ -222,6 +328,57 @@ final class Player: ObservableObject {
     func deselectHobby(_ hobby: Hobby, from selectedActivities: inout Set<String>) {
         guard selectedActivities.remove(hobby.label) != nil else { return }
         for ability in hobby.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] -= ability.weight
+        }
+    }
+
+    // MARK: - Sport selection
+
+    /// Commits the year's spare-time slot to training in `sport`. Mirrors
+    /// `selectHobby`: bumps the sport's soft skills now and registers it in
+    /// `selectedActivities` (slot accounting) plus `selectedSports`
+    /// (type-safe selection). Year-end (`advanceYear`) banks the year into
+    /// `sportYears` for the unlocked-competition gate and the win-odds bonus.
+    func selectSport(_ sport: Sport, into selectedActivities: inout Set<String>, sports: inout Set<Sport>) {
+        guard !sports.contains(sport) else { return }
+        sports.insert(sport)
+        selectedActivities.insert(sport.label)
+        for ability in sport.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] += ability.weight
+        }
+    }
+
+    /// Reverses `selectSport` if the player toggles a sport off before the
+    /// year ends. Symmetric to `deselectHobby`.
+    func deselectSport(_ sport: Sport, from selectedActivities: inout Set<String>, sports: inout Set<Sport>) {
+        guard sports.remove(sport) != nil else { return }
+        selectedActivities.remove(sport.label)
+        for ability in sport.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] -= ability.weight
+        }
+    }
+
+    // MARK: - Club selection
+
+    /// Commits the year's spare-time slot to a club (school extracurricular or
+    /// academic competition). Mirrors `selectHobby`: bumps the club's soft
+    /// skills and registers it in `selectedActivities` (slot accounting).
+    func selectClub(_ club: Club, into selectedActivities: inout Set<String>) {
+        guard !selectedActivities.contains(club.label) else { return }
+        selectedActivities.insert(club.label)
+        for ability in club.abilities {
+            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
+            softSkills[keyPath: kp] += ability.weight
+        }
+    }
+
+    /// Reverses `selectClub` if the player toggles a club off before year-end.
+    func deselectClub(_ club: Club, from selectedActivities: inout Set<String>) {
+        guard selectedActivities.remove(club.label) != nil else { return }
+        for ability in club.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] -= ability.weight
         }
@@ -367,8 +524,24 @@ final class Player: ObservableObject {
         lastCompetitionWins = 0
         lostJobThisYear = false
 
+        let newCerts = appUIState.selectedCertifications.subtracting(hardSkills.certifications)
+        let newLicenses = appUIState.selectedLicenses.subtracting(hardSkills.licenses)
         hardSkills.certifications.formUnion(appUIState.selectedCertifications)
         hardSkills.licenses.formUnion(appUIState.selectedLicenses)
+        for cert in newCerts {
+            recordStatus("📜", "Earned \(cert.friendlyName)")
+        }
+        for license in newLicenses {
+            recordStatus("🪪", "Earned \(license.friendlyName)")
+        }
+
+        // Bank the year's sport training. Each sport practised adds one to
+        // `sportYears`, which gates the matching Competitions and adds to the
+        // sport-fit bonus inside `Competition.winProbability`.
+        for sport in appUIState.selectedSports {
+            sportYears[sport, default: 0] += 1
+        }
+        appUIState.selectedSports.removeAll()
         // Portfolio pieces are no longer granted up front — they're earned by
         // successfully resolving portfolio projects in the private-projects loop
         // below (see "Private projects").
@@ -391,10 +564,17 @@ final class Player: ObservableObject {
 
         appUIState.yearsLeftToGraduation? -= 1
         if appUIState.yearsLeftToGraduation == 0 {
+            // Set up the "what's next?" prompt but DON'T toggle the sheet yet —
+            // SwiftUI would present the sheet on top of the congrats alert.
+            // The graduation alert's dismiss button fires the decision sheet so
+            // the player sees congrats first, prompt second.
             appUIState.decisionText = "You're done with your degree! What's your next step?"
-            appUIState.showDecisionSheet.toggle()
             if let currentEducation {
                 degrees.append(currentEducation)
+                recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
+                graduationMessage = "Congratulations! You completed your \(currentEducation.degreeName). Time to figure out the next step."
+                showGraduationAlert = true
+                celebrationTrigger += 1
             }
             appUIState.yearsLeftToGraduation = nil
             currentEducation = nil
@@ -460,6 +640,7 @@ final class Player: ObservableObject {
                 celebrationTrigger += 1
                 showPromotionAlert = true
                 promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
+                recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
             }
         }
 
@@ -473,17 +654,29 @@ final class Player: ObservableObject {
         var sideHustleNet = 0
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id] else { continue }
+            // Under-18 spending guard: paid ventures (any non-zero stake) are
+            // an 18+ activity. The view-level stage filter should already
+            // prevent selection; this is the safety net so a minor never
+            // gets pushed into debt by a slipped-through paid hustle.
+            if age < 18, hustle.startupCost > 0 { continue }
             savings -= hustle.startupCost
-            let outcome = hustle.resolve(for: softSkills)
+            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore)
             savings += outcome.credit
             sideHustleNet += outcome.credit - hustle.startupCost
             if let earned = outcome.grantedPortfolio {
                 hardSkills.portfolioItems.insert(earned)
                 lockedPortfolio.insert(earned)
+                // Shipping a project sharpens the founder cluster — these
+                // axes are reserved for project boosts only (see Project.boosts).
+                for (keyPath, delta) in earned.boosts {
+                    softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 5)
+                }
+                recordStatus("📁", "Shipped \(earned.rawValue)")
             }
             if let fame = outcome.grantedFame {
                 achievements.append(fame)
                 celebrationTrigger += 1
+                recordStatus("🏆", "Earned achievement: \(fame)")
             }
         }
         lastSideHustleEarnings = sideHustleNet
@@ -495,16 +688,54 @@ final class Player: ObservableObject {
         var competitionWins = 0
         for id in appUIState.selectedCompetitions {
             guard let competition = CompetitionCatalog.byId[id] else { continue }
+            // Under-18 spending guard (same rationale as the side-hustle loop).
+            if age < 18, competition.entryFee > 0 { continue }
             savings -= competition.entryFee
-            if Double.random(in: 0...1) < competition.winProbability(for: softSkills) {
+            if Double.random(in: 0...1) < competition.winProbability(for: softSkills, sportYears: sportYears) {
                 savings += competition.prize
                 achievements.append(competition.achievement)
                 competitionWins += 1
+                recordStatus("🏆", "Won \(competition.achievement)")
             }
         }
         lastCompetitionWins = competitionWins
         if competitionWins > 0 { celebrationTrigger += 1 }
         appUIState.selectedCompetitions.removeAll()
+
+        // Startup loop (realistic mode only): while the player runs an active
+        // venture, each year either pays out a buyout offer (Sell or Hold &
+        // grow), brushes off without an offer (operating as usual), or — in a
+        // recession — forces a fire-sale liquidation. The rung's salary is
+        // already banked by the occupation pay block above.
+        if !isSimplified, var startup = activeStartup,
+           let founderJob = currentOccupation,
+           let target = founderJob.targetCapital {
+            startup.yearsHeld += 1
+            if recessionThisYear {
+                let payout = FounderLadder.bankruptcyPayout(forRungIndex: startup.rungIndex, targetCapital: target)
+                savings += payout
+                lastBankruptcySalvage = payout
+                showStartupBankruptcyAlert = true
+                recordStatus("📉", "Bankruptcy — sold \(founderJob.baseTitle) at fire-sale for \(payout.formatted(.number)) $")
+                activeStartup = nil
+                pendingStartupOffer = nil
+                showStartupOfferSheet = false
+                currentOccupation = nil
+            } else {
+                let chance = FounderLadder.offerProbability(
+                    forRungIndex: startup.rungIndex,
+                    founderSkillFit: founderJob.founderSkillFit(for: self)
+                )
+                if Double.random(in: 0...1) < chance {
+                    let offer = FounderLadder.randomOffer(forRungIndex: startup.rungIndex, targetCapital: target)
+                    pendingStartupOffer = offer
+                    showStartupOfferSheet = true
+                    celebrationTrigger += 1
+                    recordStatus("💼", "Buyout offer for \(founderJob.baseTitle): \(offer.formatted(.number)) $")
+                }
+                activeStartup = startup
+            }
+        }
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -518,6 +749,11 @@ final class Player: ObservableObject {
         availableJobs = availableJobs.filter { !$0.category.isCyclical }
 
         guard currentOccupation != nil else { return }
+        // Founders don't get laid off — they go bankrupt, which the startup
+        // loop in `advanceYear` handles as a forced fire-sale liquidation.
+        // Skipping the regular layoff roll prevents a double-impact (clearing
+        // the occupation here while the startup loop also resolves the sale).
+        if activeStartup != nil { return }
         // Job-loss probability is the calm-economy base risk amplified by how
         // severe the downturn is on this difficulty (e.g. 0.08 × 6, capped).
         let lossChance = min(
@@ -525,9 +761,13 @@ final class Player: ObservableObject {
             GameConstants.baseLayoffRisk * difficulty.layoffSeverity
         )
         if Double.random(in: 0...1) < lossChance {
+            let lost = currentOccupation
             currentOccupation = nil
             lostJobThisYear = true
             showLayoffAlert = true
+            if let lost {
+                recordStatus("💼", "Laid off from \(lost.baseTitle)")
+            }
         }
     }
 
@@ -551,6 +791,7 @@ final class Player: ObservableObject {
             var hiredJob = job
             hiredJob.annualIncome = requestedSalary
             currentOccupation = hiredJob
+            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(requestedSalary.formatted(.number)) $/year")
         }
         return hired
     }
@@ -558,7 +799,10 @@ final class Player: ObservableObject {
     /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
     /// of the player's own savings. The stake is committed up front; success makes
     /// the player a founder (earning the rung's income), while failure salvages
-    /// half the stake. Returns true on success.
+    /// half the stake. In realistic mode, success also bootstraps the multi-year
+    /// startup loop (`activeStartup` is set to the rung index so subsequent
+    /// `advanceYear` calls roll for buyouts and surface a Sell-or-Hold dialog).
+    /// Returns true on success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
         appliedJobIds.insert(job.applicationKey)
@@ -568,10 +812,57 @@ final class Player: ObservableObject {
         let success = Double.random(in: 0...1) < probability
         if success {
             currentOccupation = job             // keeps the rung's annualIncome
+            recordStatus("🚀", "Founded as \(job.baseTitle)")
+            if !isSimplified, let rung = FounderLadder.rungIndex(forTitle: job.id) {
+                activeStartup = ActiveStartup(rungIndex: rung, yearsHeld: 0)
+            }
         } else {
             savings += stake / 2                // salvage half of a failed venture
         }
         return success
+    }
+
+    /// Accepts the pending buyout offer: banks the cash, ends the venture, and
+    /// clears the founder occupation. The player is now between jobs (free to
+    /// apply for the next thing or found again from scratch). No-op if there
+    /// is no offer pending.
+    func acceptStartupOffer() {
+        guard let offer = pendingStartupOffer else { return }
+        savings += offer
+        let exitedBaseTitle = currentOccupation?.baseTitle ?? "venture"
+        recordStatus("🤝", "Sold \(exitedBaseTitle) for \(offer.formatted(.number)) $")
+        activeStartup = nil
+        pendingStartupOffer = nil
+        showStartupOfferSheet = false
+        currentOccupation = nil
+        celebrationTrigger += 1
+    }
+
+    /// Holds & grows: declines the offer in exchange for advancing to the next
+    /// founder rung. Updates `currentOccupation` to the next rung's Job so the
+    /// player earns its (larger) salary going forward. At the top rung the
+    /// venture simply keeps running — next year's roll re-prices the offer.
+    func holdStartup() {
+        guard var startup = activeStartup else {
+            pendingStartupOffer = nil
+            showStartupOfferSheet = false
+            return
+        }
+        let nextRung = min(startup.rungIndex + 1, FounderLadder.count - 1)
+        if nextRung != startup.rungIndex {
+            startup.rungIndex = nextRung
+            startup.yearsHeld = 0
+            if let upgraded = FounderLadder.job(at: nextRung, in: availableJobs)
+                ?? FounderLadder.job(at: nextRung, in: JobCatalog.allJobs()) {
+                currentOccupation = upgraded
+                recordStatus("📈", "Held & grew into \(upgraded.baseTitle)")
+            }
+        } else {
+            recordStatus("📈", "Declined buyout — kept growing the company")
+        }
+        activeStartup = startup
+        pendingStartupOffer = nil
+        showStartupOfferSheet = false
     }
 
     func reset() {
@@ -580,12 +871,20 @@ final class Player: ObservableObject {
         avatar = fresh.avatar
         achievements = fresh.achievements
         lastCompetitionWins = fresh.lastCompetitionWins
+        activeStartup = fresh.activeStartup
+        pendingStartupOffer = fresh.pendingStartupOffer
+        showStartupOfferSheet = fresh.showStartupOfferSheet
+        showStartupBankruptcyAlert = fresh.showStartupBankruptcyAlert
+        lastBankruptcySalvage = fresh.lastBankruptcySalvage
         turmoilYearsRemaining = fresh.turmoilYearsRemaining
         economyInRecession = fresh.economyInRecession
         lastSideHustleEarnings = fresh.lastSideHustleEarnings
         lastPromotionRaisePct = fresh.lastPromotionRaisePct
         showPromotionAlert = fresh.showPromotionAlert
         promotionMessage = fresh.promotionMessage
+        showGraduationAlert = fresh.showGraduationAlert
+        graduationMessage = fresh.graduationMessage
+        statusEvents = fresh.statusEvents
         lostJobThisYear = fresh.lostJobThisYear
         showLayoffAlert = fresh.showLayoffAlert
         age = fresh.age
@@ -603,6 +902,7 @@ final class Player: ObservableObject {
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
         generalNetwork = fresh.generalNetwork
+        sportYears = fresh.sportYears
         appliedJobIds = []
         appliedSchoolIds = []
         attemptedCertificationIds = []

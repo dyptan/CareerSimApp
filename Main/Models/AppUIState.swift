@@ -12,6 +12,8 @@ final class AppUIState: ObservableObject {
     @Published var showSideHustlesSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showCompetitionsSheet: Bool = false
+    @Published var showSportsSheet: Bool = false
+    @Published var showClubsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
     // Selections
@@ -28,6 +30,9 @@ final class AppUIState: ObservableObject {
     /// Ids of the competitions the player is entering this year (see
     /// `CompetitionCatalog`). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedCompetitions: Set<String> = []
+    /// Sports the player is committing this year's spare-time slot to.
+    /// Banked into `Player.sportYears` and cleared by `Player.advanceYear`.
+    @Published var selectedSports: Set<Sport> = []
 
     // Misc
     @Published var yearsLeftToGraduation: Int?
@@ -81,6 +86,8 @@ final class AppUIState: ObservableObject {
         showSideHustlesSheet = false
         showEventsSheet = false
         showCompetitionsSheet = false
+        showSportsSheet = false
+        showClubsSheet = false
         showRetirementSheet = false
         hasSelectedMode = false
         showGoalSheet = false
@@ -91,6 +98,7 @@ final class AppUIState: ObservableObject {
         selectedSideHustles = []
         selectedEvents = []
         selectedCompetitions = []
+        selectedSports = []
         yearsLeftToGraduation = nil
         decisionText = ""
     }
