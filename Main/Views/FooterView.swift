@@ -101,7 +101,8 @@ struct FooterView: View {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
     }
     private var hasProjects: Bool {
-        Project.allCases.contains {
+        let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
+        return unlocked.contains {
             $0.stages.contains(currentStage) && !player.lockedPortfolio.contains($0)
         }
     }

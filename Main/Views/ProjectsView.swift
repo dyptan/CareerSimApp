@@ -22,11 +22,15 @@ struct ProjectsView: View {
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
-    /// Projects offered this stage. Pieces the player has already built are
-    /// dropped — a finished portfolio piece can't be earned twice.
+    /// Projects offered this stage. A project only shows once the player has
+    /// practised a hobby that unlocks it; pieces already built are dropped —
+    /// a finished portfolio piece can't be earned twice.
     private var stageProjects: [Project] {
-        Project.allCases.filter {
-            $0.stages.contains(currentStage) && !player.lockedPortfolio.contains($0)
+        let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
+        return Project.allCases.filter {
+            $0.stages.contains(currentStage)
+                && unlocked.contains($0)
+                && !player.lockedPortfolio.contains($0)
         }
     }
 
@@ -113,10 +117,6 @@ struct ProjectsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(project.pictogram)  \(project.rawValue)")
                         .font(.headline)
-                    Text(project.description)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
                     Text("Requires: \(requirementPictos)")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
@@ -147,7 +147,7 @@ struct ProjectsView: View {
 
             InfoHint(
                 title: "\(project.pictogram) \(project.rawValue)",
-                message: "Requires:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier it ships. A finished project earns a portfolio piece"
+                message: "\(project.description)\n\nRequires:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier it ships. A finished project earns a portfolio piece"
                     + (boostPictos.isEmpty ? "" : " and sharpens founder skills no hobby can")
                     + (project.buildsFame
                         ? ", and can earn the “\(project.fameAward ?? "")” trophy — fame that helps land Show Business roles."
