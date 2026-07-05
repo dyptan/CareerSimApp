@@ -357,14 +357,6 @@ enum JobCatalog {
             // their specialty after residency.
             case "Senior Physician", "Chief Medical Officer":
                 return HardSkills(certifications: [.boardCertified])
-            // Senior engineers/designers are hired on a deeper body of work than
-            // the entry rung's single piece (gates at portfolio-tier employers).
-            case "Senior Software Engineer", "Staff Software Engineer", "Principal Software Engineer":
-                return HardSkills(portfolioItems: [.library, .app])
-            case "Senior UX/UI Designer", "Lead UX/UI Designer":
-                return HardSkills(portfolioItems: [.website, .presentation])
-            case "Senior Graphic Artist":
-                return HardSkills(portfolioItems: [.paintingPortfolio, .presentation])
             default:
                 break
             }
@@ -424,54 +416,20 @@ enum JobCatalog {
             case "Flight Attendant":
                 return HardSkills(certifications: [.flightAttendantCert])
             case "Chef":
-                return HardSkills(portfolioItems: [.recipeBook], certifications: [.culinaryDiploma])
+                return HardSkills(certifications: [.culinaryDiploma])
 
-            // Education — teachers are hired on a sample lesson plan (the cert is
-            // a helpful extra, not a hard gate in this non-regulated field).
+            // Education — teachers are hired on a teaching certificate (a helpful
+            // signal in this non-regulated field, not a hard gate).
             case "Teacher", "Senior Teacher", "Lead Teacher":
-                return HardSkills(portfolioItems: [.lessonPlan], certifications: [.teachingCertificate])
+                return HardSkills(certifications: [.teachingCertificate])
 
-            // Tech / IT — entry roles realistically open with a cert; agencies also expect a portfolio
+            // Tech / IT — entry roles realistically open with a cert.
             case "IT Support Specialist":
                 return HardSkills(certifications: [.comptiaA])
-            case "Software Engineer":
-                return HardSkills(portfolioItems: [.library])
-            case "Software Tester/QA":
-                return HardSkills(portfolioItems: [.app])
-
-            // Design — smaller studios hire on portfolio
-            case "UX/UI Designer":
-                return HardSkills(portfolioItems: [.website])
-            case "Graphic Artist":
-                return HardSkills(portfolioItems: [.paintingPortfolio])
-
-            // Visual arts / music
-            case "Painter (Artist)":
-                return HardSkills(portfolioItems: [.paintingPortfolio])
-            case "Musician":
-                return HardSkills(portfolioItems: [.musicAlbum])
-            case "Photographer":
-                return HardSkills(portfolioItems: [.photoPortfolio])
-
-            // Writing / research — clips, drafts, published papers
-            case "Content Writer", "Journalist":
-                return HardSkills(portfolioItems: [.paper])
-            case "Research Scientist", "Senior Research Scientist", "Principal Research Scientist":
-                return HardSkills(portfolioItems: [.paper])
 
             // Agriculture — pesticides require a state applicator licence
             case "Farmer":
                 return HardSkills(licenses: [.pesticideApplicator])
-
-            // Creative freelance — hired on a body of work
-            case "Illustrator", "Tattoo Artist", "Animator", "Fashion Designer":
-                return HardSkills(portfolioItems: [.paintingPortfolio])
-            case "Content Creator":
-                return HardSkills(portfolioItems: [.photoPortfolio])
-            case "Novelist":
-                return HardSkills(portfolioItems: [.paper])
-            case "Interior Designer":
-                return HardSkills(portfolioItems: [.presentation])
 
             default:
                 return HardSkills()

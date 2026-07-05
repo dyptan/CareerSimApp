@@ -42,7 +42,7 @@ struct HeaderView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if !player.achievements.isEmpty {
+                if !player.achievements.isEmpty || !player.fameByCategory.isEmpty {
                     accoladesRow
                 }
             }
@@ -85,10 +85,30 @@ struct HeaderView: View {
                         .padding(.vertical, 3)
                         .background(Color.yellow.opacity(0.18), in: Capsule())
                     }
+                    // Industry-scoped project fame — the reputation that lifts
+                    // hiring odds in that same field (see Player.fameHireBonus).
+                    ForEach(industryFame, id: \.category) { entry in
+                        HStack(spacing: 4) {
+                            Text(JobCategory.icon(for: entry.category))
+                            Text("\(entry.category.rawValue) \(entry.points)")
+                        }
+                        .font(.caption2)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.purple.opacity(0.18), in: Capsule())
+                    }
                 }
             }
         }
         .padding(.top, 2)
+    }
+
+    /// Industries the player has earned project fame in, strongest first.
+    private var industryFame: [(category: JobCategory, points: Int)] {
+        player.fameByCategory
+            .filter { $0.value > 0 }
+            .sorted { $0.value > $1.value }
+            .map { (category: $0.key, points: $0.value) }
     }
 
     /// Plain-text summary of the current run's mode, savings, goal, and any

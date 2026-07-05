@@ -4,7 +4,7 @@ import Foundation
 /// e-sports tournament. Entering costs a fee; winning is a skill-based gamble
 /// that pays prize money AND grants a lasting **achievement** (a titled trophy).
 /// Achievements are reputation: they raise the player's hire odds across the
-/// fame-driven Show Business industry (see `Player.achievementHireBonus`).
+/// fame-driven Show Business industry (see `Player.fameHireBonus(for:)`).
 struct Competition: Identifiable, Hashable {
     let id: String
     let name: String

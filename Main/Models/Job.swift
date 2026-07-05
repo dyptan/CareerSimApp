@@ -270,9 +270,10 @@ extension Job {
         // Experience the employer expects: a shortfall drags the
         // odds down, a seasoned applicant nudges them up.
         let experience = experienceFitTerm(for: player)
-        // Fame from competition achievements opens doors in Show Business (ad,
-        // TV, music, sport, e-sports) — casting directors and sponsors chase it.
-        let fame = category == .showBusiness ? player.achievementHireBonus : 0
+        // Industry-scoped fame opens doors: a noticed body of side work (and,
+        // in Show Business, competition/side-hustle trophies) lifts the odds for
+        // roles in that same field — but only that field (see fameHireBonus).
+        let fame = player.fameHireBonus(for: category)
         let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))

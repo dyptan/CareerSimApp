@@ -61,11 +61,9 @@ let hobbies: [Hobby] = [
 
     // MARK: - Creative output
 
-    // → musicAlbum
-    // Elite: instruments and private lessons are out of reach for average
-    // families.
+    // → musicFestival
     Hobby(
-        label: "Music Playing and Composing",
+        label: "Playing music instrument",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
@@ -73,10 +71,9 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult],
-        isElite: true,
-        unlocks: [.musicAlbum]
+        unlocks: [.musicFestival]
     ),
-    // → paintingPortfolio
+    // → creativeContest
     Hobby(
         label: "Drawing and Sketching",
         abilities: [
@@ -86,12 +83,11 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult],
-        unlocks: [.paintingPortfolio]
+        unlocks: [.creativeContest]
     ),
-    // → photoPortfolio
-    // Elite: camera gear, lenses, and editing software add up fast.
+    // → creativeContest
     Hobby(
-        label: "Photography and Cinematography",
+        label: "Photography",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
@@ -99,21 +95,20 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult],
-        isElite: true,
-        unlocks: [.photoPortfolio]
+        unlocks: [.creativeContest]
     ),
-    // → recipeBook
+    // → publishBook
     Hobby(
-        label: "Cooking & Culinary Arts",
+        label: "Cooking",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult],
-        unlocks: [.recipeBook]
+        unlocks: [.publishBook]
     ),
-    // → paper / website / presentation / lessonPlan
+    // → article / presentation / publishBook
     Hobby(
         label: "Journalism, Blogging, Podcasting",
         abilities: [
@@ -123,35 +118,21 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult],
-        unlocks: [.paper, .website, .presentation, .lessonPlan]
+        unlocks: [.article, .presentation, .publishBook]
     ),
 
     // MARK: - Technical / analytical output
 
-    // → app / library / website
+    // → app / library
     Hobby(
         label: "Coding and Programming",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult],
-        unlocks: [.app, .library, .website]
+        unlocks: [.app, .library]
     )
 ]
 
-extension Project {
-    /// The set of projects unlocked by a player who has practised the hobbies in
-    /// `practisedHobbies` (their labels). A project unlocks the moment the player
-    /// has taken *any* hobby that lists it in `Hobby.unlocks` — practise the
-    /// craft first, then you can turn it into a portfolio piece.
-    static func unlocked(byPractisedHobbies practisedHobbies: Set<String>) -> Set<Project> {
-        var result: Set<Project> = []
-        for hobby in hobbies where practisedHobbies.contains(hobby.label) {
-            result.formUnion(hobby.unlocks)
-        }
-        return result
-    }
-}

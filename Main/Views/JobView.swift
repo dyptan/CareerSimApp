@@ -50,7 +50,8 @@ struct JobDetail: View {
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
         let experience = job.experienceFitTerm(for: player)
-        let fame = job.category == .showBusiness ? player.achievementHireBonus : 0
+        let fame = player.fameHireBonus(for: job.category)
+        let showFame = fame > 0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
         let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame
         let raw = rawSum * salaryFit
@@ -78,14 +79,14 @@ struct JobDetail: View {
         let playerYears = job.relevantYears(for: player)
 
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(job.category == .showBusiness ? " + Fame" : "") + Difficulty) × Salary fit
+        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(showFame ? " + Fame" : "") + Difficulty) × Salary fit
 
         Your numbers right now:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
         • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
         • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
-        • Network (\(job.category.rawValue)): \(signed(network))\(job.category == .showBusiness ? "\n        • Fame (\(player.achievements.count) achievement\(player.achievements.count == 1 ? "" : "s")): \(signed(fame))" : "")
+        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(job.category.rawValue)): \(signed(fame))" : "")
         • Difficulty bonus: \(signed(opportunity))
         • Salary fit: \(pct(salaryFit))
         Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))

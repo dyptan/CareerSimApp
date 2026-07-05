@@ -4,7 +4,7 @@ import SwiftUI
 /// `SideHustlesView`: the catalogue is filtered by life stage and capped per
 /// year. Each row shows the entry fee, the skill-driven win odds, the prize,
 /// and the achievement a win earns — a reputation that boosts hiring across
-/// Show Business (see `Player.achievementHireBonus`). Entries are resolved at
+/// Show Business (see `Player.fameHireBonus(for:)`). Entries are resolved at
 /// year end in `Player.advanceYear`.
 struct CompetitionsView: View {
     @ObservedObject var player: Player

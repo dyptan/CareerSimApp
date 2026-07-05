@@ -103,7 +103,7 @@ struct FooterView: View {
     private var hasProjects: Bool {
         let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
         return unlocked.contains {
-            $0.stages.contains(currentStage) && !player.lockedPortfolio.contains($0)
+            $0.stages.contains(currentStage)
         }
     }
     private var hasCertifications: Bool {
