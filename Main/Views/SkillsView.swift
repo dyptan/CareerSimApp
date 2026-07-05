@@ -5,6 +5,7 @@ struct SkillsView: View {
     @ObservedObject var appUIState: AppUIState
 
     @State private var softSkillsExpanded: Bool = false
+    @State private var brandExpanded: Bool = false
     @State private var hardSkillsExpanded: Bool = false
     @State private var educationExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
@@ -13,12 +14,8 @@ struct SkillsView: View {
         Array(player.hardSkills.portfolioItems)
     }
 
-    private var certifications: [Certification] {
-        Array(appUIState.selectedCertifications.union(player.hardSkills.certifications))
-    }
-
-    private var licenses: [License] {
-        Array(appUIState.selectedLicenses.union(player.hardSkills.licenses))
+    private var trainings: [Training] {
+        Array(appUIState.selectedTrainings.union(player.hardSkills.trainings))
     }
 
     private var nonZeroSoftSkills: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String, description: String)] {
@@ -36,6 +33,8 @@ struct SkillsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
                 softSkillsSection
+                Divider()
+                brandSection
                 Divider()
                 // Hard skills (certs/licenses/portfolio) don't apply in simplified mode.
                 if !player.isSimplified {
@@ -78,12 +77,49 @@ struct SkillsView: View {
         }
     }
 
+    // MARK: - Personal Brand & Recognition
+
+    /// The third pillar of career capital: *what you're known for*. Lists every
+    /// banked `Recognition` — competition trophies, fame-building side hustles,
+    /// and noticed projects — with the industry each is famous in. Only
+    /// same-industry (or general) reputation lifts hiring odds there, so the
+    /// badge tells the player where each accolade actually pays off.
+    private var brandSection: some View {
+        DisclosureGroup(isExpanded: $brandExpanded) {
+            VStack(alignment: .leading, spacing: 4) {
+                if player.recognitions.isEmpty {
+                    Text("No recognition yet — win a competition or ship a standout project.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(player.recognitions) { r in
+                        HStack {
+                            Text(r.icon)
+                            Text(r.count > 1 ? "\(r.title) ×\(r.count)" : r.title)
+                            Spacer()
+                            Text(r.industry.map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" } ?? "🌐 General")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .padding(.top, 4)
+        } label: {
+            HStack {
+                Text("Personal Brand & Recognition").font(.headline)
+                Spacer()
+                summaryPictograms(player.recognitions.map { $0.icon })
+            }
+        }
+    }
+
     // MARK: - Hard Skills
 
     private var hardSkillsSection: some View {
         DisclosureGroup(isExpanded: $hardSkillsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
-                if projects.isEmpty && certifications.isEmpty && licenses.isEmpty {
+                if projects.isEmpty && trainings.isEmpty {
                     Text("No hard skills yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -95,17 +131,10 @@ struct SkillsView: View {
                         }
                     }
                 }
-                if !certifications.isEmpty {
-                    hardSkillRow(title: "Certifications") {
-                        ForEach(certifications) { cert in
-                            Text("\(cert.friendlyName) \(cert.pictogram)")
-                        }
-                    }
-                }
-                if !licenses.isEmpty {
-                    hardSkillRow(title: "Licenses") {
-                        ForEach(licenses) { lic in
-                            Text("\(lic.friendlyName) \(lic.pictogram)")
+                if !trainings.isEmpty {
+                    hardSkillRow(title: "Trainings") {
+                        ForEach(trainings) { training in
+                            Text("\(training.friendlyName) \(training.pictogram)")
                         }
                     }
                 }
@@ -118,8 +147,7 @@ struct SkillsView: View {
                 Spacer()
                 summaryPictograms(
                     projects.map { $0.pictogram }
-                        + certifications.map { $0.pictogram }
-                        + licenses.map { $0.pictogram }
+                        + trainings.map { $0.pictogram }
                 )
             }
         }

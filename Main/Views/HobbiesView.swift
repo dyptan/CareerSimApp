@@ -64,9 +64,12 @@ struct HobbiesView: View {
                             }
                             .joined(separator: "\n")
 
-                        let isLocked = player.lockedHobbies.contains(hobby.label)
                         let atLimit = selectedActivities.count >= GameConstants.maxHobbiesPerYear
                         let isSelected = selectedActivities.contains(hobby.label)
+                        // Hobbies are repeatable — the same one can be practised
+                        // every year to keep building its skills. Only an
+                        // at-limit, not-yet-taken hobby dims.
+                        let dimmed = !isSelected && atLimit
 
                         HStack(spacing: 8) {
                             Toggle(
@@ -84,14 +87,12 @@ struct HobbiesView: View {
                             )
                             .toggleStyle(.automatic)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .disabled(isLocked || (!isSelected && atLimit))
-                            .opacity((isLocked || (!isSelected && atLimit)) ? 0.5 : 1.0)
+                            .disabled(!isSelected && atLimit)
+                            .opacity(dimmed ? 0.5 : 1.0)
                             .help(
-                                isLocked
-                                    ? "Locked after year end"
-                                    : ((!isSelected && atLimit)
-                                        ? "You can take up to \(GameConstants.maxHobbiesPerYear) hobbies this year."
-                                        : "")
+                                (!isSelected && atLimit)
+                                    ? "You can take up to \(GameConstants.maxHobbiesPerYear) hobbies this year."
+                                    : ""
                             )
                             .platformToggleStyle()
 

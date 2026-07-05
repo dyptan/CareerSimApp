@@ -81,9 +81,15 @@ struct InstitutionTiersView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Admission requirements:")
-                    .font(.subheadline.bold())
-                    .padding(.top, 4)
+                HStack(spacing: 6) {
+                    Text("Admission requirements:")
+                        .font(.subheadline.bold())
+                    InfoHint(
+                        title: "Admission requirements",
+                        message: admissionSoftSkillsHint(for: r)
+                    )
+                }
+                .padding(.top, 4)
 
                 let eduMet = highestEQF >= r.minEQF
                 RequirementRow(
@@ -92,19 +98,6 @@ struct InstitutionTiersView: View {
                     style: .meter(current: highestEQF, required: r.minEQF)
                 )
                 .foregroundStyle(eduMet ? .primary : .secondary)
-
-                ForEach(Education.Requirements.softSkillMappings) { mapping in
-                    let required = r.soft[keyPath: mapping.keyPath]
-                    if required > 0 {
-                        let playerValue = player.softSkills[keyPath: mapping.keyPath]
-                        RequirementRow(
-                            label: mapping.id,
-                            emoji: mapping.pictogram,
-                            style: .meter(current: playerValue, required: required)
-                        )
-                        .foregroundStyle(playerValue >= required ? .primary : .secondary)
-                    }
-                }
             }
 
             if player.isSimplified {
@@ -128,7 +121,7 @@ struct InstitutionTiersView: View {
                     Text("Admission chance:")
                     InfoHint(
                         title: "How admission works",
-                        message: "Your odds rise with how well your soft skills match this school's admission bar and fall with how selective the school is. Meeting every bar makes you fully qualified, but elite schools still turn away strong applicants. Build the skills below through activities to improve your chances. You get one application per school each year."
+                        message: "Your odds rise with how well your soft skills match this school's admission bar and fall with how selective the school is. Meeting every bar makes you fully qualified, but elite schools still turn away strong applicants. Build the soft skills listed under Admission requirements through activities to improve your chances. You get one application per school each year."
                     )
                     Spacer()
                     Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
@@ -165,6 +158,24 @@ struct InstitutionTiersView: View {
         .padding()
         .background(Color.secondary.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    /// The soft skills this school weighs at admission, each with the level it
+    /// looks for — surfaced in the info hint instead of a row per skill.
+    private func admissionSoftSkillsHint(for r: Education.Requirements) -> String {
+        let list = Education.Requirements.softSkillMappings
+            .compactMap { mapping -> String? in
+                let required = r.soft[keyPath: mapping.keyPath]
+                guard required > 0 else { return nil }
+                return "\(mapping.pictogram) \(mapping.id) (target \(required))"
+            }
+            .joined(separator: "\n")
+        let intro = player.isSimplified
+            ? "You'll need these soft skills to enroll:"
+            : "Soft skills that set your admission odds:"
+        return list.isEmpty
+            ? "This school has no soft-skill bar — meet the education level and you're eligible."
+            : "\(intro)\n\n\(list)"
     }
 
     /// Locks in the chosen school: drops any job, starts the degree, closes sheet.

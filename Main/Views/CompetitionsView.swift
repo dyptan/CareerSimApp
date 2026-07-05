@@ -50,7 +50,7 @@ struct CompetitionsView: View {
                             ? .red : .primary
                     )
             }
-            Text("🏆 \(player.achievements.count) achievement\(player.achievements.count == 1 ? "" : "s") · savings: \(player.savings.formatted(.number)) $")
+            Text("🏆 \(player.recognitions.count) accolade\(player.recognitions.count == 1 ? "" : "s") · savings: \(player.savings.formatted(.number)) $")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
@@ -70,7 +70,10 @@ struct CompetitionsView: View {
     private func row(for competition: Competition) -> some View {
         let isSelected = selectedCompetitions.contains(competition.id)
         let atLimit = selectedCompetitions.count >= GameConstants.maxCompetitionsPerYear
-        let isDisabled = !isSelected && atLimit
+        // Years of training in a qualifying sport gate entry to the higher tiers.
+        let meetsYears = competition.meetsTrainingRequirement(for: player.sportYears)
+        let bestYears = competition.bestSportYears(for: player.sportYears)
+        let isDisabled = (!isSelected && atLimit) || !meetsYears
         // A flag, not a gate — an unaffordable entry is taken on credit.
         let canAfford = player.savings - committedFees >= competition.entryFee
         let odds = Int((competition.winProbability(for: player.softSkills, sportYears: player.sportYears) * 100).rounded())
@@ -123,9 +126,15 @@ struct CompetitionsView: View {
                     }
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
-                    Text("🏅 Win: \(competition.achievement)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    if meetsYears {
+                        Text("🏅 Win: \(competition.achievement)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("🔒 Requires \(competition.minSportYears) yrs training (you have \(bestYears))")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -133,9 +142,11 @@ struct CompetitionsView: View {
             .disabled(isDisabled)
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
-                atLimit && !isSelected
-                    ? "You can enter up to \(GameConstants.maxCompetitionsPerYear) competitions this year."
-                    : ""
+                !meetsYears
+                    ? "Train \(competition.minSportYears) years in a qualifying sport to enter."
+                    : (atLimit && !isSelected
+                        ? "You can enter up to \(GameConstants.maxCompetitionsPerYear) competitions this year."
+                        : "")
             )
 
             InfoHint(

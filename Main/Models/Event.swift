@@ -23,6 +23,15 @@ struct CareerEvent: Identifiable {
     /// Professional-network points one attendance adds (1–3). Accumulates in
     /// `Player.network`/`Player.generalNetwork` and feeds hiring + promotion.
     let networkWeight: Int
+
+    /// Whether the player has the ≥1 year of same-industry work experience
+    /// needed to get into this event — you network your way in once you're
+    /// actually in the field. Cross-industry events (nil `category`) are open to
+    /// everyone.
+    func meetsExperienceRequirement(for experience: [JobCategory: Int]) -> Bool {
+        guard let category else { return true }
+        return (experience[category] ?? 0) >= 1
+    }
 }
 
 enum EventCatalog {

@@ -88,6 +88,25 @@ struct ProjectsView: View {
             }
             .joined(separator: "\n")
 
+        // Soft skills a successful year grows — the craft axes it drew on plus
+        // the founder-cluster bump no hobby can build (Project.successBoosts).
+        let growthPictos: String = project.successBoosts
+            .compactMap { boost -> String? in
+                let kp = boost.keyPath as PartialKeyPath<SoftSkills>
+                guard let pic = skillPictogramByKeyPath[kp] else { return nil }
+                return "\(pic)+\(boost.delta)"
+            }
+            .joined(separator: " ")
+
+        let growthHint: String = project.successBoosts
+            .map { boost -> String in
+                let kp = boost.keyPath as PartialKeyPath<SoftSkills>
+                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
+                let pic = skillPictogramByKeyPath[kp] ?? ""
+                return "\(pic) \(label) +\(boost.delta)"
+            }
+            .joined(separator: "\n")
+
         HStack(alignment: .top, spacing: 8) {
             Toggle(
                 isOn: Binding(
@@ -106,6 +125,9 @@ struct ProjectsView: View {
                     Text("\(project.pictogram)  \(project.rawValue)")
                         .font(.headline)
                     Text("Draws on: \(requirementPictos)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text("Grows: \(growthPictos)")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 10) {
@@ -129,7 +151,7 @@ struct ProjectsView: View {
 
             InfoHint(
                 title: "\(project.pictogram) \(project.rawValue)",
-                message: "\(project.description)\n\nSoft skills considered:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier the year gets noticed. A noticed year earns +1 fame in \(JobCategory.icon(for: project.fameIndustry)) \(project.fameIndustry.rawValue), a dud nothing. Fame is industry-specific: it only helps you land \(project.fameIndustry.rawValue) roles."
+                message: "\(project.description)\n\nSoft skills considered:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier the year gets noticed. A noticed year pays out two ways:\n\n• +1 fame in \(JobCategory.icon(for: project.fameIndustry)) \(project.fameIndustry.rawValue) (industry-specific — it only helps you land \(project.fameIndustry.rawValue) roles)\n• Soft-skill growth a hobby can't give:\n\n\(growthHint)\n\nA dud year yields nothing."
             )
         }
         .padding(5)

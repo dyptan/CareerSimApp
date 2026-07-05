@@ -6,22 +6,20 @@ import Foundation
 /// its slice), a side hustle's takings are banked in full, so a strong hobby can
 /// meaningfully accelerate the road to the first million.
 ///
-/// Each attempt is a gamble: the player stakes some capital up front, and the
-/// odds and the payout both scale with how well their talents fit the venture.
-/// A flop salvages half the stake. Examples range from a local small business to
-/// a shot at influencer fame, releasing an album, or landing a TV-show casting.
+/// Each attempt is a gamble, but no money is staked up front: the odds and the
+/// payout both scale with how well the player's talents fit the venture, and a
+/// flop simply earns nothing. Examples range from babysitting to a shot at
+/// influencer fame, releasing an album, or landing a TV-show casting.
 struct SideHustle: Identifiable, Hashable {
-    /// What a successful venture yields. Money ventures stake capital up front and
-    /// pay cash; portfolio projects stake no money at all — "they risk not money,
-    /// only the year's attempt" — and instead grant a portfolio piece on success.
+    /// What a successful venture yields. Money ventures pay cash; portfolio
+    /// projects grant a portfolio piece on success. Neither stakes money up
+    /// front — they risk only the year's attempt.
     enum Payoff: Hashable {
-        /// Stake `startupCost` up front (lost on a flop except a half-stake
-        /// salvage); a successful year pays out within `payoutRange`, banked in
-        /// full.
-        case money(startupCost: Int, payoutRange: ClosedRange<Int>)
-        /// No money at stake or paid out; a successful year grants this portfolio
-        /// piece (a hiring signal at portfolio-tier employers), a flop yields
-        /// nothing.
+        /// A successful year pays out within `payoutRange`, banked in full; a
+        /// flop earns nothing.
+        case money(payoutRange: ClosedRange<Int>)
+        /// A successful year grants this portfolio piece (a hiring signal at
+        /// portfolio-tier employers); a flop yields nothing.
         case portfolio(Project)
     }
 
@@ -32,7 +30,7 @@ struct SideHustle: Identifiable, Hashable {
     /// The soft-skill axes this venture draws on. The player's levels in these
     /// talents drive both the success odds and — for money ventures — the payout.
     let talents: [WritableKeyPath<SoftSkills, Int>]
-    /// Whether this venture stakes/pays money or instead builds the portfolio.
+    /// Whether this venture pays money or instead builds the portfolio.
     let payoff: Payoff
     /// Life stages in which the venture is offered (mirrors `Activity.stages`).
     let stages: Set<LifeStage>
@@ -40,7 +38,7 @@ struct SideHustle: Identifiable, Hashable {
     /// doesn't build fame). Show-business ventures — going viral, publishing,
     /// performing, recording, landing a TV spot — bank reputation that opens
     /// doors across Show Business careers, the same currency a competition win
-    /// earns (see `Player.achievements` / `fameHireBonus(for:)`).
+    /// earns (see `Player.recognitions` / `fameHireBonus(for:)`).
     var fameAward: String? = nil
     /// Reputation weight this trophy carries when totalled into the player's
     /// fame score (see `Player.fameScore`). Only meaningful for fame-building
@@ -50,12 +48,6 @@ struct SideHustle: Identifiable, Hashable {
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
-
-    /// Capital staked up front this year (0 for portfolio projects).
-    var startupCost: Int {
-        if case .money(let cost, _) = payoff { return cost }
-        return 0
-    }
 
     /// The portfolio piece this venture grants on success, if it is a project.
     var portfolioReward: Project? {
@@ -71,8 +63,10 @@ struct SideHustle: Identifiable, Hashable {
     var buildsFame: Bool { fameAward != nil }
 
     /// Talent level at which a single axis is considered a perfect fit (caps the
-    /// per-axis contribution at 1.0). Reachable mid-game by a focused hobbyist.
-    static let talentReference = 6
+    /// per-axis contribution at 1.0). Set high so a venture only pays off
+    /// reliably once the player has genuinely mastered its talents — reachable
+    /// late-game by a dedicated hobbyist, not a casual dabbler.
+    static let talentReference = 8
 
     /// 0...1 measure of how well the player's talents suit this venture: the mean
     /// of each required axis, normalized against `talentReference` and capped.
@@ -84,42 +78,44 @@ struct SideHustle: Identifiable, Hashable {
         return total / Double(talents.count)
     }
 
-    /// Probability (0.1...0.9) that the venture pays off in a given year.
-    /// Fame-building social-media ventures (influencer, album, performer, TV,
-    /// self-published book) snowball with reputation — every banked
-    /// achievement (a competition win or earlier fame hustle) lifts the odds
-    /// by +0.03 per weighted point of fame, capped at +0.15 so the climb still
-    /// feels earned. `fameScore` is the weighted sum of the player's trophies
-    /// (see `Player.fameScore`).
+    /// Probability (0.05...0.9) that the venture pays off in a given year. The
+    /// floor is deliberately low — a poorly-suited attempt almost always flops —
+    /// and the odds climb steeply with talent fit, so success is earned by
+    /// building the right skills first. Fame-building social-media ventures
+    /// (influencer, album, performer, TV, self-published book) snowball with
+    /// reputation — every banked achievement (a competition win or earlier fame
+    /// hustle) lifts the odds by +0.03 per weighted point of fame, capped at
+    /// +0.15 so the climb still feels earned. `fameScore` is the weighted sum of
+    /// the player's trophies (see `Player.fameScore`).
     func successProbability(for soft: SoftSkills, fameScore: Double = 0) -> Double {
-        let base = 0.2 + talentFit(for: soft) * 0.65
+        let base = 0.05 + talentFit(for: soft) * 0.7
         let fameLift = buildsFame ? min(fameScore * 0.03, 0.15) : 0.0
-        return max(0.1, min(0.9, base + fameLift))
+        return max(0.05, min(0.9, base + fameLift))
     }
 
     /// The payout a successful year would yield at the player's current talent
     /// fit, without the random jitter — used to preview the upside in the UI.
     /// Zero for portfolio projects, which pay no money.
     func projectedPayout(for soft: SoftSkills) -> Int {
-        guard case .money(_, let payoutRange) = payoff else { return 0 }
+        guard case .money(let payoutRange) = payoff else { return 0 }
         let lo = Double(payoutRange.lowerBound)
         let hi = Double(payoutRange.upperBound)
         return Int((lo + (hi - lo) * talentFit(for: soft)).rounded())
     }
 
     /// Rolls a single year of this venture. Money ventures return the takings
-    /// (banked in full) on success or a half-stake salvage on a flop; the caller
-    /// charges `startupCost` separately. Portfolio projects return the granted
-    /// piece on success and nothing on a flop. `fameScore` lets a fame-building
+    /// (banked in full) on success or nothing on a flop — no money is staked, so
+    /// there is nothing to salvage. Portfolio projects return the granted piece
+    /// on success and nothing on a flop. `fameScore` lets a fame-building
     /// venture's odds rise with the player's reputation (see `successProbability`).
     func resolve(for soft: SoftSkills, fameScore: Double = 0) -> Outcome {
         let succeeded = Double.random(in: 0...1) < successProbability(for: soft, fameScore: fameScore)
         // Fame is banked only on a successful year, whatever the payoff kind.
         let fame = succeeded ? fameAward : nil
         switch payoff {
-        case .money(let startupCost, let payoutRange):
+        case .money(let payoutRange):
             guard succeeded else {
-                return Outcome(hustle: self, success: false, credit: startupCost / 2,
+                return Outcome(hustle: self, success: false, credit: 0,
                                grantedPortfolio: nil, grantedFame: nil)
             }
             let base = Double(projectedPayout(for: soft))
@@ -137,9 +133,8 @@ struct SideHustle: Identifiable, Hashable {
     struct Outcome {
         let hustle: SideHustle
         let success: Bool
-        /// Money returned to the player this year (full payout on success, or a
-        /// half-stake salvage on a flop). Does not subtract the stake — the
-        /// caller charges that separately. Always 0 for portfolio projects.
+        /// Money returned to the player this year: the full payout on success, or
+        /// 0 on a flop. Always 0 for portfolio projects.
         let credit: Int
         /// The portfolio piece earned this year, if a project succeeded.
         let grantedPortfolio: Project?
@@ -149,22 +144,22 @@ struct SideHustle: Identifiable, Hashable {
 }
 
 /// Master catalogue of private projects, filtered by life stage in the UI the
-/// same way `activities` is. It joins money-making ventures (which stake and pay
-/// cash) with portfolio projects (which risk no money and grant a portfolio piece
-/// on success) — both resolve identically under the hood.
+/// same way `activities` is. It joins money-making ventures (which pay cash) with
+/// portfolio projects (which grant a portfolio piece on success) — neither stakes
+/// money, and both resolve identically under the hood.
 enum SideHustleCatalog {
-    /// Money-making ventures: stake capital up front, success pays cash. Tutoring
-    /// is open to teens; capital-heavy ventures (real estate, a brick-and-mortar
-    /// shop) are adult-only.
+    /// Money-making ventures: no money down, success pays cash. Most open once
+    /// the player is a young adult; higher-upside ventures (real estate, a
+    /// brick-and-mortar shop) are adult-only.
     static let moneyVentures: [SideHustle] = [
         SideHustle(
-            id: "tutoring",
-            label: "Tutoring",
-            icon: "📐",
-            blurb: "Coach younger students after school. No money down — just your know-how and patience.",
-            talents: [\.communicationAndNetworking, \.analyticalReasoningAndProblemSolving, \.empathyAndInterpersonalCare],
-            payoff: .money(startupCost: 0, payoutRange: 500...8_000),
-            stages: [.teen, .youngAdult, .adult]
+            id: "moocCourse",
+            label: "Create a MOOC Course",
+            icon: "🎓",
+            blurb: "Record an online course once and sell seats for years. A big effort up front, but the best courses earn while you sleep.",
+            talents: [\.analyticalReasoningAndProblemSolving, \.presentationAndStorytelling, \.communicationAndNetworking],
+            payoff: .money(payoutRange: 0...25_000),
+            stages: [.youngAdult, .adult]
         ),
         SideHustle(
             id: "etsyCrafts",
@@ -172,7 +167,7 @@ enum SideHustleCatalog {
             icon: "🧵",
             blurb: "Turn a making hobby into an online storefront of handmade goods.",
             talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.carefulnessAndAttentionToDetail],
-            payoff: .money(startupCost: 1_500, payoutRange: 500...16_000),
+            payoff: .money(payoutRange: 500...16_000),
             stages: [.youngAdult, .adult]
         ),
         SideHustle(
@@ -181,10 +176,19 @@ enum SideHustleCatalog {
             icon: "📱",
             blurb: "Build an audience and chase brand deals. Most channels fizzle — a viral one prints money.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
-            payoff: .money(startupCost: 1_000, payoutRange: 0...45_000),
+            payoff: .money(payoutRange: 0...45_000),
             stages: [.youngAdult, .adult],
             fameAward: "Viral Creator",
             fameWeight: 1.0
+        ),
+        SideHustle(
+            id: "bloggingPodcasting",
+            label: "Blogging & Podcasting",
+            icon: "🎙️",
+            blurb: "Publish a blog and a podcast on the side. Slow to build an audience, but ads and sponsors trickle in once it catches on.",
+            talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
+            payoff: .money(payoutRange: 0...20_000),
+            stages: [.youngAdult, .adult]
         ),
         SideHustle(
             id: "freelanceConsulting",
@@ -192,7 +196,7 @@ enum SideHustleCatalog {
             icon: "💻",
             blurb: "Take on paid projects on the side, solving problems for clients after hours.",
             talents: [\.analyticalReasoningAndProblemSolving, \.communicationAndNetworking, \.timeManagementAndPlanning],
-            payoff: .money(startupCost: 500, payoutRange: 1_000...30_000),
+            payoff: .money(payoutRange: 1_000...30_000),
             stages: [.youngAdult, .adult]
         ),
         SideHustle(
@@ -201,7 +205,7 @@ enum SideHustleCatalog {
             icon: "🏋️",
             blurb: "Train clients on evenings and weekends, turning your own discipline into income.",
             talents: [\.resilienceAndEndurance, \.communicationAndNetworking, \.empathyAndInterpersonalCare],
-            payoff: .money(startupCost: 800, payoutRange: 1_000...20_000),
+            payoff: .money(payoutRange: 1_000...20_000),
             stages: [.youngAdult, .adult]
         ),
         SideHustle(
@@ -210,7 +214,7 @@ enum SideHustleCatalog {
             icon: "📚",
             blurb: "Spend the year writing and publishing. Most titles sell little; a hit earns for years.",
             talents: [\.presentationAndStorytelling, \.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking],
-            payoff: .money(startupCost: 1_000, payoutRange: 0...28_000),
+            payoff: .money(payoutRange: 0...28_000),
             stages: [.youngAdult, .adult],
             fameAward: "Published Author",
             fameWeight: 1.5
@@ -221,7 +225,7 @@ enum SideHustleCatalog {
             icon: "🎭",
             blurb: "Go independent in show business — sell your art, gig as a musician, dancer, or actor, and take commissions. The self-employed creative path: feast or famine.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
-            payoff: .money(startupCost: 800, payoutRange: 0...40_000),
+            payoff: .money(payoutRange: 0...40_000),
             stages: [.youngAdult, .adult],
             fameAward: "Rising Performer",
             fameWeight: 1.0
@@ -232,7 +236,7 @@ enum SideHustleCatalog {
             icon: "🎵",
             blurb: "Book studio time and put your music out there. Long odds, but a breakout single pays big.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
-            payoff: .money(startupCost: 6_000, payoutRange: 0...55_000),
+            payoff: .money(payoutRange: 0...55_000),
             stages: [.youngAdult, .adult],
             fameAward: "Recording Artist",
             fameWeight: 2.0
@@ -243,7 +247,7 @@ enum SideHustleCatalog {
             icon: "📺",
             blurb: "Audition for a spot on screen. The longest shot of them all — and the biggest paycheck.",
             talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.stressResistanceAndEmotionalRegulation],
-            payoff: .money(startupCost: 500, payoutRange: 0...70_000),
+            payoff: .money(payoutRange: 0...70_000),
             stages: [.youngAdult, .adult],
             fameAward: "TV Personality",
             fameWeight: 2.0
@@ -254,16 +258,16 @@ enum SideHustleCatalog {
             icon: "🏪",
             blurb: "Open a local shop or service. Real overhead and real risk, but a steady earner when it clicks.",
             talents: [\.persuasionAndNegotiation, \.riskTakingAndInitiative, \.timeManagementAndPlanning],
-            payoff: .money(startupCost: 8_000, payoutRange: 2_000...30_000),
+            payoff: .money(payoutRange: 2_000...30_000),
             stages: [.adult]
         ),
         SideHustle(
             id: "realEstateFlip",
             label: "Flip Real Estate",
             icon: "🏠",
-            blurb: "Buy, renovate, and resell a property. A heavy stake with the largest upside of any venture.",
+            blurb: "Buy, renovate, and resell a property. The longest odds of any venture — but the largest upside when it lands.",
             talents: [\.riskTakingAndInitiative, \.analyticalReasoningAndProblemSolving, \.persuasionAndNegotiation],
-            payoff: .money(startupCost: 40_000, payoutRange: 0...130_000),
+            payoff: .money(payoutRange: 0...130_000),
             stages: [.adult]
         ),
     ]

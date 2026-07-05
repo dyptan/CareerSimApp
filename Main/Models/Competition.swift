@@ -15,7 +15,7 @@ struct Competition: Identifiable, Hashable {
     let entryFee: Int
     /// Cash awarded on a win.
     let prize: Int
-    /// The titled trophy granted on a win, banked in `Player.achievements`.
+    /// The titled trophy granted on a win, banked as a `Player.Recognition`.
     let achievement: String
     /// Reputation weight this trophy carries when totalled into the player's
     /// fame score (see `Player.fameScore`). A flat 1.0 is "one local win"; the
@@ -32,7 +32,14 @@ struct Competition: Identifiable, Hashable {
     /// Life stages in which the competition is open (mirrors `Hobby.stages`).
     let stages: Set<LifeStage>
 
-    enum Discipline: String { case athletic = "Athletic", esports = "E-Sports" }
+    /// Years of training required in a qualifying `sport` before the player may
+    /// enter — the progression gate. Entry-level meets (1 year) open as soon as
+    /// you take up the sport; marquee championships demand a seasoned competitor,
+    /// so a player climbs the ladder only by putting in the years. Ignored for
+    /// open events (nil `sports`).
+    var minSportYears: Int = 0
+
+    enum Discipline: String { case athletic = "Athletic", esports = "E-Sports", creative = "Creative" }
 
     static func == (lhs: Competition, rhs: Competition) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -56,9 +63,20 @@ struct Competition: Identifiable, Hashable {
     /// open competitions (sport-agnostic events) and for players who don't
     /// practice any qualifying sport.
     func sportFit(for sportYears: [Sport: Int]) -> Double {
+        min(Double(bestSportYears(for: sportYears)) / Double(Competition.sportReference), 1.0)
+    }
+
+    /// Best years of training the player has across this event's qualifying
+    /// sports (0 for open events or an untrained player).
+    func bestSportYears(for sportYears: [Sport: Int]) -> Int {
         guard let sports else { return 0 }
-        let best = sports.compactMap { sportYears[$0] }.max() ?? 0
-        return min(Double(best) / Double(Competition.sportReference), 1.0)
+        return sports.compactMap { sportYears[$0] }.max() ?? 0
+    }
+
+    /// Whether the player has trained long enough in a qualifying sport to enter.
+    /// Open events (nil `sports`) carry no training gate.
+    func meetsTrainingRequirement(for sportYears: [Sport: Int]) -> Bool {
+        sports == nil || bestSportYears(for: sportYears) >= minSportYears
     }
 
     /// Probability (0.05...0.85) of winning this year. Skill fit is the lead
@@ -89,13 +107,14 @@ enum CompetitionCatalog {
             fameWeight: 0.5,
             skills: [\.resilienceAndEndurance, \.selfDisciplineAndPerseverance, \.stressResistanceAndEmotionalRegulation],
             sports: [.running],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 1
         ),
         Competition(
             id: "city-marathon",
             name: "City Marathon",
             icon: "🥇",
-            blurb: "26.2 miles against thousands. Finishing strong turns heads.",
+            blurb: "26.2 miles against thousands. A few seasons of training under your belt to even finish.",
             discipline: .athletic,
             entryFee: 400,
             prize: 12_000,
@@ -103,13 +122,29 @@ enum CompetitionCatalog {
             fameWeight: 1.0,
             skills: [\.resilienceAndEndurance, \.selfDisciplineAndPerseverance, \.stressResistanceAndEmotionalRegulation],
             sports: [.running],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 3
+        ),
+        Competition(
+            id: "regional-championship",
+            name: "Regional Championship",
+            icon: "🏅",
+            blurb: "The step up to serious competition — qualify against your region's best. Years of training required.",
+            discipline: .athletic,
+            entryFee: 800,
+            prize: 30_000,
+            achievement: "Regional Champion",
+            fameWeight: 1.5,
+            skills: [\.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance],
+            sports: [.running, .swimming, .cycling, .gymnastics, .martialArts],
+            stages: [.youngAdult, .adult],
+            minSportYears: 5
         ),
         Competition(
             id: "national-championship",
             name: "National Championship",
             icon: "🏆",
-            blurb: "The premier athletic title — the country is watching.",
+            blurb: "The premier athletic title — the country is watching. Only for seasoned competitors.",
             discipline: .athletic,
             entryFee: 1_500,
             prize: 60_000,
@@ -117,13 +152,14 @@ enum CompetitionCatalog {
             fameWeight: 2.0,
             skills: [\.resilienceAndEndurance, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance],
             sports: [.soccer, .basketball, .tennis, .martialArts],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 5
         ),
         Competition(
             id: "olympic-trials",
             name: "Olympic Games",
             icon: "🥇",
-            blurb: "The world stage. Medal here and you're a household name for life.",
+            blurb: "The world stage. Medal here and you're a household name for life — the summit of a long career.",
             discipline: .athletic,
             entryFee: 3_000,
             prize: 150_000,
@@ -131,7 +167,8 @@ enum CompetitionCatalog {
             fameWeight: 3.0,
             skills: [\.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance, \.visionaryThinkingAndAmbition],
             sports: [.running, .swimming, .cycling, .gymnastics, .martialArts],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 8
         ),
         // MARK: - E-Sports
         Competition(
@@ -146,13 +183,14 @@ enum CompetitionCatalog {
             fameWeight: 0.5,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.stressResistanceAndEmotionalRegulation],
             sports: [.esports],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 1
         ),
         Competition(
             id: "lan-tournament",
             name: "Regional LAN Tournament",
             icon: "🕹️",
-            blurb: "Bracket play on stage against the region's best squads.",
+            blurb: "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.",
             discipline: .esports,
             entryFee: 300,
             prize: 15_000,
@@ -160,13 +198,14 @@ enum CompetitionCatalog {
             fameWeight: 1.0,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation],
             sports: [.esports],
-            stages: [.youngAdult, .adult]
+            stages: [.youngAdult, .adult],
+            minSportYears: 3
         ),
         Competition(
             id: "world-esports-final",
             name: "World Esports Finals",
             icon: "🌐",
-            blurb: "The global championship, a packed arena, and a life-changing purse.",
+            blurb: "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.",
             discipline: .esports,
             entryFee: 1_200,
             prize: 120_000,
@@ -174,6 +213,22 @@ enum CompetitionCatalog {
             fameWeight: 2.5,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation, \.visionaryThinkingAndAmbition],
             sports: [.esports],
+            stages: [.youngAdult, .adult],
+            minSportYears: 6
+        ),
+        // MARK: - Creative
+        Competition(
+            id: "creative-competition",
+            name: "Creative Competition",
+            icon: "🎨",
+            blurb: "Enter your art, design, or a performance for judging against other creators. Placing well is recognition money can't buy.",
+            discipline: .creative,
+            entryFee: 150,
+            prize: 5_000,
+            achievement: "Contest Winner",
+            fameWeight: 1.0,
+            skills: [\.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail, \.presentationAndStorytelling],
+            sports: nil,
             stages: [.youngAdult, .adult]
         ),
     ]

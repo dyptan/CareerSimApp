@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		550618402ED2245400C56E99 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* Project.swift */; };
-		550618422ED2245900C56E99 /* Certification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Certification.swift */; };
-		550618442ED2245D00C56E99 /* License.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618432ED2245D00C56E99 /* License.swift */; };
+		550618422ED2245900C56E99 /* Training.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Training.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
 		550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C550E2EB02BDE00887B96 /* HeaderView.swift */; };
 		550C55142EB16A9600887B96 /* JobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55132EB16A9600887B96 /* JobsView.swift */; };
@@ -21,12 +20,9 @@
 		555CC10B2FF130CB00426E7E /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10A2FF130CB00426E7E /* StatusBarView.swift */; };
 		555CC10D2FF1341B00426E7E /* Sport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10C2FF1341B00426E7E /* Sport.swift */; };
 		555CC10F2FF134D000426E7E /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10E2FF134D000426E7E /* SportsView.swift */; };
-		555CC1112FF1373B00426E7E /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC1102FF1373B00426E7E /* Club.swift */; };
-		555CC1132FF137F900426E7E /* ClubsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC1122FF137F900426E7E /* ClubsView.swift */; };
 		555CC1152FF1445600426E7E /* StartupOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC1142FF1445500426E7E /* StartupOfferView.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
-		5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* CertificationsView.swift */; };
-		5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */; };
+		5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingsView.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
@@ -41,7 +37,6 @@
 		84F851CB2EA0F3130066C41A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CA2EA0F3130066C41A /* RootView.swift */; };
 		84F851CD2EA16C290066C41A /* Education.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CC2EA16C290066C41A /* Education.swift */; };
 		AA00000000000000000000A2 /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A1 /* GameConstants.swift */; };
-		AA00000000000000000000A4 /* DecisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A3 /* DecisionView.swift */; };
 		AA00000000000000000000A6 /* RetirementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A5 /* RetirementView.swift */; };
 		AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A7 /* DegreesSubmenuView.swift */; };
 		AA00000000000000000000B2 /* EducationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B1 /* EducationLevel.swift */; };
@@ -92,8 +87,7 @@
 
 /* Begin PBXFileReference section */
 		5506183F2ED2245400C56E99 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
-		550618412ED2245900C56E99 /* Certification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certification.swift; sourceTree = "<group>"; };
-		550618432ED2245D00C56E99 /* License.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = License.swift; sourceTree = "<group>"; };
+		550618412ED2245900C56E99 /* Training.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Training.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
 		550C550E2EB02BDE00887B96 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		550C55132EB16A9600887B96 /* JobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsView.swift; sourceTree = "<group>"; };
@@ -106,12 +100,9 @@
 		555CC10A2FF130CB00426E7E /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
 		555CC10C2FF1341B00426E7E /* Sport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sport.swift; sourceTree = "<group>"; };
 		555CC10E2FF134D000426E7E /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
-		555CC1102FF1373B00426E7E /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
-		555CC1122FF137F900426E7E /* ClubsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClubsView.swift; sourceTree = "<group>"; };
 		555CC1142FF1445500426E7E /* StartupOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupOfferView.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
-		5598FA282EE62F57006C4D36 /* CertificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificationsView.swift; sourceTree = "<group>"; };
-		5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesView.swift; sourceTree = "<group>"; };
+		5598FA282EE62F57006C4D36 /* TrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingsView.swift; sourceTree = "<group>"; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
 		55A6ED002E9542000033B674 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
@@ -126,7 +117,6 @@
 		84F851CA2EA0F3130066C41A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		84F851CC2EA16C290066C41A /* Education.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Education.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A1 /* GameConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
-		AA00000000000000000000A3 /* DecisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A5 /* RetirementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A7 /* DegreesSubmenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DegreesSubmenuView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000B1 /* EducationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationLevel.swift; sourceTree = "<group>"; };
@@ -241,12 +231,10 @@
 				84F851C82EA0F30F0066C41A /* Player.swift */,
 				5506183F2ED2245400C56E99 /* Project.swift */,
 				AA0000000000000000000102 /* CareerGraph.swift */,
-				550618412ED2245900C56E99 /* Certification.swift */,
-				550618432ED2245D00C56E99 /* License.swift */,
+				550618412ED2245900C56E99 /* Training.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
 				AA00000000000000000000A1 /* GameConstants.swift */,
 				555CC10C2FF1341B00426E7E /* Sport.swift */,
-				555CC1102FF1373B00426E7E /* Club.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -277,10 +265,8 @@
 				AA0000000000000000000100 /* ProjectsView.swift */,
 				AA00000000000000000000E7 /* EventsView.swift */,
 				AA00000000000000000000EB /* CompetitionsView.swift */,
-				5598FA282EE62F57006C4D36 /* CertificationsView.swift */,
-				5598FA2A2EE62F6A006C4D36 /* LicensesView.swift */,
+				5598FA282EE62F57006C4D36 /* TrainingsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
-				AA00000000000000000000A3 /* DecisionView.swift */,
 				AA00000000000000000000A5 /* RetirementView.swift */,
 				AA00000000000000000000A7 /* DegreesSubmenuView.swift */,
 				AA00000000000000000000B5 /* InfoHint.swift */,
@@ -288,7 +274,6 @@
 				AA00000000000000000000C7 /* SeniorityOffersView.swift */,
 				555CC10A2FF130CB00426E7E /* StatusBarView.swift */,
 				555CC10E2FF134D000426E7E /* SportsView.swift */,
-				555CC1122FF137F900426E7E /* ClubsView.swift */,
 				555CC1142FF1445500426E7E /* StartupOfferView.swift */,
 			);
 			path = Views;
@@ -413,9 +398,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5598FA2B2EE62F6A006C4D36 /* LicensesView.swift in Sources */,
 				555CC10F2FF134D000426E7E /* SportsView.swift in Sources */,
-				5598FA292EE62F57006C4D36 /* CertificationsView.swift in Sources */,
+				5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* HobbiesView.swift in Sources */,
 				555CC1152FF1445600426E7E /* StartupOfferView.swift in Sources */,
 				55B4351C2F470E910022ACAA /* FooterView.swift in Sources */,
@@ -426,7 +410,6 @@
 				553578DE2EE39324003C8BD2 /* JobCatalog.swift in Sources */,
 				550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */,
 				55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */,
-				550618442ED2245D00C56E99 /* License.swift in Sources */,
 				550C55032EAE6C1200887B96 /* Skills.swift in Sources */,
 				C20D77EE24B665D7002E7AEA /* Main.swift in Sources */,
 				84F851CB2EA0F3130066C41A /* RootView.swift in Sources */,
@@ -437,21 +420,18 @@
 				55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */,
 				55189E932F4DD9E9005FAC2C /* AppUIState.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
-				550618422ED2245900C56E99 /* Certification.swift in Sources */,
+				550618422ED2245900C56E99 /* Training.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */,
-				555CC1112FF1373B00426E7E /* Club.swift in Sources */,
 				550618402ED2245400C56E99 /* Project.swift in Sources */,
 				AA0000000000000000000103 /* CareerGraph.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
 				555CC10D2FF1341B00426E7E /* Sport.swift in Sources */,
 				AA00000000000000000000A2 /* GameConstants.swift in Sources */,
-				AA00000000000000000000A4 /* DecisionView.swift in Sources */,
 				AA00000000000000000000A6 /* RetirementView.swift in Sources */,
 				AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */,
 				AA00000000000000000000B2 /* EducationLevel.swift in Sources */,
 				AA00000000000000000000B4 /* EducationProfile.swift in Sources */,
-				555CC1132FF137F900426E7E /* ClubsView.swift in Sources */,
 				AA00000000000000000000B6 /* InfoHint.swift in Sources */,
 				555CC10B2FF130CB00426E7E /* StatusBarView.swift in Sources */,
 				AA00000000000000000000C2 /* EducationTier.swift in Sources */,

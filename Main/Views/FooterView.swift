@@ -91,9 +91,6 @@ struct FooterView: View {
     private var hasSports: Bool {
         Sport.allCases.contains { $0.stages.contains(currentStage) }
     }
-    private var hasClubs: Bool {
-        clubs.contains { $0.stages.contains(currentStage) }
-    }
     private var hasCompetitions: Bool {
         CompetitionCatalog.all.contains { $0.stages.contains(currentStage) }
     }
@@ -106,11 +103,8 @@ struct FooterView: View {
             $0.stages.contains(currentStage)
         }
     }
-    private var hasCertifications: Bool {
-        Certification.allCases.contains { $0.stages.contains(currentStage) }
-    }
-    private var hasLicenses: Bool {
-        License.allCases.contains { $0.stages.contains(currentStage) }
+    private var hasTrainings: Bool {
+        Training.allCases.contains { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
@@ -133,26 +127,15 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            if hasClubs {
-                Button("Clubs") { appUIState.showClubsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
-            }
-
             if !player.isSimplified, !player.experience.isEmpty {
                 Button("Events") { appUIState.showEventsSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            // Certifications: realistic mode, EQF ≥ Primary, and a
-            // stage-eligible cert in the catalogue.
-            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasCertifications {
-                Button("Certifications") { appUIState.showCertificationsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
-            }
-
-            // Licenses: realistic mode and EQF ≥ High School.
-            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 3, hasLicenses {
-                Button("Licenses") { appUIState.showLicensesSheet = true }
+            // Trainings (certifications + licences): realistic mode, EQF ≥
+            // Primary, and a stage-eligible training in the catalogue.
+            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
+                Button("Trainings") { appUIState.showTrainingsSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 
