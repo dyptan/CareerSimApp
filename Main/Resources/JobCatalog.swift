@@ -33,7 +33,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 2,
                     presentationAndStorytelling: 1
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [.nurse])
+                hardSkills: .init(trainings: [.nurse])
             )
         )
 
@@ -62,7 +62,7 @@ enum JobCatalog {
                     selfDisciplineAndPerseverance: 1,
                     presentationAndStorytelling: 0
                 ),
-                hardSkills: .init(portfolioItems: [], certifications: [], licenses: [.drivers])
+                hardSkills: .init(trainings: [.drivers])
             )
         )
 
@@ -90,6 +90,22 @@ enum JobCatalog {
                     collaborationAndTeamwork: 2,
                     timeManagementAndPlanning: 2,
                     selfDisciplineAndPerseverance: 3,
+                    presentationAndStorytelling: 1
+                )
+
+            case .gaming:
+                return .init(
+                    analyticalReasoningAndProblemSolving: 2,
+                    creativityAndInsightfulThinking: 3,
+                    communicationAndNetworking: 1,
+                    visionaryThinkingAndAmbition: 1,
+                    carefulnessAndAttentionToDetail: 2,
+                    tinkeringAndFingerPrecision: 1,
+                    spacialNavigationAndOrientation: 2,
+                    stressResistanceAndEmotionalRegulation: 1,
+                    collaborationAndTeamwork: 2,
+                    timeManagementAndPlanning: 2,
+                    selfDisciplineAndPerseverance: 2,
                     presentationAndStorytelling: 1
                 )
 
@@ -313,6 +329,19 @@ enum JobCatalog {
             "Streamer":                       .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 1, stressResistanceAndEmotionalRegulation: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
             "Esports Caster":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, stressResistanceAndEmotionalRegulation: 1, presentationAndStorytelling: 4),
             "Esports Coach":                  .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+
+            // Gaming industry (art, design, and engineering that ship games)
+            "3D Modeller":                    .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 3, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
+            "3D Artist":                      .init(creativityAndInsightfulThinking: 4, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, spacialNavigationAndOrientation: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
+            "Game Animator":                  .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
+            "Level Designer":                 .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
+            "Game Designer":                  .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, visionaryThinkingAndAmbition: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+            "Narrative Designer":             .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
+            "Gameplay Programmer":            .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+            "Technical Artist":               .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
+            "Game Producer":                  .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
+            "Game QA Tester":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
+            "Art Director (Games)":           .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 2, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 2, presentationAndStorytelling: 2),
         ]
 
         // Resolves a title's soft-skill requirements: per-title override if one
@@ -330,9 +359,9 @@ enum JobCatalog {
             // certs hard-gate hiring; elsewhere they're a helpful signal only.
             switch title {
             case "Accountant", "Senior Accountant":
-                return HardSkills(certifications: [.cpa])
+                return HardSkills(trainings: [.cpa])
             case "Senior Financial Analyst", "Investment Banker":
-                return HardSkills(certifications: [.cfa])
+                return HardSkills(trainings: [.cfa])
             // Trade apprentices work *toward* the licence, so the entry rung
             // carries none — even though the journeyman base role (Electrician /
             // Plumber, same base title) requires it.
@@ -343,20 +372,20 @@ enum JobCatalog {
             // pilot certificate. Listed on the full title so only the top rung
             // is gated, not the journeyman/first-officer rungs below it.
             case "Master Electrician":
-                return HardSkills(licenses: [.electrician, .masterElectrician])
+                return HardSkills(trainings: [.electrician, .masterElectrician])
             case "Master Plumber":
-                return HardSkills(licenses: [.plumber, .masterPlumber])
+                return HardSkills(trainings: [.plumber, .masterPlumber])
             case "Airline Captain":
-                return HardSkills(licenses: [.commercialPilot, .airlineTransportPilot])
+                return HardSkills(trainings: [.commercialPilot, .airlineTransportPilot])
             // The PE licence is what lets a senior engineer stamp and sign off on
             // designs — juniors work under a PE as engineers-in-training, so the
             // licence gates the senior rung, not the entry rungs.
             case "Senior Civil Engineer", "Senior Mechanical Engineer", "Senior Electrical Engineer":
-                return HardSkills(licenses: [.professionalEngineer])
+                return HardSkills(trainings: [.professionalEngineer])
             // Attending physicians and medical leadership are board-certified in
             // their specialty after residency.
             case "Senior Physician", "Chief Medical Officer":
-                return HardSkills(certifications: [.boardCertified])
+                return HardSkills(trainings: [.boardCertified])
             default:
                 break
             }
@@ -364,72 +393,72 @@ enum JobCatalog {
             switch Job.baseTitle(of: title) {
             // Cloud platforms — vendor certs on the roles that run on them
             case "Cloud Architect":
-                return HardSkills(certifications: [.aws])
+                return HardSkills(trainings: [.aws])
             case "Systems Administrator":
-                return HardSkills(certifications: [.azure])
+                return HardSkills(trainings: [.azure])
             case "Data Scientist":
-                return HardSkills(certifications: [.google])
+                return HardSkills(trainings: [.google])
 
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
-                return HardSkills(licenses: [.drivers])
+                return HardSkills(trainings: [.drivers])
             case "Truck Driver", "Bus Driver":
-                return HardSkills(licenses: [.cdl])
+                return HardSkills(trainings: [.cdl])
             case "Pilot", "First Officer", "Airline Captain":
-                return HardSkills(licenses: [.commercialPilot])
+                return HardSkills(trainings: [.commercialPilot])
 
             // Trades — licensed by law in most jurisdictions
             case "Electrician":
-                return HardSkills(licenses: [.electrician])
+                return HardSkills(trainings: [.electrician])
             case "Plumber":
-                return HardSkills(licenses: [.plumber])
+                return HardSkills(trainings: [.plumber])
             case "Architect":
-                return HardSkills(licenses: [.architect])
+                return HardSkills(trainings: [.architect])
             case "Mechanic":
-                return HardSkills(certifications: [.ase])
+                return HardSkills(trainings: [.ase])
 
             // Health — licences + entry-level certs
             case "Registered Nurse":
-                return HardSkills(licenses: [.nurse])
+                return HardSkills(trainings: [.nurse])
             case "Paramedic":
-                return HardSkills(certifications: [.emt])
+                return HardSkills(trainings: [.emt])
             case "Medical Assistant":
-                return HardSkills(certifications: [.medicalAssistant])
+                return HardSkills(trainings: [.medicalAssistant])
             case "Dental Assistant":
-                return HardSkills(certifications: [.dentalAssistant])
+                return HardSkills(trainings: [.dentalAssistant])
             case "Nursing Aide":
-                return HardSkills(certifications: [.cna])
+                return HardSkills(trainings: [.cna])
 
             // Law / public services
             case "Lawyer", "Judge", "Managing Partner":
-                return HardSkills(licenses: [.bar])
+                return HardSkills(trainings: [.bar])
             case "Paralegal":
-                return HardSkills(certifications: [.paralegal])
+                return HardSkills(trainings: [.paralegal])
             case "Firefighter", "Senior Firefighter", "Lead Firefighter":
-                return HardSkills(certifications: [.emt])
+                return HardSkills(trainings: [.emt])
             case "Security Guard":
-                return HardSkills(licenses: [.securityGuard])
+                return HardSkills(trainings: [.securityGuard])
 
             // Service / hospitality
             case "Hairdresser/Barber", "Beautician/Cosmetologist":
-                return HardSkills(certifications: [.cosmetology])
+                return HardSkills(trainings: [.cosmetology])
             case "Flight Attendant":
-                return HardSkills(certifications: [.flightAttendantCert])
+                return HardSkills(trainings: [.flightAttendantCert])
             case "Chef":
-                return HardSkills(certifications: [.culinaryDiploma])
+                return HardSkills(trainings: [.culinaryDiploma])
 
             // Education — teachers are hired on a teaching certificate (a helpful
             // signal in this non-regulated field, not a hard gate).
             case "Teacher", "Senior Teacher", "Lead Teacher":
-                return HardSkills(certifications: [.teachingCertificate])
+                return HardSkills(trainings: [.teachingCertificate])
 
             // Tech / IT — entry roles realistically open with a cert.
             case "IT Support Specialist":
-                return HardSkills(certifications: [.comptiaA])
+                return HardSkills(trainings: [.comptiaA])
 
             // Agriculture — pesticides require a state applicator licence
             case "Farmer":
-                return HardSkills(licenses: [.pesticideApplicator])
+                return HardSkills(trainings: [.pesticideApplicator])
 
             default:
                 return HardSkills()
@@ -497,6 +526,7 @@ enum JobCatalog {
             case .law:         return [.law]
             case .education:   return [.education, .science]
             case .design:      return [.design, .arts]
+            case .gaming:      return [.technology, .design, .arts]
             case .showBusiness: return [.arts, .design, .sports]
             case .service:     return [.service, .business]
             case .agriculture: return [.agriculture, .science]
@@ -513,10 +543,7 @@ enum JobCatalog {
             // mandates, so the stated requirement reflects what the player must
             // genuinely already hold (e.g. a Paralegal needs the vocational-level
             // Paralegal Certificate, not just high school).
-            let credentialEQF = max(
-                hard.certifications.map(\.minEQF).max() ?? 0,
-                hard.licenses.map(\.minEQF).max() ?? 0
-            )
+            let credentialEQF = hard.trainings.map(\.minEQF).max() ?? 0
             let effectiveEQF = max(minEQF, credentialEQF)
             let profiles = effectiveEQF >= 5 ? defaultAcceptedProfiles(for: category) : nil
             let edu = Job.Requirements.Education(minEQF: effectiveEQF, acceptedProfiles: profiles)
@@ -717,6 +744,18 @@ enum JobCatalog {
             ("Content Creator",                 .showBusiness,        45_000, "🎥", "Builds an audience with videos, posts, and streams.",              1),
             ("Animator",                        .design,       65_000, "🎞️", "Creates 2D/3D animation for studios and clients.",                 4),
             ("Interior Designer",               .design,       60_000, "🛋️", "Designs and styles indoor spaces for clients.",                    4),
+
+            // Gaming — the studios that make video games (art, design, engineering)
+            ("Game QA Tester",                  .gaming,       45_000, "🔍", "Hunts bugs and verifies gameplay before release.",                 3),
+            ("3D Modeller",                     .gaming,       58_000, "🧊", "Sculpts characters, props, and environments as 3D assets.",        4),
+            ("Game Animator",                   .gaming,       62_000, "🎞️", "Brings characters and creatures to life in motion.",               4),
+            ("3D Artist",                       .gaming,       64_000, "🎨", "Creates textured, lit 3D art for games.",                          4),
+            ("Level Designer",                  .gaming,       68_000, "🗺️", "Builds and balances the game's levels and pacing.",                4),
+            ("Narrative Designer",              .gaming,       72_000, "✍️", "Writes the story, characters, and branching dialogue.",            5),
+            ("Game Designer",                   .gaming,       78_000, "🎮", "Designs mechanics, systems, and the player experience.",           5),
+            ("Technical Artist",                .gaming,       92_000, "🛠️", "Bridges art and code — shaders, tools, and pipelines.",            5),
+            ("Gameplay Programmer",             .gaming,       98_000, "💻", "Codes game systems, mechanics, and engine features.",              5),
+            ("Game Producer",                   .gaming,      105_000, "📋", "Coordinates team, schedule, and scope to ship the game.",          5),
         ]
 
         // MARK: - Compose final list
@@ -832,6 +871,14 @@ enum JobCatalog {
             // Creative leadership
             ("Art Director",                 .showBusiness,          100_000, "🖼️", "Sets the visual direction for campaigns, films, or publications.",                5, 8),
             ("Editor-in-Chief",              .showBusiness,         135_000, "🗞️", "Leads a publication's editorial vision and newsroom.",                            5, 10),
+
+            // Gaming — art, design, and engineering ladders inside a studio
+            ("Senior 3D Artist",             .gaming,         95_000, "🎨", "Owns key art and sets the visual bar for the team.",                              4, 5),
+            ("Art Director (Games)",         .gaming,        145_000, "🖌️", "Directs the art team and defines the game's whole look.",                         5, 8),
+            ("Senior Game Designer",         .gaming,        115_000, "🎮", "Owns major game systems and mentors designers.",                                  5, 5),
+            ("Lead Game Designer",           .gaming,        150_000, "🎮", "Sets the design vision for the entire title.",                                    5, 9),
+            ("Senior Gameplay Programmer",   .gaming,        150_000, "💻", "Owns complex gameplay systems and mentors engineers.",                            5, 5),
+            ("Lead Gameplay Programmer",     .gaming,        190_000, "💻", "Leads the gameplay engineering team and its architecture.",                       6, 9),
 
             // C-suite — the top of the business, tech, and medical tracks
             ("Chief Medical Officer",        .health,        300_000, "🏥", "Sets clinical strategy and quality across a health system.",                      7, 12),

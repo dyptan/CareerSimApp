@@ -56,17 +56,16 @@ enum CareerGraph {
         // matching `Job.allRequirementsMet`.
         if !player.isSimplified {
             let req = job.requirements.hardSkills
-            for lic in req.licenses.subtracting(player.hardSkills.licenses)
+            let held = player.hardSkills.trainings
+            // Statutory trainings are required everywhere; non-statutory ones
+            // (former certifications) only in regulated fields.
+            let needed = req.trainings.filter { $0.isStatutory || job.category.requiresCredentials }
+            for training in needed.subtracting(held)
                 .sorted(by: { $0.rawValue < $1.rawValue }) {
-                gaps.append("Licence: \(lic.friendlyName)")
+                gaps.append("Training: \(training.friendlyName)")
             }
-            // Regulated fields gate on certifications; everywhere else, portfolio.
-            if job.category.requiresCredentials {
-                for cert in req.certifications.subtracting(player.hardSkills.certifications)
-                    .sorted(by: { $0.rawValue < $1.rawValue }) {
-                    gaps.append("Certification: \(cert.friendlyName)")
-                }
-            } else {
+            // Everywhere else, employers hire on demonstrated portfolio work.
+            if !job.category.requiresCredentials {
                 for piece in req.portfolioItems.subtracting(player.hardSkills.portfolioItems)
                     .sorted(by: { $0.rawValue < $1.rawValue }) {
                     gaps.append("Portfolio: \(piece.rawValue)")
@@ -107,15 +106,12 @@ enum CareerGraph {
             issues.append("Project ‘\(project.rawValue)’ is unlocked by no hobby — unreachable.")
         }
 
-        // 2. The licence prerequisite chain must stay acyclic (it is a DAG).
-        issues.append(contentsOf: licenceCycleIssues())
+        // 2. The training prerequisite chain must stay acyclic (it is a DAG).
+        issues.append(contentsOf: trainingCycleIssues())
 
         // 3. Credential education gates must be attainable at all.
-        for cert in Certification.allCases where cert.minEQF > maxAttainableEQF {
-            issues.append("Certification ‘\(cert.rawValue)’ needs EQF \(cert.minEQF) > max attainable \(maxAttainableEQF).")
-        }
-        for lic in License.allCases where lic.minEQF > maxAttainableEQF {
-            issues.append("Licence ‘\(lic.rawValue)’ needs EQF \(lic.minEQF) > max attainable \(maxAttainableEQF).")
+        for training in Training.allCases where training.minEQF > maxAttainableEQF {
+            issues.append("Training ‘\(training.rawValue)’ needs EQF \(training.minEQF) > max attainable \(maxAttainableEQF).")
         }
 
         // 4. Every job's hard requirements must be producible.
@@ -132,30 +128,30 @@ enum CareerGraph {
         return issues
     }
 
-    /// Depth-first cycle detection over `License.prerequisiteLicenses`. Reports
-    /// the offending chain so a future bad edge is easy to spot.
-    private static func licenceCycleIssues() -> [String] {
+    /// Depth-first cycle detection over `Training.prerequisites`. Reports the
+    /// offending chain so a future bad edge is easy to spot.
+    private static func trainingCycleIssues() -> [String] {
         var issues: [String] = []
         // 0 = unvisited, 1 = on the current DFS stack, 2 = fully explored.
-        var state: [License: Int] = [:]
+        var state: [Training: Int] = [:]
 
-        func visit(_ lic: License, _ trail: [License]) {
-            switch state[lic] {
+        func visit(_ training: Training, _ trail: [Training]) {
+            switch state[training] {
             case 2: return
             case 1:
-                let cycle = (trail + [lic]).map(\.rawValue).joined(separator: " → ")
-                issues.append("Licence prerequisite cycle: \(cycle)")
+                let cycle = (trail + [training]).map(\.rawValue).joined(separator: " → ")
+                issues.append("Training prerequisite cycle: \(cycle)")
                 return
             default: break
             }
-            state[lic] = 1
-            for prereq in lic.prerequisiteLicenses {
-                visit(prereq, trail + [lic])
+            state[training] = 1
+            for prereq in training.prerequisites {
+                visit(prereq, trail + [training])
             }
-            state[lic] = 2
+            state[training] = 2
         }
 
-        for lic in License.allCases { visit(lic, []) }
+        for training in Training.allCases { visit(training, []) }
         return issues
     }
 }

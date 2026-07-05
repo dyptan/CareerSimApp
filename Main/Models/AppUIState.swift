@@ -3,24 +3,22 @@ import Combine
 
 final class AppUIState: ObservableObject {
     // Sheets
-    @Published var showDecisionSheet: Bool
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showHobbiesSheet: Bool = false
-    @Published var showCertificationsSheet: Bool = false
-    @Published var showLicensesSheet: Bool = false
+    @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
     @Published var showProjectsSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showCompetitionsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
-    @Published var showClubsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
     // Selections
     @Published var selectedActivities: Set<String>
-    @Published var selectedLicenses: Set<License>
-    @Published var selectedCertifications: Set<Certification>
+    /// Trainings the player is attempting this year (former certifications +
+    /// licences, now unified). Resolved and cleared by `Player.advanceYear`.
+    @Published var selectedTrainings: Set<Training>
     /// Ids of the side hustles the player is attempting this year (see
     /// `SideHustleCatalog`). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
@@ -40,7 +38,6 @@ final class AppUIState: ObservableObject {
 
     // Misc
     @Published var yearsLeftToGraduation: Int?
-    @Published var decisionText: String
 
     /// Whether the player has picked a game mode yet. Until true, RootView shows
     /// the mode picker instead of the game. Reset to false on restart.
@@ -53,59 +50,46 @@ final class AppUIState: ObservableObject {
 
 
     init(
-        showDecisionSheet: Bool = false,
         showTertiarySheet: Bool = false,
         showCareersSheet: Bool = false,
         selectedActivities: Set<String> = [],
-        selectedLicenses: Set<License> = [],
-        selectedCertifications: Set<Certification> = [],
+        selectedTrainings: Set<Training> = [],
         yearsLeftToGraduation: Int? = nil,
-        decisionText: String = "",
         showHobbiesSheet: Bool = false,
-        showCertificationsSheet: Bool = false,
-        showLicensesSheet: Bool = false,
+        showTrainingsSheet: Bool = false,
         showRetirementSheet: Bool = false
     ) {
-        self.showDecisionSheet = showDecisionSheet
         self.showTertiarySheet = showTertiarySheet
         self.showCareersSheet = showCareersSheet
         self.selectedActivities = selectedActivities
-        self.selectedLicenses = selectedLicenses
-        self.selectedCertifications = selectedCertifications
+        self.selectedTrainings = selectedTrainings
         self.yearsLeftToGraduation = yearsLeftToGraduation
-        self.decisionText = decisionText
         self.showHobbiesSheet = showHobbiesSheet
-        self.showCertificationsSheet = showCertificationsSheet
-        self.showLicensesSheet = showLicensesSheet
+        self.showTrainingsSheet = showTrainingsSheet
         self.showRetirementSheet = showRetirementSheet
     }
 
     func reset() {
-        showDecisionSheet = false
         showTertiarySheet = false
         showCareersSheet = true
         showHobbiesSheet = false
-        showCertificationsSheet = false
-        showLicensesSheet = false
+        showTrainingsSheet = false
         showSideHustlesSheet = false
         showProjectsSheet = false
         showEventsSheet = false
         showCompetitionsSheet = false
         showSportsSheet = false
-        showClubsSheet = false
         showRetirementSheet = false
         hasSelectedMode = false
         showGoalSheet = false
         hasShownGoal = false
         selectedActivities = []
-        selectedLicenses = []
-        selectedCertifications = []
+        selectedTrainings = []
         selectedSideHustles = []
         selectedProjects = []
         selectedEvents = []
         selectedCompetitions = []
         selectedSports = []
         yearsLeftToGraduation = nil
-        decisionText = ""
     }
 }

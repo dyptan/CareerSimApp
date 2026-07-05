@@ -45,36 +45,36 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
-    /// The licence prerequisite chain must terminate (no cycles) and bottom out
-    /// in a licence with no prerequisites.
-    func testLicencePrerequisiteChainsTerminate() {
-        for start in License.allCases {
-            var seen: Set<License> = []
-            var frontier = start.prerequisiteLicenses
+    /// The training prerequisite chain must terminate (no cycles) and bottom out
+    /// in a training with no prerequisites.
+    func testTrainingPrerequisiteChainsTerminate() {
+        for start in Training.allCases {
+            var seen: Set<Training> = []
+            var frontier = start.prerequisites
             var depth = 0
             while let next = frontier.popLast() {
                 XCTAssertFalse(
                     seen.contains(next),
-                    "Licence prerequisite cycle reached '\(next.rawValue)' from '\(start.rawValue)'."
+                    "Training prerequisite cycle reached '\(next.rawValue)' from '\(start.rawValue)'."
                 )
                 seen.insert(next)
-                frontier.append(contentsOf: next.prerequisiteLicenses)
+                frontier.append(contentsOf: next.prerequisites)
                 depth += 1
-                XCTAssertLessThan(depth, License.allCases.count + 1,
-                                  "Licence chain from '\(start.rawValue)' did not terminate.")
+                XCTAssertLessThan(depth, Training.allCases.count + 1,
+                                  "Training chain from '\(start.rawValue)' did not terminate.")
             }
         }
     }
 
     /// `missingHardRequirements` should report the gaps for a fresh player and go
     /// empty once those exact gaps are filled — a sanity check on the queryable
-    /// guidance helper. Uses a job that gates on a portfolio piece.
+    /// guidance helper. Uses a job that gates on a statutory training.
     func testMissingHardRequirementsClearsWhenSatisfied() {
-        // Find a non-regulated job that requires a portfolio piece (so the gap is
-        // a buildable project, easy to satisfy in-test).
+        // Find a non-regulated job that requires a statutory training (checked in
+        // every field), with no education/experience gate so it's easy to satisfy.
         guard let job = JobCatalog.allJobs().first(where: {
             !$0.category.requiresCredentials
-                && !$0.requirements.hardSkills.portfolioItems.isEmpty
+                && $0.requirements.hardSkills.trainings.contains(where: \.isStatutory)
                 && $0.requirements.minYearsExperience == 0
                 && !$0.educationIsMandatory
         }) else {
@@ -89,18 +89,17 @@ final class CareerGraphTests: XCTestCase {
         let before = CareerGraph.missingHardRequirements(for: job, player: player)
         XCTAssertFalse(before.isEmpty, "Expected unmet requirements for a fresh player on '\(job.id)'.")
 
-        // Grant exactly the hard skills the job gates on (portfolio always; a
-        // licence is checked in every field even when non-regulated).
+        // Grant exactly the hard skills the job gates on.
         for piece in job.requirements.hardSkills.portfolioItems {
             player.hardSkills.portfolioItems.insert(piece)
         }
-        for licence in job.requirements.hardSkills.licenses {
-            player.hardSkills.licenses.insert(licence)
+        for training in job.requirements.hardSkills.trainings {
+            player.hardSkills.trainings.insert(training)
         }
         let after = CareerGraph.missingHardRequirements(for: job, player: player)
         XCTAssertEqual(
             after, [],
-            "Granting the required portfolio pieces should clear the gaps for '\(job.id)', got: \(after)"
+            "Granting the required trainings should clear the gaps for '\(job.id)', got: \(after)"
         )
     }
 }

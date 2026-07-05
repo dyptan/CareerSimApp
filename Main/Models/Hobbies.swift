@@ -51,12 +51,12 @@ struct Hobby {
     var unlocks: [Project] = []
 }
 
-// Master catalogue. Curated to the rule that every hobby must have a clearly
-// corresponding `Project` (portfolio piece) — practising the hobby builds
-// toward the deliverable. Pure-experience pastimes (board games, travel) and
-// athletic pursuits live elsewhere (Sports dialog). Professional networking
-// is handled by `Event`. Stage filtering is unchanged: HobbiesView shows the
-// subset whose `stages` includes `LifeStage.forAge(player.age)`.
+// Master catalogue. A hobby reliably builds soft skills, and many also unlock a
+// matching `Project` (practising the craft builds toward the deliverable) —
+// though not every hobby maps to a project. Athletic pursuits live elsewhere
+// (Sports dialog) and professional networking is handled by `Event`. Stage
+// filtering is unchanged: HobbiesView shows the subset whose `stages` includes
+// `LifeStage.forAge(player.age)`.
 let hobbies: [Hobby] = [
 
     // MARK: - Creative output
@@ -73,7 +73,7 @@ let hobbies: [Hobby] = [
         stages: [.child, .teen, .youngAdult, .adult],
         unlocks: [.musicFestival]
     ),
-    // → creativeContest
+    // Builds the eye and craft for creative competitions (see CompetitionCatalog).
     Hobby(
         label: "Drawing and Sketching",
         abilities: [
@@ -82,10 +82,9 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult],
-        unlocks: [.creativeContest]
+        stages: [.child, .teen, .youngAdult, .adult]
     ),
-    // → creativeContest
+    // Builds the eye and craft for creative competitions (see CompetitionCatalog).
     Hobby(
         label: "Photography",
         abilities: [
@@ -94,8 +93,7 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult],
-        unlocks: [.creativeContest]
+        stages: [.child, .teen, .youngAdult, .adult]
     ),
     // → publishBook
     Hobby(
@@ -105,12 +103,24 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult],
+        stages: [.child, .teen, .youngAdult, .adult],
         unlocks: [.publishBook]
+    ),
+    // → article
+    Hobby(
+        label: "Diary Writing",
+        abilities: [
+            .init(keyPath: \.presentationAndStorytelling, weight: 2),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult],
+        unlocks: [.article]
     ),
     // → article / presentation / publishBook
     Hobby(
-        label: "Journalism, Blogging, Podcasting",
+        label: "Journalism",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 2),
@@ -133,6 +143,95 @@ let hobbies: [Hobby] = [
         ],
         stages: [.teen, .youngAdult, .adult],
         unlocks: [.app, .library]
+    ),
+    // → game3d
+    Hobby(
+        label: "3D Modelling",
+        abilities: [
+            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+        ],
+        stages: [.teen, .youngAdult, .adult],
+        unlocks: [.game3d]
+    ),
+
+    // MARK: - Movement & play
+
+    // Builds toward dance competitions and showcases (see CompetitionCatalog).
+    Hobby(
+        label: "Dancing",
+        abilities: [
+            .init(keyPath: \.presentationAndStorytelling, weight: 2),
+            .init(keyPath: \.resilienceAndEndurance, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+    // Physical street activity — balance, coordination, and composure under the
+    // risk of a spill. A pure soft-skill builder.
+    Hobby(
+        label: "Urban Leisure (Skating, BMX)",
+        abilities: [
+            .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
+            .init(keyPath: \.resilienceAndEndurance, weight: 1),
+            .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
+            .init(keyPath: \.outdoorAndWeatherResilience, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+    // A pure soft-skill builder — sharpens strategy and table manners, but has
+    // no matching portfolio project.
+    Hobby(
+        label: "Board Games",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
+            .init(keyPath: \.collaborationAndTeamwork, weight: 1),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+
+    // MARK: - Learning & leisure
+
+    // Builds toward craft fairs and maker competitions (see CompetitionCatalog).
+    Hobby(
+        label: "Hand Crafting",
+        abilities: [
+            .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+    // Pure soft-skill builders — no matching portfolio project.
+    Hobby(
+        label: "Language Learning",
+        abilities: [
+            .init(keyPath: \.communicationAndNetworking, weight: 2),
+            .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
+            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+    Hobby(
+        label: "Watching Educational TV",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
+    ),
+    Hobby(
+        label: "Playing Simulator Games",
+        abilities: [
+            .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
+            .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
+            .init(keyPath: \.timeManagementAndPlanning, weight: 1)
+        ],
+        stages: [.child, .teen, .youngAdult, .adult]
     )
 ]
 

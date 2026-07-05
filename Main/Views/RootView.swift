@@ -39,9 +39,6 @@ struct RootView: View {
         .frame(minWidth: 900, idealWidth: 1000, maxWidth: .infinity,
                minHeight: 600, idealHeight: 700, maxHeight: .infinity)
         #endif
-        .sheet(isPresented: $appUIState.showDecisionSheet) {
-            DecisionView(appUIState: appUIState)
-        }
         .sheet(isPresented: $appUIState.showTertiarySheet) {
             EducationView(
                 player: player,
@@ -70,11 +67,8 @@ struct RootView: View {
             Button("Close") { appUIState.showCareersSheet = false }
                 .padding()
         }
-        .sheet(isPresented: $appUIState.showCertificationsSheet) {
-            navigationSheet { certificationsContent }
-        }
-        .sheet(isPresented: $appUIState.showLicensesSheet) {
-            navigationSheet { licensesContent }
+        .sheet(isPresented: $appUIState.showTrainingsSheet) {
+            navigationSheet { trainingsContent }
         }
         .sheet(isPresented: $appUIState.showHobbiesSheet) {
             navigationSheet { hobbiesContent }
@@ -93,9 +87,6 @@ struct RootView: View {
         }
         .sheet(isPresented: $appUIState.showSportsSheet) {
             navigationSheet { sportsContent }
-        }
-        .sheet(isPresented: $appUIState.showClubsSheet) {
-            navigationSheet { clubsContent }
         }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
@@ -126,9 +117,6 @@ struct RootView: View {
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
                 player.currentEducation = Education(Level.Stage.HighSchool)
             case 18:
-                // Stage the decision prompt; the graduation alert's dismiss
-                // button will present it once the congrats has been seen.
-                appUIState.decisionText = "You're 18! What's your next step?"
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
@@ -156,16 +144,10 @@ struct RootView: View {
             Text(player.promotionMessage)
         }
         // Marks the end of a degree with a congrats pop-up. The same milestone
-        // is also banked into the StatusBar history so the player can revisit
-        // it later. Dismissing the alert reveals the "what's next?" decision
-        // sheet — staged at graduation time but deferred so the congrats lands
-        // first.
+        // is also banked into the StatusBar history so the player can revisit it
+        // later. College and Careers stay reachable any year from the footer.
         .alert("Congratulations! 🎓", isPresented: $player.showGraduationAlert) {
-            Button("Thanks!", role: .cancel) {
-                if !appUIState.decisionText.isEmpty {
-                    appUIState.showDecisionSheet = true
-                }
-            }
+            Button("Thanks!", role: .cancel) { }
         } message: {
             Text(player.graduationMessage)
         }
@@ -278,22 +260,6 @@ struct RootView: View {
             }
     }
 
-    private var clubsContent: some View {
-        ClubsView(player: player, selectedActivities: $appUIState.selectedActivities)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showClubsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showClubsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
     private var sideHustlesContent: some View {
         PrivateProjectsView(
             player: player,
@@ -332,38 +298,19 @@ struct RootView: View {
             }
     }
 
-    private var certificationsContent: some View {
-        CertificationsView(
+    private var trainingsContent: some View {
+        TrainingsView(
             player: player,
-            selectedCertifications: $appUIState.selectedCertifications,
+            selectedTrainings: $appUIState.selectedTrainings,
             selectedActivities: $appUIState.selectedActivities
         )
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Back") { appUIState.showCertificationsSheet = false }
+                Button("Back") { appUIState.showTrainingsSheet = false }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Next") {
-                    appUIState.showCertificationsSheet = false
-                    player.advanceYear(appUIState: appUIState)
-                }
-            }
-        }
-    }
-
-    private var licensesContent: some View {
-        LicensesView(
-            player: player,
-            selectedLicenses: $appUIState.selectedLicenses,
-            selectedActivities: $appUIState.selectedActivities
-        )
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Back") { appUIState.showLicensesSheet = false }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Next") {
-                    appUIState.showLicensesSheet = false
+                    appUIState.showTrainingsSheet = false
                     player.advanceYear(appUIState: appUIState)
                 }
             }
@@ -506,15 +453,9 @@ struct ModeSelectionView: View {
     private func start(_ difficulty: Difficulty) {
         player.difficulty = difficulty
         player.avatar = avatar
-        let needsDecision = player.configureStart(age: startAge)
+        player.configureStart(age: startAge)
         player.regenerateAvailableJobs()
         appUIState.hasSelectedMode = true
-        // Starting at 18 means high school is already done — prompt the same
-        // "what's next?" decision the age-18 transition would normally fire.
-        if needsDecision {
-            appUIState.decisionText = "You're \(startAge)! What's your next step?"
-            appUIState.showDecisionSheet = true
-        }
     }
 }
 

@@ -33,12 +33,24 @@ struct JobDetail: View {
         return "Apply"
     }
 
+    /// The soft skills that feed the hire-probability skill match, each with the
+    /// level the employer looks for. Surfaced in the InfoHint so the list isn't
+    /// cluttering the requirements page.
+    private var softSkillsClause: String {
+        let considered = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
+        guard !considered.isEmpty else { return "" }
+        let list = considered
+            .map { "\($0.pictogram) \($0.label) (target \(requiredSoft[keyPath: $0.keyPath]))" }
+            .joined(separator: "\n")
+        return "\n\nSoft skills that count toward the skill match (helpful, not required):\n\n\(list)"
+    }
+
     /// Plain-language breakdown of the hire-probability formula with the
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
             let degreeClause = job.educationIsMandatory ? "degree, " : ""
-            return "Hire chance is 0% until every required \(degreeClause)license, \(job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place."
+            return "Hire chance is 0% until every required \(degreeClause)license, \(job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place.\(softSkillsClause)"
         }
 
         let scoredCount = SoftSkills.allAxes.count
@@ -91,6 +103,7 @@ struct JobDetail: View {
         • Salary fit: \(pct(salaryFit))
         Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
         Final (clamped 5–95%): \(pct(final))
+        \(softSkillsClause)
         """
     }
 
@@ -197,29 +210,15 @@ struct JobDetail: View {
                 }
             }
 
-            if !isSimplified && !requiredHard.certifications.isEmpty {
-                Text("Certifications:")
+            if !isSimplified && !requiredHard.trainings.isEmpty {
+                Text("Trainings:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
-                ForEach(Array(requiredHard.certifications).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { cert in
-                    let owned = player.hardSkills.certifications.contains(cert)
-                    RequirementRow(label: cert.friendlyName, emoji: cert.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-            }
-
-            if !isSimplified && !requiredHard.licenses.isEmpty {
-                Text("Licenses:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(Array(requiredHard.licenses).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { license in
-                    let owned = player.hardSkills.licenses.contains(license)
-                    RequirementRow(label: license.friendlyName, emoji: license.pictogram, style: .badge(isMet: owned))
+                ForEach(Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { training in
+                    let owned = player.hardSkills.trainings.contains(training)
+                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
                         .foregroundStyle(owned ? .primary : .secondary)
                         .padding(.horizontal)
                 }
@@ -235,28 +234,6 @@ struct JobDetail: View {
                     let owned = player.hardSkills.portfolioItems.contains(project)
                     RequirementRow(label: project.rawValue, emoji: project.pictogram, style: .badge(isMet: owned))
                         .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-            }
-
-            let requiredSkills = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
-            if !isSimplified && !requiredSkills.isEmpty {
-                Text("Soft requirements")
-                    .font(.title)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                Text("Helpful but not required — they boost your hire probability.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-
-                ForEach(requiredSkills, id: \.label) { skill in
-                    let required = requiredSoft[keyPath: skill.keyPath]
-                    let playerValue = player.softSkills[keyPath: skill.keyPath]
-                    RequirementRow(label: skill.label, emoji: skill.pictogram, style: .meter(current: playerValue, required: required))
-                        .foregroundStyle(playerValue >= required ? .primary : .secondary)
                         .padding(.horizontal)
                 }
             }

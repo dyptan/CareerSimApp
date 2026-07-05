@@ -177,14 +177,17 @@ extension Job {
 
     func hardSkillsMet(for player: Player) -> Bool {
         let req = requirements.hardSkills
-        // Licenses are always required (legally enforced regardless of employer).
-        guard req.licenses.isSubset(of: player.hardSkills.licenses) else {
-            return false
-        }
+        let held = player.hardSkills.trainings
+        // Statutory trainings (former licences) are legally enforced regardless
+        // of employer — always required.
+        let statutory = req.trainings.filter(\.isStatutory)
+        guard statutory.isSubset(of: held) else { return false }
         // Safety-critical / regulated fields (health, transportation, law, …)
-        // gate on their certifications — you can't practise without the credential.
+        // also gate on their non-statutory trainings (former certifications) —
+        // you can't practise without the credential.
         if category.requiresCredentials {
-            return req.certifications.isSubset(of: player.hardSkills.certifications)
+            let preference = req.trainings.filter { !$0.isStatutory }
+            return preference.isSubset(of: held)
         }
         // Everywhere else, employers hire on demonstrated portfolio work.
         return req.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
@@ -542,8 +545,7 @@ var jobExample = Job(
         ),
         hardSkills: .init(
             portfolioItems: [],
-            certifications: [],
-            licenses: []
+            trainings: []
         )
     ),
 )

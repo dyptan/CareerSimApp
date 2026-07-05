@@ -42,7 +42,7 @@ struct HeaderView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if !player.achievements.isEmpty || !player.fameByCategory.isEmpty {
+                if !player.recognitions.isEmpty {
                     accoladesRow
                 }
             }
@@ -64,51 +64,13 @@ struct HeaderView: View {
         }
     }
 
-    /// Banked trophies as a horizontally-scrolling chip row. Each chip pairs
-    /// the trophy's source icon with its title; the count + fame-score line on
-    /// top mirrors the hire-bonus the player gets from this reputation.
+    /// A single-line fame counter. The individual accolade titles live in the
+    /// SkillsView "Personal Brand & Recognition" section, not here.
     private var accoladesRow: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("🏆 Accolades (\(player.achievements.count)) · fame \(String(format: "%.1f", player.fameScore))")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(Array(player.achievements.enumerated()), id: \.offset) { _, title in
-                        let meta = Player.fameMetadata(for: title)
-                        HStack(spacing: 4) {
-                            Text(meta.icon)
-                            Text(title)
-                        }
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Color.yellow.opacity(0.18), in: Capsule())
-                    }
-                    // Industry-scoped project fame — the reputation that lifts
-                    // hiring odds in that same field (see Player.fameHireBonus).
-                    ForEach(industryFame, id: \.category) { entry in
-                        HStack(spacing: 4) {
-                            Text(JobCategory.icon(for: entry.category))
-                            Text("\(entry.category.rawValue) \(entry.points)")
-                        }
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Color.purple.opacity(0.18), in: Capsule())
-                    }
-                }
-            }
-        }
-        .padding(.top, 2)
-    }
-
-    /// Industries the player has earned project fame in, strongest first.
-    private var industryFame: [(category: JobCategory, points: Int)] {
-        player.fameByCategory
-            .filter { $0.value > 0 }
-            .sorted { $0.value > $1.value }
-            .map { (category: $0.key, points: $0.value) }
+        Text("🌟 Fame \(String(format: "%.1f", player.fameScore))")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .padding(.top, 2)
     }
 
     /// Plain-text summary of the current run's mode, savings, goal, and any
@@ -153,14 +115,11 @@ struct HeaderView: View {
             currentOccupation: .none
         ),
         appUIState: AppUIState(
-            showDecisionSheet: false,
             showTertiarySheet: false,
             showCareersSheet: false,
             selectedActivities: [],
-            selectedLicenses: [],
-            selectedCertifications: [],
-            yearsLeftToGraduation: nil,
-            decisionText: ""
+            selectedTrainings: [],
+            yearsLeftToGraduation: nil
         )
     )
 }

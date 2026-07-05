@@ -51,7 +51,9 @@ struct EventsView: View {
     private func row(for event: CareerEvent) -> some View {
         let isSelected = selectedEvents.contains(event.id)
         let atLimit = selectedEvents.count >= GameConstants.maxEventsPerYear
-        let isDisabled = !isSelected && atLimit
+        // Industry events open only once you have ≥1 year in that field.
+        let meetsExp = event.meetsExperienceRequirement(for: player.experience)
+        let isDisabled = (!isSelected && atLimit) || !meetsExp
         // A flag, not a gate — an unaffordable ticket is still bought on credit.
         let canAfford = isSelected || player.savings >= event.cost
 
@@ -115,6 +117,11 @@ struct EventsView: View {
                     }
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
+                    if !meetsExp, let category = event.category {
+                        Text("🔒 Requires 1 yr in \(category.rawValue)")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -122,9 +129,11 @@ struct EventsView: View {
             .disabled(isDisabled)
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
-                atLimit && !isSelected
-                    ? "You can attend up to \(GameConstants.maxEventsPerYear) events this year."
-                    : ""
+                !meetsExp
+                    ? "Work at least 1 year in \(event.category?.rawValue ?? "this field") to attend."
+                    : (atLimit && !isSelected
+                        ? "You can attend up to \(GameConstants.maxEventsPerYear) events this year."
+                        : "")
             )
 
             InfoHint(

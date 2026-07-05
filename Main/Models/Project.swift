@@ -5,9 +5,9 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     case library = "Contribute to open-source project"
     case article = "Article"
     case presentation = "Presentation"
-    case creativeContest = "Win a creative Competition"
     case musicFestival = "Music Festival"
     case publishBook = "Coauthor a book or a paper"
+    case game3d = "3D Game"
 
     var id: String { rawValue }
 
@@ -22,9 +22,9 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         case .library: return "An open-source project you contribute to in your free time, out in the open for other tinkerers to see. Land your work in something people depend on and your name travels with it."
         case .article: return "A long-form article or deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown."
         case .presentation: return "A talk you put together for a meetup, conference, or hobby community. Landing an idea in front of a room is how people start to know your name."
-        case .creativeContest: return "You enter a creative competition — art, design, a showcase — and put your work up for judging. Placing well is recognition money can't buy."
         case .musicFestival: return "You take the stage at a music festival. A good set in front of a crowd is the fastest way to get talked about."
         case .publishBook: return "You coauthor a book or a paper and see it published. A title with your name on the spine carries lasting recognition."
+        case .game3d: return "A 3D game you model, build, and ship in your spare time — characters, worlds, and mechanics all your own. A standout indie title gets you noticed."
         }
     }
 
@@ -34,9 +34,9 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         case .library: return "📦"
         case .article: return "📝"
         case .presentation: return "🖥️"
-        case .creativeContest: return "🖼️"
         case .musicFestival: return "🎵"
         case .publishBook: return "📖"
+        case .game3d: return "🎮"
         }
     }
 
@@ -45,7 +45,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     /// grown-up pieces (a published book/paper) unlock later.
     var stages: Set<LifeStage> {
         switch self {
-        case .app, .library, .presentation:
+        case .app, .library, .presentation, .game3d:
             return [.teen, .youngAdult, .adult]
         case .publishBook:
             return [.youngAdult, .adult]
@@ -79,10 +79,6 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.init(keyPath: \.presentationAndStorytelling, weight: 2),
                     .init(keyPath: \.communicationAndNetworking, weight: 2),
                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)]
-        case .creativeContest:
-            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
-                    .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-                    .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
         case .musicFestival:
             return [.init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
@@ -91,6 +87,10 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.init(keyPath: \.communicationAndNetworking, weight: 2),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
                     .init(keyPath: \.timeManagementAndPlanning, weight: 1)]
+        case .game3d:
+            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
+                    .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
+                    .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)]
         }
     }
 
@@ -126,10 +126,58 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     /// The fame-and-recognition bump a year on this project earns: `1` when the
     /// year gets noticed, `0` when it doesn't. The single roll uses
     /// `successProbability`, so a strong soft-skill fit is far likelier to land
-    /// the point. Banked into `Player.fameByCategory[fameIndustry]` in
+    /// the point. Banked as a `Player.Recognition` in the project's `fameIndustry` in
     /// `advanceYear`.
     func rollFameGain(for soft: SoftSkills) -> Int {
         Double.random(in: 0...1) < successProbability(for: soft) ? 1 : 0
+    }
+
+    /// Soft skills a *successful* year on this project grows (each capped at 5
+    /// in `advanceYear`). Two kinds combine: the craft axes it draws on (its
+    /// `requirements`, +1 each — you sharpen what you practise) and a curated
+    /// founder-cluster bump (initiative / vision / leadership / persuasion — the
+    /// axes no hobby can build, earned only by shipping real work into the
+    /// world). This is the reward a hobby can't give: a hobby is passive
+    /// practice, a shipped project is an achievement that grows you.
+    var successBoosts: [(keyPath: WritableKeyPath<SoftSkills, Int>, delta: Int)] {
+        requirements.map { (keyPath: $0.keyPath, delta: 1) } + founderBoosts
+    }
+
+    /// The leadership/founder axes a shipped project sharpens — the half of the
+    /// soft-skill map hobbies never touch (see `successBoosts`).
+    private var founderBoosts: [(keyPath: WritableKeyPath<SoftSkills, Int>, delta: Int)] {
+        switch self {
+        case .app:
+            return [(\.riskTakingAndInitiative, 1), (\.visionaryThinkingAndAmbition, 1)]
+        case .library:
+            return [(\.leadershipAndInfluence, 1), (\.visionaryThinkingAndAmbition, 1)]
+        case .article:
+            return [(\.visionaryThinkingAndAmbition, 1), (\.persuasionAndNegotiation, 1)]
+        case .presentation:
+            return [(\.persuasionAndNegotiation, 2)]
+        case .musicFestival:
+            return [(\.riskTakingAndInitiative, 1), (\.visionaryThinkingAndAmbition, 1)]
+        case .publishBook:
+            return [(\.visionaryThinkingAndAmbition, 1), (\.leadershipAndInfluence, 1)]
+        case .game3d:
+            return [(\.riskTakingAndInitiative, 1), (\.visionaryThinkingAndAmbition, 1)]
+        }
+    }
+
+    /// The personal-brand title a noticed year on this project earns, banked as
+    /// a `Recognition` (levelling up on repeats). Reads as something you're
+    /// *known for* — distinct from the fame-building side-hustle awards so the
+    /// two never collide on the shelf.
+    var recognitionTitle: String {
+        switch self {
+        case .app: return "App Maker"
+        case .library: return "Open-Source Contributor"
+        case .article: return "Bylined Writer"
+        case .presentation: return "Noted Speaker"
+        case .musicFestival: return "Festival Performer"
+        case .publishBook: return "Book Coauthor"
+        case .game3d: return "Indie Game Dev"
+        }
     }
 
     /// The industry this project builds fame in. Fame is industry-scoped — it
@@ -139,9 +187,9 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     var fameIndustry: JobCategory {
         switch self {
         case .app, .library: return .technology
+        case .game3d: return .gaming
         case .article, .musicFestival: return .showBusiness
         case .presentation: return .business
-        case .creativeContest: return .design
         case .publishBook: return .science
         }
     }

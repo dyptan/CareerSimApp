@@ -39,8 +39,12 @@ enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Compa
 struct HardSkills: Codable, Hashable {
 
     private(set) var portfolioLevels: [Project: ProficiencyLevel] = [:]
-    private(set) var certificationLevels: [Certification: ProficiencyLevel] = [:]
-    private(set) var licenseLevels: [License: ProficiencyLevel] = [:]
+
+    /// Professional credentials the player has earned — the former
+    /// certifications and licences, now unified as `Training`. A plain set:
+    /// trainings carry no proficiency level (you either hold the credential or
+    /// you don't).
+    var trainings: Set<Training> = []
 
 
     var portfolioItems: Set<Project> {
@@ -48,26 +52,14 @@ struct HardSkills: Codable, Hashable {
         set { HardSkills.syncLevels(&portfolioLevels, to: newValue) }
     }
 
-    var certifications: Set<Certification> {
-        get { Set(certificationLevels.keys) }
-        set { HardSkills.syncLevels(&certificationLevels, to: newValue) }
-    }
-
-    var licenses: Set<License> {
-        get { Set(licenseLevels.keys) }
-        set { HardSkills.syncLevels(&licenseLevels, to: newValue) }
-    }
-
     // MARK: - Initializer
 
     init(
         portfolioItems: Set<Project> = [],
-        certifications: Set<Certification> = [],
-        licenses: Set<License> = []
+        trainings: Set<Training> = []
     ) {
         self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
-        self.certificationLevels = Dictionary(uniqueKeysWithValues: certifications.map { ($0, .level1) })
-        self.licenseLevels = Dictionary(uniqueKeysWithValues: licenses.map { ($0, .level1) })
+        self.trainings = trainings
     }
 
     // MARK: - Private helper
@@ -80,8 +72,6 @@ struct HardSkills: Codable, Hashable {
     // MARK: - Level accessors
 
     func level(for item: Project) -> ProficiencyLevel? { portfolioLevels[item] }
-    func level(for cert: Certification) -> ProficiencyLevel? { certificationLevels[cert] }
-    func level(for lic: License) -> ProficiencyLevel? { licenseLevels[lic] }
 
     // MARK: - Mutating setters
 
@@ -89,23 +79,11 @@ struct HardSkills: Codable, Hashable {
     mutating func setLevel(_ level: ProficiencyLevel, for item: Project) {
         portfolioLevels[item] = level
     }
-    mutating func setLevel(_ level: ProficiencyLevel, for cert: Certification) {
-        certificationLevels[cert] = level
-    }
-    mutating func setLevel(_ level: ProficiencyLevel, for lic: License) {
-        licenseLevels[lic] = level
-    }
 
     // MARK: - Promotion helpers (keeps highest)
 
     mutating func promote(to level: ProficiencyLevel, for item: Project) {
         portfolioLevels[item] = max(portfolioLevels[item] ?? .level1, level)
-    }
-    mutating func promote(to level: ProficiencyLevel, for cert: Certification) {
-        certificationLevels[cert] = max(certificationLevels[cert] ?? .level1, level)
-    }
-    mutating func promote(to level: ProficiencyLevel, for lic: License) {
-        licenseLevels[lic] = max(licenseLevels[lic] ?? .level1, level)
     }
 
     // MARK: - Sequential progression policy (1 level per year)
@@ -128,12 +106,6 @@ struct HardSkills: Codable, Hashable {
     func canTrain(_ item: Project) -> Bool {
         nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
     }
-    func canTrain(_ cert: Certification) -> Bool {
-        nextLevel(after: currentLevel(in: certificationLevels, for: cert)) != nil
-    }
-    func canTrain(_ lic: License) -> Bool {
-        nextLevel(after: currentLevel(in: licenseLevels, for: lic)) != nil
-    }
 
 
     @discardableResult
@@ -144,28 +116,10 @@ struct HardSkills: Codable, Hashable {
         }
         return portfolioLevels[item]
     }
-    @discardableResult
-    mutating func trainOneYear(_ cert: Certification) -> ProficiencyLevel? {
-        let next = nextLevel(after: certificationLevels[cert])
-        if let n = next {
-            certificationLevels[cert] = n
-        }
-        return certificationLevels[cert]
-    }
-    @discardableResult
-    mutating func trainOneYear(_ lic: License) -> ProficiencyLevel? {
-        let next = nextLevel(after: licenseLevels[lic])
-        if let n = next {
-            licenseLevels[lic] = n
-        }
-        return licenseLevels[lic]
-    }
 
     // MARK: - Removal
 
     mutating func remove(_ item: Project) { portfolioLevels.removeValue(forKey: item) }
-    mutating func remove(_ cert: Certification) { certificationLevels.removeValue(forKey: cert) }
-    mutating func remove(_ lic: License) { licenseLevels.removeValue(forKey: lic) }
 }
 
 /// One soft-skill axis and its player-facing metadata. `SoftSkills.allAxes`

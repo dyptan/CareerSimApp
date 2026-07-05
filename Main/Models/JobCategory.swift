@@ -9,6 +9,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case education = "Education"
     case agriculture = "Agriculture"
     case design = "Design"
+    case gaming = "Gaming"
     case language = "Language"
     case tourism = "Tourism"
     case law = "Law"
@@ -39,7 +40,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return 0.55   // founder income swings wildly with the venture
         case .showBusiness, .fashion:
             return 0.50   // heavily project-based / performance-driven
-        case .technology, .engineering, .aviation, .science:
+        case .technology, .engineering, .aviation, .science, .gaming:
             return 0.40   // bonuses, stock, market swings
         case .business, .law, .finance:
             return 0.40
@@ -108,6 +109,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .education: return "📚"
         case .agriculture: return "🌾"
         case .design: return "🖌️"
+        case .gaming: return "🎮"
         case .language: return "🗣️"
         case .tourism: return "🧳"
         case .law: return "⚖️"
@@ -141,6 +143,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .agriculture:
             return .outdoors
         case .design:
+            return .creative
+        case .gaming:
             return .creative
         case .language:
             return .people
@@ -197,6 +201,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Farming, growing food, and taking care of animals. It's all about nurturing life."
         case .design:
             return "Make things look great and work well—like logos, apps, clothes, and rooms."
+        case .gaming:
+            return "Build video games: model 3D worlds, design mechanics, animate characters, and code the fun."
         case .language:
             return "Use words to connect people: translate, teach languages, write, and communicate."
         case .tourism:
@@ -257,6 +263,8 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Agriculturist, horticulturist, livestock"
         case .design:
             return "Graphic, UI/UX, fashion, interior"
+        case .gaming:
+            return "3D modeller, game designer, animator, gameplay programmer"
         case .language:
             return "Translator, interpreter, language teacher"
         case .tourism:
