@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		550618402ED2245400C56E99 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* Project.swift */; };
-		AA0000000000000000000103 /* CareerGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* CareerGraph.swift */; };
-		AA000000000000000000020B /* CareerGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020A /* CareerGraphTests.swift */; };
 		550618422ED2245900C56E99 /* Certification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Certification.swift */; };
 		550618442ED2245D00C56E99 /* License.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618432ED2245D00C56E99 /* License.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
@@ -55,13 +53,15 @@
 		AA00000000000000000000D2 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D1 /* Difficulty.swift */; };
 		AA00000000000000000000E2 /* SideHustle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E1 /* SideHustle.swift */; };
 		AA00000000000000000000E4 /* SideHustlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E3 /* SideHustlesView.swift */; };
-		AA0000000000000000000101 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000100 /* ProjectsView.swift */; };
 		AA00000000000000000000E6 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E5 /* Event.swift */; };
 		AA00000000000000000000E8 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E7 /* EventsView.swift */; };
 		AA00000000000000000000EA /* Competition.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E9 /* Competition.swift */; };
 		AA00000000000000000000EC /* CompetitionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000EB /* CompetitionsView.swift */; };
 		AA00000000000000000000EE /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000ED /* GameCenterManager.swift */; };
 		AA00000000000000000000F3 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000F2 /* ConfettiSwiftUI */; };
+		AA0000000000000000000101 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000100 /* ProjectsView.swift */; };
+		AA0000000000000000000103 /* CareerGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* CareerGraph.swift */; };
+		AA000000000000000000020B /* CareerGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020A /* CareerGraphTests.swift */; };
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
@@ -92,9 +92,6 @@
 
 /* Begin PBXFileReference section */
 		5506183F2ED2245400C56E99 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
-		AA0000000000000000000102 /* CareerGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraph.swift; sourceTree = "<group>"; };
-		AA000000000000000000020A /* CareerGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraphTests.swift; sourceTree = "<group>"; };
-		AA0000000000000000000201 /* CareersAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareersAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		550618412ED2245900C56E99 /* Certification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certification.swift; sourceTree = "<group>"; };
 		550618432ED2245D00C56E99 /* License.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = License.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
@@ -141,12 +138,15 @@
 		AA00000000000000000000D1 /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E1 /* SideHustle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustle.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E3 /* SideHustlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustlesView.swift; sourceTree = "<group>"; };
-		AA0000000000000000000100 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E5 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E7 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E9 /* Competition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Competition.swift; sourceTree = "<group>"; };
 		AA00000000000000000000EB /* CompetitionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompetitionsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000ED /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		AA0000000000000000000100 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000102 /* CareerGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraph.swift; sourceTree = "<group>"; };
+		AA0000000000000000000201 /* CareersAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareersAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000000000000000000020A /* CareerGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraphTests.swift; sourceTree = "<group>"; };
 		C20D77EA24B665D7002E7AEA /* CareersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -154,6 +154,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AA0000000000000000000203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C20D77E724B665D7002E7AEA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -162,16 +169,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA0000000000000000000203 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AA000000000000000000020C /* CareersAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000020A /* CareerGraphTests.swift */,
+			);
+			path = CareersAppTests;
+			sourceTree = "<group>";
+		};
 		C20D77E124B665D7002E7AEA = {
 			isa = PBXGroup;
 			children = (
@@ -180,14 +188,6 @@
 				AA000000000000000000020C /* CareersAppTests */,
 				C20D77EB24B665D7002E7AEA /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		AA000000000000000000020C /* CareersAppTests */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000000020A /* CareerGraphTests.swift */,
-			);
-			path = CareersAppTests;
 			sourceTree = "<group>";
 		};
 		C20D77EB24B665D7002E7AEA /* Products */ = {
@@ -297,6 +297,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		AA0000000000000000000200 /* CareersAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0000000000000000000205 /* Build configuration list for PBXNativeTarget "CareersAppTests" */;
+			buildPhases = (
+				AA0000000000000000000202 /* Sources */,
+				AA0000000000000000000203 /* Frameworks */,
+				AA0000000000000000000204 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA0000000000000000000208 /* PBXTargetDependency */,
+			);
+			name = CareersAppTests;
+			packageProductDependencies = (
+			);
+			productName = CareersAppTests;
+			productReference = AA0000000000000000000201 /* CareersAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C20D77E924B665D7002E7AEA /* CareersApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C20D77F924B665D8002E7AEA /* Build configuration list for PBXNativeTarget "CareersApp" */;
@@ -318,26 +338,6 @@
 			productReference = C20D77EA24B665D7002E7AEA /* CareersApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AA0000000000000000000200 /* CareersAppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA0000000000000000000205 /* Build configuration list for PBXNativeTarget "CareersAppTests" */;
-			buildPhases = (
-				AA0000000000000000000202 /* Sources */,
-				AA0000000000000000000203 /* Frameworks */,
-				AA0000000000000000000204 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AA0000000000000000000208 /* PBXTargetDependency */,
-			);
-			name = CareersAppTests;
-			packageProductDependencies = (
-			);
-			productName = CareersAppTests;
-			productReference = AA0000000000000000000201 /* CareersAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -346,15 +346,15 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2610;
+				LastUpgradeCheck = 2660;
 				ORGANIZATIONNAME = Apple;
 				TargetAttributes = {
-					C20D77E924B665D7002E7AEA = {
-						CreatedOnToolsVersion = 12.0;
-					};
 					AA0000000000000000000200 = {
 						CreatedOnToolsVersion = 16.0;
 						TestTargetID = C20D77E924B665D7002E7AEA;
+					};
+					C20D77E924B665D7002E7AEA = {
+						CreatedOnToolsVersion = 12.0;
 					};
 				};
 			};
@@ -381,6 +381,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000204 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C20D77E824B665D7002E7AEA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -391,16 +398,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA0000000000000000000204 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000202 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000000000000000000020B /* CareerGraphTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C20D77E624B665D7002E7AEA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -461,14 +469,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA0000000000000000000202 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA000000000000000000020B /* CareerGraphTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -480,6 +480,44 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AA0000000000000000000206 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MU8Q7GLNNL;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.dyptan.carrersim.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareersApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareersApp";
+			};
+			name = Debug;
+		};
+		AA0000000000000000000207 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MU8Q7GLNNL;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.dyptan.carrersim.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareersApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareersApp";
+			};
+			name = Release;
+		};
 		C20D77F724B665D8002E7AEA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -712,49 +750,18 @@
 			};
 			name = Release;
 		};
-		AA0000000000000000000206 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = MU8Q7GLNNL;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.dyptan.carrersim.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareersApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareersApp";
-			};
-			name = Debug;
-		};
-		AA0000000000000000000207 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = MU8Q7GLNNL;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.dyptan.carrersim.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CareersApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CareersApp";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AA0000000000000000000205 /* Build configuration list for PBXNativeTarget "CareersAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000206 /* Debug */,
+				AA0000000000000000000207 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C20D77E524B665D7002E7AEA /* Build configuration list for PBXProject "CareersApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -769,15 +776,6 @@
 			buildConfigurations = (
 				C20D77FA24B665D8002E7AEA /* Debug */,
 				C20D77FB24B665D8002E7AEA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AA0000000000000000000205 /* Build configuration list for PBXNativeTarget "CareersAppTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AA0000000000000000000206 /* Debug */,
-				AA0000000000000000000207 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
