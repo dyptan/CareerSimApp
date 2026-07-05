@@ -1,115 +1,96 @@
 import Foundation
 
 enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
-    case app = "App"
-    case website = "Website"
-    case library = "Library"
-    case paper = "Paper"
+    case app = "Mobile App"
+    case library = "Contribute to open-source project"
+    case article = "Article"
     case presentation = "Presentation"
-    case paintingPortfolio = "Painting Portfolio"
-    case photoPortfolio = "Photo Portfolio"
-    case musicAlbum = "Music Album"
-    case recipeBook = "Recipe Book"
-    case lessonPlan = "Lesson Plan"
+    case creativeContest = "Win a creative Competition"
+    case musicFestival = "Music Festival"
+    case publishBook = "Coauthor a book or a paper"
 
     var id: String { rawValue }
 
-    /// Plain-language explanation of the side/hobby project, for the in-game
-    /// info popover. Projects are personal passion projects you build in your
-    /// own time — not work deliverables — but a strong body of work catches an
-    /// employer's eye when you go job-hunting.
+    /// Plain-language explanation of the side project, for the in-game info
+    /// popover. Projects are spare-time passion projects you put yourself into —
+    /// not work deliverables. Unlike a hobby (which quietly builds soft skills),
+    /// a project *spends* the soft skills you've already built for a shot at
+    /// fame and recognition — putting your name out into the world.
     var description: String {
         switch self {
-        case .app: return "A little mobile or desktop app you build in your spare time — to scratch an itch or just to learn. A working side project speaks louder than a résumé when you look for software work."
-        case .website: return "A personal site you design and build on the side — a blog, a fan page, a favour for a friend. Hands-on proof you can ship for the web."
-        case .library: return "An open-source code library you make in your free time and share for other tinkerers to use. A passion project that quietly shows real engineering chops."
-        case .paper: return "A long-form article or deep-dive you write out of pure curiosity. Finishing one shows you can dig into a subject and explain it clearly."
-        case .presentation: return "A talk or slide deck you put together for a meetup, club, or hobby community. Great practice at making an idea land in front of a room."
-        case .paintingPortfolio: return "A collection of paintings and drawings you make for the love of it. A body of work that speaks for your eye and craft."
-        case .photoPortfolio: return "A curated set of your favourite shots, taken and edited in your own time. Your personal best, gathered into one body of work."
-        case .musicAlbum: return "A set of songs you write, record, and produce as a labour of love — proof you can take music from idea to finished tracks."
-        case .recipeBook: return "A personal collection of recipes you've cooked, photographed, and written up — a foodie passion project."
-        case .lessonPlan: return "A set of lessons you design for fun — to tutor a sibling, run a club, or teach something you love. Shows you can structure and explain a topic."
+        case .app: return "A little mobile or desktop app you build in your spare time — to scratch an itch or just to learn. Ship something people actually use and word gets around."
+        case .library: return "An open-source project you contribute to in your free time, out in the open for other tinkerers to see. Land your work in something people depend on and your name travels with it."
+        case .article: return "A long-form article or deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown."
+        case .presentation: return "A talk you put together for a meetup, conference, or hobby community. Landing an idea in front of a room is how people start to know your name."
+        case .creativeContest: return "You enter a creative competition — art, design, a showcase — and put your work up for judging. Placing well is recognition money can't buy."
+        case .musicFestival: return "You take the stage at a music festival. A good set in front of a crowd is the fastest way to get talked about."
+        case .publishBook: return "You coauthor a book or a paper and see it published. A title with your name on the spine carries lasting recognition."
         }
     }
 
     var pictogram: String {
         switch self {
         case .app: return "📱"
-        case .website: return "🌐"
         case .library: return "📦"
-        case .paper: return "📄"
+        case .article: return "📝"
         case .presentation: return "🖥️"
-        case .paintingPortfolio: return "🖼️"
-        case .photoPortfolio: return "📷"
-        case .musicAlbum: return "🎵"
-        case .recipeBook: return "🍳"
-        case .lessonPlan: return "🍎"
+        case .creativeContest: return "🖼️"
+        case .musicFestival: return "🎵"
+        case .publishBook: return "📖"
         }
     }
 
-    /// Life stages in which this portfolio piece is offered. Creative kid-friendly
-    /// outputs (drawing, photos, music) are available from childhood; technical
-    /// and adult-career pieces (library, recipe book, lesson plan) unlock later.
+    /// Life stages in which this project is offered. Kid-friendly creative
+    /// outings (a creative contest, a festival) are open from childhood;
+    /// grown-up pieces (a published book/paper) unlock later.
     var stages: Set<LifeStage> {
         switch self {
-        case .paintingPortfolio, .photoPortfolio, .musicAlbum:
-            return [.child, .teen, .youngAdult, .adult]
-        case .app, .website, .paper, .presentation:
+        case .app, .library, .presentation:
             return [.teen, .youngAdult, .adult]
-        case .library, .recipeBook, .lessonPlan:
+        case .publishBook:
             return [.youngAdult, .adult]
+        default:
+            return [.child, .teen, .youngAdult, .adult]
         }
     }
 
-    /// The soft skills a project *demands*, with the level at which each counts
-    /// as fully met (the `weight`). This is the mirror image of a `Hobby`: a
-    /// hobby *grants* soft skills for free, whereas a project *spends* the soft
-    /// skills you've already built — the better you meet these requirements, the
-    /// likelier the project comes together (see `successProbability`). Build the
-    /// matching hobby first, then cash those skills in on the deliverable.
+    /// The soft skills a project *draws on*, with the level at which each counts
+    /// as fully met (the `weight`). These are the axes surfaced in the project's
+    /// info hint — the skills "considered" when the player takes it on. The
+    /// better the player meets them, the likelier the year earns fame (see
+    /// `successProbability` / `rollFameGain`). This is the mirror image of a
+    /// `Hobby`: a hobby *grants* soft skills for free, whereas a project
+    /// *spends* the soft skills you've already built for a shot at recognition.
     var requirements: [WeightedAbility] {
         switch self {
         case .app:
             return [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
                     .init(keyPath: \.timeManagementAndPlanning, weight: 1)]
-        case .website:
-            return [.init(keyPath: \.communicationAndNetworking, weight: 2),
-                    .init(keyPath: \.timeManagementAndPlanning, weight: 2),
-                    .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)]
         case .library:
             return [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 3),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
                     .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)]
-        case .paper:
+        case .article:
             return [.init(keyPath: \.communicationAndNetworking, weight: 2),
-                    .init(keyPath: \.timeManagementAndPlanning, weight: 2),
+                    .init(keyPath: \.presentationAndStorytelling, weight: 2),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
         case .presentation:
             return [.init(keyPath: \.presentationAndStorytelling, weight: 2),
                     .init(keyPath: \.communicationAndNetworking, weight: 2),
                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)]
-        case .paintingPortfolio:
+        case .creativeContest:
             return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
                     .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
-        case .photoPortfolio:
-            return [.init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
-                    .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
-                    .init(keyPath: \.timeManagementAndPlanning, weight: 1)]
-        case .musicAlbum:
+        case .musicFestival:
             return [.init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
                     .init(keyPath: \.presentationAndStorytelling, weight: 1)]
-        case .recipeBook:
-            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 2),
+        case .publishBook:
+            return [.init(keyPath: \.communicationAndNetworking, weight: 2),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
                     .init(keyPath: \.timeManagementAndPlanning, weight: 1)]
-        case .lessonPlan:
-            return [.init(keyPath: \.communicationAndNetworking, weight: 2),
-                    .init(keyPath: \.timeManagementAndPlanning, weight: 2),
-                    .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
         }
     }
 
@@ -134,72 +115,42 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         return met / Double(totalWeight)
     }
 
-    /// Probability (0.1...0.9) that a year spent on this project ships a finished
-    /// portfolio piece, driven entirely by how well the player meets its
-    /// soft-skill requirements. Even a perfect fit leaves room for a flop, and a
-    /// weak fit still leaves a slim chance.
+    /// Probability (0.1...0.9) that a year on this project earns any fame at
+    /// all, driven entirely by how well the player meets its soft-skill
+    /// requirements. Even a perfect fit leaves room for a dud year, and a weak
+    /// fit still leaves a slim chance of being noticed.
     func successProbability(for soft: SoftSkills) -> Double {
         max(0.1, min(0.9, 0.15 + requirementFit(for: soft) * 0.75))
     }
 
-    /// Soft-skill bumps granted when a project ships. Reserved for the
-    /// "founder cluster" — Risk-Taker, Visionary, Persuader, Leader — axes
-    /// you can only sharpen by actually putting your own work into the world.
-    /// Each delta is applied (and capped at 5) inside `Player.advanceYear`
-    /// when the project ships its portfolio piece.
-    var boosts: [(WritableKeyPath<SoftSkills, Int>, Int)] {
+    /// The fame-and-recognition bump a year on this project earns: `1` when the
+    /// year gets noticed, `0` when it doesn't. The single roll uses
+    /// `successProbability`, so a strong soft-skill fit is far likelier to land
+    /// the point. Banked into `Player.fameByCategory[fameIndustry]` in
+    /// `advanceYear`.
+    func rollFameGain(for soft: SoftSkills) -> Int {
+        Double.random(in: 0...1) < successProbability(for: soft) ? 1 : 0
+    }
+
+    /// The industry this project builds fame in. Fame is industry-scoped — it
+    /// only lifts hiring odds for roles in this same `JobCategory` (see
+    /// `Player.fameHireBonus(for:)`), so a coding project's renown helps land
+    /// tech roles, not a spot on stage.
+    var fameIndustry: JobCategory {
         switch self {
-        case .app:
-            return [(\.riskTakingAndInitiative, 1), (\.visionaryThinkingAndAmbition, 1)]
-        case .website:
-            return [(\.persuasionAndNegotiation, 1)]
-        case .library:
-            return [(\.leadershipAndInfluence, 1), (\.visionaryThinkingAndAmbition, 1)]
-        case .paper:
-            return [(\.visionaryThinkingAndAmbition, 1)]
-        case .presentation:
-            return [(\.persuasionAndNegotiation, 2)]
-        case .paintingPortfolio, .photoPortfolio:
-            return [(\.visionaryThinkingAndAmbition, 1)]
-        case .musicAlbum:
-            return [(\.visionaryThinkingAndAmbition, 1), (\.riskTakingAndInitiative, 1)]
-        case .recipeBook:
-            return [(\.persuasionAndNegotiation, 1)]
-        case .lessonPlan:
-            return [(\.leadershipAndInfluence, 1)]
+        case .app, .library: return .technology
+        case .article, .musicFestival: return .showBusiness
+        case .presentation: return .business
+        case .creativeContest: return .design
+        case .publishBook: return .science
         }
     }
 
-    /// A titled fame trophy a project can earn when it ships — reputation that
-    /// no hobby can buy. The marquee creative pieces (a body of paintings, a
-    /// breakout album, an acclaimed photo set) put your name out into the world;
-    /// the quietly technical pieces (an app, a library) build professional skill
-    /// instead and grant no fame. `nil` means this project never builds fame.
-    /// Banked into `Player.achievements` on a successful year and surfaced
-    /// through `Player.fameMetadata(for:)` (see `Player.fameRegistry`).
-    var fameAward: String? {
-        switch self {
-        case .paintingPortfolio: return "Exhibited Artist"
-        case .photoPortfolio: return "Acclaimed Photographer"
-        case .musicAlbum: return "Breakout Album"
-        case .paper: return "Published Researcher"
-        case .presentation: return "Keynote Speaker"
-        case .recipeBook: return "Celebrated Cook"
-        case .app, .website, .library, .lessonPlan: return nil
+    static func unlocked(byPractisedHobbies practisedHobbies: Set<String>) -> Set<Project> {
+        var result: Set<Project> = []
+        for hobby in hobbies where practisedHobbies.contains(hobby.label) {
+            result.formUnion(hobby.unlocks)
         }
+        return result
     }
-
-    /// Reputation weight this project's trophy carries in the player's fame
-    /// score (see `Player.fameScore`). Marquee outputs are tuned higher; only
-    /// meaningful when `fameAward` is non-nil.
-    var fameWeight: Double {
-        switch self {
-        case .musicAlbum, .paper: return 1.5
-        default: return 1.0
-        }
-    }
-
-    /// Whether a successful year of this project banks a fame trophy.
-    var buildsFame: Bool { fameAward != nil }
 }
-

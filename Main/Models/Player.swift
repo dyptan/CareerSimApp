@@ -52,6 +52,14 @@ final class Player: ObservableObject {
     /// score (see `fameScore`) that helps land Show Business roles.
     @Published var achievements: [String] = []
 
+    /// Fame-and-recognition points earned from spare-time `Project`s, tallied
+    /// per industry (a project builds fame in its `Project.fameIndustry`). Each
+    /// noticed project year adds 1 to its industry (see `Project.rollFameGain`).
+    /// Fame is industry-scoped: only the tally for a role's own `JobCategory`
+    /// lifts hiring odds there (see `fameHireBonus(for:)`), mirroring how
+    /// `networkByCategory` keeps professional networks field-specific.
+    @Published var fameByCategory: [JobCategory: Int] = [:]
+
     /// Number of competitions won in the year just advanced (0 when none).
     /// Surfaced in the header alongside the confetti.
     @Published var lastCompetitionWins: Int = 0
@@ -81,16 +89,25 @@ final class Player: ObservableObject {
 
     /// Weighted sum of every banked trophy, where each title's contribution
     /// comes from its source's `fameWeight` (a local 5K is worth less than an
-    /// Olympic medal). Drives both `achievementHireBonus` and the fame lift on
+    /// Olympic medal). Drives both `fameHireBonus(for:)` and the fame lift on
     /// Show Business side hustles.
     var fameScore: Double {
         achievements.reduce(0.0) { $0 + Player.fameMetadata(for: $1).weight }
+            + Double(fameByCategory.values.reduce(0, +))
     }
 
-    /// Additive hire-probability boost for fame-driven Show Business roles from
-    /// the player's trophies. Diminishing, capped at +0.20 — a decorated
-    /// competitor is a draw for casting directors and sponsors.
-    var achievementHireBonus: Double { min(0.20, fameScore * 0.04) }
+    /// Additive hire-probability boost for a role in `category`, capped at
+    /// +0.20. Fame is industry-scoped: only reputation earned in the *same*
+    /// industry counts, so a tech portfolio's renown does nothing for a stage
+    /// audition. Project fame is tagged by industry (`Project.fameIndustry`);
+    /// competition and side-hustle trophies count as Show Business reputation.
+    func fameHireBonus(for category: JobCategory) -> Double {
+        var points = Double(fameByCategory[category] ?? 0)
+        if category == .showBusiness {
+            points += achievements.reduce(0.0) { $0 + Player.fameMetadata(for: $1).weight }
+        }
+        return min(0.20, points * 0.04)
+    }
 
     /// Source-of-truth registry mapping each trophy title to its visual icon
     /// and reputation weight. Built once from the competition and side-hustle
@@ -103,11 +120,6 @@ final class Player: ObservableObject {
         for h in SideHustleCatalog.all {
             if let award = h.fameAward {
                 map[award] = (h.icon, h.fameWeight)
-            }
-        }
-        for p in Project.allCases {
-            if let award = p.fameAward {
-                map[award] = (p.pictogram, p.fameWeight)
             }
         }
         return map
@@ -680,11 +692,6 @@ final class Player: ObservableObject {
             if let earned = outcome.grantedPortfolio {
                 hardSkills.portfolioItems.insert(earned)
                 lockedPortfolio.insert(earned)
-                // Shipping a project sharpens the founder cluster — these
-                // axes are reserved for project boosts only (see Project.boosts).
-                for (keyPath, delta) in earned.boosts {
-                    softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 5)
-                }
                 recordStatus("📁", "Shipped \(earned.rawValue)")
             }
             if let fame = outcome.grantedFame {
@@ -696,39 +703,27 @@ final class Player: ObservableObject {
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
 
-        // Personal projects: spare-time creative work the player commits a year
-        // to. Unlike a hobby — which reliably hands out soft skills — a project
-        // is a gamble gated by the soft skills already built: its odds scale
-        // with how well the player meets its requirements (Project.successProbability).
-        // When it comes together it yields what hobbies never can — a portfolio
-        // piece (a professional credential), founder-cluster growth (axes no
-        // hobby touches), and, for marquee pieces, a fame trophy. A flop simply
-        // yields nothing.
-        var shippedProjects = 0
+        // Personal projects: spare-time work the player commits a year to.
+        // Unlike a hobby — which reliably hands out soft skills — a project is a
+        // gamble on the soft skills already built, and it pays out in one thing
+        // only: fame and recognition, banked into the project's own industry.
+        // Its odds scale with how well the player meets its requirements
+        // (Project.successProbability); a noticed year adds 1 fame to that
+        // industry, a dud adds nothing (Project.rollFameGain). Projects are
+        // repeatable — the player can chase the same stage again year after year.
+        var famedProjects = 0
         for raw in appUIState.selectedProjects {
             guard let project = Project(rawValue: raw) else { continue }
-            // A finished piece can't be earned twice.
-            if lockedPortfolio.contains(project) { continue }
-            let succeeded = Double.random(in: 0...1) < project.successProbability(for: softSkills)
-            guard succeeded else {
-                recordStatus("📁", "\(project.rawValue) didn't come together this year")
+            let gain = project.rollFameGain(for: softSkills)
+            guard gain > 0 else {
+                recordStatus(project.pictogram, "\(project.rawValue) went unnoticed this year")
                 continue
             }
-            hardSkills.portfolioItems.insert(project)
-            lockedPortfolio.insert(project)
-            // Shipping a project sharpens the founder cluster — these axes are
-            // reserved for project boosts only (see Project.boosts).
-            for (keyPath, delta) in project.boosts {
-                softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 5)
-            }
-            shippedProjects += 1
-            recordStatus("📁", "Shipped \(project.rawValue)")
-            if let fame = project.fameAward {
-                achievements.append(fame)
-                recordStatus("🏆", "Earned achievement: \(fame)")
-            }
+            fameByCategory[project.fameIndustry, default: 0] += gain
+            famedProjects += 1
+            recordStatus("🌟", "\(project.rawValue) earned +\(gain) fame in \(project.fameIndustry.rawValue)")
         }
-        if shippedProjects > 0 { celebrationTrigger += 1 }
+        if famedProjects > 0 { celebrationTrigger += 1 }
         appUIState.selectedProjects.removeAll()
 
         // Competitions: resolve every contest entered this year. The entry fee is
@@ -919,6 +914,7 @@ final class Player: ObservableObject {
         difficulty = fresh.difficulty
         avatar = fresh.avatar
         achievements = fresh.achievements
+        fameByCategory = fresh.fameByCategory
         lastCompetitionWins = fresh.lastCompetitionWins
         activeStartup = fresh.activeStartup
         pendingStartupOffer = fresh.pendingStartupOffer

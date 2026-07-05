@@ -2,12 +2,11 @@ import SwiftUI
 
 /// The **Projects** page — a deliberate mirror of `HobbiesView`, but inverted.
 /// A hobby reliably *grants* soft skills for free; a project *spends* the soft
-/// skills you've already built and gambles them on a deliverable. Each row shows
-/// what the project *requires* (soft-skill axes, with the level each needs), the
-/// odds it comes together this year, and the rewards a hobby can never give —
-/// a portfolio piece (a professional credential), founder-cluster growth, and,
-/// for marquee pieces, a fame trophy. The catalogue is filtered by life stage
-/// and capped per year, exactly like hobbies.
+/// skills you've already built and gambles them on one reward a hobby can never
+/// give: fame and recognition. Each row shows which soft skills are considered
+/// (with the level each is measured against), the odds the year gets noticed,
+/// and the fame it can earn (0, 1, or 2). Projects are repeatable and filtered
+/// by life stage, exactly like hobbies.
 struct ProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedProjects: Set<String>
@@ -23,14 +22,12 @@ struct ProjectsView: View {
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     /// Projects offered this stage. A project only shows once the player has
-    /// practised a hobby that unlocks it; pieces already built are dropped —
-    /// a finished portfolio piece can't be earned twice.
+    /// practised a hobby that unlocks it. Projects are repeatable — a player can
+    /// chase the same stage again each year for another shot at recognition.
     private var stageProjects: [Project] {
         let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
         return Project.allCases.filter {
-            $0.stages.contains(currentStage)
-                && unlocked.contains($0)
-                && !player.lockedPortfolio.contains($0)
+            $0.stages.contains(currentStage) && unlocked.contains($0)
         }
     }
 
@@ -47,7 +44,7 @@ struct ProjectsView: View {
                             ? .red : .primary
                     )
             }
-            Text("Spend your soft skills on a portfolio piece — \(currentStage.displayName), age \(player.age)")
+            Text("Spend your soft skills for fame and recognition — \(currentStage.displayName), age \(player.age)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
@@ -71,8 +68,9 @@ struct ProjectsView: View {
 
         let odds = Int((project.successProbability(for: player.softSkills) * 100).rounded())
 
-        // Each required axis as "Nx🔍" (need level N) — mirrors how a hobby row
-        // shows its weighted gains, but read as a requirement rather than a gain.
+        // Each considered axis as "Nx🔍" (measured against level N) — mirrors how
+        // a hobby row shows its weighted gains, but read as a skill drawn on
+        // rather than a gain.
         let requirementPictos: String = project.requirements
             .compactMap { req -> String? in
                 let kp = req.keyPath as PartialKeyPath<SoftSkills>
@@ -81,22 +79,12 @@ struct ProjectsView: View {
             }
             .joined(separator: " ")
 
-        // Founder-cluster skills this project sharpens on success (axes no hobby
-        // can build), rendered with their "+N" gain.
-        let boostPictos: String = project.boosts
-            .compactMap { (kp, delta) -> String? in
-                let pk = kp as PartialKeyPath<SoftSkills>
-                guard let pic = skillPictogramByKeyPath[pk] else { return nil }
-                return "\(pic)+\(delta)"
-            }
-            .joined(separator: " ")
-
         let requirementHint: String = project.requirements
             .map { req -> String in
                 let kp = req.keyPath as PartialKeyPath<SoftSkills>
                 let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
                 let pic = skillPictogramByKeyPath[kp] ?? ""
-                return "\(pic) \(label) (need \(req.weight))"
+                return "\(pic) \(label) (measured against \(req.weight))"
             }
             .joined(separator: "\n")
 
@@ -117,19 +105,13 @@ struct ProjectsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(project.pictogram)  \(project.rawValue)")
                         .font(.headline)
-                    Text("Requires: \(requirementPictos)")
+                    Text("Draws on: \(requirementPictos)")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     HStack(spacing: 10) {
                         Text("🎲 ~\(odds)%")
-                        Text("📁 Portfolio piece")
-                        if !boostPictos.isEmpty {
-                            Text(boostPictos)
-                        }
-                        if let fame = project.fameAward {
-                            Text("🌟 \(fame)")
-                                .foregroundStyle(.purple)
-                        }
+                        Text("🌟 +0–1 \(JobCategory.icon(for: project.fameIndustry)) \(project.fameIndustry.rawValue) fame")
+                            .foregroundStyle(.purple)
                     }
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
@@ -147,11 +129,7 @@ struct ProjectsView: View {
 
             InfoHint(
                 title: "\(project.pictogram) \(project.rawValue)",
-                message: "\(project.description)\n\nRequires:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier it ships. A finished project earns a portfolio piece"
-                    + (boostPictos.isEmpty ? "" : " and sharpens founder skills no hobby can")
-                    + (project.buildsFame
-                        ? ", and can earn the “\(project.fameAward ?? "")” trophy — fame that helps land Show Business roles."
-                        : ".")
+                message: "\(project.description)\n\nSoft skills considered:\n\n\(requirementHint)\n\nUnlike a hobby, a project spends the soft skills you've built — the better you meet these, the likelier the year gets noticed. A noticed year earns +1 fame in \(JobCategory.icon(for: project.fameIndustry)) \(project.fameIndustry.rawValue), a dud nothing. Fame is industry-specific: it only helps you land \(project.fameIndustry.rawValue) roles."
             )
         }
         .padding(5)
