@@ -250,11 +250,6 @@ final class Player: ObservableObject {
     /// One admission attempt per school per year, so a rejection can't be
     /// brute-forced — the player must try another school or wait a year.
     @Published var appliedSchoolIds: Set<String> = []
-    /// Trainings whose exam has been attempted this year (by `rawValue`).
-    /// One attempt per training per year — a failed exam can't be brute-forced;
-    /// the player must improve their skills and retry next year. Cleared in
-    /// `advanceYear`.
-    @Published var attemptedTrainingIds: Set<String> = []
     /// Jobs offered to the player this year. Re-shuffled (and re-rolled for
     /// salary variance) every time `advanceYear` runs, so the listing feels
     /// different each game year.
@@ -445,23 +440,33 @@ final class Player: ObservableObject {
     /// `Training.minYearsExperience`).
     var totalYearsWorked: Int { experience.values.reduce(0, +) }
 
-    /// Sits this year's training exam: pays the fee and consumes the training
-    /// slot (win or lose), then rolls a pass against the training's
-    /// `passProbability`. A pass selects the training (committed at year end); a
-    /// fail leaves the player out the fee. One attempt per training per year — a
-    /// fail means studying again next year. Returns whether the exam was passed.
+    /// Enrols in this year's training: consumes the training slot and earns the
+    /// credential (committed at year end). Once the hard requirements are met the
+    /// course is assumed to be passed — students who put in the year pass the exam
+    /// — so there's no roll. Completing the course also nudges the transferable
+    /// soft skills it builds (see `Training.softSkillBoosts`), capped at 10.
+    /// Returns whether enrolment succeeded.
     @discardableResult
     func attemptTraining(_ training: Training, into selectedTrainings: inout Set<Training>, activities selectedActivities: inout Set<String>) -> Bool {
-        guard case .ok(let cost) = training.requirements(self) else { return false }
-        guard !attemptedTrainingIds.contains(training.rawValue) else { return false }
-        attemptedTrainingIds.insert(training.rawValue)
+        guard case .ok = training.requirements(self) else { return false }
+        guard !selectedTrainings.contains(training) else { return false }
         selectedActivities.insert("training:\(training.rawValue)")
-        savings -= cost
-        let passed = Double.random(in: 0...1) < training.passProbability(for: self)
-        if passed {
-            selectedTrainings.insert(training)
+        selectedTrainings.insert(training)
+        for boost in training.softSkillBoosts {
+            softSkills[keyPath: boost.keyPath] = min(softSkills[keyPath: boost.keyPath] + boost.weight, 10)
         }
-        return passed
+        return true
+    }
+
+    /// Reverses `attemptTraining` if the player toggles a training off before the
+    /// year ends: frees the spare-time slot, un-selects the credential, and
+    /// rolls back the soft-skill nudges. Symmetric to `deselectHobby`.
+    func cancelTraining(_ training: Training, from selectedTrainings: inout Set<Training>, activities selectedActivities: inout Set<String>) {
+        guard selectedTrainings.remove(training) != nil else { return }
+        selectedActivities.remove("training:\(training.rawValue)")
+        for boost in training.softSkillBoosts {
+            softSkills[keyPath: boost.keyPath] -= boost.weight
+        }
     }
 
     // MARK: - Promotion
@@ -532,6 +537,9 @@ final class Player: ObservableObject {
         // below (see "Private projects").
 
         lockedTrainings.formUnion(appUIState.selectedTrainings)
+        // This year's picks are now permanent (hard skills + locked); clear the
+        // pending set so next year starts fresh, mirroring sports/hobbies/events.
+        appUIState.selectedTrainings.removeAll()
 
         // Bank this year's hobbies into the player's practised-hobby history.
         // It both locks a hobby from being retaken (HobbiesView) and unlocks the
@@ -570,7 +578,6 @@ final class Player: ObservableObject {
 
         appliedJobIds.removeAll()
         appliedSchoolIds.removeAll()
-        attemptedTrainingIds.removeAll()
         // Re-roll the job market for the new year (fresh tiers and salaries).
         regenerateAvailableJobs()
 
@@ -911,7 +918,6 @@ final class Player: ObservableObject {
         sportYears = fresh.sportYears
         appliedJobIds = []
         appliedSchoolIds = []
-        attemptedTrainingIds = []
         availableJobs = fresh.availableJobs
     }
 }

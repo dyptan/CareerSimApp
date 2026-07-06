@@ -1,7 +1,7 @@
 import Foundation
 
 enum TrainingRequirementResult {
-    case ok(cost: Int)
+    case ok
     case blocked(reason: String)
 }
 

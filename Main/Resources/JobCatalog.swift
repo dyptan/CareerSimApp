@@ -360,8 +360,6 @@ enum JobCatalog {
             switch title {
             case "Accountant", "Senior Accountant":
                 return HardSkills(trainings: [.cpa])
-            case "Senior Financial Analyst", "Investment Banker":
-                return HardSkills(trainings: [.cfa])
             // Trade apprentices work *toward* the licence, so the entry rung
             // carries none — even though the journeyman base role (Electrician /
             // Plumber, same base title) requires it.
@@ -391,14 +389,6 @@ enum JobCatalog {
             }
 
             switch Job.baseTitle(of: title) {
-            // Cloud platforms — vendor certs on the roles that run on them
-            case "Cloud Architect":
-                return HardSkills(trainings: [.aws])
-            case "Systems Administrator":
-                return HardSkills(trainings: [.azure])
-            case "Data Scientist":
-                return HardSkills(trainings: [.google])
-
             // Drivers / transport
             case "Light Truck Delivery Driver", "Taxi Driver":
                 return HardSkills(trainings: [.drivers])
@@ -414,16 +404,12 @@ enum JobCatalog {
                 return HardSkills(trainings: [.plumber])
             case "Architect":
                 return HardSkills(trainings: [.architect])
-            case "Mechanic":
-                return HardSkills(trainings: [.ase])
 
             // Health — licences + entry-level certs
             case "Registered Nurse":
                 return HardSkills(trainings: [.nurse])
             case "Paramedic":
                 return HardSkills(trainings: [.emt])
-            case "Medical Assistant":
-                return HardSkills(trainings: [.medicalAssistant])
             case "Dental Assistant":
                 return HardSkills(trainings: [.dentalAssistant])
             case "Nursing Aide":
@@ -432,8 +418,6 @@ enum JobCatalog {
             // Law / public services
             case "Lawyer", "Judge", "Managing Partner":
                 return HardSkills(trainings: [.bar])
-            case "Paralegal":
-                return HardSkills(trainings: [.paralegal])
             case "Firefighter", "Senior Firefighter", "Lead Firefighter":
                 return HardSkills(trainings: [.emt])
             case "Security Guard":
@@ -444,17 +428,11 @@ enum JobCatalog {
                 return HardSkills(trainings: [.cosmetology])
             case "Flight Attendant":
                 return HardSkills(trainings: [.flightAttendantCert])
-            case "Chef":
-                return HardSkills(trainings: [.culinaryDiploma])
 
             // Education — teachers are hired on a teaching certificate (a helpful
             // signal in this non-regulated field, not a hard gate).
             case "Teacher", "Senior Teacher", "Lead Teacher":
                 return HardSkills(trainings: [.teachingCertificate])
-
-            // Tech / IT — entry roles realistically open with a cert.
-            case "IT Support Specialist":
-                return HardSkills(trainings: [.comptiaA])
 
             // Agriculture — pesticides require a state applicator licence
             case "Farmer":
