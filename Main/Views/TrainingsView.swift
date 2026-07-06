@@ -15,11 +15,12 @@ extension View {
 }
 
 /// The **Trainings** page — the unified home for professional credentials, the
-/// merger of the old Certifications and Licenses sheets. Every training is
-/// earned the same way: it costs a fee and a spare-time slot, and a year's
-/// attempt rolls a pass against `Training.passProbability` (soft skills set the
-/// odds). Age, education, prerequisite trainings, and — for senior credentials —
-/// work experience are hard gates on *attempting*; a blocked training shows why.
+/// merger of the old Certifications and Licenses sheets. It shares its layout and
+/// the single spare-time slot with Hobbies and Sports: picking a training this
+/// year displaces any other activity. Once the hard gates are met the credential
+/// is earned outright (no exam roll), and completing the course nudges the soft
+/// skills it builds. Age, education, prerequisite trainings, and — for senior
+/// credentials — work experience are the hard gates; a blocked training shows why.
 struct TrainingsView: View {
     @ObservedObject var player: Player
 
@@ -31,141 +32,140 @@ struct TrainingsView: View {
     private var sortedTrainings: [Training] {
         Training.allCases
             .filter { $0.stages.contains(currentStage) }
+            // Age is a visibility gate, not a disabled row: a training the player
+            // is too young for simply doesn't appear until they can attempt it.
+            .filter { player.age >= $0.minAge }
             .sorted { $0.friendlyName < $1.friendlyName }
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                if sortedTrainings.isEmpty {
-                    Text("Professional trainings unlock as you get older and finish school.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .padding()
-                } else {
-                    ForEach(sortedTrainings, id: \.rawValue) { training in
-                        row(for: training)
-                            .padding(.vertical, 4)
+        VStack {
+            HStack(spacing: 6) {
+                Text("Training this year:")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text("\(selectedActivities.count)/\(GameConstants.trainingActivitySlotCost)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(
+                        selectedActivities.count >= GameConstants.trainingActivitySlotCost
+                            ? .red : .primary
+                    )
+            }
+            Text("\(currentStage.displayName) — age \(player.age)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer()
+
+            ScrollView {
+                VStack(spacing: 10) {
+                    if sortedTrainings.isEmpty {
+                        Text("Professional trainings unlock as you get older and finish school.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .padding()
+                    } else {
+                        ForEach(sortedTrainings, id: \.rawValue) { training in
+                            row(for: training)
+                        }
                     }
                 }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
         }
-        .padding()
     }
 
     @ViewBuilder
     private func row(for training: Training) -> some View {
-        // Owned if already earned (locked / in hard skills) or passed this year.
-        let isOwned = player.lockedTrainings.contains(training)
+        // Earned in a prior year (permanent) vs. picked this year (reversible).
+        let isEarned = player.lockedTrainings.contains(training)
             || player.hardSkills.trainings.contains(training)
-            || selectedTrainings.contains(training)
-        let attemptedThisYear = player.attemptedTrainingIds.contains(training.rawValue)
+        let isSelectedThisYear = selectedTrainings.contains(training)
         let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
-        let cost = training.cost
-        let canAfford = player.savings >= cost
 
         let blockedReason: String? = {
             if case .blocked(let reason) = training.requirements(player) { return reason }
             return nil
         }()
         let gatesMet = blockedReason == nil
-        let passChance = training.passProbability(for: player)
-        // Can sit the exam: eligible, not already owned/attempted, slot free.
-        // Affordability is NOT a gate — an unaffordable fee just goes into debt.
-        let canAttempt = gatesMet && !isOwned && !attemptedThisYear && !atLimit
+        // Can switch on only if eligible and the shared slot is free.
+        let canToggleOn = gatesMet && !atLimit
+        let isDisabled = isEarned || (!isSelectedThisYear && !canToggleOn)
 
-        // Soft skills that drive the pass odds, with the level each weighs in at —
-        // surfaced in the info hint so the player knows what to build toward.
-        let softSkillsHint: String = training.softSkillThresholds
-            .map { pair in
-                let label = SoftSkills.label(forKeyPath: pair.0) ?? ""
-                let pic = SoftSkills.pictogram(forKeyPath: pair.0) ?? "🧩"
-                return "\(pic) \(label) (weighs in at \(pair.1))"
+        // Soft skills the completed course builds — shown on the row and in the hint.
+        let pictos: String = training.softSkillBoosts
+            .compactMap { SoftSkills.pictogram(forKeyPath: $0.keyPath) }
+            .joined(separator: " ")
+        let boostsHint: String = training.softSkillBoosts
+            .map { boost in
+                let label = SoftSkills.label(forKeyPath: boost.keyPath) ?? ""
+                let pic = SoftSkills.pictogram(forKeyPath: boost.keyPath) ?? "🧩"
+                return "\(pic) \(label) (+\(boost.weight))"
             }
             .joined(separator: "\n")
-        let hintMessage: String = softSkillsHint.isEmpty
+        let hintMessage: String = boostsHint.isEmpty
             ? training.description
-            : "\(training.description)\n\nSoft skills that set your pass odds:\n\n\(softSkillsHint)"
+            : "\(training.description)\n\nCompleting this course builds:\n\n\(boostsHint)"
 
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
-                InfoHint(title: "\(training.pictogram) \(training.friendlyName)", message: hintMessage)
-                Text(training.friendlyName)
-                    .font(.body)
-                if training.isStatutory {
-                    Text("licence")
-                        .font(.caption2)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 1)
-                        .background(Color.blue.opacity(0.15), in: Capsule())
-                }
-                Spacer()
-                if isOwned {
-                    Text("✓ Earned")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.green)
-                }
-            }
-
-            Text(canAfford
-                 ? "Cost $\(cost.formatted(.number)) (course + exam)"
-                 : "Cost $\(cost.formatted(.number)) (course + exam) — paid on credit")
-                .font(.caption)
-                .foregroundStyle(canAfford ? Color.secondary : Color.orange)
-                .padding(.leading, 8)
-
-            // Pass odds (realistic mode only — simplified is a guaranteed pass).
-            if !player.isSimplified && !isOwned {
-                HStack(spacing: 6) {
-                    Text("Pass chance:")
-                    Spacer()
-                    Text(gatesMet ? "\(Int((passChance * 100).rounded())) %" : "—")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(passChance >= 0.6 ? .green : passChance >= 0.3 ? .orange : .red)
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-            }
-
-            if !isOwned {
-                Button {
-                    let passed = player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
-                    // Passing against long odds is worth a celebration.
-                    if passed, passChance <= GameConstants.luckyAdmissionThreshold {
-                        player.celebrationTrigger += 1
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Toggle(
+                    isOn: Binding(
+                        get: { isEarned || isSelectedThisYear },
+                        set: { isOn in
+                            if isOn {
+                                guard canToggleOn else { return }
+                                player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
+                            } else {
+                                player.cancelTraining(training, from: &selectedTrainings, activities: &selectedActivities)
+                            }
+                        }
+                    )
+                ) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 6) {
+                            Text("\(training.pictogram) \(training.friendlyName)")
+                                .font(.body)
+                            if training.isStatutory {
+                                Text("licence")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1)
+                                    .background(Color.blue.opacity(0.15), in: Capsule())
+                            }
+                            if isEarned {
+                                Text("✓ Earned")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.green)
+                            }
+                        }
+                        if !pictos.isEmpty {
+                            Text("Builds: \(pictos)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                } label: {
-                    Text(attemptButtonLabel(attempted: attemptedThisYear, atLimit: atLimit, blockedReason: blockedReason))
-                        .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(!canAttempt)
-                .opacity(canAttempt ? 1.0 : 0.5)
-                .padding(.top, 2)
+                .platformToggleStyle()
+                .disabled(isDisabled)
+                .opacity(isDisabled && !isEarned ? 0.5 : 1.0)
+                .help(helpText(blockedReason: blockedReason, atLimit: atLimit, isSelected: isSelectedThisYear))
 
-                if attemptedThisYear {
-                    Text("❌ Didn't pass this year — build the skills below and retry next year.")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .padding(.leading, 8)
-                }
+                InfoHint(title: "\(training.pictogram) \(training.friendlyName)", message: hintMessage)
             }
 
-            if !isOwned {
+            // Hard requirements — education, prerequisite trainings, and work
+            // experience — shown as met/unmet badges for a training the player
+            // hasn't taken. Age isn't listed: it's a visibility gate.
+            let hasHardRequirements = training.minEQF > 0
+                || !training.prerequisites.isEmpty
+                || training.minYearsExperience > 0
+            if !isEarned && !isSelectedThisYear && hasHardRequirements {
                 let highestEQF = player.degrees.map(\.eqf).max() ?? 0
                 VStack(alignment: .leading, spacing: 4) {
-                    // Hard requirements — must all be met to sit the exam. Shown
-                    // as met/unmet badges alongside the soft-skill odds below.
                     Text("Requirements")
                         .font(.caption2.bold())
                         .foregroundStyle(.secondary)
-                    RequirementRow(
-                        label: "Age \(training.minAge)+",
-                        emoji: "🎂",
-                        style: .badge(isMet: player.age >= training.minAge)
-                    )
                     if training.minEQF > 0 {
                         RequirementRow(
                             label: Education.Requirements(minEQF: training.minEQF).educationLabel(),
@@ -181,23 +181,29 @@ struct TrainingsView: View {
                         )
                     }
                     if training.minYearsExperience > 0 {
+                        let fieldYears = training.field.map { player.experience[$0] ?? 0 }
+                            ?? player.totalYearsWorked
+                        let expLabel = training.field.map { "\(training.minYearsExperience) yrs in \($0.rawValue)" }
+                            ?? "\(training.minYearsExperience) yrs work experience"
                         RequirementRow(
-                            label: "\(training.minYearsExperience) yrs work experience",
+                            label: expLabel,
                             emoji: "💼",
-                            style: .badge(isMet: player.totalYearsWorked >= training.minYearsExperience)
+                            style: .badge(isMet: fieldYears >= training.minYearsExperience)
                         )
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.leading, 24)
             }
         }
+        .padding(5)
     }
 
-    private func attemptButtonLabel(attempted: Bool, atLimit: Bool, blockedReason: String?) -> String {
-        if blockedReason != nil { return "Requirements not met" }
-        if attempted { return "Attempted this year" }
-        if atLimit { return "Only \(GameConstants.trainingActivitySlotCost) activity per year" }
-        return player.isSimplified ? "Take Training" : "Sit Exam"
+    private func helpText(blockedReason: String?, atLimit: Bool, isSelected: Bool) -> String {
+        if let blockedReason { return blockedReason }
+        if atLimit && !isSelected {
+            return "You can commit to one activity per year — drop your current pick first."
+        }
+        return ""
     }
 }
 
