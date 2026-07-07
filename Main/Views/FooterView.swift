@@ -94,12 +94,6 @@ struct FooterView: View {
     private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
     }
-    private var hasProjects: Bool {
-        let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
-        return unlocked.contains {
-            $0.stages.contains(currentStage)
-        }
-    }
     private var hasTrainings: Bool {
         Training.allCases.contains { $0.stages.contains(currentStage) }
     }
@@ -141,13 +135,8 @@ struct FooterView: View {
                 appUIState.showCareersSheet.toggle()
             }.buttonStyle(.bordered).font(.headline)
 
-            if hasProjects {
-                Button("Projects") { appUIState.showProjectsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
-            }
-
             if hasSideHustles {
-                Button("Side Hustles") { appUIState.showSideHustlesSheet = true }
+                Button("Projects") { appUIState.showSideHustlesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 

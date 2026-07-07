@@ -49,8 +49,11 @@ struct JobDetail: View {
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
-            let degreeClause = job.educationIsMandatory ? "degree, " : ""
-            return "Hire chance is 0% until every required \(degreeClause)license, \(job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place.\(softSkillsClause)"
+            var needs: [String] = []
+            if job.educationIsMandatory { needs.append("the required degree") }
+            if job.category.requiresCredentials { needs.append("the required license and certification") }
+            needs.append("the baseline years of experience")
+            return "Hire chance is 0% until you have \(needs.joined(separator: ", ")).\(softSkillsClause)"
         }
 
         // Breakthrough gate: without the signature title, odds sit at the floor.
@@ -228,20 +231,6 @@ struct JobDetail: View {
                 ForEach(Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { training in
                     let owned = player.hardSkills.trainings.contains(training)
                     RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-            }
-
-            if !isSimplified && !requiredHard.portfolioItems.isEmpty {
-                Text("Portfolio:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(Array(requiredHard.portfolioItems).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { project in
-                    let owned = player.hardSkills.portfolioItems.contains(project)
-                    RequirementRow(label: project.rawValue, emoji: project.pictogram, style: .badge(isMet: owned))
                         .foregroundStyle(owned ? .primary : .secondary)
                         .padding(.horizontal)
                 }

@@ -44,24 +44,18 @@ struct Hobby {
     /// camera gear) that only appear in `.comfortable` ("Relaxed", well-off
     /// family) runs. `HobbiesView` hides them on every other difficulty.
     var isElite: Bool = false
-    /// The portfolio `Project`s this hobby unlocks. A project only appears in
-    /// `ProjectsView` once the player has practised at least one hobby that
-    /// unlocks it — you can't ship a photo portfolio without ever picking up
-    /// photography. See `Project.unlocked(byPractisedHobbies:)`.
-    var unlocks: [Project] = []
 }
 
-// Master catalogue. A hobby reliably builds soft skills, and many also unlock a
-// matching `Project` (practising the craft builds toward the deliverable) —
-// though not every hobby maps to a project. Athletic pursuits live elsewhere
-// (Sports dialog) and professional networking is handled by `Event`. Stage
+// Master catalogue. A hobby reliably builds soft skills — those skills in turn
+// unlock the spare-time ventures in the Projects menu (see `SideHustle`).
+// Athletic pursuits live elsewhere (Sports dialog) and professional networking
+// is handled by `Event`. Stage
 // filtering is unchanged: HobbiesView shows the subset whose `stages` includes
 // `LifeStage.forAge(player.age)`.
 let hobbies: [Hobby] = [
 
     // MARK: - Creative output
 
-    // → musicFestival
     Hobby(
         label: "Playing music instrument",
         abilities: [
@@ -70,8 +64,7 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.presentationAndStorytelling, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult],
-        unlocks: [.musicFestival]
+        stages: [.child, .teen, .youngAdult, .adult]
     ),
     // Builds the eye and craft for creative competitions (see CompetitionCatalog).
     Hobby(
@@ -95,7 +88,6 @@ let hobbies: [Hobby] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    // → publishBook
     Hobby(
         label: "Cooking",
         abilities: [
@@ -103,10 +95,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult],
-        unlocks: [.publishBook]
+        stages: [.child, .teen, .youngAdult, .adult]
     ),
-    // → article
     Hobby(
         label: "Diary Writing",
         abilities: [
@@ -115,10 +105,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
             .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
         ],
-        stages: [.child, .teen, .youngAdult, .adult],
-        unlocks: [.article]
+        stages: [.child, .teen, .youngAdult, .adult]
     ),
-    // → article / presentation / publishBook
     Hobby(
         label: "Journalism",
         abilities: [
@@ -127,13 +115,11 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult],
-        unlocks: [.article, .presentation, .publishBook]
+        stages: [.teen, .youngAdult, .adult]
     ),
 
     // MARK: - Technical / analytical output
 
-    // → app / library
     Hobby(
         label: "Coding and Programming",
         abilities: [
@@ -141,10 +127,8 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult],
-        unlocks: [.app, .library]
+        stages: [.teen, .youngAdult, .adult]
     ),
-    // → game3d
     Hobby(
         label: "3D Modelling",
         abilities: [
@@ -153,8 +137,7 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
         ],
-        stages: [.teen, .youngAdult, .adult],
-        unlocks: [.game3d]
+        stages: [.teen, .youngAdult, .adult]
     ),
 
     // MARK: - Movement & play

@@ -23,15 +23,10 @@ enum GameConstants {
     /// See `CareerEvent.networkPoints(for:)`.
     static let presenterNetworkBonus: Int = 2
 
-    /// Realistic mode: how many side hustles the player can take on in one year.
-    /// Spare time is limited, so monetizing talents competes for the same hours.
+    /// Realistic mode: how many spare-time ventures (money hustles + fame
+    /// projects, now one system) the player can take on in one year. Spare time
+    /// is limited, so every venture competes for the same hours.
     static let maxSideHustlesPerYear: Int = 1
-
-    /// How many personal projects (portfolio pieces) the player can commit a
-    /// year to. Like a hobby, a project is one spare-time pursuit at a time —
-    /// but it spends soft skills rather than building them, and gambles on a
-    /// portfolio piece, founder growth, and fame (see `Project` / `ProjectsView`).
-    static let maxProjectsPerYear: Int = 1
 
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700

@@ -1,10 +1,10 @@
 import Foundation
 
 /// A thin, **derived** dependency graph over the game's discrete unlockables —
-/// hobbies, projects, certifications, licences, and the jobs that consume them.
-/// It is built entirely from the existing catalogue declarations (`hobbies`,
-/// `Project`, `Certification`, `License`, `JobCatalog`); it introduces no new
-/// source of truth and is never consulted by the hiring/odds maths.
+/// trainings (former certifications/licences) and the jobs that consume them.
+/// It is built entirely from the existing catalogue declarations (`Training`,
+/// `JobCatalog`); it introduces no new source of truth and is never consulted by
+/// the hiring/odds maths.
 ///
 /// It models *only* the **hard-prerequisite** layer — the part that is genuinely
 /// a DAG ("you either hold the licence / portfolio piece or you don't"). The
@@ -26,14 +26,6 @@ enum CareerGraph {
     /// Highest EQF a player can in principle attain (doctorate). Used to check
     /// that every credential's education gate is reachable at all.
     static let maxAttainableEQF = 7
-
-    /// Every project that at least one hobby unlocks. A project outside this set
-    /// can never be built, so any job requiring it would be unwinnable.
-    static var unlockableProjects: Set<Project> {
-        var result: Set<Project> = []
-        for hobby in hobbies { result.formUnion(hobby.unlocks) }
-        return result
-    }
 
     // MARK: - Player guidance
 
@@ -64,13 +56,6 @@ enum CareerGraph {
                 .sorted(by: { $0.rawValue < $1.rawValue }) {
                 gaps.append("Training: \(training.friendlyName)")
             }
-            // Everywhere else, employers hire on demonstrated portfolio work.
-            if !job.category.requiresCredentials {
-                for piece in req.portfolioItems.subtracting(player.hardSkills.portfolioItems)
-                    .sorted(by: { $0.rawValue < $1.rawValue }) {
-                    gaps.append("Portfolio: \(piece.rawValue)")
-                }
-            }
         }
 
         if !job.experienceMet(for: player) {
@@ -98,28 +83,17 @@ enum CareerGraph {
     /// by static reachability.
     static func validateCatalogue() -> [String] {
         var issues: [String] = []
-        let buildable = unlockableProjects
 
-        // 1. No orphan projects — every project must be unlocked by some hobby,
-        //    or it can never enter the portfolio.
-        for project in Project.allCases where !buildable.contains(project) {
-            issues.append("Project ‘\(project.rawValue)’ is unlocked by no hobby — unreachable.")
-        }
-
-        // 2. The training prerequisite chain must stay acyclic (it is a DAG).
+        // 1. The training prerequisite chain must stay acyclic (it is a DAG).
         issues.append(contentsOf: trainingCycleIssues())
 
-        // 3. Credential education gates must be attainable at all.
+        // 2. Credential education gates must be attainable at all.
         for training in Training.allCases where training.minEQF > maxAttainableEQF {
             issues.append("Training ‘\(training.rawValue)’ needs EQF \(training.minEQF) > max attainable \(maxAttainableEQF).")
         }
 
-        // 4. Every job's hard requirements must be producible.
+        // 3. Every job's education gate must be attainable at all.
         for job in JobCatalog.allJobs() {
-            let req = job.requirements.hardSkills
-            for piece in req.portfolioItems where !buildable.contains(piece) {
-                issues.append("Job ‘\(job.id)’ requires portfolio ‘\(piece.rawValue)’, which no hobby unlocks.")
-            }
             if job.requirements.education.minEQF > maxAttainableEQF {
                 issues.append("Job ‘\(job.id)’ needs EQF \(job.requirements.education.minEQF) > max attainable \(maxAttainableEQF).")
             }

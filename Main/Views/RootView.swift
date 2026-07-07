@@ -76,9 +76,6 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
             navigationSheet { sideHustlesContent }
         }
-        .sheet(isPresented: $appUIState.showProjectsSheet) {
-            navigationSheet { projectsContent }
-        }
         .sheet(isPresented: $appUIState.showEventsSheet) {
             navigationSheet { eventsContent }
         }
@@ -262,25 +259,6 @@ struct RootView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
                         appUIState.showSideHustlesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var projectsContent: some View {
-        ProjectsView(
-            player: player,
-            selectedProjects: $appUIState.selectedProjects
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showProjectsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showProjectsSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
                 }

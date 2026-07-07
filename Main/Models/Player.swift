@@ -257,7 +257,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
-    @Published var lockedPortfolio: Set<Project>
     @Published var lockedHobbies: Set<String>
     /// Professional network built by attending industry `CareerEvent`s, keyed by
     /// the event's industry. Improves hiring odds on that field's postings and
@@ -306,7 +305,6 @@ final class Player: ObservableObject {
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedTrainings: Set<Training> = [],
-        lockedPortfolio: Set<Project> = [],
         lockedHobbies: Set<String> = []
     ) {
         self.age = age
@@ -318,7 +316,6 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedTrainings = lockedTrainings
-        self.lockedPortfolio = lockedPortfolio
         self.lockedHobbies = lockedHobbies
         self.availableJobs = JobCatalog.allJobs().shuffled()
     }
@@ -609,19 +606,15 @@ final class Player: ObservableObject {
             sportYears[sport, default: 0] += 1
         }
         appUIState.selectedSports.removeAll()
-        // Portfolio pieces are no longer granted up front — they're earned by
-        // successfully resolving portfolio projects in the private-projects loop
-        // below (see "Private projects").
 
         lockedTrainings.formUnion(appUIState.selectedTrainings)
         // This year's picks are now permanent (hard skills + locked); clear the
         // pending set so next year starts fresh, mirroring sports/hobbies/events.
         appUIState.selectedTrainings.removeAll()
 
-        // Bank this year's hobbies into the player's practised-hobby history.
-        // It both locks a hobby from being retaken (HobbiesView) and unlocks the
-        // matching portfolio projects (ProjectsView). `selectedActivities` also
-        // carries sport and training: entries, so intersect with the hobby
+        // Bank this year's hobbies into the player's practised-hobby history,
+        // locking a hobby from being retaken (HobbiesView). `selectedActivities`
+        // also carries sport and training: entries, so intersect with the hobby
         // catalogue to keep only real hobby labels.
         lockedHobbies.formUnion(
             appUIState.selectedActivities.intersection(Set(hobbies.map(\.label)))
@@ -723,58 +716,40 @@ final class Player: ObservableObject {
             }
         }
 
-        // Private projects: resolve every venture taken on this year. No money is
-        // staked — a success pays out (banked in full, unlike salary) while a
-        // flop simply yields nothing; the year's takings are surfaced in the
-        // header. A successful show-business venture also banks a fame trophy
-        // (reputation that helps land Show Business roles).
+        // Spare-time ventures (money hustles + fame projects, now one system).
+        // No money is staked. A money venture pays out in full on success (unlike
+        // salary), surfaced in the header. A fame venture banks an industry-scoped
+        // award and grows the soft skills it drew on — the founder-cluster axes no
+        // hobby can build. A flop yields nothing. Fame ventures snowball with the
+        // player's reputation (see SideHustle.successProbability); all are
+        // repeatable year after year.
         var sideHustleNet = 0
+        var famedVentures = 0
         for id in appUIState.selectedSideHustles {
-            guard let hustle = SideHustleCatalog.byId[id] else { continue }
+            guard let hustle = SideHustleCatalog.byId[id],
+                  hustle.meetsPrerequisite(for: softSkills) else { continue }
             let outcome = hustle.resolve(for: softSkills, fameScore: fameScore)
-            savings += outcome.credit
-            sideHustleNet += outcome.credit
-            if let earned = outcome.grantedPortfolio {
-                hardSkills.portfolioItems.insert(earned)
-                lockedPortfolio.insert(earned)
-                recordStatus("📁", "Shipped \(earned.rawValue)")
-            }
-            if let fame = outcome.grantedFame {
-                award(fame, icon: hustle.icon, industry: .showBusiness, weight: hustle.fameWeight)
-                celebrationTrigger += 1
-                recordStatus("🏆", "Earned fame: \(fame)")
+            if outcome.success {
+                savings += outcome.credit
+                sideHustleNet += outcome.credit
+                if outcome.credit > 0 {
+                    recordStatus(hustle.icon, "\(hustle.label) paid \(outcome.credit.formatted(.number)) $")
+                }
+                if let grant = outcome.grantedFame {
+                    award(grant.title, icon: hustle.icon, industry: grant.industry, weight: grant.weight)
+                    for ability in hustle.growth {
+                        softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
+                    }
+                    famedVentures += 1
+                    recordStatus("🌟", "\(hustle.label) earned fame in \(grant.industry.rawValue)")
+                }
+            } else {
+                recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
             }
         }
+        if famedVentures > 0 { celebrationTrigger += 1 }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
-
-        // Personal projects: spare-time work the player commits a year to.
-        // Unlike a hobby — which reliably hands out soft skills — a project is a
-        // gamble on the soft skills already built. It pays out two ways on a
-        // noticed year: a fame award in the project's own industry
-        // (a `FameAward`, levelled on repeats), and soft-skill growth — the
-        // craft axes it drew on plus a founder-cluster bump no hobby can build
-        // (Project.successBoosts, capped at 5). Its odds scale with how well the
-        // player meets its requirements (Project.successProbability); a dud year
-        // yields nothing. Projects are repeatable — the player can chase the
-        // same stage again year after year.
-        var famedProjects = 0
-        for raw in appUIState.selectedProjects {
-            guard let project = Project(rawValue: raw) else { continue }
-            guard project.rollFameGain(for: softSkills) > 0 else {
-                recordStatus(project.pictogram, "\(project.rawValue) went unnoticed this year")
-                continue
-            }
-            award(project.fameTitle, icon: project.pictogram,
-                  industry: project.fameIndustry, weight: 1.0)
-            for (keyPath, delta) in project.successBoosts {
-                softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 10)
-            }
-            famedProjects += 1
-            recordStatus("🌟", "\(project.rawValue) earned fame in \(project.fameIndustry.rawValue)")
-        }
-        if famedProjects > 0 { celebrationTrigger += 1 }
-        appUIState.selectedProjects.removeAll()
 
         // Competitions: training a sport now automatically enters you into its
         // top eligible contest — no menu, no entry fee. Win odds start low and
@@ -996,7 +971,6 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         lockedTrainings = fresh.lockedTrainings
-        lockedPortfolio = fresh.lockedPortfolio
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
         generalNetwork = fresh.generalNetwork

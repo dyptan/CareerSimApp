@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		550618402ED2245400C56E99 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5506183F2ED2245400C56E99 /* Project.swift */; };
 		550618422ED2245900C56E99 /* Training.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Training.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
 		550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C550E2EB02BDE00887B96 /* HeaderView.swift */; };
@@ -53,7 +52,6 @@
 		AA00000000000000000000EA /* Competition.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E9 /* Competition.swift */; };
 		AA00000000000000000000EE /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000ED /* GameCenterManager.swift */; };
 		AA00000000000000000000F3 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000F2 /* ConfettiSwiftUI */; };
-		AA0000000000000000000101 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000100 /* ProjectsView.swift */; };
 		AA0000000000000000000103 /* CareerGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* CareerGraph.swift */; };
 		AA000000000000000000020B /* CareerGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020A /* CareerGraphTests.swift */; };
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
@@ -85,7 +83,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5506183F2ED2245400C56E99 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		550618412ED2245900C56E99 /* Training.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Training.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
 		550C550E2EB02BDE00887B96 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -131,7 +128,6 @@
 		AA00000000000000000000E7 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E9 /* Competition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Competition.swift; sourceTree = "<group>"; };
 		AA00000000000000000000ED /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
-		AA0000000000000000000100 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000102 /* CareerGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraph.swift; sourceTree = "<group>"; };
 		AA0000000000000000000201 /* CareersAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareersAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000000000000000000020A /* CareerGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraphTests.swift; sourceTree = "<group>"; };
@@ -227,7 +223,6 @@
 				84C2E86F2E9C1C0F0093E507 /* JobCategory.swift */,
 				5596D81B2E9AE4EF00E98CEF /* Job.swift */,
 				84F851C82EA0F30F0066C41A /* Player.swift */,
-				5506183F2ED2245400C56E99 /* Project.swift */,
 				AA0000000000000000000102 /* CareerGraph.swift */,
 				550618412ED2245900C56E99 /* Training.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
@@ -260,7 +255,6 @@
 				551B66F52EBFB91900092DC7 /* SkillsView.swift */,
 				551B66F72EBFB9CD00092DC7 /* HobbiesView.swift */,
 				AA00000000000000000000E3 /* SideHustlesView.swift */,
-				AA0000000000000000000100 /* ProjectsView.swift */,
 				AA00000000000000000000E7 /* EventsView.swift */,
 				5598FA282EE62F57006C4D36 /* TrainingsView.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
@@ -419,7 +413,6 @@
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Training.swift in Sources */,
 				84C2E8722E9C1C260093E507 /* JobGroup.swift in Sources */,
-				550618402ED2245400C56E99 /* Project.swift in Sources */,
 				AA0000000000000000000103 /* CareerGraph.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
@@ -435,7 +428,6 @@
 				AA00000000000000000000D2 /* Difficulty.swift in Sources */,
 				AA00000000000000000000E2 /* SideHustle.swift in Sources */,
 				AA00000000000000000000E4 /* SideHustlesView.swift in Sources */,
-				AA0000000000000000000101 /* ProjectsView.swift in Sources */,
 				AA00000000000000000000E6 /* Event.swift in Sources */,
 				AA00000000000000000000E8 /* EventsView.swift in Sources */,
 				AA00000000000000000000EA /* Competition.swift in Sources */,

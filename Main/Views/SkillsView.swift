@@ -10,10 +10,6 @@ struct SkillsView: View {
     @State private var educationExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
 
-    private var projects: [Project] {
-        Array(player.hardSkills.portfolioItems)
-    }
-
     private var trainings: [Training] {
         Array(appUIState.selectedTrainings.union(player.hardSkills.trainings))
     }
@@ -36,7 +32,7 @@ struct SkillsView: View {
                 Divider()
                 fameSection
                 Divider()
-                // Hard skills (certs/licenses/portfolio) don't apply in simplified mode.
+                // Hard skills (trainings: certs/licenses) don't apply in simplified mode.
                 if !player.isSimplified {
                     hardSkillsSection
                     Divider()
@@ -142,19 +138,11 @@ struct SkillsView: View {
     private var hardSkillsSection: some View {
         DisclosureGroup(isExpanded: $hardSkillsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
-                if projects.isEmpty && trainings.isEmpty {
+                if trainings.isEmpty {
                     Text("No hard skills yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                }
-                if !projects.isEmpty {
-                    hardSkillRow(title: "Projects") {
-                        ForEach(projects) { item in
-                            Text("\(item.id) \(item.pictogram)")
-                        }
-                    }
-                }
-                if !trainings.isEmpty {
+                } else {
                     hardSkillRow(title: "Trainings") {
                         ForEach(trainings) { training in
                             Text("\(training.friendlyName) \(training.pictogram)")
@@ -168,10 +156,7 @@ struct SkillsView: View {
             HStack {
                 Text("Hard Skills").font(.headline)
                 Spacer()
-                summaryPictograms(
-                    projects.map { $0.pictogram }
-                        + trainings.map { $0.pictogram }
-                )
+                summaryPictograms(trainings.map { $0.pictogram })
             }
         }
     }

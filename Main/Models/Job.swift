@@ -210,8 +210,9 @@ extension Job {
             let preference = req.trainings.filter { !$0.isStatutory }
             return preference.isSubset(of: held)
         }
-        // Everywhere else, employers hire on demonstrated portfolio work.
-        return req.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+        // Everywhere else there's no hard-skill gate — hiring turns on the
+        // soft-skill fit, experience, network, and fame terms in `hireProbability`.
+        return true
     }
 
     /// Whether a degree is a *hard* hiring gate for this role. True only in
@@ -579,10 +580,7 @@ var jobExample = Job(
             selfDisciplineAndPerseverance: 0,
             presentationAndStorytelling: 0
         ),
-        hardSkills: .init(
-            portfolioItems: [],
-            trainings: []
-        )
+        hardSkills: .init(trainings: [])
     ),
 )
 
