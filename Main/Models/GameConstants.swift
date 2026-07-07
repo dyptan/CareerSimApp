@@ -9,24 +9,25 @@ enum GameConstants {
     static let trainingActivitySlotCost: Int = 1
 
     /// Realistic mode: how many professional events (summits, conferences,
-    /// networking mixers) the player can attend in one year. Separate from the
-    /// hobby/training slot — events cost money rather than the spare-time slot.
+    /// networking mixers) the player can attend in one year. Free to attend;
+    /// separate from the hobby/training spare-time slot.
     static let maxEventsPerYear: Int = 1
 
-    /// Realistic mode: how many side hustles the player can take on in one year.
-    /// Spare time is limited, so monetizing talents competes for the same hours.
+    /// Years of same-industry work experience required to attend an event as a
+    /// **presenter** rather than a participant. You speak once you're an
+    /// established name in the field. See `CareerEvent.canPresent(with:)`.
+    static let presenterExperienceYears: Int = 5
+
+    /// Extra professional-network points a presenter banks over a participant
+    /// at the same event — being on stage puts more of the room in your orbit.
+    /// See `CareerEvent.networkPoints(for:)`.
+    static let presenterNetworkBonus: Int = 2
+
+    /// Realistic mode: how many spare-time ventures (money hustles + fame
+    /// projects, now one system) the player can take on in one year. Spare time
+    /// is limited, so every venture competes for the same hours.
     static let maxSideHustlesPerYear: Int = 1
 
-    /// How many personal projects (portfolio pieces) the player can commit a
-    /// year to. Like a hobby, a project is one spare-time pursuit at a time —
-    /// but it spends soft skills rather than building them, and gambles on a
-    /// portfolio piece, founder growth, and fame (see `Project` / `ProjectsView`).
-    static let maxProjectsPerYear: Int = 1
-
-    /// Realistic mode: how many competitions (athletic or e-sports) the player
-    /// can enter in one year. Each costs an entry fee and is a skill-based shot
-    /// at prize money and a reputation-building achievement.
-    static let maxCompetitionsPerYear: Int = 2
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700
 

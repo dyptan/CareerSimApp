@@ -76,14 +76,8 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
             navigationSheet { sideHustlesContent }
         }
-        .sheet(isPresented: $appUIState.showProjectsSheet) {
-            navigationSheet { projectsContent }
-        }
         .sheet(isPresented: $appUIState.showEventsSheet) {
             navigationSheet { eventsContent }
-        }
-        .sheet(isPresented: $appUIState.showCompetitionsSheet) {
-            navigationSheet { competitionsContent }
         }
         .sheet(isPresented: $appUIState.showSportsSheet) {
             navigationSheet { sportsContent }
@@ -142,6 +136,14 @@ struct RootView: View {
             Button("Thanks!", role: .cancel) { }
         } message: {
             Text(player.promotionMessage)
+        }
+        // Celebrates winning the sport's automatic yearly competition. The
+        // header note (player.lastCompetitionWins) lingers for the year, and
+        // confetti fires via celebrationTrigger.
+        .alert("Champion! 🏆", isPresented: $player.showCompetitionWinAlert) {
+            Button("🎉", role: .cancel) { }
+        } message: {
+            Text(player.competitionWinMessage)
         }
         // Marks the end of a degree with a congrats pop-up. The same milestone
         // is also banked into the StatusBar history so the player can revisit it
@@ -224,22 +226,6 @@ struct RootView: View {
             }
     }
 
-    private var competitionsContent: some View {
-        CompetitionsView(player: player, selectedCompetitions: $appUIState.selectedCompetitions)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showCompetitionsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showCompetitionsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
     private var sportsContent: some View {
         SportsView(
             player: player,
@@ -273,25 +259,6 @@ struct RootView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
                         appUIState.showSideHustlesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var projectsContent: some View {
-        ProjectsView(
-            player: player,
-            selectedProjects: $appUIState.selectedProjects
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showProjectsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showProjectsSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
                 }

@@ -27,9 +27,9 @@ struct ActiveStartup: Hashable {
     var yearsHeld: Int
 }
 
-/// A single entry on the player's personal-brand shelf: a named accolade that
+/// A single entry on the player's fame shelf: a named accolade that
 /// builds reputation — a competition trophy, a fame-building side hustle, or a
-/// noticed spare-time project. Recognition is the third pillar of career
+/// noticed spare-time project. Fame is the third pillar of career
 /// capital alongside soft and hard skills: *what you're known for*, rather than
 /// what you can do. Each entry carries its own display icon and reputation
 /// `weight`; `count` levels it up when the same accolade is earned again (a
@@ -37,7 +37,7 @@ struct ActiveStartup: Hashable {
 /// `industry` scopes the reputation — it only lifts hiring odds for roles in
 /// that same `JobCategory` (see `Player.fameHireBonus(for:)`); `nil` is general
 /// renown that helps a little everywhere.
-struct Recognition: Identifiable, Hashable {
+struct FameAward: Identifiable, Hashable {
     let title: String
     let icon: String
     let industry: JobCategory?
@@ -70,28 +70,33 @@ final class Player: ObservableObject {
         "🦸", "🧑‍🎤", "🧑‍🚀", "🤖", "🦊", "🐱", "🐵", "🦄"
     ]
 
-    /// The player's personal-brand shelf: every accolade they've earned —
+    /// The player's fame shelf: every accolade they've earned —
     /// competition trophies, fame-building side hustles, and noticed spare-time
-    /// projects — as `Recognition` entries. This is the third pillar of career
+    /// projects — as `FameAward` entries. This is the third pillar of career
     /// capital alongside `softSkills` and `hardSkills`, surfaced in its own
     /// SkillsView section. Reputation is industry-scoped (see `fameHireBonus`),
     /// and repeats level an existing entry rather than duplicating it (see
     /// `award`).
-    @Published var recognitions: [Recognition] = []
+    @Published var fameAwards: [FameAward] = []
 
-    /// Banks an accolade on the personal-brand shelf, levelling an existing
+    /// Banks an accolade on the fame shelf, levelling an existing
     /// entry of the same title rather than adding a duplicate row.
     func award(_ title: String, icon: String, industry: JobCategory?, weight: Double) {
-        if let i = recognitions.firstIndex(where: { $0.title == title }) {
-            recognitions[i].count += 1
+        if let i = fameAwards.firstIndex(where: { $0.title == title }) {
+            fameAwards[i].count += 1
         } else {
-            recognitions.append(Recognition(title: title, icon: icon, industry: industry, weight: weight))
+            fameAwards.append(FameAward(title: title, icon: icon, industry: industry, weight: weight))
         }
     }
 
     /// Number of competitions won in the year just advanced (0 when none).
     /// Surfaced in the header alongside the confetti.
     @Published var lastCompetitionWins: Int = 0
+
+    /// Drives the competition-win celebration dialog. Set when the automatic
+    /// yearly contest for the sport trained this year is won (see `advanceYear`).
+    @Published var showCompetitionWinAlert: Bool = false
+    @Published var competitionWinMessage: String = ""
 
     /// The player's current startup if they're operating one (realistic mode
     /// only). Created when a founder Job is launched via `foundVenture`;
@@ -121,19 +126,41 @@ final class Player: ObservableObject {
     /// Olympic medal). Drives both `fameHireBonus(for:)` and the fame lift on
     /// Show Business side hustles.
     var fameScore: Double {
-        recognitions.reduce(0.0) { $0 + $1.totalWeight }
+        fameAwards.reduce(0.0) { $0 + $1.totalWeight }
     }
 
-    /// Additive hire-probability boost for a role in `category`, capped at
-    /// +0.20. Fame is industry-scoped: only reputation earned in the *same*
-    /// industry counts (plus general, industry-less renown), so a tech
-    /// portfolio's fame does nothing for a stage audition. Each `Recognition`
-    /// carries the industry it was earned in (see `Recognition.industry`).
-    func fameHireBonus(for category: JobCategory) -> Double {
-        let points = recognitions.reduce(0.0) { acc, r in
-            (r.industry == category || r.industry == nil) ? acc + r.totalWeight : acc
+    /// Weighted fame relevant to a field: same-industry awards plus general
+    /// (industry-less) renown. Only this counts toward the hire and promotion
+    /// fame bonuses — a tech portfolio does nothing for a stage audition. Each
+    /// `FameAward` carries the industry it was earned in (see `FameAward.industry`).
+    func famePoints(for category: JobCategory) -> Double {
+        fameAwards.reduce(0.0) { acc, award in
+            (award.industry == category || award.industry == nil) ? acc + award.totalWeight : acc
         }
-        return min(0.20, points * 0.04)
+    }
+
+    /// Fame totals grouped by the industry each award was earned in, for display.
+    /// A `nil` industry is general (industry-less) renown. Ordered by score,
+    /// highest first, so the field the player is best known in leads.
+    var fameByIndustry: [(industry: JobCategory?, score: Double)] {
+        var totals: [JobCategory?: Double] = [:]
+        for award in fameAwards {
+            totals[award.industry, default: 0] += award.totalWeight
+        }
+        return totals
+            .map { (industry: $0.key, score: $0.value) }
+            .sorted { $0.score > $1.score }
+    }
+
+    /// Additive hire-probability boost from fame for a role in `category`.
+    /// Ordinary roles get a modest lift (capped +0.20). **Top positions** weight
+    /// reputation far more heavily — a public profile is often what separates the
+    /// shortlist for a leadership seat — so they earn a steeper per-point rate and
+    /// a higher cap (+0.40). See `Job.isTopLeadership` / `Job.hireProbability`.
+    func fameHireBonus(for category: JobCategory, topPosition: Bool = false) -> Double {
+        let rate = topPosition ? 0.08 : 0.04
+        let cap = topPosition ? 0.40 : 0.20
+        return min(cap, famePoints(for: category) * rate)
     }
 
     /// Years a prolonged recession still has to run. While positive, each
@@ -230,7 +257,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
-    @Published var lockedPortfolio: Set<Project>
     @Published var lockedHobbies: Set<String>
     /// Professional network built by attending industry `CareerEvent`s, keyed by
     /// the event's industry. Improves hiring odds on that field's postings and
@@ -279,7 +305,6 @@ final class Player: ObservableObject {
         currentOccupation: Job? = nil,
         savings: Int = 0,
         lockedTrainings: Set<Training> = [],
-        lockedPortfolio: Set<Project> = [],
         lockedHobbies: Set<String> = []
     ) {
         self.age = age
@@ -291,7 +316,6 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedTrainings = lockedTrainings
-        self.lockedPortfolio = lockedPortfolio
         self.lockedHobbies = lockedHobbies
         self.availableJobs = JobCatalog.allJobs().shuffled()
     }
@@ -376,39 +400,46 @@ final class Player: ObservableObject {
 
     // MARK: - Professional events & network
 
-    /// Attends a professional event: charges its cost, applies its soft-skill
-    /// nudges, and banks its network points (per-industry, or general for a
-    /// cross-industry event). Mirror of `dropEvent` so a selection toggled off
-    /// before the year advances is fully reversed.
-    func attendEvent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
-        guard !selectedEvents.contains(event.id) else { return }
-        // Industry events need ≥1 year in that field (safety net; the view locks
-        // these too).
+    /// Attends a professional event in the given `role`, applying its soft-skill
+    /// nudges and banking its network points (per-industry, or general for a
+    /// cross-industry event). A presenter banks more network; the fame
+    /// award presenting earns is deferred to `advanceYear` so a selection
+    /// toggled off before the year advances stays fully reversible (mirror of
+    /// `dropEvent`).
+    func attendEvent(
+        _ event: CareerEvent,
+        role: EventRole = .participant,
+        into selectedEvents: inout [String: EventRole]
+    ) {
+        guard selectedEvents[event.id] == nil else { return }
+        // Industry events need ≥1 year in that field; presenting needs the full
+        // veteran gate (safety net; the view locks these too).
         guard event.meetsExperienceRequirement(for: experience) else { return }
-        selectedEvents.insert(event.id)
-        savings -= event.cost
+        let role = (role == .presenter && event.canPresent(with: experience)) ? role : .participant
+        selectedEvents[event.id] = role
         for ability in event.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + ability.weight, 10)
         }
+        let points = event.networkPoints(for: role)
         if let category = event.category {
-            networkByCategory[category, default: 0] += event.networkWeight
+            networkByCategory[category, default: 0] += points
         } else {
-            generalNetwork += event.networkWeight
+            generalNetwork += points
         }
     }
 
-    func dropEvent(_ event: CareerEvent, from selectedEvents: inout Set<String>) {
-        guard selectedEvents.remove(event.id) != nil else { return }
-        savings += event.cost
+    func dropEvent(_ event: CareerEvent, from selectedEvents: inout [String: EventRole]) {
+        guard let role = selectedEvents.removeValue(forKey: event.id) else { return }
         for ability in event.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] -= ability.weight
         }
+        let points = event.networkPoints(for: role)
         if let category = event.category {
-            networkByCategory[category, default: 0] -= event.networkWeight
+            networkByCategory[category, default: 0] -= points
         } else {
-            generalNetwork -= event.networkWeight
+            generalNetwork -= points
         }
     }
 
@@ -431,6 +462,14 @@ final class Player: ObservableObject {
     /// performance (soft skills) still carries most of the weight.
     func networkPromotionBonus(for category: JobCategory) -> Double {
         min(0.05, Double(networkPoints(for: category)) * 0.006)
+    }
+
+    /// Additive boost to the annual promotion probability from the player's fame
+    /// in their current field. A *significant* lever — 3% per weighted point up
+    /// to a 0.15 ceiling, three times the network bonus's reach — because a known
+    /// name is first in line for the next rung, especially the senior ones.
+    func famePromotionBonus(for category: JobCategory) -> Double {
+        min(0.15, famePoints(for: category) * 0.03)
     }
 
     // MARK: - Training purchase / refund
@@ -491,24 +530,54 @@ final class Player: ObservableObject {
         return total / Double(Player.promotionSkills.count)
     }
 
+    /// The per-term breakdown behind `promotionChance`, so the UI can explain the
+    /// odds the same way the hire-probability InfoHint does. `promotes` is false
+    /// for unskilled roles that never promote in place (all other terms zero).
+    struct PromotionOdds {
+        let promotes: Bool
+        /// Readiness-scaled base chance (soft skills).
+        let readinessBase: Double
+        let network: Double
+        let fame: Double
+        let tenure: Double
+        let tenureYears: Int
+        let total: Double
+    }
+
+    /// Full breakdown of the annual promotion odds for `job`. Single source of
+    /// truth for both `promotionChance` and the header InfoHint.
+    func promotionOdds(for job: Job) -> PromotionOdds {
+        // Unskilled jobs don't promote in place — in real life a raise-and-title
+        // bump rarely lands in work needing no post-secondary training; the
+        // player advances by applying upward instead.
+        guard !job.isLowSkilled else {
+            return PromotionOdds(promotes: false, readinessBase: 0, network: 0,
+                                 fame: 0, tenure: 0, tenureYears: 0, total: 0)
+        }
+        let base = GameConstants.promotionBaseChance
+        // Base chance scaled by promotion readiness (40%–100% of the base, so
+        // soft skills move the odds).
+        let core = base * (0.4 + 0.6 * promotionReadiness)
+        // Tenure in the current role makes a promotion more likely — seasoned
+        // employees are next in line — with diminishing returns (capped +0.10).
+        let years = experienceByRole[job.baseTitle, default: 0]
+        let tenureBoost = min(0.10, Double(years) * 0.02)
+        let network = networkPromotionBonus(for: job.category)
+        let fame = famePromotionBonus(for: job.category)
+        let total = min(1.0, core + network + fame + tenureBoost)
+        return PromotionOdds(promotes: true, readinessBase: core, network: network,
+                             fame: fame, tenure: tenureBoost, tenureYears: years, total: total)
+    }
+
     /// Annual promotion probability for a job: a flat base chance
     /// (`GameConstants.promotionBaseChance`) scaled by promotion readiness
     /// (40%–100% of the base, so soft skills move the odds), plus a
     /// professional-network bonus for the job's industry — attending that
-    /// field's summits and conferences makes a raise more likely — and a tenure
-    /// bonus for years already spent in the role.
+    /// field's summits and conferences makes a raise more likely — a significant
+    /// fame bonus for reputation built in the field, and a tenure bonus for years
+    /// already spent in the role.
     func promotionChance(for job: Job) -> Double {
-        // Unskilled jobs don't promote in place — in real life a raise-and-title
-        // bump rarely lands in work needing no post-secondary training; the
-        // player advances by applying upward instead.
-        guard !job.isLowSkilled else { return 0 }
-        let base = GameConstants.promotionBaseChance
-        let core = base * (0.4 + 0.6 * promotionReadiness)
-        // Tenure in the current role makes a promotion more likely — seasoned
-        // employees are next in line — with diminishing returns (capped +0.10).
-        let tenure = experienceByRole[job.baseTitle, default: 0]
-        let tenureBoost = min(0.10, Double(tenure) * 0.02)
-        return min(1.0, core + networkPromotionBonus(for: job.category) + tenureBoost)
+        promotionOdds(for: job).total
     }
 
     // MARK: - Year progression
@@ -517,6 +586,8 @@ final class Player: ObservableObject {
         age += 1
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
+        showCompetitionWinAlert = false
+        competitionWinMessage = ""
         lostJobThisYear = false
 
         let newTrainings = appUIState.selectedTrainings.subtracting(hardSkills.trainings)
@@ -527,32 +598,38 @@ final class Player: ObservableObject {
 
         // Bank the year's sport training. Each sport practised adds one to
         // `sportYears`, which gates the matching Competitions and adds to the
-        // sport-fit bonus inside `Competition.winProbability`.
-        for sport in appUIState.selectedSports {
+        // sport-fit bonus inside `Competition.winProbability`. The set is
+        // captured first so the competition loop below can compete in exactly
+        // the sport(s) trained this year.
+        let competedSports = appUIState.selectedSports
+        for sport in competedSports {
             sportYears[sport, default: 0] += 1
         }
         appUIState.selectedSports.removeAll()
-        // Portfolio pieces are no longer granted up front — they're earned by
-        // successfully resolving portfolio projects in the private-projects loop
-        // below (see "Private projects").
 
         lockedTrainings.formUnion(appUIState.selectedTrainings)
         // This year's picks are now permanent (hard skills + locked); clear the
         // pending set so next year starts fresh, mirroring sports/hobbies/events.
         appUIState.selectedTrainings.removeAll()
 
-        // Bank this year's hobbies into the player's practised-hobby history.
-        // It both locks a hobby from being retaken (HobbiesView) and unlocks the
-        // matching portfolio projects (ProjectsView). `selectedActivities` also
-        // carries sport and training: entries, so intersect with the hobby
+        // Bank this year's hobbies into the player's practised-hobby history,
+        // locking a hobby from being retaken (HobbiesView). `selectedActivities`
+        // also carries sport and training: entries, so intersect with the hobby
         // catalogue to keep only real hobby labels.
         lockedHobbies.formUnion(
             appUIState.selectedActivities.intersection(Set(hobbies.map(\.label)))
         )
 
         appUIState.selectedActivities.removeAll()
-        // Events were charged and their network/soft-skill effects applied when
-        // attended; just clear this year's picks so next year starts fresh.
+        // Events applied their network/soft-skill effects when attended. Bank the
+        // fame award each presenter role earns (deferred to here so the
+        // within-year toggle stayed reversible), then clear this year's picks.
+        for (id, role) in appUIState.selectedEvents where role == .presenter {
+            guard let event = EventCatalog.byId[id],
+                  let title = event.presenterFameTitle else { continue }
+            award(title, icon: event.icon, industry: event.category, weight: event.presenterFameWeight)
+            recordStatus("🎤", "Presented at \(event.name)")
+        }
         appUIState.selectedEvents.removeAll()
 
         // Charge tuition for the year the player is enrolled in a tertiary program.
@@ -639,82 +716,65 @@ final class Player: ObservableObject {
             }
         }
 
-        // Private projects: resolve every venture taken on this year. No money is
-        // staked — a success pays out (banked in full, unlike salary) while a
-        // flop simply yields nothing; the year's takings are surfaced in the
-        // header. A successful show-business venture also banks a fame trophy
-        // (reputation that helps land Show Business roles).
+        // Spare-time ventures (money hustles + fame projects, now one system).
+        // No money is staked. A money venture pays out in full on success (unlike
+        // salary), surfaced in the header. A fame venture banks an industry-scoped
+        // award and grows the soft skills it drew on — the founder-cluster axes no
+        // hobby can build. A flop yields nothing. Fame ventures snowball with the
+        // player's reputation (see SideHustle.successProbability); all are
+        // repeatable year after year.
         var sideHustleNet = 0
+        var famedVentures = 0
         for id in appUIState.selectedSideHustles {
-            guard let hustle = SideHustleCatalog.byId[id] else { continue }
+            guard let hustle = SideHustleCatalog.byId[id],
+                  hustle.meetsPrerequisite(for: softSkills) else { continue }
             let outcome = hustle.resolve(for: softSkills, fameScore: fameScore)
-            savings += outcome.credit
-            sideHustleNet += outcome.credit
-            if let earned = outcome.grantedPortfolio {
-                hardSkills.portfolioItems.insert(earned)
-                lockedPortfolio.insert(earned)
-                recordStatus("📁", "Shipped \(earned.rawValue)")
-            }
-            if let fame = outcome.grantedFame {
-                award(fame, icon: hustle.icon, industry: .showBusiness, weight: hustle.fameWeight)
-                celebrationTrigger += 1
-                recordStatus("🏆", "Earned recognition: \(fame)")
+            if outcome.success {
+                savings += outcome.credit
+                sideHustleNet += outcome.credit
+                if outcome.credit > 0 {
+                    recordStatus(hustle.icon, "\(hustle.label) paid \(outcome.credit.formatted(.number)) $")
+                }
+                if let grant = outcome.grantedFame {
+                    award(grant.title, icon: hustle.icon, industry: grant.industry, weight: grant.weight)
+                    for ability in hustle.growth {
+                        softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
+                    }
+                    famedVentures += 1
+                    recordStatus("🌟", "\(hustle.label) earned fame in \(grant.industry.rawValue)")
+                }
+            } else {
+                recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
             }
         }
+        if famedVentures > 0 { celebrationTrigger += 1 }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
 
-        // Personal projects: spare-time work the player commits a year to.
-        // Unlike a hobby — which reliably hands out soft skills — a project is a
-        // gamble on the soft skills already built. It pays out two ways on a
-        // noticed year: personal-brand recognition in the project's own industry
-        // (a `Recognition`, levelled on repeats), and soft-skill growth — the
-        // craft axes it drew on plus a founder-cluster bump no hobby can build
-        // (Project.successBoosts, capped at 5). Its odds scale with how well the
-        // player meets its requirements (Project.successProbability); a dud year
-        // yields nothing. Projects are repeatable — the player can chase the
-        // same stage again year after year.
-        var famedProjects = 0
-        for raw in appUIState.selectedProjects {
-            guard let project = Project(rawValue: raw) else { continue }
-            guard project.rollFameGain(for: softSkills) > 0 else {
-                recordStatus(project.pictogram, "\(project.rawValue) went unnoticed this year")
-                continue
-            }
-            award(project.recognitionTitle, icon: project.pictogram,
-                  industry: project.fameIndustry, weight: 1.0)
-            for (keyPath, delta) in project.successBoosts {
-                softSkills[keyPath: keyPath] = min(softSkills[keyPath: keyPath] + delta, 10)
-            }
-            famedProjects += 1
-            recordStatus("🌟", "\(project.rawValue) earned recognition in \(project.fameIndustry.rawValue)")
-        }
-        if famedProjects > 0 { celebrationTrigger += 1 }
-        appUIState.selectedProjects.removeAll()
-
-        // Competitions: resolve every contest entered this year. The entry fee is
-        // staked up front (even into debt); a win pays the prize and banks a
-        // lasting achievement (reputation that helps land Show Business roles).
+        // Competitions: training a sport now automatically enters you into its
+        // top eligible contest — no menu, no entry fee. Win odds start low and
+        // climb with the trained years (and the soft skills training builds).
+        // A win pays the prize and banks a lasting achievement (reputation that
+        // helps land Show Business roles), then surfaces a celebration dialog.
         var competitionWins = 0
-        for id in appUIState.selectedCompetitions {
-            guard let competition = CompetitionCatalog.byId[id] else { continue }
-            // Training gate: can't enter without the required years in a
-            // qualifying sport (safety net; the view already locks these).
-            guard competition.meetsTrainingRequirement(for: sportYears) else { continue }
-            // Under-18 spending guard (same rationale as the side-hustle loop).
-            if age < 18, competition.entryFee > 0 { continue }
-            savings -= competition.entryFee
-            if Double.random(in: 0...1) < competition.winProbability(for: softSkills, sportYears: sportYears) {
+        let currentStage = LifeStage.forAge(age)
+        for sport in competedSports {
+            let years = sportYears[sport, default: 0]
+            guard let competition = CompetitionCatalog.bestCompetition(
+                forSport: sport, stage: currentStage, years: years
+            ) else { continue }
+            if Double.random(in: 0...1) < competition.winProbability(for: softSkills, years: years) {
                 savings += competition.prize
                 award(competition.achievement, icon: competition.icon,
                       industry: .showBusiness, weight: competition.fameWeight)
                 competitionWins += 1
                 recordStatus("🏆", "Won \(competition.achievement)")
+                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a \(competition.prize.formatted(.number)) $ prize and a boost to your reputation."
+                showCompetitionWinAlert = true
             }
         }
         lastCompetitionWins = competitionWins
         if competitionWins > 0 { celebrationTrigger += 1 }
-        appUIState.selectedCompetitions.removeAll()
 
         // Startup loop (realistic mode only): while the player runs an active
         // venture, each year either pays out a buyout offer (Sell or Hold &
@@ -883,7 +943,7 @@ final class Player: ObservableObject {
         let fresh = Player()
         difficulty = fresh.difficulty
         avatar = fresh.avatar
-        recognitions = fresh.recognitions
+        fameAwards = fresh.fameAwards
         lastCompetitionWins = fresh.lastCompetitionWins
         activeStartup = fresh.activeStartup
         pendingStartupOffer = fresh.pendingStartupOffer
@@ -911,7 +971,6 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         lockedTrainings = fresh.lockedTrainings
-        lockedPortfolio = fresh.lockedPortfolio
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
         generalNetwork = fresh.generalNetwork

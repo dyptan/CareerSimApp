@@ -1,21 +1,25 @@
 import Foundation
 
-/// A contest the player can enter in their spare time — an athletic event or an
-/// e-sports tournament. Entering costs a fee; winning is a skill-based gamble
-/// that pays prize money AND grants a lasting **achievement** (a titled trophy).
-/// Achievements are reputation: they raise the player's hire odds across the
-/// fame-driven Show Business industry (see `Player.fameHireBonus(for:)`).
+/// A contest tied to a sport — an athletic event or an e-sports tournament.
+/// The player never enters one directly: training a sport automatically enters
+/// its top eligible contest each year (see `CompetitionCatalog.bestCompetition`
+/// and `Player.advanceYear`). Winning is a skill-based gamble that pays prize
+/// money AND grants a lasting **achievement** (a titled trophy). Achievements
+/// are reputation: they raise the player's hire odds across the fame-driven
+/// Show Business industry (see `Player.fameHireBonus(for:)`).
 struct Competition: Identifiable, Hashable {
     let id: String
     let name: String
     let icon: String
     let blurb: String
     let discipline: Discipline
-    /// Entry fee (registration, travel, gear), staked when the player competes.
+    /// Legacy field from when competitions were entered manually for a fee.
+    /// Competing is now automatic and free, so this is no longer charged; kept
+    /// on the model for reference and possible future use.
     let entryFee: Int
     /// Cash awarded on a win.
     let prize: Int
-    /// The titled trophy granted on a win, banked as a `Player.Recognition`.
+    /// The titled trophy granted on a win, banked as a `Player.FameAward`.
     let achievement: String
     /// Reputation weight this trophy carries when totalled into the player's
     /// fame score (see `Player.fameScore`). A flat 1.0 is "one local win"; the
@@ -24,10 +28,11 @@ struct Competition: Identifiable, Hashable {
     var fameWeight: Double = 1.0
     /// Soft-skill axes that drive the odds of winning.
     let skills: [WritableKeyPath<SoftSkills, Int>]
-    /// Sports that qualify for entry. Set membership is the hard gate: a
-    /// competition is hidden in `CompetitionsView` unless the player practices
-    /// at least one of these sports. `nil` means open (no sport gate, e.g. a
-    /// generic multi-sport event), in which case `sportBonus` returns 0.
+    /// Sports that qualify for entry. Set membership is the hard gate: the
+    /// competition only auto-enters when the player trains one of these sports
+    /// (see `CompetitionCatalog.bestCompetition`). `nil` means open (no sport
+    /// gate), in which case `sportBonus` returns 0 — such events no longer have
+    /// an entry point now that competing is sport-driven.
     let sports: Set<Sport>?
     /// Life stages in which the competition is open (mirrors `Hobby.stages`).
     let stages: Set<LifeStage>
@@ -59,33 +64,28 @@ struct Competition: Identifiable, Hashable {
         return total / Double(skills.count)
     }
 
-    /// 0...1 fit of the player's most-trained qualifying sport. Returns 0 for
-    /// open competitions (sport-agnostic events) and for players who don't
-    /// practice any qualifying sport.
-    func sportFit(for sportYears: [Sport: Int]) -> Double {
-        min(Double(bestSportYears(for: sportYears)) / Double(Competition.sportReference), 1.0)
+    /// 0...1 sport-fit from the years trained in the *specific* sport the player
+    /// is competing through — competitions are always evaluated per sport, so a
+    /// multi-sport event draws only on the years in the one sport that entered
+    /// it, not the player's best across the whole qualifying set. Tops out at
+    /// `sportReference` years.
+    func sportFit(forYears years: Int) -> Double {
+        min(Double(years) / Double(Competition.sportReference), 1.0)
     }
 
-    /// Best years of training the player has across this event's qualifying
-    /// sports (0 for open events or an untrained player).
-    func bestSportYears(for sportYears: [Sport: Int]) -> Int {
-        guard let sports else { return 0 }
-        return sports.compactMap { sportYears[$0] }.max() ?? 0
+    /// Whether the given years in a qualifying sport clear this event's gate.
+    func meetsTrainingRequirement(forYears years: Int) -> Bool {
+        years >= minSportYears
     }
 
-    /// Whether the player has trained long enough in a qualifying sport to enter.
-    /// Open events (nil `sports`) carry no training gate.
-    func meetsTrainingRequirement(for sportYears: [Sport: Int]) -> Bool {
-        sports == nil || bestSportYears(for: sportYears) >= minSportYears
-    }
-
-    /// Probability (0.05...0.85) of winning this year. Skill fit is the lead
-    /// driver; years in a qualifying sport add an additive bonus that tops out
-    /// once the player is a seasoned competitor in the discipline.
-    func winProbability(for soft: SoftSkills, sportYears: [Sport: Int]) -> Double {
-        let skillTerm = skillFit(for: soft) * 0.60
-        let sportTerm = sportFit(for: sportYears) * 0.25
-        return max(0.05, min(0.85, 0.05 + skillTerm + sportTerm))
+    /// Probability of winning this year, evaluated for one specific sport's
+    /// trained `years`. Deliberately steep: even a seasoned, highly skilled
+    /// competitor tops out around a coin-flip, and a newcomer is a long shot —
+    /// winning a title is meant to take years of committed training.
+    func winProbability(for soft: SoftSkills, years: Int) -> Double {
+        let skillTerm = skillFit(for: soft) * 0.30
+        let sportTerm = sportFit(forYears: years) * 0.25
+        return max(0.02, min(0.55, 0.02 + skillTerm + sportTerm))
     }
 }
 
@@ -94,6 +94,25 @@ enum CompetitionCatalog {
     /// modest prizes) with marquee championships (steep entry, big purse and a
     /// prestigious trophy). Open from the teen years onward.
     static let all: [Competition] = [
+        // MARK: - Junior (teen-only)
+        // The youth pathway into team sport. Winning it as a teen banks the
+        // "Junior Champion" title, which is the gateway fame award for the
+        // Professional Player career (see `Job.breakthroughFameByRole`).
+        Competition(
+            id: "junior-championship",
+            name: "Junior Championship",
+            icon: "🏅",
+            blurb: "The youth league final — where scouts spot the next generation of pro players.",
+            discipline: .athletic,
+            entryFee: 0,
+            prize: 3_000,
+            achievement: "Junior Champion",
+            fameWeight: 1.0,
+            skills: [\.collaborationAndTeamwork, \.spacialNavigationAndOrientation, \.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation],
+            sports: [.soccer, .basketball, .tennis],
+            stages: [.teen],
+            minSportYears: 1
+        ),
         // MARK: - Athletic
         Competition(
             id: "local-5k",
@@ -216,23 +235,30 @@ enum CompetitionCatalog {
             stages: [.youngAdult, .adult],
             minSportYears: 6
         ),
-        // MARK: - Creative
-        Competition(
-            id: "creative-competition",
-            name: "Creative Competition",
-            icon: "🎨",
-            blurb: "Enter your art, design, or a performance for judging against other creators. Placing well is recognition money can't buy.",
-            discipline: .creative,
-            entryFee: 150,
-            prize: 5_000,
-            achievement: "Contest Winner",
-            fameWeight: 1.0,
-            skills: [\.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail, \.presentationAndStorytelling],
-            sports: nil,
-            stages: [.youngAdult, .adult]
-        ),
     ]
 
     static let byId: [String: Competition] =
         Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
+
+    /// The top competition a player training `sport` currently qualifies for:
+    /// stage-eligible, explicitly tagged for that sport, and within `years` of
+    /// training in *that* sport (the gate is per-sport). The highest tier wins
+    /// (max `minSportYears`, then max `prize`); returns nil if none qualify —
+    /// e.g. a child, or year 0 in the sport. Drives the automatic yearly contest
+    /// resolved in `Player.advanceYear`.
+    static func bestCompetition(
+        forSport sport: Sport,
+        stage: LifeStage,
+        years: Int
+    ) -> Competition? {
+        all
+            .filter { competition in
+                competition.stages.contains(stage)
+                    && competition.sports?.contains(sport) == true
+                    && competition.meetsTrainingRequirement(forYears: years)
+            }
+            .max { lhs, rhs in
+                (lhs.minSportYears, lhs.prize) < (rhs.minSportYears, rhs.prize)
+            }
+    }
 }

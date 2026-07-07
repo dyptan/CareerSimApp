@@ -1,14 +1,16 @@
 import SwiftUI
 
 /// Lets the player attend professional events this year — summits, conferences,
-/// expos, and networking mixers. Unlike hobbies, events cost money and build a
-/// per-industry professional network that improves hiring odds on that field's
-/// postings and the chance of promotion within it. Effects (cost, soft skills,
-/// network) apply the moment an event is toggled on, and reverse if toggled off
-/// before the year advances.
+/// expos, and networking mixers. Events are free but build a per-industry
+/// professional network that improves hiring odds on that field's postings and
+/// the chance of promotion within it. Industry events can be attended as a
+/// **presenter** once the player is a veteran of the field — presenting banks
+/// extra network plus a fame award. Effects (soft skills, network) apply
+/// the moment an event is toggled on and reverse if toggled off before the year
+/// advances; presenter fame is banked when the year advances.
 struct EventsView: View {
     @ObservedObject var player: Player
-    @Binding var selectedEvents: Set<String>
+    @Binding var selectedEvents: [String: EventRole]
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -31,7 +33,7 @@ struct EventsView: View {
                             ? .red : .primary
                     )
             }
-            Text("Grow your professional network · savings: \(player.savings.formatted(.number)) $")
+            Text("Grow your professional network — present once you're a veteran of the field")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
@@ -49,20 +51,22 @@ struct EventsView: View {
 
     @ViewBuilder
     private func row(for event: CareerEvent) -> some View {
-        let isSelected = selectedEvents.contains(event.id)
+        let role = selectedEvents[event.id]
+        let isSelected = role != nil
         let atLimit = selectedEvents.count >= GameConstants.maxEventsPerYear
         // Industry events open only once you have ≥1 year in that field.
         let meetsExp = event.meetsExperienceRequirement(for: player.experience)
         let isDisabled = (!isSelected && atLimit) || !meetsExp
-        // A flag, not a gate — an unaffordable ticket is still bought on credit.
-        let canAfford = isSelected || player.savings >= event.cost
+        // Presenting needs the full veteran gate on top of the attend gate.
+        let canPresent = event.canPresent(with: player.experience)
 
-        // Where this event builds your network: a specific field, or everywhere.
+        // Network points reflect the chosen role (participant baseline until on).
+        let netPoints = event.networkPoints(for: role ?? .participant)
         let networkLabel: String = {
             if let category = event.category {
-                return "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(event.networkWeight)"
+                return "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(netPoints)"
             }
-            return "🌐 All-industry network +\(event.networkWeight)"
+            return "🌐 All-industry network +\(netPoints)"
         }()
 
         let pictos: String = event.abilities
@@ -108,15 +112,43 @@ struct EventsView: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
-                    HStack(spacing: 10) {
-                        Text(canAfford
-                             ? "💵 \(event.cost.formatted(.number)) $"
-                             : "💵 \(event.cost.formatted(.number)) $ (on credit)")
-                            .foregroundStyle(canAfford ? Color.secondary : Color.orange)
-                        Text("🤝 \(networkLabel)")
+                    Text("🤝 \(networkLabel)")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(.secondary)
+
+                    // Role picker for industry events once selected: participants
+                    // always, presenters once the veteran gate is cleared.
+                    if isSelected, event.supportsPresenter {
+                        if canPresent {
+                            Picker(
+                                "Role",
+                                selection: Binding(
+                                    get: { role ?? .participant },
+                                    set: { newRole in
+                                        // Re-attend so the network delta between
+                                        // roles is applied cleanly.
+                                        player.dropEvent(event, from: &selectedEvents)
+                                        player.attendEvent(event, role: newRole, into: &selectedEvents)
+                                    }
+                                )
+                            ) {
+                                Text("🙋 Participant").tag(EventRole.participant)
+                                Text("🎤 Presenter").tag(EventRole.presenter)
+                            }
+                            .pickerStyle(.segmented)
+                            .labelsHidden()
+                            if role == .presenter, let category = event.category {
+                                Text("🎤 Earns reputation in \(category.rawValue)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else {
+                            Text("🔒 Present with \(GameConstants.presenterExperienceYears) yrs in \(event.category?.rawValue ?? "this field")")
+                                .font(.caption2)
+                                .foregroundStyle(.orange)
+                        }
                     }
-                    .font(.caption2.monospacedDigit())
-                    .foregroundStyle(.secondary)
+
                     if !meetsExp, let category = event.category {
                         Text("🔒 Requires 1 yr in \(category.rawValue)")
                             .font(.caption2)
@@ -138,7 +170,7 @@ struct EventsView: View {
 
             InfoHint(
                 title: "\(event.icon) \(event.name)",
-                message: "\(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion."
+                message: "\(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion. Present at an industry event (after \(GameConstants.presenterExperienceYears) years in the field) for extra network and fame."
             )
         }
         .padding(5)
@@ -148,7 +180,7 @@ struct EventsView: View {
 #Preview {
     EventsView(
         player: Player(),
-        selectedEvents: .constant([])
+        selectedEvents: .constant([:])
     )
     .padding()
 }

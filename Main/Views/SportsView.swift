@@ -3,9 +3,11 @@ import SwiftUI
 /// Lets the player commit this year's spare-time slot to training in a sport.
 /// Sports share the same `selectedActivities` slot as hobbies, certifications,
 /// and licenses, so picking one displaces any other activity. Each year of
-/// practice banks into `Player.sportYears`, which (a) gates which competitions
-/// appear in `CompetitionsView` and (b) adds a sport-fit bonus to the win
-/// probability of qualifying competitions.
+/// practice banks into `Player.sportYears`, which (a) escalates the tier of the
+/// competition the sport auto-enters each year and (b) adds a sport-fit bonus to
+/// its win probability. Competitions have no menu of their own — they resolve
+/// automatically for the trained sport in `Player.advanceYear`; each row here
+/// previews the current contest and win odds.
 struct SportsView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
@@ -81,9 +83,23 @@ struct SportsView: View {
         let atLimit = selectedActivities.count >= GameConstants.maxHobbiesPerYear
         let isSelected = selectedSports.contains(sport)
 
+        // The contest this sport currently feeds. Training it auto-enters the
+        // top tier the player qualifies for; odds climb with trained years.
+        let competition = CompetitionCatalog.bestCompetition(
+            forSport: sport, stage: currentStage, years: years
+        )
+        let competitionOdds = competition.map {
+            Int(($0.winProbability(for: player.softSkills, years: years) * 100).rounded())
+        }
+
+        let competitionLine: String = {
+            guard let competition, let competitionOdds else { return "" }
+            return "\n🏅 \(competition.name) · 🎲 ~\(competitionOdds)%"
+        }()
+
         HStack(spacing: 8) {
             Toggle(
-                "\(sport.pictogram) \(sport.label)\n\(pictos)\(years > 0 ? "  ·  \(years) yr\(years == 1 ? "" : "s") trained" : "")",
+                "\(sport.pictogram) \(sport.label)\n\(pictos)\(years > 0 ? "  ·  \(years) yr\(years == 1 ? "" : "s") trained" : "")\(competitionLine)",
                 isOn: Binding(
                     get: { isSelected },
                     set: { isOn in
@@ -108,7 +124,7 @@ struct SportsView: View {
 
             InfoHint(
                 title: "\(sport.pictogram) \(sport.label)",
-                message: "\(sport.description)\n\nEach year of training builds:\n\n\(abilityHint)\n\nYears trained also unlock matching competitions and lift your win odds inside them."
+                message: "\(sport.description)\n\nEach year of training builds:\n\n\(abilityHint)\n\nWhile you train a sport you automatically compete in its top event each year — no entry fee. Your win odds start low and climb with every year trained (and the skills it builds), unlocking bigger contests along the way."
             )
         }
         .padding(5)

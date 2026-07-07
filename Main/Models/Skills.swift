@@ -5,121 +5,18 @@ enum TrainingRequirementResult {
     case blocked(reason: String)
 }
 
-enum ProficiencyLevel: Int, Codable, Hashable, CaseIterable, Identifiable, Comparable {
-    case level1 = 1
-    case level2 = 2
-    case level3 = 3
-
-    var id: Int { rawValue }
-
-    // Comparable by raw value
-    static func < (lhs: ProficiencyLevel, rhs: ProficiencyLevel) -> Bool {
-        lhs.rawValue < rhs.rawValue
-    }
-
-    var displayName: String {
-        switch self {
-        case .level1: return "Level 1"
-        case .level2: return "Level 2"
-        case .level3: return "Level 3"
-        }
-    }
-
-    var next: ProficiencyLevel? {
-        switch self {
-        case .level1: return .level2
-        case .level2: return .level3
-        case .level3: return nil
-        }
-    }
-}
-
-// MARK: - Hard skills model (leveled dictionaries + set-facing API)
+// MARK: - Hard skills model
 
 struct HardSkills: Codable, Hashable {
-
-    private(set) var portfolioLevels: [Project: ProficiencyLevel] = [:]
-
     /// Professional credentials the player has earned — the former
     /// certifications and licences, now unified as `Training`. A plain set:
     /// trainings carry no proficiency level (you either hold the credential or
     /// you don't).
     var trainings: Set<Training> = []
 
-
-    var portfolioItems: Set<Project> {
-        get { Set(portfolioLevels.keys) }
-        set { HardSkills.syncLevels(&portfolioLevels, to: newValue) }
-    }
-
-    // MARK: - Initializer
-
-    init(
-        portfolioItems: Set<Project> = [],
-        trainings: Set<Training> = []
-    ) {
-        self.portfolioLevels = Dictionary(uniqueKeysWithValues: portfolioItems.map { ($0, .level1) })
+    init(trainings: Set<Training> = []) {
         self.trainings = trainings
     }
-
-    // MARK: - Private helper
-
-    private static func syncLevels<T: Hashable>(_ dict: inout [T: ProficiencyLevel], to newSet: Set<T>) {
-        for key in Array(dict.keys) where !newSet.contains(key) { dict.removeValue(forKey: key) }
-        for key in newSet where dict[key] == nil { dict[key] = .level1 }
-    }
-
-    // MARK: - Level accessors
-
-    func level(for item: Project) -> ProficiencyLevel? { portfolioLevels[item] }
-
-    // MARK: - Mutating setters
-
-
-    mutating func setLevel(_ level: ProficiencyLevel, for item: Project) {
-        portfolioLevels[item] = level
-    }
-
-    // MARK: - Promotion helpers (keeps highest)
-
-    mutating func promote(to level: ProficiencyLevel, for item: Project) {
-        portfolioLevels[item] = max(portfolioLevels[item] ?? .level1, level)
-    }
-
-    // MARK: - Sequential progression policy (1 level per year)
-
-    private func currentLevel<T: Hashable>(in dict: [T: ProficiencyLevel], for key: T) -> ProficiencyLevel? {
-        dict[key]
-    }
-
-    private func nextLevel(after level: ProficiencyLevel?) -> ProficiencyLevel? {
-        switch level {
-        case nil: return .level1
-        case .some(let lv): return lv.next
-        }
-    }
-
-    func isMaxLevel<T: Hashable>(_ key: T, in dict: [T: ProficiencyLevel]) -> Bool {
-        (dict[key] ?? .level1) == .level3
-    }
-
-    func canTrain(_ item: Project) -> Bool {
-        nextLevel(after: currentLevel(in: portfolioLevels, for: item)) != nil
-    }
-
-
-    @discardableResult
-    mutating func trainOneYear(_ item: Project) -> ProficiencyLevel? {
-        let next = nextLevel(after: portfolioLevels[item])
-        if let n = next {
-            portfolioLevels[item] = n
-        }
-        return portfolioLevels[item]
-    }
-
-    // MARK: - Removal
-
-    mutating func remove(_ item: Project) { portfolioLevels.removeValue(forKey: item) }
 }
 
 /// One soft-skill axis and its player-facing metadata. `SoftSkills.allAxes`
@@ -199,13 +96,6 @@ struct SoftSkills: Codable, Hashable {
 
     static func description(forKeyPath keyPath: PartialKeyPath<SoftSkills>) -> String? {
         _descriptionMap[keyPath]
-    }
-}
-// MARK: - Optional: convenience display helpers for a skill + level
-
-extension ProficiencyLevel {
-    func formatted(for name: String) -> String {
-        "\(name) — \(displayName)"
     }
 }
 

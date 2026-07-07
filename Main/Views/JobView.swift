@@ -49,9 +49,19 @@ struct JobDetail: View {
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
     private var hireProbabilityFormulaText: String {
         guard allRequirementsMet else {
-            let degreeClause = job.educationIsMandatory ? "degree, " : ""
-            return "Hire chance is 0% until every required \(degreeClause)license, \(job.category.requiresCredentials ? "certification" : "portfolio item"), and the baseline years of experience are in place.\(softSkillsClause)"
+            var needs: [String] = []
+            if job.educationIsMandatory { needs.append("the required degree") }
+            if job.category.requiresCredentials { needs.append("the required license and certification") }
+            needs.append("the baseline years of experience")
+            return "Hire chance is 0% until you have \(needs.joined(separator: ", ")).\(softSkillsClause)"
         }
+
+        // Breakthrough gate: without the signature title, odds sit at the floor.
+        if let key = job.breakthroughFame,
+           !player.fameAwards.contains(where: { $0.title == key }) {
+            return "This career is gated on a breakthrough achievement. Hire chance stays at the 5% floor until you win a Junior Championship (which banks the “\(key)” title). Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
+        }
+        let hasBreakthrough = job.breakthroughFame != nil
 
         let scoredCount = SoftSkills.allAxes.count
         let matched = job.softSkillsHelpfulScore(for: player)
@@ -62,10 +72,12 @@ struct JobDetail: View {
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
         let experience = job.experienceFitTerm(for: player)
-        let fame = player.fameHireBonus(for: job.category)
+        let topPosition = job.isTopLeadership
+        let fame = player.fameHireBonus(for: job.category, topPosition: topPosition)
         let showFame = fame > 0
+        let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame
+        let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame + breakthrough
         let raw = rawSum * salaryFit
         let final = max(0.05, min(0.95, raw))
 
@@ -91,14 +103,14 @@ struct JobDetail: View {
         let playerYears = job.relevantYears(for: player)
 
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(showFame ? " + Fame" : "") + Difficulty) × Salary fit
+        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(showFame ? " + Fame" : "")\(hasBreakthrough ? " + Breakthrough" : "") + Difficulty) × Salary fit
 
         Your numbers right now:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
         • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
         • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
-        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(job.category.rawValue)): \(signed(fame))" : "")
+        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(job.category.rawValue))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
         • Difficulty bonus: \(signed(opportunity))
         • Salary fit: \(pct(salaryFit))
         Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
@@ -224,18 +236,27 @@ struct JobDetail: View {
                 }
             }
 
-            if !isSimplified && !requiredHard.portfolioItems.isEmpty {
-                Text("Portfolio:")
+            // Breakthrough fame award: the gateway achievement for gated careers
+            // (e.g. a junior-competition win for Professional Player). Applies in
+            // every mode, so it's shown regardless of simplified/realistic.
+            if let key = job.breakthroughFame {
+                let held = player.fameAwards.contains { $0.title == key }
+                Text("Breakthrough:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
 
-                ForEach(Array(requiredHard.portfolioItems).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { project in
-                    let owned = player.hardSkills.portfolioItems.contains(project)
-                    RequirementRow(label: project.rawValue, emoji: project.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
+                RequirementRow(label: "\(key) title", emoji: "🏅", style: .badge(isMet: held))
+                    .foregroundStyle(held ? .primary : .secondary)
+                    .padding(.horizontal)
+
+                Text(held
+                     ? "This is the single biggest factor in getting signed."
+                     : "Win a Junior Championship as a teen to earn this — without it, clubs won't sign you (odds stay at 5%).")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
             }
 
             Divider()

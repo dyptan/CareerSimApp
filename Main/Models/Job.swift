@@ -115,6 +115,27 @@ extension Job {
     private static let scoredSoftSkills: [WritableKeyPath<SoftSkills, Int>] =
         SoftSkills.allAxes.filter(\.isScored).map(\.keyPath)
 
+    /// Careers whose hiring hinges on a breakthrough fame award — a specific
+    /// achievement (won in a competition) that is *the* gateway into the field.
+    /// Keyed by base title → the required `FameAward.title`. Without it, hire
+    /// odds sit at the floor even for a strong applicant; with it, a large bonus
+    /// makes it the dominant hiring factor. The Professional Player track is
+    /// gated on the "Junior Champion" title from the teen `Junior Championship`.
+    static let breakthroughFameByRole: [String: String] = [
+        "Player": "Junior Champion"
+    ]
+
+    /// The breakthrough fame award this role requires, or nil for ordinary
+    /// roles. Keyed by `baseTitle`, so every rung of a ladder shares it.
+    var breakthroughFame: String? {
+        Job.breakthroughFameByRole[baseTitle]
+    }
+
+    /// Hire-probability bonus once the player holds this role's breakthrough
+    /// fame award. Large enough to dominate the formula — it is the single
+    /// most important factor for a gated career.
+    static let breakthroughBonus: Double = 0.40
+
     func educationMet(for player: Player) -> Bool {
         let playerEQF = player.degrees.last?.eqf ?? 0
         guard playerEQF >= requirements.education.minEQF else { return false }
@@ -189,8 +210,9 @@ extension Job {
             let preference = req.trainings.filter { !$0.isStatutory }
             return preference.isSubset(of: held)
         }
-        // Everywhere else, employers hire on demonstrated portfolio work.
-        return req.portfolioItems.isSubset(of: player.hardSkills.portfolioItems)
+        // Everywhere else there's no hard-skill gate — hiring turns on the
+        // soft-skill fit, experience, network, and fame terms in `hireProbability`.
+        return true
     }
 
     /// Whether a degree is a *hard* hiring gate for this role. True only in
@@ -259,6 +281,17 @@ extension Job {
             return founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
         }
         guard allRequirementsMet(for: player) else { return 0.0 }
+        // Breakthrough gate: a career like Professional Player is effectively
+        // closed without its signature fame award (a junior-competition win) —
+        // odds sit at the floor no matter how skilled the applicant, in every
+        // mode. Holding it opens the door (and adds a dominant bonus below).
+        let hasBreakthrough: Bool
+        if let key = breakthroughFame {
+            hasBreakthrough = player.fameAwards.contains { $0.title == key }
+            if !hasBreakthrough { return 0.05 }
+        } else {
+            hasBreakthrough = false
+        }
         // Simplified mode: meeting the gate (degree + experience) is a sure hire.
         // No skill score, prestige, tier, or salary-fit adjustments.
         if player.isSimplified { return 1.0 }
@@ -276,8 +309,12 @@ extension Job {
         // Industry-scoped fame opens doors: a noticed body of side work (and,
         // in Show Business, competition/side-hustle trophies) lifts the odds for
         // roles in that same field — but only that field (see fameHireBonus).
-        let fame = player.fameHireBonus(for: category)
-        let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame)
+        // Top leadership roles weight reputation far more heavily.
+        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership)
+        // The breakthrough fame award (held — we returned at the floor above if
+        // not) is the dominant hiring factor for gated careers.
+        let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
+        let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
     }
@@ -416,7 +453,7 @@ extension Job {
     /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
         "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur",
-        "Elite Athlete"
+        "Elite Athlete", "Elite Player"
     ]
 
     /// True for the top management role of a career track — the win condition
@@ -543,10 +580,7 @@ var jobExample = Job(
             selfDisciplineAndPerseverance: 0,
             presentationAndStorytelling: 0
         ),
-        hardSkills: .init(
-            portfolioItems: [],
-            trainings: []
-        )
+        hardSkills: .init(trainings: [])
     ),
 )
 

@@ -8,9 +8,7 @@ final class AppUIState: ObservableObject {
     @Published var showHobbiesSheet: Bool = false
     @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
-    @Published var showProjectsSheet: Bool = false
     @Published var showEventsSheet: Bool = false
-    @Published var showCompetitionsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
@@ -19,19 +17,15 @@ final class AppUIState: ObservableObject {
     /// Trainings the player is attempting this year (former certifications +
     /// licences, now unified). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedTrainings: Set<Training>
-    /// Ids of the side hustles the player is attempting this year (see
-    /// `SideHustleCatalog`). Resolved and cleared by `Player.advanceYear`.
+    /// Ids of the spare-time ventures (money hustles + fame projects, now one
+    /// system) the player is attempting this year (see `SideHustleCatalog`).
+    /// Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
-    /// Raw values of the `Project`s the player is attempting this year (see
-    /// `Project` / `ProjectsView`). Resolved and cleared by `Player.advanceYear`.
-    @Published var selectedProjects: Set<String> = []
-    /// Ids of the professional events the player is attending this year (see
-    /// `EventCatalog`). Their cost/effects apply on attendance; cleared by
-    /// `Player.advanceYear`.
-    @Published var selectedEvents: Set<String> = []
-    /// Ids of the competitions the player is entering this year (see
-    /// `CompetitionCatalog`). Resolved and cleared by `Player.advanceYear`.
-    @Published var selectedCompetitions: Set<String> = []
+    /// The professional events the player is attending this year, keyed by event
+    /// id and mapped to the role (participant/presenter) they're attending in
+    /// (see `EventCatalog`). Network/soft-skill effects apply on attendance;
+    /// presenter fame is banked — and picks cleared — by `Player.advanceYear`.
+    @Published var selectedEvents: [String: EventRole] = [:]
     /// Sports the player is committing this year's spare-time slot to.
     /// Banked into `Player.sportYears` and cleared by `Player.advanceYear`.
     @Published var selectedSports: Set<Sport> = []
@@ -75,9 +69,7 @@ final class AppUIState: ObservableObject {
         showHobbiesSheet = false
         showTrainingsSheet = false
         showSideHustlesSheet = false
-        showProjectsSheet = false
         showEventsSheet = false
-        showCompetitionsSheet = false
         showSportsSheet = false
         showRetirementSheet = false
         hasSelectedMode = false
@@ -86,9 +78,7 @@ final class AppUIState: ObservableObject {
         selectedActivities = []
         selectedTrainings = []
         selectedSideHustles = []
-        selectedProjects = []
-        selectedEvents = []
-        selectedCompetitions = []
+        selectedEvents = [:]
         selectedSports = []
         yearsLeftToGraduation = nil
     }
