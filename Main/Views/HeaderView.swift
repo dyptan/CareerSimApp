@@ -29,7 +29,16 @@ struct HeaderView: View {
                 }
 
                 if let currentOccupation = player.currentOccupation {
-                    Text("Working: \(currentOccupation.id) \(currentOccupation.icon)")
+                    HStack(spacing: 6) {
+                        Text("Working: \(currentOccupation.id) \(currentOccupation.icon)")
+                        // Promotions are a realistic-mode mechanic only.
+                        if !player.isSimplified {
+                            InfoHint(
+                                title: "Promotion odds this year",
+                                message: promotionOddsSummary(for: currentOccupation)
+                            )
+                        }
+                    }
                     Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -41,10 +50,6 @@ struct HeaderView: View {
                 Text("Savings: \(player.savings.formatted(.number)) $")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-
-                if !player.recognitions.isEmpty {
-                    accoladesRow
-                }
             }
 
             Spacer()
@@ -64,13 +69,30 @@ struct HeaderView: View {
         }
     }
 
-    /// A single-line fame counter. The individual accolade titles live in the
-    /// SkillsView "Personal Brand & Recognition" section, not here.
-    private var accoladesRow: some View {
-        Text("🌟 Fame \(String(format: "%.1f", player.fameScore))")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-            .padding(.top, 2)
+    /// Plain-text breakdown of this year's promotion odds for the current job,
+    /// mirroring the hire-probability InfoHint. Explains each term (readiness,
+    /// network, fame, tenure) so the fame contribution is visible.
+    private func promotionOddsSummary(for job: Job) -> String {
+        let odds = player.promotionOdds(for: job)
+        guard odds.promotes else {
+            return "This role doesn't offer in-place promotions — unskilled work rarely comes with a raise-and-title bump. Climb by applying to a higher role instead."
+        }
+        func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
+        func signed(_ v: Double) -> String {
+            let s = Int((v * 100).rounded())
+            return s >= 0 ? "+\(s)%" : "\(s)%"
+        }
+        return """
+        Each year in a skilled role you get a shot at a raise and title bump. This year's odds:
+
+        • Base × soft-skill readiness: \(pct(odds.readinessBase))
+        • Network (\(job.category.rawValue)): \(signed(odds.network))
+        • Fame (\(job.category.rawValue)): \(signed(odds.fame))
+        • Tenure (\(odds.tenureYears) yr in role): \(signed(odds.tenure))
+        Total: \(pct(odds.total))
+
+        Raises are paused during a recession.
+        """
     }
 
     /// Plain-text summary of the current run's mode, savings, goal, and any

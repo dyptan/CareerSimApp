@@ -91,9 +91,6 @@ struct FooterView: View {
     private var hasSports: Bool {
         Sport.allCases.contains { $0.stages.contains(currentStage) }
     }
-    private var hasCompetitions: Bool {
-        CompetitionCatalog.all.contains { $0.stages.contains(currentStage) }
-    }
     private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
     }
@@ -108,9 +105,10 @@ struct FooterView: View {
     }
 
     var body: some View {
-        // Private Certifications, Competitions, Licenses, and Events are
-        // realistic-mode features, so hide them in simplified mode. Hobbies
-        // stay — they build the soft skills that gate school admission.
+        // Trainings and Events are realistic-mode features, so hide them in
+        // simplified mode. Hobbies stay — they build the soft skills that gate
+        // school admission. Competitions are no longer a button at all: they
+        // fire automatically each year from the sport trained in Sports.
         // Single wrapping row: every available button sits on one line when
         // the window is wide, and reflows onto extra rows as width shrinks.
         // Certifications / Licenses / Events keep their realistic-mode and
@@ -136,11 +134,6 @@ struct FooterView: View {
             // Primary, and a stage-eligible training in the catalogue.
             if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
                 Button("Trainings") { appUIState.showTrainingsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
-            }
-
-            if !player.isSimplified, hasCompetitions {
-                Button("Competitions") { appUIState.showCompetitionsSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 

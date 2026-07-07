@@ -318,6 +318,8 @@ enum JobCatalog {
 
             // Sports (physical resilience + discipline; coaches/refs add their own demands)
             "Athlete":                        .init(communicationAndNetworking: 1, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 3, selfDisciplineAndPerseverance: 4),
+            // Team-sport player: teamwork- and court-sense-heavy, gated on a junior title.
+            "Player":                         .init(communicationAndNetworking: 1, leadershipAndInfluence: 1, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 4, selfDisciplineAndPerseverance: 3),
             "Athletic Coach":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
             "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
             "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
@@ -821,6 +823,14 @@ enum JobCatalog {
             ("Master Electrician",           .construction,  92_000, "🔌", "Licensed master responsible for jobs and apprentices.",                            4, 5),
             ("Master Plumber",               .construction,  88_000, "🚰", "Licensed master plumber leading complex installations.",                           4, 5),
             ("Master Carpenter",             .construction,  76_000, "🪚", "Master tradesperson on bespoke and large-scale builds.",                           4, 6),
+
+            // Sports — team-sport player ladder. Gated on the "Junior Champion"
+            // title (win the teen Junior Championship): without it hire odds sit
+            // at the floor; with it, going pro is on the table (see
+            // `Job.breakthroughFameByRole`). No degree needed.
+            ("Amateur Player",               .showBusiness,        30_000, "🥅", "Signed to a club's youth-to-senior pipeline after a standout junior career.",     1, 0),
+            ("Professional Player",          .showBusiness,       130_000, "⚽", "Earns a living on a professional team's roster.",                                 1, 3),
+            ("Elite Player",                 .showBusiness,       320_000, "🌟", "A marquee starter with major contracts and sponsorships.",                       1, 7),
 
             // Sports — performance-gated athlete ladder + coaching track (no degree needed)
             ("Amateur Athlete",              .showBusiness,        22_000, "🏃", "Competes semi-professionally while building a track record.",                     1, 0),

@@ -82,9 +82,6 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showEventsSheet) {
             navigationSheet { eventsContent }
         }
-        .sheet(isPresented: $appUIState.showCompetitionsSheet) {
-            navigationSheet { competitionsContent }
-        }
         .sheet(isPresented: $appUIState.showSportsSheet) {
             navigationSheet { sportsContent }
         }
@@ -142,6 +139,14 @@ struct RootView: View {
             Button("Thanks!", role: .cancel) { }
         } message: {
             Text(player.promotionMessage)
+        }
+        // Celebrates winning the sport's automatic yearly competition. The
+        // header note (player.lastCompetitionWins) lingers for the year, and
+        // confetti fires via celebrationTrigger.
+        .alert("Champion! 🏆", isPresented: $player.showCompetitionWinAlert) {
+            Button("🎉", role: .cancel) { }
+        } message: {
+            Text(player.competitionWinMessage)
         }
         // Marks the end of a degree with a congrats pop-up. The same milestone
         // is also banked into the StatusBar history so the player can revisit it
@@ -218,22 +223,6 @@ struct RootView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
                         appUIState.showEventsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var competitionsContent: some View {
-        CompetitionsView(player: player, selectedCompetitions: $appUIState.selectedCompetitions)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showCompetitionsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showCompetitionsSheet = false
                         player.advanceYear(appUIState: appUIState)
                     }
                 }

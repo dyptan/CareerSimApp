@@ -15,7 +15,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     /// popover. Projects are spare-time passion projects you put yourself into —
     /// not work deliverables. Unlike a hobby (which quietly builds soft skills),
     /// a project *spends* the soft skills you've already built for a shot at
-    /// fame and recognition — putting your name out into the world.
+    /// fame — putting your name out into the world.
     var description: String {
         switch self {
         case .app: return "A little mobile or desktop app you build in your spare time — to scratch an itch or just to learn. Ship something people actually use and word gets around."
@@ -23,7 +23,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         case .article: return "A long-form article or deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown."
         case .presentation: return "A talk you put together for a meetup, conference, or hobby community. Landing an idea in front of a room is how people start to know your name."
         case .musicFestival: return "You take the stage at a music festival. A good set in front of a crowd is the fastest way to get talked about."
-        case .publishBook: return "You coauthor a book or a paper and see it published. A title with your name on the spine carries lasting recognition."
+        case .publishBook: return "You coauthor a book or a paper and see it published. A title with your name on the spine carries lasting fame."
         case .game3d: return "A 3D game you model, build, and ship in your spare time — characters, worlds, and mechanics all your own. A standout indie title gets you noticed."
         }
     }
@@ -60,7 +60,7 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
     /// better the player meets them, the likelier the year earns fame (see
     /// `successProbability` / `rollFameGain`). This is the mirror image of a
     /// `Hobby`: a hobby *grants* soft skills for free, whereas a project
-    /// *spends* the soft skills you've already built for a shot at recognition.
+    /// *spends* the soft skills you've already built for a shot at fame.
     var requirements: [WeightedAbility] {
         switch self {
         case .app:
@@ -123,10 +123,10 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         max(0.1, min(0.9, 0.15 + requirementFit(for: soft) * 0.75))
     }
 
-    /// The fame-and-recognition bump a year on this project earns: `1` when the
+    /// The fame bump a year on this project earns: `1` when the
     /// year gets noticed, `0` when it doesn't. The single roll uses
     /// `successProbability`, so a strong soft-skill fit is far likelier to land
-    /// the point. Banked as a `Player.Recognition` in the project's `fameIndustry` in
+    /// the point. Banked as a `Player.FameAward` in the project's `fameIndustry` in
     /// `advanceYear`.
     func rollFameGain(for soft: SoftSkills) -> Int {
         Double.random(in: 0...1) < successProbability(for: soft) ? 1 : 0
@@ -164,11 +164,11 @@ enum Project: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// The personal-brand title a noticed year on this project earns, banked as
-    /// a `Recognition` (levelling up on repeats). Reads as something you're
+    /// The fame title a noticed year on this project earns, banked as
+    /// a `FameAward` (levelling up on repeats). Reads as something you're
     /// *known for* — distinct from the fame-building side-hustle awards so the
     /// two never collide on the shelf.
-    var recognitionTitle: String {
+    var fameTitle: String {
         switch self {
         case .app: return "App Maker"
         case .library: return "Open-Source Contributor"

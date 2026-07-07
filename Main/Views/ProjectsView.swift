@@ -3,7 +3,7 @@ import SwiftUI
 /// The **Projects** page — a deliberate mirror of `HobbiesView`, but inverted.
 /// A hobby reliably *grants* soft skills for free; a project *spends* the soft
 /// skills you've already built and gambles them on one reward a hobby can never
-/// give: fame and recognition. Each row shows which soft skills are considered
+/// give: fame. Each row shows which soft skills are considered
 /// (with the level each is measured against), the odds the year gets noticed,
 /// and the fame it can earn (0, 1, or 2). Projects are repeatable and filtered
 /// by life stage, exactly like hobbies.
@@ -23,7 +23,7 @@ struct ProjectsView: View {
 
     /// Projects offered this stage. A project only shows once the player has
     /// practised a hobby that unlocks it. Projects are repeatable — a player can
-    /// chase the same stage again each year for another shot at recognition.
+    /// chase the same stage again each year for another shot at fame.
     private var stageProjects: [Project] {
         let unlocked = Project.unlocked(byPractisedHobbies: player.lockedHobbies)
         return Project.allCases.filter {
@@ -44,7 +44,7 @@ struct ProjectsView: View {
                             ? .red : .primary
                     )
             }
-            Text("Spend your soft skills for fame and recognition — \(currentStage.displayName), age \(player.age)")
+            Text("Spend your soft skills for fame — \(currentStage.displayName), age \(player.age)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()

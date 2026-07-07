@@ -5,7 +5,7 @@ struct SkillsView: View {
     @ObservedObject var appUIState: AppUIState
 
     @State private var softSkillsExpanded: Bool = false
-    @State private var brandExpanded: Bool = false
+    @State private var fameExpanded: Bool = false
     @State private var hardSkillsExpanded: Bool = false
     @State private var educationExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
@@ -34,7 +34,7 @@ struct SkillsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 softSkillsSection
                 Divider()
-                brandSection
+                fameSection
                 Divider()
                 // Hard skills (certs/licenses/portfolio) don't apply in simplified mode.
                 if !player.isSimplified {
@@ -77,28 +77,26 @@ struct SkillsView: View {
         }
     }
 
-    // MARK: - Personal Brand & Recognition
+    // MARK: - Fame
 
-    /// The third pillar of career capital: *what you're known for*. Lists every
-    /// banked `Recognition` — competition trophies, fame-building side hustles,
-    /// and noticed projects — with the industry each is famous in. Only
-    /// same-industry (or general) reputation lifts hiring odds there, so the
-    /// badge tells the player where each accolade actually pays off.
-    private var brandSection: some View {
-        DisclosureGroup(isExpanded: $brandExpanded) {
+    /// The third pillar of career capital: *what you're known for*. Fame is
+    /// industry-scoped — only same-industry reputation lifts hiring and promotion
+    /// odds there — so the section shows the fame score per field. The individual
+    /// accolades are surfaced once in the status log as they're earned.
+    private var fameSection: some View {
+        DisclosureGroup(isExpanded: $fameExpanded) {
             VStack(alignment: .leading, spacing: 4) {
-                if player.recognitions.isEmpty {
-                    Text("No recognition yet — win a competition or ship a standout project.")
+                if player.fameAwards.isEmpty {
+                    Text("No fame yet — win a competition or ship a standout project.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(player.recognitions) { r in
+                    ForEach(player.fameByIndustry, id: \.industry) { group in
                         HStack {
-                            Text(r.icon)
-                            Text(r.count > 1 ? "\(r.title) ×\(r.count)" : r.title)
+                            Text(fameIndustryLabel(group.industry))
                             Spacer()
-                            Text(r.industry.map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" } ?? "🌐 General")
-                                .font(.caption2)
+                            Text("🌟 \(String(format: "%.1f", group.score))")
+                                .monospacedDigit()
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -107,11 +105,36 @@ struct SkillsView: View {
             .padding(.top, 4)
         } label: {
             HStack {
-                Text("Personal Brand & Recognition").font(.headline)
+                Text("Fame").font(.headline)
                 Spacer()
-                summaryPictograms(player.recognitions.map { $0.icon })
+                // Per-industry split, visible even when the section is collapsed.
+                if player.fameAwards.isEmpty {
+                    Text("🌟 0.0")
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text(fameIndustrySummary)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
             }
         }
+    }
+
+    /// Icon + name for a fame group's industry (`nil` = general renown).
+    private func fameIndustryLabel(_ industry: JobCategory?) -> String {
+        industry.map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" } ?? "🌐 General"
+    }
+
+    /// Compact per-industry fame chips for the collapsed section label, e.g.
+    /// "🎬 3.0  💻 1.0" — highest-scoring field first.
+    private var fameIndustrySummary: String {
+        player.fameByIndustry
+            .map { group in
+                let icon = group.industry.map { JobCategory.icon(for: $0) } ?? "🌐"
+                return "\(icon) \(String(format: "%.1f", group.score))"
+            }
+            .joined(separator: "  ")
     }
 
     // MARK: - Hard Skills

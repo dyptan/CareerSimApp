@@ -38,7 +38,7 @@ struct SideHustle: Identifiable, Hashable {
     /// doesn't build fame). Show-business ventures — going viral, publishing,
     /// performing, recording, landing a TV spot — bank reputation that opens
     /// doors across Show Business careers, the same currency a competition win
-    /// earns (see `Player.recognitions` / `fameHireBonus(for:)`).
+    /// earns (see `Player.fameAwards` / `fameHireBonus(for:)`).
     var fameAward: String? = nil
     /// Reputation weight this trophy carries when totalled into the player's
     /// fame score (see `Player.fameScore`). Only meaningful for fame-building
