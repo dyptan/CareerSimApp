@@ -81,6 +81,15 @@ struct RootView: View {
             Button("Close") { appUIState.showEntrepreneurshipSheet = false }
                 .padding()
         }
+        .sheet(isPresented: $appUIState.showExecutiveSheet) {
+            ExecutiveDecisionsView(
+                player: player,
+                showSheet: $appUIState.showExecutiveSheet
+            )
+            #if os(macOS)
+            .frame(minWidth: 520, minHeight: 480)
+            #endif
+        }
         .sheet(isPresented: $appUIState.showTrainingsSheet) {
             navigationSheet { trainingsContent }
         }

@@ -328,6 +328,23 @@ extension Job {
     /// category) so founder roles can live under the Business category.
     var isEntrepreneurial: Bool { targetCapital != nil }
 
+    /// True for a senior seat where equity/strategy plays make sense — the roles
+    /// that unlock the Boardroom (`ExecutiveDecision`). Covers every founder
+    /// venture plus the top leadership rung of a business-style track (C-suite,
+    /// director, partner in Business/Entrepreneurship/Finance/Technology). A
+    /// Head Chef or Charge Nurse tops out their ladder too, but doesn't run a
+    /// cap table — so `isTopLeadership` alone isn't enough.
+    var isExecutive: Bool {
+        if isEntrepreneurial { return true }
+        guard isTopLeadership else { return false }
+        switch category {
+        case .business, .entrepreneurship, .finance, .technology:
+            return true
+        default:
+            return false
+        }
+    }
+
     /// Whether this is unskilled work — a role requiring no post-secondary
     /// education or training (below `GameConstants.promotionMinEQF`). Such jobs
     /// don't hand out in-place promotions (see `Player.promotionChance`); the

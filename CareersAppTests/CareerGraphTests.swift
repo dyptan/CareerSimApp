@@ -165,4 +165,75 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(plain.experienceLift(years: 20), 0,
                        "A venture with no experience category gets no lift.")
     }
+
+    // MARK: - Executive decisions (Boardroom)
+
+    /// The Boardroom unlocks for founders and business-style top leadership, but
+    /// not for ordinary roles or non-commercial capstones.
+    func testExecutiveSeatGating() {
+        let jobs = JobCatalog.allJobs()
+
+        if let ceo = jobs.first(where: { $0.id == "Chief Executive Officer" }) {
+            XCTAssertTrue(ceo.isExecutive, "The CEO should unlock the Boardroom.")
+        }
+        if let founder = jobs.first(where: { $0.isEntrepreneurial }) {
+            XCTAssertTrue(founder.isExecutive, "Founder ventures should unlock the Boardroom.")
+        }
+        if let analyst = jobs.first(where: {
+            $0.category == .business && $0.seniorityPrefix == nil && !$0.isTopLeadership
+        }) {
+            XCTAssertFalse(analyst.isExecutive, "A rank-and-file role shouldn't unlock the Boardroom.")
+        }
+        // A top-leadership role outside the commercial fields (e.g. a Head Chef)
+        // tops out its ladder but doesn't run a cap table.
+        if let nonCommercial = jobs.first(where: {
+            $0.isTopLeadership && !$0.isEntrepreneurial
+                && ![.business, .entrepreneurship, .finance, .technology].contains($0.category)
+        }) {
+            XCTAssertFalse(nonCommercial.isExecutive,
+                           "'\(nonCommercial.id)' is top leadership but shouldn't unlock the Boardroom.")
+        }
+    }
+
+    /// Selling vested shares is a guaranteed payout that grows with tenure and
+    /// is one-per-year.
+    func testSellSharesPaysAndScalesWithTenure() {
+        guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
+            return
+        }
+        let player = Player()
+        player.currentOccupation = ceo
+        XCTAssertTrue(player.canMakeExecutiveDecisions)
+
+        let rookie = player.sellSharesPayout()
+        player.experienceByRole[ceo.baseTitle] = 8
+        let veteran = player.sellSharesPayout()
+        XCTAssertGreaterThan(veteran, rookie, "Longer tenure should vest more equity.")
+
+        guard let decision = ExecutiveDecisionCatalog.byId["sellShares"] else { return }
+        let before = player.savings
+        let outcome = player.resolveExecutiveDecision(decision)
+        XCTAssertTrue(outcome.success)
+        XCTAssertEqual(player.savings, before + outcome.cash)
+        XCTAssertTrue(player.hasUsedExecutiveDecision(decision),
+                      "A decision should be marked used for the year.")
+    }
+
+    /// Investment-round odds stay in bounds, and the per-year lock clears when the
+    /// year advances.
+    func testInvestmentRoundOddsBoundedAndResetYearly() {
+        guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
+            return
+        }
+        let player = Player()
+        player.currentOccupation = ceo
+        let odds = player.investmentRoundOdds()
+        XCTAssertGreaterThanOrEqual(odds, 0.05)
+        XCTAssertLessThanOrEqual(odds, 0.95)
+
+        player.executiveActionsThisYear.insert("investmentRound")
+        player.advanceYear(appUIState: AppUIState())
+        XCTAssertTrue(player.executiveActionsThisYear.isEmpty,
+                      "Executive actions should reset each year.")
+    }
 }

@@ -272,6 +272,10 @@ final class Player: ObservableObject {
     /// competitions to appear) and the `sportFit` bonus inside `winProbability`.
     @Published var sportYears: [Sport: Int] = [:]
     @Published var appliedJobIds: Set<String> = []
+    /// Executive decisions (see `ExecutiveDecision`) taken this year, by id. Each
+    /// Boardroom play can be made at most once per year; cleared by `advanceYear`
+    /// alongside `appliedJobIds`.
+    @Published var executiveActionsThisYear: Set<String> = []
     /// Schools (by `Education.id`) the player has already applied to this year.
     /// One admission attempt per school per year, so a rejection can't be
     /// brute-forced — the player must try another school or wait a year.
@@ -669,6 +673,7 @@ final class Player: ObservableObject {
 
         appliedJobIds.removeAll()
         appliedSchoolIds.removeAll()
+        executiveActionsThisYear.removeAll()
         // Re-roll the job market for the new year (fresh tiers and salaries).
         regenerateAvailableJobs()
 
@@ -965,6 +970,98 @@ final class Player: ObservableObject {
         showStartupOfferSheet = false
     }
 
+    // MARK: - Executive decisions (Boardroom)
+
+    /// Whether the player currently holds a seat that unlocks the Boardroom's
+    /// equity/strategy plays (see `Job.isExecutive`).
+    var canMakeExecutiveDecisions: Bool {
+        currentOccupation?.isExecutive ?? false
+    }
+
+    /// Whether the given decision has already been used this year (each plays
+    /// once per year).
+    func hasUsedExecutiveDecision(_ decision: ExecutiveDecision) -> Bool {
+        executiveActionsThisYear.contains(decision.id)
+    }
+
+    /// Founder-cluster soft skills weighed when investors size up a round.
+    private static let investmentRoundSkills: [WritableKeyPath<SoftSkills, Int>] = [
+        \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
+        \.leadershipAndInfluence, \.communicationAndNetworking,
+    ]
+    /// Skill level at which an investment-round axis is a perfect fit.
+    private static let investmentRoundSkillReference = 8
+
+    /// Probability (0.05...0.95) that an announced investment round closes. Built
+    /// from the founder-cluster soft-skill fit plus the player's network and
+    /// reputation in their current field — a known, well-connected leader with a
+    /// compelling vision raises money far more reliably.
+    func investmentRoundOdds() -> Double {
+        guard let job = currentOccupation else { return 0 }
+        let fit = Player.investmentRoundSkills.reduce(0.0) { acc, kp in
+            acc + min(Double(softSkills[keyPath: kp]) / Double(Player.investmentRoundSkillReference), 1.0)
+        } / Double(Player.investmentRoundSkills.count)
+        let network = networkBonus(for: job.category)                      // up to +0.12
+        let fame = fameHireBonus(for: job.category, topPosition: true)     // up to +0.40
+        return max(0.05, min(0.95, 0.15 + fit * 0.45 + network + fame))
+    }
+
+    /// Headline capital a *successful* investment round realises for the player
+    /// as equity liquidity — a multiple of their current pay. The actual payout
+    /// is this value jittered in `resolveExecutiveDecision`.
+    func investmentRoundProjectedRaise() -> Int {
+        guard let job = currentOccupation else { return 0 }
+        return job.annualIncome * 3
+    }
+
+    /// Guaranteed cash from selling vested shares: a fraction of pay that grows
+    /// with tenure in the seat (more years held → more equity vested), from
+    /// ~0.75× pay on day one up to a 2.5× cap for a long-tenured leader.
+    func sellSharesPayout() -> Int {
+        guard let job = currentOccupation else { return 0 }
+        let years = experienceByRole[job.baseTitle, default: 0]
+        let multiple = min(0.75 + Double(years) * 0.15, 2.5)
+        return Int((Double(job.annualIncome) * multiple).rounded())
+    }
+
+    /// Resolves an executive decision immediately, applying its effects and
+    /// returning the outcome for the Boardroom view to display. Marks the
+    /// decision used for the year. No-op-ish (returns an empty failure) if the
+    /// player somehow isn't in an executive seat.
+    @discardableResult
+    func resolveExecutiveDecision(_ decision: ExecutiveDecision) -> ExecutiveDecision.Outcome {
+        executiveActionsThisYear.insert(decision.id)
+        guard let job = currentOccupation else {
+            return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
+        }
+        switch decision.kind {
+        case .sellShares:
+            let cash = sellSharesPayout()
+            savings += cash
+            recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(cash.formatted(.number)) $")
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: nil)
+        case .investmentRound:
+            let succeeded = Double.random(in: 0...1) < investmentRoundOdds()
+            guard succeeded else {
+                recordStatus("🚫", "Investment round for \(job.baseTitle) fell through")
+                return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
+            }
+            let base = Double(investmentRoundProjectedRaise())
+            let cash = Int((base * Double.random(in: 0.8...1.4)).rounded())
+            savings += cash
+            let title = "Raised a Round"
+            award(title, icon: decision.icon, industry: job.category, weight: 1.5)
+            let growthAxes: [WritableKeyPath<SoftSkills, Int>] =
+                [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation]
+            for kp in growthAxes {
+                softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
+            }
+            celebrationTrigger += 1
+            recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: title)
+        }
+    }
+
     func reset() {
         let fresh = Player()
         difficulty = fresh.difficulty
@@ -1003,6 +1100,7 @@ final class Player: ObservableObject {
         sportYears = fresh.sportYears
         appliedJobIds = []
         appliedSchoolIds = []
+        executiveActionsThisYear = []
         availableJobs = fresh.availableJobs
     }
 }

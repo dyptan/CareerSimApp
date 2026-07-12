@@ -46,6 +46,8 @@
 		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		AA00000000000000000000D2 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D1 /* Difficulty.swift */; };
 		AA00000000000000000000E2 /* SideHustle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E1 /* SideHustle.swift */; };
+		AA0000000000000000000111 /* ExecutiveDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000110 /* ExecutiveDecision.swift */; };
+		AA0000000000000000000113 /* ExecutiveDecisionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000112 /* ExecutiveDecisionsView.swift */; };
 		AA00000000000000000000E4 /* SideHustlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E3 /* SideHustlesView.swift */; };
 		AA00000000000000000000E6 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E5 /* Event.swift */; };
 		AA00000000000000000000E8 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E7 /* EventsView.swift */; };
@@ -123,6 +125,8 @@
 		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000D1 /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E1 /* SideHustle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustle.swift; sourceTree = "<group>"; };
+		AA0000000000000000000110 /* ExecutiveDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecision.swift; sourceTree = "<group>"; };
+		AA0000000000000000000112 /* ExecutiveDecisionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecisionsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E3 /* SideHustlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustlesView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E5 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E7 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
@@ -216,6 +220,7 @@
 				AA00000000000000000000C1 /* EducationTier.swift */,
 				AA00000000000000000000D1 /* Difficulty.swift */,
 				AA00000000000000000000E1 /* SideHustle.swift */,
+				AA0000000000000000000110 /* ExecutiveDecision.swift */,
 				AA00000000000000000000E5 /* Event.swift */,
 				AA00000000000000000000E9 /* Competition.swift */,
 				AA00000000000000000000ED /* GameCenterManager.swift */,
@@ -266,6 +271,7 @@
 				555CC10A2FF130CB00426E7E /* StatusBarView.swift */,
 				555CC10E2FF134D000426E7E /* SportsView.swift */,
 				555CC1142FF1445500426E7E /* StartupOfferView.swift */,
+				AA0000000000000000000112 /* ExecutiveDecisionsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -427,6 +433,8 @@
 				AA00000000000000000000C2 /* EducationTier.swift in Sources */,
 				AA00000000000000000000D2 /* Difficulty.swift in Sources */,
 				AA00000000000000000000E2 /* SideHustle.swift in Sources */,
+				AA0000000000000000000111 /* ExecutiveDecision.swift in Sources */,
+				AA0000000000000000000113 /* ExecutiveDecisionsView.swift in Sources */,
 				AA00000000000000000000E4 /* SideHustlesView.swift in Sources */,
 				AA00000000000000000000E6 /* Event.swift in Sources */,
 				AA00000000000000000000E8 /* EventsView.swift in Sources */,
