@@ -59,33 +59,27 @@ struct PrivateProjectsView: View {
     private func row(for hustle: SideHustle) -> some View {
         let isSelected = selectedSideHustles.contains(hustle.id)
         let atLimit = selectedSideHustles.count >= GameConstants.maxSideHustlesPerYear
-        // A venture is locked until its relevant soft-skill prerequisite is met.
+        // A venture is locked until its soft-skill prerequisite and any capital
+        // requirement are both met.
         let meetsPrereq = hustle.meetsPrerequisite(for: player.softSkills)
-        let isDisabled = (!isSelected && atLimit) || !meetsPrereq
+        let meetsCapital = hustle.meetsCapital(savings: player.savings)
+        let meetsAll = meetsPrereq && meetsCapital
+        let isDisabled = (!isSelected && atLimit) || !meetsAll
 
         let lockLabel: String? = {
-            guard let req = hustle.prerequisite, !meetsPrereq else { return nil }
-            let kp = req.keyPath as PartialKeyPath<SoftSkills>
-            let pic = skillPictogramByKeyPath[kp] ?? ""
-            let label = SoftSkills.label(forKeyPath: kp) ?? "skill"
-            return "🔒 Requires \(pic) \(label) \(req.minLevel)"
-        }()
-
-        let odds = Int((hustle.successProbability(for: player.softSkills, fameScore: player.fameScore) * 100).rounded())
-        let upside = hustle.projectedPayout(for: player.softSkills)
-
-        let pictos: String = hustle.talents
-            .compactMap { skillPictogramByKeyPath[$0 as PartialKeyPath<SoftSkills>] }
-            .joined(separator: " ")
-
-        // Soft skills a successful fame year grows (empty for money ventures).
-        let growthPictos: String = hustle.growth
-            .compactMap { boost -> String? in
-                let kp = boost.keyPath as PartialKeyPath<SoftSkills>
-                guard let pic = skillPictogramByKeyPath[kp] else { return nil }
-                return "\(pic)+\(boost.weight)"
+            var parts: [String] = []
+            if let req = hustle.prerequisite, !meetsPrereq {
+                let kp = req.keyPath as PartialKeyPath<SoftSkills>
+                let pic = skillPictogramByKeyPath[kp] ?? ""
+                let label = SoftSkills.label(forKeyPath: kp) ?? "skill"
+                parts.append("\(pic) \(label) \(req.minLevel)")
             }
-            .joined(separator: " ")
+            if let cap = hustle.minCapital, !meetsCapital {
+                parts.append("💰 \(cap.formatted(.number)) $")
+            }
+            guard !parts.isEmpty else { return nil }
+            return "🔒 Requires " + parts.joined(separator: " · ")
+        }()
 
         let talentHint: String = hustle.talents
             .map { kp -> String in
@@ -125,25 +119,6 @@ struct PrivateProjectsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("Draws on: \(pictos)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    if !growthPictos.isEmpty {
-                        Text("Grows: \(growthPictos)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    HStack(spacing: 10) {
-                        Text("🎲 ~\(odds)%")
-                        if let industry = hustle.fameIndustry {
-                            Text("🌟 \(JobCategory.icon(for: industry)) \(industry.rawValue) fame")
-                                .foregroundStyle(.purple)
-                        } else {
-                            Text("📈 up to \(upside.formatted(.number)) $")
-                        }
-                    }
-                    .font(.caption2.monospacedDigit())
-                    .foregroundStyle(.secondary)
                     if let lockLabel {
                         Text(lockLabel)
                             .font(.caption2)
@@ -156,8 +131,8 @@ struct PrivateProjectsView: View {
             .disabled(isDisabled)
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
-                !meetsPrereq
-                    ? "Build the required soft skill first — take it on once you meet the prerequisite."
+                !meetsAll
+                    ? "Meet this project's requirements first — the required soft skill and any capital on hand — then take it on."
                     : (atLimit && !isSelected
                         ? "You can take on up to \(GameConstants.maxSideHustlesPerYear) project(s) this year."
                         : "")
@@ -173,17 +148,28 @@ struct PrivateProjectsView: View {
 
     private func infoMessage(for hustle: SideHustle, talentHint: String, growthHint: String) -> String {
         let gate: String = {
-            guard let req = hustle.prerequisite else { return "" }
-            let kp = req.keyPath as PartialKeyPath<SoftSkills>
-            let pic = skillPictogramByKeyPath[kp] ?? ""
-            let label = SoftSkills.label(forKeyPath: kp) ?? "a skill"
-            return "🔒 Unlocks at \(pic) \(label) \(req.minLevel) — build it through hobbies first.\n\n"
+            var lines: [String] = []
+            if let req = hustle.prerequisite {
+                let kp = req.keyPath as PartialKeyPath<SoftSkills>
+                let pic = skillPictogramByKeyPath[kp] ?? ""
+                let label = SoftSkills.label(forKeyPath: kp) ?? "a skill"
+                lines.append("🔒 Unlocks at \(pic) \(label) \(req.minLevel) — build it through hobbies first.")
+            }
+            if let cap = hustle.minCapital {
+                lines.append("💰 Requires \(cap.formatted(.number)) $ in savings on hand to take on.")
+            }
+            guard !lines.isEmpty else { return "" }
+            return lines.joined(separator: "\n") + "\n\n"
         }()
+        let odds = Int((hustle.successProbability(for: player.softSkills, fameScore: player.fameScore) * 100).rounded())
         switch hustle.payoff {
         case .money:
-            return gate + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing."
+            let upside = hustle.projectedPayout(for: player.softSkills)
+            let stats = "🎲 ~\(odds)% success · 📈 up to \(upside.formatted(.number)) $\n\n"
+            return gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing."
         case .fame(let industry, _):
-            return gate + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing."
+            let stats = "🎲 ~\(odds)% success · 🌟 \(JobCategory.icon(for: industry)) \(industry.rawValue) fame\n\n"
+            return gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing."
         }
     }
 }

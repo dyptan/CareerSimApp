@@ -452,8 +452,7 @@ extension Job {
     /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
     /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
-        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur",
-        "Elite Athlete", "Elite Player"
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
     ]
 
     /// True for the top management role of a career track — the win condition

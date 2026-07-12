@@ -67,6 +67,20 @@ struct RootView: View {
             Button("Close") { appUIState.showCareersSheet = false }
                 .padding()
         }
+        .sheet(isPresented: $appUIState.showEntrepreneurshipSheet) {
+            EntrepreneurshipView(
+                availableJobs: availableJobs,
+                player: player,
+                showSheet: $appUIState.showEntrepreneurshipSheet
+            )
+            .frame(idealHeight: 500, alignment: .leading)
+            #if os(macOS)
+            .frame(minWidth: 800, minHeight: 500)
+            #endif
+
+            Button("Close") { appUIState.showEntrepreneurshipSheet = false }
+                .padding()
+        }
         .sheet(isPresented: $appUIState.showTrainingsSheet) {
             navigationSheet { trainingsContent }
         }
