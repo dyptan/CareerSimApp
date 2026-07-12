@@ -43,18 +43,17 @@ struct RetirementView: View {
     }
 }
 
-/// Celebration shown the first time the active mode's goal is reached.
-/// Offers to keep playing or start over.
+/// Celebration shown the first time the mode's goal is reached. Only the
+/// Simplified mode has a fixed goal (top leadership); the realistic settings are
+/// open-ended and never trigger this (see `Player.goalMet`). Offers to keep
+/// playing or start over.
 struct GoalView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
     private var achievementText: String {
-        if player.isSimplified {
-            let role = player.currentOccupation?.id ?? "a top leadership role"
-            return "You climbed all the way to the top — you're now \(role)! 👔"
-        }
-        return "You banked your first million! 💰\nSavings: \(player.savings.formatted(.number)) $"
+        let role = player.currentOccupation?.id ?? "a top leadership role"
+        return "You climbed all the way to the top — you're now \(role)! 👔"
     }
 
     var body: some View {

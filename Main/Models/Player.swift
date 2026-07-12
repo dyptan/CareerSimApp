@@ -293,20 +293,23 @@ final class Player: ObservableObject {
         statusEvents.append(StatusEvent(age: age, icon: icon, message: message))
     }
 
-    /// Whether the player has met the current setting's win condition:
-    /// a top leadership ("C-suite") role in Simplified, or a million in
-    /// savings in the realistic settings.
+    /// Whether the player has met the current setting's win condition. Only the
+    /// Simplified mode has a fixed finish line — reaching a top leadership
+    /// ("C-suite") role. The realistic settings are open-ended: there is no
+    /// target to hit, just a running `leaderboardScore` the player banks whenever
+    /// they choose to finish the game (see `RetirementView`).
     var goalMet: Bool {
-        if isSimplified {
-            return currentOccupation?.isTopLeadership ?? false
-        }
-        return savings >= GameConstants.millionGoal
+        guard isSimplified else { return false }
+        return currentOccupation?.isTopLeadership ?? false
     }
 
     @Published var age: Int
 
-    /// Game Center leaderboard score: "wealth velocity" — savings per year of
-    /// life. Reaching wealth younger scores higher. Floored at 0.
+    /// The player's running score, recalculated from current state (so it's
+    /// always up to date each year): "wealth velocity" — savings per year of
+    /// life. Reaching wealth younger scores higher. Floored at 0. This is what a
+    /// realistic-mode run is playing for; finishing the game banks it to the
+    /// Game Center leaderboard.
     var leaderboardScore: Int { age > 0 ? max(0, savings) / age : 0 }
 
     @Published var degrees: [Education]

@@ -306,4 +306,41 @@ final class CareerGraphTests: XCTestCase {
                                  "A closed round should grow the venture's revenue.")
         }
     }
+
+    // MARK: - Open-ended realistic goal + running score
+
+    /// Realistic modes are open-ended: no savings target ever counts as a goal,
+    /// however wealthy the player gets.
+    func testRealisticModeHasNoFixedGoal() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.savings = 5_000_000
+        XCTAssertFalse(player.goalMet, "Realistic mode should have no fixed savings goal.")
+
+        player.difficulty = .comfortable
+        XCTAssertFalse(player.goalMet)
+    }
+
+    /// Simplified keeps its finish line: reaching a top-leadership role.
+    func testSimplifiedGoalIsTopLeadership() {
+        let player = Player()
+        player.difficulty = .simplified
+        XCTAssertFalse(player.goalMet, "No occupation yet — goal not met.")
+        if let ceo = JobCatalog.allJobs().first(where: { $0.isTopLeadership }) {
+            player.currentOccupation = ceo
+            XCTAssertTrue(player.goalMet, "Reaching a top-leadership role wins Simplified.")
+        }
+    }
+
+    /// The running score is savings ÷ age and recomputes from current state.
+    func testRunningScoreTracksSavingsPerYear() {
+        let player = Player()
+        player.age = 25
+        player.savings = 100_000
+        XCTAssertEqual(player.leaderboardScore, 4_000)
+        player.savings = 250_000
+        XCTAssertEqual(player.leaderboardScore, 10_000, "Score should update as savings grow.")
+        player.savings = -50_000
+        XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
+    }
 }
