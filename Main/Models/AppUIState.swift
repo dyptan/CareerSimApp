@@ -8,6 +8,7 @@ final class AppUIState: ObservableObject {
     @Published var showHobbiesSheet: Bool = false
     @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
+    @Published var showEntrepreneurshipSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
@@ -69,6 +70,7 @@ final class AppUIState: ObservableObject {
         showHobbiesSheet = false
         showTrainingsSheet = false
         showSideHustlesSheet = false
+        showEntrepreneurshipSheet = false
         showEventsSheet = false
         showSportsSheet = false
         showRetirementSheet = false

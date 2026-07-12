@@ -360,7 +360,16 @@ struct Education: Codable, Hashable, Identifiable {
 
     private static func elevated(_ r: Requirements, by delta: Int) -> Requirements {
         var x = r
-        func bump(_ v: Int) -> Int { v > 0 ? min(v + delta, 5) : 0 }
+        // Higher degrees deepen a field's *core* competencies (baseline ≥ 2) by
+        // the full level delta, but raise its *peripheral* axes (baseline 1) only
+        // half as fast. This keeps advanced degrees demanding on the skills that
+        // matter while staying reachable in a ~10-year run of hobbies and
+        // projects — a PhD needs a few skills near the top, not every axis maxed.
+        func bump(_ v: Int) -> Int {
+            guard v > 0 else { return 0 }
+            let step = v >= 2 ? delta : (delta + 1) / 2
+            return min(v + step, 5)
+        }
 
         for kp in SoftSkills.allAxes.map(\.keyPath) {
             x.soft[keyPath: kp] = bump(x.soft[keyPath: kp])

@@ -48,6 +48,11 @@ struct SideHustle: Identifiable, Hashable {
     /// you build the relevant skill (through hobbies and activities) before you
     /// can credibly chase the project. `nil` for open, entry-level ventures.
     var prerequisite: SkillRequirement? = nil
+    /// A hard capital gate: the minimum savings the player must have on hand to
+    /// take the venture on. Set for ventures that need real money up front — a
+    /// shop's fit-out, a property's down payment — so you can't credibly start
+    /// them broke. `nil` for ventures that need no capital.
+    var minCapital: Int? = nil
 
     /// A minimum-level requirement on one soft-skill axis (see `prerequisite`).
     struct SkillRequirement: Hashable {
@@ -63,6 +68,13 @@ struct SideHustle: Identifiable, Hashable {
     func meetsPrerequisite(for soft: SoftSkills) -> Bool {
         guard let req = prerequisite else { return true }
         return soft[keyPath: req.keyPath] >= req.minLevel
+    }
+
+    /// Whether the player has the capital this venture requires on hand (always
+    /// true when it needs none).
+    func meetsCapital(savings: Int) -> Bool {
+        guard let minCapital else { return true }
+        return savings >= minCapital
     }
 
     /// The industry a fame venture builds reputation in (`nil` for money ventures).
@@ -172,7 +184,7 @@ enum SideHustleCatalog {
             talents: [\.analyticalReasoningAndProblemSolving, \.presentationAndStorytelling, \.communicationAndNetworking],
             payoff: .money(payoutRange: 0...25_000),
             stages: [.youngAdult, .adult],
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 4)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
         ),
         SideHustle(
             id: "etsyCrafts",
@@ -181,36 +193,8 @@ enum SideHustleCatalog {
             blurb: "Turn a making hobby into an online storefront of handmade goods.",
             talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.carefulnessAndAttentionToDetail],
             payoff: .money(payoutRange: 500...16_000),
-            stages: [.youngAdult, .adult]
-        ),
-        SideHustle(
-            id: "bloggingPodcasting",
-            label: "Blogging & Podcasting",
-            icon: "🎙️",
-            blurb: "Publish a blog and a podcast on the side. Slow to build an audience, but ads and sponsors trickle in once it catches on.",
-            talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
-            payoff: .money(payoutRange: 0...20_000),
-            stages: [.youngAdult, .adult]
-        ),
-        SideHustle(
-            id: "freelanceConsulting",
-            label: "Freelance Consulting",
-            icon: "💻",
-            blurb: "Take on paid projects on the side, solving problems for clients after hours.",
-            talents: [\.analyticalReasoningAndProblemSolving, \.communicationAndNetworking, \.timeManagementAndPlanning],
-            payoff: .money(payoutRange: 1_000...30_000),
             stages: [.youngAdult, .adult],
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
-        ),
-        SideHustle(
-            id: "fitnessCoaching",
-            label: "Fitness Coaching",
-            icon: "🏋️",
-            blurb: "Train clients on evenings and weekends, turning your own discipline into income.",
-            talents: [\.resilienceAndEndurance, \.communicationAndNetworking, \.empathyAndInterpersonalCare],
-            payoff: .money(payoutRange: 1_000...20_000),
-            stages: [.youngAdult, .adult],
-            prerequisite: .init(keyPath: \.resilienceAndEndurance, minLevel: 4)
+            prerequisite: .init(keyPath: \.tinkeringAndFingerPrecision, minLevel: 4)
         ),
         SideHustle(
             id: "smallBusiness",
@@ -220,7 +204,8 @@ enum SideHustleCatalog {
             talents: [\.persuasionAndNegotiation, \.riskTakingAndInitiative, \.timeManagementAndPlanning],
             payoff: .money(payoutRange: 2_000...30_000),
             stages: [.adult],
-            prerequisite: .init(keyPath: \.persuasionAndNegotiation, minLevel: 4)
+            prerequisite: .init(keyPath: \.timeManagementAndPlanning, minLevel: 5),
+            minCapital: 15_000
         ),
         SideHustle(
             id: "realEstateFlip",
@@ -230,7 +215,8 @@ enum SideHustleCatalog {
             talents: [\.riskTakingAndInitiative, \.analyticalReasoningAndProblemSolving, \.persuasionAndNegotiation],
             payoff: .money(payoutRange: 0...130_000),
             stages: [.adult],
-            prerequisite: .init(keyPath: \.riskTakingAndInitiative, minLevel: 5)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 6),
+            minCapital: 60_000
         ),
     ]
 
@@ -245,14 +231,15 @@ enum SideHustleCatalog {
             id: "influencer",
             label: "Influencer / Content Creator",
             icon: "📱",
-            blurb: "Build an audience and chase the spotlight. Most channels fizzle — a viral one makes your name.",
+            blurb: "Build an audience across social, a blog, and a podcast, and chase the spotlight. Most channels fizzle — a viral one makes your name.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
             payoff: .fame(industry: .showBusiness, weight: 1.0),
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Viral Creator"
+            fameTitle: "Viral Creator",
+            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
         ),
         SideHustle(
             id: "selfPublishBook",
@@ -266,7 +253,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Published Author",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 5)
         ),
         SideHustle(
             id: "freelancePerformer",
@@ -280,7 +267,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
             fameTitle: "Rising Performer",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 4)
+            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 5)
         ),
         SideHustle(
             id: "releaseAlbum",
@@ -294,7 +281,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Recording Artist",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 5)
+            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 6)
         ),
         SideHustle(
             id: "tvShow",
@@ -308,7 +295,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)],
             fameTitle: "TV Personality",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 5)
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 7)
         ),
         // --- Former standalone projects (unlocked to everyone, stage-gated) ---
         SideHustle(
@@ -324,7 +311,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "App Maker",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 4)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
         ),
         SideHustle(
             id: "projectLibrary",
@@ -339,7 +326,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Open-Source Contributor",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 6)
         ),
         SideHustle(
             id: "projectArticle",
@@ -354,7 +341,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
             fameTitle: "Bylined Writer",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 3)
+            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
         ),
         SideHustle(
             id: "projectPresentation",
@@ -368,7 +355,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 2)],
             fameTitle: "Noted Speaker",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 5)
         ),
         SideHustle(
             id: "projectMusicFestival",
@@ -383,7 +370,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Festival Performer",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 3)
+            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 4)
         ),
         SideHustle(
             id: "projectPublishBook",
@@ -398,7 +385,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.leadershipAndInfluence, weight: 1)],
             fameTitle: "Book Coauthor",
-            prerequisite: .init(keyPath: \.carefulnessAndAttentionToDetail, minLevel: 5)
+            prerequisite: .init(keyPath: \.carefulnessAndAttentionToDetail, minLevel: 6)
         ),
         SideHustle(
             id: "projectGame3d",
@@ -413,7 +400,56 @@ enum SideHustleCatalog {
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Indie Game Dev",
-            prerequisite: .init(keyPath: \.spacialNavigationAndOrientation, minLevel: 4)
+            prerequisite: .init(keyPath: \.spacialNavigationAndOrientation, minLevel: 5)
+        ),
+        // --- Entrepreneurship ventures: the path to the founder skillset that
+        // hobbies can't teach — leadership, vision, persuasion, and risk appetite.
+        // A successful year banks business-industry fame (toward management and
+        // C-suite roles) and grows the entrepreneurial cluster the way running a
+        // company would. Gated on hobby-reachable skills so the path stays open.
+        SideHustle(
+            id: "startupLaunch",
+            label: "Launch a Startup",
+            icon: "🚀",
+            blurb: "Spin up a company on the side — pitch the idea, ship a product, chase growth. Most fold, but a breakout puts your name in the business press.",
+            talents: [\.analyticalReasoningAndProblemSolving, \.communicationAndNetworking, \.timeManagementAndPlanning],
+            payoff: .fame(industry: .business, weight: 1.5),
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
+                     .init(keyPath: \.riskTakingAndInitiative, weight: 1),
+                     .init(keyPath: \.leadershipAndInfluence, weight: 1),
+                     .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
+            fameTitle: "Startup Founder",
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 4)
+        ),
+        SideHustle(
+            id: "pitchCompetition",
+            label: "Enter a Pitch Competition",
+            icon: "🎤",
+            blurb: "Take a business idea to investors and a live audience. Win the room and doors — and wallets — start to open.",
+            talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.creativityAndInsightfulThinking],
+            payoff: .fame(industry: .business, weight: 1.0),
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.persuasionAndNegotiation, weight: 2),
+                     .init(keyPath: \.presentationAndStorytelling, weight: 1),
+                     .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
+            fameTitle: "Pitch Winner",
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
+        ),
+        SideHustle(
+            id: "crowdfundingCampaign",
+            label: "Run a Crowdfunding Campaign",
+            icon: "💸",
+            blurb: "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision and lead a crowd.",
+            talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
+            payoff: .fame(industry: .business, weight: 1.0),
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.persuasionAndNegotiation, weight: 1),
+                     .init(keyPath: \.riskTakingAndInitiative, weight: 1),
+                     .init(keyPath: \.leadershipAndInfluence, weight: 1),
+                     .init(keyPath: \.communicationAndNetworking, weight: 1)],
+            fameTitle: "Crowdfunded Creator",
+            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
         ),
     ]
 

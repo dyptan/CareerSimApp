@@ -140,6 +140,9 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
+            Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+                .buttonStyle(.bordered).font(.headline)
+
             Button("Education") {
                 appUIState.showTertiarySheet.toggle()
             }.buttonStyle(.bordered).font(.headline)

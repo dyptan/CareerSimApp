@@ -6,9 +6,12 @@ struct JobsView: View {
     @Binding var showCareersSheet: Bool
 
     func categories() -> [JobCategory] {
-        Array(Set(availableJobs.map(\.category))).sorted {
-            $0.rawValue < $1.rawValue
-        }
+        // Entrepreneurship is its own surface (see `EntrepreneurshipView`) — the
+        // founder path is a capital-staked venture, not salaried employment, so
+        // it's kept out of the Jobs list.
+        Array(Set(availableJobs.map(\.category)))
+            .filter { $0 != .entrepreneurship }
+            .sorted { $0.rawValue < $1.rawValue }
     }
 
     /// Groups the jobs in `category` by `baseTitle`, returning one entry per
@@ -119,6 +122,91 @@ private struct RoleGroupRow: View {
             Spacer()
         }
         .padding()
+    }
+}
+
+/// The **Ventures** surface — the founder path, split out from the salaried
+/// Jobs list. Each row is a capital-staked entrepreneurial rung (Side Hustler →
+/// Serial Entrepreneur): you invest your own savings for a shot at running a
+/// venture, then chase buyout offers year over year (see `FounderLadder` and
+/// `Player.foundVenture`). Routes into the same `JobDetail` invest flow the
+/// Jobs sheet used to host these under the Entrepreneurship category.
+struct EntrepreneurshipView: View {
+    var availableJobs: [Job]
+    @ObservedObject var player: Player
+    @Binding var showSheet: Bool
+
+    /// Founder rungs on offer, in climb order (least to most experience).
+    private var ventures: [Job] {
+        availableJobs
+            .filter { $0.category == .entrepreneurship }
+            .sorted {
+                if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
+                    return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
+                }
+                return $0.income < $1.income
+            }
+    }
+
+    var body: some View {
+        if #available(iOS 16, macOS 13, *) {
+            NavigationStack { content }
+        } else {
+            NavigationView { content }
+            #if os(iOS)
+                .navigationViewStyle(.stack)
+            #endif
+        }
+    }
+
+    private var content: some View {
+        List {
+            Section {
+                ForEach(ventures) { venture in
+                    NavigationLink {
+                        JobDetail(
+                            job: venture.atBaseSalary(),
+                            player: player,
+                            showCareersSheet: $showSheet
+                        )
+                    } label: {
+                        VentureRow(job: venture)
+                    }
+                }
+            } header: {
+                Text("Stake your own capital to run a venture. Grow it and sell for a multiple — or ride out the downturns.")
+                    .textCase(nil)
+            }
+        }
+        .navigationTitle("Ventures")
+    }
+}
+
+private struct VentureRow: View {
+    let job: Job
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(job.icon)
+                .font(.system(size: 28))
+                .frame(width: 40, height: 40)
+                .background(Color(.systemGray))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(job.baseTitle)
+                    .font(.headline)
+                Text(job.summary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("💰 Stake \((job.targetCapital ?? 0).formatted(.number)) $")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }
 

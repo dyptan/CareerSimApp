@@ -93,7 +93,8 @@ let hobbies: [Hobby] = [
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
@@ -113,7 +114,7 @@ let hobbies: [Hobby] = [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.communicationAndNetworking, weight: 2),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1)
         ],
         stages: [.teen, .youngAdult, .adult]
     ),
@@ -195,7 +196,7 @@ let hobbies: [Hobby] = [
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
-            .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
+            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1)
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
