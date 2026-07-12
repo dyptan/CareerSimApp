@@ -157,11 +157,13 @@ extension Job {
     /// for a rung on a seniority ladder (so unrelated jobs in the industry don't
     /// qualify you for a promotion), or accumulated whole-industry years for a
     /// standalone role (entry-level, or a top capstone with no junior rung).
+    /// Standalone roles credit related industries too — notably, entrepreneurship
+    /// experience counts toward Business roles (see `Player.industryExperience`).
     func relevantYears(for player: Player) -> Int {
         if seniorityPrefix != nil {
             return player.experienceByRole[baseTitle] ?? 0
         }
-        return player.experience[category] ?? 0
+        return player.industryExperience(for: category)
     }
 
     /// Years of experience this role expects — its catalog baseline

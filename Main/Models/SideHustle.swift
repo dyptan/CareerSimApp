@@ -53,6 +53,15 @@ struct SideHustle: Identifiable, Hashable {
     /// shop's fit-out, a property's down payment — so you can't credibly start
     /// them broke. `nil` for ventures that need no capital.
     var minCapital: Int? = nil
+    /// The industry a committed year of this venture credits as *work
+    /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
+    /// so years spent building a startup, pitching, or crowdfunding accumulate
+    /// like a job would — and, because Business credits entrepreneurship
+    /// (`JobCategory.creditedExperienceCategories`), count toward Business roles.
+    /// The player's existing experience in this field also lifts the venture's
+    /// success odds (see `experienceLift`). `nil` for ventures that build no
+    /// formal work experience (most fame plays).
+    var experienceCategory: JobCategory? = nil
 
     /// A minimum-level requirement on one soft-skill axis (see `prerequisite`).
     struct SkillRequirement: Hashable {
@@ -105,16 +114,35 @@ struct SideHustle: Identifiable, Hashable {
         return total / Double(talents.count)
     }
 
+    /// Per-year lift to a venture's success odds from relevant work experience,
+    /// and the cap that lift tops out at. Only ventures with an
+    /// `experienceCategory` benefit — a seasoned operator runs a smarter play.
+    static let experienceLiftPerYear = 0.03
+    static let maxExperienceLift = 0.15
+
+    /// Additive success-odds lift from the player's relevant work experience.
+    /// Zero for ventures that build no experience (`experienceCategory == nil`);
+    /// otherwise +`experienceLiftPerYear` per credited year, capped. `years` is
+    /// the player's `industryExperience` for this venture's `experienceCategory`.
+    func experienceLift(years: Int) -> Double {
+        guard experienceCategory != nil else { return 0 }
+        return min(Double(max(0, years)) * SideHustle.experienceLiftPerYear, SideHustle.maxExperienceLift)
+    }
+
     /// Probability (0.05...0.9) that the venture pays off in a given year. The
     /// floor is deliberately low — a poorly-suited attempt almost always flops —
     /// and the odds climb steeply with talent fit, so success is earned by
     /// building the right skills first. Fame ventures snowball with reputation —
     /// every banked award lifts the odds by +0.03 per weighted fame point, capped
     /// at +0.15. `fameScore` is the weighted sum of the player's awards.
-    func successProbability(for soft: SoftSkills, fameScore: Double = 0) -> Double {
+    /// Ventures that build work experience also lift with the player's years in
+    /// the field (`experienceYears`, see `experienceLift`) — a startup runs
+    /// smarter the more business you've done.
+    func successProbability(for soft: SoftSkills, fameScore: Double = 0, experienceYears: Int = 0) -> Double {
         let base = 0.05 + talentFit(for: soft) * 0.7
         let fameLift = buildsFame ? min(fameScore * 0.03, 0.15) : 0.0
-        return max(0.05, min(0.9, base + fameLift))
+        let expLift = experienceLift(years: experienceYears)
+        return max(0.05, min(0.9, base + fameLift + expLift))
     }
 
     /// The payout a successful year would yield at the player's current talent
@@ -130,9 +158,11 @@ struct SideHustle: Identifiable, Hashable {
     /// Rolls a single year of this venture. A money venture returns the takings
     /// (banked in full) on success or nothing on a flop; a fame venture returns a
     /// `FameGrant` on success. No money is staked, so there is nothing to salvage.
-    /// `fameScore` lets a fame venture's odds rise with the player's reputation.
-    func resolve(for soft: SoftSkills, fameScore: Double = 0) -> Outcome {
-        let succeeded = Double.random(in: 0...1) < successProbability(for: soft, fameScore: fameScore)
+    /// `fameScore` lets a fame venture's odds rise with the player's reputation;
+    /// `experienceYears` lets an experience-building venture's odds rise with the
+    /// player's years in its field.
+    func resolve(for soft: SoftSkills, fameScore: Double = 0, experienceYears: Int = 0) -> Outcome {
+        let succeeded = Double.random(in: 0...1) < successProbability(for: soft, fameScore: fameScore, experienceYears: experienceYears)
         guard succeeded else {
             return Outcome(hustle: self, success: false, credit: 0, grantedFame: nil)
         }
@@ -404,14 +434,20 @@ enum SideHustleCatalog {
         ),
         // --- Entrepreneurship ventures: the path to the founder skillset that
         // hobbies can't teach — leadership, vision, persuasion, and risk appetite.
-        // A successful year banks business-industry fame (toward management and
-        // C-suite roles) and grows the entrepreneurial cluster the way running a
-        // company would. Gated on hobby-reachable skills so the path stays open.
+        // The talents they draw on are all hobby-built (analytical from Coding &
+        // Board Games, communication from Journalism & Language Learning,
+        // presentation from Diary Writing & Dancing), so each idea is linked to a
+        // hobby, a soft skill, and — via `experienceCategory` — real work
+        // experience. A committed year credits `.entrepreneurship` work
+        // experience (which counts toward Business roles), banks business-industry
+        // fame (toward management and C-suite roles), and grows the entrepreneurial
+        // cluster the way running a company would. Years already spent in
+        // business/entrepreneurship also raise the odds (see `experienceLift`).
         SideHustle(
             id: "startupLaunch",
             label: "Launch a Startup",
             icon: "🚀",
-            blurb: "Spin up a company on the side — pitch the idea, ship a product, chase growth. Most fold, but a breakout puts your name in the business press.",
+            blurb: "Spin up a company on the side — pitch the idea, ship a product, chase growth. Most fold, but a breakout puts your name in the business press and a year on your entrepreneurial résumé.",
             talents: [\.analyticalReasoningAndProblemSolving, \.communicationAndNetworking, \.timeManagementAndPlanning],
             payoff: .fame(industry: .business, weight: 1.5),
             stages: [.youngAdult, .adult],
@@ -420,13 +456,14 @@ enum SideHustleCatalog {
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
             fameTitle: "Startup Founder",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 4)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 4),
+            experienceCategory: .entrepreneurship
         ),
         SideHustle(
             id: "pitchCompetition",
             label: "Enter a Pitch Competition",
             icon: "🎤",
-            blurb: "Take a business idea to investors and a live audience. Win the room and doors — and wallets — start to open.",
+            blurb: "Take a business idea to investors and a live audience. Win the room and doors — and wallets — start to open, and the reps count as real venture experience.",
             talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.creativityAndInsightfulThinking],
             payoff: .fame(industry: .business, weight: 1.0),
             stages: [.youngAdult, .adult],
@@ -434,13 +471,14 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Pitch Winner",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4),
+            experienceCategory: .entrepreneurship
         ),
         SideHustle(
             id: "crowdfundingCampaign",
             label: "Run a Crowdfunding Campaign",
             icon: "💸",
-            blurb: "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision and lead a crowd.",
+            blurb: "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision, lead a crowd, and run a venture end to end.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
             payoff: .fame(industry: .business, weight: 1.0),
             stages: [.youngAdult, .adult],
@@ -449,7 +487,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Crowdfunded Creator",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
+            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4),
+            experienceCategory: .entrepreneurship
         ),
     ]
 

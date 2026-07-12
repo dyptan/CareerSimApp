@@ -161,15 +161,33 @@ struct PrivateProjectsView: View {
             guard !lines.isEmpty else { return "" }
             return lines.joined(separator: "\n") + "\n\n"
         }()
-        let odds = Int((hustle.successProbability(for: player.softSkills, fameScore: player.fameScore) * 100).rounded())
+        let expYears = hustle.experienceCategory.map { player.industryExperience(for: $0) } ?? 0
+        let odds = Int((hustle.successProbability(for: player.softSkills, fameScore: player.fameScore, experienceYears: expYears) * 100).rounded())
+        // Ventures that build work experience (the entrepreneurship plays) note
+        // the industry the year credits — and that Business roles count it too.
+        let experienceNote: String = {
+            guard let cat = hustle.experienceCategory else { return "" }
+            let icon = JobCategory.icon(for: cat)
+            let credited = cat.creditedExperienceCategories
+                .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
+                .joined(separator: ", ")
+            let creditLine = credited.isEmpty
+                ? ""
+                : " Those years also count toward \(credited) roles."
+            let liftPct = Int((hustle.experienceLift(years: expYears) * 100).rounded())
+            let liftLine = expYears > 0
+                ? " Your \(expYears) yr so far add +\(liftPct)% to the odds."
+                : " Years in the field raise the odds over time."
+            return "\n\n📅 A committed year — win or lose — banks a year of \(icon) \(cat.rawValue) work experience.\(creditLine)\(liftLine)"
+        }()
         switch hustle.payoff {
         case .money:
             let upside = hustle.projectedPayout(for: player.softSkills)
             let stats = "🎲 ~\(odds)% success · 📈 up to \(upside.formatted(.number)) $\n\n"
-            return gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing."
+            return gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing." + experienceNote
         case .fame(let industry, _):
             let stats = "🎲 ~\(odds)% success · 🌟 \(JobCategory.icon(for: industry)) \(industry.rawValue) fame\n\n"
-            return gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing."
+            return gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
         }
     }
 }

@@ -443,6 +443,20 @@ final class Player: ObservableObject {
         }
     }
 
+    /// Years of work experience that count toward roles in `category`: the years
+    /// banked directly in that industry plus any years in industries it credits
+    /// (see `JobCategory.creditedExperienceCategories`). This is how
+    /// entrepreneurship experience — whether from running a founder venture or
+    /// from spare-time entrepreneurship projects — counts toward Business roles,
+    /// and vice versa.
+    func industryExperience(for category: JobCategory) -> Int {
+        let own = experience[category] ?? 0
+        let credited = category.creditedExperienceCategories.reduce(0) { total, other in
+            total + (experience[other] ?? 0)
+        }
+        return own + credited
+    }
+
     /// Total professional-network points relevant to a field: its industry
     /// network plus the general (cross-industry) network.
     func networkPoints(for category: JobCategory) -> Int {
@@ -728,7 +742,19 @@ final class Player: ObservableObject {
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id],
                   hustle.meetsPrerequisite(for: softSkills) else { continue }
-            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore)
+            // A year committed to an experience-building venture (the
+            // entrepreneurship plays) counts as real work experience in its
+            // field — banked whether or not the venture pays off, because the
+            // reps happen either way. Because Business credits entrepreneurship
+            // (see `JobCategory.creditedExperienceCategories`), this also moves
+            // the player toward Business roles. The player's existing years then
+            // lift the odds below.
+            let experienceYears = hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
+            if let cat = hustle.experienceCategory {
+                experience[cat, default: 0] += 1
+                recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
+            }
+            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
             if outcome.success {
                 savings += outcome.credit
                 sideHustleNet += outcome.credit

@@ -102,4 +102,67 @@ final class CareerGraphTests: XCTestCase {
             "Granting the required trainings should clear the gaps for '\(job.id)', got: \(after)"
         )
     }
+
+    // MARK: - Entrepreneurship experience counts toward Business
+
+    /// Entrepreneurship and Business credit each other's years, so a founder's
+    /// experience counts toward Business roles (and vice versa).
+    func testEntrepreneurshipExperienceCreditsBusiness() {
+        let player = Player(experience: [.entrepreneurship: 4])
+        XCTAssertEqual(player.industryExperience(for: .business), 4,
+                       "Entrepreneurship years should count toward Business experience.")
+        XCTAssertEqual(player.industryExperience(for: .entrepreneurship), 4)
+
+        let player2 = Player(experience: [.business: 3])
+        XCTAssertEqual(player2.industryExperience(for: .entrepreneurship), 3,
+                       "Business years should count toward Entrepreneurship experience.")
+    }
+
+    /// A standalone Business role's relevant years should reflect entrepreneurship
+    /// experience, so a founder can qualify on venture years alone.
+    func testBusinessRoleCountsEntrepreneurshipYears() {
+        guard let job = JobCatalog.allJobs().first(where: {
+            $0.category == .business
+                && $0.seniorityPrefix == nil
+                && $0.requirements.minYearsExperience > 0
+        }) else {
+            return // no such role in the catalogue — nothing to assert
+        }
+        let need = job.requirements.minYearsExperience
+        let player = Player(experience: [.entrepreneurship: need])
+        XCTAssertEqual(job.relevantYears(for: player), need)
+        XCTAssertTrue(job.experienceMet(for: player),
+                      "Entrepreneurship years should satisfy '\(job.id)'s experience gate.")
+    }
+
+    /// Every entrepreneurship spare-time venture builds `.entrepreneurship` work
+    /// experience — the mechanism that feeds Business roles.
+    func testEntrepreneurshipVenturesBuildExperience() {
+        let ventureIds = ["startupLaunch", "pitchCompetition", "crowdfundingCampaign"]
+        for id in ventureIds {
+            guard let venture = SideHustleCatalog.byId[id] else {
+                XCTFail("Missing entrepreneurship venture '\(id)'."); continue
+            }
+            XCTAssertEqual(venture.experienceCategory, .entrepreneurship,
+                           "Venture '\(id)' should build entrepreneurship experience.")
+        }
+    }
+
+    /// Relevant work experience should lift an experience-building venture's odds,
+    /// but never beyond the cap; ventures with no experience category are unmoved.
+    func testExperienceLiftRaisesVentureOdds() {
+        guard let venture = SideHustleCatalog.byId["startupLaunch"],
+              let plain = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Expected ventures missing from catalogue."); return
+        }
+        let soft = SoftSkills()
+        let cold = venture.successProbability(for: soft, experienceYears: 0)
+        let seasoned = venture.successProbability(for: soft, experienceYears: 20)
+        XCTAssertGreaterThan(seasoned, cold,
+                             "Experience should raise an entrepreneurship venture's odds.")
+        XCTAssertEqual(venture.experienceLift(years: 100), SideHustle.maxExperienceLift,
+                       "Experience lift should cap out.")
+        XCTAssertEqual(plain.experienceLift(years: 20), 0,
+                       "A venture with no experience category gets no lift.")
+    }
 }
