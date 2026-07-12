@@ -236,4 +236,74 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertTrue(player.executiveActionsThisYear.isEmpty,
                       "Executive actions should reset each year.")
     }
+
+    // MARK: - Venture metrics (market share, revenue, headcount)
+
+    /// A founded venture seeds positive metrics scaled off its capital.
+    func testFoundedVentureSeedsMetrics() {
+        let s = ActiveStartup.founded(rungIndex: 2, targetCapital: 60_000)
+        XCTAssertGreaterThan(s.marketSharePct, 0)
+        XCTAssertGreaterThanOrEqual(s.revenue, 60_000)
+        XCTAssertGreaterThanOrEqual(s.headcount, 1)
+    }
+
+    /// Holding the venture another year always grows revenue and lifts the exit
+    /// premium (the growth factor is strictly > 1).
+    func testGrowthRaisesRevenueAndExitPremium() {
+        var s = ActiveStartup.founded(rungIndex: 1, targetCapital: 25_000)
+        let premiumBefore = s.exitPremium(targetCapital: 25_000)
+        let revenueBefore = s.revenue
+        s.grow(founderSkillFit: 0.8)
+        XCTAssertGreaterThan(s.revenue, revenueBefore, "A held year should grow revenue.")
+        XCTAssertGreaterThanOrEqual(s.exitPremium(targetCapital: 25_000), premiumBefore,
+                                    "Growth should not lower the exit premium.")
+        XCTAssertLessThanOrEqual(s.marketSharePct, 100.0, "Market share is capped at 100%.")
+    }
+
+    /// A bigger, higher-share company commands a larger exit premium.
+    func testExitPremiumScalesWithTraction() {
+        let target = 60_000
+        let small = ActiveStartup.founded(rungIndex: 2, targetCapital: target)
+        var big = small
+        big.revenue = target * 4
+        big.marketSharePct = 40
+        XCTAssertGreaterThan(big.exitPremium(targetCapital: target),
+                             small.exitPremium(targetCapital: target))
+        XCTAssertGreaterThanOrEqual(small.exitPremium(targetCapital: target), 0.5,
+                                    "Exit premium never falls below the floor.")
+    }
+
+    /// Stepping up a rung scales the company and never shrinks it.
+    func testScaleUpGrowsAndFloorsMetrics() {
+        var s = ActiveStartup.founded(rungIndex: 0, targetCapital: 2_000)
+        let revenueBefore = s.revenue
+        s.scaleUp(toRungIndex: 1, targetCapital: 25_000)
+        XCTAssertEqual(s.rungIndex, 1)
+        XCTAssertEqual(s.yearsHeld, 0)
+        XCTAssertGreaterThanOrEqual(s.revenue, revenueBefore)
+        XCTAssertGreaterThanOrEqual(s.revenue, 25_000, "Floored at the new rung's seed.")
+    }
+
+    /// An investment round injected into a founder's venture grows its metrics.
+    func testInvestmentRoundFuelsVentureMetrics() {
+        guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }),
+              let decision = ExecutiveDecisionCatalog.byId["investmentRound"] else { return }
+        let player = Player()
+        player.currentOccupation = founder
+        player.activeStartup = ActiveStartup.founded(
+            rungIndex: FounderLadder.rungIndex(forTitle: founder.id) ?? 0,
+            targetCapital: founder.targetCapital ?? 0
+        )
+        // Guarantee the round closes so we can assert the metric injection.
+        player.softSkills.visionaryThinkingAndAmbition = 10
+        player.softSkills.persuasionAndNegotiation = 10
+        player.softSkills.leadershipAndInfluence = 10
+        player.softSkills.communicationAndNetworking = 10
+        let revenueBefore = player.activeStartup?.revenue ?? 0
+        let outcome = player.resolveExecutiveDecision(decision)
+        if outcome.success {
+            XCTAssertGreaterThan(player.activeStartup?.revenue ?? 0, revenueBefore,
+                                 "A closed round should grow the venture's revenue.")
+        }
+    }
 }

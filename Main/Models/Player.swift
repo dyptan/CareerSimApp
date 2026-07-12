@@ -22,9 +22,77 @@ struct StatusEvent: Identifiable, Hashable {
 /// (0 = Side Hustler … 3 = Serial Entrepreneur). `yearsHeld` is the count of
 /// year-rolls since the venture was founded (or last grew), purely informational
 /// for the dialog copy.
+///
+/// The venture also tracks three **business metrics** that grow with every year
+/// held: `marketSharePct` (share of its market), `revenue` (annual $), and
+/// `headcount` (employees). They start modest, compound each year (faster for a
+/// better-run company), step up on a rung-up, and — crucially — drive the size
+/// of the buyout offer (see `exitPremium`): grow the company and it sells for
+/// more. An investment round from the Boardroom (`ExecutiveDecision`) fuels them.
 struct ActiveStartup: Hashable {
     var rungIndex: Int
     var yearsHeld: Int
+    /// Share of its market, 0...100 %.
+    var marketSharePct: Double
+    /// Annual revenue in $.
+    var revenue: Int
+    /// Employees on the books.
+    var headcount: Int
+
+    /// Seeds a freshly founded venture at `rungIndex`, with starting metrics
+    /// scaled off the rung's `targetCapital` (a bigger raise buys more traction).
+    static func founded(rungIndex: Int, targetCapital: Int) -> ActiveStartup {
+        ActiveStartup(
+            rungIndex: rungIndex,
+            yearsHeld: 0,
+            marketSharePct: min(1.5 + Double(rungIndex) * 1.5, 100),
+            revenue: max(1_000, targetCapital),
+            headcount: max(1, 1 + rungIndex * 3)
+        )
+    }
+
+    /// Compounds one year of organic growth. A well-run venture (higher
+    /// `founderSkillFit`, 0...1) grows faster; a little jitter keeps years from
+    /// feeling identical. Revenue leads; headcount trails it; market share creeps
+    /// toward saturation. Does not touch `yearsHeld` (the caller owns that).
+    mutating func grow(founderSkillFit: Double) {
+        let rate = 0.08 + max(0, min(founderSkillFit, 1)) * 0.22   // 8%–30% baseline
+        let factor = 1.0 + rate * Double.random(in: 0.6...1.4)
+        revenue = Int((Double(revenue) * factor).rounded())
+        headcount = max(1, Int((Double(headcount) * (1.0 + (factor - 1.0) * 0.7)).rounded()))
+        marketSharePct = min(100.0, marketSharePct * factor)
+    }
+
+    /// Applies a one-off boost to the metrics — used when an investment round
+    /// closes (see `Player.resolveExecutiveDecision`). `scale` > 1 grows revenue
+    /// and headcount; market share ticks up additively toward the cap.
+    mutating func inject(scale: Double, marketShareGain: Double) {
+        revenue = Int((Double(revenue) * scale).rounded())
+        headcount = max(headcount, Int((Double(headcount) * (1.0 + (scale - 1.0) * 0.6)).rounded()))
+        marketSharePct = min(100.0, marketSharePct + marketShareGain)
+    }
+
+    /// Steps the venture up to `toRungIndex` on a Hold-and-grow: a step change in
+    /// scale, floored at the new rung's seed so a rung-up never shrinks the
+    /// company. Resets `yearsHeld`.
+    mutating func scaleUp(toRungIndex: Int, targetCapital: Int) {
+        let seed = ActiveStartup.founded(rungIndex: toRungIndex, targetCapital: targetCapital)
+        rungIndex = toRungIndex
+        yearsHeld = 0
+        revenue = max(revenue * 2, seed.revenue)
+        headcount = max(Int((Double(headcount) * 1.8).rounded()), seed.headcount)
+        marketSharePct = min(100.0, max(marketSharePct + 3.0, seed.marketSharePct))
+    }
+
+    /// Multiplier on the rung's headline buyout value from the venture's traction:
+    /// revenue grown past the rung's capital baseline plus a market-share kicker.
+    /// ~1.0 at founding, climbing toward ~2× for a well-grown company, so holding
+    /// and growing is rewarded at exit. Never below 0.5.
+    func exitPremium(targetCapital: Int) -> Double {
+        let revenueRatio = Double(revenue) / Double(max(targetCapital, 1))
+        let premium = min(revenueRatio, 4.0) * 0.25 + min(marketSharePct / 100.0, 1.0) * 0.5
+        return max(0.5, 0.75 + premium)
+    }
 }
 
 /// A single entry on the player's fame shelf: a named accolade that
@@ -816,8 +884,12 @@ final class Player: ObservableObject {
            let founderJob = currentOccupation,
            let target = founderJob.targetCapital {
             startup.yearsHeld += 1
+            let skillFit = founderJob.founderSkillFit(for: self)
             if recessionThisYear {
-                let payout = FounderLadder.bankruptcyPayout(forRungIndex: startup.rungIndex, targetCapital: target)
+                let payout = FounderLadder.bankruptcyPayout(
+                    forRungIndex: startup.rungIndex, targetCapital: target,
+                    metricsMultiplier: startup.exitPremium(targetCapital: target)
+                )
                 savings += payout
                 lastBankruptcySalvage = payout
                 showStartupBankruptcyAlert = true
@@ -827,12 +899,18 @@ final class Player: ObservableObject {
                 showStartupOfferSheet = false
                 currentOccupation = nil
             } else {
+                // Another year at the helm grows the company's traction.
+                startup.grow(founderSkillFit: skillFit)
+                recordStatus("📊", "\(founderJob.baseTitle): \(startup.revenue.formatted(.number)) $ revenue · \(startup.headcount) staff · \(Int(startup.marketSharePct.rounded()))% market")
                 let chance = FounderLadder.offerProbability(
                     forRungIndex: startup.rungIndex,
-                    founderSkillFit: founderJob.founderSkillFit(for: self)
+                    founderSkillFit: skillFit
                 )
                 if Double.random(in: 0...1) < chance {
-                    let offer = FounderLadder.randomOffer(forRungIndex: startup.rungIndex, targetCapital: target)
+                    let offer = FounderLadder.randomOffer(
+                        forRungIndex: startup.rungIndex, targetCapital: target,
+                        metricsMultiplier: startup.exitPremium(targetCapital: target)
+                    )
                     pendingStartupOffer = offer
                     showStartupOfferSheet = true
                     celebrationTrigger += 1
@@ -919,7 +997,7 @@ final class Player: ObservableObject {
             currentOccupation = job             // keeps the rung's annualIncome
             recordStatus("🚀", "Founded as \(job.baseTitle)")
             if !isSimplified, let rung = FounderLadder.rungIndex(forTitle: job.id) {
-                activeStartup = ActiveStartup(rungIndex: rung, yearsHeld: 0)
+                activeStartup = ActiveStartup.founded(rungIndex: rung, targetCapital: job.targetCapital ?? 0)
             }
         } else {
             savings += stake / 2                // salvage half of a failed venture
@@ -955,12 +1033,14 @@ final class Player: ObservableObject {
         }
         let nextRung = min(startup.rungIndex + 1, FounderLadder.count - 1)
         if nextRung != startup.rungIndex {
-            startup.rungIndex = nextRung
-            startup.yearsHeld = 0
-            if let upgraded = FounderLadder.job(at: nextRung, in: availableJobs)
-                ?? FounderLadder.job(at: nextRung, in: JobCatalog.allJobs()) {
+            let upgraded = FounderLadder.job(at: nextRung, in: availableJobs)
+                ?? FounderLadder.job(at: nextRung, in: JobCatalog.allJobs())
+            // Stepping up a rung is a step change in scale, floored at the new
+            // rung's seed so growth never goes backwards.
+            startup.scaleUp(toRungIndex: nextRung, targetCapital: upgraded?.targetCapital ?? 0)
+            if let upgraded {
                 currentOccupation = upgraded
-                recordStatus("📈", "Held & grew into \(upgraded.baseTitle)")
+                recordStatus("📈", "Held & grew into \(upgraded.baseTitle) — \(startup.headcount) staff, \(Int(startup.marketSharePct.rounded()))% market")
             }
         } else {
             recordStatus("📈", "Declined buyout — kept growing the company")
@@ -1055,6 +1135,13 @@ final class Player: ObservableObject {
                 [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation]
             for kp in growthAxes {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
+            }
+            // A closed round fuels a founder's own venture — capital buys growth,
+            // hiring, and market share (no-op for a hired exec with no startup).
+            if var startup = activeStartup {
+                startup.inject(scale: 1.6, marketShareGain: 5.0)
+                activeStartup = startup
+                recordStatus("📊", "Round fuels \(job.baseTitle): \(startup.headcount) staff · \(Int(startup.marketSharePct.rounded()))% market")
             }
             celebrationTrigger += 1
             recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")

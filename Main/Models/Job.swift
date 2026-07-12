@@ -547,12 +547,15 @@ enum FounderLadder {
         return Int((Double(targetCapital) * exitMultiplier[idx]).rounded())
     }
 
-    /// One year's randomised buyout offer: the rung's headline value jittered
-    /// uniformly within ±25%. Re-rolled every successful annual offer roll.
-    static func randomOffer(forRungIndex idx: Int, targetCapital: Int) -> Int {
-        let headline = headlineOffer(forRungIndex: idx, targetCapital: targetCapital)
+    /// One year's randomised buyout offer: the rung's headline value scaled by
+    /// the venture's traction (`metricsMultiplier`, see `ActiveStartup.exitPremium`)
+    /// and jittered uniformly within ±25%. Re-rolled every successful annual roll,
+    /// so a company that has grown its revenue and market share commands a bigger
+    /// exit each year.
+    static func randomOffer(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
+        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
         let jitter = Double.random(in: 0.75...1.25)
-        return Int((Double(headline) * jitter).rounded())
+        return Int((headline * jitter).rounded())
     }
 
     /// Probability (clamped 0.05...0.92) that this year's annual roll surfaces
@@ -565,10 +568,12 @@ enum FounderLadder {
     }
 
     /// Fire-sale payout when a recession forces the player to liquidate. Caps
-    /// the loss while still hurting — a haircut on the rung's would-be offer.
-    static func bankruptcyPayout(forRungIndex idx: Int, targetCapital: Int) -> Int {
-        let headline = headlineOffer(forRungIndex: idx, targetCapital: targetCapital)
-        return Int((Double(headline) * bankruptcySalvageFraction).rounded())
+    /// the loss while still hurting — a haircut on the rung's would-be offer,
+    /// scaled by the venture's traction (`metricsMultiplier`) so a bigger company
+    /// salvages more even in a forced sale.
+    static func bankruptcyPayout(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
+        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
+        return Int((headline * bankruptcySalvageFraction).rounded())
     }
 }
 
