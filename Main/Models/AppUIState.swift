@@ -9,6 +9,9 @@ final class AppUIState: ObservableObject {
     @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
     @Published var showEntrepreneurshipSheet: Bool = false
+    /// The Boardroom sheet — senior-leadership strategy plays. Gated in the
+    /// footer on the player holding an executive seat (`Job.isExecutive`).
+    @Published var showExecutiveSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
@@ -71,6 +74,7 @@ final class AppUIState: ObservableObject {
         showTrainingsSheet = false
         showSideHustlesSheet = false
         showEntrepreneurshipSheet = false
+        showExecutiveSheet = false
         showEventsSheet = false
         showSportsSheet = false
         showRetirementSheet = false

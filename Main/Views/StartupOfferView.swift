@@ -31,6 +31,28 @@ struct StartupOfferView: View {
         return "\(offer.formatted(.number)) $"
     }
 
+    /// The venture's current business metrics — the traction that drove this
+    /// offer up (see `ActiveStartup.exitPremium`).
+    @ViewBuilder
+    private func metricsRow(for startup: ActiveStartup) -> some View {
+        HStack(spacing: 18) {
+            metric("📊", "\(Int(startup.marketSharePct.rounded()))%", "market")
+            metric("💰", "\(startup.revenue.formatted(.number)) $", "revenue")
+            metric("👥", "\(startup.headcount)", "staff")
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func metric(_ icon: String, _ value: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text("\(icon) \(value)")
+                .font(.callout.bold().monospacedDigit())
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 18) {
             Text("💼 Buyout Offer")
@@ -45,6 +67,10 @@ struct StartupOfferView: View {
             Text(offerText)
                 .font(.largeTitle.bold())
                 .foregroundStyle(.green)
+
+            if let startup = player.activeStartup {
+                metricsRow(for: startup)
+            }
 
             Text(nextRungTitle == nil
                  ? "You're already at the top of the founder ladder. Hold and another bidder may show up next year."

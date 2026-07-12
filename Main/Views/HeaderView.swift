@@ -42,6 +42,14 @@ struct HeaderView: View {
                     Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+
+                    // While running a founder venture, show its live business
+                    // metrics — the traction that drives the next buyout offer.
+                    if let startup = player.activeStartup {
+                        Text("📊 \(Int(startup.marketSharePct.rounded()))% market · 💰 \(startup.revenue.formatted(.number)) $ · 👥 \(startup.headcount)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 if let currentEducation = player.currentEducation {
                     Text("Studying: \(currentEducation.degreeName)")
@@ -50,6 +58,20 @@ struct HeaderView: View {
                 Text("Savings: \(player.savings.formatted(.number)) $")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                // Realistic mode is open-ended: show the running score (updated
+                // every year) that the player banks when they finish the game.
+                if !player.isSimplified {
+                    HStack(spacing: 6) {
+                        Text("🏅 Score: \(player.leaderboardScore.formatted(.number))")
+                            .font(.caption.bold())
+                            .foregroundStyle(.secondary)
+                        InfoHint(
+                            title: "Your score",
+                            message: "Your score is your savings ÷ your age (\(player.savings.formatted(.number)) ÷ \(player.age) = \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
+                        )
+                    }
+                }
             }
 
             Spacer()
@@ -60,12 +82,12 @@ struct HeaderView: View {
                 .font(.headline)
         }
         .alert("Finish game?", isPresented: $showFinishConfirm) {
-            Button("Finish & record score", role: .destructive) {
+            Button("Finish & save record", role: .destructive) {
                 appUIState.showRetirementSheet = true
             }
             Button("Keep playing", role: .cancel) { }
         } message: {
-            Text("End your career now and record your score (savings ÷ age = \(player.leaderboardScore)). You can start over afterward.")
+            Text("End your career now and save your score of \(player.leaderboardScore) (savings ÷ age) to the leaderboard. You can start over afterward.")
         }
     }
 

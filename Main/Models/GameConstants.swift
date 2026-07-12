@@ -31,12 +31,9 @@ enum GameConstants {
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700
 
-    /// Savings target that wins the game in realistic mode ("first million").
-    static let millionGoal: Int = 1_000_000
-
     /// Realistic mode: annual nominal return the accumulated balance compounds
     /// at (a balanced-portfolio, long-run figure). Compounding — not raw salary —
-    /// is what realistically carries a diligent saver to the first million.
+    /// is what steadily grows a diligent saver's score over a career.
     static let investmentReturn: Double = 0.06
 
     /// Age at which a new game begins (childhood start). The player's age

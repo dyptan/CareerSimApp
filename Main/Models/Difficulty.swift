@@ -60,18 +60,20 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Short name of this setting's win condition, shown in the picker and header.
+    /// Short name of this setting's goal, shown in the picker and header. The
+    /// realistic settings are open-ended — there's no finish line, just a running
+    /// score to grow and bank whenever you decide to finish.
     var goalHeadline: String {
         switch self {
-        case .simplified:             return "Make it to the top"
-        case .comfortable, .middleClass: return "Earn your first million"
+        case .simplified:                return "Make it to the top"
+        case .comfortable, .middleClass: return "Score as high as you can"
         }
     }
 
     var goalIcon: String {
         switch self {
-        case .simplified:             return "👔"
-        case .comfortable, .middleClass: return "💰"
+        case .simplified:                return "👔"
+        case .comfortable, .middleClass: return "🏅"
         }
     }
 

@@ -81,6 +81,15 @@ struct RootView: View {
             Button("Close") { appUIState.showEntrepreneurshipSheet = false }
                 .padding()
         }
+        .sheet(isPresented: $appUIState.showExecutiveSheet) {
+            ExecutiveDecisionsView(
+                player: player,
+                showSheet: $appUIState.showExecutiveSheet
+            )
+            #if os(macOS)
+            .frame(minWidth: 520, minHeight: 480)
+            #endif
+        }
         .sheet(isPresented: $appUIState.showTrainingsSheet) {
             navigationSheet { trainingsContent }
         }
@@ -110,7 +119,9 @@ struct RootView: View {
         } message: {
             Text("A downturn forced you to liquidate your startup. You walked away with \(player.lastBankruptcySalvage.formatted(.number)) $ from the fire-sale.")
         }
-        .onChange(of: player.savings) { _ in checkGoalReached() }
+        // The only fixed goal left is Simplified's top-leadership finish line,
+        // which turns on when the occupation changes; realistic modes are
+        // open-ended and score-based (see `Player.goalMet`).
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
         .onChange(of: player.age) { newValue in
             switch newValue {

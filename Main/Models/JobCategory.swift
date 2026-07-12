@@ -99,6 +99,20 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Other industries whose accumulated work experience *also* counts toward
+    /// roles in this category. Business and Entrepreneurship credit each other:
+    /// running your own venture builds the same commercial acumen a Business
+    /// employer values, and years spent in Business roles read as founder
+    /// experience when you set out on your own. See `Player.industryExperience`
+    /// and `Job.relevantYears`.
+    var creditedExperienceCategories: Set<JobCategory> {
+        switch self {
+        case .business:         return [.entrepreneurship]
+        case .entrepreneurship: return [.business]
+        default:                return []
+        }
+    }
+
     static func icon(for category: JobCategory) -> String {
         switch category {
         case .engineering: return "🧰"

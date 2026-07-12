@@ -219,6 +219,22 @@ struct JobDetail: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
+
+                    // Standalone roles credit related industries too — notably,
+                    // entrepreneurship experience counts toward Business roles.
+                    let credited = job.seniorityPrefix == nil
+                        ? job.category.creditedExperienceCategories
+                        : []
+                    if !credited.isEmpty {
+                        let names = credited
+                            .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
+                            .joined(separator: ", ")
+                        Text("Your \(names) experience counts toward this too.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                    }
                 }
             }
 

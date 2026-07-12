@@ -143,6 +143,13 @@ struct FooterView: View {
             Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
                 .buttonStyle(.bordered).font(.headline)
 
+            // Boardroom: senior-leadership strategy plays, shown only once the
+            // player holds an executive seat (CEO, director, partner, founder).
+            if player.canMakeExecutiveDecisions {
+                Button("Boardroom") { appUIState.showExecutiveSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+            }
+
             Button("Education") {
                 appUIState.showTertiarySheet.toggle()
             }.buttonStyle(.bordered).font(.headline)
