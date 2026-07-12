@@ -273,15 +273,59 @@ final class CareerGraphTests: XCTestCase {
                                     "Exit premium never falls below the floor.")
     }
 
-    /// Stepping up a rung scales the company and never shrinks it.
-    func testScaleUpGrowsAndFloorsMetrics() {
-        var s = ActiveStartup.founded(rungIndex: 0, targetCapital: 2_000)
-        let revenueBefore = s.revenue
-        s.scaleUp(toRungIndex: 1, targetCapital: 25_000)
-        XCTAssertEqual(s.rungIndex, 1)
-        XCTAssertEqual(s.yearsHeld, 0)
-        XCTAssertGreaterThanOrEqual(s.revenue, revenueBefore)
-        XCTAssertGreaterThanOrEqual(s.revenue, 25_000, "Floored at the new rung's seed.")
+    /// A founded venture starts fully owned by the founder.
+    func testFoundedVentureIsFullyOwned() {
+        let s = ActiveStartup.founded(rungIndex: 1, targetCapital: 25_000)
+        XCTAssertEqual(s.ownershipFraction, 1.0, "A new founder owns the whole company.")
+    }
+
+    /// The venture valuation grows with traction and is marked down in a downturn.
+    func testVentureValuationReflectsTractionAndEconomy() {
+        guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }) else { return }
+        let player = Player()
+        player.difficulty = .middleClass
+        player.currentOccupation = founder
+        let rung = FounderLadder.rungIndex(forTitle: founder.id) ?? 0
+        player.activeStartup = ActiveStartup.founded(rungIndex: rung, targetCapital: founder.targetCapital ?? 0)
+
+        player.economyInRecession = false
+        let calm = player.ventureValuation ?? 0
+        XCTAssertGreaterThan(calm, 0, "A running venture has a positive valuation.")
+
+        // More traction raises the valuation.
+        player.activeStartup?.revenue = max(1, (founder.targetCapital ?? 1)) * 4
+        player.activeStartup?.marketSharePct = 40
+        let grown = player.ventureValuation ?? 0
+        XCTAssertGreaterThan(grown, calm, "More traction should raise the valuation.")
+
+        // A recession marks the same company down.
+        player.economyInRecession = true
+        let recessed = player.ventureValuation ?? 0
+        XCTAssertLessThan(recessed, grown, "A downturn should mark the valuation down.")
+    }
+
+    /// Selling part of the stake banks cash and keeps the venture running with a
+    /// smaller ownership share; selling all of it exits the venture.
+    func testSellVentureSharesPartialThenExit() {
+        guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }) else { return }
+        let player = Player()
+        player.difficulty = .middleClass
+        player.currentOccupation = founder
+        let rung = FounderLadder.rungIndex(forTitle: founder.id) ?? 0
+        player.activeStartup = ActiveStartup.founded(rungIndex: rung, targetCapital: founder.targetCapital ?? 0)
+        player.savings = 0
+
+        XCTAssertGreaterThan(player.founderStakeValue ?? 0, 0)
+
+        player.sellVentureShares(fractionOfStake: 0.5)
+        XCTAssertNotNil(player.activeStartup, "A partial sale keeps the venture running.")
+        XCTAssertEqual(player.activeStartup?.ownershipFraction ?? 0, 0.5, accuracy: 0.001,
+                       "Selling half the stake leaves 50% ownership.")
+        XCTAssertGreaterThan(player.savings, 0, "A sale banks cash.")
+
+        player.sellVentureShares(fractionOfStake: 1.0)
+        XCTAssertNil(player.activeStartup, "Selling the whole stake exits the venture.")
+        XCTAssertNil(player.currentOccupation, "Exiting clears the founder occupation.")
     }
 
     /// An investment round injected into a founder's venture grows its metrics.

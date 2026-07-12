@@ -1,38 +1,50 @@
 import SwiftUI
 
-/// Sell-or-Hold dialog that appears the year a player's active startup lands a
-/// buyout offer (see `Player.advanceYear` and `Player.activeStartup`). The
-/// player either banks the cash (`acceptStartupOffer`) and exits the venture,
-/// or declines and advances to the next founder rung (`holdStartup`). The
-/// sheet is presented from `RootView`, driven by `Player.showStartupOfferSheet`.
-struct StartupOfferView: View {
+/// The running-venture panel shown inside the **Ventures** surface while the
+/// player operates an active startup (realistic mode only, see
+/// `EntrepreneurshipView`). It reports the company's live valuation — traction-
+/// and economy-adjusted (see `Player.ventureValuation`) — and lets the founder
+/// sell any slice of their equity with a slider. Selling the whole stake exits
+/// the venture; a partial sale banks the cash and keeps them running with a
+/// smaller ownership share (`Player.sellVentureShares`). There are no buyout
+/// offers — the founder sells on their own schedule.
+struct ActiveVentureView: View {
     @ObservedObject var player: Player
 
-    private var rungTitle: String {
-        guard let idx = player.activeStartup?.rungIndex,
-              FounderLadder.rungTitles.indices.contains(idx) else {
-            return player.currentOccupation?.baseTitle ?? "Your venture"
-        }
-        return FounderLadder.rungTitles[idx]
+    /// Fraction (0...1) of the founder's *current* stake to sell, driven by the
+    /// slider. Resets to 0 after each sale.
+    @State private var sellFraction: Double = 0
+
+    private var title: String { player.currentOccupation?.baseTitle ?? "Your venture" }
+
+    /// Whole-company valuation ($). Zero if the venture has somehow gone away.
+    private var fullValuation: Int { player.ventureValuation ?? 0 }
+
+    /// Cash value of the founder's retained stake ($).
+    private var stakeValue: Int { player.founderStakeValue ?? 0 }
+
+    private var ownershipPct: Int {
+        Int(((player.activeStartup?.ownershipFraction ?? 0) * 100).rounded())
     }
 
-    /// The next rung's title if there is one above the current rung. Used in
-    /// the Hold-button copy so the player sees exactly what they're trading
-    /// the cash offer for ("Hold & grow into Small Business Owner").
-    private var nextRungTitle: String? {
-        guard let idx = player.activeStartup?.rungIndex else { return nil }
-        let next = idx + 1
-        guard FounderLadder.rungTitles.indices.contains(next) else { return nil }
-        return FounderLadder.rungTitles[next]
+    /// Cash the current slider position would bank.
+    private var proceeds: Int { Int((Double(stakeValue) * sellFraction).rounded()) }
+
+    private var sellPct: Int { Int((sellFraction * 100).rounded()) }
+
+    /// Selling the entire remaining stake exits the venture.
+    private var isFullExit: Bool { sellFraction >= 0.999 }
+
+    private var valuationHint: String {
+        """
+        Your company's valuation is what the whole business is worth today. It starts from the capital your venture needs, multiplied for its tier (a bigger venture is worth a larger multiple), then scaled by how much traction you've built — your revenue versus that capital, plus your share of the market.
+
+        The economy matters too: during a downturn, buyers and investors pay less, so valuations are marked down until the recession lifts.
+
+        You own \(ownershipPct)% of the company. Selling shares banks that slice of the valuation as cash. Sell all of your shares and you exit the venture; sell only part and you keep running it with a smaller stake.
+        """
     }
 
-    private var offerText: String {
-        guard let offer = player.pendingStartupOffer else { return "—" }
-        return "\(offer.formatted(.number)) $"
-    }
-
-    /// The venture's current business metrics — the traction that drove this
-    /// offer up (see `ActiveStartup.exitPremium`).
     @ViewBuilder
     private func metricsRow(for startup: ActiveStartup) -> some View {
         HStack(spacing: 18) {
@@ -54,53 +66,78 @@ struct StartupOfferView: View {
     }
 
     var body: some View {
-        VStack(spacing: 18) {
-            Text("💼 Buyout Offer")
-                .font(.title2.bold())
-                .padding(.top)
+        ScrollView {
+            VStack(spacing: 18) {
+                Text("🏢 \(title)")
+                    .font(.title2.bold())
+                    .padding(.top)
 
-            Text("An acquirer wants to buy your \(rungTitle).")
-                .font(.body)
-                .multilineTextAlignment(.center)
+                if let startup = player.activeStartup {
+                    metricsRow(for: startup)
+                }
+
+                VStack(spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text("Company valuation")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                        InfoHint(title: "How your venture is valued", message: valuationHint)
+                    }
+                    Text("\(fullValuation.formatted(.number)) $")
+                        .font(.largeTitle.bold().monospacedDigit())
+                        .foregroundStyle(.green)
+                    Text("You own \(ownershipPct)% — worth \(stakeValue.formatted(.number)) $")
+                        .font(.callout.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+
+                if player.economyInRecession {
+                    Label("Recession — valuations are marked down until the economy recovers.",
+                          systemImage: "chart.line.downtrend.xyaxis")
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+
+                Divider()
+
+                VStack(spacing: 10) {
+                    HStack {
+                        Text("Sell shares")
+                            .font(.headline)
+                        Spacer()
+                        Text("\(sellPct)% of your stake")
+                            .font(.callout.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $sellFraction, in: 0...1, step: 0.05)
+                    Text(isFullExit
+                         ? "You'll sell your entire stake and exit the venture."
+                         : "You'll bank \(proceeds.formatted(.number)) $ and keep a \(ownershipPct - Int((Double(ownershipPct) * sellFraction).rounded()))% stake.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                }
                 .padding(.horizontal)
 
-            Text(offerText)
-                .font(.largeTitle.bold())
-                .foregroundStyle(.green)
-
-            if let startup = player.activeStartup {
-                metricsRow(for: startup)
-            }
-
-            Text(nextRungTitle == nil
-                 ? "You're already at the top of the founder ladder. Hold and another bidder may show up next year."
-                 : "Take the cash now, or hold and grow the company into \(nextRungTitle!) — bigger risk, bigger exit.")
-                .font(.callout)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                Button {
+                    player.sellVentureShares(fractionOfStake: sellFraction)
+                    sellFraction = 0
+                } label: {
+                    Text(isFullExit
+                         ? "Sell entire stake for \(proceeds.formatted(.number)) $"
+                         : "Sell \(sellPct)% for \(proceeds.formatted(.number)) $")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(sellFraction <= 0)
                 .padding(.horizontal)
-
-            Button {
-                player.acceptStartupOffer()
-            } label: {
-                Text("Sell for \(offerText)")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-
-            Button {
-                player.holdStartup()
-            } label: {
-                Text(nextRungTitle.map { "Hold & grow into \($0)" } ?? "Hold & wait for a better offer")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
+            .padding(.bottom)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .center)
-        #if os(macOS)
-        .frame(minWidth: 480, minHeight: 360)
-        #endif
     }
 }

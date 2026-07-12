@@ -488,92 +488,57 @@ extension Job {
     }
 }
 
-/// Realistic-mode founder loop: once a player launches an entrepreneurial Job
-/// the game tracks an `ActiveStartup` (see `Player.activeStartup`), and each
-/// year `advanceYear` consults this enum to roll a buyout offer or determine
-/// the fire-sale value during a recession.
+/// Realistic-mode founder economics: once a player launches an entrepreneurial
+/// Job the game tracks an `ActiveStartup` (see `Player.activeStartup`), and this
+/// enum turns the venture's founding tier and traction into a live **company
+/// valuation**. The founder sells slices of their equity against that valuation
+/// on their own schedule (see `Player.sellVentureShares`); a recession can still
+/// force a fire-sale liquidation (`bankruptcyPayout`).
 ///
-/// The four rungs mirror the founder titles declared in `JobCatalog.allJobs`
-/// (Side Hustler → Small Business Owner → Startup Founder → Serial Entrepreneur).
-/// Holding a successful offer advances `rungIndex`; selling banks the offer
-/// and ends the venture.
+/// The four founding tiers mirror the founder titles declared in
+/// `JobCatalog.allJobs` (Side Hustler → Small Business Owner → Startup Founder →
+/// Serial Entrepreneur). The tier is fixed at founding — the venture grows in
+/// valuation rather than climbing a rung ladder.
 enum FounderLadder {
-    /// The four founder titles in climb order, matched to the ids registered
-    /// in `JobCatalog`. The index of a title is the `ActiveStartup.rungIndex`.
+    /// The four founding titles, matched to the ids registered in `JobCatalog`.
+    /// The index of a title is the `ActiveStartup.rungIndex` (the founding tier).
     static let rungTitles: [String] = [
         "Side Hustler", "Small Business Owner", "Startup Founder", "Serial Entrepreneur"
     ]
 
-    /// Per-rung buyout multiplier on the rung's `targetCapital`. A Side Hustler
-    /// acquihire is small money; an exit at the Serial Entrepreneur tier is
-    /// life-changing. Tuned so each rung's offer comfortably exceeds the
-    /// previous one's, rewarding the Hold-and-grow path.
-    private static let exitMultiplier: [Double] = [2.0, 3.0, 6.0, 12.0]
+    /// Per-tier valuation multiplier on the venture's `targetCapital`. A Side
+    /// Hustler is worth a small multiple of the capital it needs; a Serial
+    /// Entrepreneur's company is worth many times more. Sets the baseline the
+    /// venture's traction then scales up (see `ActiveStartup.valuation`).
+    private static let valuationMultiplier: [Double] = [2.0, 3.0, 6.0, 12.0]
 
-    /// Per-rung base probability that an annual roll lands a buyout offer.
-    /// Smaller ventures sell more often; world-changing companies take patience.
-    /// The founder's skill fit adds up to +0.20 on top.
-    private static let baseOfferChance: [Double] = [0.35, 0.25, 0.18, 0.12]
-
-    /// Fraction of the (jittered) offer paid out during a forced bankruptcy.
-    /// A fire-sale during a recession returns a fraction of the would-be exit,
-    /// less than the half-stake salvage on a regular failure but still
-    /// meaningful — the player walks away with *something*.
+    /// Fraction of the valuation paid out during a forced bankruptcy. A fire-sale
+    /// during a recession returns a fraction of the going value, less than the
+    /// half-stake salvage on a regular failure but still meaningful — the player
+    /// walks away with *something*.
     static let bankruptcySalvageFraction: Double = 0.30
 
-    /// Number of rungs (the top index is `count - 1`).
-    static var count: Int { rungTitles.count }
-
-    /// Index of the founder rung carrying this title, or `nil` for non-founder
+    /// Index of the founder tier carrying this title, or `nil` for non-founder
     /// titles. Matches against `Job.baseTitle` so seniority variants resolve.
     static func rungIndex(forTitle title: String) -> Int? {
         rungTitles.firstIndex(of: Job.baseTitle(of: title))
     }
 
-    /// Resolves the Job description for a rung by looking it up in the
-    /// shared catalogue. Returns nil if the catalogue is missing the title
-    /// (shouldn't happen — guards against typos / future renames).
-    static func job(at rungIndex: Int, in catalogue: [Job]) -> Job? {
-        guard rungTitles.indices.contains(rungIndex) else { return nil }
-        let title = rungTitles[rungIndex]
-        return catalogue.first { $0.id == title }
+    /// Baseline whole-company valuation for a founding tier — the venture's
+    /// `targetCapital` scaled by the tier multiplier, before traction and the
+    /// economy are applied (see `ActiveStartup.valuation`).
+    static func baseValuation(forRungIndex idx: Int, targetCapital: Int) -> Int {
+        guard valuationMultiplier.indices.contains(idx) else { return targetCapital }
+        return Int((Double(targetCapital) * valuationMultiplier[idx]).rounded())
     }
 
-    /// Headline buyout value for a rung — the rung's `targetCapital` scaled by
-    /// the tier's exit multiplier. The actual offer the player sees is this
-    /// value jittered ±25% by `randomOffer(forRungIndex:)`.
-    static func headlineOffer(forRungIndex idx: Int, targetCapital: Int) -> Int {
-        guard exitMultiplier.indices.contains(idx) else { return targetCapital }
-        return Int((Double(targetCapital) * exitMultiplier[idx]).rounded())
-    }
-
-    /// One year's randomised buyout offer: the rung's headline value scaled by
-    /// the venture's traction (`metricsMultiplier`, see `ActiveStartup.exitPremium`)
-    /// and jittered uniformly within ±25%. Re-rolled every successful annual roll,
-    /// so a company that has grown its revenue and market share commands a bigger
-    /// exit each year.
-    static func randomOffer(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
-        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
-        let jitter = Double.random(in: 0.75...1.25)
-        return Int((headline * jitter).rounded())
-    }
-
-    /// Probability (clamped 0.05...0.92) that this year's annual roll surfaces
-    /// a buyout offer. Built from the rung's base chance plus up to +0.20 from
-    /// the player's founder-trait fit (Risk-Taker / Visionary / Persuader).
-    static func offerProbability(forRungIndex idx: Int, founderSkillFit: Double) -> Double {
-        guard baseOfferChance.indices.contains(idx) else { return 0 }
-        let raw = baseOfferChance[idx] + min(max(founderSkillFit, 0), 1) * 0.20
-        return max(0.05, min(0.92, raw))
-    }
-
-    /// Fire-sale payout when a recession forces the player to liquidate. Caps
-    /// the loss while still hurting — a haircut on the rung's would-be offer,
-    /// scaled by the venture's traction (`metricsMultiplier`) so a bigger company
-    /// salvages more even in a forced sale.
+    /// Fire-sale payout when a recession forces the player to liquidate. Caps the
+    /// loss while still hurting — a haircut on the venture's baseline value,
+    /// scaled by traction (`metricsMultiplier`) so a bigger company salvages more
+    /// even in a forced sale.
     static func bankruptcyPayout(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
-        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
-        return Int((headline * bankruptcySalvageFraction).rounded())
+        let base = Double(baseValuation(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
+        return Int((base * bankruptcySalvageFraction).rounded())
     }
 }
 

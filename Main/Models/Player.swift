@@ -12,23 +12,24 @@ struct StatusEvent: Identifiable, Hashable {
 }
 
 /// The player's currently-active startup (realistic mode only). Founded by
-/// taking on a founder Job; each year `advanceYear` rolls for a buyout offer
-/// and — on a hit — sets `Player.pendingStartupOffer` so the UI can present a
-/// Sell-or-Hold dialog. Holding advances `rungIndex` to the next founder rung
-/// (and updates `currentOccupation` accordingly); selling banks the offer and
-/// clears `activeStartup`. A recession forces a fire-sale liquidation.
+/// taking on a founder Job; each year `advanceYear` grows its traction. The
+/// founder sells slices of their equity against the venture's live valuation
+/// whenever they choose (see `Player.sellVentureShares`) — selling the whole
+/// stake exits the venture, a partial sale banks cash and keeps them running
+/// with a smaller `ownershipFraction`. A recession marks the valuation down and
+/// can force a fire-sale liquidation on a bad year.
 ///
-/// `rungIndex` corresponds to the four founder rungs declared in `JobCatalog`
-/// (0 = Side Hustler … 3 = Serial Entrepreneur). `yearsHeld` is the count of
-/// year-rolls since the venture was founded (or last grew), purely informational
-/// for the dialog copy.
+/// `rungIndex` corresponds to the four founding tiers declared in `JobCatalog`
+/// (0 = Side Hustler … 3 = Serial Entrepreneur); it is fixed at founding and
+/// sets the valuation baseline. `yearsHeld` is the count of year-rolls since the
+/// venture was founded, purely informational.
 ///
 /// The venture also tracks three **business metrics** that grow with every year
 /// held: `marketSharePct` (share of its market), `revenue` (annual $), and
 /// `headcount` (employees). They start modest, compound each year (faster for a
-/// better-run company), step up on a rung-up, and — crucially — drive the size
-/// of the buyout offer (see `exitPremium`): grow the company and it sells for
-/// more. An investment round from the Boardroom (`ExecutiveDecision`) fuels them.
+/// better-run company), and — crucially — drive the valuation (see `exitPremium`
+/// and `valuation`): grow the company and it's worth more. An investment round
+/// from the Boardroom (`ExecutiveDecision`) fuels them.
 struct ActiveStartup: Hashable {
     var rungIndex: Int
     var yearsHeld: Int
@@ -38,17 +39,33 @@ struct ActiveStartup: Hashable {
     var revenue: Int
     /// Employees on the books.
     var headcount: Int
+    /// The founder's retained equity, 0...1. Starts at 1.0 (100 %) and shrinks as
+    /// the player sells shares against the valuation.
+    var ownershipFraction: Double = 1.0
 
     /// Seeds a freshly founded venture at `rungIndex`, with starting metrics
-    /// scaled off the rung's `targetCapital` (a bigger raise buys more traction).
+    /// scaled off the tier's `targetCapital` (a bigger raise buys more traction).
+    /// The founder starts owning the whole company.
     static func founded(rungIndex: Int, targetCapital: Int) -> ActiveStartup {
         ActiveStartup(
             rungIndex: rungIndex,
             yearsHeld: 0,
             marketSharePct: min(1.5 + Double(rungIndex) * 1.5, 100),
             revenue: max(1_000, targetCapital),
-            headcount: max(1, 1 + rungIndex * 3)
+            headcount: max(1, 1 + rungIndex * 3),
+            ownershipFraction: 1.0
         )
+    }
+
+    /// The venture's current whole-company valuation in $: the tier's baseline
+    /// value (`FounderLadder.baseValuation`) scaled by traction (`exitPremium`)
+    /// and the prevailing economy (`economyFactor`, < 1 in a downturn). This is
+    /// the value of 100 % of the company; the founder's stake is this times
+    /// `ownershipFraction`.
+    func valuation(targetCapital: Int, economyFactor: Double) -> Int {
+        let base = Double(FounderLadder.baseValuation(forRungIndex: rungIndex, targetCapital: targetCapital))
+        let full = base * exitPremium(targetCapital: targetCapital) * economyFactor
+        return Int(full.rounded())
     }
 
     /// Compounds one year of organic growth. A well-run venture (higher
@@ -72,22 +89,10 @@ struct ActiveStartup: Hashable {
         marketSharePct = min(100.0, marketSharePct + marketShareGain)
     }
 
-    /// Steps the venture up to `toRungIndex` on a Hold-and-grow: a step change in
-    /// scale, floored at the new rung's seed so a rung-up never shrinks the
-    /// company. Resets `yearsHeld`.
-    mutating func scaleUp(toRungIndex: Int, targetCapital: Int) {
-        let seed = ActiveStartup.founded(rungIndex: toRungIndex, targetCapital: targetCapital)
-        rungIndex = toRungIndex
-        yearsHeld = 0
-        revenue = max(revenue * 2, seed.revenue)
-        headcount = max(Int((Double(headcount) * 1.8).rounded()), seed.headcount)
-        marketSharePct = min(100.0, max(marketSharePct + 3.0, seed.marketSharePct))
-    }
-
-    /// Multiplier on the rung's headline buyout value from the venture's traction:
-    /// revenue grown past the rung's capital baseline plus a market-share kicker.
-    /// ~1.0 at founding, climbing toward ~2× for a well-grown company, so holding
-    /// and growing is rewarded at exit. Never below 0.5.
+    /// Traction multiplier on the venture's baseline value: revenue grown past
+    /// the tier's capital baseline plus a market-share kicker. ~1.0 at founding,
+    /// climbing toward ~2× for a well-grown company, so growing the business is
+    /// rewarded in the valuation. Never below 0.5.
     func exitPremium(targetCapital: Int) -> Double {
         let revenueRatio = Double(revenue) / Double(max(targetCapital, 1))
         let premium = min(revenueRatio, 4.0) * 0.25 + min(marketSharePct / 100.0, 1.0) * 0.5
@@ -167,19 +172,11 @@ final class Player: ObservableObject {
     @Published var competitionWinMessage: String = ""
 
     /// The player's current startup if they're operating one (realistic mode
-    /// only). Created when a founder Job is launched via `foundVenture`;
-    /// resolved annually by `advanceYear` into either a buyout dialog or a
-    /// recession-driven bankruptcy. `nil` outside the startup loop.
+    /// only). Created when a founder Job is launched via `foundVenture`; grown
+    /// each year by `advanceYear`. The player sells equity against its valuation
+    /// on demand from the Ventures surface (see `sellVentureShares`); a recession
+    /// can force a bankruptcy fire-sale. `nil` when no venture is running.
     @Published var activeStartup: ActiveStartup?
-
-    /// Buyout amount waiting on a Sell-or-Hold decision from the player. Set
-    /// by `advanceYear` when the annual roll lands an offer; cleared the moment
-    /// the player resolves the offer via `acceptStartupOffer` or `holdStartup`.
-    @Published var pendingStartupOffer: Int?
-
-    /// One-shot trigger for the buyout-offer sheet. Bound by `RootView`; the
-    /// `Sell` / `Hold & grow` buttons flip it off.
-    @Published var showStartupOfferSheet: Bool = false
 
     /// One-shot trigger for the bankruptcy notice that fires when a recession
     /// forces a fire-sale of the player's startup.
@@ -188,6 +185,28 @@ final class Player: ObservableObject {
     /// Salvage value paid out by the most recent forced bankruptcy. Used by
     /// the bankruptcy alert message; not a header note.
     @Published var lastBankruptcySalvage: Int = 0
+
+    /// Economy multiplier applied to venture valuations — marked down during a
+    /// downturn so a founder's paper worth (and any sale) reflects the market
+    /// (see `GameConstants.recessionValuationFactor`).
+    var ventureEconomyFactor: Double {
+        economyInRecession ? GameConstants.recessionValuationFactor : 1.0
+    }
+
+    /// The active venture's full-company valuation in $ — traction- and
+    /// economy-adjusted. `nil` when no venture is running.
+    var ventureValuation: Int? {
+        guard let startup = activeStartup,
+              let target = currentOccupation?.targetCapital else { return nil }
+        return startup.valuation(targetCapital: target, economyFactor: ventureEconomyFactor)
+    }
+
+    /// The current cash value of the founder's retained stake — the full
+    /// valuation scaled by their `ownershipFraction`. `nil` when no venture runs.
+    var founderStakeValue: Int? {
+        guard let startup = activeStartup, let full = ventureValuation else { return nil }
+        return Int((Double(full) * startup.ownershipFraction).rounded())
+    }
 
     /// Weighted sum of every banked trophy, where each title's contribution
     /// comes from its source's `fameWeight` (a local 5K is worth less than an
@@ -879,46 +898,50 @@ final class Player: ObservableObject {
         if competitionWins > 0 { celebrationTrigger += 1 }
 
         // Startup loop (realistic mode only): while the player runs an active
-        // venture, each year either pays out a buyout offer (Sell or Hold &
-        // grow), brushes off without an offer (operating as usual), or — in a
-        // recession — forces a fire-sale liquidation. The rung's salary is
-        // already banked by the occupation pay block above.
+        // venture, each year grows the company's traction (lifting its valuation),
+        // or — in a recession — forces a fire-sale liquidation. The player sells
+        // equity on their own schedule from the Ventures surface (see
+        // `sellVentureShares`), so no offer is surfaced here. The founder's salary
+        // is already banked by the occupation pay block above.
         if !isSimplified, var startup = activeStartup,
            let founderJob = currentOccupation,
            let target = founderJob.targetCapital {
             startup.yearsHeld += 1
             let skillFit = founderJob.founderSkillFit(for: self)
             if recessionThisYear {
-                let payout = FounderLadder.bankruptcyPayout(
-                    forRungIndex: startup.rungIndex, targetCapital: target,
-                    metricsMultiplier: startup.exitPremium(targetCapital: target)
+                // A downturn puts the venture at risk. Most years it survives —
+                // growth stalls and its valuation is marked down by the economy
+                // (see `ventureValuation`), which the player can sell into or ride
+                // out — but a bad roll forces a fire-sale liquidation. The risk
+                // uses the same amplified odds as an employee layoff.
+                let bankruptcyChance = min(
+                    GameConstants.turmoilMaxLayoffChance,
+                    GameConstants.baseLayoffRisk * difficulty.layoffSeverity
                 )
-                savings += payout
-                lastBankruptcySalvage = payout
-                showStartupBankruptcyAlert = true
-                recordStatus("📉", "Bankruptcy — sold \(founderJob.baseTitle) at fire-sale for \(payout.formatted(.number)) $")
-                activeStartup = nil
-                pendingStartupOffer = nil
-                showStartupOfferSheet = false
-                currentOccupation = nil
+                if Double.random(in: 0...1) < bankruptcyChance {
+                    // The founder salvages only the fire-sale value of the equity
+                    // they still hold.
+                    let fullPayout = FounderLadder.bankruptcyPayout(
+                        forRungIndex: startup.rungIndex, targetCapital: target,
+                        metricsMultiplier: startup.exitPremium(targetCapital: target)
+                    )
+                    let payout = Int((Double(fullPayout) * startup.ownershipFraction).rounded())
+                    savings += payout
+                    lastBankruptcySalvage = payout
+                    showStartupBankruptcyAlert = true
+                    recordStatus("📉", "Bankruptcy — sold \(founderJob.baseTitle) at fire-sale for \(payout.formatted(.number)) $")
+                    activeStartup = nil
+                    currentOccupation = nil
+                } else {
+                    // Weathered the downturn: growth stalls for the year and the
+                    // valuation is depressed while the recession lasts.
+                    recordStatus("📉", "\(founderJob.baseTitle) weathered the downturn — its valuation is down this year")
+                    activeStartup = startup
+                }
             } else {
                 // Another year at the helm grows the company's traction.
                 startup.grow(founderSkillFit: skillFit)
                 recordStatus("📊", "\(founderJob.baseTitle): \(startup.revenue.formatted(.number)) $ revenue · \(startup.headcount) staff · \(Int(startup.marketSharePct.rounded()))% market")
-                let chance = FounderLadder.offerProbability(
-                    forRungIndex: startup.rungIndex,
-                    founderSkillFit: skillFit
-                )
-                if Double.random(in: 0...1) < chance {
-                    let offer = FounderLadder.randomOffer(
-                        forRungIndex: startup.rungIndex, targetCapital: target,
-                        metricsMultiplier: startup.exitPremium(targetCapital: target)
-                    )
-                    pendingStartupOffer = offer
-                    showStartupOfferSheet = true
-                    celebrationTrigger += 1
-                    recordStatus("💼", "Buyout offer for \(founderJob.baseTitle): \(offer.formatted(.number)) $")
-                }
                 activeStartup = startup
             }
         }
@@ -985,10 +1008,10 @@ final class Player: ObservableObject {
     /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
     /// of the player's own savings. The stake is committed up front; success makes
     /// the player a founder (earning the rung's income), while failure salvages
-    /// half the stake. In realistic mode, success also bootstraps the multi-year
-    /// startup loop (`activeStartup` is set to the rung index so subsequent
-    /// `advanceYear` calls roll for buyouts and surface a Sell-or-Hold dialog).
-    /// Returns true on success.
+    /// half the stake. In realistic mode, success also starts the venture
+    /// (`activeStartup` is seeded from the founding tier) so `advanceYear` grows
+    /// it and the player can sell equity against its valuation. Returns true on
+    /// success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
         appliedJobIds.insert(job.applicationKey)
@@ -1008,49 +1031,34 @@ final class Player: ObservableObject {
         return success
     }
 
-    /// Accepts the pending buyout offer: banks the cash, ends the venture, and
-    /// clears the founder occupation. The player is now between jobs (free to
-    /// apply for the next thing or found again from scratch). No-op if there
-    /// is no offer pending.
-    func acceptStartupOffer() {
-        guard let offer = pendingStartupOffer else { return }
-        savings += offer
-        let exitedBaseTitle = currentOccupation?.baseTitle ?? "venture"
-        recordStatus("🤝", "Sold \(exitedBaseTitle) for \(offer.formatted(.number)) $")
-        activeStartup = nil
-        pendingStartupOffer = nil
-        showStartupOfferSheet = false
-        currentOccupation = nil
-        celebrationTrigger += 1
-    }
-
-    /// Holds & grows: declines the offer in exchange for advancing to the next
-    /// founder rung. Updates `currentOccupation` to the next rung's Job so the
-    /// player earns its (larger) salary going forward. At the top rung the
-    /// venture simply keeps running — next year's roll re-prices the offer.
-    func holdStartup() {
-        guard var startup = activeStartup else {
-            pendingStartupOffer = nil
-            showStartupOfferSheet = false
-            return
-        }
-        let nextRung = min(startup.rungIndex + 1, FounderLadder.count - 1)
-        if nextRung != startup.rungIndex {
-            let upgraded = FounderLadder.job(at: nextRung, in: availableJobs)
-                ?? FounderLadder.job(at: nextRung, in: JobCatalog.allJobs())
-            // Stepping up a rung is a step change in scale, floored at the new
-            // rung's seed so growth never goes backwards.
-            startup.scaleUp(toRungIndex: nextRung, targetCapital: upgraded?.targetCapital ?? 0)
-            if let upgraded {
-                currentOccupation = upgraded
-                recordStatus("📈", "Held & grew into \(upgraded.baseTitle) — \(startup.headcount) staff, \(Int(startup.marketSharePct.rounded()))% market")
-            }
+    /// Sells `fractionOfStake` (0...1) of the founder's *current* equity at the
+    /// venture's live valuation, banking the proceeds. Selling the whole stake
+    /// (`1.0`) exits the venture — clearing `activeStartup` and the founder
+    /// occupation, leaving the player between jobs. A partial sale banks cash and
+    /// keeps them running the company with a smaller `ownershipFraction`. No-op
+    /// if no venture is running or the fraction is zero.
+    func sellVentureShares(fractionOfStake: Double) {
+        guard var startup = activeStartup,
+              let fullValuation = ventureValuation else { return }
+        let fraction = min(max(fractionOfStake, 0), 1)
+        guard fraction > 0 else { return }
+        let title = currentOccupation?.baseTitle ?? "venture"
+        // Portion of the *whole company* changing hands in this sale.
+        let companyShareSold = startup.ownershipFraction * fraction
+        let proceeds = Int((Double(fullValuation) * companyShareSold).rounded())
+        savings += proceeds
+        if fraction >= 1.0 {
+            recordStatus("🤝", "Sold your remaining stake in \(title) for \(proceeds.formatted(.number)) $")
+            activeStartup = nil
+            currentOccupation = nil
         } else {
-            recordStatus("📈", "Declined buyout — kept growing the company")
+            startup.ownershipFraction -= companyShareSold
+            activeStartup = startup
+            let soldPct = Int((fraction * 100).rounded())
+            let leftPct = Int((startup.ownershipFraction * 100).rounded())
+            recordStatus("💸", "Sold \(soldPct)% of your \(title) shares for \(proceeds.formatted(.number)) $ — \(leftPct)% stake left")
         }
-        activeStartup = startup
-        pendingStartupOffer = nil
-        showStartupOfferSheet = false
+        celebrationTrigger += 1
     }
 
     // MARK: - Executive decisions (Boardroom)
@@ -1159,8 +1167,6 @@ final class Player: ObservableObject {
         fameAwards = fresh.fameAwards
         lastCompetitionWins = fresh.lastCompetitionWins
         activeStartup = fresh.activeStartup
-        pendingStartupOffer = fresh.pendingStartupOffer
-        showStartupOfferSheet = fresh.showStartupOfferSheet
         showStartupBankruptcyAlert = fresh.showStartupBankruptcyAlert
         lastBankruptcySalvage = fresh.lastBankruptcySalvage
         turmoilYearsRemaining = fresh.turmoilYearsRemaining

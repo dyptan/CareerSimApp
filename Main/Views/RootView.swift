@@ -111,9 +111,6 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
         }
-        .sheet(isPresented: $player.showStartupOfferSheet) {
-            StartupOfferView(player: player)
-        }
         .alert("Bankruptcy", isPresented: $player.showStartupBankruptcyAlert) {
             Button("OK", role: .cancel) { }
         } message: {

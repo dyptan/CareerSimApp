@@ -83,4 +83,10 @@ enum GameConstants {
     /// Flat across all jobs now that company tiers are gone. See
     /// `Player.applyEconomicTurmoil`.
     static let baseLayoffRisk: Double = 0.08
+
+    /// Realistic mode: multiplier applied to a venture's valuation while the
+    /// economy is in a downturn. Acquirers and investors pay less in a bear
+    /// market, so a founder's paper worth — and anything they sell — is marked
+    /// down. See `Player.ventureEconomyFactor` and `ActiveStartup.valuation`.
+    static let recessionValuationFactor: Double = 0.6
 }

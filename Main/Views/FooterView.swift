@@ -140,8 +140,12 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-                .buttonStyle(.bordered).font(.headline)
+            // Ventures (the founder path) are a realistic-mode feature, hidden in
+            // Simplified — that mode is a straight climb from junior to senior.
+            if !player.isSimplified {
+                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+            }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).

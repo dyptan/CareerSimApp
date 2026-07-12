@@ -126,17 +126,18 @@ private struct RoleGroupRow: View {
 }
 
 /// The **Ventures** surface — the founder path, split out from the salaried
-/// Jobs list. Each row is a capital-staked entrepreneurial rung (Side Hustler →
-/// Serial Entrepreneur): you invest your own savings for a shot at running a
-/// venture, then chase buyout offers year over year (see `FounderLadder` and
-/// `Player.foundVenture`). Routes into the same `JobDetail` invest flow the
-/// Jobs sheet used to host these under the Entrepreneurship category.
+/// Jobs list. When no venture is running it lists the capital-staked founding
+/// tiers (Side Hustler → Serial Entrepreneur): you invest your own savings for a
+/// shot at running a venture (see `Player.foundVenture`), routing into the same
+/// `JobDetail` invest flow. Once a venture is active it shows the running-company
+/// panel (`ActiveVentureView`) — its live valuation and a slider to sell equity.
+/// Realistic mode only; hidden in Simplified (see `FooterView`).
 struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
 
-    /// Founder rungs on offer, in climb order (least to most experience).
+    /// Founding tiers you can launch, ordered by experience required (least first).
     private var ventures: [Job] {
         availableJobs
             .filter { $0.category == .entrepreneurship }
@@ -159,26 +160,32 @@ struct EntrepreneurshipView: View {
         }
     }
 
+    @ViewBuilder
     private var content: some View {
-        List {
-            Section {
-                ForEach(ventures) { venture in
-                    NavigationLink {
-                        JobDetail(
-                            job: venture.atBaseSalary(),
-                            player: player,
-                            showCareersSheet: $showSheet
-                        )
-                    } label: {
-                        VentureRow(job: venture)
+        if player.activeStartup != nil {
+            ActiveVentureView(player: player)
+                .navigationTitle("Ventures")
+        } else {
+            List {
+                Section {
+                    ForEach(ventures) { venture in
+                        NavigationLink {
+                            JobDetail(
+                                job: venture.atBaseSalary(),
+                                player: player,
+                                showCareersSheet: $showSheet
+                            )
+                        } label: {
+                            VentureRow(job: venture)
+                        }
                     }
+                } header: {
+                    Text("Stake your own capital to run a venture. Grow it, then sell your shares against its valuation — or ride out the downturns.")
+                        .textCase(nil)
                 }
-            } header: {
-                Text("Stake your own capital to run a venture. Grow it and sell for a multiple — or ride out the downturns.")
-                    .textCase(nil)
             }
+            .navigationTitle("Ventures")
         }
-        .navigationTitle("Ventures")
     }
 }
 

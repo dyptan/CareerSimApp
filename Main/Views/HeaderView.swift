@@ -44,11 +44,17 @@ struct HeaderView: View {
                         .foregroundStyle(.secondary)
 
                     // While running a founder venture, show its live business
-                    // metrics — the traction that drives the next buyout offer.
+                    // metrics — the traction that drives the company's valuation —
+                    // plus the founder's retained stake once they've sold any shares.
                     if let startup = player.activeStartup {
                         Text("📊 \(Int(startup.marketSharePct.rounded()))% market · 💰 \(startup.revenue.formatted(.number)) $ · 👥 \(startup.headcount)")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                        if startup.ownershipFraction < 0.999 {
+                            Text("🧑‍💼 \(Int((startup.ownershipFraction * 100).rounded()))% stake")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
                 if let currentEducation = player.currentEducation {
