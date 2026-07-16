@@ -809,13 +809,13 @@ final class Player: ObservableObject {
             }
         }
 
-        // Spare-time ventures (money hustles + fame projects, now one system).
-        // No money is staked. A money venture pays out in full on success (unlike
-        // salary), surfaced in the header. A fame venture banks an industry-scoped
-        // award and grows the soft skills it drew on — the founder-cluster axes no
-        // hobby can build. A flop yields nothing. Fame ventures snowball with the
-        // player's reputation (see SideHustle.successProbability); all are
-        // repeatable year after year.
+        // Spare-time ventures (business ventures + creative projects, one system).
+        // No money is staked. A successful year banks an industry-scoped fame
+        // award — Business fame for the commercial/entrepreneurial ventures,
+        // field fame for the creative projects — and grows the soft skills it
+        // drew on, the founder-cluster axes no hobby can build. A flop yields
+        // nothing. Fame ventures snowball with the player's reputation (see
+        // SideHustle.successProbability); all are repeatable year after year.
         var sideHustleNet = 0
         var famedVentures = 0
         for id in appUIState.selectedSideHustles {

@@ -200,7 +200,7 @@ struct EntrepreneurshipView: View {
                         )
                     }
                 } header: {
-                    Text("Spare-time plays with a shot at becoming a business — a course, an online store, an app, a game, a startup. Bank cash or build your name, and each committed year is resolved when you advance the year.")
+                    Text("Spare-time plays with a shot at becoming a business — a course, an online store, an app, a game, a startup. A standout year builds your name in business, and each committed year is resolved when you advance the year.")
                         .textCase(nil)
                 }
             }

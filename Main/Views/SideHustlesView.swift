@@ -6,9 +6,10 @@ import SwiftUI
 /// scoped **fame** (growing the soft skills it drew on). Mirrors `HobbiesView`:
 /// the catalogue is filtered by life stage and capped per year.
 ///
-/// Anything with prospects of turning profitable — the money ventures, the
-/// buildable products (app, game), and the entrepreneurship plays — lives in
-/// the **Ventures** sheet instead (see `EntrepreneurshipView` and
+/// Anything with prospects of turning profitable — the commercial ventures
+/// (course, online store, shop, flip), the buildable products (app, game), and
+/// the entrepreneurship plays — banks Business fame and lives in the
+/// **Ventures** sheet instead (see `EntrepreneurshipView` and
 /// `SideHustleCatalog.businessVentures`).
 struct PrivateProjectsView: View {
     @ObservedObject var player: Player
