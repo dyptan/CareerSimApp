@@ -1,14 +1,15 @@
 import SwiftUI
 
-/// The unified **Projects** page — the single home for spare-time ventures,
-/// joining what were two features (money-making side hustles and fame-earning
-/// projects). Every row is a talent-fit gamble that stakes no money: most
-/// ventures bank industry-scoped **fame** (and grow the soft skills they drew
-/// on), while a handful of business plays still pay **cash**. Mirrors
-/// `HobbiesView`: the catalogue is filtered by life stage and capped per year.
+/// The **Projects** page — the home for the pure fame/creative spare-time plays
+/// (writing, talks, festivals, open source, and personal-brand performances).
+/// Every row is a talent-fit gamble that stakes no money and banks industry-
+/// scoped **fame** (growing the soft skills it drew on). Mirrors `HobbiesView`:
+/// the catalogue is filtered by life stage and capped per year.
 ///
-/// Business plays with prospects of becoming a company (the entrepreneurship
-/// ventures) live in the **Ventures** sheet instead — see `EntrepreneurshipView`.
+/// Anything with prospects of turning profitable — the money ventures, the
+/// buildable products (app, game), and the entrepreneurship plays — lives in
+/// the **Ventures** sheet instead (see `EntrepreneurshipView` and
+/// `SideHustleCatalog.businessVentures`).
 struct PrivateProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
@@ -35,7 +36,7 @@ struct PrivateProjectsView: View {
                             ? .red : .primary
                     )
             }
-            Text("Spend a year building fame — or banking cash · savings: \(player.savings.formatted(.number)) $")
+            Text("Spend a year building your name — a standout project banks fame in its field.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()

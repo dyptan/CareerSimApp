@@ -130,10 +130,11 @@ private struct RoleGroupRow: View {
 /// Serial Entrepreneur) are capital-staked: you invest your own savings for a
 /// shot at running a venture, then chase buyout offers year over year (see
 /// `FounderLadder` and `Player.foundVenture`), routing into the same `JobDetail`
-/// invest flow. The spare-time business ventures (startup, pitch competition,
-/// crowdfunding) are lighter entrepreneurial projects with prospects of becoming
-/// a business — they stake no cash, credit `.entrepreneurship` work experience,
-/// and are committed when the year advances (see `SideHustleCatalog`).
+/// invest flow. The spare-time business ventures (a course, an online store, an
+/// app, a game, a startup — every `SideHustle` with business prospects) are
+/// lighter plays that can turn profitable: they bank cash or fame, some credit
+/// `.entrepreneurship` work experience, and are committed when the year advances
+/// (see `SideHustleCatalog.businessVentures`).
 struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
@@ -152,8 +153,8 @@ struct EntrepreneurshipView: View {
             }
     }
 
-    /// Spare-time business ventures offered at the player's life stage — the
-    /// entrepreneurship projects moved here out of the Projects sheet.
+    /// Spare-time ventures with business prospects, offered at the player's life
+    /// stage — the profit-capable projects that live here rather than in Projects.
     private var businessVentures: [SideHustle] {
         let stage = LifeStage.forAge(player.age)
         return SideHustleCatalog.businessVentures.filter { $0.stages.contains(stage) }
@@ -199,7 +200,7 @@ struct EntrepreneurshipView: View {
                         )
                     }
                 } header: {
-                    Text("Spare-time business plays — no cash down. Each committed year builds entrepreneurship experience and is resolved when you advance the year.")
+                    Text("Spare-time plays with a shot at becoming a business — a course, an online store, an app, a game, a startup. Bank cash or build your name, and each committed year is resolved when you advance the year.")
                         .textCase(nil)
                 }
             }
