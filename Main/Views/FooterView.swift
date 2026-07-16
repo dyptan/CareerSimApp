@@ -144,8 +144,14 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-                .buttonStyle(.bordered).font(.headline)
+            // The entrepreneurial path (founder ventures + spare-time business
+            // plays) is a realistic-mode feature — it stakes capital and turns
+            // on soft skills, fame, and the economy, none of which exist in
+            // Simplified, so the whole surface is hidden there.
+            if !player.isSimplified {
+                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+            }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).
