@@ -134,10 +134,6 @@ struct SideHustleRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(hustle.icon)  \(hustle.label)")
                         .font(.headline)
-                    Text(hustle.blurb)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
                     if let lockLabel {
                         Text(lockLabel)
                             .font(.caption2)
@@ -166,6 +162,7 @@ struct SideHustleRow: View {
     }
 
     private func infoMessage(for hustle: SideHustle, talentHint: String, growthHint: String) -> String {
+        let intro = hustle.blurb + "\n\n"
         let gate: String = {
             var lines: [String] = []
             if let req = hustle.prerequisite {
@@ -203,10 +200,10 @@ struct SideHustleRow: View {
         case .money:
             let upside = hustle.projectedPayout(for: player.softSkills)
             let stats = "🎲 ~\(odds)% success · 📈 up to \(upside.formatted(.number)) $\n\n"
-            return gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing." + experienceNote
+            return intro + gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing." + experienceNote
         case .fame(let industry, _):
             let stats = "🎲 ~\(odds)% success · 🌟 \(JobCategory.icon(for: industry)) \(industry.rawValue) fame\n\n"
-            return gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
+            return intro + gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
         }
     }
 }

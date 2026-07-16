@@ -91,10 +91,7 @@ struct TrainingsView: View {
         let canToggleOn = gatesMet && !atLimit
         let isDisabled = isEarned || (!isSelectedThisYear && !canToggleOn)
 
-        // Soft skills the completed course builds — shown on the row and in the hint.
-        let pictos: String = training.softSkillBoosts
-            .compactMap { SoftSkills.pictogram(forKeyPath: $0.keyPath) }
-            .joined(separator: " ")
+        // Soft skills the completed course builds — surfaced in the hint.
         let boostsHint: String = training.softSkillBoosts
             .map { boost in
                 let label = SoftSkills.label(forKeyPath: boost.keyPath) ?? ""
@@ -102,9 +99,37 @@ struct TrainingsView: View {
                 return "\(pic) \(label) (+\(boost.weight))"
             }
             .joined(separator: "\n")
-        let hintMessage: String = boostsHint.isEmpty
-            ? training.description
-            : "\(training.description)\n\nCompleting this course builds:\n\n\(boostsHint)"
+        // Hard requirements — education, prerequisite trainings, and work
+        // experience — shown in the hint as met/unmet (✅/❌) lines rather than
+        // inline badges, so the row itself stays compact.
+        let requirementsHint: String = {
+            guard !isEarned else { return "" }
+            let highestEQF = player.degrees.map(\.eqf).max() ?? 0
+            var lines: [String] = []
+            if training.minEQF > 0 {
+                let met = highestEQF >= training.minEQF
+                lines.append("\(met ? "✅" : "❌") 🎓 \(Education.Requirements(minEQF: training.minEQF).educationLabel())")
+            }
+            for prereq in training.prerequisites {
+                let met = player.hardSkills.trainings.contains(prereq)
+                lines.append("\(met ? "✅" : "❌") \(prereq.pictogram) \(prereq.friendlyName)")
+            }
+            if training.minYearsExperience > 0 {
+                let fieldYears = training.field.map { player.experience[$0] ?? 0 } ?? player.totalYearsWorked
+                let met = fieldYears >= training.minYearsExperience
+                let expLabel = training.field.map { "\(training.minYearsExperience) yrs in \($0.rawValue)" }
+                    ?? "\(training.minYearsExperience) yrs work experience"
+                lines.append("\(met ? "✅" : "❌") 💼 \(expLabel)")
+            }
+            guard !lines.isEmpty else { return "" }
+            return "\n\nRequirements:\n\n" + lines.joined(separator: "\n")
+        }()
+        let hintMessage: String = {
+            let base = boostsHint.isEmpty
+                ? training.description
+                : "\(training.description)\n\nCompleting this course builds:\n\n\(boostsHint)"
+            return base + requirementsHint
+        }()
 
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
@@ -121,27 +146,20 @@ struct TrainingsView: View {
                         }
                     )
                 ) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 6) {
-                            Text("\(training.pictogram) \(training.friendlyName)")
-                                .font(.body)
-                            if training.isStatutory {
-                                Text("licence")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 1)
-                                    .background(Color.blue.opacity(0.15), in: Capsule())
-                            }
-                            if isEarned {
-                                Text("✓ Earned")
-                                    .font(.caption.bold())
-                                    .foregroundStyle(.green)
-                            }
-                        }
-                        if !pictos.isEmpty {
-                            Text("Builds: \(pictos)")
+                    HStack(spacing: 6) {
+                        Text("\(training.pictogram) \(training.friendlyName)")
+                            .font(.body)
+                        if training.isStatutory {
+                            Text("licence")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1)
+                                .background(Color.blue.opacity(0.15), in: Capsule())
+                        }
+                        if isEarned {
+                            Text("✓ Earned")
+                                .font(.caption.bold())
+                                .foregroundStyle(.green)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -154,45 +172,15 @@ struct TrainingsView: View {
                 InfoHint(title: "\(training.pictogram) \(training.friendlyName)", message: hintMessage)
             }
 
-            // Hard requirements — education, prerequisite trainings, and work
-            // experience — shown as met/unmet badges for a training the player
-            // hasn't taken. Age isn't listed: it's a visibility gate.
-            let hasHardRequirements = training.minEQF > 0
-                || !training.prerequisites.isEmpty
-                || training.minYearsExperience > 0
-            if !isEarned && !isSelectedThisYear && hasHardRequirements {
-                let highestEQF = player.degrees.map(\.eqf).max() ?? 0
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Requirements")
-                        .font(.caption2.bold())
-                        .foregroundStyle(.secondary)
-                    if training.minEQF > 0 {
-                        RequirementRow(
-                            label: Education.Requirements(minEQF: training.minEQF).educationLabel(),
-                            emoji: "🎓",
-                            style: .badge(isMet: highestEQF >= training.minEQF)
-                        )
-                    }
-                    ForEach(training.prerequisites, id: \.self) { prereq in
-                        RequirementRow(
-                            label: prereq.friendlyName,
-                            emoji: prereq.pictogram,
-                            style: .badge(isMet: player.hardSkills.trainings.contains(prereq))
-                        )
-                    }
-                    if training.minYearsExperience > 0 {
-                        let fieldYears = training.field.map { player.experience[$0] ?? 0 }
-                            ?? player.totalYearsWorked
-                        let expLabel = training.field.map { "\(training.minYearsExperience) yrs in \($0.rawValue)" }
-                            ?? "\(training.minYearsExperience) yrs work experience"
-                        RequirementRow(
-                            label: expLabel,
-                            emoji: "💼",
-                            style: .badge(isMet: fieldYears >= training.minYearsExperience)
-                        )
-                    }
-                }
-                .padding(.leading, 24)
+            // A concise lock reason for a blocked training; the full met/unmet
+            // requirement breakdown lives in the info hint. Age isn't listed:
+            // it's a visibility gate.
+            if !isEarned, let blockedReason {
+                Text("🔒 \(blockedReason)")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 24)
             }
         }
         .padding(5)
