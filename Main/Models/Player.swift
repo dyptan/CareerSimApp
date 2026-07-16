@@ -721,8 +721,11 @@ final class Player: ObservableObject {
         }
         appUIState.selectedEvents.removeAll()
 
-        // Charge tuition for the year the player is enrolled in a tertiary program.
-        if let edu = currentEducation,
+        // Charge tuition for the year the player is enrolled in a tertiary
+        // program. Simplified mode is money-free where school is concerned —
+        // education costs are hidden, so nothing is deducted.
+        if !isSimplified,
+           let edu = currentEducation,
            let yearsLeft = appUIState.yearsLeftToGraduation,
            yearsLeft > 0,
            edu.profile != nil {
@@ -1056,9 +1059,13 @@ final class Player: ObservableObject {
     // MARK: - Executive decisions (Boardroom)
 
     /// Whether the player currently holds a seat that unlocks the Boardroom's
-    /// equity/strategy plays (see `Job.isExecutive`).
+    /// equity/strategy plays (see `Job.isExecutive`). The Boardroom is part of
+    /// the entrepreneurial/equity path (investment rounds, share sales) and
+    /// leans on soft skills, fame, and the economy — all absent in Simplified —
+    /// so it never unlocks there.
     var canMakeExecutiveDecisions: Bool {
-        currentOccupation?.isExecutive ?? false
+        guard !isSimplified else { return false }
+        return currentOccupation?.isExecutive ?? false
     }
 
     /// Whether the given decision has already been used this year (each plays

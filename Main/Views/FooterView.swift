@@ -92,7 +92,7 @@ struct FooterView: View {
         Sport.allCases.contains { $0.stages.contains(currentStage) }
     }
     private var hasSideHustles: Bool {
-        SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
+        SideHustleCatalog.spareTimeProjects.contains { $0.stages.contains(currentStage) }
     }
     private var hasTrainings: Bool {
         Training.allCases.contains { $0.stages.contains(currentStage) }
@@ -131,17 +131,27 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Jobs") {
-                appUIState.showCareersSheet.toggle()
-            }.buttonStyle(.bordered).font(.headline)
+            // Jobs open up once the player reaches legal working age; before
+            // that they're in school and nothing in the list is applicable.
+            if player.age >= GameConstants.minimumWorkingAge {
+                Button("Jobs") {
+                    appUIState.showCareersSheet.toggle()
+                }.buttonStyle(.bordered).font(.headline)
+            }
 
             if hasSideHustles {
                 Button("Projects") { appUIState.showSideHustlesSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-                .buttonStyle(.bordered).font(.headline)
+            // The entrepreneurial path (founder ventures + spare-time business
+            // plays) is a realistic-mode feature — it stakes capital and turns
+            // on soft skills, fame, and the economy, none of which exist in
+            // Simplified, so the whole surface is hidden there.
+            if !player.isSimplified {
+                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+                    .buttonStyle(.bordered).font(.headline)
+            }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).
@@ -150,9 +160,14 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Education") {
-                appUIState.showTertiarySheet.toggle()
-            }.buttonStyle(.bordered).font(.headline)
+            // Higher education (vocational/university) becomes relevant only
+            // after high school; until then primary/middle/high school progress
+            // automatically, so the menu stays hidden.
+            if player.age >= GameConstants.minimumTertiaryAge {
+                Button("Education") {
+                    appUIState.showTertiarySheet.toggle()
+                }.buttonStyle(.bordered).font(.headline)
+            }
 
             Button("Next") {
                 player.advanceYear(appUIState: appUIState)

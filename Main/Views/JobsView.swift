@@ -126,15 +126,19 @@ private struct RoleGroupRow: View {
 }
 
 /// The **Ventures** surface — the founder path, split out from the salaried
-/// Jobs list. Each row is a capital-staked entrepreneurial rung (Side Hustler →
-/// Serial Entrepreneur): you invest your own savings for a shot at running a
-/// venture, then chase buyout offers year over year (see `FounderLadder` and
-/// `Player.foundVenture`). Routes into the same `JobDetail` invest flow the
-/// Jobs sheet used to host these under the Entrepreneurship category.
+/// Jobs list. Two kinds of play live here. The founder rungs (Side Hustler →
+/// Serial Entrepreneur) are capital-staked: you invest your own savings for a
+/// shot at running a venture, then chase buyout offers year over year (see
+/// `FounderLadder` and `Player.foundVenture`), routing into the same `JobDetail`
+/// invest flow. The spare-time business ventures (startup, pitch competition,
+/// crowdfunding) are lighter entrepreneurial projects with prospects of becoming
+/// a business — they stake no cash, credit `.entrepreneurship` work experience,
+/// and are committed when the year advances (see `SideHustleCatalog`).
 struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
+    @Binding var selectedSideHustles: Set<String>
 
     /// Founder rungs on offer, in climb order (least to most experience).
     private var ventures: [Job] {
@@ -146,6 +150,13 @@ struct EntrepreneurshipView: View {
                 }
                 return $0.income < $1.income
             }
+    }
+
+    /// Spare-time business ventures offered at the player's life stage — the
+    /// entrepreneurship projects moved here out of the Projects sheet.
+    private var businessVentures: [SideHustle] {
+        let stage = LifeStage.forAge(player.age)
+        return SideHustleCatalog.businessVentures.filter { $0.stages.contains(stage) }
     }
 
     var body: some View {
@@ -176,6 +187,21 @@ struct EntrepreneurshipView: View {
             } header: {
                 Text("Stake your own capital to run a venture. Grow it and sell for a multiple — or ride out the downturns.")
                     .textCase(nil)
+            }
+
+            if !businessVentures.isEmpty {
+                Section {
+                    ForEach(businessVentures) { hustle in
+                        SideHustleRow(
+                            hustle: hustle,
+                            player: player,
+                            selectedSideHustles: $selectedSideHustles
+                        )
+                    }
+                } header: {
+                    Text("Spare-time business plays — no cash down. Each committed year builds entrepreneurship experience and is resolved when you advance the year.")
+                        .textCase(nil)
+                }
             }
         }
         .navigationTitle("Ventures")

@@ -46,6 +46,12 @@ enum GameConstants {
     /// education requirement clear this gate implicitly via schooling time.
     static let minimumWorkingAge: Int = 14
 
+    /// Age at which higher (tertiary) education — vocational training and
+    /// university — becomes relevant. Until then the player is progressing
+    /// through primary/middle/high school automatically (see `RootView`), so the
+    /// Education menu stays hidden. Matches the age high school wraps up.
+    static let minimumTertiaryAge: Int = 18
+
     /// Realistic mode: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.

@@ -69,12 +69,16 @@ struct InstitutionTiersView: View {
             }
 
             HStack(spacing: 10) {
-                Label("\(education.annualTuition.formatted(.number)) $/yr", systemImage: "dollarsign.circle")
-                    .font(.caption)
-                    .foregroundStyle(canAfford ? Color.secondary : Color.red)
-                Label("Total \(education.totalTuition.formatted(.number)) $", systemImage: "sum")
-                    .font(.caption)
-                    .foregroundStyle(canAfford ? Color.secondary : Color.red)
+                // Simplified mode is kid-friendly — education is free, so its
+                // costs are hidden and only the duration is shown.
+                if !player.isSimplified {
+                    Label("\(education.annualTuition.formatted(.number)) $/yr", systemImage: "dollarsign.circle")
+                        .font(.caption)
+                        .foregroundStyle(canAfford ? Color.secondary : Color.red)
+                    Label("Total \(education.totalTuition.formatted(.number)) $", systemImage: "sum")
+                        .font(.caption)
+                        .foregroundStyle(canAfford ? Color.secondary : Color.red)
+                }
                 Label("\(education.yearsToComplete) yrs", systemImage: "clock")
                     .font(.caption)
                     .foregroundStyle(.secondary)
