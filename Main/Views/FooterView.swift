@@ -131,9 +131,13 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Jobs") {
-                appUIState.showCareersSheet.toggle()
-            }.buttonStyle(.bordered).font(.headline)
+            // Jobs open up once the player reaches legal working age; before
+            // that they're in school and nothing in the list is applicable.
+            if player.age >= GameConstants.minimumWorkingAge {
+                Button("Jobs") {
+                    appUIState.showCareersSheet.toggle()
+                }.buttonStyle(.bordered).font(.headline)
+            }
 
             if hasSideHustles {
                 Button("Projects") { appUIState.showSideHustlesSheet = true }
@@ -150,9 +154,14 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            Button("Education") {
-                appUIState.showTertiarySheet.toggle()
-            }.buttonStyle(.bordered).font(.headline)
+            // Higher education (vocational/university) becomes relevant only
+            // after high school; until then primary/middle/high school progress
+            // automatically, so the menu stays hidden.
+            if player.age >= GameConstants.minimumTertiaryAge {
+                Button("Education") {
+                    appUIState.showTertiarySheet.toggle()
+                }.buttonStyle(.bordered).font(.headline)
+            }
 
             Button("Next") {
                 player.advanceYear(appUIState: appUIState)

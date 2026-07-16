@@ -721,8 +721,11 @@ final class Player: ObservableObject {
         }
         appUIState.selectedEvents.removeAll()
 
-        // Charge tuition for the year the player is enrolled in a tertiary program.
-        if let edu = currentEducation,
+        // Charge tuition for the year the player is enrolled in a tertiary
+        // program. Simplified mode is money-free where school is concerned —
+        // education costs are hidden, so nothing is deducted.
+        if !isSimplified,
+           let edu = currentEducation,
            let yearsLeft = appUIState.yearsLeftToGraduation,
            yearsLeft > 0,
            edu.profile != nil {
