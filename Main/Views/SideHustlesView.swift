@@ -6,24 +6,20 @@ import SwiftUI
 /// ventures bank industry-scoped **fame** (and grow the soft skills they drew
 /// on), while a handful of business plays still pay **cash**. Mirrors
 /// `HobbiesView`: the catalogue is filtered by life stage and capped per year.
+///
+/// Business plays with prospects of becoming a company (the entrepreneurship
+/// ventures) live in the **Ventures** sheet instead — see `EntrepreneurshipView`.
 struct PrivateProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
 
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-    }
-
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
-    /// Ventures offered this stage. All are always available once the player is
+    /// Spare-time projects offered this stage (business ventures excluded — they
+    /// live in the Ventures sheet). All are always available once the player is
     /// old enough — no hobby prerequisite.
     private var stageProjects: [SideHustle] {
-        SideHustleCatalog.all.filter { $0.stages.contains(currentStage) }
+        SideHustleCatalog.spareTimeProjects.filter { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
@@ -47,16 +43,37 @@ struct PrivateProjectsView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(stageProjects) { hustle in
-                        row(for: hustle)
+                        SideHustleRow(
+                            hustle: hustle,
+                            player: player,
+                            selectedSideHustles: $selectedSideHustles
+                        )
                     }
                 }
                 .padding(.horizontal)
             }
         }
     }
+}
 
-    @ViewBuilder
-    private func row(for hustle: SideHustle) -> some View {
+/// A single selectable spare-time venture row: a talent-fit toggle with its
+/// blurb, lock label (unmet soft-skill / capital gate), and an info popover.
+/// Shared by the **Projects** sheet and the business-ventures section of the
+/// **Ventures** sheet, so both surfaces present a venture identically.
+struct SideHustleRow: View {
+    let hustle: SideHustle
+    @ObservedObject var player: Player
+    @Binding var selectedSideHustles: Set<String>
+
+    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
+        Dictionary(
+            uniqueKeysWithValues: SoftSkills.skillNames.map {
+                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
+            }
+        )
+    }
+
+    var body: some View {
         let isSelected = selectedSideHustles.contains(hustle.id)
         let atLimit = selectedSideHustles.count >= GameConstants.maxSideHustlesPerYear
         // A venture is locked until its soft-skill prerequisite and any capital

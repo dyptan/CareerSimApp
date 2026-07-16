@@ -71,7 +71,8 @@ struct RootView: View {
             EntrepreneurshipView(
                 availableJobs: availableJobs,
                 player: player,
-                showSheet: $appUIState.showEntrepreneurshipSheet
+                showSheet: $appUIState.showEntrepreneurshipSheet,
+                selectedSideHustles: $appUIState.selectedSideHustles
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)

@@ -92,7 +92,7 @@ struct FooterView: View {
         Sport.allCases.contains { $0.stages.contains(currentStage) }
     }
     private var hasSideHustles: Bool {
-        SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
+        SideHustleCatalog.spareTimeProjects.contains { $0.stages.contains(currentStage) }
     }
     private var hasTrainings: Bool {
         Training.allCases.contains { $0.stages.contains(currentStage) }

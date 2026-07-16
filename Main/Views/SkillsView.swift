@@ -44,7 +44,7 @@ struct SkillsView: View {
         }
     }
 
-    // MARK: - Soft Skills
+    // MARK: - Personality
 
     private var softSkillsSection: some View {
         DisclosureGroup(isExpanded: $softSkillsExpanded) {
@@ -66,7 +66,7 @@ struct SkillsView: View {
             .padding(.top, 4)
         } label: {
             HStack {
-                Text("Soft Skills").font(.headline)
+                Text("Personality").font(.headline)
                 Spacer()
                 summaryPictograms(nonZeroSoftSkills.map { $0.pictogram })
             }
@@ -133,13 +133,13 @@ struct SkillsView: View {
             .joined(separator: "  ")
     }
 
-    // MARK: - Hard Skills
+    // MARK: - Skills
 
     private var hardSkillsSection: some View {
         DisclosureGroup(isExpanded: $hardSkillsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
                 if trainings.isEmpty {
-                    Text("No hard skills yet.")
+                    Text("No skills yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -154,7 +154,7 @@ struct SkillsView: View {
             .padding(.top, 4)
         } label: {
             HStack {
-                Text("Hard Skills").font(.headline)
+                Text("Skills").font(.headline)
                 Spacer()
                 summaryPictograms(trainings.map { $0.pictogram })
             }
@@ -202,13 +202,13 @@ struct SkillsView: View {
         }
     }
 
-    // MARK: - Work Experience
+    // MARK: - Experience
 
     private var experienceSection: some View {
         DisclosureGroup(isExpanded: $experienceExpanded) {
             VStack(alignment: .leading, spacing: 4) {
                 if experienceEntries.isEmpty {
-                    Text("No work experience yet.")
+                    Text("No experience yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -227,7 +227,7 @@ struct SkillsView: View {
             .padding(.top, 4)
         } label: {
             HStack {
-                Text("Work Experience").font(.headline)
+                Text("Experience").font(.headline)
                 Spacer()
                 summaryPictograms(experienceEntries.map { _ in "💼" })
             }

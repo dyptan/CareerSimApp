@@ -495,6 +495,18 @@ enum SideHustleCatalog {
     /// Every spare-time venture on offer: money plays first, then the fame set.
     static let all: [SideHustle] = moneyVentures + fameVentures
 
+    /// Ventures with prospects of becoming a business — the entrepreneurship
+    /// plays (startup, pitch competition, crowdfunding) that credit real
+    /// `.entrepreneurship` work experience. These live in the **Ventures** sheet
+    /// alongside the founder path, not in the spare-time **Projects** sheet.
+    static let businessVentures: [SideHustle] =
+        all.filter { $0.experienceCategory == .entrepreneurship }
+
+    /// Spare-time projects shown in the **Projects** sheet: every venture that
+    /// isn't a business play (the money hustles and the fame projects).
+    static let spareTimeProjects: [SideHustle] =
+        all.filter { $0.experienceCategory != .entrepreneurship }
+
     /// Lookup by stable id, used when resolving the year's selected ventures.
     static let byId: [String: SideHustle] =
         Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
