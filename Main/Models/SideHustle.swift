@@ -62,6 +62,14 @@ struct SideHustle: Identifiable, Hashable {
     /// success odds (see `experienceLift`). `nil` for ventures that build no
     /// formal work experience (most fame plays).
     var experienceCategory: JobCategory? = nil
+    /// Whether this play has prospects of becoming a business — a real income
+    /// stream or company. Set on every venture that can turn profitable: the
+    /// commercial ventures (a course, an online store, a shop, a property flip)
+    /// and the buildable products that could grow into one (a mobile app, a
+    /// shipped game). Each banks Business fame. Combined with the entrepreneurship
+    /// plays (`experienceCategory == .entrepreneurship`), these fill the
+    /// **Ventures** sheet, while pure fame/creative projects stay in **Projects**.
+    var hasBusinessProspects: Bool = false
 
     /// A minimum-level requirement on one soft-skill axis (see `prerequisite`).
     struct SkillRequirement: Hashable {
@@ -198,55 +206,81 @@ struct SideHustle: Identifiable, Hashable {
 }
 
 /// Master catalogue of spare-time ventures, filtered by life stage in the UI the
-/// same way `activities` is. Joins the money-making ventures with the (now much
-/// larger) set of fame-earning ventures — the former standalone "projects" — into
-/// one list. All resolve identically under the hood as talent-fit gambles.
+/// same way `activities` is. Joins the commercial ventures (which bank Business
+/// fame) with the larger set of creative fame plays — the former standalone
+/// "projects" — into one list. Every venture banks industry-scoped fame and all
+/// resolve identically under the hood as talent-fit gambles.
 enum SideHustleCatalog {
-    /// Business plays that still pay cash — no money down, success pays out. Most
-    /// open once the player is a young adult; higher-upside ventures (real estate,
-    /// a brick-and-mortar shop) are adult-only.
-    static let moneyVentures: [SideHustle] = [
+    /// Commercial ventures — building a course, an online store, a local shop,
+    /// or a property flip. Each is a play with prospects of becoming a business,
+    /// so a successful year banks 🚀 **Business** fame (like the entrepreneurship
+    /// plays) and grows the founder-cluster talents it drew on. Most open once
+    /// the player is a young adult; the capital-heavy ventures (a shop, a
+    /// property flip) are adult-only and gate on savings on hand.
+    static let commercialVentures: [SideHustle] = [
         SideHustle(
             id: "moocCourse",
             label: "Create a MOOC Course",
             icon: "🎓",
-            blurb: "Record an online course once and sell seats for years. A big effort up front, but the best courses earn while you sleep.",
+            blurb: "Record an online course and build an audience of learners. Grow it into a name and the business world takes note.",
             talents: [\.analyticalReasoningAndProblemSolving, \.presentationAndStorytelling, \.communicationAndNetworking],
-            payoff: .money(payoutRange: 0...25_000),
+            payoff: .fame(industry: .business, weight: 1.0),
             stages: [.youngAdult, .adult],
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
+            growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
+                     .init(keyPath: \.communicationAndNetworking, weight: 1),
+                     .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
+            fameTitle: "Course Creator",
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5),
+            hasBusinessProspects: true
         ),
         SideHustle(
             id: "etsyCrafts",
             label: "Sell Art & Crafts Online",
             icon: "🧵",
-            blurb: "Turn a making hobby into an online storefront of handmade goods.",
+            blurb: "Turn a making hobby into an online storefront of handmade goods. Grow the brand and you make a name in business.",
             talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.carefulnessAndAttentionToDetail],
-            payoff: .money(payoutRange: 500...16_000),
+            payoff: .fame(industry: .business, weight: 1.0),
             stages: [.youngAdult, .adult],
-            prerequisite: .init(keyPath: \.tinkeringAndFingerPrecision, minLevel: 4)
+            growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                     .init(keyPath: \.persuasionAndNegotiation, weight: 1),
+                     .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
+            fameTitle: "Online Seller",
+            prerequisite: .init(keyPath: \.tinkeringAndFingerPrecision, minLevel: 4),
+            hasBusinessProspects: true
         ),
         SideHustle(
             id: "smallBusiness",
             label: "Start a Small Business",
             icon: "🏪",
-            blurb: "Open a local shop or service. Real overhead and real risk, but a steady earner when it clicks.",
+            blurb: "Open a local shop or service. Make it work and you build a reputation as a business owner.",
             talents: [\.persuasionAndNegotiation, \.riskTakingAndInitiative, \.timeManagementAndPlanning],
-            payoff: .money(payoutRange: 2_000...30_000),
+            payoff: .fame(industry: .business, weight: 1.5),
             stages: [.adult],
+            growth: [.init(keyPath: \.leadershipAndInfluence, weight: 1),
+                     .init(keyPath: \.riskTakingAndInitiative, weight: 1),
+                     .init(keyPath: \.persuasionAndNegotiation, weight: 1),
+                     .init(keyPath: \.timeManagementAndPlanning, weight: 1)],
+            fameTitle: "Small-Business Owner",
             prerequisite: .init(keyPath: \.timeManagementAndPlanning, minLevel: 5),
-            minCapital: 15_000
+            minCapital: 15_000,
+            hasBusinessProspects: true
         ),
         SideHustle(
             id: "realEstateFlip",
             label: "Flip Real Estate",
             icon: "🏠",
-            blurb: "Buy, renovate, and resell a property. The longest odds of any money venture — but the largest cash upside when it lands.",
+            blurb: "Buy, renovate, and resell a property. Pull off the deal and your name climbs in business circles.",
             talents: [\.riskTakingAndInitiative, \.analyticalReasoningAndProblemSolving, \.persuasionAndNegotiation],
-            payoff: .money(payoutRange: 0...130_000),
+            payoff: .fame(industry: .business, weight: 2.0),
             stages: [.adult],
+            growth: [.init(keyPath: \.riskTakingAndInitiative, weight: 1),
+                     .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
+                     .init(keyPath: \.persuasionAndNegotiation, weight: 1),
+                     .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
+            fameTitle: "Property Developer",
             prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 6),
-            minCapital: 60_000
+            minCapital: 60_000,
+            hasBusinessProspects: true
         ),
     ]
 
@@ -334,14 +368,15 @@ enum SideHustleCatalog {
             icon: "📱",
             blurb: "A little app you build in your spare time. Ship something people actually use and word gets around.",
             talents: [\.analyticalReasoningAndProblemSolving, \.creativityAndInsightfulThinking, \.timeManagementAndPlanning],
-            payoff: .fame(industry: .technology, weight: 1.0),
+            payoff: .fame(industry: .business, weight: 1.0),
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "App Maker",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
+            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5),
+            hasBusinessProspects: true
         ),
         SideHustle(
             id: "projectLibrary",
@@ -423,14 +458,15 @@ enum SideHustleCatalog {
             icon: "🎮",
             blurb: "A 3D game you model, build, and ship in your spare time — worlds and mechanics all your own. A standout indie title gets you noticed.",
             talents: [\.creativityAndInsightfulThinking, \.spacialNavigationAndOrientation, \.analyticalReasoningAndProblemSolving],
-            payoff: .fame(industry: .gaming, weight: 1.0),
+            payoff: .fame(industry: .business, weight: 1.0),
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Indie Game Dev",
-            prerequisite: .init(keyPath: \.spacialNavigationAndOrientation, minLevel: 5)
+            prerequisite: .init(keyPath: \.spacialNavigationAndOrientation, minLevel: 5),
+            hasBusinessProspects: true
         ),
         // --- Entrepreneurship ventures: the path to the founder skillset that
         // hobbies can't teach — leadership, vision, persuasion, and risk appetite.
@@ -492,20 +528,25 @@ enum SideHustleCatalog {
         ),
     ]
 
-    /// Every spare-time venture on offer: money plays first, then the fame set.
-    static let all: [SideHustle] = moneyVentures + fameVentures
+    /// Every spare-time venture on offer: the commercial (Business-fame) plays
+    /// first, then the creative fame set.
+    static let all: [SideHustle] = commercialVentures + fameVentures
 
-    /// Ventures with prospects of becoming a business — the entrepreneurship
-    /// plays (startup, pitch competition, crowdfunding) that credit real
-    /// `.entrepreneurship` work experience. These live in the **Ventures** sheet
-    /// alongside the founder path, not in the spare-time **Projects** sheet.
+    /// Ventures with prospects of becoming a business — everything that can turn
+    /// profitable and banks 🚀 Business fame: the commercial ventures (course,
+    /// online store, shop, property flip), the buildable products that could grow
+    /// into a business (app, game), and the entrepreneurship plays (startup, pitch
+    /// competition, crowdfunding) that also credit real `.entrepreneurship` work
+    /// experience. These live in the **Ventures** sheet alongside the founder
+    /// path, not in the spare-time **Projects** sheet.
     static let businessVentures: [SideHustle] =
-        all.filter { $0.experienceCategory == .entrepreneurship }
+        all.filter { $0.hasBusinessProspects || $0.experienceCategory == .entrepreneurship }
 
-    /// Spare-time projects shown in the **Projects** sheet: every venture that
-    /// isn't a business play (the money hustles and the fame projects).
+    /// Spare-time projects shown in the **Projects** sheet: the pure
+    /// fame/creative plays with no business prospects (articles, talks,
+    /// festivals, open source, and the personal-brand performances).
     static let spareTimeProjects: [SideHustle] =
-        all.filter { $0.experienceCategory != .entrepreneurship }
+        all.filter { !($0.hasBusinessProspects || $0.experienceCategory == .entrepreneurship) }
 
     /// Lookup by stable id, used when resolving the year's selected ventures.
     static let byId: [String: SideHustle] =

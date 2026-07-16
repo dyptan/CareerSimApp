@@ -69,14 +69,6 @@ struct EventsView: View {
             return "🌐 All-industry network +\(netPoints)"
         }()
 
-        let pictos: String = event.abilities
-            .compactMap { ability -> String? in
-                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                guard let pic = skillPictogramByKeyPath[kp] else { return nil }
-                return ability.weight > 1 ? "\(ability.weight)x\(pic)" : pic
-            }
-            .joined(separator: " ")
-
         let hintMessage: String = event.abilities
             .map { ability -> String in
                 let kp = ability.keyPath as PartialKeyPath<SoftSkills>
@@ -103,18 +95,6 @@ struct EventsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(event.icon)  \(event.name)")
                         .font(.headline)
-                    Text(event.blurb)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if !pictos.isEmpty {
-                        Text("Builds: \(pictos)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    Text("🤝 \(networkLabel)")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(.secondary)
 
                     // Role picker for industry events once selected: participants
                     // always, presenters once the veteran gate is cleared.
@@ -170,7 +150,7 @@ struct EventsView: View {
 
             InfoHint(
                 title: "\(event.icon) \(event.name)",
-                message: "\(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion. Present at an industry event (after \(GameConstants.presenterExperienceYears) years in the field) for extra network and fame."
+                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion. Present at an industry event (after \(GameConstants.presenterExperienceYears) years in the field) for extra network and fame."
             )
         }
         .padding(5)
