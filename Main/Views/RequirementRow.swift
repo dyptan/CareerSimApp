@@ -18,7 +18,7 @@ public struct RequirementRow: View {
             switch style {
             case let .meter(current, required):
                 HStack(spacing: 4) {
-                    ForEach(0..<required, id: \.self) { index in
+                    ForEach(0..<max(0, required), id: \.self) { index in
                         Text(emoji)
                             .opacity(index < current ? 1.0 : 0.3)
                     }

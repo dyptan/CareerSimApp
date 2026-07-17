@@ -389,7 +389,14 @@ struct JobDetail: View {
             .padding(.horizontal)
 
             if canInvest {
-                Slider(value: $investedCapital, in: 0...Double(player.savings), step: 500)
+                // Guard against a degenerate slider: when savings are smaller
+                // than the usual 500 increment, a step wider than the range
+                // crashes SwiftUI's Slider. Cap the step to the available span
+                // (and keep ~10 stops on small ranges) so the range is always
+                // valid regardless of how little the player has saved.
+                let maxInvestable = Double(player.savings)
+                let step = max(1, min(500, (maxInvestable / 10).rounded()))
+                Slider(value: $investedCapital, in: 0...maxInvestable, step: step)
                     .padding(.horizontal)
                 HStack {
                     Text("0 $")
@@ -464,9 +471,13 @@ struct JobDetail: View {
 
     private var applyButton: some View {
         Button {
+            // Convert defensively: a degenerate slider state could leave the
+            // bound value non-finite, and Int(_:) traps on NaN/infinity.
+            let capital = investedCapital.isFinite ? Int(investedCapital) : 0
+            let salary = requestedSalary.isFinite ? Int(requestedSalary) : job.income
             let success = isFounder
-                ? player.foundVenture(job, investedCapital: Int(investedCapital))
-                : player.applyForJob(job, requestedSalary: Int(requestedSalary))
+                ? player.foundVenture(job, investedCapital: capital)
+                : player.applyForJob(job, requestedSalary: salary)
             if success {
                 // Hired (or venture launched): close the careers dialog right away
                 // so the player lands back on the game view — the header shows the

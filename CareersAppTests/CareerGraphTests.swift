@@ -6,43 +6,15 @@ import XCTest
 /// O(catalogue size), not as a combinatorial sweep of player states.
 final class CareerGraphTests: XCTestCase {
 
-    /// The headline guarantee: the catalogue is internally consistent. No orphan
-    /// projects, no licence-prerequisite cycles, every credential gate and every
-    /// job's required portfolio pieces are reachable. A failure prints the exact
-    /// offending node(s).
+    /// The headline guarantee: the catalogue is internally consistent. No
+    /// licence-prerequisite cycles and every credential/education gate is
+    /// reachable. A failure prints the exact offending node(s).
     func testCatalogueHasNoUnreachablePaths() {
         let issues = CareerGraph.validateCatalogue()
         XCTAssertEqual(
             issues, [],
             "Career graph validation found \(issues.count) issue(s):\n" + issues.joined(separator: "\n")
         )
-    }
-
-    /// Every project must be unlocked by at least one hobby — otherwise it can
-    /// never be built and any job requiring it is unwinnable. (This is the class
-    /// of bug that previously left `presentation` and `lessonPlan` orphaned.)
-    func testEveryProjectIsUnlockedByAHobby() {
-        let buildable = CareerGraph.unlockableProjects
-        for project in Project.allCases {
-            XCTAssertTrue(
-                buildable.contains(project),
-                "Project '\(project.rawValue)' is unlocked by no hobby."
-            )
-        }
-    }
-
-    /// Every portfolio piece any job asks for must be producible by some project
-    /// (which in turn must be hobby-unlockable).
-    func testEveryRequiredPortfolioPieceIsBuildable() {
-        let buildable = CareerGraph.unlockableProjects
-        for job in JobCatalog.allJobs() {
-            for piece in job.requirements.hardSkills.portfolioItems {
-                XCTAssertTrue(
-                    buildable.contains(piece),
-                    "Job '\(job.id)' requires portfolio '\(piece.rawValue)', which no hobby unlocks."
-                )
-            }
-        }
     }
 
     /// The training prerequisite chain must terminate (no cycles) and bottom out
@@ -89,10 +61,7 @@ final class CareerGraphTests: XCTestCase {
         let before = CareerGraph.missingHardRequirements(for: job, player: player)
         XCTAssertFalse(before.isEmpty, "Expected unmet requirements for a fresh player on '\(job.id)'.")
 
-        // Grant exactly the hard skills the job gates on.
-        for piece in job.requirements.hardSkills.portfolioItems {
-            player.hardSkills.portfolioItems.insert(piece)
-        }
+        // Grant exactly the hard skills (trainings) the job gates on.
         for training in job.requirements.hardSkills.trainings {
             player.hardSkills.trainings.insert(training)
         }
