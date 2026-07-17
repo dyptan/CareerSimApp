@@ -62,6 +62,28 @@ final class VentureLaunchTests: XCTestCase {
         XCTAssertLessThanOrEqual(p, 0.92, "Odds are capped at 0.92.")
     }
 
+    /// A stake smaller than the founder screen's investment step (500) and
+    /// below the venture's target is still a valid founding — the case that
+    /// crashed the launch slider (range `0...savings` narrower than a 500 step)
+    /// for an early-game player with only a few hundred saved. The model must
+    /// accept it so the (now step-clamped) UI has something valid to submit.
+    func testTinyStakeBelowStepIsAValidFounding() throws {
+        let job = try sideHustlerJob()
+        var launched = false
+        for _ in 0..<500 {
+            let player = realisticFounder(savings: 400)   // < 500 UI step, < target
+            let p = job.founderSuccessProbability(for: player, investedCapital: 400)
+            XCTAssertGreaterThan(p, 0.0, "A small but positive stake should still give positive odds.")
+            XCTAssertTrue(p.isFinite, "Founding odds must be finite for any stake.")
+            if player.foundVenture(job, investedCapital: 400) {
+                XCTAssertNotNil(player.activeStartup, "A small-stake launch still starts a venture.")
+                launched = true
+                break
+            }
+        }
+        XCTAssertTrue(launched, "A small-stake Side Hustler should be launchable.")
+    }
+
     /// Launching a venture (the success branch of `foundVenture`) makes the
     /// player a founder and boots the multi-year startup loop: an `activeStartup`
     /// at the rung matching the job, with the stake committed from savings.
