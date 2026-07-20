@@ -14,8 +14,10 @@ import Foundation
 ///   and banks industry fame; a failure yields nothing but the opportunity cost.
 ///   The odds turn on the founder-cluster soft skills, plus the player's network
 ///   and reputation in the field.
-/// - **Sell Vested Shares** — the safe play. A *guaranteed* payout scaled by pay
-///   and years vested in the role. No fame, no gamble — just liquidity.
+/// - **Sell Your Stake** — put your equity on the market at a price you name. The
+///   higher you ask relative to the company's fair valuation, the less likely a
+///   buyer bites, and a recession thins the buyers further. A founder who lands a
+///   sale exits the venture; a hired exec just cashes out vested equity.
 struct ExecutiveDecision: Identifiable, Hashable {
     /// How the decision resolves. Each kind has its own odds/payout maths on
     /// `Player`, so the catalogue stays declarative.
@@ -68,10 +70,10 @@ enum ExecutiveDecisionCatalog {
         ExecutiveDecision(
             id: "sellShares",
             kind: .sellShares,
-            label: "Sell Vested Shares",
+            label: "Sell Your Stake",
             icon: "💸",
-            blurb: "Cash out part of your equity stake. A sure payout that grows with every year you've held the seat — no gamble, no headlines, just liquidity in the bank.",
-            talents: [\.riskTakingAndInitiative, \.timeManagementAndPlanning]
+            blurb: "Put your equity on the market at a price you set. Ask near its fair value and a buyer bites readily; hold out for a premium and you may find no takers this year. A recession thins the buyers further.",
+            talents: [\.persuasionAndNegotiation, \.riskTakingAndInitiative]
         ),
     ]
 

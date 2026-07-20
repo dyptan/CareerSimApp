@@ -124,11 +124,19 @@ struct TrainingsView: View {
             guard !lines.isEmpty else { return "" }
             return "\n\nRequirements:\n\n" + lines.joined(separator: "\n")
         }()
+        // The hiring/founding edge a skill-building credential confers, spelled
+        // out so its value is clear (licences carry none — their value is the
+        // gate they clear).
+        let edgeHint: String = {
+            guard let boost = training.careerBoost else { return "" }
+            let fields = boost.categories.map(\.rawValue).sorted().joined(separator: ", ")
+            return "\n\n🎯 An edge landing jobs and launching ventures in: \(fields)"
+        }()
         let hintMessage: String = {
             let base = boostsHint.isEmpty
                 ? training.description
                 : "\(training.description)\n\nCompleting this course builds:\n\n\(boostsHint)"
-            return base + requirementsHint
+            return base + edgeHint + requirementsHint
         }()
 
         VStack(alignment: .leading, spacing: 4) {

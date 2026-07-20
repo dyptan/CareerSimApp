@@ -279,11 +279,15 @@ enum JobCatalog {
             "Sales Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 4, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
             "Marketing Specialist":           .init(analyticalReasoningAndProblemSolving: 1, creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
             "Recruiter":                      .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
-            // Entrepreneurial ladder (no degree gate; success is capital-backed)
-            "Side Hustler":                   .init(persuasionAndNegotiation: 1, riskTakingAndInitiative: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 1),
-            "Small Business Owner":           .init(communicationAndNetworking: 2, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, visionaryThinkingAndAmbition: 1, riskTakingAndInitiative: 2, carefulnessAndAttentionToDetail: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
-            "Startup Founder":                .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, persuasionAndNegotiation: 3, leadershipAndInfluence: 2, visionaryThinkingAndAmbition: 3, riskTakingAndInitiative: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 3),
-            "Serial Entrepreneur":            .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, persuasionAndNegotiation: 3, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 4, riskTakingAndInitiative: 4, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+            // Ventures (concrete industry founder plays; no degree gate). Each
+            // profile is what *that* business demands — launch odds score the
+            // player against it plus raw founder grit (see `Job.founderSkillFit`).
+            "Specialty Coffee Roastery":      .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 2, persuasionAndNegotiation: 2, riskTakingAndInitiative: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+            "Boutique Fitness Studio":        .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 2, riskTakingAndInitiative: 2, empathyAndInterpersonalCare: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+            "Farm-to-Table Restaurant":       .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 2, leadershipAndInfluence: 2, riskTakingAndInitiative: 2, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2),
+            "Indie Game Studio":              .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, visionaryThinkingAndAmbition: 3, riskTakingAndInitiative: 2, resilienceAndEndurance: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 3),
+            "Property Development Firm":      .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 2, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 2, riskTakingAndInitiative: 3, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2),
+            "SaaS App Startup":               .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 4, riskTakingAndInitiative: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 3),
 
             // Management / coordination
             "Project Manager":                .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
@@ -848,21 +852,28 @@ enum JobCatalog {
             extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: eqf, minYears: years))
         }
 
-        // MARK: - Entrepreneurial ladder (its own Entrepreneurship category)
-        // Founders aren't gated on degrees; success is a capital-backed bet
-        // (see `Job.founderSuccessProbability`). Each rung needs prior
-        // entrepreneurship experience, so the ladder is climbed in order. They
-        // carry a `targetCapital`, which is what flags them as founder roles
-        // (`Job.isEntrepreneurial`).
-        // (id, income, icon, summary, minYears, targetCapital)
-        let founderTitles: [(String, Int, String, String, Int, Int)] = [
-            ("Side Hustler",          28_000, "🛒", "Sells homemade goods or services on the side to test an idea.",     0,   2_000),
-            ("Small Business Owner",  55_000, "🏪", "Runs a local shop, café, or trade business of their own.",          1,  25_000),
-            ("Startup Founder",       95_000, "🚀", "Builds a high-growth company, raising money and hiring a team.",    2,  60_000),
-            ("Serial Entrepreneur",  180_000, "🏢", "Launches venture after venture, scaling and selling companies.",    5, 200_000),
+        // MARK: - Ventures (concrete, industry-specific founder plays)
+        // Each venture is a real business idea in a real industry, not a generic
+        // "startup". They're one-off founder bets — no auto-climbing ladder — and
+        // you run one at a time (it becomes your occupation until you sell out or
+        // go bankrupt; see `Player.foundVenture` and the Boardroom). What flags a
+        // role as a venture is its `targetCapital` (`Job.isEntrepreneurial`), not
+        // its category — so each keeps its true industry category, which means
+        // your relevant work experience *in that field* feeds the launch odds
+        // (`Job.founderSuccessProbability` weights experience + soft-skill fit
+        // over raw capital). Founders aren't gated on degrees (`minEQF: 0`); the
+        // gate is the years of industry experience the idea demands.
+        // (id, category, income, icon, summary, minYears, targetCapital)
+        let ventures: [(String, JobCategory, Int, String, String, Int, Int)] = [
+            ("Specialty Coffee Roastery", .retail,       46_000, "☕", "Source, roast, and sell your own beans through a café and online.",        1,  30_000),
+            ("Boutique Fitness Studio",   .health,       52_000, "🏋️", "Run your own small-group training studio and build a member community.",   2,  35_000),
+            ("Farm-to-Table Restaurant",  .hospitality,  60_000, "🍽️", "Open a seasonal restaurant sourcing straight from local growers.",         3,  80_000),
+            ("Indie Game Studio",         .gaming,       85_000, "🎮", "Bootstrap a small studio and ship an original game to players.",           3,  55_000),
+            ("Property Development Firm",  .construction,110_000, "🏗️", "Buy, build, and sell property — financing projects and managing crews.",   4, 120_000),
+            ("SaaS App Startup",          .technology,  120_000, "💻", "Build a subscription software product and grow it toward a real raise.",   3,  60_000),
         ]
-        for (title, income, icon, summary, years, capital) in founderTitles {
-            extras.append(fullJob(id: title, category: .entrepreneurship, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
+        for (title, cat, income, icon, summary, years, capital) in ventures {
+            extras.append(fullJob(id: title, category: cat, income: income, icon: icon, summary: summary, minEQF: 0, minYears: years, targetCapital: capital))
         }
 
         var all: [Job] = [rn, lightDriver]
@@ -870,4 +881,15 @@ enum JobCatalog {
 
         return all
     }
+
+    /// Role pictogram keyed by base title — for surfacing a role's own industry
+    /// icon in places that only hold the title string (e.g. the Experience list,
+    /// which is keyed by `Job.baseTitle`). Deterministic, so it's built once.
+    static let iconByBaseTitle: [String: String] = {
+        var map: [String: String] = [:]
+        for job in allJobs() where map[job.baseTitle] == nil {
+            map[job.baseTitle] = job.icon
+        }
+        return map
+    }()
 }

@@ -11,90 +11,6 @@ struct StatusEvent: Identifiable, Hashable {
     let message: String
 }
 
-/// The player's currently-active startup (realistic mode only). Founded by
-/// taking on a founder Job; each year `advanceYear` rolls for a buyout offer
-/// and — on a hit — sets `Player.pendingStartupOffer` so the UI can present a
-/// Sell-or-Hold dialog. Holding advances `rungIndex` to the next founder rung
-/// (and updates `currentOccupation` accordingly); selling banks the offer and
-/// clears `activeStartup`. A recession forces a fire-sale liquidation.
-///
-/// `rungIndex` corresponds to the four founder rungs declared in `JobCatalog`
-/// (0 = Side Hustler … 3 = Serial Entrepreneur). `yearsHeld` is the count of
-/// year-rolls since the venture was founded (or last grew), purely informational
-/// for the dialog copy.
-///
-/// The venture also tracks three **business metrics** that grow with every year
-/// held: `marketSharePct` (share of its market), `revenue` (annual $), and
-/// `headcount` (employees). They start modest, compound each year (faster for a
-/// better-run company), step up on a rung-up, and — crucially — drive the size
-/// of the buyout offer (see `exitPremium`): grow the company and it sells for
-/// more. An investment round from the Boardroom (`ExecutiveDecision`) fuels them.
-struct ActiveStartup: Hashable {
-    var rungIndex: Int
-    var yearsHeld: Int
-    /// Share of its market, 0...100 %.
-    var marketSharePct: Double
-    /// Annual revenue in $.
-    var revenue: Int
-    /// Employees on the books.
-    var headcount: Int
-
-    /// Seeds a freshly founded venture at `rungIndex`, with starting metrics
-    /// scaled off the rung's `targetCapital` (a bigger raise buys more traction).
-    static func founded(rungIndex: Int, targetCapital: Int) -> ActiveStartup {
-        ActiveStartup(
-            rungIndex: rungIndex,
-            yearsHeld: 0,
-            marketSharePct: min(1.5 + Double(rungIndex) * 1.5, 100),
-            revenue: max(1_000, targetCapital),
-            headcount: max(1, 1 + rungIndex * 3)
-        )
-    }
-
-    /// Compounds one year of organic growth. A well-run venture (higher
-    /// `founderSkillFit`, 0...1) grows faster; a little jitter keeps years from
-    /// feeling identical. Revenue leads; headcount trails it; market share creeps
-    /// toward saturation. Does not touch `yearsHeld` (the caller owns that).
-    mutating func grow(founderSkillFit: Double) {
-        let rate = 0.08 + max(0, min(founderSkillFit, 1)) * 0.22   // 8%–30% baseline
-        let factor = 1.0 + rate * Double.random(in: 0.6...1.4)
-        revenue = Int((Double(revenue) * factor).rounded())
-        headcount = max(1, Int((Double(headcount) * (1.0 + (factor - 1.0) * 0.7)).rounded()))
-        marketSharePct = min(100.0, marketSharePct * factor)
-    }
-
-    /// Applies a one-off boost to the metrics — used when an investment round
-    /// closes (see `Player.resolveExecutiveDecision`). `scale` > 1 grows revenue
-    /// and headcount; market share ticks up additively toward the cap.
-    mutating func inject(scale: Double, marketShareGain: Double) {
-        revenue = Int((Double(revenue) * scale).rounded())
-        headcount = max(headcount, Int((Double(headcount) * (1.0 + (scale - 1.0) * 0.6)).rounded()))
-        marketSharePct = min(100.0, marketSharePct + marketShareGain)
-    }
-
-    /// Steps the venture up to `toRungIndex` on a Hold-and-grow: a step change in
-    /// scale, floored at the new rung's seed so a rung-up never shrinks the
-    /// company. Resets `yearsHeld`.
-    mutating func scaleUp(toRungIndex: Int, targetCapital: Int) {
-        let seed = ActiveStartup.founded(rungIndex: toRungIndex, targetCapital: targetCapital)
-        rungIndex = toRungIndex
-        yearsHeld = 0
-        revenue = max(revenue * 2, seed.revenue)
-        headcount = max(Int((Double(headcount) * 1.8).rounded()), seed.headcount)
-        marketSharePct = min(100.0, max(marketSharePct + 3.0, seed.marketSharePct))
-    }
-
-    /// Multiplier on the rung's headline buyout value from the venture's traction:
-    /// revenue grown past the rung's capital baseline plus a market-share kicker.
-    /// ~1.0 at founding, climbing toward ~2× for a well-grown company, so holding
-    /// and growing is rewarded at exit. Never below 0.5.
-    func exitPremium(targetCapital: Int) -> Double {
-        let revenueRatio = Double(revenue) / Double(max(targetCapital, 1))
-        let premium = min(revenueRatio, 4.0) * 0.25 + min(marketSharePct / 100.0, 1.0) * 0.5
-        return max(0.5, 0.75 + premium)
-    }
-}
-
 /// A single entry on the player's fame shelf: a named accolade that
 /// builds reputation — a competition trophy, a fame-building side hustle, or a
 /// noticed spare-time project. Fame is the third pillar of career
@@ -102,13 +18,14 @@ struct ActiveStartup: Hashable {
 /// what you can do. Each entry carries its own display icon and reputation
 /// `weight`; `count` levels it up when the same accolade is earned again (a
 /// repeatable project shipped three good years reads as ×3, not three rows).
-/// `industry` scopes the reputation — it only lifts hiring odds for roles in
-/// that same `JobCategory` (see `Player.fameHireBonus(for:)`); `nil` is general
-/// renown that helps a little everywhere.
+/// `category` scopes the reputation to one of the five `FameCategory` buckets —
+/// it only lifts hiring odds for roles whose industry maps to that same bucket
+/// (see `Player.fameHireBonus(for:)`); `nil` is general renown that helps a
+/// little everywhere.
 struct FameAward: Identifiable, Hashable {
     let title: String
     let icon: String
-    let industry: JobCategory?
+    let category: FameCategory?
     let weight: Double
     var count: Int = 1
 
@@ -149,11 +66,11 @@ final class Player: ObservableObject {
 
     /// Banks an accolade on the fame shelf, levelling an existing
     /// entry of the same title rather than adding a duplicate row.
-    func award(_ title: String, icon: String, industry: JobCategory?, weight: Double) {
+    func award(_ title: String, icon: String, category: FameCategory?, weight: Double) {
         if let i = fameAwards.firstIndex(where: { $0.title == title }) {
             fameAwards[i].count += 1
         } else {
-            fameAwards.append(FameAward(title: title, icon: icon, industry: industry, weight: weight))
+            fameAwards.append(FameAward(title: title, icon: icon, category: category, weight: weight))
         }
     }
 
@@ -166,29 +83,6 @@ final class Player: ObservableObject {
     @Published var showCompetitionWinAlert: Bool = false
     @Published var competitionWinMessage: String = ""
 
-    /// The player's current startup if they're operating one (realistic mode
-    /// only). Created when a founder Job is launched via `foundVenture`;
-    /// resolved annually by `advanceYear` into either a buyout dialog or a
-    /// recession-driven bankruptcy. `nil` outside the startup loop.
-    @Published var activeStartup: ActiveStartup?
-
-    /// Buyout amount waiting on a Sell-or-Hold decision from the player. Set
-    /// by `advanceYear` when the annual roll lands an offer; cleared the moment
-    /// the player resolves the offer via `acceptStartupOffer` or `holdStartup`.
-    @Published var pendingStartupOffer: Int?
-
-    /// One-shot trigger for the buyout-offer sheet. Bound by `RootView`; the
-    /// `Sell` / `Hold & grow` buttons flip it off.
-    @Published var showStartupOfferSheet: Bool = false
-
-    /// One-shot trigger for the bankruptcy notice that fires when a recession
-    /// forces a fire-sale of the player's startup.
-    @Published var showStartupBankruptcyAlert: Bool = false
-
-    /// Salvage value paid out by the most recent forced bankruptcy. Used by
-    /// the bankruptcy alert message; not a header note.
-    @Published var lastBankruptcySalvage: Int = 0
-
     /// Weighted sum of every banked trophy, where each title's contribution
     /// comes from its source's `fameWeight` (a local 5K is worth less than an
     /// Olympic medal). Drives both `fameHireBonus(for:)` and the fame lift on
@@ -197,38 +91,42 @@ final class Player: ObservableObject {
         fameAwards.reduce(0.0) { $0 + $1.totalWeight }
     }
 
-    /// Weighted fame relevant to a field: same-industry awards plus general
-    /// (industry-less) renown. Only this counts toward the hire and promotion
-    /// fame bonuses — a tech portfolio does nothing for a stage audition. Each
-    /// `FameAward` carries the industry it was earned in (see `FameAward.industry`).
-    func famePoints(for category: JobCategory) -> Double {
+    /// Weighted fame relevant to a fame bucket: awards banked in that same
+    /// `FameCategory` plus general (bucket-less) renown. Only this counts toward
+    /// the hire and promotion fame bonuses — a tech portfolio does nothing for a
+    /// stage audition. Passing `nil` (a job family outside every bucket) counts
+    /// only the general renown. Each `FameAward` carries the bucket it was earned
+    /// in (see `FameAward.category`).
+    func famePoints(for category: FameCategory?) -> Double {
         fameAwards.reduce(0.0) { acc, award in
-            (award.industry == category || award.industry == nil) ? acc + award.totalWeight : acc
+            if award.category == nil { return acc + award.totalWeight }  // general renown
+            return award.category == category ? acc + award.totalWeight : acc
         }
     }
 
-    /// Fame totals grouped by the industry each award was earned in, for display.
-    /// A `nil` industry is general (industry-less) renown. Ordered by score,
+    /// Fame totals grouped by the bucket each award was earned in, for display.
+    /// A `nil` category is general (bucket-less) renown. Ordered by score,
     /// highest first, so the field the player is best known in leads.
-    var fameByIndustry: [(industry: JobCategory?, score: Double)] {
-        var totals: [JobCategory?: Double] = [:]
+    var fameByCategory: [(category: FameCategory?, score: Double)] {
+        var totals: [FameCategory?: Double] = [:]
         for award in fameAwards {
-            totals[award.industry, default: 0] += award.totalWeight
+            totals[award.category, default: 0] += award.totalWeight
         }
         return totals
-            .map { (industry: $0.key, score: $0.value) }
+            .map { (category: $0.key, score: $0.value) }
             .sorted { $0.score > $1.score }
     }
 
-    /// Additive hire-probability boost from fame for a role in `category`.
-    /// Ordinary roles get a modest lift (capped +0.20). **Top positions** weight
-    /// reputation far more heavily — a public profile is often what separates the
-    /// shortlist for a leadership seat — so they earn a steeper per-point rate and
-    /// a higher cap (+0.40). See `Job.isTopLeadership` / `Job.hireProbability`.
-    func fameHireBonus(for category: JobCategory, topPosition: Bool = false) -> Double {
+    /// Additive hire-probability boost from fame for a role in `jobCategory`,
+    /// mapping the industry to its `FameCategory` bucket. Ordinary roles get a
+    /// modest lift (capped +0.20). **Top positions** weight reputation far more
+    /// heavily — a public profile is often what separates the shortlist for a
+    /// leadership seat — so they earn a steeper per-point rate and a higher cap
+    /// (+0.40). See `Job.isTopLeadership` / `Job.hireProbability`.
+    func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false) -> Double {
         let rate = topPosition ? 0.08 : 0.04
         let cap = topPosition ? 0.40 : 0.20
-        return min(cap, famePoints(for: category) * rate)
+        return min(cap, famePoints(for: jobCategory.fameCategory) * rate)
     }
 
     /// Years a prolonged recession still has to run. While positive, each
@@ -545,6 +443,19 @@ final class Player: ObservableObject {
         min(0.12, Double(networkPoints(for: category)) * 0.015)
     }
 
+    /// Additive hire/founder-probability lift from the player's skill-building
+    /// trainings relevant to `category` — the coding/game-dev/design/performing
+    /// programs (see `Training.careerBoost`). Credentials don't stack: the single
+    /// strongest relevant one applies, so a shelf full of certificates isn't a
+    /// shortcut. Zero for the licence-style trainings, which gate rather than nudge.
+    func trainingCareerBonus(for category: JobCategory) -> Double {
+        hardSkills.trainings
+            .compactMap(\.careerBoost)
+            .filter { $0.categories.contains(category) }
+            .map(\.weight)
+            .max() ?? 0.0
+    }
+
     /// Additive boost to the annual promotion probability from the player's
     /// network in their current field. Smaller than the hiring bonus (0.6% per
     /// point, capped at 0.05) — knowing the right people helps you move up, but
@@ -558,7 +469,7 @@ final class Player: ObservableObject {
     /// to a 0.15 ceiling, three times the network bonus's reach — because a known
     /// name is first in line for the next rung, especially the senior ones.
     func famePromotionBonus(for category: JobCategory) -> Double {
-        min(0.15, famePoints(for: category) * 0.03)
+        min(0.15, famePoints(for: category.fameCategory) * 0.03)
     }
 
     // MARK: - Training purchase / refund
@@ -716,7 +627,7 @@ final class Player: ObservableObject {
         for (id, role) in appUIState.selectedEvents where role == .presenter {
             guard let event = EventCatalog.byId[id],
                   let title = event.presenterFameTitle else { continue }
-            award(title, icon: event.icon, industry: event.category, weight: event.presenterFameWeight)
+            award(title, icon: event.icon, category: event.category?.fameCategory, weight: event.presenterFameWeight)
             recordStatus("🎤", "Presented at \(event.name)")
         }
         appUIState.selectedEvents.removeAll()
@@ -791,6 +702,12 @@ final class Player: ObservableObject {
             savings += saved
             experience[job.category, default: 0] += 1
             experienceByRole[job.baseTitle, default: 0] += 1
+            // A year running your own venture builds commercial/founder acumen on
+            // top of the trade itself, so a CEO year also banks entrepreneurship
+            // experience — which credits Business roles (see industryExperience).
+            if job.isEntrepreneurial, job.category != .entrepreneurship {
+                experience[.entrepreneurship, default: 0] += 1
+            }
 
             // Promotion (realistic mode): a yearly shot at a raise, its odds set
             // by the player's promotion-readiness soft skills, tenure, and network.
@@ -841,12 +758,12 @@ final class Player: ObservableObject {
                     recordStatus(hustle.icon, "\(hustle.label) paid \(outcome.credit.formatted(.number)) $")
                 }
                 if let grant = outcome.grantedFame {
-                    award(grant.title, icon: hustle.icon, industry: grant.industry, weight: grant.weight)
+                    award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
                     for ability in hustle.growth {
                         softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
                     }
                     famedVentures += 1
-                    recordStatus("🌟", "\(hustle.label) earned fame in \(grant.industry.rawValue)")
+                    recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
             } else {
                 recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
@@ -859,8 +776,8 @@ final class Player: ObservableObject {
         // Competitions: training a sport now automatically enters you into its
         // top eligible contest — no menu, no entry fee. Win odds start low and
         // climb with the trained years (and the soft skills training builds).
-        // A win pays the prize and banks a lasting achievement (reputation that
-        // helps land Show Business roles), then surfaces a celebration dialog.
+        // A win pays the prize and banks a lasting achievement (Entertainment
+        // fame that helps land spotlight roles), then surfaces a celebration dialog.
         var competitionWins = 0
         let currentStage = LifeStage.forAge(age)
         for sport in competedSports {
@@ -871,7 +788,7 @@ final class Player: ObservableObject {
             if Double.random(in: 0...1) < competition.winProbability(for: softSkills, years: years) {
                 savings += competition.prize
                 award(competition.achievement, icon: competition.icon,
-                      industry: .showBusiness, weight: competition.fameWeight)
+                      category: .entertainment, weight: competition.fameWeight)
                 competitionWins += 1
                 recordStatus("🏆", "Won \(competition.achievement)")
                 competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a \(competition.prize.formatted(.number)) $ prize and a boost to your reputation."
@@ -880,51 +797,6 @@ final class Player: ObservableObject {
         }
         lastCompetitionWins = competitionWins
         if competitionWins > 0 { celebrationTrigger += 1 }
-
-        // Startup loop (realistic mode only): while the player runs an active
-        // venture, each year either pays out a buyout offer (Sell or Hold &
-        // grow), brushes off without an offer (operating as usual), or — in a
-        // recession — forces a fire-sale liquidation. The rung's salary is
-        // already banked by the occupation pay block above.
-        if !isSimplified, var startup = activeStartup,
-           let founderJob = currentOccupation,
-           let target = founderJob.targetCapital {
-            startup.yearsHeld += 1
-            let skillFit = founderJob.founderSkillFit(for: self)
-            if recessionThisYear {
-                let payout = FounderLadder.bankruptcyPayout(
-                    forRungIndex: startup.rungIndex, targetCapital: target,
-                    metricsMultiplier: startup.exitPremium(targetCapital: target)
-                )
-                savings += payout
-                lastBankruptcySalvage = payout
-                showStartupBankruptcyAlert = true
-                recordStatus("📉", "Bankruptcy — sold \(founderJob.baseTitle) at fire-sale for \(payout.formatted(.number)) $")
-                activeStartup = nil
-                pendingStartupOffer = nil
-                showStartupOfferSheet = false
-                currentOccupation = nil
-            } else {
-                // Another year at the helm grows the company's traction.
-                startup.grow(founderSkillFit: skillFit)
-                recordStatus("📊", "\(founderJob.baseTitle): \(startup.revenue.formatted(.number)) $ revenue · \(startup.headcount) staff · \(Int(startup.marketSharePct.rounded()))% market")
-                let chance = FounderLadder.offerProbability(
-                    forRungIndex: startup.rungIndex,
-                    founderSkillFit: skillFit
-                )
-                if Double.random(in: 0...1) < chance {
-                    let offer = FounderLadder.randomOffer(
-                        forRungIndex: startup.rungIndex, targetCapital: target,
-                        metricsMultiplier: startup.exitPremium(targetCapital: target)
-                    )
-                    pendingStartupOffer = offer
-                    showStartupOfferSheet = true
-                    celebrationTrigger += 1
-                    recordStatus("💼", "Buyout offer for \(founderJob.baseTitle): \(offer.formatted(.number)) $")
-                }
-                activeStartup = startup
-            }
-        }
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -938,11 +810,10 @@ final class Player: ObservableObject {
         availableJobs = availableJobs.filter { !$0.category.isCyclical }
 
         guard currentOccupation != nil else { return }
-        // Founders don't get laid off — they go bankrupt, which the startup
-        // loop in `advanceYear` handles as a forced fire-sale liquidation.
-        // Skipping the regular layoff roll prevents a double-impact (clearing
-        // the occupation here while the startup loop also resolves the sale).
-        if activeStartup != nil { return }
+        // Founders own their business — they aren't laid off. A downturn still
+        // squeezes them elsewhere (frozen hiring/raises, and thinner odds of
+        // finding a buyer if they try to sell their stake in the Boardroom).
+        if currentOccupation?.isEntrepreneurial == true { return }
         // Job-loss probability is the calm-economy base risk amplified by how
         // severe the downturn is on this difficulty (e.g. 0.08 × 6, capped).
         let lossChance = min(
@@ -987,10 +858,9 @@ final class Player: ObservableObject {
 
     /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
     /// of the player's own savings. The stake is committed up front; success makes
-    /// the player a founder (earning the rung's income), while failure salvages
-    /// half the stake. In realistic mode, success also bootstraps the multi-year
-    /// startup loop (`activeStartup` is set to the rung index so subsequent
-    /// `advanceYear` calls roll for buyouts and surface a Sell-or-Hold dialog).
+    /// the venture the player's occupation (earning its income), while failure
+    /// salvages half the stake. Odds come from `Job.founderSuccessProbability`
+    /// (industry experience + soft-skill fit, with capital a supporting factor).
     /// Returns true on success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
@@ -1000,60 +870,16 @@ final class Player: ObservableObject {
         savings -= stake                       // commit the capital
         let success = Double.random(in: 0...1) < probability
         if success {
-            currentOccupation = job             // keeps the rung's annualIncome
-            recordStatus("🚀", "Founded as \(job.baseTitle)")
-            if !isSimplified, let rung = FounderLadder.rungIndex(forTitle: job.id) {
-                activeStartup = ActiveStartup.founded(rungIndex: rung, targetCapital: job.targetCapital ?? 0)
+            let previous = currentOccupation
+            currentOccupation = job             // the venture is now the player's job
+            if let previous, previous.id != job.id {
+                recordStatus("🚪", "Left \(previous.baseTitle) to go all-in on your venture")
             }
+            recordStatus("🚀", "Founded \(job.baseTitle) — you're now CEO")
         } else {
             savings += stake / 2                // salvage half of a failed venture
         }
         return success
-    }
-
-    /// Accepts the pending buyout offer: banks the cash, ends the venture, and
-    /// clears the founder occupation. The player is now between jobs (free to
-    /// apply for the next thing or found again from scratch). No-op if there
-    /// is no offer pending.
-    func acceptStartupOffer() {
-        guard let offer = pendingStartupOffer else { return }
-        savings += offer
-        let exitedBaseTitle = currentOccupation?.baseTitle ?? "venture"
-        recordStatus("🤝", "Sold \(exitedBaseTitle) for \(offer.formatted(.number)) $")
-        activeStartup = nil
-        pendingStartupOffer = nil
-        showStartupOfferSheet = false
-        currentOccupation = nil
-        celebrationTrigger += 1
-    }
-
-    /// Holds & grows: declines the offer in exchange for advancing to the next
-    /// founder rung. Updates `currentOccupation` to the next rung's Job so the
-    /// player earns its (larger) salary going forward. At the top rung the
-    /// venture simply keeps running — next year's roll re-prices the offer.
-    func holdStartup() {
-        guard var startup = activeStartup else {
-            pendingStartupOffer = nil
-            showStartupOfferSheet = false
-            return
-        }
-        let nextRung = min(startup.rungIndex + 1, FounderLadder.count - 1)
-        if nextRung != startup.rungIndex {
-            let upgraded = FounderLadder.job(at: nextRung, in: availableJobs)
-                ?? FounderLadder.job(at: nextRung, in: JobCatalog.allJobs())
-            // Stepping up a rung is a step change in scale, floored at the new
-            // rung's seed so growth never goes backwards.
-            startup.scaleUp(toRungIndex: nextRung, targetCapital: upgraded?.targetCapital ?? 0)
-            if let upgraded {
-                currentOccupation = upgraded
-                recordStatus("📈", "Held & grew into \(upgraded.baseTitle) — \(startup.headcount) staff, \(Int(startup.marketSharePct.rounded()))% market")
-            }
-        } else {
-            recordStatus("📈", "Declined buyout — kept growing the company")
-        }
-        activeStartup = startup
-        pendingStartupOffer = nil
-        showStartupOfferSheet = false
     }
 
     // MARK: - Executive decisions (Boardroom)
@@ -1081,19 +907,37 @@ final class Player: ObservableObject {
     ]
     /// Skill level at which an investment-round axis is a perfect fit.
     private static let investmentRoundSkillReference = 8
+    /// Per-point weight of business fame on an investment round, and its cap.
+    /// Deliberately steep: raising capital turns on who the market has heard of,
+    /// so a well-known founder's reputation is the single biggest swing after
+    /// raw skill fit. Reaching the cap takes ~5 points of business (💼) fame.
+    private static let investmentRoundFameRate = 0.11
+    private static let investmentRoundFameCap = 0.55
+
+    /// The player's business (💼) fame contribution to an investment round —
+    /// exposed so the Boardroom can show how much of the odds reputation is
+    /// carrying. Business fame is used regardless of the venture's own industry:
+    /// a raise is a business-reputation play, so a famous tech founder and a
+    /// famous retail founder both trade on the same 💼 renown.
+    func investmentRoundFameBonus() -> Double {
+        min(Player.investmentRoundFameCap,
+            famePoints(for: .business) * Player.investmentRoundFameRate)
+    }
 
     /// Probability (0.05...0.95) that an announced investment round closes. Built
-    /// from the founder-cluster soft-skill fit plus the player's network and
-    /// reputation in their current field — a known, well-connected leader with a
-    /// compelling vision raises money far more reliably.
+    /// from the founder-cluster soft-skill fit, the player's network in their
+    /// field, and — weighted heavily — their **business fame**: a known,
+    /// well-connected founder with a compelling vision raises money far more
+    /// reliably, and reputation is what most separates a closed round from a
+    /// quarter wasted chasing term sheets.
     func investmentRoundOdds() -> Double {
         guard let job = currentOccupation else { return 0 }
         let fit = Player.investmentRoundSkills.reduce(0.0) { acc, kp in
             acc + min(Double(softSkills[keyPath: kp]) / Double(Player.investmentRoundSkillReference), 1.0)
         } / Double(Player.investmentRoundSkills.count)
-        let network = networkBonus(for: job.category)                      // up to +0.12
-        let fame = fameHireBonus(for: job.category, topPosition: true)     // up to +0.40
-        return max(0.05, min(0.95, 0.15 + fit * 0.45 + network + fame))
+        let network = networkBonus(for: job.category)   // up to +0.12
+        let fame = investmentRoundFameBonus()           // up to +0.55 (business fame)
+        return max(0.05, min(0.95, 0.12 + fit * 0.35 + network + fame))
     }
 
     /// Headline capital a *successful* investment round realises for the player
@@ -1104,14 +948,38 @@ final class Player: ObservableObject {
         return job.annualIncome * 3
     }
 
-    /// Guaranteed cash from selling vested shares: a fraction of pay that grows
-    /// with tenure in the seat (more years held → more equity vested), from
-    /// ~0.75× pay on day one up to a 2.5× cap for a long-tenured leader.
-    func sellSharesPayout() -> Int {
+    /// Fair-market value of the player's equity stake — the anchor the Boardroom's
+    /// asking-price slider is built around and the yardstick a buyer measures an
+    /// offer against. Vested value grows with pay and tenure in the seat (~0.75×
+    /// pay on day one up to a 2.5× cap).
+    func shareStakeValue() -> Int {
         guard let job = currentOccupation else { return 0 }
         let years = experienceByRole[job.baseTitle, default: 0]
         let multiple = min(0.75 + Double(years) * 0.15, 2.5)
         return Int((Double(job.annualIncome) * multiple).rounded())
+    }
+
+    /// Bounds for the asking-price slider: a buyer will entertain anything from a
+    /// half-price bargain up to 2.5× the fair valuation (beyond which no one
+    /// bites). Returns `(min, fair, max)` so the view can seed the slider at fair.
+    func shareAskingBounds() -> (min: Int, fair: Int, max: Int) {
+        let fair = shareStakeValue()
+        return (Int(Double(fair) * 0.5), fair, Int(Double(fair) * 2.5))
+    }
+
+    /// Probability (0.02...0.98) that a buyer takes the stake at `askPrice`.
+    /// Buyers anchor on the fair valuation: price at or below fair and it sells
+    /// readily; each step above fair steepens the odds of no takers (a logistic
+    /// decay in the ask/fair ratio, centred a little above fair so a fair-priced
+    /// stake still finds a buyer ~7 years in 10). A recession thins the buyer
+    /// pool, dropping the odds across the board.
+    func shareSaleOdds(askPrice: Int) -> Double {
+        let fair = shareStakeValue()
+        guard fair > 0 else { return 0 }
+        let ratio = Double(askPrice) / Double(fair)
+        let odds = 1.0 / (1.0 + exp(3.0 * (ratio - 1.3)))
+        let economy = economyInRecession ? 0.55 : 1.0
+        return max(0.02, min(0.98, odds * economy))
     }
 
     /// Resolves an executive decision immediately, applying its effects and
@@ -1119,17 +987,35 @@ final class Player: ObservableObject {
     /// decision used for the year. No-op-ish (returns an empty failure) if the
     /// player somehow isn't in an executive seat.
     @discardableResult
-    func resolveExecutiveDecision(_ decision: ExecutiveDecision) -> ExecutiveDecision.Outcome {
+    func resolveExecutiveDecision(_ decision: ExecutiveDecision, askPrice: Int? = nil) -> ExecutiveDecision.Outcome {
         executiveActionsThisYear.insert(decision.id)
         guard let job = currentOccupation else {
             return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
         }
         switch decision.kind {
         case .sellShares:
-            let cash = sellSharesPayout()
-            savings += cash
-            recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(cash.formatted(.number)) $")
-            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: nil)
+            // A sale is no longer a sure thing: the player names a price and the
+            // market decides. Odds fall the higher they ask relative to the fair
+            // valuation, and a recession thins the buyers.
+            let ask = askPrice ?? shareStakeValue()
+            let sold = Double.random(in: 0...1) < shareSaleOdds(askPrice: ask)
+            guard sold else {
+                recordStatus("🤝", "No buyer for your \(job.baseTitle) stake at \(ask.formatted(.number)) $ this year")
+                return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
+            }
+            savings += ask
+            // An owner-founder who sells their stake exits the venture entirely —
+            // the seat is gone, freeing them to start something new (and the
+            // Ventures button returns). Ownership is what an entrepreneurial seat
+            // means. A hired executive just cashes out vested equity, keeps their
+            // seat, and can sell again in a later year.
+            if job.isEntrepreneurial {
+                currentOccupation = nil
+                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ — exited the venture")
+            } else {
+                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $")
+            }
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: ask, fameTitle: nil)
         case .investmentRound:
             let succeeded = Double.random(in: 0...1) < investmentRoundOdds()
             guard succeeded else {
@@ -1140,18 +1026,14 @@ final class Player: ObservableObject {
             let cash = Int((base * Double.random(in: 0.8...1.4)).rounded())
             savings += cash
             let title = "Raised a Round"
-            award(title, icon: decision.icon, industry: job.category, weight: 1.5)
+            // Closing a round is a business milestone: it banks business (💼)
+            // fame, which in turn lifts the odds on the next round — a founder's
+            // reputation compounds.
+            award(title, icon: decision.icon, category: .business, weight: 1.5)
             let growthAxes: [WritableKeyPath<SoftSkills, Int>] =
                 [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation]
             for kp in growthAxes {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
-            }
-            // A closed round fuels a founder's own venture — capital buys growth,
-            // hiring, and market share (no-op for a hired exec with no startup).
-            if var startup = activeStartup {
-                startup.inject(scale: 1.6, marketShareGain: 5.0)
-                activeStartup = startup
-                recordStatus("📊", "Round fuels \(job.baseTitle): \(startup.headcount) staff · \(Int(startup.marketSharePct.rounded()))% market")
             }
             celebrationTrigger += 1
             recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")
@@ -1165,11 +1047,6 @@ final class Player: ObservableObject {
         avatar = fresh.avatar
         fameAwards = fresh.fameAwards
         lastCompetitionWins = fresh.lastCompetitionWins
-        activeStartup = fresh.activeStartup
-        pendingStartupOffer = fresh.pendingStartupOffer
-        showStartupOfferSheet = fresh.showStartupOfferSheet
-        showStartupBankruptcyAlert = fresh.showStartupBankruptcyAlert
-        lastBankruptcySalvage = fresh.lastBankruptcySalvage
         turmoilYearsRemaining = fresh.turmoilYearsRemaining
         economyInRecession = fresh.economyInRecession
         lastSideHustleEarnings = fresh.lastSideHustleEarnings

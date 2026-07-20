@@ -52,7 +52,7 @@ struct GoalView: View {
     @ObservedObject var appUIState: AppUIState
 
     private var achievementText: String {
-        let role = player.currentOccupation?.id ?? "a top leadership role"
+        let role = player.currentOccupation?.displayTitle ?? "a top leadership role"
         return "You climbed all the way to the top — you're now \(role)! 👔"
     }
 

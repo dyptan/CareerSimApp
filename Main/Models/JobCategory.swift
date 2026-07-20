@@ -1,3 +1,32 @@
+/// The curated set of reputation buckets the game tracks fame in — a small,
+/// fixed taxonomy distinct from the ~two dozen `JobCategory` industries. Every
+/// fame source (competitions, spare-time projects, presenter roles, executive
+/// wins) banks into one of these, and each job maps to one via
+/// `JobCategory.fameCategory` so a reputation only helps hiring in its own
+/// family. **Entertainment** merges the spotlight fields — performing arts,
+/// media, and sports — into a single celebrity bucket.
+enum FameCategory: String, CaseIterable, Identifiable, Codable {
+    case entertainment = "Entertainment"
+    case technology = "Technology"
+    case arts = "Arts"
+    case business = "Business"
+    case science = "Science"
+
+    var id: String { rawValue }
+
+    /// Display pictogram for the bucket, shown on the fame shelf and in hiring
+    /// odds breakdowns.
+    var icon: String {
+        switch self {
+        case .entertainment: return "🎬"
+        case .technology: return "💻"
+        case .arts: return "🎨"
+        case .business: return "💼"
+        case .science: return "🔬"
+        }
+    }
+}
+
 enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case engineering = "Engineering"
     /// Entertainment and the spotlight: performing arts, media/creators, and
@@ -31,6 +60,33 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case administration = "Administration"
 
     var id: String { rawValue }
+
+    /// The fame bucket this industry belongs to, or `nil` for fields where a
+    /// public reputation doesn't move the hiring needle (trades, services,
+    /// regulated/blue-collar work). Fame is earned and spent in these five
+    /// curated buckets rather than per job category (see `FameCategory` and
+    /// `Player.fameHireBonus`): tech/engineering/gaming build **Technology**
+    /// fame, business/finance/retail/entrepreneurship/administration build
+    /// **Business**, science/health/education build **Science**,
+    /// design/fashion/language build **Arts**, and the spotlight fields
+    /// (show business, which already folds in the performing arts and sports)
+    /// build **Entertainment**.
+    var fameCategory: FameCategory? {
+        switch self {
+        case .technology, .engineering, .gaming:
+            return .technology
+        case .business, .finance, .retail, .entrepreneurship, .administration:
+            return .business
+        case .science, .health, .education:
+            return .science
+        case .design, .fashion, .language:
+            return .arts
+        case .showBusiness:
+            return .entertainment
+        default:
+            return nil
+        }
+    }
 
     /// Maximum fractional swing above or below the base salary in a single year.
     /// e.g. 0.5 means actual pay can range from 50 % to 150 % of the base.

@@ -75,6 +75,7 @@ struct JobDetail: View {
         let topPosition = job.isTopLeadership
         let fame = player.fameHireBonus(for: job.category, topPosition: topPosition)
         let showFame = fame > 0
+        let fameLabel = job.category.fameCategory?.rawValue ?? "general"
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
         let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame + breakthrough
@@ -110,7 +111,7 @@ struct JobDetail: View {
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
         • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
         • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
-        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(job.category.rawValue))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
+        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
         • Difficulty bonus: \(signed(opportunity))
         • Salary fit: \(pct(salaryFit))
         Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))

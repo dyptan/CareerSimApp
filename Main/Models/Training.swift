@@ -47,6 +47,17 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     case masterPlumber = "Master Plumber License"
     case airlineTransportPilot = "ATP"
 
+    // MARK: Skill-building programs (creative & digital fields)
+    // Non-statutory, non-gating credentials for fields that legally require none
+    // — tech, games, design, and show business. They earn no licence; their value
+    // is the edge they give in landing a job in the field or launching a venture
+    // there (see `careerBoost`), plus the soft skills they build.
+    case codingBootcamp = "Coding Bootcamp"
+    case gameDevProgram = "Game Development Program"
+    case productDesign = "Product Design Certificate"
+    case actingConservatory = "Acting Conservatory"
+    case musicProduction = "Music Production Certificate"
+
     var id: String { rawValue }
 
     /// Legally-mandated credentials (former licences). These hard-gate hiring in
@@ -89,6 +100,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .masterElectrician: return "Master Electrician"
         case .masterPlumber: return "Master Plumber"
         case .airlineTransportPilot: return "Airline Transport Pilot (ATP)"
+        case .codingBootcamp: return "Coding Bootcamp"
+        case .gameDevProgram: return "Game Development"
+        case .productDesign: return "Product Design"
+        case .actingConservatory: return "Acting Conservatory"
+        case .musicProduction: return "Music Production"
         }
     }
 
@@ -118,6 +134,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .masterElectrician: return "The senior electrician licence. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician."
         case .masterPlumber: return "The senior plumbing licence. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber."
         case .airlineTransportPilot: return "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner."
+        case .codingBootcamp: return "An intensive full-stack software program. No licence — but the skills and portfolio it builds give you a real edge landing tech and engineering roles, and launching a software venture of your own."
+        case .gameDevProgram: return "A studio-style program in game design and engine programming. Builds the craft to break into a gaming studio — or to ship your own indie title."
+        case .productDesign: return "A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by."
+        case .actingConservatory: return "Formal conservatory training in acting and stagecraft. Nobody's legally required to hold it, but it's how many performers get taken seriously for stage and screen — and it carries weight when you chase the spotlight."
+        case .musicProduction: return "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed."
         }
     }
 
@@ -146,6 +167,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .masterElectrician: return "⚡️"
         case .masterPlumber: return "🔧"
         case .airlineTransportPilot: return "✈️"
+        case .codingBootcamp: return "💻"
+        case .gameDevProgram: return "🎮"
+        case .productDesign: return "🎨"
+        case .actingConservatory: return "🎭"
+        case .musicProduction: return "🎚️"
         }
     }
 
@@ -330,7 +356,50 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
                     .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
                     .init(keyPath: \.leadershipAndInfluence, weight: 1)]
+        case .codingBootcamp:
+            return [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
+                    .init(keyPath: \.timeManagementAndPlanning, weight: 1)]
+        case .gameDevProgram:
+            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                    .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)]
+        case .productDesign:
+            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                    .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
+        case .actingConservatory:
+            return [.init(keyPath: \.presentationAndStorytelling, weight: 1),
+                    .init(keyPath: \.communicationAndNetworking, weight: 1)]
+        case .musicProduction:
+            return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                    .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
         }
+    }
+
+    /// The hiring/founding edge a *non-gating* skill-building credential confers,
+    /// and the fields it applies to. Unlike the licences and role-defining certs —
+    /// whose value is the hard gate they clear — these modern programs (coding,
+    /// game dev, design, performing arts) legally gate nothing, so their payoff is
+    /// this soft probability lift: a relevant credential meaningfully raises the
+    /// odds of being hired into the field (`Job.hireProbability`) and of a venture
+    /// in it succeeding (`Job.founderSuccessProbability`). `nil` for the licences,
+    /// which don't move the odds — they open (or close) the door outright.
+    var careerBoost: CareerBoost? {
+        switch self {
+        case .codingBootcamp:     return CareerBoost(categories: [.technology, .engineering], weight: 0.15)
+        case .gameDevProgram:     return CareerBoost(categories: [.gaming, .technology], weight: 0.15)
+        case .productDesign:      return CareerBoost(categories: [.design, .fashion], weight: 0.15)
+        case .actingConservatory: return CareerBoost(categories: [.showBusiness], weight: 0.15)
+        case .musicProduction:    return CareerBoost(categories: [.showBusiness], weight: 0.12)
+        default:                  return nil
+        }
+    }
+
+    /// A credential's soft edge in one or more career fields (see `careerBoost`).
+    struct CareerBoost {
+        /// Job categories the credential helps you land a role in / found a
+        /// venture in.
+        let categories: Set<JobCategory>
+        /// Additive probability lift, applied in the field's hire/founder odds.
+        let weight: Double
     }
 
     /// Hard gates on *enrolling* in this training: age, prerequisite trainings,

@@ -107,7 +107,7 @@ final class CareerGraphTests: XCTestCase {
     /// Every entrepreneurship spare-time venture builds `.entrepreneurship` work
     /// experience — the mechanism that feeds Business roles.
     func testEntrepreneurshipVenturesBuildExperience() {
-        let ventureIds = ["startupLaunch", "pitchCompetition", "crowdfundingCampaign"]
+        let ventureIds = ["crowdfundingCampaign"]
         for id in ventureIds {
             guard let venture = SideHustleCatalog.byId[id] else {
                 XCTFail("Missing entrepreneurship venture '\(id)'."); continue
@@ -120,7 +120,7 @@ final class CareerGraphTests: XCTestCase {
     /// Relevant work experience should lift an experience-building venture's odds,
     /// but never beyond the cap; ventures with no experience category are unmoved.
     func testExperienceLiftRaisesVentureOdds() {
-        guard let venture = SideHustleCatalog.byId["startupLaunch"],
+        guard let venture = SideHustleCatalog.byId["crowdfundingCampaign"],
               let plain = SideHustleCatalog.byId["projectApp"] else {
             XCTFail("Expected ventures missing from catalogue."); return
         }
@@ -133,6 +133,127 @@ final class CareerGraphTests: XCTestCase {
                        "Experience lift should cap out.")
         XCTAssertEqual(plain.experienceLift(years: 20), 0,
                        "A venture with no experience category gets no lift.")
+    }
+
+    // MARK: - Projects vs. Events taxonomy
+
+    /// The four participate-in-an-organized-thing plays moved out of Projects and
+    /// into Events: they must exist as `CareerEvent`s and be gone from the
+    /// spare-time project catalogue (which is now self-initiated works only).
+    func testSpotlightPlaysAreEventsNotProjects() {
+        let movedEventIds = ["music-festival", "tv-casting", "conference-talk", "pitch-competition"]
+        for id in movedEventIds {
+            XCTAssertNotNil(EventCatalog.byId[id], "Spotlight play '\(id)' should be a career event.")
+        }
+        let removedProjectIds = ["projectMusicFestival", "tvShow", "projectPresentation", "pitchCompetition"]
+        for id in removedProjectIds {
+            XCTAssertNil(SideHustleCatalog.byId[id],
+                         "Moved play '\(id)' should no longer be a spare-time project.")
+        }
+    }
+
+    /// A moved spotlight event supports the stage/presenter role and banks its
+    /// bespoke fame accolade (not the generic "— Speaker" title) in the right
+    /// fame bucket.
+    func testMovedEventsBankBespokeStageFame() {
+        let expected: [String: (JobCategory, FameCategory, String)] = [
+            "music-festival":   (.showBusiness,    .entertainment, "Festival Performer"),
+            "tv-casting":       (.showBusiness,    .entertainment, "TV Personality"),
+            "conference-talk":  (.business,        .business,      "Noted Speaker"),
+            "pitch-competition":(.entrepreneurship, .business,     "Pitch Winner"),
+        ]
+        for (id, (category, fame, title)) in expected {
+            guard let event = EventCatalog.byId[id] else {
+                XCTFail("Missing spotlight event '\(id)'."); continue
+            }
+            XCTAssertEqual(event.category, category, "'\(id)' should serve \(category.rawValue).")
+            XCTAssertTrue(event.supportsPresenter, "'\(id)' should offer a stage role.")
+            XCTAssertEqual(event.presenterFameTitle, title, "'\(id)' should bank a bespoke accolade.")
+            XCTAssertEqual(event.category?.fameCategory, fame, "'\(id)' fame should land in \(fame).")
+        }
+    }
+
+    // MARK: - Skill-building trainings (career-boost credentials)
+
+    /// The new creative/digital programs are non-statutory, non-gating credentials
+    /// whose value is the career edge they confer in the right fields.
+    func testSkillBuildingTrainingsAreNonGatingBoosts() {
+        let expected: [Training: Set<JobCategory>] = [
+            .codingBootcamp:     [.technology, .engineering],
+            .gameDevProgram:     [.gaming, .technology],
+            .productDesign:      [.design, .fashion],
+            .actingConservatory: [.showBusiness],
+            .musicProduction:    [.showBusiness],
+        ]
+        for (training, categories) in expected {
+            XCTAssertFalse(training.isStatutory, "\(training.rawValue) is a program, not a licence.")
+            guard let boost = training.careerBoost else {
+                XCTFail("\(training.rawValue) should carry a career boost."); continue
+            }
+            XCTAssertEqual(boost.categories, categories, "\(training.rawValue) boosts the wrong fields.")
+            XCTAssertGreaterThan(boost.weight, 0, "\(training.rawValue) boost should be positive.")
+        }
+    }
+
+    /// The bonus is field-scoped and non-stacking: it applies to a relevant field,
+    /// is zero for unrelated fields, and the strongest single credential wins.
+    func testTrainingCareerBonusIsFieldScopedAndNonStacking() {
+        let player = Player()
+        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0, "No credential, no bonus.")
+
+        player.hardSkills.trainings.insert(.codingBootcamp)
+        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.15, accuracy: 1e-9,
+                       "A Coding Bootcamp should lift technology odds.")
+        XCTAssertEqual(player.trainingCareerBonus(for: .health), 0,
+                       "It should do nothing for an unrelated field.")
+
+        // A second tech-relevant credential doesn't stack — the strongest applies.
+        player.hardSkills.trainings.insert(.gameDevProgram)
+        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.15, accuracy: 1e-9,
+                       "Bonuses take the strongest relevant credential, not the sum.")
+    }
+
+    /// A relevant credential meaningfully raises a founder's launch odds — the
+    /// "significant for launching a venture" guarantee.
+    func testRelevantTrainingLiftsFounderOdds() throws {
+        let saas = try XCTUnwrap(
+            JobCatalog.allJobs().first { $0.isEntrepreneurial && $0.baseTitle == "SaaS App Startup" },
+            "The catalogue is missing the SaaS App Startup venture."
+        )
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        player.experience[.technology] = 4   // clears the launch experience gate
+        let stake = saas.targetCapital ?? 0
+
+        let without = saas.founderSuccessProbability(for: player, investedCapital: stake)
+        player.hardSkills.trainings.insert(.codingBootcamp)
+        let with = saas.founderSuccessProbability(for: player, investedCapital: stake)
+        XCTAssertGreaterThan(with, without,
+                             "A Coding Bootcamp should raise the odds of launching a SaaS startup.")
+    }
+
+    /// A relevant credential raises hire odds for a role in its field — the
+    /// "significant for landing a relevant job" guarantee. Never lowers them.
+    func testRelevantTrainingLiftsHireOdds() {
+        let techJobs = JobCatalog.allJobs().filter { $0.category == .technology && !$0.isEntrepreneurial }
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 40)
+        player.experience[.technology] = 12   // seasoned enough to clear tech gates
+
+        var sawStrictIncrease = false
+        for job in techJobs where job.allRequirementsMet(for: player) && !player.isSimplified {
+            let salary = Double(job.annualIncome)
+            let before = job.hireProbability(for: player, requestedSalary: salary)
+            player.hardSkills.trainings.insert(.codingBootcamp)
+            let after = job.hireProbability(for: player, requestedSalary: salary)
+            player.hardSkills.trainings.remove(.codingBootcamp)
+            XCTAssertGreaterThanOrEqual(after, before, "A credential must never hurt hire odds.")
+            if after > before { sawStrictIncrease = true }
+        }
+        XCTAssertTrue(sawStrictIncrease,
+                      "The credential should strictly raise hire odds for at least one tech role.")
     }
 
     // MARK: - Executive decisions (Boardroom)
@@ -164,9 +285,10 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
-    /// Selling vested shares is a guaranteed payout that grows with tenure and
-    /// is one-per-year.
-    func testSellSharesPaysAndScalesWithTenure() {
+    /// Selling a stake is a priced, probabilistic sale: the valuation grows with
+    /// tenure, the odds a buyer bites fall as the asking price climbs above fair
+    /// value, and whatever the roll, savings move by exactly the cash booked.
+    func testSellStakeValuationAndOdds() {
         guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
             return
         }
@@ -174,18 +296,69 @@ final class CareerGraphTests: XCTestCase {
         player.currentOccupation = ceo
         XCTAssertTrue(player.canMakeExecutiveDecisions)
 
-        let rookie = player.sellSharesPayout()
+        let rookie = player.shareStakeValue()
         player.experienceByRole[ceo.baseTitle] = 8
-        let veteran = player.sellSharesPayout()
+        let veteran = player.shareStakeValue()
         XCTAssertGreaterThan(veteran, rookie, "Longer tenure should vest more equity.")
+
+        // Asking above fair value should find fewer buyers; odds stay in bounds.
+        let fair = player.shareStakeValue()
+        let cheapOdds = player.shareSaleOdds(askPrice: fair / 2)
+        let dearOdds = player.shareSaleOdds(askPrice: fair * 2)
+        XCTAssertGreaterThan(cheapOdds, dearOdds, "A higher asking price should find fewer buyers.")
+        for odds in [cheapOdds, dearOdds] {
+            XCTAssertGreaterThanOrEqual(odds, 0.02)
+            XCTAssertLessThanOrEqual(odds, 0.98)
+        }
 
         guard let decision = ExecutiveDecisionCatalog.byId["sellShares"] else { return }
         let before = player.savings
-        let outcome = player.resolveExecutiveDecision(decision)
-        XCTAssertTrue(outcome.success)
+        let outcome = player.resolveExecutiveDecision(decision, askPrice: fair)
+        // Whether or not a buyer appears, savings move by exactly the cash booked.
         XCTAssertEqual(player.savings, before + outcome.cash)
+        XCTAssertEqual(outcome.cash, outcome.success ? fair : 0)
         XCTAssertTrue(player.hasUsedExecutiveDecision(decision),
                       "A decision should be marked used for the year.")
+    }
+
+    /// A recession thins the buyer pool: for the same asking price, the odds a
+    /// buyer bites are strictly lower during a downturn.
+    func testRecessionLowersSaleOdds() {
+        guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
+            return
+        }
+        let player = Player()
+        player.currentOccupation = ceo
+        let fair = player.shareStakeValue()
+        let normalOdds = player.shareSaleOdds(askPrice: fair)
+        player.economyInRecession = true
+        let recessionOdds = player.shareSaleOdds(askPrice: fair)
+        XCTAssertLessThan(recessionOdds, normalOdds, "A recession should cut the odds a buyer bites.")
+    }
+
+    /// When a founder lands a sale of their venture, they exit it: the occupation
+    /// (and any startup state) clears, so they're no longer an executive and the
+    /// Ventures button returns — the owner can't re-sell the same stake next
+    /// year. A rock-bottom asking price makes a buyer near-certain; a bounded
+    /// retry absorbs the tail.
+    func testVentureSaleExitsVenture() {
+        guard let venture = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }) else { return }
+        guard let decision = ExecutiveDecisionCatalog.byId["sellShares"] else { return }
+
+        for _ in 0..<40 {
+            let player = Player()
+            player.currentOccupation = venture
+            let floor = player.shareAskingBounds().min
+            let outcome = player.resolveExecutiveDecision(decision, askPrice: floor)
+            if outcome.success {
+                XCTAssertNil(player.currentOccupation,
+                             "Selling a venture should free the occupation slot, not keep the owner in the seat.")
+                XCTAssertFalse(player.canMakeExecutiveDecisions,
+                               "After exiting, the player is no longer an executive and can't re-sell.")
+                return
+            }
+        }
+        XCTFail("Expected at least one floor-priced sale to succeed across 40 attempts.")
     }
 
     /// Investment-round odds stay in bounds, and the per-year lock clears when the
@@ -206,74 +379,60 @@ final class CareerGraphTests: XCTestCase {
                       "Executive actions should reset each year.")
     }
 
-    // MARK: - Venture metrics (market share, revenue, headcount)
+    /// Business fame is a heavy lever on investment-round odds: a well-known
+    /// founder's reputation should move the odds substantially (up to the +0.55
+    /// cap) and outweigh a small skill edge. Fame in another bucket does nothing.
+    func testBusinessFameSignificantlyLiftsInvestmentRoundOdds() {
+        guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
+            return
+        }
+        let player = Player()
+        player.currentOccupation = ceo
+        let plain = player.investmentRoundOdds()
 
-    /// A founded venture seeds positive metrics scaled off its capital.
-    func testFoundedVentureSeedsMetrics() {
-        let s = ActiveStartup.founded(rungIndex: 2, targetCapital: 60_000)
-        XCTAssertGreaterThan(s.marketSharePct, 0)
-        XCTAssertGreaterThanOrEqual(s.revenue, 60_000)
-        XCTAssertGreaterThanOrEqual(s.headcount, 1)
+        // Fame in an unrelated bucket must not help a capital raise.
+        player.award("Chart-Topping Single", icon: "🎬", category: .entertainment, weight: 5)
+        XCTAssertEqual(player.investmentRoundOdds(), plain, accuracy: 0.0001,
+                       "Only business fame should move investment-round odds.")
+
+        // A big business reputation should be a large, capped swing.
+        player.award("Serial Founder", icon: "💼", category: .business, weight: 10)
+        XCTAssertEqual(player.investmentRoundFameBonus(), 0.55, accuracy: 0.0001,
+                       "Ample business fame should saturate the fame bonus at its cap.")
+        XCTAssertGreaterThan(player.investmentRoundOdds() - plain, 0.30,
+                             "Business fame should be a significant lift, not a rounding error.")
+        XCTAssertLessThanOrEqual(player.investmentRoundOdds(), 0.95)
     }
 
-    /// Holding the venture another year always grows revenue and lifts the exit
-    /// premium (the growth factor is strictly > 1).
-    func testGrowthRaisesRevenueAndExitPremium() {
-        var s = ActiveStartup.founded(rungIndex: 1, targetCapital: 25_000)
-        let premiumBefore = s.exitPremium(targetCapital: 25_000)
-        let revenueBefore = s.revenue
-        s.grow(founderSkillFit: 0.8)
-        XCTAssertGreaterThan(s.revenue, revenueBefore, "A held year should grow revenue.")
-        XCTAssertGreaterThanOrEqual(s.exitPremium(targetCapital: 25_000), premiumBefore,
-                                    "Growth should not lower the exit premium.")
-        XCTAssertLessThanOrEqual(s.marketSharePct, 100.0, "Market share is capped at 100%.")
-    }
+    // MARK: - Investment round outcome
 
-    /// A bigger, higher-share company commands a larger exit premium.
-    func testExitPremiumScalesWithTraction() {
-        let target = 60_000
-        let small = ActiveStartup.founded(rungIndex: 2, targetCapital: target)
-        var big = small
-        big.revenue = target * 4
-        big.marketSharePct = 40
-        XCTAssertGreaterThan(big.exitPremium(targetCapital: target),
-                             small.exitPremium(targetCapital: target))
-        XCTAssertGreaterThanOrEqual(small.exitPremium(targetCapital: target), 0.5,
-                                    "Exit premium never falls below the floor.")
-    }
-
-    /// Stepping up a rung scales the company and never shrinks it.
-    func testScaleUpGrowsAndFloorsMetrics() {
-        var s = ActiveStartup.founded(rungIndex: 0, targetCapital: 2_000)
-        let revenueBefore = s.revenue
-        s.scaleUp(toRungIndex: 1, targetCapital: 25_000)
-        XCTAssertEqual(s.rungIndex, 1)
-        XCTAssertEqual(s.yearsHeld, 0)
-        XCTAssertGreaterThanOrEqual(s.revenue, revenueBefore)
-        XCTAssertGreaterThanOrEqual(s.revenue, 25_000, "Floored at the new rung's seed.")
-    }
-
-    /// An investment round injected into a founder's venture grows its metrics.
-    func testInvestmentRoundFuelsVentureMetrics() {
+    /// A closed investment round banks cash and additional business (💼) fame —
+    /// the reputation that compounds into the next round's odds. Maxing the
+    /// driving skills and fame pins the odds at the cap, so a bounded retry lands
+    /// the success branch.
+    func testInvestmentRoundSuccessBanksCashAndFame() {
         guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }),
               let decision = ExecutiveDecisionCatalog.byId["investmentRound"] else { return }
-        let player = Player()
-        player.currentOccupation = founder
-        player.activeStartup = ActiveStartup.founded(
-            rungIndex: FounderLadder.rungIndex(forTitle: founder.id) ?? 0,
-            targetCapital: founder.targetCapital ?? 0
-        )
-        // Guarantee the round closes so we can assert the metric injection.
-        player.softSkills.visionaryThinkingAndAmbition = 10
-        player.softSkills.persuasionAndNegotiation = 10
-        player.softSkills.leadershipAndInfluence = 10
-        player.softSkills.communicationAndNetworking = 10
-        let revenueBefore = player.activeStartup?.revenue ?? 0
-        let outcome = player.resolveExecutiveDecision(decision)
-        if outcome.success {
-            XCTAssertGreaterThan(player.activeStartup?.revenue ?? 0, revenueBefore,
-                                 "A closed round should grow the venture's revenue.")
+        for _ in 0..<40 {
+            let player = Player()
+            player.currentOccupation = founder
+            player.softSkills.visionaryThinkingAndAmbition = 10
+            player.softSkills.persuasionAndNegotiation = 10
+            player.softSkills.leadershipAndInfluence = 10
+            player.softSkills.communicationAndNetworking = 10
+            player.award("Serial Founder", icon: "💼", category: .business, weight: 10)
+            let before = player.savings
+            let fameBefore = player.famePoints(for: .business)
+            let outcome = player.resolveExecutiveDecision(decision)
+            if outcome.success {
+                XCTAssertGreaterThan(outcome.cash, 0, "A closed round realises cash.")
+                XCTAssertEqual(player.savings, before + outcome.cash)
+                XCTAssertGreaterThan(player.famePoints(for: .business), fameBefore,
+                                     "Closing a round banks additional business fame.")
+                return
+            }
         }
+        XCTFail("Expected the round to close within many attempts at capped odds.")
     }
 
     // MARK: - Open-ended realistic goal + running score
