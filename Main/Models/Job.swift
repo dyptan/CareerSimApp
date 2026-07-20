@@ -316,7 +316,10 @@ extension Job {
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
-        let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough)
+        // A relevant skill-building credential (coding/game-dev/design/performing
+        // program) demonstrably helps you land a role in its field.
+        let credential = player.trainingCareerBonus(for: category)
+        let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough + credential)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
     }
@@ -351,32 +354,56 @@ extension Job {
     /// player climbs out of them by applying to a higher role instead.
     var isLowSkilled: Bool { requirements.education.minEQF < GameConstants.promotionMinEQF }
 
-    /// Probability that a founding attempt succeeds. Driven mainly by how well
-    /// the invested capital covers the venture's target, with a smaller bump
-    /// from the founder skill set (Risk-Taker / Visionary / Persuader). The
-    /// experience gate still applies — you can't skip rungs of the ladder.
+    /// Probability that a founding attempt succeeds. Driven by *who the founder
+    /// is*, not their bank balance: experience in the venture's own industry and
+    /// how well their soft skills fit what the business demands are the two big
+    /// levers, with the size of the stake a supporting factor. The industry
+    /// experience baseline (`minYearsExperience`) is still a hard gate — you
+    /// can't credibly launch a restaurant having never worked in hospitality.
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
         guard experienceMet(for: player) else { return 0.0 }
+        let experience = founderExperienceFit(for: player) * 0.40   // up to +40%
+        let skill = founderSkillFit(for: player) * 0.35             // up to +35%
         let capitalRatio = Double(investedCapital) / Double(target)
-        let capitalTerm = min(capitalRatio, 1.0) * 0.55          // up to +55% at full funding
-        let overfundBonus = min(max(capitalRatio - 1.0, 0.0), 1.0) * 0.10  // a little more for a fat war chest
-        let skillTerm = founderSkillFit(for: player) * 0.30      // up to +30%
-        return max(0.03, min(0.92, 0.03 + capitalTerm + overfundBonus + skillTerm))
+        let capital = min(capitalRatio, 1.0) * 0.15                 // up to +15%
+        // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
+        // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
+        let credential = player.trainingCareerBonus(for: category) // up to +15%
+        return max(0.03, min(0.95, 0.05 + experience + skill + capital + credential))
     }
 
-    /// 0...1 fit of the player against this venture's founder skills.
+    /// 0...1 measure of how seasoned the player is in this venture's industry.
+    /// Relevant industry years (see `relevantYears`) scaled against an ideal set
+    /// a little above the entry gate, so clearing the minimum is a decent start
+    /// and a veteran of the field maxes it out.
+    func founderExperienceFit(for player: Player) -> Double {
+        let ideal = max(expectedYearsExperience + 4, 6)
+        return min(Double(relevantYears(for: player)) / Double(ideal), 1.0)
+    }
+
+    /// 0...1 fit of the player's soft skills for founding *this* venture. Blends
+    /// how well they match the business's own skill profile (its
+    /// `requirements.softSkills`) with raw entrepreneurial grit — the
+    /// Risk-Taker / Visionary / Persuader traits every founder leans on
+    /// regardless of field. The field-specific profile is weighted a little more.
     func founderSkillFit(for player: Player) -> Double {
-        let keys: [WritableKeyPath<SoftSkills, Int>] = [
+        let p = player.softSkills
+        let req = requirements.softSkills
+
+        let profileAxes = Job.scoredSoftSkills.filter { req[keyPath: $0] > 0 }
+        let profileFit: Double = profileAxes.isEmpty ? 0.5 : profileAxes.reduce(0.0) { acc, kp in
+            acc + min(Double(p[keyPath: kp]) / Double(req[keyPath: kp]), 1.0)
+        } / Double(profileAxes.count)
+
+        let gritKeys: [WritableKeyPath<SoftSkills, Int>] = [
             \.riskTakingAndInitiative, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
         ]
-        let req = requirements.softSkills
-        let p = player.softSkills
-        let total = keys.reduce(0.0) { acc, kp in
-            let need = max(req[keyPath: kp], 1)
-            return acc + min(Double(p[keyPath: kp]) / Double(need), 1.0)
-        }
-        return total / Double(keys.count)
+        let grit = gritKeys.reduce(0.0) { acc, kp in
+            acc + min(Double(p[keyPath: kp]) / 6.0, 1.0)
+        } / Double(gritKeys.count)
+
+        return profileFit * 0.6 + grit * 0.4
     }
 
     /// Hire-probability bonus from the player's most prestigious *relevant* degree.
@@ -454,6 +481,14 @@ extension Job {
         seniorityPrefix ?? "Standard"
     }
 
+    /// Player-facing occupation title. Founding a venture makes the player its
+    /// CEO, so an entrepreneurial occupation reads "CEO, <Venture>" rather than
+    /// the bare venture name (`baseTitle` stays the venture for experience and
+    /// catalogue lookups).
+    var displayTitle: String {
+        isEntrepreneurial ? "CEO, \(id)" : id
+    }
+
     /// Apex seniority prefixes that represent the top rung of a career ladder.
     private static let leadershipPrefixes: Set<String> = [
         "Lead", "Principal", "Staff", "Head", "Executive", "Master", "Charge", "Chief"
@@ -485,95 +520,6 @@ extension Job {
             return true
         }
         return Job.leadershipKeywords.contains { id.contains($0) }
-    }
-}
-
-/// Realistic-mode founder loop: once a player launches an entrepreneurial Job
-/// the game tracks an `ActiveStartup` (see `Player.activeStartup`), and each
-/// year `advanceYear` consults this enum to roll a buyout offer or determine
-/// the fire-sale value during a recession.
-///
-/// The four rungs mirror the founder titles declared in `JobCatalog.allJobs`
-/// (Side Hustler → Small Business Owner → Startup Founder → Serial Entrepreneur).
-/// Holding a successful offer advances `rungIndex`; selling banks the offer
-/// and ends the venture.
-enum FounderLadder {
-    /// The four founder titles in climb order, matched to the ids registered
-    /// in `JobCatalog`. The index of a title is the `ActiveStartup.rungIndex`.
-    static let rungTitles: [String] = [
-        "Side Hustler", "Small Business Owner", "Startup Founder", "Serial Entrepreneur"
-    ]
-
-    /// Per-rung buyout multiplier on the rung's `targetCapital`. A Side Hustler
-    /// acquihire is small money; an exit at the Serial Entrepreneur tier is
-    /// life-changing. Tuned so each rung's offer comfortably exceeds the
-    /// previous one's, rewarding the Hold-and-grow path.
-    private static let exitMultiplier: [Double] = [2.0, 3.0, 6.0, 12.0]
-
-    /// Per-rung base probability that an annual roll lands a buyout offer.
-    /// Smaller ventures sell more often; world-changing companies take patience.
-    /// The founder's skill fit adds up to +0.20 on top.
-    private static let baseOfferChance: [Double] = [0.35, 0.25, 0.18, 0.12]
-
-    /// Fraction of the (jittered) offer paid out during a forced bankruptcy.
-    /// A fire-sale during a recession returns a fraction of the would-be exit,
-    /// less than the half-stake salvage on a regular failure but still
-    /// meaningful — the player walks away with *something*.
-    static let bankruptcySalvageFraction: Double = 0.30
-
-    /// Number of rungs (the top index is `count - 1`).
-    static var count: Int { rungTitles.count }
-
-    /// Index of the founder rung carrying this title, or `nil` for non-founder
-    /// titles. Matches against `Job.baseTitle` so seniority variants resolve.
-    static func rungIndex(forTitle title: String) -> Int? {
-        rungTitles.firstIndex(of: Job.baseTitle(of: title))
-    }
-
-    /// Resolves the Job description for a rung by looking it up in the
-    /// shared catalogue. Returns nil if the catalogue is missing the title
-    /// (shouldn't happen — guards against typos / future renames).
-    static func job(at rungIndex: Int, in catalogue: [Job]) -> Job? {
-        guard rungTitles.indices.contains(rungIndex) else { return nil }
-        let title = rungTitles[rungIndex]
-        return catalogue.first { $0.id == title }
-    }
-
-    /// Headline buyout value for a rung — the rung's `targetCapital` scaled by
-    /// the tier's exit multiplier. The actual offer the player sees is this
-    /// value jittered ±25% by `randomOffer(forRungIndex:)`.
-    static func headlineOffer(forRungIndex idx: Int, targetCapital: Int) -> Int {
-        guard exitMultiplier.indices.contains(idx) else { return targetCapital }
-        return Int((Double(targetCapital) * exitMultiplier[idx]).rounded())
-    }
-
-    /// One year's randomised buyout offer: the rung's headline value scaled by
-    /// the venture's traction (`metricsMultiplier`, see `ActiveStartup.exitPremium`)
-    /// and jittered uniformly within ±25%. Re-rolled every successful annual roll,
-    /// so a company that has grown its revenue and market share commands a bigger
-    /// exit each year.
-    static func randomOffer(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
-        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
-        let jitter = Double.random(in: 0.75...1.25)
-        return Int((headline * jitter).rounded())
-    }
-
-    /// Probability (clamped 0.05...0.92) that this year's annual roll surfaces
-    /// a buyout offer. Built from the rung's base chance plus up to +0.20 from
-    /// the player's founder-trait fit (Risk-Taker / Visionary / Persuader).
-    static func offerProbability(forRungIndex idx: Int, founderSkillFit: Double) -> Double {
-        guard baseOfferChance.indices.contains(idx) else { return 0 }
-        let raw = baseOfferChance[idx] + min(max(founderSkillFit, 0), 1) * 0.20
-        return max(0.05, min(0.92, raw))
-    }
-
-    /// Fire-sale payout when a recession forces the player to liquidate. Caps
-    /// the loss while still hurting — a haircut on the rung's would-be offer,
-    /// scaled by the venture's traction (`metricsMultiplier`) so a bigger company
-    /// salvages more even in a forced sale.
-    static func bankruptcyPayout(forRungIndex idx: Int, targetCapital: Int, metricsMultiplier: Double = 1.0) -> Int {
-        let headline = Double(headlineOffer(forRungIndex: idx, targetCapital: targetCapital)) * metricsMultiplier
-        return Int((headline * bankruptcySalvageFraction).rounded())
     }
 }
 

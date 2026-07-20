@@ -71,8 +71,7 @@ struct RootView: View {
             EntrepreneurshipView(
                 availableJobs: availableJobs,
                 player: player,
-                showSheet: $appUIState.showEntrepreneurshipSheet,
-                selectedSideHustles: $appUIState.selectedSideHustles
+                showSheet: $appUIState.showEntrepreneurshipSheet
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
@@ -111,14 +110,6 @@ struct RootView: View {
         }
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
-        }
-        .sheet(isPresented: $player.showStartupOfferSheet) {
-            StartupOfferView(player: player)
-        }
-        .alert("Bankruptcy", isPresented: $player.showStartupBankruptcyAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text("A downturn forced you to liquidate your startup. You walked away with \(player.lastBankruptcySalvage.formatted(.number)) $ from the fire-sale.")
         }
         // The only fixed goal left is Simplified's top-leadership finish line,
         // which turns on when the occupation changes; realistic modes are

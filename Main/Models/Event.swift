@@ -34,6 +34,28 @@ struct CareerEvent: Identifiable {
     /// Accumulates in `Player.networkByCategory`/`Player.generalNetwork` and
     /// feeds hiring + promotion. A presenter banks more (see `networkPoints`).
     let networkWeight: Int
+    /// Verb for the "take the stage" role on this event's row — "Present" for a
+    /// conference, but "Perform" at a festival, "Compete" at a pitch, and so on.
+    /// Purely cosmetic; the mechanic is identical (see `EventRole.presenter`).
+    let presenterActionLabel: String
+    /// Bespoke title for the fame award a presenter banks (e.g. "Festival
+    /// Performer", "Pitch Winner"). `nil` falls back to "<name> — Speaker".
+    let presenterFameTitleOverride: String?
+
+    init(id: String, name: String, icon: String, blurb: String, category: JobCategory?,
+         abilities: [WeightedAbility], networkWeight: Int,
+         presenterActionLabel: String = "Present",
+         presenterFameTitleOverride: String? = nil) {
+        self.id = id
+        self.name = name
+        self.icon = icon
+        self.blurb = blurb
+        self.category = category
+        self.abilities = abilities
+        self.networkWeight = networkWeight
+        self.presenterActionLabel = presenterActionLabel
+        self.presenterFameTitleOverride = presenterFameTitleOverride
+    }
 
     /// Whether the player has the ≥1 year of same-industry work experience
     /// needed to get into this event — you network your way in once you're
@@ -63,9 +85,10 @@ struct CareerEvent: Identifiable {
 
     /// The fame accolade banked (when the year advances) for presenting here,
     /// scoped to the event's industry. `nil` for general events, which have no
-    /// presenter role.
+    /// presenter role. Spotlight events override the default speaker wording.
     var presenterFameTitle: String? {
-        supportsPresenter ? "\(name) — Speaker" : nil
+        guard supportsPresenter else { return nil }
+        return presenterFameTitleOverride ?? "\(name) — Speaker"
     }
 
     /// Reputation weight of the presenter fame award — flagship summits (higher
@@ -218,6 +241,68 @@ enum EventCatalog {
                 .init(keyPath: \.communicationAndNetworking, weight: 2)
             ],
             networkWeight: 3
+        ),
+        // Spotlight & competitive events — organized happenings you show up to
+        // and can take the stage at. Attending builds the field's network;
+        // taking the stage (presenter role, once you're a veteran of the field)
+        // banks industry fame. These were formerly spare-time *projects*, but
+        // they're participation in someone else's event rather than a
+        // self-initiated work, so they belong here.
+        CareerEvent(
+            id: "music-festival",
+            name: "Music Festival",
+            icon: "🎪",
+            blurb: "Work the crowd and the backstage scene — or take the stage and play your set.",
+            category: .showBusiness,
+            abilities: [
+                .init(keyPath: \.communicationAndNetworking, weight: 1),
+                .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
+            ],
+            networkWeight: 2,
+            presenterActionLabel: "Perform",
+            presenterFameTitleOverride: "Festival Performer"
+        ),
+        CareerEvent(
+            id: "tv-casting",
+            name: "TV Show Casting",
+            icon: "📺",
+            blurb: "Network the production — or land a spot on screen and get seen.",
+            category: .showBusiness,
+            abilities: [
+                .init(keyPath: \.communicationAndNetworking, weight: 1),
+                .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
+            ],
+            networkWeight: 2,
+            presenterActionLabel: "Appear",
+            presenterFameTitleOverride: "TV Personality"
+        ),
+        CareerEvent(
+            id: "conference-talk",
+            name: "Conference Talk",
+            icon: "🖥️",
+            blurb: "Attend to meet the field — or take the podium and land your idea in front of the room.",
+            category: .business,
+            abilities: [
+                .init(keyPath: \.communicationAndNetworking, weight: 1),
+                .init(keyPath: \.presentationAndStorytelling, weight: 1)
+            ],
+            networkWeight: 1,
+            presenterActionLabel: "Speak",
+            presenterFameTitleOverride: "Noted Speaker"
+        ),
+        CareerEvent(
+            id: "pitch-competition",
+            name: "Pitch Competition",
+            icon: "🎤",
+            blurb: "Work the room of founders and investors — or take the stage to pitch your idea and win it.",
+            category: .entrepreneurship,
+            abilities: [
+                .init(keyPath: \.communicationAndNetworking, weight: 1),
+                .init(keyPath: \.persuasionAndNegotiation, weight: 1)
+            ],
+            networkWeight: 2,
+            presenterActionLabel: "Compete",
+            presenterFameTitleOverride: "Pitch Winner"
         ),
         // Learning & training — paid skill-building rather than pure networking,
         // so these lean on soft-skill gains with only a small general network.

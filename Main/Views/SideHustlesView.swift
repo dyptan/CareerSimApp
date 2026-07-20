@@ -1,27 +1,27 @@
 import SwiftUI
 
-/// The **Projects** page — the home for the pure fame/creative spare-time plays
-/// (writing, talks, festivals, open source, and personal-brand performances).
-/// Every row is a talent-fit gamble that stakes no money and banks industry-
-/// scoped **fame** (growing the soft skills it drew on). Mirrors `HobbiesView`:
-/// the catalogue is filtered by life stage and capped per year.
+/// The **Projects** page — the home for every *self-initiated* spare-time work:
+/// creative fame gambles you make on your own (writing, albums, open source,
+/// podcasts, films, personal-brand plays), the course/MOOC play, and the
+/// crowdfunding entrepreneurship play. Things you *participate in* rather than
+/// create — a festival set, a TV casting, a conference talk, a pitch competition
+/// — are Events instead (see `EventCatalog`). Every row is a talent-fit gamble
+/// that stakes no money and banks industry-scoped **fame** (growing the soft
+/// skills it drew on). Mirrors `HobbiesView`: filtered by life stage and capped
+/// per year.
 ///
-/// Anything with prospects of turning profitable — the commercial ventures
-/// (course, online store, shop, flip), the buildable products (app, game), and
-/// the entrepreneurship plays — banks Business fame and lives in the
-/// **Ventures** sheet instead (see `EntrepreneurshipView` and
-/// `SideHustleCatalog.businessVentures`).
+/// The **Ventures** sheet keeps only the capital-staked industry ventures (see
+/// `EntrepreneurshipView`); every `SideHustle` lives here.
 struct PrivateProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
-    /// Spare-time projects offered this stage (business ventures excluded — they
-    /// live in the Ventures sheet). All are always available once the player is
-    /// old enough — no hobby prerequisite.
+    /// Every spare-time project offered this stage. Available once the player is
+    /// old enough, subject to each project's own soft-skill / capital gate.
     private var stageProjects: [SideHustle] {
-        SideHustleCatalog.spareTimeProjects.filter { $0.stages.contains(currentStage) }
+        SideHustleCatalog.all.filter { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
@@ -58,10 +58,9 @@ struct PrivateProjectsView: View {
     }
 }
 
-/// A single selectable spare-time venture row: a talent-fit toggle with its
+/// A single selectable spare-time project row: a talent-fit toggle with its
 /// blurb, lock label (unmet soft-skill / capital gate), and an info popover.
-/// Shared by the **Projects** sheet and the business-ventures section of the
-/// **Ventures** sheet, so both surfaces present a venture identically.
+/// Every `SideHustle` is presented through this row in the **Projects** sheet.
 struct SideHustleRow: View {
     let hustle: SideHustle
     @ObservedObject var player: Player
@@ -201,9 +200,9 @@ struct SideHustleRow: View {
             let upside = hustle.projectedPayout(for: player.softSkills)
             let stats = "🎲 ~\(odds)% success · 📈 up to \(upside.formatted(.number)) $\n\n"
             return intro + gate + stats + "Monetizes:\n\n\(talentHint)\n\nA money venture risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing." + experienceNote
-        case .fame(let industry, _):
-            let stats = "🎲 ~\(odds)% success · 🌟 \(JobCategory.icon(for: industry)) \(industry.rawValue) fame\n\n"
-            return intro + gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks fame in \(JobCategory.icon(for: industry)) \(industry.rawValue) (industry-specific — it only helps you land \(industry.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
+        case .fame(let category, _):
+            let stats = "🎲 ~\(odds)% success · 🌟 \(category.icon) \(category.rawValue) fame\n\n"
+            return intro + gate + stats + "Draws on:\n\n\(talentHint)\n\nA fame venture spends the soft skills you've built for a shot at being noticed. A successful year banks \(category.icon) \(category.rawValue) fame (it only lifts your hiring odds for \(category.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
         }
     }
 }

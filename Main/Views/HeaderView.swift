@@ -30,7 +30,7 @@ struct HeaderView: View {
 
                 if let currentOccupation = player.currentOccupation {
                     HStack(spacing: 6) {
-                        Text("Working: \(currentOccupation.id) \(currentOccupation.icon)")
+                        Text("Working: \(currentOccupation.displayTitle) \(currentOccupation.icon)")
                         // Promotions are a realistic-mode mechanic only.
                         if !player.isSimplified {
                             InfoHint(
@@ -42,14 +42,6 @@ struct HeaderView: View {
                     Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-
-                    // While running a founder venture, show its live business
-                    // metrics — the traction that drives the next buyout offer.
-                    if let startup = player.activeStartup {
-                        Text("📊 \(Int(startup.marketSharePct.rounded()))% market · 💰 \(startup.revenue.formatted(.number)) $ · 👥 \(startup.headcount)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
                 }
                 if let currentEducation = player.currentEducation {
                     Text("Studying: \(currentEducation.degreeName)")

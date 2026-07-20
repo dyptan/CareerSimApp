@@ -19,7 +19,6 @@
 		555CC10B2FF130CB00426E7E /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10A2FF130CB00426E7E /* StatusBarView.swift */; };
 		555CC10D2FF1341B00426E7E /* Sport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10C2FF1341B00426E7E /* Sport.swift */; };
 		555CC10F2FF134D000426E7E /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10E2FF134D000426E7E /* SportsView.swift */; };
-		555CC1152FF1445600426E7E /* StartupOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC1142FF1445500426E7E /* StartupOfferView.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
 		5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingsView.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
@@ -99,7 +98,6 @@
 		555CC10A2FF130CB00426E7E /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
 		555CC10C2FF1341B00426E7E /* Sport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sport.swift; sourceTree = "<group>"; };
 		555CC10E2FF134D000426E7E /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
-		555CC1142FF1445500426E7E /* StartupOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupOfferView.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		5598FA282EE62F57006C4D36 /* TrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingsView.swift; sourceTree = "<group>"; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
@@ -273,7 +271,6 @@
 				AA00000000000000000000C7 /* SeniorityOffersView.swift */,
 				555CC10A2FF130CB00426E7E /* StatusBarView.swift */,
 				555CC10E2FF134D000426E7E /* SportsView.swift */,
-				555CC1142FF1445500426E7E /* StartupOfferView.swift */,
 				AA0000000000000000000112 /* ExecutiveDecisionsView.swift */,
 			);
 			path = Views;
@@ -402,7 +399,6 @@
 				555CC10F2FF134D000426E7E /* SportsView.swift in Sources */,
 				5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* HobbiesView.swift in Sources */,
-				555CC1152FF1445600426E7E /* StartupOfferView.swift in Sources */,
 				55B4351C2F470E910022ACAA /* FooterView.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,
 				55A6ED012E9542000033B674 /* JobView.swift in Sources */,

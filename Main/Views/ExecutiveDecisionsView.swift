@@ -16,8 +16,12 @@ struct ExecutiveDecisionsView: View {
     /// its row. Keyed by decision id so each row shows only its own result.
     @State private var outcomes: [String: ExecutiveDecision.Outcome] = [:]
 
+    /// The asking price the player has dialled in on the Sell-Your-Stake slider,
+    /// in dollars. `nil` until they touch it, so the slider seeds at fair value.
+    @State private var askPrice: Double?
+
     private var roleName: String {
-        player.currentOccupation.map { "\($0.icon) \($0.id)" } ?? "your seat"
+        player.currentOccupation.map { "\($0.icon) \($0.displayTitle)" } ?? "your seat"
     }
 
     var body: some View {
@@ -86,12 +90,20 @@ struct ExecutiveDecisionsView: View {
                 InfoHint(title: "\(decision.icon) \(decision.label)", message: infoMessage(for: decision))
             }
 
-            Text(previewLine(for: decision))
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
+            if !used {
+                if decision.kind == .sellShares {
+                    sellControls
+                } else {
+                    Text(previewLine(for: decision))
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             Button {
-                let result = player.resolveExecutiveDecision(decision)
+                let result = decision.kind == .sellShares
+                    ? player.resolveExecutiveDecision(decision, askPrice: currentAsk)
+                    : player.resolveExecutiveDecision(decision)
                 outcomes[decision.id] = result
             } label: {
                 Text(used ? "Done for this year" : actionLabel(for: decision))
@@ -113,12 +125,51 @@ struct ExecutiveDecisionsView: View {
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
+    // MARK: - Sell-your-stake controls
+
+    /// The asking price currently dialled in, in dollars — the slider value, or
+    /// fair value if the player hasn't touched it yet.
+    private var currentAsk: Int {
+        Int((askPrice ?? Double(player.shareStakeValue())).rounded())
+    }
+
+    /// Price slider plus a live read-out of the fair value and the odds a buyer
+    /// takes the stake at the chosen price. Shown in place of the static preview
+    /// line for the Sell-Your-Stake card.
+    @ViewBuilder
+    private var sellControls: some View {
+        let bounds = player.shareAskingBounds()
+        let odds = player.shareSaleOdds(askPrice: currentAsk)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Asking price")
+                Spacer()
+                Text("\(currentAsk.formatted(.number)) $").monospacedDigit()
+            }
+            .font(.caption.bold())
+
+            if bounds.max > bounds.min {
+                Slider(
+                    value: Binding(
+                        get: { askPrice ?? Double(bounds.fair) },
+                        set: { askPrice = $0 }
+                    ),
+                    in: Double(bounds.min)...Double(bounds.max)
+                )
+            }
+
+            Text("🏷️ Fair value \(bounds.fair.formatted(.number)) $ · 🎲 ~\(Int((odds * 100).rounded()))% a buyer bites\(player.economyInRecession ? " · 📉 recession" : "")")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+        }
+    }
+
     // MARK: - Copy helpers
 
     private func actionLabel(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound: return "Announce the round"
-        case .sellShares:      return "Sell shares for \(player.sellSharesPayout().formatted(.number)) $"
+        case .sellShares:      return "Offer for sale at \(currentAsk.formatted(.number)) $"
         }
     }
 
@@ -126,10 +177,12 @@ struct ExecutiveDecisionsView: View {
         switch decision.kind {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
+            let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
             let upside = player.investmentRoundProjectedRaise()
-            return "🎲 ~\(odds)% success · 📈 up to \(upside.formatted(.number)) $ + 💼 business fame"
+            return "🎲 ~\(odds)% success (💼 fame +\(famePts)%) · 📈 up to \(upside.formatted(.number)) $"
         case .sellShares:
-            return "✅ Guaranteed · 💰 \(player.sellSharesPayout().formatted(.number)) $"
+            let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
+            return "🎲 ~\(odds)% a buyer bites · 💰 \(currentAsk.formatted(.number)) $"
         }
     }
 
@@ -140,7 +193,9 @@ struct ExecutiveDecisionsView: View {
                 ? "🎉 Round closed — raised \(outcome.cash.formatted(.number)) $ and banked “\(outcome.fameTitle ?? "")” fame."
                 : "🚫 Investors passed this time. Build your reputation and try again next year."
         case .sellShares:
-            return "💸 Sold — \(outcome.cash.formatted(.number)) $ added to your savings."
+            return outcome.success
+                ? "💸 Sold — \(outcome.cash.formatted(.number)) $ added to your savings."
+                : "🤝 No buyer at that price this year. Ask less, or try again next year."
         }
     }
 
@@ -151,16 +206,21 @@ struct ExecutiveDecisionsView: View {
         switch decision.kind {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
+            let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
             return """
-            A gamble. ~\(odds)% to close this year, driven by your \(talents), plus your network and reputation in the field.
+            A gamble. ~\(odds)% to close this year, driven by your \(talents) and network — but above all by your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
 
-            Success realises a raise worth up to \(player.investmentRoundProjectedRaise().formatted(.number)) $ as equity liquidity, banks industry fame, and sharpens your vision and persuasion. Failure costs only the year's effort.
+            Success realises a raise worth up to \(player.investmentRoundProjectedRaise().formatted(.number)) $ as equity liquidity, banks more business fame, and sharpens your vision and persuasion. Failure costs only the year's effort.
             """
         case .sellShares:
+            let bounds = player.shareAskingBounds()
+            let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
             return """
-            The safe play — no roll. You cash out vested equity for a guaranteed \(player.sellSharesPayout().formatted(.number)) $, scaled by your pay and the years you've held the seat.
+            Put your equity on the market at a price you name. Its fair value right now is \(bounds.fair.formatted(.number)) $ — pay and tenure in the seat, lifted by your venture's traction (revenue and market share).
 
-            No fame, no headlines — just liquidity in the bank.
+            The higher you ask, the fewer buyers: at \(currentAsk.formatted(.number)) $ there's roughly a \(odds)% chance one bites this year\(player.economyInRecession ? ", and a recession is thinning the pool right now" : "").
+
+            Land a sale and, if you're a founder, you exit the venture — the seat and company are gone, freeing you to start something new.
             """
         }
     }

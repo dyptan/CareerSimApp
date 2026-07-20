@@ -76,9 +76,9 @@ struct SkillsView: View {
     // MARK: - Fame
 
     /// The third pillar of career capital: *what you're known for*. Fame is
-    /// industry-scoped — only same-industry reputation lifts hiring and promotion
-    /// odds there — so the section shows the fame score per field. The individual
-    /// accolades are surfaced once in the status log as they're earned.
+    /// bucket-scoped — only same-bucket reputation lifts hiring and promotion
+    /// odds there — so the section shows the fame score per `FameCategory`. The
+    /// individual accolades are surfaced once in the status log as they're earned.
     private var fameSection: some View {
         DisclosureGroup(isExpanded: $fameExpanded) {
             VStack(alignment: .leading, spacing: 4) {
@@ -87,9 +87,9 @@ struct SkillsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(player.fameByIndustry, id: \.industry) { group in
+                    ForEach(player.fameByCategory, id: \.category) { group in
                         HStack {
-                            Text(fameIndustryLabel(group.industry))
+                            Text(fameCategoryLabel(group.category))
                             Spacer()
                             Text("🌟 \(String(format: "%.1f", group.score))")
                                 .monospacedDigit()
@@ -109,7 +109,7 @@ struct SkillsView: View {
                         .font(.subheadline.monospacedDigit())
                         .foregroundStyle(.secondary)
                 } else {
-                    Text(fameIndustrySummary)
+                    Text(fameCategorySummary)
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                 }
@@ -117,17 +117,17 @@ struct SkillsView: View {
         }
     }
 
-    /// Icon + name for a fame group's industry (`nil` = general renown).
-    private func fameIndustryLabel(_ industry: JobCategory?) -> String {
-        industry.map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" } ?? "🌐 General"
+    /// Icon + name for a fame group's bucket (`nil` = general renown).
+    private func fameCategoryLabel(_ category: FameCategory?) -> String {
+        category.map { "\($0.icon) \($0.rawValue)" } ?? "🌐 General"
     }
 
-    /// Compact per-industry fame chips for the collapsed section label, e.g.
-    /// "🎬 3.0  💻 1.0" — highest-scoring field first.
-    private var fameIndustrySummary: String {
-        player.fameByIndustry
+    /// Compact per-bucket fame chips for the collapsed section label, e.g.
+    /// "🎬 3.0  💻 1.0" — highest-scoring bucket first.
+    private var fameCategorySummary: String {
+        player.fameByCategory
             .map { group in
-                let icon = group.industry.map { JobCategory.icon(for: $0) } ?? "🌐"
+                let icon = group.category?.icon ?? "🌐"
                 return "\(icon) \(String(format: "%.1f", group.score))"
             }
             .joined(separator: "  ")
@@ -214,7 +214,7 @@ struct SkillsView: View {
                 } else {
                     ForEach(experienceEntries, id: \.role) { entry in
                         HStack {
-                            Text("💼")
+                            Text(roleIcon(entry.role))
                             Text(entry.role)
                             Spacer()
                             Text("\(entry.years) yr\(entry.years == 1 ? "" : "s")")
@@ -229,9 +229,15 @@ struct SkillsView: View {
             HStack {
                 Text("Experience").font(.headline)
                 Spacer()
-                summaryPictograms(experienceEntries.map { _ in "💼" })
+                summaryPictograms(experienceEntries.map { roleIcon($0.role) })
             }
         }
+    }
+
+    /// The pictogram for an experience role — its own industry icon, falling back
+    /// to the generic briefcase for a title the catalogue doesn't recognise.
+    private func roleIcon(_ role: String) -> String {
+        JobCatalog.iconByBaseTitle[role] ?? "💼"
     }
 
     // MARK: - Helpers

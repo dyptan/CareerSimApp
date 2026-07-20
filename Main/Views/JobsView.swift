@@ -6,11 +6,12 @@ struct JobsView: View {
     @Binding var showCareersSheet: Bool
 
     func categories() -> [JobCategory] {
-        // Entrepreneurship is its own surface (see `EntrepreneurshipView`) — the
-        // founder path is a capital-staked venture, not salaried employment, so
-        // it's kept out of the Jobs list.
-        Array(Set(availableJobs.map(\.category)))
-            .filter { $0 != .entrepreneurship }
+        // Ventures live on their own surface (see `EntrepreneurshipView`) — a
+        // founder play is a capital-staked bet, not salaried employment. Ventures
+        // now keep their true industry category, so they're filtered out by
+        // `isEntrepreneurial` rather than by category (a category still lists its
+        // ordinary jobs).
+        Array(Set(availableJobs.filter { !$0.isEntrepreneurial }.map(\.category)))
             .sorted { $0.rawValue < $1.rawValue }
     }
 
@@ -18,7 +19,7 @@ struct JobsView: View {
     /// role family. Each entry's `variants` are sorted from least to most
     /// senior using `minYearsExperience` (with `income` as a tiebreaker).
     private func roleGroups(in category: JobCategory) -> [RoleGroup] {
-        let inCategory = availableJobs.filter { $0.category == category }
+        let inCategory = availableJobs.filter { $0.category == category && !$0.isEntrepreneurial }
         let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
         return grouped
             .map { (key, value) -> RoleGroup in
@@ -126,38 +127,33 @@ private struct RoleGroupRow: View {
 }
 
 /// The **Ventures** surface — the founder path, split out from the salaried
-/// Jobs list. Two kinds of play live here. The founder rungs (Side Hustler →
-/// Serial Entrepreneur) are capital-staked: you invest your own savings for a
-/// shot at running a venture, then chase buyout offers year over year (see
-/// `FounderLadder` and `Player.foundVenture`), routing into the same `JobDetail`
-/// invest flow. The spare-time business ventures (a course, an online store, an
-/// app, a game, a startup — every `SideHustle` with business prospects) are
-/// lighter plays that can turn profitable: they bank cash or fame, some credit
-/// `.entrepreneurship` work experience, and are committed when the year advances
-/// (see `SideHustleCatalog.businessVentures`).
+/// Jobs list. Each entry is a concrete, industry-specific business idea (a coffee
+/// roastery, an indie game studio, a SaaS startup…), staked with the player's own
+/// capital. Ventures are one-off founder bets — no auto-climbing ladder — run one
+/// at a time (a launched venture becomes the player's occupation until they sell
+/// out or go bankrupt). Launch success turns on the player's experience in that
+/// industry and their soft-skill fit, not mainly capital (see
+/// `Job.founderSuccessProbability` and `Player.foundVenture`). Every venture
+/// routes into the same `JobDetail` invest flow. The spare-time plays (course,
+/// app, game, and the creative fame gambles) live in the **Projects** sheet
+/// instead (see `PrivateProjectsView`).
 struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
-    @Binding var selectedSideHustles: Set<String>
 
-    /// Founder rungs on offer, in climb order (least to most experience).
+    /// All ventures on offer — every capital-staked founder play — sorted by
+    /// experience gate then stake size (least to most), so the most accessible
+    /// ideas lead.
     private var ventures: [Job] {
         availableJobs
-            .filter { $0.category == .entrepreneurship }
+            .filter { $0.isEntrepreneurial }
             .sorted {
                 if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
                     return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
                 }
                 return $0.income < $1.income
             }
-    }
-
-    /// Spare-time ventures with business prospects, offered at the player's life
-    /// stage — the profit-capable projects that live here rather than in Projects.
-    private var businessVentures: [SideHustle] {
-        let stage = LifeStage.forAge(player.age)
-        return SideHustleCatalog.businessVentures.filter { $0.stages.contains(stage) }
     }
 
     var body: some View {
@@ -175,42 +171,43 @@ struct EntrepreneurshipView: View {
         List {
             Section {
                 ForEach(ventures) { venture in
-                    NavigationLink {
-                        JobDetail(
-                            job: venture.atBaseSalary(),
-                            player: player,
-                            showCareersSheet: $showSheet
-                        )
-                    } label: {
-                        VentureRow(job: venture)
-                    }
+                    ventureLink(venture)
                 }
             } header: {
-                Text("Stake your own capital to run a venture. Grow it and sell for a multiple — or ride out the downturns.")
+                Text("Real business ideas across different industries. Stake your capital on one at a time — your experience in that field and your personal strengths decide whether the launch flies. Grow it, then sell out or move on.")
                     .textCase(nil)
-            }
-
-            if !businessVentures.isEmpty {
-                Section {
-                    ForEach(businessVentures) { hustle in
-                        SideHustleRow(
-                            hustle: hustle,
-                            player: player,
-                            selectedSideHustles: $selectedSideHustles
-                        )
-                    }
-                } header: {
-                    Text("Spare-time plays with a shot at becoming a business — a course, an online store, an app, a game, a startup. A standout year builds your name in business, and each committed year is resolved when you advance the year.")
-                        .textCase(nil)
-                }
             }
         }
         .navigationTitle("Ventures")
+    }
+
+    private func ventureLink(_ venture: Job) -> some View {
+        NavigationLink {
+            JobDetail(
+                job: venture.atBaseSalary(),
+                player: player,
+                showCareersSheet: $showSheet
+            )
+        } label: {
+            VentureRow(job: venture)
+        }
     }
 }
 
 private struct VentureRow: View {
     let job: Job
+
+    /// One-line facts strip: the industry the venture draws experience from, the
+    /// years of that experience it expects, and the capital stake.
+    private var ventureFacts: String {
+        var parts = ["🏭 \(job.category.rawValue)"]
+        let years = job.requirements.minYearsExperience
+        if years > 0 {
+            parts.append("🧭 \(years)+ yr exp")
+        }
+        parts.append("💰 Stake \((job.targetCapital ?? 0).formatted(.number)) $")
+        return parts.joined(separator: "  ·  ")
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -227,7 +224,7 @@ private struct VentureRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("💰 Stake \((job.targetCapital ?? 0).formatted(.number)) $")
+                Text(ventureFacts)
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
             }

@@ -3,14 +3,35 @@ import SwiftUI
 /// Lets the player attend professional events this year — summits, conferences,
 /// expos, and networking mixers. Events are free but build a per-industry
 /// professional network that improves hiring odds on that field's postings and
-/// the chance of promotion within it. Industry events can be attended as a
-/// **presenter** once the player is a veteran of the field — presenting banks
-/// extra network plus a fame award. Effects (soft skills, network) apply
-/// the moment an event is toggled on and reverse if toggled off before the year
-/// advances; presenter fame is banked when the year advances.
+/// the chance of promotion within it. Industry events list two distinct rows —
+/// **attend** (participant) and **present** (unlocked once the player is a
+/// veteran of the field); presenting banks extra network plus a fame award, and
+/// the two are mutually exclusive (you attend an event in one capacity). Effects
+/// (soft skills, network) apply the moment a row is toggled on and reverse if
+/// toggled off before the year advances; presenter fame is banked when the year
+/// advances.
 struct EventsView: View {
     @ObservedObject var player: Player
     @Binding var selectedEvents: [String: EventRole]
+
+    /// One selectable row: an event attended in a specific capacity. Presentable
+    /// events contribute both a participant and a presenter row; everything else
+    /// contributes a single participant row.
+    private struct EventOption: Identifiable {
+        let event: CareerEvent
+        let role: EventRole
+        var id: String { "\(event.id)#\(role.rawValue)" }
+    }
+
+    private var eventOptions: [EventOption] {
+        EventCatalog.all.flatMap { event -> [EventOption] in
+            var options = [EventOption(event: event, role: .participant)]
+            if event.supportsPresenter {
+                options.append(EventOption(event: event, role: .presenter))
+            }
+            return options
+        }
+    }
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -40,8 +61,8 @@ struct EventsView: View {
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(EventCatalog.all) { event in
-                        row(for: event)
+                    ForEach(eventOptions) { option in
+                        row(for: option)
                     }
                 }
                 .padding(.horizontal)
@@ -50,18 +71,31 @@ struct EventsView: View {
     }
 
     @ViewBuilder
-    private func row(for event: CareerEvent) -> some View {
-        let role = selectedEvents[event.id]
-        let isSelected = role != nil
+    private func row(for option: EventOption) -> some View {
+        let event = option.event
+        let rowRole = option.role
+        let isPresenterRow = rowRole == .presenter
+
+        let currentRole = selectedEvents[event.id]
+        let isSelected = currentRole == rowRole
+        // The same event is already claimed in the other capacity — toggling this
+        // row on switches to it rather than consuming a fresh event slot.
+        let selectedElsewhere = currentRole != nil && currentRole != rowRole
         let atLimit = selectedEvents.count >= GameConstants.maxEventsPerYear
+
         // Industry events open only once you have ≥1 year in that field.
         let meetsExp = event.meetsExperienceRequirement(for: player.experience)
-        let isDisabled = (!isSelected && atLimit) || !meetsExp
-        // Presenting needs the full veteran gate on top of the attend gate.
-        let canPresent = event.canPresent(with: player.experience)
+        // Presenter rows stay locked until the full veteran gate is cleared.
+        let presenterLocked = isPresenterRow && !event.canPresent(with: player.experience)
+        // No free slot, and this isn't a switch of an already-attended event.
+        let noSlot = !isSelected && !selectedElsewhere && atLimit
+        let isDisabled = !meetsExp || presenterLocked || noSlot
 
-        // Network points reflect the chosen role (participant baseline until on).
-        let netPoints = event.networkPoints(for: role ?? .participant)
+        let roleIcon = isPresenterRow ? "🎤" : "🙋"
+        let roleLabel = isPresenterRow ? event.presenterActionLabel : "Attend"
+
+        // Network points reflect this row's role.
+        let netPoints = event.networkPoints(for: rowRole)
         let networkLabel: String = {
             if let category = event.category {
                 return "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(netPoints)"
@@ -84,8 +118,15 @@ struct EventsView: View {
                     get: { isSelected },
                     set: { isOn in
                         if isOn {
-                            guard !atLimit else { return }
-                            player.attendEvent(event, into: &selectedEvents)
+                            if selectedElsewhere {
+                                // Switch capacity on the same event — reapply so
+                                // the network delta between roles lands cleanly.
+                                player.dropEvent(event, from: &selectedEvents)
+                                player.attendEvent(event, role: rowRole, into: &selectedEvents)
+                            } else {
+                                guard !atLimit else { return }
+                                player.attendEvent(event, role: rowRole, into: &selectedEvents)
+                            }
                         } else {
                             player.dropEvent(event, from: &selectedEvents)
                         }
@@ -95,37 +136,19 @@ struct EventsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(event.icon)  \(event.name)")
                         .font(.headline)
+                    Text("\(roleIcon) \(roleLabel)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
 
-                    // Role picker for industry events once selected: participants
-                    // always, presenters once the veteran gate is cleared.
-                    if isSelected, event.supportsPresenter {
-                        if canPresent {
-                            Picker(
-                                "Role",
-                                selection: Binding(
-                                    get: { role ?? .participant },
-                                    set: { newRole in
-                                        // Re-attend so the network delta between
-                                        // roles is applied cleanly.
-                                        player.dropEvent(event, from: &selectedEvents)
-                                        player.attendEvent(event, role: newRole, into: &selectedEvents)
-                                    }
-                                )
-                            ) {
-                                Text("🙋 Participant").tag(EventRole.participant)
-                                Text("🎤 Presenter").tag(EventRole.presenter)
-                            }
-                            .pickerStyle(.segmented)
-                            .labelsHidden()
-                            if role == .presenter, let category = event.category {
-                                Text("🎤 Earns reputation in \(category.rawValue)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } else {
-                            Text("🔒 Present with \(GameConstants.presenterExperienceYears) yrs in \(event.category?.rawValue ?? "this field")")
+                    if isPresenterRow, let category = event.category {
+                        if presenterLocked {
+                            Text("🔒 \(event.presenterActionLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
                                 .font(.caption2)
                                 .foregroundStyle(.orange)
+                        } else {
+                            Text("🎤 Earns reputation in \(category.rawValue)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
                         }
                     }
 
@@ -143,14 +166,16 @@ struct EventsView: View {
             .help(
                 !meetsExp
                     ? "Work at least 1 year in \(event.category?.rawValue ?? "this field") to attend."
-                    : (atLimit && !isSelected
-                        ? "You can attend up to \(GameConstants.maxEventsPerYear) events this year."
-                        : "")
+                    : (presenterLocked
+                        ? "Spend \(GameConstants.presenterExperienceYears) years in \(event.category?.rawValue ?? "this field") to \(event.presenterActionLabel.lowercased()) here."
+                        : (noSlot
+                            ? "You can attend up to \(GameConstants.maxEventsPerYear) events this year."
+                            : ""))
             )
 
             InfoHint(
-                title: "\(event.icon) \(event.name)",
-                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion. Present at an industry event (after \(GameConstants.presenterExperienceYears) years in the field) for extra network and fame."
+                title: "\(roleIcon) \(event.name) — \(roleLabel)",
+                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nA strong network in a field raises your hiring odds there and your chance of promotion." + (isPresenterRow ? "\n\nTaking the stage banks extra network plus a fame award in \(event.category?.rawValue ?? "the field")." : "")
             )
         }
         .padding(5)
