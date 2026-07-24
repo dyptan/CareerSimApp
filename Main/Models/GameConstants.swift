@@ -62,9 +62,28 @@ enum GameConstants {
     /// See `Difficulty.layoffSeverity`.
     static let turmoilMaxLayoffChance: Double = 0.85
 
-    /// Admission odds at or below this count as a long shot: getting in anyway is
-    /// celebrated with confetti. See `InstitutionTiersView`.
-    static let luckyAdmissionThreshold: Double = 0.35
+    /// A gain whose success probability was below this counts as a genuine long
+    /// shot — the only kind of win the confetti celebrates. Applied uniformly to
+    /// every stochastic payoff: admissions, promotions, competition wins, fame
+    /// projects, and investment rounds. Likely or guaranteed gains (e.g. simply
+    /// graduating) fire no confetti.
+    static let luckyWinThreshold: Double = 0.20
+
+    /// Multiplier applied to the fame a shipped **project** banks (see `SideHustle`
+    /// fame plays). Like taking the stage at an event, a completed project is a
+    /// significant, industry-scoped fame driver — worth well more than its raw
+    /// catalogue weight — feeding the hiring fame bonus (`Player.fameHireBonus`).
+    static let projectFameMultiplier: Double = 2.0
+
+    /// How much a founder can borrow to top up a venture stake once their savings
+    /// are spent, as a multiple of their current annual income — a bank lends
+    /// against what you earn. Zero income means no borrowing headroom.
+    static let ventureLoanIncomeMultiple: Double = 2.0
+
+    /// Annual interest charged on an outstanding venture loan. Applied each year
+    /// before that year's repayment, so carrying debt has a real cost — and if the
+    /// venture flops, the loan (and its interest) still has to be paid back.
+    static let ventureLoanAnnualInterest: Double = 0.10
 
     /// Lowest education level (EQF) a role can require and still offer in-place
     /// promotions. Roles below this — unskilled work needing no post-secondary

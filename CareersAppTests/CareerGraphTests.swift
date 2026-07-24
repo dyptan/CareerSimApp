@@ -182,7 +182,6 @@ final class CareerGraphTests: XCTestCase {
             .codingBootcamp:     [.technology, .engineering],
             .gameDevProgram:     [.gaming, .technology],
             .productDesign:      [.design, .fashion],
-            .actingConservatory: [.showBusiness],
             .musicProduction:    [.showBusiness],
         ]
         for (training, categories) in expected {

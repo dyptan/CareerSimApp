@@ -174,7 +174,11 @@ struct SideHustle: Identifiable, Hashable {
             let payout = max(payoutRange.lowerBound, Int((base * jitter).rounded()))
             return Outcome(hustle: self, success: true, credit: payout, grantedFame: nil)
         case .fame(let category, let weight):
-            let grant = FameGrant(title: fameTitle ?? label, category: category, weight: weight)
+            // A shipped project is a strong fame driver, like presenting at an
+            // event — the banked reputation is scaled up from the raw catalogue
+            // weight (see GameConstants.projectFameMultiplier).
+            let banked = weight * GameConstants.projectFameMultiplier
+            let grant = FameGrant(title: fameTitle ?? label, category: category, weight: banked)
             return Outcome(hustle: self, success: true, credit: 0, grantedFame: grant)
         }
     }

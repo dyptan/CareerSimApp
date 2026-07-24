@@ -26,7 +26,7 @@ struct JobDetail: View {
         if player.appliedJobIds.contains(job.applicationKey) { return isFounder ? "Already attempted this year" : "Already applied" }
         if isFounder {
             if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
-            if player.savings <= 0 { return "No savings to invest" }
+            if player.savings + player.maxVentureLoan <= 0 { return "No savings or income to invest" }
             return "Launch venture 🚀"
         }
         if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
@@ -215,11 +215,13 @@ struct JobDetail: View {
                 .padding(.horizontal)
 
                 if !isSimplified {
-                    Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
+                    if !isFounder {
+                        Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                    }
 
                     // Standalone roles credit related industries too — notably,
                     // entrepreneurship experience counts toward Business roles.
@@ -251,6 +253,32 @@ struct JobDetail: View {
                         .foregroundStyle(owned ? .primary : .secondary)
                         .padding(.horizontal)
                 }
+            }
+
+            // Preferred (helpful) credentials — non-gating skill-building programs
+            // whose careerBoost covers this field. Never required; holding one
+            // meaningfully lifts the hire odds (see Player.trainingCareerBonus).
+            let helpfulTrainings = Training.allCases
+                .filter { $0.careerBoost?.categories.contains(job.category) == true }
+                .sorted { $0.rawValue < $1.rawValue }
+            if !isSimplified && !helpfulTrainings.isEmpty {
+                Text("Preferred (helpful):")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+
+                ForEach(helpfulTrainings, id: \.self) { training in
+                    let owned = player.hardSkills.trainings.contains(training)
+                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
+                        .foregroundStyle(owned ? .primary : .secondary)
+                        .padding(.horizontal)
+                }
+
+                Text("Not required — a relevant credential meaningfully raises your hire odds in this field.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
             }
 
             // Breakthrough fame award: the gateway achievement for gated careers
@@ -315,7 +343,7 @@ struct JobDetail: View {
         .onAppear {
             requestedSalary = Double(job.income)
             if isFounder {
-                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.savings))
+                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.savings + player.maxVentureLoan))
             }
         }
     }
@@ -374,8 +402,11 @@ struct JobDetail: View {
     }
 
     private var founderInvestmentSection: some View {
-        let target = job.targetCapital ?? 0
-        let canInvest = player.savings > 0
+        // You can stake your savings plus a loan of up to 2× income once savings
+        // run out (see Player.maxVentureLoan / foundVenture).
+        let maxInvestable = Double(player.savings + player.maxVentureLoan)
+        let canInvest = maxInvestable > 0
+        let borrowed = max(0, Int(investedCapital) - player.savings)
         return VStack(alignment: .leading, spacing: 8) {
             Text("Launch your venture")
                 .font(.title2.bold())
@@ -390,12 +421,11 @@ struct JobDetail: View {
             .padding(.horizontal)
 
             if canInvest {
-                // Guard against a degenerate slider: when savings are smaller
-                // than the usual 500 increment, a step wider than the range
-                // crashes SwiftUI's Slider. Cap the step to the available span
-                // (and keep ~10 stops on small ranges) so the range is always
-                // valid regardless of how little the player has saved.
-                let maxInvestable = Double(player.savings)
+                // Guard against a degenerate slider: when the investable span is
+                // smaller than the usual 500 increment, a step wider than the
+                // range crashes SwiftUI's Slider. Cap the step to the available
+                // span (and keep ~10 stops on small ranges) so the range is always
+                // valid regardless of how little the player has.
                 let step = max(1, min(500, (maxInvestable / 10).rounded()))
                 Slider(value: $investedCapital, in: 0...maxInvestable, step: step)
                     .padding(.horizontal)
@@ -403,24 +433,20 @@ struct JobDetail: View {
                     Text("0 $")
                         .font(.caption).foregroundStyle(.secondary)
                     Spacer()
-                    Text("your savings: \(player.savings.formatted(.number)) $")
+                    Text("savings \(player.savings.formatted(.number)) $ + loan \(player.maxVentureLoan.formatted(.number)) $")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
+                if borrowed > 0 {
+                    Text("🏦 Borrowing \(borrowed.formatted(.number)) $ against your income — repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, even if the venture flops.")
+                        .font(.caption).foregroundStyle(.orange)
+                        .padding(.horizontal)
+                }
             } else {
-                Text("You have no savings to invest yet. Earn and save first, then come back to launch.")
+                Text("You have no savings or income to invest yet. Earn and save first, then come back to launch.")
                     .font(.caption).foregroundStyle(.secondary)
                     .padding(.horizontal)
             }
-
-            HStack {
-                Text("Recommended capital:")
-                    .font(.caption).foregroundStyle(.secondary)
-                Spacer()
-                Text("\(target.formatted(.number)) $")
-                    .font(.caption).foregroundStyle(.secondary)
-            }
-            .padding(.horizontal)
 
             HStack(spacing: 6) {
                 Text("Success chance:")
@@ -435,10 +461,6 @@ struct JobDetail: View {
             }
             .padding(.horizontal)
             .padding(.top, 4)
-
-            Text("If the venture fails, you keep half of what you put in.")
-                .font(.caption2).foregroundStyle(.secondary)
-                .padding(.horizontal)
         }
         .padding(.vertical)
     }
@@ -451,7 +473,7 @@ struct JobDetail: View {
         return """
         Your odds come mostly from how much capital you put in versus the \(target) $ this venture really needs, plus your founder skills (Risk-Taker 🎲, Visionary 🔭, Persuader 💬).
 
-        Invest more to raise your odds. Succeed and you're in business; fail and you keep half your stake.
+        Invest more to raise your odds. Succeed and you're in business; fail and you lose your stake.
         """
     }
 
@@ -459,14 +481,14 @@ struct JobDetail: View {
 
     private func resultMessage(_ result: ApplicationResult) -> String {
         if isFounder {
-            return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you kept half your stake."
+            return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you lost your stake."
         }
         return result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time."
     }
 
     private var applyDisabled: Bool {
         if player.appliedJobIds.contains(job.applicationKey) { return true }
-        if isFounder { return !job.experienceMet(for: player) || player.savings <= 0 }
+        if isFounder { return !job.experienceMet(for: player) || player.savings + player.maxVentureLoan <= 0 }
         return !allRequirementsMet
     }
 
