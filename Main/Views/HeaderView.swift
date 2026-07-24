@@ -51,6 +51,12 @@ struct HeaderView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
+                if player.outstandingLoan > 0 {
+                    Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+
                 // Realistic mode is open-ended: show the running score (updated
                 // every year) that the player banks when they finish the game.
                 if !player.isSimplified {
@@ -60,7 +66,7 @@ struct HeaderView: View {
                             .foregroundStyle(.secondary)
                         InfoHint(
                             title: "Your score",
-                            message: "Your score is your savings ÷ your age (\(player.savings.formatted(.number)) ÷ \(player.age) = \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
+                            message: "Your score is your net worth — savings minus any venture loan — ÷ your age (currently \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
                         )
                     }
                 }

@@ -118,14 +118,17 @@ final class Player: ObservableObject {
     }
 
     /// Additive hire-probability boost from fame for a role in `jobCategory`,
-    /// mapping the industry to its `FameCategory` bucket. Ordinary roles get a
-    /// modest lift (capped +0.20). **Top positions** weight reputation far more
-    /// heavily — a public profile is often what separates the shortlist for a
-    /// leadership seat — so they earn a steeper per-point rate and a higher cap
-    /// (+0.40). See `Job.isTopLeadership` / `Job.hireProbability`.
+    /// mapping the industry to its `FameCategory` bucket. Fame is chiefly earned
+    /// by shipping **accomplished projects** (see `SideHustle` fame plays), and a
+    /// noticed body of that work is a significant hiring lever — ordinary roles
+    /// lift a strong +0.07 per reputation point up to a +0.35 cap (a serious
+    /// portfolio nearly rivals the soft-skill fit term). **Top positions** weight
+    /// reputation even more heavily — a public profile is often what separates the
+    /// shortlist for a leadership seat — so they earn a steeper per-point rate and
+    /// a higher cap (+0.50). See `Job.isTopLeadership` / `Job.hireProbability`.
     func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false) -> Double {
-        let rate = topPosition ? 0.08 : 0.04
-        let cap = topPosition ? 0.40 : 0.20
+        let rate = topPosition ? 0.12 : 0.07
+        let cap = topPosition ? 0.50 : 0.35
         return min(cap, famePoints(for: jobCategory.fameCategory) * rate)
     }
 
@@ -203,12 +206,25 @@ final class Player: ObservableObject {
 
     @Published var age: Int
 
+    /// Outstanding balance of a loan taken to fund a venture beyond the player's
+    /// savings (see `foundVenture` / `maxVentureLoan`). Accrues interest and is
+    /// repaid from savings each year in `advanceYear`; it counts against net worth
+    /// for the leaderboard. Zero when the player owes nothing.
+    @Published var outstandingLoan: Int = 0
+
+    /// How much the player can borrow right now to top up a venture stake — a
+    /// multiple of current annual income (`GameConstants.ventureLoanIncomeMultiple`).
+    /// Zero when unemployed: a bank lends against income.
+    var maxVentureLoan: Int {
+        Int((Double(currentOccupation?.annualIncome ?? 0) * GameConstants.ventureLoanIncomeMultiple).rounded())
+    }
+
     /// The player's running score, recalculated from current state (so it's
-    /// always up to date each year): "wealth velocity" — savings per year of
-    /// life. Reaching wealth younger scores higher. Floored at 0. This is what a
-    /// realistic-mode run is playing for; finishing the game banks it to the
-    /// Game Center leaderboard.
-    var leaderboardScore: Int { age > 0 ? max(0, savings) / age : 0 }
+    /// always up to date each year): "wealth velocity" — net worth (savings minus
+    /// any outstanding loan) per year of life. Reaching wealth younger scores
+    /// higher. Floored at 0. This is what a realistic-mode run is playing for;
+    /// finishing the game banks it to the Game Center leaderboard.
+    var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan) / age : 0 }
 
     @Published var degrees: [Education]
     /// Years of work experience per industry. Key is the job's `JobCategory`,
@@ -650,7 +666,6 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
                 graduationMessage = "Congratulations! You completed your \(currentEducation.degreeName). Time to figure out the next step."
                 showGraduationAlert = true
-                celebrationTrigger += 1
             }
             appUIState.yearsLeftToGraduation = nil
             currentEducation = nil
@@ -715,14 +730,46 @@ final class Player: ObservableObject {
             // downturn — no raises while the economy is in a recession.
             if !isSimplified, !recessionThisYear, let current = currentOccupation,
                Double.random(in: 0...1) < promotionChance(for: current) {
+                // Confetti only for a promotion that was a genuine long shot.
+                let luckyPromotion = promotionChance(for: current) < GameConstants.luckyWinThreshold
+                // Prefer a real rung change: move up to the next seniority level
+                // in the same ladder the player now qualifies for (its full
+                // requirements — degree, credential, and the tenure just banked).
+                // Only fall back to an in-place merit raise when there's no higher
+                // rung, or the player doesn't yet meet the next one's bar.
+                let nextRung = JobCatalog.allJobs()
+                    .filter { $0.baseTitle == current.baseTitle
+                        && $0.seniorityRank > current.seniorityRank
+                        && $0.allRequirementsMet(for: self) }
+                    .min { $0.seniorityRank < $1.seniorityRank }
+
                 let raise = Double.random(in: GameConstants.promotionRaise)
-                let newIncome = Int((Double(current.annualIncome) * (1 + raise)).rounded())
-                currentOccupation?.annualIncome = newIncome
-                lastPromotionRaisePct = Int((raise * 100).rounded())
-                celebrationTrigger += 1
-                showPromotionAlert = true
-                promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
-                recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
+                if let next = nextRung {
+                    // Never a pay cut on a promotion: take the higher of the new
+                    // rung's pay and a raise on the current salary.
+                    var promoted = next
+                    promoted.annualIncome = max(next.annualIncome,
+                                                Int((Double(current.annualIncome) * (1 + raise)).rounded()))
+                    let pct = current.annualIncome > 0
+                        ? Int((((Double(promoted.annualIncome) / Double(current.annualIncome)) - 1) * 100).rounded())
+                        : 0
+                    currentOccupation = promoted
+                    lastPromotionRaisePct = max(0, pct)
+                    if luckyPromotion { celebrationTrigger += 1 }
+                    showPromotionAlert = true
+                    promotionMessage = "Your hard work paid off — you've been promoted from \(current.displayTitle) to \(promoted.displayTitle). Your pay rises to \(promoted.annualIncome.formatted(.number)) $ a year."
+                    recordStatus("⬆️", "Promoted to \(promoted.id)")
+                } else {
+                    // Top of the ladder (or not yet qualified for the next rung):
+                    // a merit raise in place.
+                    let newIncome = Int((Double(current.annualIncome) * (1 + raise)).rounded())
+                    currentOccupation?.annualIncome = newIncome
+                    lastPromotionRaisePct = Int((raise * 100).rounded())
+                    if luckyPromotion { celebrationTrigger += 1 }
+                    showPromotionAlert = true
+                    promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
+                    recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
+                }
             }
         }
 
@@ -735,6 +782,7 @@ final class Player: ObservableObject {
         // SideHustle.successProbability); all are repeatable year after year.
         var sideHustleNet = 0
         var famedVentures = 0
+        var luckyFame = false
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id],
                   hustle.meetsPrerequisite(for: softSkills) else { continue }
@@ -750,6 +798,7 @@ final class Player: ObservableObject {
                 experience[cat, default: 0] += 1
                 recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
             }
+            let odds = hustle.successProbability(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
             let outcome = hustle.resolve(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
             if outcome.success {
                 savings += outcome.credit
@@ -763,13 +812,14 @@ final class Player: ObservableObject {
                         softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
                     }
                     famedVentures += 1
+                    if odds < GameConstants.luckyWinThreshold { luckyFame = true }
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
             } else {
                 recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
             }
         }
-        if famedVentures > 0 { celebrationTrigger += 1 }
+        if luckyFame { celebrationTrigger += 1 }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
 
@@ -779,24 +829,40 @@ final class Player: ObservableObject {
         // A win pays the prize and banks a lasting achievement (Entertainment
         // fame that helps land spotlight roles), then surfaces a celebration dialog.
         var competitionWins = 0
+        var luckyCompetition = false
         let currentStage = LifeStage.forAge(age)
         for sport in competedSports {
             let years = sportYears[sport, default: 0]
             guard let competition = CompetitionCatalog.bestCompetition(
                 forSport: sport, stage: currentStage, years: years
             ) else { continue }
-            if Double.random(in: 0...1) < competition.winProbability(for: softSkills, years: years) {
+            let odds = competition.winProbability(for: softSkills, years: years)
+            if Double.random(in: 0...1) < odds {
                 savings += competition.prize
                 award(competition.achievement, icon: competition.icon,
                       category: .entertainment, weight: competition.fameWeight)
                 competitionWins += 1
+                if odds < GameConstants.luckyWinThreshold { luckyCompetition = true }
                 recordStatus("🏆", "Won \(competition.achievement)")
                 competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a \(competition.prize.formatted(.number)) $ prize and a boost to your reputation."
                 showCompetitionWinAlert = true
             }
         }
         lastCompetitionWins = competitionWins
-        if competitionWins > 0 { celebrationTrigger += 1 }
+        if luckyCompetition { celebrationTrigger += 1 }
+
+        // Service any venture loan: interest accrues first, then it's repaid from
+        // this year's savings as far as they stretch. A flopped venture still owes
+        // — the debt (and its interest) outlives the venture that borrowed it.
+        if outstandingLoan > 0 {
+            outstandingLoan = Int((Double(outstandingLoan) * (1 + GameConstants.ventureLoanAnnualInterest)).rounded())
+            let repayment = min(max(0, savings), outstandingLoan)
+            savings -= repayment
+            outstandingLoan -= repayment
+            if outstandingLoan == 0 && repayment > 0 {
+                recordStatus("🏦", "Paid off your venture loan")
+            }
+        }
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -857,17 +923,26 @@ final class Player: ObservableObject {
     }
 
     /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
-    /// of the player's own savings. The stake is committed up front; success makes
-    /// the venture the player's occupation (earning its income), while failure
-    /// salvages half the stake. Odds come from `Job.founderSuccessProbability`
-    /// (industry experience + soft-skill fit, with capital a supporting factor).
-    /// Returns true on success.
+    /// of the player's own savings — topped up, once savings run out, by a loan of
+    /// up to `maxVentureLoan` (2× annual income). The stake is committed up front;
+    /// success makes the venture the player's occupation (earning its income),
+    /// while failure loses the entire stake. Any borrowed portion becomes an
+    /// `outstandingLoan` that must be repaid regardless of the outcome. Odds come
+    /// from `Job.founderSuccessProbability` (industry experience + soft-skill fit,
+    /// with capital a supporting factor). Returns true on success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
         appliedJobIds.insert(job.applicationKey)
-        let stake = min(max(0, investedCapital), savings)
+        // Savings fund the stake first; anything beyond them (up to the loan cap)
+        // is borrowed against income and booked as debt.
+        let stake = min(max(0, investedCapital), savings + maxVentureLoan)
+        let borrowed = max(0, stake - savings)
         let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
-        savings -= stake                       // commit the capital
+        savings -= (stake - borrowed)          // spend savings first
+        if borrowed > 0 {
+            outstandingLoan += borrowed        // the rest is a loan
+            recordStatus("🏦", "Borrowed \(borrowed.formatted(.number)) $ to fund your venture")
+        }
         let success = Double.random(in: 0...1) < probability
         if success {
             let previous = currentOccupation
@@ -876,9 +951,8 @@ final class Player: ObservableObject {
                 recordStatus("🚪", "Left \(previous.baseTitle) to go all-in on your venture")
             }
             recordStatus("🚀", "Founded \(job.baseTitle) — you're now CEO")
-        } else {
-            savings += stake / 2                // salvage half of a failed venture
         }
+        // On failure the committed stake is lost in full.
         return success
     }
 
@@ -1017,7 +1091,8 @@ final class Player: ObservableObject {
             }
             return ExecutiveDecision.Outcome(decision: decision, success: true, cash: ask, fameTitle: nil)
         case .investmentRound:
-            let succeeded = Double.random(in: 0...1) < investmentRoundOdds()
+            let odds = investmentRoundOdds()
+            let succeeded = Double.random(in: 0...1) < odds
             guard succeeded else {
                 recordStatus("🚫", "Investment round for \(job.baseTitle) fell through")
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
@@ -1035,7 +1110,7 @@ final class Player: ObservableObject {
             for kp in growthAxes {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
             }
-            celebrationTrigger += 1
+            if odds < GameConstants.luckyWinThreshold { celebrationTrigger += 1 }
             recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")
             return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: title)
         }
@@ -1067,6 +1142,7 @@ final class Player: ObservableObject {
         currentOccupation = fresh.currentOccupation
         currentEducation = fresh.currentEducation
         savings = fresh.savings
+        outstandingLoan = fresh.outstandingLoan
         lockedTrainings = fresh.lockedTrainings
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory

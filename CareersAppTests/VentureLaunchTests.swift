@@ -127,15 +127,15 @@ final class VentureLaunchTests: XCTestCase {
         XCTAssertTrue(launched, "A funded Coffee Roastery should launch within many attempts.")
     }
 
-    /// A failed founding salvages half the stake and never makes the player a
+    /// A failed founding loses the entire stake and never makes the player a
     /// founder. Driving the odds to zero (no experience) guarantees the flop.
-    func testFailedFoundingSalvagesHalfAndStartsNoVenture() throws {
+    func testFailedFoundingLosesFullStakeAndStartsNoVenture() throws {
         let job = try coffeeRoasteryJob()
         let player = realisticFounder(savings: 10_000, retailYears: 0)  // gated → certain failure
         XCTAssertFalse(player.foundVenture(job, investedCapital: 4_000))
         XCTAssertNil(player.currentOccupation, "A flop must not make the player a founder.")
-        XCTAssertEqual(player.savings, 10_000 - 4_000 + 4_000 / 2,
-                       "A failed founding salvages half the committed stake.")
+        XCTAssertEqual(player.savings, 10_000 - 4_000,
+                       "A failed founding loses the entire committed stake.")
     }
 
     // MARK: - Life after launch

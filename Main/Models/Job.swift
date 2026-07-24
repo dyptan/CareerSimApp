@@ -297,6 +297,18 @@ extension Job {
         // Simplified mode: meeting the gate (degree + experience) is a sure hire.
         // No skill score, prestige, tier, or salary-fit adjustments.
         if player.isSimplified { return 1.0 }
+        // Unregulated fields never *hard-gate* a role on a degree or credential —
+        // you can always apply. But a skilled role still needs some qualification
+        // behind it: with no post-secondary education, no field-relevant
+        // credential, and no prior experience in the field, an applicant has
+        // nothing to show and their odds sit at the floor. Unskilled roles need
+        // nothing; regulated fields gate on their mandated degree/licence instead.
+        if !educationIsMandatory && !category.requiresCredentials && !isLowSkilled {
+            let hasEducation = player.degrees.contains { $0.eqf >= GameConstants.promotionMinEQF }
+            let hasCredential = player.trainingCareerBonus(for: category) > 0
+            let hasExperience = relevantYears(for: player) > 0
+            if !hasEducation && !hasCredential && !hasExperience { return 0.05 }
+        }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
         // Where a degree isn't mandatory, falling short of the expected level
@@ -308,10 +320,11 @@ extension Job {
         // Experience the employer expects: a shortfall drags the
         // odds down, a seasoned applicant nudges them up.
         let experience = experienceFitTerm(for: player)
-        // Industry-scoped fame opens doors: a noticed body of side work (and,
-        // in Show Business, competition/side-hustle trophies) lifts the odds for
-        // roles in that same field — but only that field (see fameHireBonus).
-        // Top leadership roles weight reputation far more heavily.
+        // Industry-scoped fame opens doors — and a body of accomplished projects
+        // (the main fame source) is a significant lift for roles in that same
+        // field: a strong portfolio nearly rivals the soft-skill fit term, but
+        // helps only its own field (see fameHireBonus). Top leadership roles
+        // weight reputation even more heavily.
         let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership)
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
@@ -479,6 +492,22 @@ extension Job {
     /// when the job title carries no seniority prefix.
     var seniorityLabel: String {
         seniorityPrefix ?? "Standard"
+    }
+
+    /// Ordered rank of this rung within its ladder, used to promote to the next
+    /// level up (same `baseTitle`). The bare base title (no prefix) sits
+    /// mid-ladder, between Junior and Senior; prefixes marking the same tier
+    /// share a rank so a ladder climbs one recognised step at a time.
+    var seniorityRank: Int {
+        switch seniorityPrefix {
+        case "Apprentice", "Amateur":                      return 0
+        case "Junior":                                     return 1
+        case "Mid-Level", .none:                           return 2
+        case "Senior", "Sous", "Professional":             return 3
+        case "Lead", "Head", "Charge", "Elite":            return 4
+        case "Principal", "Staff", "Executive", "Master":  return 5
+        default:                                           return 2
+        }
     }
 
     /// Player-facing occupation title. Founding a venture makes the player its

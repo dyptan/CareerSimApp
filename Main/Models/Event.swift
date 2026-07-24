@@ -10,15 +10,15 @@ enum EventRole: String {
     case presenter
 }
 
-/// A professional event — a summit, conference, expo, or networking mixer.
-/// Distinct from a `Hobby`: events are a realistic-mode feature that build an
-/// industry **professional network** improving both the hiring odds on that
-/// field's job postings and the chance of promotion while working in it (see
-/// `Player.networkBonus` and `Player.promotionChance`). They also nudge the
-/// networking-flavoured soft skills, applied immediately on attendance the way
-/// a hobby is. Attending as a **presenter** (industry events only, and only
-/// once you're a veteran of the field) banks extra network plus a fame
-/// fame award in that industry.
+/// A professional event — a summit, conference, expo, festival, or pitch
+/// competition. Distinct from a `Hobby`: events are a realistic-mode feature
+/// that build an industry **professional network** improving both the hiring
+/// odds on that field's job postings and the chance of promotion while working
+/// in it (see `Player.networkBonus` and `Player.promotionChance`). They also
+/// nudge the networking-flavoured soft skills, applied immediately the way a
+/// hobby is. The player takes part as a **presenter** — taking the stage
+/// (industry events only, and only once you're a veteran of the field) banks
+/// the field's network plus a fame award in that industry.
 struct CareerEvent: Identifiable {
     let id: String
     let name: String
@@ -91,16 +91,20 @@ struct CareerEvent: Identifiable {
         return presenterFameTitleOverride ?? "\(name) — Speaker"
     }
 
-    /// Reputation weight of the presenter fame award — flagship summits (higher
-    /// `networkWeight`) are worth more on the shelf. See `Player.fameHireBonus`.
-    var presenterFameWeight: Double { Double(networkWeight) }
+    /// Reputation weight of the presenter fame award. Taking the stage at an
+    /// industry event is a veteran-gated accomplishment — you only get the podium
+    /// once you're established in the field — so it banks meaningfully more fame
+    /// than its raw network points: a significant hiring lever in that same
+    /// industry (see `Player.fameHireBonus`), and it compounds each year you
+    /// present. Flagship summits (higher `networkWeight`) are worth proportionally
+    /// more.
+    var presenterFameWeight: Double { Double(networkWeight) * 2.0 }
 }
 
 enum EventCatalog {
     /// The events on offer. Each is tagged to the industry whose network it
-    /// builds; `nil` events build a general network that helps in any field.
-    /// Industry events can also be presented at once you're a veteran of the
-    /// field (see `CareerEvent.canPresent`).
+    /// builds, and is taken by presenting — you take the stage once you're a
+    /// veteran of the field (see `CareerEvent.canPresent`).
     static let all: [CareerEvent] = [
         CareerEvent(
             id: "tech-summit",
@@ -208,45 +212,10 @@ enum EventCatalog {
             ],
             networkWeight: 1
         ),
-        CareerEvent(
-            id: "career-fair-mixer",
-            name: "Career Fair & Networking Mixer",
-            icon: "🤝",
-            blurb: "An affordable, come-one-come-all evening of introductions.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.communicationAndNetworking, weight: 1),
-                .init(keyPath: \.empathyAndInterpersonalCare, weight: 1)
-            ],
-            networkWeight: 1
-        ),
-        CareerEvent(
-            id: "leadership-retreat",
-            name: "Leadership Retreat",
-            icon: "🧗",
-            blurb: "An immersive week with senior leaders from every industry.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.communicationAndNetworking, weight: 1)
-            ],
-            networkWeight: 2
-        ),
-        CareerEvent(
-            id: "world-economic-summit",
-            name: "World Economic Summit",
-            icon: "🌐",
-            blurb: "The flagship gathering of executives and policymakers worldwide.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.communicationAndNetworking, weight: 2)
-            ],
-            networkWeight: 3
-        ),
-        // Spotlight & competitive events — organized happenings you show up to
-        // and can take the stage at. Attending builds the field's network;
-        // taking the stage (presenter role, once you're a veteran of the field)
-        // banks industry fame. These were formerly spare-time *projects*, but
-        // they're participation in someone else's event rather than a
+        // Spotlight & competitive events — organized happenings you take the
+        // stage at (once you're a veteran of the field), banking the field's
+        // network plus industry fame. These were formerly spare-time *projects*,
+        // but they're participation in someone else's event rather than a
         // self-initiated work, so they belong here.
         CareerEvent(
             id: "music-festival",
@@ -304,47 +273,6 @@ enum EventCatalog {
             presenterActionLabel: "Compete",
             presenterFameTitleOverride: "Pitch Winner"
         ),
-        // Learning & training — paid skill-building rather than pure networking,
-        // so these lean on soft-skill gains with only a small general network.
-        CareerEvent(
-            id: "skills-workshop",
-            name: "Skills Workshop",
-            icon: "🛠️",
-            blurb: "A hands-on weekend workshop to sharpen a practical skill.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-                .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-                .init(keyPath: \.communicationAndNetworking, weight: 1)
-            ],
-            networkWeight: 1
-        ),
-        CareerEvent(
-            id: "instructor-led-training",
-            name: "Instructor-Led Training",
-            icon: "🧑‍🏫",
-            blurb: "A structured course led by an expert instructor, ending in a certificate of completion.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-                .init(keyPath: \.communicationAndNetworking, weight: 1),
-                .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
-            ],
-            networkWeight: 1
-        ),
-        CareerEvent(
-            id: "intensive-bootcamp",
-            name: "Intensive Bootcamp",
-            icon: "🥾",
-            blurb: "Weeks of immersive, intensive training that rebuild your skill set fast.",
-            category: nil,
-            abilities: [
-                .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
-                .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
-                .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
-            ],
-            networkWeight: 1
-        )
     ]
 
     static let byId: [String: CareerEvent] = Dictionary(

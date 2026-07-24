@@ -133,7 +133,6 @@ struct RootView: View {
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
                 player.graduationMessage = "Congratulations! You finished \(degree.degreeName). Time to figure out the next step — university, vocational training, or straight into work."
                 player.showGraduationAlert = true
-                player.celebrationTrigger += 1
                 player.currentEducation = nil
             case 68: appUIState.showRetirementSheet.toggle()
             default: break
