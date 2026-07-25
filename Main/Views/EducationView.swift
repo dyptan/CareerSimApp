@@ -64,6 +64,7 @@ struct EducationView: View {
                 }
             }
         }
+        .gameSheetClose($showTertiarySheet, title: "Education")
     }
 
     private func degrees(for profile: TertiaryProfile) -> [Education] {

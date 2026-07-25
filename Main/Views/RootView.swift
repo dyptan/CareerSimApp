@@ -16,23 +16,23 @@ struct RootView: View {
     }
 
     private var gameView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             HeaderView(player: player, appUIState: appUIState)
-                .padding(.bottom)
 
             StatusBarView(player: player)
-                .padding(.bottom, 4)
 
             Divider()
-            Spacer()
 
+            // The skills panel flexes to fill the space between the pinned header
+            // and footer — scrolling when there's a lot to show (a full career)
+            // and top-aligning when there isn't (early childhood) — instead of the
+            // old pair of Spacers that centred it and left a large void mid-screen.
             SkillsView(player: player, appUIState: appUIState)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-            Spacer()
             Divider()
 
             FooterView(player: player, appUIState: appUIState)
-                .padding(.bottom)
         }
         #if os(macOS)
         // Resizable game window with a sensible default; min keeps it usable.
@@ -49,9 +49,6 @@ struct RootView: View {
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showTertiarySheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showCareersSheet) {
             JobsView(
@@ -63,9 +60,6 @@ struct RootView: View {
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showCareersSheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showEntrepreneurshipSheet) {
             EntrepreneurshipView(
@@ -77,9 +71,6 @@ struct RootView: View {
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showEntrepreneurshipSheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showExecutiveSheet) {
             ExecutiveDecisionsView(
@@ -91,19 +82,40 @@ struct RootView: View {
             #endif
         }
         .sheet(isPresented: $appUIState.showTrainingsSheet) {
-            navigationSheet { trainingsContent }
+            GameSheet(title: "Trainings", isPresented: $appUIState.showTrainingsSheet) {
+                TrainingsView(
+                    player: player,
+                    selectedTrainings: $appUIState.selectedTrainings,
+                    selectedActivities: $appUIState.selectedActivities
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showHobbiesSheet) {
-            navigationSheet { hobbiesContent }
+            GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet) {
+                HobbiesView(player: player, selectedActivities: $appUIState.selectedActivities)
+            }
         }
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
-            navigationSheet { sideHustlesContent }
+            GameSheet(title: "Projects", isPresented: $appUIState.showSideHustlesSheet) {
+                PrivateProjectsView(
+                    player: player,
+                    selectedSideHustles: $appUIState.selectedSideHustles
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showEventsSheet) {
-            navigationSheet { eventsContent }
+            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet) {
+                EventsView(player: player, selectedEvents: $appUIState.selectedEvents)
+            }
         }
         .sheet(isPresented: $appUIState.showSportsSheet) {
-            navigationSheet { sportsContent }
+            GameSheet(title: "Sports", isPresented: $appUIState.showSportsSheet) {
+                SportsView(
+                    player: player,
+                    selectedActivities: $appUIState.selectedActivities,
+                    selectedSports: $appUIState.selectedSports
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
@@ -187,117 +199,6 @@ struct RootView: View {
         guard !appUIState.hasShownGoal, player.goalMet else { return }
         appUIState.hasShownGoal = true
         appUIState.showGoalSheet = true
-    }
-
-    // MARK: - Navigation sheet wrapper
-
-    @ViewBuilder
-    private func navigationSheet<C: View>(@ViewBuilder content: () -> C) -> some View {
-        Group {
-            if #available(iOS 16, macOS 13, *) {
-                NavigationStack { content() }
-            } else {
-                NavigationView { content() }
-                #if os(iOS)
-                .navigationViewStyle(.stack)
-                #endif
-            }
-        }
-        #if os(macOS)
-        .frame(minWidth: 800, minHeight: 500)
-        #endif
-    }
-
-    // MARK: - Sheet content
-
-    private var hobbiesContent: some View {
-        HobbiesView(player: player, selectedActivities: $appUIState.selectedActivities)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showHobbiesSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showHobbiesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var eventsContent: some View {
-        EventsView(player: player, selectedEvents: $appUIState.selectedEvents)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showEventsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showEventsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var sportsContent: some View {
-        SportsView(
-            player: player,
-            selectedActivities: $appUIState.selectedActivities,
-            selectedSports: $appUIState.selectedSports
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showSportsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showSportsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var sideHustlesContent: some View {
-        PrivateProjectsView(
-            player: player,
-            selectedSideHustles: $appUIState.selectedSideHustles
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showSideHustlesSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showSideHustlesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var trainingsContent: some View {
-        TrainingsView(
-            player: player,
-            selectedTrainings: $appUIState.selectedTrainings,
-            selectedActivities: $appUIState.selectedActivities
-        )
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Back") { appUIState.showTrainingsSheet = false }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Next") {
-                    appUIState.showTrainingsSheet = false
-                    player.advanceYear(appUIState: appUIState)
-                }
-            }
-        }
     }
 
 }
@@ -448,4 +349,57 @@ struct ModeSelectionView: View {
 
 #Preview("Mode selection") {
     ModeSelectionView(player: Player(), appUIState: AppUIState())
+}
+
+// MARK: - Standard sheet chrome
+
+/// Standard chrome for every action sheet in the game. Wraps plain content in a
+/// navigation container and gives it the one, uniform dismiss control — a single
+/// leading **Close** button with an inline title — via `gameSheetClose`. Dialogs
+/// never advance the game year (only the footer's **Next** does), so a sheet
+/// carries no confirm/"Next" action; any commit (Apply, Enroll, Launch…) is an
+/// in-content button that keeps the sheet open on failure and closes on success.
+///
+/// The four dialogs that manage their own `NavigationStack` (Jobs, Education,
+/// Ventures, Boardroom) don't use this wrapper — they apply `gameSheetClose`
+/// directly to their root content — but the dismiss control ends up identical.
+struct GameSheet<Content: View>: View {
+    let title: String
+    @Binding var isPresented: Bool
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        Group {
+            if #available(iOS 16, macOS 13, *) {
+                NavigationStack { content().gameSheetClose($isPresented, title: title) }
+            } else {
+                NavigationView { content().gameSheetClose($isPresented, title: title) }
+                #if os(iOS)
+                .navigationViewStyle(.stack)
+                #endif
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 520, minHeight: 480)
+        #endif
+    }
+}
+
+extension View {
+    /// Applies the game's standard sheet chrome: an inline navigation title and a
+    /// single leading **Close** button. Used by `GameSheet` for plain content and
+    /// directly by the dialogs that own their navigation stack, so every sheet is
+    /// dismissed the same way, from the same place, with the same label.
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: String) -> some View {
+        self
+            .navigationTitle(title)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { isPresented.wrappedValue = false }
+                }
+            }
+    }
 }
