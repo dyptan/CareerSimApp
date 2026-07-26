@@ -47,12 +47,7 @@ struct ExecutiveDecisionsView: View {
                 .padding()
             }
         }
-        .navigationTitle("Boardroom")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { showSheet = false }
-            }
-        }
+        .gameSheetClose($showSheet, title: "Boardroom")
     }
 
     private var header: some View {

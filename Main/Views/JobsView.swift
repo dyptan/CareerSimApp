@@ -86,7 +86,7 @@ struct JobsView: View {
                 }
             }
         }
-        .navigationTitle("Jobs")
+        .gameSheetClose($showCareersSheet, title: "Jobs")
     }
 
 }
@@ -178,7 +178,7 @@ struct EntrepreneurshipView: View {
                     .textCase(nil)
             }
         }
-        .navigationTitle("Ventures")
+        .gameSheetClose($showSheet, title: "Ventures")
     }
 
     private func ventureLink(_ venture: Job) -> some View {
