@@ -176,6 +176,13 @@ final class Player: ObservableObject {
     /// by `lostJobThisYear`, lingers for the rest of the year as a reminder).
     @Published var showLayoffAlert: Bool = false
 
+    /// One-shot trigger for the venture-failure pop-up. Set the year a running
+    /// venture folds (see the ongoing venture risk in `advanceYear`); the alert
+    /// clears it when dismissed. Founders aren't laid off — their businesses fail.
+    @Published var showVentureFailureAlert: Bool = false
+    /// Message for the venture-failure pop-up, naming the venture that folded.
+    @Published var ventureFailureMessage: String = ""
+
     /// Incremented on a celebratory stroke of luck (a promotion, or a long-shot
     /// college admission); the game view watches it to fire the confetti cannon.
     @Published var celebrationTrigger: Int = 0
@@ -212,6 +219,14 @@ final class Player: ObservableObject {
     /// for the leaderboard. Zero when the player owes nothing.
     @Published var outstandingLoan: Int = 0
 
+    /// Outstanding student-loan balance from tuition the player couldn't cover in
+    /// cash (see the tuition charge in `advanceYear`). Accrues interest each year
+    /// at `GameConstants.studentLoanAnnualInterest` and is repaid from savings once
+    /// the player is earning — so reaching for an expensive degree early is a debt
+    /// that follows you. Counts against net worth for the leaderboard. Zero when
+    /// the player owes nothing (paid cash, or has cleared it).
+    @Published var studentLoan: Int = 0
+
     /// How much the player can borrow right now to top up a venture stake — a
     /// multiple of current annual income (`GameConstants.ventureLoanIncomeMultiple`).
     /// Zero when unemployed: a bank lends against income.
@@ -224,7 +239,7 @@ final class Player: ObservableObject {
     /// any outstanding loan) per year of life. Reaching wealth younger scores
     /// higher. Floored at 0. This is what a realistic-mode run is playing for;
     /// finishing the game banks it to the Game Center leaderboard.
-    var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan) / age : 0 }
+    var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan - studentLoan) / age : 0 }
 
     @Published var degrees: [Education]
     /// Years of work experience per industry. Key is the job's `JobCategory`,
@@ -656,7 +671,15 @@ final class Player: ObservableObject {
            let yearsLeft = appUIState.yearsLeftToGraduation,
            yearsLeft > 0,
            edu.profile != nil {
-            savings -= edu.annualTuition
+            // Pay what savings allow; borrow the rest as a student loan that
+            // accrues interest and is repaid later (see the servicing below), so
+            // reaching for a pricey degree with no means is a lasting cost rather
+            // than a free negative balance.
+            let tuition = edu.annualTuition
+            let fromSavings = min(max(0, savings), tuition)
+            savings -= fromSavings
+            let borrowed = tuition - fromSavings
+            if borrowed > 0 { studentLoan += borrowed }
         }
 
         appUIState.yearsLeftToGraduation? -= 1
@@ -737,11 +760,20 @@ final class Player: ObservableObject {
                 // requirements — degree, credential, and the tenure just banked).
                 // Only fall back to an in-place merit raise when there's no higher
                 // rung, or the player doesn't yet meet the next one's bar.
-                let nextRung = JobCatalog.allJobs()
+                var nextRung = JobCatalog.allJobs()
                     .filter { $0.baseTitle == current.baseTitle
                         && $0.seniorityRank > current.seniorityRank
                         && $0.allRequirementsMet(for: self) }
                     .min { $0.seniorityRank < $1.seniorityRank }
+
+                // C-suite scarcity: taking an executive seat clears one more
+                // competitive hurdle — there are few of them and many contenders.
+                // Miss it and you keep climbing, banking an in-place raise this
+                // year instead of the title (founders make their own seat, exempt).
+                if let candidate = nextRung, candidate.isExecutive, !candidate.isEntrepreneurial,
+                   Double.random(in: 0...1) >= GameConstants.executiveSeatChance {
+                    nextRung = nil
+                }
 
                 let raise = Double.random(in: GameConstants.promotionRaise)
                 if let next = nextRung {
@@ -769,6 +801,24 @@ final class Player: ObservableObject {
                     showPromotionAlert = true
                     promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
                     recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
+                }
+            }
+
+            // Ongoing venture risk (realistic mode): a founder isn't laid off like
+            // a salaried worker — but their business can fail outright in any year,
+            // and a downturn makes that far likelier. A fold clears the occupation
+            // (and its income); the player keeps what they've banked, and any
+            // venture loan outlives the business (serviced below).
+            if !isSimplified, job.isEntrepreneurial {
+                let failChance = min(
+                    GameConstants.ventureMaxFailureRisk,
+                    GameConstants.ventureAnnualFailureRisk * (recessionThisYear ? difficulty.layoffSeverity : 1.0)
+                )
+                if Double.random(in: 0...1) < failChance {
+                    currentOccupation = nil
+                    showVentureFailureAlert = true
+                    ventureFailureMessage = "Your venture, \(job.baseTitle), folded this year. The business — and its income — are gone, but you keep what you've saved. Any outstanding venture loan still has to be repaid. You can found a new venture whenever you're ready."
+                    recordStatus("📉", "\(job.baseTitle) folded")
                 }
             }
         }
@@ -861,6 +911,20 @@ final class Player: ObservableObject {
             outstandingLoan -= repayment
             if outstandingLoan == 0 && repayment > 0 {
                 recordStatus("🏦", "Paid off your venture loan")
+            }
+        }
+
+        // Service any student loan: interest accrues (at a gentler rate than a
+        // venture loan), then it's repaid from whatever savings are left after the
+        // venture loan. It lingers through lean years and clears once earnings
+        // catch up — an expensive early degree stays with you until then.
+        if studentLoan > 0 {
+            studentLoan = Int((Double(studentLoan) * (1 + GameConstants.studentLoanAnnualInterest)).rounded())
+            let repayment = min(max(0, savings), studentLoan)
+            savings -= repayment
+            studentLoan -= repayment
+            if studentLoan == 0 && repayment > 0 {
+                recordStatus("🎓", "Paid off your student loan")
             }
         }
     }

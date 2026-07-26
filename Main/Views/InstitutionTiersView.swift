@@ -153,9 +153,10 @@ struct InstitutionTiersView: View {
                 .padding(.top, 4)
 
                 if alreadyApplied {
-                    Text("❌ Not admitted this year — improve your skills or try another school.")
+                    Text("❌ Not admitted this year (your odds were \(Int((admission * 100).rounded()))%). Even a strong applicant can be turned away by a selective school — build the soft skills listed above, try a less selective school, or apply again next year.")
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }

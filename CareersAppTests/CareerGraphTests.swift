@@ -470,4 +470,81 @@ final class CareerGraphTests: XCTestCase {
         player.savings = -50_000
         XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
     }
+
+    // MARK: - Breakthrough-gated star careers
+
+    /// The three star tracks (pro athlete, movie star, pop star) exist in the
+    /// catalogue and are effectively closed without their signature achievement:
+    /// a fully-qualified applicant who lacks the award sits at the 5% floor, and
+    /// holding it lifts the odds well above the floor.
+    func testStarCareersAreBreakthroughGated() {
+        let jobs = JobCatalog.allJobs()
+        let gates: [(base: String, award: String)] = [
+            ("Player", "Junior Champion"),
+            ("Movie Star", "Breakout Role"),
+            ("Pop Star", "Hit Record"),
+        ]
+        for gate in gates {
+            // Use the easiest-to-qualify rung of the ladder (lowest seniority).
+            guard let job = jobs
+                .filter({ $0.baseTitle == gate.base })
+                .min(by: { $0.seniorityRank < $1.seniorityRank }) else {
+                XCTFail("Missing star career '\(gate.base)' in the catalogue.")
+                continue
+            }
+            XCTAssertEqual(job.breakthroughFame, gate.award,
+                           "\(gate.base) should gate on the '\(gate.award)' award.")
+
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 40)          // clears the entry rungs' light gates
+            XCTAssertTrue(job.allRequirementsMet(for: player),
+                          "A 40-year-old should meet the entry rung's requirements for '\(job.id)'.")
+
+            let salary = Double(job.annualIncome)
+            let gated = job.hireProbability(for: player, requestedSalary: salary)
+            XCTAssertEqual(gated, 0.05, accuracy: 0.0001,
+                           "Without the breakthrough, '\(job.id)' odds sit at the 5% floor.")
+
+            player.award(gate.award, icon: "🏅", category: .entertainment, weight: 2.0)
+            let opened = job.hireProbability(for: player, requestedSalary: salary)
+            XCTAssertGreaterThan(opened, gated,
+                                 "Holding the '\(gate.award)' award should open '\(job.id)' up.")
+        }
+    }
+
+    // MARK: - Early-choice balance (Phase 3)
+
+    /// An elite school turns away even a flawless applicant a good share of the
+    /// time — a maxed candidate tops out around 65%, not the old 82%.
+    func testEliteAdmissionTurnsAwayEvenTopApplicants() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)            // high-school record clears the EQF gate
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+
+        let elite = Education(.Bachelor, profile: .business, tier: .elite)
+        let odds = elite.admissionProbability(player: player)
+        XCTAssertGreaterThan(odds, 0.5, "A perfect applicant should still have a real shot.")
+        XCTAssertLessThanOrEqual(odds, 0.66, "An elite school shouldn't be a near-lock even when maxed.")
+    }
+
+    /// Tuition the player can't cover in cash becomes an interest-bearing student
+    /// loan that drags net worth — an expensive early degree is a lasting cost.
+    func testUnaffordableTuitionBecomesAStudentLoan() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        player.savings = 0
+        let ui = AppUIState()
+        player.currentEducation = Education(.Bachelor, profile: .business, tier: .elite)
+        ui.yearsLeftToGraduation = 3
+
+        XCTAssertEqual(player.studentLoan, 0, "No debt before the first tuition bill.")
+        player.advanceYear(appUIState: ui)
+        XCTAssertGreaterThan(player.studentLoan, 0,
+                             "Unaffordable tuition should be borrowed as a student loan.")
+        XCTAssertEqual(player.leaderboardScore, 0,
+                       "A net-negative balance from the loan floors the score at 0.")
+    }
 }

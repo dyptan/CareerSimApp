@@ -59,7 +59,7 @@ struct JobDetail: View {
         // Breakthrough gate: without the signature title, odds sit at the floor.
         if let key = job.breakthroughFame,
            !player.fameAwards.contains(where: { $0.title == key }) {
-            return "This career is gated on a breakthrough achievement. Hire chance stays at the 5% floor until you win a Junior Championship (which banks the “\(key)” title). Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
+            return "This career is gated on a breakthrough achievement. Hire chance stays at the 5% floor until you earn the “\(key)” title. \(breakthroughHowTo(key)) Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
         }
         let hasBreakthrough = job.breakthroughFame != nil
 
@@ -297,7 +297,7 @@ struct JobDetail: View {
 
                 Text(held
                      ? "This is the single biggest factor in getting signed."
-                     : "Win a Junior Championship as a teen to earn this — without it, clubs won't sign you (odds stay at 5%).")
+                     : "\(breakthroughHowTo(key)) Without it, you won't be signed (odds stay at 5%).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -332,10 +332,20 @@ struct JobDetail: View {
             }
 
             if let result = applicationResult {
-                Text(resultMessage(result))
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
+                VStack(spacing: 4) {
+                    Text(resultMessage(result))
+                        .font(.headline)
+                    if let advice = rejectionAdvice {
+                        Text(advice)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .padding(.horizontal)
             }
 
             applyButton
@@ -479,11 +489,59 @@ struct JobDetail: View {
 
     // MARK: - Shared apply button
 
+    /// How the player earns a gated career's breakthrough award — the rare
+    /// achievement that unlocks it. Keyed by the award title so the copy stays
+    /// accurate as new star tracks are added.
+    private func breakthroughHowTo(_ key: String) -> String {
+        switch key {
+        case "Junior Champion": return "Win a Junior Championship as a teen — train a sport for years to raise your odds."
+        case "Breakout Role":   return "Chase a Breakout Role under Projects — it takes years and high performing skills."
+        case "Hit Record":      return "Chase a Hit Single under Projects — it takes years and high performing skills."
+        default:                return "Earn the “\(key)” title first."
+        }
+    }
+
     private func resultMessage(_ result: ApplicationResult) -> String {
         if isFounder {
             return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you lost your stake."
         }
         return result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time."
+    }
+
+    /// Explains *why* an application was turned down and what the player can do
+    /// about it — a rejection is otherwise a silent dead end. Requirements are
+    /// already met (the button gates on that), so a "no" is either the
+    /// breakthrough gate, a too-high salary ask, or simply losing the odds roll;
+    /// this names the dominant lever and points at the ⓘ breakdown. Simplified
+    /// mode never rejects a qualified applicant, so this only fires in the
+    /// realistic settings.
+    private var rejectionAdvice: String? {
+        guard applicationResult == .rejected else { return nil }
+        func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
+
+        if isFounder {
+            let capital = investedCapital.isFinite ? Int(investedCapital) : 0
+            let odds = job.founderSuccessProbability(for: player, investedCapital: capital)
+            return "The launch had \(pct(odds)) odds and didn't pan out. Backing it with a larger stake, or more experience in \(job.category.rawValue), improves the next attempt. You can try again next year."
+        }
+
+        // The breakthrough gate (e.g. a pro-player role needing a junior title)
+        // pins odds at the 5% floor — by far the likeliest reason for a "no", so
+        // call it out first.
+        if let key = job.breakthroughFame,
+           !player.fameAwards.contains(where: { $0.title == key }) {
+            return "Employers here look for the “\(key)” title — without it your odds sit at the 5% floor. Win a Junior Championship to unlock this career."
+        }
+
+        var levers: [String] = []
+        if job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
+            levers.append("lower your salary ask")
+        }
+        levers.append("build the soft skills and experience this role weighs")
+        if !isSimplified {
+            levers.append("grow your network and fame in \(job.category.rawValue)")
+        }
+        return "Hiring is part chance — your odds were \(pct(hireProbability)) and the roll didn't land this year. To improve: \(levers.joined(separator: ", ")). Tap the ⓘ next to “Hire probability” for the full breakdown, then try again next year."
     }
 
     private var applyDisabled: Bool {

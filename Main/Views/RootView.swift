@@ -182,6 +182,13 @@ struct RootView: View {
         } message: {
             Text("A downturn hit your employer and your position was cut. You'll need to find a new job — open Careers to start applying.")
         }
+        // A founder's venture folding is a major setback worth a pop-up — they're
+        // not laid off, their business fails (see the ongoing venture risk).
+        .alert("Venture Folded 📉", isPresented: $player.showVentureFailureAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(player.ventureFailureMessage)
+        }
         // Congratulates the player on a promotion — a milestone worth a pop-up.
         // The header note (player.lastPromotionRaisePct) lingers for the year.
         .alert("Congratulations! 🎉", isPresented: $player.showPromotionAlert) {

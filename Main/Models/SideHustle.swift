@@ -62,6 +62,12 @@ struct SideHustle: Identifiable, Hashable {
     /// success odds (see `experienceLift`). `nil` for ventures that build no
     /// formal work experience (most fame plays).
     var experienceCategory: JobCategory? = nil
+    /// The most this venture's success odds can ever reach in a single year,
+    /// however talented and famous the player is. Ordinary ventures leave this at
+    /// the default 0.9. A rare **big-break** play (a breakout role, a hit single)
+    /// sets it low — a lottery you keep entering — so becoming a star is a
+    /// years-long chase, not a formality once your skills are high.
+    var successCeiling: Double = 0.9
 
     /// A minimum-level requirement on one soft-skill axis (see `prerequisite`).
     struct SkillRequirement: Hashable {
@@ -143,7 +149,7 @@ struct SideHustle: Identifiable, Hashable {
         let base = 0.05 + talentFit(for: soft) * 0.7
         let fameLift = buildsFame ? min(fameScore * 0.03, 0.15) : 0.0
         let expLift = experienceLift(years: experienceYears)
-        return max(0.05, min(0.9, base + fameLift + expLift))
+        return max(0.05, min(successCeiling, base + fameLift + expLift))
     }
 
     /// The payout a successful year would yield at the player's current talent
@@ -297,6 +303,44 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Recording Artist",
             prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 6)
+        ),
+        // --- The big break: rare, career-defining show-business lotteries. Each
+        // banks a signature title that is *the* gateway into the A-list career
+        // ladder (see `Job.breakthroughFameByRole` — "Breakout Role" opens the
+        // Movie Star track, "Hit Record" the Pop Star track). The odds ceiling is
+        // deliberately low: even a gifted, well-known performer only breaks
+        // through after chasing it for years — that's the lottery upside show
+        // business is meant to have. High skill prerequisites gate the attempt,
+        // and accumulated show-business fame nudges the long odds upward.
+        SideHustle(
+            id: "bigBreakActing",
+            label: "Chase a Breakout Role",
+            icon: "🎬",
+            blurb: "Audition for the part that could change everything — a lead that puts your face on every screen. The odds are long and you'll chase it for years, but land it and you're a movie star.",
+            talents: [\.presentationAndStorytelling, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
+            payoff: .fame(category: .entertainment, weight: 3.0),
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
+                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                     .init(keyPath: \.resilienceAndEndurance, weight: 1)],
+            fameTitle: "Breakout Role",
+            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 7),
+            successCeiling: 0.30
+        ),
+        SideHustle(
+            id: "bigBreakMusic",
+            label: "Chase a Hit Single",
+            icon: "🎤",
+            blurb: "Pour everything into the song that could top the charts. Most never land it — but a genuine hit turns a working musician into a pop star overnight.",
+            talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
+            payoff: .fame(category: .entertainment, weight: 3.0),
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                     .init(keyPath: \.presentationAndStorytelling, weight: 1),
+                     .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
+            fameTitle: "Hit Record",
+            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 7),
+            successCeiling: 0.30
         ),
         // --- Self-initiated creative works (unlocked to everyone, stage-gated) ---
         SideHustle(

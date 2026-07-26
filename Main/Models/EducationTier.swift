@@ -61,7 +61,9 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         switch self {
         case .community: return 0.10
         case .state:     return 0.0
-        case .elite:     return -0.18
+        // Elite schools turn away even top applicants: a maxed-out candidate tops
+        // out around 65% here (0.1 + 0.9 − 0.35), so a place is earned, not given.
+        case .elite:     return -0.35
         }
     }
 
