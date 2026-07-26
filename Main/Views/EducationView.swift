@@ -6,6 +6,8 @@ struct EducationView: View {
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
     @Binding var showCareersSheet: Bool
+    /// Advances the game year and dismisses, via the shared **Next ▸** control.
+    var onNext: (() -> Void)? = nil
 
     private var availableEducations: [Education] {
         availableNextEducations(holds: player.degrees)
@@ -64,7 +66,7 @@ struct EducationView: View {
                 }
             }
         }
-        .gameSheetClose($showTertiarySheet, title: "Education")
+        .gameSheetClose($showTertiarySheet, title: "Education", onNext: onNext)
     }
 
     private func degrees(for profile: TertiaryProfile) -> [Education] {

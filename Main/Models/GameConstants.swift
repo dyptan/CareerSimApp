@@ -52,6 +52,13 @@ enum GameConstants {
     /// Education menu stays hidden. Matches the age high school wraps up.
     static let minimumTertiaryAge: Int = 18
 
+    /// Minimum age at which the entrepreneurial surface (founder ventures) opens
+    /// up. Staking capital on a business is an adult play, so — like the
+    /// Boardroom, which gates on holding an executive seat — Ventures stays
+    /// hidden from children even in realistic mode, keeping the young-player
+    /// footer uncluttered. Matches the age formal adulthood begins.
+    static let minimumEntrepreneurAge: Int = 18
+
     /// Realistic mode: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.

@@ -147,11 +147,15 @@ struct FooterView: View {
             // The entrepreneurial path (founder ventures + spare-time business
             // plays) is a realistic-mode feature — it stakes capital and turns
             // on soft skills, fame, and the economy, none of which exist in
-            // Simplified, so the whole surface is hidden there. Only one venture
-            // runs at a time: once the player has founded one (it becomes their
-            // occupation), the button hides until they exit it — sell out or go
-            // bankrupt — which clears the entrepreneurial occupation.
-            if !player.isSimplified, player.currentOccupation?.isEntrepreneurial != true {
+            // Simplified, so the whole surface is hidden there. It's also an
+            // adult play, so it stays hidden until the player reaches the
+            // entrepreneur age (a 7-year-old shouldn't see a Ventures button).
+            // Only one venture runs at a time: once the player has founded one
+            // (it becomes their occupation), the button hides until they exit
+            // it — sell out or go bankrupt — which clears the occupation.
+            if !player.isSimplified,
+               player.age >= GameConstants.minimumEntrepreneurAge,
+               player.currentOccupation?.isEntrepreneurial != true {
                 Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }
