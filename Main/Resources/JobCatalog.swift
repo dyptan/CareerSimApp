@@ -279,6 +279,12 @@ enum JobCatalog {
             "Sales Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 4, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
             "Marketing Specialist":           .init(analyticalReasoningAndProblemSolving: 1, creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
             "Recruiter":                      .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+            // Breakthrough-gated star tracks. These aren't landed on skill alone —
+            // a signature achievement (see `Job.breakthroughFameByRole`) is the
+            // real key — but a strong profile still shapes the odds once you're in.
+            "Player":                         .init(communicationAndNetworking: 1, leadershipAndInfluence: 1, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 4, selfDisciplineAndPerseverance: 3),
+            "Movie Star":                     .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
+            "Pop Star":                       .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, visionaryThinkingAndAmbition: 2, resilienceAndEndurance: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
             // Ventures (concrete industry founder plays; no degree gate). Each
             // profile is what *that* business demands — launch odds score the
             // player against it plus raw founder grit (see `Job.founderSkillFit`).
@@ -855,6 +861,24 @@ enum JobCatalog {
             // Creative leadership
             ("Art Director",                 .showBusiness,          100_000, "🖼️", "Sets the visual direction for campaigns, films, or publications.",                5, 8),
             ("Editor-in-Chief",              .showBusiness,         135_000, "🗞️", "Leads a publication's editorial vision and newsroom.",                            5, 10),
+
+            // Breakthrough-gated star tracks — the rare, lottery-upside careers.
+            // Each entry rung is easy to *qualify* for (no degree, no tenure) but
+            // effectively closed without its signature achievement: hire odds sit
+            // at the 5% floor until you hold it (see `Job.breakthroughFameByRole`).
+            // Athletics — the pro-player track, opened by a junior-competition win
+            // ("Junior Champion", from the teen Junior Championship).
+            ("Amateur Player",               .showBusiness,          30_000, "🥅", "Signed to a club's development squad after a standout junior career.",            1, 0),
+            ("Professional Player",          .showBusiness,         130_000, "⚽", "Earns a living on a professional team's roster.",                                 1, 3),
+            ("Elite Player",                 .showBusiness,         320_000, "🌟", "A marquee starter with major contracts and sponsorships.",                        1, 7),
+            // Acting — the movie-star track, opened by a "Breakout Role" project.
+            ("Rising Movie Star",            .showBusiness,          90_000, "🎬", "A working screen actor landing real roles off a breakout part.",                  0, 0),
+            ("Movie Star",                   .showBusiness,         260_000, "🌟", "A bankable lead whose name sells tickets.",                                       0, 3),
+            ("A-List Movie Star",            .showBusiness,         800_000, "🏆", "A global marquee name commanding top billing and huge paydays.",                  0, 7),
+            // Music — the pop-star track, opened by a "Hit Record" project.
+            ("Rising Pop Star",              .showBusiness,          85_000, "🎤", "A charting artist touring off a breakout hit.",                                   0, 0),
+            ("Pop Star",                     .showBusiness,         240_000, "🌟", "A headline act with hit records and sold-out shows.",                             0, 3),
+            ("A-List Pop Star",              .showBusiness,         700_000, "🏆", "A global superstar with stadium tours and chart dominance.",                      0, 7),
 
             // Gaming — art, design, and engineering ladders inside a studio
             ("Senior 3D Artist",             .gaming,         95_000, "🎨", "Owns key art and sets the visual bar for the team.",                              4, 5),

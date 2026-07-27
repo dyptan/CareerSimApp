@@ -122,7 +122,12 @@ extension Job {
     /// makes it the dominant hiring factor. The Professional Player track is
     /// gated on the "Junior Champion" title from the teen `Junior Championship`.
     static let breakthroughFameByRole: [String: String] = [
-        "Player": "Junior Champion"
+        // Sports: the pro-athlete track opens on a junior-competition win.
+        "Player": "Junior Champion",
+        // Show business: the A-list acting and music tracks each open on a rare
+        // "big break" project (see the breakout ventures in `SideHustle`).
+        "Movie Star": "Breakout Role",
+        "Pop Star": "Hit Record",
     ]
 
     /// The breakthrough fame award this role requires, or nil for ordinary
@@ -334,7 +339,11 @@ extension Job {
         let credential = player.trainingCareerBonus(for: category)
         let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough + credential)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
-        return max(0.05, min(0.95, raw))
+        // C-suite scarcity: executive seats are few, so even a strong candidate
+        // faces long odds of landing one — most qualified applicants never make it
+        // to the top. Founders make their own seat, so they're exempt.
+        let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
+        return max(0.05, min(0.95, raw * scarcity))
     }
 
     // MARK: - Entrepreneurial path
@@ -376,14 +385,17 @@ extension Job {
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
         guard experienceMet(for: player) else { return 0.0 }
-        let experience = founderExperienceFit(for: player) * 0.40   // up to +40%
-        let skill = founderSkillFit(for: player) * 0.35             // up to +35%
+        // Weighted so that even a maxed-out founder lands around the
+        // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
+        // while weaker preparation falls away steeply below it.
+        let experience = founderExperienceFit(for: player) * 0.26   // up to +26%
+        let skill = founderSkillFit(for: player) * 0.20             // up to +20%
         let capitalRatio = Double(investedCapital) / Double(target)
-        let capital = min(capitalRatio, 1.0) * 0.15                 // up to +15%
+        let capital = min(capitalRatio, 1.0) * 0.09                 // up to +9%
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
-        return max(0.03, min(0.95, 0.05 + experience + skill + capital + credential))
+        return max(0.03, min(GameConstants.founderMaxSuccess, 0.05 + experience + skill + capital + credential))
     }
 
     /// 0...1 measure of how seasoned the player is in this venture's industry.
@@ -465,7 +477,10 @@ extension Job {
         "Apprentice ", "Junior ", "Mid-Level ", "Senior ", "Lead ",
         "Principal ", "Staff ", "Head ", "Sous ",
         "Executive ", "Master ", "Charge ",
-        "Amateur ", "Professional ", "Elite "
+        "Amateur ", "Professional ", "Elite ",
+        // Show-business star ladders (Movie Star / Pop Star): a breakout rung
+        // and an apex, sharing the bare title as the mid rung.
+        "Rising ", "A-List "
     ]
 
     /// Strips a recognised seniority prefix from `id`, returning the base role
@@ -501,11 +516,11 @@ extension Job {
     var seniorityRank: Int {
         switch seniorityPrefix {
         case "Apprentice", "Amateur":                      return 0
-        case "Junior":                                     return 1
+        case "Junior", "Rising":                           return 1
         case "Mid-Level", .none:                           return 2
         case "Senior", "Sous", "Professional":             return 3
         case "Lead", "Head", "Charge", "Elite":            return 4
-        case "Principal", "Staff", "Executive", "Master":  return 5
+        case "Principal", "Staff", "Executive", "Master", "A-List":  return 5
         default:                                           return 2
         }
     }

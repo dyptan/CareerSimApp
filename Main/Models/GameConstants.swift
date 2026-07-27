@@ -52,6 +52,13 @@ enum GameConstants {
     /// Education menu stays hidden. Matches the age high school wraps up.
     static let minimumTertiaryAge: Int = 18
 
+    /// Minimum age at which the entrepreneurial surface (founder ventures) opens
+    /// up. Staking capital on a business is an adult play, so — like the
+    /// Boardroom, which gates on holding an executive seat — Ventures stays
+    /// hidden from children even in realistic mode, keeping the young-player
+    /// footer uncluttered. Matches the age formal adulthood begins.
+    static let minimumEntrepreneurAge: Int = 18
+
     /// Realistic mode: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.
@@ -84,6 +91,38 @@ enum GameConstants {
     /// before that year's repayment, so carrying debt has a real cost — and if the
     /// venture flops, the loan (and its interest) still has to be paid back.
     static let ventureLoanAnnualInterest: Double = 0.10
+
+    /// Annual interest on an outstanding student loan (tuition borrowed beyond the
+    /// player's savings). Gentler than a venture loan — student debt is cheaper —
+    /// but it still compounds each year until earnings clear it, so an expensive
+    /// early degree is a lasting cost. See `Player.advanceYear`.
+    static let studentLoanAnnualInterest: Double = 0.05
+
+    /// The most likely a founding attempt can ever be, however experienced,
+    /// skilled, funded, and credentialed the founder. Founding a business is a
+    /// genuine gamble — even the best-prepared founder is closer to a coin-flip
+    /// than a sure thing — so the launch odds top out here rather than near
+    /// certainty. See `Job.founderSuccessProbability`.
+    static let founderMaxSuccess: Double = 0.55
+
+    /// Base annual chance that a running venture fails outright in a calm economy.
+    /// Unlike a salaried worker (who faces layoffs only in a downturn), a founder
+    /// carries this risk *every* year — a business can always fold. A recession
+    /// multiplies it by `Difficulty.layoffSeverity`, capped at
+    /// `ventureMaxFailureRisk`. See `Player.advanceYear`.
+    static let ventureAnnualFailureRisk: Double = 0.07
+
+    /// Ceiling on the amplified annual venture-failure probability, so even a
+    /// harsh downturn never makes a fold a certainty.
+    static let ventureMaxFailureRisk: Double = 0.25
+
+    /// C-suite scarcity: there are only a handful of executive seats, so landing
+    /// one is competitive even for a qualified insider. Applied as a multiplier to
+    /// the odds of being *hired into* or *promoted into* an executive (non-founder)
+    /// role — CEO, CTO, CMO, director, partner — so reaching the top of a business
+    /// track is rare rather than a foregone conclusion. Founders are unaffected
+    /// (they make their own seat). See `Job.hireProbability` / `Player.advanceYear`.
+    static let executiveSeatChance: Double = 0.30
 
     /// Lowest education level (EQF) a role can require and still offer in-place
     /// promotions. Roles below this — unskilled work needing no post-secondary
