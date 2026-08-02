@@ -41,14 +41,9 @@ struct Education: Codable, Hashable, Identifiable {
     /// Convenience accessor for tier prestige (1/2/3); 0 for K-12.
     var prestige: Int { profile == nil ? 0 : tier.prestige }
 
-    // Admission requirements mirror the Job model: soft-skill thresholds reuse
-    // `SoftSkills` so the whole app shares one soft-skill field list.
-    struct SoftSkillMapping: Identifiable {
-        let id: String
-        let pictogram: String
-        let keyPath: WritableKeyPath<SoftSkills, Int>
-    }
-
+    // Admission preferences mirror the Job model: soft-skill levels reuse
+    // `SoftSkills` so the whole app shares one soft-skill field list. The
+    // admissions UI reads them back through `softSkillOverlap`.
     struct Requirements: Codable, Hashable {
         /// The one hard gate on admission: the qualification level the applicant
         /// must already hold.
@@ -74,11 +69,6 @@ struct Education: Codable, Hashable, Identifiable {
             default: return "Doctorate+"
             }
         }
-
-        /// Derived from the single source of truth so the admissions UI lists
-        /// every axis automatically.
-        static let softSkillMappings: [Education.SoftSkillMapping] =
-            SoftSkills.allAxes.map { .init(id: $0.label, pictogram: $0.pictogram, keyPath: $0.keyPath) }
     }
 
     var requirements: Requirements {
@@ -129,24 +119,55 @@ struct Education: Codable, Hashable, Identifiable {
         return highestEQF >= requirements.minEQF
     }
 
-    /// How well the player's soft skills line up with what this school looks for,
-    /// as 0...1. Each axis the school weighs contributes its own ratio, capped at
-    /// 1.0, so exceeding a target doesn't compensate for missing another. A school
-    /// that weighs no soft skills scores a flat 1.0.
-    func softSkillFit(player: Player) -> Double {
-        var weighedAxes = 0
-        var fitSum = 0.0
-        for kp in SoftSkills.allAxes.map(\.keyPath) {
-            let target = requirements.soft[keyPath: kp]
-            guard target > 0 else { continue }
-            weighedAxes += 1
-            fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(target), 1.0)
-        }
-        return weighedAxes == 0 ? 1.0 : fitSum / Double(weighedAxes)
+    /// One soft skill this school weighs at admission: the level it prefers next
+    /// to the level the player actually has. The per-axis view of `softSkillFit`,
+    /// so the admissions UI can show the overlap the odds are computed from
+    /// rather than just their result.
+    struct SoftSkillOverlap: Identifiable {
+        let label: String
+        let pictogram: String
+        /// The player's current level on this axis.
+        let have: Int
+        /// The level this school prefers.
+        let target: Int
+
+        var id: String { label }
+        /// Share of the target this player covers, 0...1. Capped, so a surplus on
+        /// one axis never papers over a gap on another.
+        var fit: Double { target <= 0 ? 1.0 : min(Double(have) / Double(target), 1.0) }
+        var isMet: Bool { have >= target }
     }
 
-    /// Probability (0.02...0.98) that an application here is accepted, in realistic
-    /// mode. The prior-degree (EQF) prerequisite is the only hard structural gate;
+    /// Every soft skill this school weighs, paired with the player's level, in the
+    /// app's canonical axis order — stable across tiers, so the schools on offer
+    /// can be compared row by row. Axes the school doesn't care about are left out.
+    func softSkillOverlap(player: Player) -> [SoftSkillOverlap] {
+        SoftSkills.allAxes.compactMap { axis in
+            let target = requirements.soft[keyPath: axis.keyPath]
+            guard target > 0 else { return nil }
+            return SoftSkillOverlap(
+                label: axis.label,
+                pictogram: axis.pictogram,
+                have: player.softSkills[keyPath: axis.keyPath],
+                target: target
+            )
+        }
+    }
+
+    /// How well the player's soft skills line up with what this school looks for,
+    /// as 0...1 — the average of the per-axis overlap. A school that weighs no
+    /// soft skills scores a flat 1.0.
+    func softSkillFit(player: Player) -> Double {
+        let overlap = softSkillOverlap(player: player)
+        guard !overlap.isEmpty else { return 1.0 }
+        return overlap.reduce(0.0) { $0 + $1.fit } / Double(overlap.count)
+    }
+
+    /// Probability (0.02...0.98) that an application here is accepted. Admission
+    /// is a roll in every mode — no school is a formality, and none is closed to
+    /// an applicant who holds the prerequisite degree.
+    ///
+    /// The prior-degree (EQF) prerequisite is the only hard structural gate;
     /// beyond that, admission is always possible — the odds simply rise with how
     /// well the player's soft skills match what the school looks for and fall with
     /// the institution's selectivity. Matching every target is "fully qualified"

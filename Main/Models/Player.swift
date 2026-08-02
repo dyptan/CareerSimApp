@@ -961,7 +961,7 @@ final class Player: ObservableObject {
         }
     }
 
-    /// Applies for admission to a school (realistic mode). Records the attempt
+    /// Applies for admission to a school — a roll in every mode. Records the attempt
     /// (one per school per year) and returns whether the player was admitted. The
     /// caller performs enrollment on success.
     @discardableResult

@@ -584,6 +584,55 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertGreaterThan(strong, some, "More soft skills, better odds — up to fully qualified.")
     }
 
+    /// Admission is a roll in every mode, Simplified included — no school is a
+    /// formality, and none is a closed door.
+    func testAdmissionIsProbabilisticInEveryMode() {
+        for difficulty in Difficulty.allCases {
+            let player = Player()
+            player.difficulty = difficulty
+            player.configureStart(age: 18)
+
+            // The community tier is the one school Simplified offers, and the
+            // most forgiving elsewhere — if even this is a roll, all of them are.
+            let school = Education(.Bachelor, profile: .business, tier: .community)
+
+            let blankSlate = school.admissionProbability(player: player)
+            XCTAssertGreaterThan(blankSlate, 0,
+                                 "A thin applicant should still have a chance in \(difficulty.title).")
+
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+            let maxedOut = school.admissionProbability(player: player)
+            XCTAssertGreaterThan(maxedOut, blankSlate,
+                                 "Soft skills should pay off in \(difficulty.title).")
+            XCTAssertLessThan(maxedOut, 1.0,
+                              "Admission is never a certainty in \(difficulty.title).")
+        }
+    }
+
+    /// The overlap the admissions screen shows is the same overlap the odds are
+    /// computed from — every listed skill is one the school weighs, and their
+    /// average is the fit that feeds `admissionProbability`.
+    func testSoftSkillOverlapExplainsTheOdds() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        player.softSkills.communicationAndNetworking = 2
+        player.softSkills.presentationAndStorytelling = 9   // well past the target
+
+        let school = Education(.Bachelor, profile: .business, tier: .state)
+        let overlap = school.softSkillOverlap(player: player)
+
+        XCTAssertFalse(overlap.isEmpty, "A business degree weighs some soft skills.")
+        for axis in overlap {
+            XCTAssertGreaterThan(axis.target, 0, "Only skills the school looks for are listed.")
+            XCTAssertLessThanOrEqual(axis.fit, 1.0, "A surplus on one axis can't exceed a full match.")
+        }
+
+        let average = overlap.reduce(0.0) { $0 + $1.fit } / Double(overlap.count)
+        XCTAssertEqual(school.softSkillFit(player: player), average, accuracy: 0.0001,
+                       "The rows shown and the fit used must be the same number.")
+    }
+
     /// Tuition the player can't cover in cash becomes an interest-bearing student
     /// loan that drags net worth — an expensive early degree is a lasting cost.
     func testUnaffordableTuitionBecomesAStudentLoan() {
