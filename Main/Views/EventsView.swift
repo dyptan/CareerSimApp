@@ -29,17 +29,8 @@ struct EventsView: View {
 
     var body: some View {
         VStack {
-            HStack(spacing: 6) {
-                Text("Events this year:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("\(selectedEvents.count)/\(GameConstants.maxEventsPerYear)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(
-                        selectedEvents.count >= GameConstants.maxEventsPerYear
-                            ? .red : .primary
-                    )
-            }
+            // No slot counter — see `HobbiesView`; an event that can't be taken
+            // this year dims in place.
             Text("Take the stage to grow your reputation — unlocks once you're a veteran of the field")
                 .font(.caption)
                 .foregroundStyle(.secondary)

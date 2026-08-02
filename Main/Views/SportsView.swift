@@ -31,24 +31,9 @@ struct SportsView: View {
     }
 
     var body: some View {
+        // No header strip — see `HobbiesView`: the sheet opens on the sports
+        // themselves, and a taken slot shows as dimmed rows.
         VStack {
-
-            HStack(spacing: 6) {
-                Text("Sport this year:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("\(selectedActivities.count)/\(GameConstants.maxHobbiesPerYear)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(
-                        selectedActivities.count >= GameConstants.maxHobbiesPerYear
-                            ? .red : .primary
-                    )
-            }
-            Text("\(currentStage.displayName) — age \(player.age)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(stageSports) { sport in
