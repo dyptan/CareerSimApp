@@ -100,9 +100,12 @@ struct FooterView: View {
 
     var body: some View {
         // Trainings and Events are realistic-mode features, so hide them in
-        // simplified mode. Hobbies stay — they build the soft skills that gate
-        // school admission. Competitions are no longer a button at all: they
-        // fire automatically each year from the sport trained in Sports.
+        // simplified mode. Hobbies stay — they build the soft skills that shape
+        // school admission odds. Competitions are no longer a button at all:
+        // they fire automatically each year from the sport trained in Sports.
+        // Advancing the year isn't here either — **Skip** lives in the header,
+        // under **Finish game** (see `HeaderView`), so this row is purely the
+        // list of things to *do* with the year before moving on.
         // Single wrapping row: every available button sits on one line when
         // the window is wide, and reflows onto extra rows as width shrinks.
         // Certifications / Licenses / Events keep their realistic-mode and
@@ -175,12 +178,6 @@ struct FooterView: View {
                     appUIState.showTertiarySheet.toggle()
                 }.buttonStyle(.bordered).font(.headline)
             }
-
-            Button("Next") {
-                player.advanceYear(appUIState: appUIState)
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.headline)
         }
     }
 }

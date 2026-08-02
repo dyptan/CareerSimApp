@@ -512,7 +512,7 @@ struct CoachView: View {
     private var tips: [Tip] {
         [
             Tip(icon: "🎂", title: "One turn = one year",
-                body: "Your character grows a year older each turn. Tap the blue Next ▸ button to move on to the next year."),
+                body: "Your character grows a year older each turn. Tap the blue Skip button in the top corner to move on to the next year — or the Next ▸ button at the bottom of any dialog, which does exactly the same thing."),
             Tip(icon: "🎒", title: "Build your life from the buttons",
                 body: "The buttons along the bottom — School, Hobbies, Sports, Jobs and more — are how you decide what to do each year. Every choice shapes who you become."),
             Tip(icon: "📈", title: "Watch yourself grow",
