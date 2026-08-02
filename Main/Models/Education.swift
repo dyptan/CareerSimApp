@@ -50,8 +50,11 @@ struct Education: Codable, Hashable, Identifiable {
     }
 
     struct Requirements: Codable, Hashable {
+        /// The one hard gate on admission: the qualification level the applicant
+        /// must already hold.
         var minEQF: Int = 0
-        /// Minimum soft-skill levels required for admission.
+        /// Soft-skill levels the school looks for. These are *not* a barrier —
+        /// they only shift the admission odds (see `admissionProbability`).
         var soft = SoftSkills()
 
         init(minEQF: Int = 0) {
@@ -117,38 +120,44 @@ struct Education: Codable, Hashable, Identifiable {
         return r
     }
 
+    /// Whether the player is eligible to apply here. The prior-qualification
+    /// (EQF) level is the *only* hard requirement — you cannot start a Master's
+    /// without a Bachelor's. Soft skills never block an application; they only
+    /// move the odds (see `admissionProbability`).
     func meetsRequirements(player: Player) -> Bool {
-        let p = player.softSkills
         let highestEQF = player.degrees.last?.eqf ?? 0
-        let r = requirements
+        return highestEQF >= requirements.minEQF
+    }
 
-        guard highestEQF >= r.minEQF else { return false }
+    /// How well the player's soft skills line up with what this school looks for,
+    /// as 0...1. Each axis the school weighs contributes its own ratio, capped at
+    /// 1.0, so exceeding a target doesn't compensate for missing another. A school
+    /// that weighs no soft skills scores a flat 1.0.
+    func softSkillFit(player: Player) -> Double {
+        var weighedAxes = 0
+        var fitSum = 0.0
         for kp in SoftSkills.allAxes.map(\.keyPath) {
-            guard p[keyPath: kp] >= r.soft[keyPath: kp] else { return false }
+            let target = requirements.soft[keyPath: kp]
+            guard target > 0 else { continue }
+            weighedAxes += 1
+            fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(target), 1.0)
         }
-        return true
+        return weighedAxes == 0 ? 1.0 : fitSum / Double(weighedAxes)
     }
 
     /// Probability (0.02...0.98) that an application here is accepted, in realistic
-    /// mode. The prior-degree (EQF) prerequisite is a hard structural gate; beyond
-    /// that, the odds rise with how well the player's soft skills match the
-    /// admission bar and fall with the institution's selectivity. Meeting every
-    /// bar is "fully qualified" (per-axis fit caps at 1.0), but an elite school can
-    /// still turn a fully-qualified applicant away.
+    /// mode. The prior-degree (EQF) prerequisite is the only hard structural gate;
+    /// beyond that, admission is always possible — the odds simply rise with how
+    /// well the player's soft skills match what the school looks for and fall with
+    /// the institution's selectivity. Matching every target is "fully qualified"
+    /// (per-axis fit caps at 1.0), but an elite school can still turn a
+    /// fully-qualified applicant away, and a school will still take a chance on an
+    /// applicant with no soft skills at all.
     func admissionProbability(player: Player) -> Double {
-        let highestEQF = player.degrees.last?.eqf ?? 0
-        guard highestEQF >= requirements.minEQF else { return 0 }
+        guard meetsRequirements(player: player) else { return 0 }
 
-        var requiredAxes = 0
-        var fitSum = 0.0
-        for kp in SoftSkills.allAxes.map(\.keyPath) {
-            let need = requirements.soft[keyPath: kp]
-            guard need > 0 else { continue }
-            requiredAxes += 1
-            fitSum += min(Double(player.softSkills[keyPath: kp]) / Double(need), 1.0)
-        }
-        let fit = requiredAxes == 0 ? 1.0 : fitSum / Double(requiredAxes)
-        let raw = 0.1 + 0.9 * fit + tier.admissionSelectivity + player.difficulty.opportunityBonus
+        let raw = 0.1 + 0.9 * softSkillFit(player: player)
+            + tier.admissionSelectivity + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
     }
 

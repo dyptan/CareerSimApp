@@ -41,10 +41,10 @@ struct InstitutionTiersView: View {
     private func tierCard(for education: Education) -> some View {
         let r = education.requirements
         let highestEQF = player.degrees.last?.eqf ?? 0
-        let meetsAll = education.meetsRequirements(player: player)
         let canAfford = player.savings >= education.totalTuition
-        // Realistic mode: admission is a roll based on soft-skill fit + selectivity.
-        let eqfMet = highestEQF >= r.minEQF
+        // The qualification level is the only hard gate; soft skills just move the
+        // odds of the admission roll (realistic mode).
+        let eqfMet = education.meetsRequirements(player: player)
         let admission = education.admissionProbability(player: player)
         let alreadyApplied = player.appliedSchoolIds.contains(education.id)
 
@@ -86,22 +86,21 @@ struct InstitutionTiersView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    Text("Admission requirements:")
+                    Text("Admission requirement:")
                         .font(.subheadline.bold())
                     InfoHint(
-                        title: "Admission requirements",
+                        title: "Admission requirement",
                         message: admissionSoftSkillsHint(for: r)
                     )
                 }
                 .padding(.top, 4)
 
-                let eduMet = highestEQF >= r.minEQF
                 RequirementRow(
                     label: r.educationLabel(),
                     emoji: "🎓",
                     style: .meter(current: highestEQF, required: r.minEQF)
                 )
-                .foregroundStyle(eduMet ? .primary : .secondary)
+                .foregroundStyle(eqfMet ? .primary : .secondary)
             }
 
             if player.isSimplified {
@@ -110,12 +109,12 @@ struct InstitutionTiersView: View {
                 Button {
                     enroll(in: education)
                 } label: {
-                    Text(meetsAll ? "Enroll" : "Requirements not met")
+                    Text(eqfMet ? "Enroll" : "Need \(r.educationLabel()) first")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!meetsAll)
-                .opacity(meetsAll ? 1.0 : 0.5)
+                .disabled(!eqfMet)
+                .opacity(eqfMet ? 1.0 : 0.5)
                 .padding(.top, 4)
             } else {
                 // Realistic mode: admission is probabilistic. Strong soft skills
@@ -125,7 +124,7 @@ struct InstitutionTiersView: View {
                     Text("Admission chance:")
                     InfoHint(
                         title: "How admission works",
-                        message: "Your odds rise with how well your soft skills match this school's admission bar and fall with how selective the school is. Meeting every bar makes you fully qualified, but elite schools still turn away strong applicants. Build the soft skills listed under Admission requirements through activities to improve your chances. You get one application per school each year."
+                        message: "Your current education level is the only hard requirement — once you have it you can always apply. From there, your odds rise with how well your soft skills match what the school looks for and fall with how selective the school is. Matching every one makes you fully qualified, but elite schools still turn away strong applicants — and a school may still take a chance on you when your soft skills are thin. Build the soft skills listed under the admission hint through activities to improve your chances. You get one application per school each year."
                     )
                     Spacer()
                     Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
@@ -166,20 +165,21 @@ struct InstitutionTiersView: View {
     }
 
     /// The soft skills this school weighs at admission, each with the level it
-    /// looks for — surfaced in the info hint instead of a row per skill.
+    /// looks for — surfaced in the info hint instead of a row per skill. They are
+    /// never a requirement: the education level above is the only hard gate.
     private func admissionSoftSkillsHint(for r: Education.Requirements) -> String {
         let list = Education.Requirements.softSkillMappings
             .compactMap { mapping -> String? in
-                let required = r.soft[keyPath: mapping.keyPath]
-                guard required > 0 else { return nil }
-                return "\(mapping.pictogram) \(mapping.id) (target \(required))"
+                let target = r.soft[keyPath: mapping.keyPath]
+                guard target > 0 else { return nil }
+                return "\(mapping.pictogram) \(mapping.id) (target \(target))"
             }
             .joined(separator: "\n")
         let intro = player.isSimplified
-            ? "You'll need these soft skills to enroll:"
-            : "Soft skills that set your admission odds:"
+            ? "The education level above is all you need to enroll. These soft skills are what this school likes to see:"
+            : "Your education level above is all you need to apply. These soft skills only raise your admission odds — they never block you:"
         return list.isEmpty
-            ? "This school has no soft-skill bar — meet the education level and you're eligible."
+            ? "This school looks at no soft skills — meet the education level and you're eligible."
             : "\(intro)\n\n\(list)"
     }
 
