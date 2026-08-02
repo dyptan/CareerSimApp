@@ -80,21 +80,11 @@ struct HeaderView: View {
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 8) {
-                // End the run early and record the score, at any age.
-                Button("Finish game") { showFinishConfirm = true }
-                    .buttonStyle(.bordered)
-                    .font(.headline)
-
-                // Move on to the next year without doing anything else — the
-                // same advance the sheets' **Next ▸** performs, named for what
-                // it means from the main screen: skip the rest of this year.
-                Button("Skip") {
-                    player.advanceYear(appUIState: appUIState)
-                }
-                .buttonStyle(.borderedProminent)
+            // End the run early and record the score, at any age. Advancing a
+            // single year is the footer's **Skip** button, not this.
+            Button("Finish game") { showFinishConfirm = true }
+                .buttonStyle(.bordered)
                 .font(.headline)
-            }
         }
         .alert("Finish game?", isPresented: $showFinishConfirm) {
             Button("Finish & save record", role: .destructive) {
