@@ -400,7 +400,8 @@ struct ModeSelectionView: View {
 /// Standard chrome for every action sheet in the game. Wraps plain content in a
 /// navigation container and gives it the two uniform controls — a leading
 /// **Close** button and, when the sheet is passed an `onNext`, a trailing
-/// prominent **Next ▸** button — with an inline title, via `gameSheetClose`.
+/// prominent **Next ▸** button — in a bar pinned along the sheet's bottom edge,
+/// under an inline title, via `gameSheetClose`.
 /// **Next ▸** advances the game year and dismisses the sheet in one tap, so the
 /// player can keep aging up without the old Close-then-tap-Next two-step; this
 /// makes rapid iteration across career paths cheap. Any in-content commit
@@ -435,9 +436,45 @@ struct GameSheet<Content: View>: View {
     }
 }
 
+/// The uniform button bar every sheet carries along its bottom edge: **Close**
+/// on the leading side and, when the sheet advances the year, a prominent
+/// **Next ▸** on the trailing side. Pinned to the bottom rather than tucked in
+/// the navigation bar, so both controls sit where the hand already is — right
+/// next to the game's own bottom button row — after the player has scrolled
+/// through the sheet's options.
+struct GameSheetButtonBar: View {
+    @Binding var isPresented: Bool
+    /// Advances the game year; when nil the bar shows only **Close**.
+    var onNext: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack {
+                Button("Close") { isPresented = false }
+                    .buttonStyle(.bordered)
+                Spacer()
+                if let onNext {
+                    Button {
+                        onNext()
+                        isPresented = false
+                    } label: {
+                        Text("Next ▸")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+        }
+        // Keeps the bar legible when list content scrolls underneath it.
+        .background(.bar)
+    }
+}
+
 extension View {
-    /// Applies the game's standard sheet chrome: an inline navigation title, a
-    /// leading **Close** button, and — when `onNext` is supplied — a trailing
+    /// Applies the game's standard sheet chrome: an inline navigation title and a
+    /// bottom button bar holding **Close** and — when `onNext` is supplied — a
     /// prominent **Next ▸** button that runs `onNext` (advance the year) and then
     /// dismisses. Used by `GameSheet` for plain content and directly by the
     /// dialogs that own their navigation stack, so every sheet is dismissed the
@@ -448,21 +485,8 @@ extension View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { isPresented.wrappedValue = false }
-                }
-                if let onNext {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button {
-                            onNext()
-                            isPresented.wrappedValue = false
-                        } label: {
-                            Text("Next ▸")
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                GameSheetButtonBar(isPresented: isPresented, onNext: onNext)
             }
     }
 }
