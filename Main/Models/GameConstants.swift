@@ -52,6 +52,13 @@ enum GameConstants {
     /// Education menu stays hidden. Matches the age high school wraps up.
     static let minimumTertiaryAge: Int = 18
 
+    /// Minimum age at which the Trainings menu (certifications + licences) opens
+    /// up. The earliest credentials in the catalogue are the driver's and private
+    /// pilot licences (`Training.minAge` 16 and 17); gating the menu here means it
+    /// appears once there is something in it the player can actually attempt,
+    /// rather than opening onto rows that are all blocked on age.
+    static let minimumTrainingAge: Int = 17
+
     /// Minimum age at which the entrepreneurial surface (founder ventures) opens
     /// up. Staking capital on a business is an adult play, so — like the
     /// Boardroom, which gates on holding an executive seat — Ventures stays

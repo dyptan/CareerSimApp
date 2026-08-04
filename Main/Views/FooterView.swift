@@ -147,9 +147,12 @@ struct FooterView: View {
                     .buttonStyle(.bordered).font(.headline)
             }
 
-            // Trainings (certifications + licences): realistic mode, EQF ≥
-            // Primary, and a stage-eligible training in the catalogue.
-            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
+            // Trainings (certifications + licences): realistic mode, old enough
+            // for the earliest licence, and a stage-eligible training in the
+            // catalogue. The age gate replaces the old EQF ≥ Primary check,
+            // which every 10-year-old already cleared through school and so
+            // opened the menu years before anything in it was attainable.
+            if !player.isSimplified, player.age >= GameConstants.minimumTrainingAge, hasTrainings {
                 Button("Trainings") { appUIState.showTrainingsSheet = true }
                     .buttonStyle(.bordered).font(.headline)
             }

@@ -173,6 +173,46 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
+    /// The fitness coaching roles are client-facing personal services, not
+    /// spotlight careers: they belong to Personal Services (which puts them in
+    /// the "people" persona group and off the Entertainment fame track).
+    func testFitnessCoachingRolesArePersonalServices() {
+        for title in ["Personal Trainer", "Fitness Instructor"] {
+            guard let job = JobCatalog.allJobs().first(where: { $0.baseTitle == title }) else {
+                XCTFail("Missing job '\(title)'."); continue
+            }
+            XCTAssertEqual(job.category, .service, "'\(title)' should be a Personal Services role.")
+            XCTAssertEqual(job.category.persona, .people, "'\(title)' should sit in the people group.")
+        }
+    }
+
+    // MARK: - Retired catalogue entries
+
+    /// E-Sports is no longer a trainable sport and "Run a Tech Channel" is no
+    /// longer a spare-time project. Checked by label/id rather than enum case
+    /// because the cases themselves are gone.
+    func testRetiredSportAndProjectAreGone() {
+        XCTAssertFalse(Sport.allCases.contains { $0.label.contains("Sports") },
+                       "E-Sports should no longer be a trainable sport.")
+        for id in ["online-ladder", "lan-tournament", "world-esports-final"] {
+            XCTAssertNil(CompetitionCatalog.byId[id],
+                         "E-Sports competition '\(id)' should be gone with the sport.")
+        }
+        XCTAssertNil(SideHustleCatalog.byId["projectTechChannel"],
+                     "'Run a Tech Channel' should no longer be a spare-time project.")
+    }
+
+    /// Retiring a sport must not leave an orphaned competition behind: a contest
+    /// whose `sports` gate is empty can never auto-enter, so it would be dead
+    /// content rather than a visible removal.
+    func testEverySportGatedCompetitionIsReachable() {
+        for competition in CompetitionCatalog.all {
+            guard let sports = competition.sports else { continue }
+            XCTAssertFalse(sports.isEmpty,
+                           "Competition '\(competition.id)' gates on a sport but names none, so it can never be entered.")
+        }
+    }
+
     // MARK: - Skill-building trainings (career-boost credentials)
 
     /// The new creative/digital programs are non-statutory, non-gating credentials

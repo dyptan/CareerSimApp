@@ -13,7 +13,6 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
     case tennis
     case martialArts
     case gymnastics
-    case esports
 
     var id: String { rawValue }
 
@@ -27,7 +26,6 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         case .tennis:       return "Tennis"
         case .martialArts:  return "Martial Arts"
         case .gymnastics:   return "Gymnastics"
-        case .esports:      return "E-Sports"
         }
     }
 
@@ -41,7 +39,6 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         case .tennis:       return "🎾"
         case .martialArts:  return "🥋"
         case .gymnastics:   return "🤸"
-        case .esports:      return "🎮"
         }
     }
 
@@ -55,17 +52,14 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         case .tennis:       return "Singles or doubles tennis. A racket sport that drills focus, footwork, and composure in long points."
         case .martialArts:  return "Karate, judo, boxing — disciplines that drill technique, respect, and grit through repetition."
         case .gymnastics:   return "Floor, bars, vault, beam. Years of precision, body control, and strength work build the toolkit of an Olympic-stream athlete."
-        case .esports:      return "Competitive video gaming. Hours of structured practice on a chosen title sharpen reflexes and tactical reading."
         }
     }
 
-    /// Stages in which the sport is offered. Most sports are open from childhood
-    /// onward; a couple (gymnastics, esports) bias to teen/adult availability.
+    /// Stages in which the sport is offered. Every sport here is a physical
+    /// discipline you can take up as a child and keep for life, so all four
+    /// stages are open across the board.
     var stages: Set<LifeStage> {
-        switch self {
-        case .esports:      return [.teen, .youngAdult, .adult]
-        default:            return [.child, .teen, .youngAdult, .adult]
-        }
+        [.child, .teen, .youngAdult, .adult]
     }
 
     /// Gear- or coaching-heavy sports that only appear in `.comfortable`
@@ -125,11 +119,6 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
                 .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
                 .init(keyPath: \.resilienceAndEndurance, weight: 1),
                 .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
-            ]
-        case .esports:
-            return [
-                .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
-                .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)
             ]
         }
     }

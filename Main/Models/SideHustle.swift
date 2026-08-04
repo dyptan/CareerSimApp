@@ -243,7 +243,7 @@ enum SideHustleCatalog {
     /// reputation award and grows the soft skills it drew on. All are
     /// self-initiated works — creative personal-brand plays (influencer, book,
     /// album, freelance performer) and things you build in the open (app, open
-    /// source, article, podcast, short film, tech channel, preprint, coauthored
+    /// source, article, podcast, short film, preprint, coauthored
     /// book/paper, game mod) — spread across the Entertainment, Arts, Technology,
     /// Business, and Science buckets.
     static let fameVentures: [SideHustle] = [
@@ -450,21 +450,6 @@ enum SideHustleCatalog {
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
             fameTitle: "Indie Filmmaker",
             prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 5)
-        ),
-        SideHustle(
-            id: "projectTechChannel",
-            label: "Run a Tech Channel",
-            icon: "🎥",
-            blurb: "A channel of tutorials and deep-dives you record on the side. Explain things well enough and you become a name developers follow.",
-            talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.analyticalReasoningAndProblemSolving],
-            payoff: .fame(category: .technology, weight: 1.0),
-            stages: [.teen, .youngAdult, .adult],
-            growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
-                     .init(keyPath: \.communicationAndNetworking, weight: 1),
-                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-                     .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Tech Educator",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
         ),
         SideHustle(
             id: "projectPreprint",
