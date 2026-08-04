@@ -100,14 +100,37 @@ struct FooterView: View {
 
     var body: some View {
         // Trainings and Events are realistic-mode features, so hide them in
-        // simplified mode. Hobbies stay — they build the soft skills that gate
-        // school admission. Competitions are no longer a button at all: they
-        // fire automatically each year from the sport trained in Sports.
+        // simplified mode. Hobbies stay — they build the soft skills that shape
+        // school admission odds. Competitions are no longer a button at all:
+        // they fire automatically each year from the sport trained in Sports.
         // Single wrapping row: every available button sits on one line when
         // the window is wide, and reflows onto extra rows as width shrinks.
         // Certifications / Licenses / Events keep their realistic-mode and
         // prerequisite gates; the rest are gated only by their stage-eligible
         // catalogues.
+        //
+        // **Skip** — advance the year — is deliberately *outside* the wrapping
+        // row: pinned to the trailing edge and bottom-aligned, it stays in the
+        // bottom-right corner no matter how many rows the activity buttons
+        // reflow into, so the one button pressed every turn is always under the
+        // same thumb. The activity row takes whatever width is left.
+        HStack(alignment: .bottom, spacing: 12) {
+            activityButtons
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button("Skip") {
+                player.advanceYear(appUIState: appUIState)
+            }
+            .buttonStyle(.borderedProminent)
+            .font(.headline)
+            .layoutPriority(1)
+        }
+    }
+
+    /// Everything the player can *do* with the year, as a row that wraps onto
+    /// extra lines when the window is too narrow to hold it.
+    @ViewBuilder
+    private var activityButtons: some View {
         FooterButtonRow {
             if hasHobbies {
                 Button("Hobbies") { appUIState.showHobbiesSheet = true }
@@ -175,12 +198,6 @@ struct FooterView: View {
                     appUIState.showTertiarySheet.toggle()
                 }.buttonStyle(.bordered).font(.headline)
             }
-
-            Button("Next") {
-                player.advanceYear(appUIState: appUIState)
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.headline)
         }
     }
 }

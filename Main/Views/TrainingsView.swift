@@ -39,23 +39,9 @@ struct TrainingsView: View {
     }
 
     var body: some View {
+        // No header strip — see `HobbiesView`: the sheet opens on the course
+        // list, and a spent activity slot shows as dimmed rows.
         VStack {
-            HStack(spacing: 6) {
-                Text("Training this year:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("\(selectedActivities.count)/\(GameConstants.trainingActivitySlotCost)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(
-                        selectedActivities.count >= GameConstants.trainingActivitySlotCost
-                            ? .red : .primary
-                    )
-            }
-            Text("\(currentStage.displayName) — age \(player.age)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-
             ScrollView {
                 VStack(spacing: 10) {
                     if sortedTrainings.isEmpty {

@@ -22,24 +22,10 @@ struct HobbiesView: View {
     }
 
     var body: some View {
+        // No header strip: the sheet opens straight onto the hobbies. The
+        // year's slot budget shows itself where it bites — rows dim once the
+        // limit is reached — and the age lives in the game's own header.
         VStack {
-
-            HStack(spacing: 6) {
-                Text("Hobbies this year:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("\(selectedActivities.count)/\(GameConstants.maxHobbiesPerYear)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(
-                        selectedActivities.count >= GameConstants.maxHobbiesPerYear
-                            ? .red : .primary
-                    )
-            }
-            Text("\(currentStage.displayName) — age \(player.age)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(stageHobbies, id: \.label) { hobby in

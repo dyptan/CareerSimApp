@@ -173,13 +173,8 @@ struct EntrepreneurshipView: View {
 
     private var content: some View {
         List {
-            Section {
-                ForEach(ventures) { venture in
-                    ventureLink(venture)
-                }
-            } header: {
-                Text("Real business ideas across different industries. Stake your capital on one at a time — your experience in that field and your personal strengths decide whether the launch flies. Grow it, then sell out or move on.")
-                    .textCase(nil)
+            ForEach(ventures) { venture in
+                ventureLink(venture)
             }
         }
         .gameSheetClose($showSheet, title: "Ventures", onNext: onNext)

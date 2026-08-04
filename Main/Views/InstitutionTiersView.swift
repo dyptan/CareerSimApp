@@ -34,17 +34,17 @@ struct InstitutionTiersView: View {
             }
             .padding()
         }
-        .navigationTitle(player.isSimplified ? "Enroll" : "Compare schools")
+        .navigationTitle(player.isSimplified ? "Apply" : "Compare schools")
     }
 
     @ViewBuilder
     private func tierCard(for education: Education) -> some View {
         let r = education.requirements
         let highestEQF = player.degrees.last?.eqf ?? 0
-        let meetsAll = education.meetsRequirements(player: player)
         let canAfford = player.savings >= education.totalTuition
-        // Realistic mode: admission is a roll based on soft-skill fit + selectivity.
-        let eqfMet = highestEQF >= r.minEQF
+        // The qualification level is the only hard gate; soft skills just move the
+        // odds of the admission roll, in every mode.
+        let eqfMet = education.meetsRequirements(player: player)
         let admission = education.admissionProbability(player: player)
         let alreadyApplied = player.appliedSchoolIds.contains(education.id)
 
@@ -86,78 +86,94 @@ struct InstitutionTiersView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    Text("Admission requirements:")
+                    Text("Admission requirement:")
                         .font(.subheadline.bold())
                     InfoHint(
-                        title: "Admission requirements",
-                        message: admissionSoftSkillsHint(for: r)
+                        title: "Admission requirement",
+                        message: "The education level below is the one thing you must already hold to apply here. Everything else only moves your odds."
                     )
                 }
                 .padding(.top, 4)
 
-                let eduMet = highestEQF >= r.minEQF
                 RequirementRow(
                     label: r.educationLabel(),
                     emoji: "🎓",
                     style: .meter(current: highestEQF, required: r.minEQF)
                 )
-                .foregroundStyle(eduMet ? .primary : .secondary)
+                .foregroundStyle(eqfMet ? .primary : .secondary)
             }
 
-            if player.isSimplified {
-                // Simplified mode keeps a deterministic gate — kid-friendly, no
-                // chance of a surprise rejection.
-                Button {
-                    enroll(in: education)
-                } label: {
-                    Text(meetsAll ? "Enroll" : "Requirements not met")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!meetsAll)
-                .opacity(meetsAll ? 1.0 : 0.5)
-                .padding(.top, 4)
-            } else {
-                // Realistic mode: admission is probabilistic. Strong soft skills
-                // raise the odds; meeting every bar still isn't a guarantee at a
-                // selective school.
-                HStack(spacing: 6) {
-                    Text("Admission chance:")
-                    InfoHint(
-                        title: "How admission works",
-                        message: "Your odds rise with how well your soft skills match this school's admission bar and fall with how selective the school is. Meeting every bar makes you fully qualified, but elite schools still turn away strong applicants. Build the soft skills listed under Admission requirements through activities to improve your chances. You get one application per school each year."
-                    )
-                    Spacer()
-                    Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
-                        .font(.headline)
-                        .foregroundStyle(admission >= 0.6 ? .green : admission >= 0.3 ? .orange : .red)
-                }
-                .font(.subheadline)
-                .padding(.top, 4)
-
-                Button {
-                    if player.applyToSchool(education) {
-                        // Beating long odds is worth a celebration.
-                        if admission < GameConstants.luckyWinThreshold {
-                            player.celebrationTrigger += 1
-                        }
-                        enroll(in: education)
+            // The overlap the odds are made of: what this school looks for, next
+            // to what the player brings. Shown in full rather than tucked behind
+            // a hint — it's the one thing the player can act on.
+            let overlap = education.softSkillOverlap(player: player)
+            if !overlap.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
+                        Text("What this school looks for:")
+                            .font(.subheadline.bold())
+                        InfoHint(
+                            title: "Soft-skill match",
+                            message: admissionSoftSkillsHint(for: overlap)
+                        )
+                        Spacer()
+                        Text("\(Int((education.softSkillFit(player: player) * 100).rounded())) % match")
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                    Text(applyLabel(eqfMet: eqfMet, alreadyApplied: alreadyApplied, education: education))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!eqfMet || alreadyApplied)
-                .opacity(!eqfMet || alreadyApplied ? 0.5 : 1.0)
-                .padding(.top, 4)
 
-                if alreadyApplied {
-                    Text("❌ Not admitted this year (your odds were \(Int((admission * 100).rounded()))%). Even a strong applicant can be turned away by a selective school — build the soft skills listed above, try a less selective school, or apply again next year.")
+                    ForEach(overlap) { axis in
+                        RequirementRow(
+                            label: axis.label,
+                            emoji: axis.pictogram,
+                            style: .meter(current: axis.have, required: axis.target)
+                        )
                         .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .foregroundStyle(axis.isMet ? .primary : .secondary)
+                    }
                 }
+                .padding(.top, 4)
+            }
+
+            // Admission is a roll in every mode: strong soft skills raise the
+            // odds, a thin profile lowers them, and matching everything still
+            // isn't a guarantee at a selective school.
+            HStack(spacing: 6) {
+                Text("Admission chance:")
+                InfoHint(
+                    title: "How admission works",
+                    message: "Your current education level is the only hard requirement — once you have it you can always apply. From there, your odds rise with how well your soft skills overlap with what this school looks for and fall with how selective the school is. Matching every one makes you fully qualified, but selective schools still turn away strong applicants — and a school may still take a chance on you when your soft skills are thin. Build the skills listed above through hobbies, sports and projects to improve your chances. You get one application per school each year."
+                )
+                Spacer()
+                Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
+                    .font(.headline)
+                    .foregroundStyle(admission >= 0.6 ? .green : admission >= 0.3 ? .orange : .red)
+            }
+            .font(.subheadline)
+            .padding(.top, 4)
+
+            Button {
+                if player.applyToSchool(education) {
+                    // Beating long odds is worth a celebration.
+                    if admission < GameConstants.luckyWinThreshold {
+                        player.celebrationTrigger += 1
+                    }
+                    enroll(in: education)
+                }
+            } label: {
+                Text(applyLabel(eqfMet: eqfMet, alreadyApplied: alreadyApplied, education: education))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!eqfMet || alreadyApplied)
+            .opacity(!eqfMet || alreadyApplied ? 0.5 : 1.0)
+            .padding(.top, 4)
+
+            if alreadyApplied {
+                Text("❌ Not admitted this year (your odds were \(Int((admission * 100).rounded()))%). Even a strong applicant can be turned away — build the skills listed above, try a less selective school, or apply again next year.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding()
@@ -165,22 +181,18 @@ struct InstitutionTiersView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    /// The soft skills this school weighs at admission, each with the level it
-    /// looks for — surfaced in the info hint instead of a row per skill.
-    private func admissionSoftSkillsHint(for r: Education.Requirements) -> String {
-        let list = Education.Requirements.softSkillMappings
-            .compactMap { mapping -> String? in
-                let required = r.soft[keyPath: mapping.keyPath]
-                guard required > 0 else { return nil }
-                return "\(mapping.pictogram) \(mapping.id) (target \(required))"
-            }
+    /// Spells out the match rows in numbers: what the school looks for on each
+    /// skill against what the player brings, and what a gap actually costs —
+    /// odds, never entry.
+    private func admissionSoftSkillsHint(for overlap: [Education.SoftSkillOverlap]) -> String {
+        let list = overlap
+            .map { "\($0.pictogram) \($0.label): you have \($0.have), they look for \($0.target)" }
             .joined(separator: "\n")
-        let intro = player.isSimplified
-            ? "You'll need these soft skills to enroll:"
-            : "Soft skills that set your admission odds:"
-        return list.isEmpty
-            ? "This school has no soft-skill bar — meet the education level and you're eligible."
-            : "\(intro)\n\n\(list)"
+        return """
+        Every skill here counts toward your admission chance. Reaching the level a school looks for scores that skill in full, falling short scores it in part — and no gap can shut you out, it only lowers the odds.
+
+        \(list)
+        """
     }
 
     /// Locks in the chosen school: drops any job, starts the degree, closes sheet.

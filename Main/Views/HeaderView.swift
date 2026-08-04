@@ -80,7 +80,8 @@ struct HeaderView: View {
 
             Spacer()
 
-            // End the run early and record the score, at any age.
+            // End the run early and record the score, at any age. Advancing a
+            // single year is the footer's **Skip** button, not this.
             Button("Finish game") { showFinishConfirm = true }
                 .buttonStyle(.bordered)
                 .font(.headline)

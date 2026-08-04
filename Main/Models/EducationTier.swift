@@ -44,8 +44,9 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
-    /// Extra soft-skill threshold added on top of the profile's base requirements.
-    /// Only elite schools raise the admission bar; state matches community.
+    /// Extra soft-skill target added on top of the profile's base ones — it makes
+    /// a strong applicant harder to be, not admission impossible. Only elite
+    /// schools raise the bar; state matches community.
     var requirementBonus: Int {
         switch self {
         case .community: return 0

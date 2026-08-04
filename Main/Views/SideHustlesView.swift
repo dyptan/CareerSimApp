@@ -26,17 +26,8 @@ struct PrivateProjectsView: View {
 
     var body: some View {
         VStack {
-            HStack(spacing: 6) {
-                Text("Projects this year:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("\(selectedSideHustles.count)/\(GameConstants.maxSideHustlesPerYear)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(
-                        selectedSideHustles.count >= GameConstants.maxSideHustlesPerYear
-                            ? .red : .primary
-                    )
-            }
+            // No slot counter — see `HobbiesView`; a project that can't be taken
+            // this year dims in place.
             Text("Spend a year building your name — a standout project banks fame in its field.")
                 .font(.caption)
                 .foregroundStyle(.secondary)

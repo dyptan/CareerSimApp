@@ -529,6 +529,110 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertLessThanOrEqual(odds, 0.66, "An elite school shouldn't be a near-lock even when maxed.")
     }
 
+    /// Soft skills are never a gate: an applicant who holds the prior
+    /// qualification can always apply, whatever their soft skills look like.
+    func testSoftSkillsNeverBlockAdmission() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)            // high-school record clears the EQF gate
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
+
+        for profile in TertiaryProfile.allCases {
+            for tier in EducationTier.allCases {
+                let school = Education(.Bachelor, profile: profile, tier: tier)
+                XCTAssertTrue(school.meetsRequirements(player: player),
+                              "Zero soft skills shouldn't bar an application to \(profile.rawValue) (\(tier.rawValue)).")
+                XCTAssertGreaterThan(school.admissionProbability(player: player), 0,
+                                     "A blank-slate applicant should still have a shot at \(profile.rawValue) (\(tier.rawValue)).")
+            }
+        }
+    }
+
+    /// The prior-qualification level is the one hard gate — no Master's without a
+    /// Bachelor's, no matter how good the soft skills are.
+    func testEducationLevelIsTheOnlyHardGate() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+
+        let master = Education(.Master, profile: .business, tier: .state)
+        XCTAssertFalse(master.meetsRequirements(player: player),
+                       "A high-school leaver can't enter a Master's, however strong their soft skills.")
+        XCTAssertEqual(master.admissionProbability(player: player), 0,
+                       "Missing the prerequisite degree leaves no admission chance at all.")
+    }
+
+    /// Soft skills earn their keep on the odds instead: better skills, better
+    /// chances, all the way up to fully qualified.
+    func testSoftSkillsRaiseAdmissionOdds() {
+        let school = Education(.Bachelor, profile: .business, tier: .state)
+
+        func odds(softSkillLevel: Int) -> Double {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = softSkillLevel }
+            return school.admissionProbability(player: player)
+        }
+
+        let none = odds(softSkillLevel: 0)
+        let some = odds(softSkillLevel: 2)
+        let strong = odds(softSkillLevel: 5)
+
+        XCTAssertGreaterThan(some, none, "Building soft skills should improve the odds.")
+        XCTAssertGreaterThan(strong, some, "More soft skills, better odds — up to fully qualified.")
+    }
+
+    /// Admission is a roll in every mode, Simplified included — no school is a
+    /// formality, and none is a closed door.
+    func testAdmissionIsProbabilisticInEveryMode() {
+        for difficulty in Difficulty.allCases {
+            let player = Player()
+            player.difficulty = difficulty
+            player.configureStart(age: 18)
+
+            // The community tier is the one school Simplified offers, and the
+            // most forgiving elsewhere — if even this is a roll, all of them are.
+            let school = Education(.Bachelor, profile: .business, tier: .community)
+
+            let blankSlate = school.admissionProbability(player: player)
+            XCTAssertGreaterThan(blankSlate, 0,
+                                 "A thin applicant should still have a chance in \(difficulty.title).")
+
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+            let maxedOut = school.admissionProbability(player: player)
+            XCTAssertGreaterThan(maxedOut, blankSlate,
+                                 "Soft skills should pay off in \(difficulty.title).")
+            XCTAssertLessThan(maxedOut, 1.0,
+                              "Admission is never a certainty in \(difficulty.title).")
+        }
+    }
+
+    /// The overlap the admissions screen shows is the same overlap the odds are
+    /// computed from — every listed skill is one the school weighs, and their
+    /// average is the fit that feeds `admissionProbability`.
+    func testSoftSkillOverlapExplainsTheOdds() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        player.softSkills.communicationAndNetworking = 2
+        player.softSkills.presentationAndStorytelling = 9   // well past the target
+
+        let school = Education(.Bachelor, profile: .business, tier: .state)
+        let overlap = school.softSkillOverlap(player: player)
+
+        XCTAssertFalse(overlap.isEmpty, "A business degree weighs some soft skills.")
+        for axis in overlap {
+            XCTAssertGreaterThan(axis.target, 0, "Only skills the school looks for are listed.")
+            XCTAssertLessThanOrEqual(axis.fit, 1.0, "A surplus on one axis can't exceed a full match.")
+        }
+
+        let average = overlap.reduce(0.0) { $0 + $1.fit } / Double(overlap.count)
+        XCTAssertEqual(school.softSkillFit(player: player), average, accuracy: 0.0001,
+                       "The rows shown and the fit used must be the same number.")
+    }
+
     /// Tuition the player can't cover in cash becomes an interest-bearing student
     /// loan that drags net worth — an expensive early degree is a lasting cost.
     func testUnaffordableTuitionBecomesAStudentLoan() {
