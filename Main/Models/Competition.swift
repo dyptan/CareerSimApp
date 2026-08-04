@@ -1,6 +1,6 @@
 import Foundation
 
-/// A contest tied to a sport — an athletic event or an e-sports tournament.
+/// A contest tied to a sport — an athletic meet, tournament, or championship.
 /// The player never enters one directly: training a sport automatically enters
 /// its top eligible contest each year (see `CompetitionCatalog.bestCompetition`
 /// and `Player.advanceYear`). Winning is a skill-based gamble that pays prize
@@ -45,7 +45,7 @@ struct Competition: Identifiable, Hashable {
     /// open events (nil `sports`).
     var minSportYears: Int = 0
 
-    enum Discipline: String { case athletic = "Athletic", esports = "E-Sports", creative = "Creative" }
+    enum Discipline: String { case athletic = "Athletic", creative = "Creative" }
 
     static func == (lhs: Competition, rhs: Competition) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -91,9 +91,9 @@ struct Competition: Identifiable, Hashable {
 }
 
 enum CompetitionCatalog {
-    /// Athletic and e-sports contests, mixing accessible local events (cheap,
-    /// modest prizes) with marquee championships (steep entry, big purse and a
-    /// prestigious trophy). Open from the teen years onward.
+    /// Athletic contests, mixing accessible local events (cheap, modest prizes)
+    /// with marquee championships (steep entry, big purse and a prestigious
+    /// trophy). Open from the teen years onward.
     static let all: [Competition] = [
         // MARK: - Junior (teen-only)
         // The youth pathway into team sport. Winning it as a teen banks the
@@ -189,52 +189,6 @@ enum CompetitionCatalog {
             sports: [.running, .swimming, .cycling, .gymnastics, .martialArts],
             stages: [.youngAdult, .adult],
             minSportYears: 8
-        ),
-        // MARK: - E-Sports
-        Competition(
-            id: "online-ladder",
-            name: "Online Ranked Ladder",
-            icon: "🎮",
-            blurb: "Climb the seasonal ranks from your own setup. Cheap to enter, a real grind.",
-            discipline: .esports,
-            entryFee: 50,
-            prize: 2_000,
-            achievement: "Ladder Season Champion",
-            fameWeight: 0.5,
-            skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.stressResistanceAndEmotionalRegulation],
-            sports: [.esports],
-            stages: [.youngAdult, .adult],
-            minSportYears: 1
-        ),
-        Competition(
-            id: "lan-tournament",
-            name: "Regional LAN Tournament",
-            icon: "🕹️",
-            blurb: "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.",
-            discipline: .esports,
-            entryFee: 300,
-            prize: 15_000,
-            achievement: "LAN Tournament Champion",
-            fameWeight: 1.0,
-            skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation],
-            sports: [.esports],
-            stages: [.youngAdult, .adult],
-            minSportYears: 3
-        ),
-        Competition(
-            id: "world-esports-final",
-            name: "World Esports Finals",
-            icon: "🌐",
-            blurb: "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.",
-            discipline: .esports,
-            entryFee: 1_200,
-            prize: 120_000,
-            achievement: "Esports World Champion",
-            fameWeight: 2.5,
-            skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation, \.visionaryThinkingAndAmbition],
-            sports: [.esports],
-            stages: [.youngAdult, .adult],
-            minSportYears: 6
         ),
     ]
 
