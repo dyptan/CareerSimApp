@@ -173,6 +173,19 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
+    /// The fitness coaching roles are client-facing personal services, not
+    /// spotlight careers: they belong to Personal Services (which puts them in
+    /// the "people" persona group and off the Entertainment fame track).
+    func testFitnessCoachingRolesArePersonalServices() {
+        for title in ["Personal Trainer", "Fitness Instructor"] {
+            guard let job = JobCatalog.allJobs().first(where: { $0.baseTitle == title }) else {
+                XCTFail("Missing job '\(title)'."); continue
+            }
+            XCTAssertEqual(job.category, .service, "'\(title)' should be a Personal Services role.")
+            XCTAssertEqual(job.category.persona, .people, "'\(title)' should sit in the people group.")
+        }
+    }
+
     // MARK: - Retired catalogue entries
 
     /// E-Sports is no longer a trainable sport and "Run a Tech Channel" is no

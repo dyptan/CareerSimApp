@@ -300,7 +300,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .fashion:
             return "Create clothing and styles, follow trends, and help people express themselves."
         case .service:
-            return "Personal grooming and beauty services that help people look and feel their best."
+            return "Grooming, beauty, and fitness — working with clients one-on-one to help them look and feel their best."
         case .manufacturing:
             return "Make products from raw materials: factories, workshops, and artisans."
         case .finance:
@@ -328,7 +328,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .technology:
             return "Developer, tester, security, data"
         case .showBusiness:
-            return "Actor, musician, athlete, TV host, content creator, coach"
+            return "Actor, musician, athlete, TV host, content creator, journalist"
         case .agriculture:
             return "Agriculturist, horticulturist, livestock"
         case .design:
@@ -362,7 +362,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .fashion:
             return "Fashion designer, stylist, tailor, merchandiser"
         case .service:
-            return "Hairdresser, barber, beautician"
+            return "Hairdresser, barber, beautician, personal trainer, fitness instructor"
         case .manufacturing:
             return "Plumber, electrician, welder"
         case .finance:

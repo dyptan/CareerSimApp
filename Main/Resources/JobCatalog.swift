@@ -325,7 +325,7 @@ enum JobCatalog {
 
             "Fashion Designer":               .init(creativityAndInsightfulThinking: 4, persuasionAndNegotiation: 1, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, presentationAndStorytelling: 2),
 
-            // Fitness (personal-brand coaching roles kept; competitive sport ladders removed)
+            // Fitness (Personal Services: client coaching roles; competitive sport ladders removed)
             "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
             "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
 
@@ -590,9 +590,12 @@ enum JobCatalog {
             ("Hotel Manager",                   .hospitality,  72_000, "🏨", "Oversees hotel operations and staff.",                             5),
             ("Event Planner",                   .hospitality,  55_000, "🎉", "Organizes events and logistics.",                                  5),
 
-            // Personal Services — personal and general services
+            // Personal Services — grooming, beauty, and fitness: client-facing
+            // work built on personal rapport rather than the spotlight.
             ("Hairdresser/Barber",              .service,      32_000, "💇", "Cuts and styles hair for clients.",                                 4),
             ("Beautician/Cosmetologist",        .service,      30_000, "💄", "Provides beauty treatments and services.",                         4),
+            ("Personal Trainer",                .service,      40_000, "🏋️", "Coaches clients one-on-one toward their fitness goals.",            3),
+            ("Fitness Instructor",              .service,      34_000, "🤸", "Leads group exercise and gym classes.",                            2),
 
             // Education — two tracks: an accessible Tutor ladder and a
             // degree-gated Teacher ladder (Senior/Lead rungs in the seniority
@@ -729,10 +732,6 @@ enum JobCatalog {
             ("News Anchor",                     .showBusiness,        95_000, "🎙️", "Anchors television news broadcasts.",                              5),
             ("Video Editor",                    .showBusiness,        55_000, "🎬", "Cuts and assembles footage for film, TV, and online.",             4),
             ("Social Media Manager",            .showBusiness,        58_000, "📱", "Runs brand presence and campaigns across social platforms.",       5),
-
-            // Sports / Fitness
-            ("Personal Trainer",                .showBusiness,       40_000, "🏋️", "Coaches clients one-on-one toward their fitness goals.",            3),
-            ("Fitness Instructor",              .showBusiness,       34_000, "🤸", "Leads group exercise and gym classes.",                            2),
 
             // Agriculture
             ("Farmhand",                        .agriculture,  28_000, "🧑‍🌾", "Plants, harvests, and tends crops and livestock.",               1),
