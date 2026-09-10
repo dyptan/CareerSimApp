@@ -4,6 +4,122 @@ import XCTest
 /// Structural validation of the career dependency graph. These are *catalogue*
 /// invariants — reachability over the prerequisite DAG — so they run in
 /// O(catalogue size), not as a combinatorial sweep of player states.
+
+/// Structural invariants of the hand-written catalogues.
+///
+/// The per-title override tables in `JobCatalog` are keyed by title *string*, so
+/// renaming a job would silently drop it back to its category defaults — the
+/// balance would shift and nothing would complain. These tests are what makes
+/// that safe: they enumerate each table's keys and assert every one still names
+/// a real job, so a rename fails here instead of quietly changing the game.
+final class CatalogIntegrityTests: XCTestCase {
+
+    private var fullTitles: Set<String> { Set(JobCatalog.specs.map(\.title)) }
+    private var baseTitles: Set<String> { Set(JobCatalog.specs.map { Job.baseTitle(of: $0.title) }) }
+
+    /// Tables keyed by *base* title, so one entry covers every rung of a ladder.
+    func testBaseTitleOverridesNameRealJobs() {
+        let tables: [(String, [String])] = [
+            ("softSkillsByBaseTitle", Array(JobCatalog.softSkillsByBaseTitle.keys)),
+            ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
+            ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
+        ]
+        let known = baseTitles
+        for (name, keys) in tables {
+            let orphans = Set(keys).subtracting(known).sorted()
+            XCTAssertTrue(orphans.isEmpty,
+                          "\(name) has keys that are not the base title of any job: \(orphans). "
+                          + "Either the job was renamed or the key carries a seniority prefix "
+                          + "(this table is looked up through Job.baseTitle, so a prefixed key can never match).")
+        }
+    }
+
+    /// Tables keyed by *full* title, so they attach to one rung only.
+    func testFullTitleOverridesNameRealJobs() {
+        let tables: [(String, [String])] = [
+            ("credentialsByFullTitle", Array(JobCatalog.credentialsByFullTitle.keys)),
+            ("minYearsByTitle", Array(JobCatalog.minYearsByTitle.keys)),
+        ]
+        let known = fullTitles
+        for (name, keys) in tables {
+            let orphans = Set(keys).subtracting(known).sorted()
+            XCTAssertTrue(orphans.isEmpty,
+                          "\(name) has keys matching no job title: \(orphans). The job was probably renamed.")
+        }
+    }
+
+    func testJobTitlesAreUnique() {
+        let titles = JobCatalog.specs.map(\.title)
+        let dupes = Set(titles.filter { t in titles.filter { $0 == t }.count > 1 }).sorted()
+        XCTAssertTrue(dupes.isEmpty, "Duplicate job titles would produce two jobs with one id: \(dupes).")
+    }
+
+    /// `job(from:)` raises a role's education floor to whatever its mandated
+    /// credentials require, so a job can never demand a credential the player
+    /// couldn't have earned at its stated level.
+    func testStatedEducationCoversMandatedCredentials() {
+        for job in JobCatalog.allJobs() {
+            let needed = job.requirements.hardSkills.trainings.map(\.minEQF).max() ?? 0
+            XCTAssertGreaterThanOrEqual(
+                job.requirements.education.minEQF, needed,
+                "\(job.id) states EQF \(job.requirements.education.minEQF) but mandates a credential needing \(needed).")
+        }
+    }
+
+    /// Carrying `targetCapital` is what makes a role a venture — not its category.
+    func testVentureFlagAndCapitalAgree() {
+        for job in JobCatalog.allJobs() {
+            XCTAssertEqual(job.targetCapital != nil, job.isEntrepreneurial,
+                           "\(job.id): targetCapital and isEntrepreneurial disagree.")
+        }
+        for venture in JobCatalog.ventures {
+            XCTAssertGreaterThan(venture.targetCapital ?? 0, 0,
+                                 "Venture \(venture.title) must stake capital.")
+        }
+    }
+
+    /// `seniorityPrefixes` and the rank map both derive from `seniorityLadder`,
+    /// so a prefix can't exist without a rank. This pins that down.
+    func testEverySeniorityPrefixResolvesToItsRank() {
+        for (prefix, rank) in Job.seniorityLadder {
+            let probe = Job(id: prefix + "Probe", category: .retail, income: 1,
+                            summary: "", icon: "",
+                            requirements: .init(education: .init(minEQF: 0, acceptedProfiles: nil),
+                                                softSkills: .init(), hardSkills: .init()))
+            XCTAssertEqual(probe.seniorityRank, rank,
+                           "Prefix '\(prefix)' should rank \(rank).")
+            XCTAssertEqual(probe.baseTitle, "Probe",
+                           "Prefix '\(prefix)' should be stripped by baseTitle.")
+        }
+    }
+
+    /// Every credential must have a row in `rulesByTraining`. Without this, a new
+    /// `Training` case silently takes the struct defaults — a statutory licence
+    /// that quietly stops gating hiring, for instance.
+    func testEveryTrainingHasRules() {
+        let missing = Training.allCases.filter { Training.rulesByTraining[$0] == nil }
+        XCTAssertTrue(missing.isEmpty,
+                      "Trainings with no rules row: \(missing.map(\.rawValue)). Add them to Training.rulesByTraining.")
+    }
+
+    /// A prerequisite chain must terminate, or a credential could never be earned.
+    func testTrainingPrerequisitesTerminate() {
+        /// The chain that revisits a credential, or nil when it terminates.
+        func cycle(from training: Training, seen: [Training] = []) -> [Training]? {
+            if let loop = seen.firstIndex(of: training) { return Array(seen[loop...]) + [training] }
+            for prerequisite in training.prerequisites {
+                if let found = cycle(from: prerequisite, seen: seen + [training]) { return found }
+            }
+            return nil
+        }
+        for training in Training.allCases {
+            let found = cycle(from: training)
+            XCTAssertNil(found, "\(training.rawValue) has a cyclic prerequisite chain: "
+                         + (found?.map(\.rawValue).joined(separator: " -> ") ?? ""))
+        }
+    }
+}
+
 final class CareerGraphTests: XCTestCase {
 
     /// The headline guarantee: the catalogue is internally consistent. No
