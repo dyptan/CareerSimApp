@@ -57,6 +57,12 @@ struct HeaderView: View {
                         .foregroundStyle(.orange)
                 }
 
+                if player.studentLoan > 0 {
+                    Text("🎓 Student loan owed: \(player.studentLoan.formatted(.number)) $")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+
                 // Realistic mode is open-ended: show the running score (updated
                 // every year) that the player banks when they finish the game.
                 if !player.isSimplified {
@@ -66,7 +72,7 @@ struct HeaderView: View {
                             .foregroundStyle(.secondary)
                         InfoHint(
                             title: "Your score",
-                            message: "Your score is your net worth — savings minus any venture loan — ÷ your age (currently \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
+                            message: "Your score is your net worth — savings minus any venture or student loan — ÷ your age (currently \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
                         )
                     }
                 }
@@ -74,7 +80,8 @@ struct HeaderView: View {
 
             Spacer()
 
-            // End the run early and record the score, at any age.
+            // End the run early and record the score, at any age. Advancing a
+            // single year is the footer's **Skip** button, not this.
             Button("Finish game") { showFinishConfirm = true }
                 .buttonStyle(.bordered)
                 .font(.headline)

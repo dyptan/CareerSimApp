@@ -58,7 +58,8 @@ final class VentureLaunchTests: XCTestCase {
         let job = try coffeeRoasteryJob()
         let p = job.founderSuccessProbability(for: player, investedCapital: job.targetCapital ?? 0)
         XCTAssertGreaterThan(p, 0.5, "A funded, experienced, skilled founder should have strong odds.")
-        XCTAssertLessThanOrEqual(p, 0.95, "Odds are capped at 0.95.")
+        XCTAssertLessThanOrEqual(p, GameConstants.founderMaxSuccess,
+                                 "Founding is a gamble — odds top out at the founder ceiling, not near certainty.")
     }
 
     /// Experience is a hard gate: with no industry experience the odds are zero,

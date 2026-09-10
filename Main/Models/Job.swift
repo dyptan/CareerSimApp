@@ -122,7 +122,12 @@ extension Job {
     /// makes it the dominant hiring factor. The Professional Player track is
     /// gated on the "Junior Champion" title from the teen `Junior Championship`.
     static let breakthroughFameByRole: [String: String] = [
-        "Player": "Junior Champion"
+        // Sports: the pro-athlete track opens on a junior-competition win.
+        "Player": "Junior Champion",
+        // Show business: the A-list acting and music tracks each open on a rare
+        // "big break" project (see the breakout ventures in `SideHustle`).
+        "Movie Star": "Breakout Role",
+        "Pop Star": "Hit Record",
     ]
 
     /// The breakthrough fame award this role requires, or nil for ordinary
@@ -333,7 +338,11 @@ extension Job {
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
         let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough + credential)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
-        return max(0.05, min(0.95, raw))
+        // C-suite scarcity: executive seats are few, so even a strong candidate
+        // faces long odds of landing one — most qualified applicants never make it
+        // to the top. Founders make their own seat, so they're exempt.
+        let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
+        return max(0.05, min(0.95, raw * scarcity))
     }
 
     // MARK: - Entrepreneurial path
@@ -375,14 +384,17 @@ extension Job {
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
         guard experienceMet(for: player) else { return 0.0 }
-        let experience = founderExperienceFit(for: player) * 0.40   // up to +40%
-        let skill = founderSkillFit(for: player) * 0.35             // up to +35%
+        // Weighted so that even a maxed-out founder lands around the
+        // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
+        // while weaker preparation falls away steeply below it.
+        let experience = founderExperienceFit(for: player) * 0.26   // up to +26%
+        let skill = founderSkillFit(for: player) * 0.20             // up to +20%
         let capitalRatio = Double(investedCapital) / Double(target)
-        let capital = min(capitalRatio, 1.0) * 0.15                 // up to +15%
+        let capital = min(capitalRatio, 1.0) * 0.09                 // up to +9%
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
-        return max(0.03, min(0.95, 0.05 + experience + skill + capital + credential))
+        return max(0.03, min(GameConstants.founderMaxSuccess, 0.05 + experience + skill + capital + credential))
     }
 
     /// 0...1 measure of how seasoned the player is in this venture's industry.
@@ -467,7 +479,10 @@ extension Job {
         ("Apprentice ", 0), ("Junior ", 1), ("Mid-Level ", 2), ("Senior ", 3),
         ("Lead ", 4), ("Principal ", 5), ("Staff ", 5), ("Head ", 4),
         ("Sous ", 3), ("Executive ", 5), ("Master ", 5), ("Charge ", 4),
-        ("Amateur ", 0), ("Professional ", 3), ("Elite ", 4)
+        ("Amateur ", 0), ("Professional ", 3), ("Elite ", 4),
+        // Show-business star ladders (Movie Star / Pop Star): a breakout rung
+        // and an apex, sharing the bare title as the mid rung.
+        ("Rising ", 1), ("A-List ", 5)
     ]
 
     /// Title prefixes that mark a seniority variant of a base role, in ladder

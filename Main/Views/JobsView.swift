@@ -4,6 +4,8 @@ struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+    /// Advances the game year and dismisses, via the shared **Next ▸** control.
+    var onNext: (() -> Void)? = nil
 
     func categories() -> [JobCategory] {
         // Ventures live on their own surface (see `EntrepreneurshipView`) — a
@@ -86,7 +88,7 @@ struct JobsView: View {
                 }
             }
         }
-        .navigationTitle("Jobs")
+        .gameSheetClose($showCareersSheet, title: "Jobs", onNext: onNext)
     }
 
 }
@@ -141,6 +143,8 @@ struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
+    /// Advances the game year and dismisses, via the shared **Next ▸** control.
+    var onNext: (() -> Void)? = nil
 
     /// All ventures on offer — every capital-staked founder play — sorted by
     /// experience gate then stake size (least to most), so the most accessible
@@ -169,16 +173,11 @@ struct EntrepreneurshipView: View {
 
     private var content: some View {
         List {
-            Section {
-                ForEach(ventures) { venture in
-                    ventureLink(venture)
-                }
-            } header: {
-                Text("Real business ideas across different industries. Stake your capital on one at a time — your experience in that field and your personal strengths decide whether the launch flies. Grow it, then sell out or move on.")
-                    .textCase(nil)
+            ForEach(ventures) { venture in
+                ventureLink(venture)
             }
         }
-        .navigationTitle("Ventures")
+        .gameSheetClose($showSheet, title: "Ventures", onNext: onNext)
     }
 
     private func ventureLink(_ venture: Job) -> some View {

@@ -11,6 +11,8 @@ import SwiftUI
 struct ExecutiveDecisionsView: View {
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
+    /// Advances the game year and dismisses, via the shared **Next ▸** control.
+    var onNext: (() -> Void)? = nil
 
     /// The outcome of the most recent decision this session, shown inline under
     /// its row. Keyed by decision id so each row shows only its own result.
@@ -47,12 +49,7 @@ struct ExecutiveDecisionsView: View {
                 .padding()
             }
         }
-        .navigationTitle("Boardroom")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { showSheet = false }
-            }
-        }
+        .gameSheetClose($showSheet, title: "Boardroom", onNext: onNext)
     }
 
     private var header: some View {

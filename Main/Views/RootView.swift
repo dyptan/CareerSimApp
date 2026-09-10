@@ -5,6 +5,13 @@ struct RootView: View {
     @StateObject var player = Player()
     @StateObject var appUIState = AppUIState()
 
+    /// Persists across launches: the first-run coach shows only until the player
+    /// has seen it once. Reset in a fresh install (or by clearing app storage).
+    @AppStorage("hasSeenCoach") private var hasSeenCoach = false
+    /// Drives the coach sheet; set true when the game view first appears and the
+    /// player hasn't seen the coach yet.
+    @State private var showCoach = false
+
     private var availableJobs: [Job] { player.availableJobs }
 
     var body: some View {
@@ -16,94 +23,123 @@ struct RootView: View {
     }
 
     private var gameView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             HeaderView(player: player, appUIState: appUIState)
-                .padding(.bottom)
 
             StatusBarView(player: player)
-                .padding(.bottom, 4)
 
             Divider()
-            Spacer()
 
+            // The skills panel flexes to fill the space between the pinned header
+            // and footer — scrolling when there's a lot to show (a full career)
+            // and top-aligning when there isn't (early childhood) — instead of the
+            // old pair of Spacers that centred it and left a large void mid-screen.
             SkillsView(player: player, appUIState: appUIState)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-            Spacer()
             Divider()
 
             FooterView(player: player, appUIState: appUIState)
-                .padding(.bottom)
         }
         #if os(macOS)
         // Resizable game window with a sensible default; min keeps it usable.
         .frame(minWidth: 900, idealWidth: 1000, maxWidth: .infinity,
                minHeight: 600, idealHeight: 700, maxHeight: .infinity)
         #endif
+        // First-run onboarding: greet a brand-new player once, right after they
+        // land in the game, then never again (flag persists across launches).
+        .onAppear {
+            if !hasSeenCoach { showCoach = true }
+        }
+        .sheet(isPresented: $showCoach, onDismiss: { hasSeenCoach = true }) {
+            CoachView(difficulty: player.difficulty, isPresented: $showCoach)
+        }
         .sheet(isPresented: $appUIState.showTertiarySheet) {
             EducationView(
                 player: player,
                 yearsLeftToGraduation: $appUIState.yearsLeftToGraduation,
                 showTertiarySheet: $appUIState.showTertiarySheet,
-                showCareersSheet: $appUIState.showCareersSheet
+                showCareersSheet: $appUIState.showCareersSheet,
+                onNext: { player.advanceYear(appUIState: appUIState) }
             )
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showTertiarySheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showCareersSheet) {
             JobsView(
                 availableJobs: availableJobs,
                 player: player,
-                showCareersSheet: $appUIState.showCareersSheet
+                showCareersSheet: $appUIState.showCareersSheet,
+                onNext: { player.advanceYear(appUIState: appUIState) }
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showCareersSheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showEntrepreneurshipSheet) {
             EntrepreneurshipView(
                 availableJobs: availableJobs,
                 player: player,
-                showSheet: $appUIState.showEntrepreneurshipSheet
+                showSheet: $appUIState.showEntrepreneurshipSheet,
+                onNext: { player.advanceYear(appUIState: appUIState) }
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
             #endif
-
-            Button("Close") { appUIState.showEntrepreneurshipSheet = false }
-                .padding()
         }
         .sheet(isPresented: $appUIState.showExecutiveSheet) {
             ExecutiveDecisionsView(
                 player: player,
-                showSheet: $appUIState.showExecutiveSheet
+                showSheet: $appUIState.showExecutiveSheet,
+                onNext: { player.advanceYear(appUIState: appUIState) }
             )
             #if os(macOS)
             .frame(minWidth: 520, minHeight: 480)
             #endif
         }
         .sheet(isPresented: $appUIState.showTrainingsSheet) {
-            navigationSheet { trainingsContent }
+            GameSheet(title: "Trainings", isPresented: $appUIState.showTrainingsSheet,
+                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+                TrainingsView(
+                    player: player,
+                    selectedTrainings: $appUIState.selectedTrainings,
+                    selectedActivities: $appUIState.selectedActivities
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showHobbiesSheet) {
-            navigationSheet { hobbiesContent }
+            GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet,
+                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+                HobbiesView(player: player, selectedActivities: $appUIState.selectedActivities)
+            }
         }
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
-            navigationSheet { sideHustlesContent }
+            GameSheet(title: "Projects", isPresented: $appUIState.showSideHustlesSheet,
+                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+                PrivateProjectsView(
+                    player: player,
+                    selectedSideHustles: $appUIState.selectedSideHustles
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showEventsSheet) {
-            navigationSheet { eventsContent }
+            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet,
+                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+                EventsView(player: player, selectedEvents: $appUIState.selectedEvents)
+            }
         }
         .sheet(isPresented: $appUIState.showSportsSheet) {
-            navigationSheet { sportsContent }
+            GameSheet(title: "Sports", isPresented: $appUIState.showSportsSheet,
+                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+                SportsView(
+                    player: player,
+                    selectedActivities: $appUIState.selectedActivities,
+                    selectedSports: $appUIState.selectedSports
+                )
+            }
         }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
@@ -146,6 +182,13 @@ struct RootView: View {
         } message: {
             Text("A downturn hit your employer and your position was cut. You'll need to find a new job — open Careers to start applying.")
         }
+        // A founder's venture folding is a major setback worth a pop-up — they're
+        // not laid off, their business fails (see the ongoing venture risk).
+        .alert("Venture Folded 📉", isPresented: $player.showVentureFailureAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(player.ventureFailureMessage)
+        }
         // Congratulates the player on a promotion — a milestone worth a pop-up.
         // The header note (player.lastPromotionRaisePct) lingers for the year.
         .alert("Congratulations! 🎉", isPresented: $player.showPromotionAlert) {
@@ -187,117 +230,6 @@ struct RootView: View {
         guard !appUIState.hasShownGoal, player.goalMet else { return }
         appUIState.hasShownGoal = true
         appUIState.showGoalSheet = true
-    }
-
-    // MARK: - Navigation sheet wrapper
-
-    @ViewBuilder
-    private func navigationSheet<C: View>(@ViewBuilder content: () -> C) -> some View {
-        Group {
-            if #available(iOS 16, macOS 13, *) {
-                NavigationStack { content() }
-            } else {
-                NavigationView { content() }
-                #if os(iOS)
-                .navigationViewStyle(.stack)
-                #endif
-            }
-        }
-        #if os(macOS)
-        .frame(minWidth: 800, minHeight: 500)
-        #endif
-    }
-
-    // MARK: - Sheet content
-
-    private var hobbiesContent: some View {
-        HobbiesView(player: player, selectedActivities: $appUIState.selectedActivities)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showHobbiesSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showHobbiesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var eventsContent: some View {
-        EventsView(player: player, selectedEvents: $appUIState.selectedEvents)
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showEventsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showEventsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var sportsContent: some View {
-        SportsView(
-            player: player,
-            selectedActivities: $appUIState.selectedActivities,
-            selectedSports: $appUIState.selectedSports
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showSportsSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showSportsSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var sideHustlesContent: some View {
-        PrivateProjectsView(
-            player: player,
-            selectedSideHustles: $appUIState.selectedSideHustles
-        )
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Back") { appUIState.showSideHustlesSheet = false }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Next") {
-                        appUIState.showSideHustlesSheet = false
-                        player.advanceYear(appUIState: appUIState)
-                    }
-                }
-            }
-    }
-
-    private var trainingsContent: some View {
-        TrainingsView(
-            player: player,
-            selectedTrainings: $appUIState.selectedTrainings,
-            selectedActivities: $appUIState.selectedActivities
-        )
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Back") { appUIState.showTrainingsSheet = false }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Next") {
-                    appUIState.showTrainingsSheet = false
-                    player.advanceYear(appUIState: appUIState)
-                }
-            }
-        }
     }
 
 }
@@ -405,8 +337,21 @@ struct ModeSelectionView: View {
                     start(difficulty)
                 } label: {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("\(difficulty.icon)  \(difficulty.title)")
-                            .font(.title2.bold())
+                        HStack(spacing: 8) {
+                            Text("\(difficulty.icon)  \(difficulty.title)")
+                                .font(.title2.bold())
+                            if difficulty.isRecommendedForNewPlayers {
+                                Text("Start here")
+                                    .font(.caption2.bold())
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Capsule().fill(Color.accentColor))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        Text(difficulty.audience)
+                            .font(.caption.bold())
+                            .foregroundStyle(.secondary)
                         Text(difficulty.blurb)
                             .font(.callout)
                             .foregroundStyle(.secondary)
@@ -448,4 +393,201 @@ struct ModeSelectionView: View {
 
 #Preview("Mode selection") {
     ModeSelectionView(player: Player(), appUIState: AppUIState())
+}
+
+// MARK: - Standard sheet chrome
+
+/// Standard chrome for every action sheet in the game. Wraps plain content in a
+/// navigation container and gives it the two uniform controls — a leading
+/// **Close** button and, when the sheet is passed an `onNext`, a trailing
+/// prominent **Next ▸** button — in a bar pinned along the sheet's bottom edge,
+/// under an inline title, via `gameSheetClose`.
+/// **Next ▸** advances the game year and dismisses the sheet in one tap, so the
+/// player can keep aging up without the old Close-then-tap-Next two-step; this
+/// makes rapid iteration across career paths cheap. Any in-content commit
+/// (Apply, Enroll, Launch…) still keeps the sheet open on failure and closes on
+/// success — those are separate from Next.
+///
+/// The four dialogs that manage their own `NavigationStack` (Jobs, Education,
+/// Ventures, Boardroom) don't use this wrapper — they apply `gameSheetClose`
+/// directly to their root content — but they thread `onNext` through the same
+/// way, so the controls end up identical.
+struct GameSheet<Content: View>: View {
+    let title: String
+    @Binding var isPresented: Bool
+    /// Advances the game year; when nil the sheet shows only **Close**.
+    var onNext: (() -> Void)? = nil
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        Group {
+            if #available(iOS 16, macOS 13, *) {
+                NavigationStack { content().gameSheetClose($isPresented, title: title, onNext: onNext) }
+            } else {
+                NavigationView { content().gameSheetClose($isPresented, title: title, onNext: onNext) }
+                #if os(iOS)
+                .navigationViewStyle(.stack)
+                #endif
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 520, minHeight: 480)
+        #endif
+    }
+}
+
+/// The uniform button bar every sheet carries along its bottom edge: **Close**
+/// on the leading side and, when the sheet advances the year, a prominent
+/// **Next ▸** on the trailing side. Pinned to the bottom rather than tucked in
+/// the navigation bar, so both controls sit where the hand already is — right
+/// next to the game's own bottom button row — after the player has scrolled
+/// through the sheet's options.
+struct GameSheetButtonBar: View {
+    @Binding var isPresented: Bool
+    /// Advances the game year; when nil the bar shows only **Close**.
+    var onNext: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack {
+                Button("Close") { isPresented = false }
+                    .buttonStyle(.bordered)
+                Spacer()
+                if let onNext {
+                    Button {
+                        onNext()
+                        isPresented = false
+                    } label: {
+                        Text("Next ▸")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+        }
+        // Keeps the bar legible when list content scrolls underneath it.
+        .background(.bar)
+    }
+}
+
+extension View {
+    /// Applies the game's standard sheet chrome: an inline navigation title and a
+    /// bottom button bar holding **Close** and — when `onNext` is supplied — a
+    /// prominent **Next ▸** button that runs `onNext` (advance the year) and then
+    /// dismisses. Used by `GameSheet` for plain content and directly by the
+    /// dialogs that own their navigation stack, so every sheet is dismissed the
+    /// same way and advances the year the same way, from the same place.
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: String, onNext: (() -> Void)? = nil) -> some View {
+        self
+            .navigationTitle(title)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                GameSheetButtonBar(isPresented: isPresented, onNext: onNext)
+            }
+    }
+}
+
+// MARK: - First-run coach
+
+/// One-time onboarding shown the first time a game starts. Explains the core
+/// loop — age up with **Next ▸**, use the bottom buttons to build a life, chase
+/// the goal — in plain, friendly language so a first-time (or young) player
+/// isn't dropped in cold. Presented once via the `hasSeenCoach` @AppStorage flag
+/// in `RootView`; the single **Let's go** button (or Close) dismisses it.
+struct CoachView: View {
+    let difficulty: Difficulty
+    @Binding var isPresented: Bool
+
+    private struct Tip: Identifiable {
+        let icon: String
+        let title: String
+        let body: String
+        var id: String { title }
+    }
+
+    private var tips: [Tip] {
+        [
+            Tip(icon: "🎂", title: "One turn = one year",
+                body: "Your character grows a year older each turn. Tap the blue Skip button in the bottom-right corner to move on to the next year — or the Next ▸ button at the bottom of any dialog, which does exactly the same thing."),
+            Tip(icon: "🎒", title: "Build your life from the buttons",
+                body: "The buttons along the bottom — School, Hobbies, Sports, Jobs and more — are how you decide what to do each year. Every choice shapes who you become."),
+            Tip(icon: "📈", title: "Watch yourself grow",
+                body: "The middle of the screen tracks the skills, titles, and money you pile up over the years."),
+            Tip(icon: difficulty.goalIcon, title: "Your goal",
+                body: "\(difficulty.goalHeadline). Tap the ⓘ next to your age at any time to check how you're doing."),
+            Tip(icon: "💡", title: "Stuck? Look for ⓘ",
+                body: "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition."),
+        ]
+    }
+
+    var body: some View {
+        NavigationStackOrView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Welcome to Career Sim! 👋")
+                            .font(.title.bold())
+                        Text("Live a whole life, one year at a time — here's the idea:")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(tips) { tip in
+                        HStack(alignment: .top, spacing: 12) {
+                            Text(tip.icon)
+                                .font(.title2)
+                                .frame(width: 32)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(tip.title)
+                                    .font(.headline)
+                                Text(tip.body)
+                                    .font(.callout)
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Text("Let's go! 🚀")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 4)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top, 4)
+                }
+                .padding()
+                .frame(maxWidth: 520)
+                .frame(maxWidth: .infinity)
+            }
+            .gameSheetClose($isPresented, title: "How to play")
+        }
+        #if os(macOS)
+        .frame(minWidth: 520, minHeight: 520)
+        #endif
+    }
+}
+
+/// Wraps content in the era-appropriate navigation container (`NavigationStack`
+/// on modern OSes, `NavigationView` otherwise) so `CoachView` can reuse the
+/// shared `gameSheetClose` chrome without repeating the availability scaffolding.
+private struct NavigationStackOrView<Content: View>: View {
+    @ViewBuilder var content: () -> Content
+    var body: some View {
+        if #available(iOS 16, macOS 13, *) {
+            NavigationStack { content() }
+        } else {
+            NavigationView { content() }
+            #if os(iOS)
+            .navigationViewStyle(.stack)
+            #endif
+        }
+    }
 }
