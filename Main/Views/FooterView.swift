@@ -61,11 +61,17 @@ private struct FooterButtonRow<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            FlowLayout(spacing: 8, lineSpacing: 8) { content() }
-        } else {
-            HStack { content() }
+        Group {
+            if #available(iOS 16, macOS 13, *) {
+                FlowLayout(spacing: 8, lineSpacing: 8) { content() }
+            } else {
+                HStack { content() }
+            }
         }
+        // Styled once here rather than on each button, so the row stays uniform
+        // as buttons are added. **Skip** sits outside this row and keeps its own
+        // prominent style.
+        .gameFooterButtonStyle()
     }
 }
 
@@ -134,24 +140,20 @@ struct FooterView: View {
         FooterButtonRow {
             if hasHobbies {
                 Button("Hobbies") { appUIState.showHobbiesSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             if hasSports {
                 Button("Sports") { appUIState.showSportsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             if !player.isSimplified, !player.experience.isEmpty {
                 Button("Events") { appUIState.showEventsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Trainings (certifications + licences): realistic mode, EQF ≥
             // Primary, and a stage-eligible training in the catalogue.
             if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
                 Button("Trainings") { appUIState.showTrainingsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Jobs open up once the player reaches legal working age; before
@@ -159,12 +161,11 @@ struct FooterView: View {
             if player.age >= GameConstants.minimumWorkingAge {
                 Button("Jobs") {
                     appUIState.showCareersSheet.toggle()
-                }.buttonStyle(.bordered).font(.headline)
+                }
             }
 
             if hasSideHustles {
                 Button("Projects") { appUIState.showSideHustlesSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // The entrepreneurial path (founder ventures + spare-time business
@@ -180,14 +181,12 @@ struct FooterView: View {
                player.age >= GameConstants.minimumEntrepreneurAge,
                player.currentOccupation?.isEntrepreneurial != true {
                 Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).
             if player.canMakeExecutiveDecisions {
                 Button("Boardroom") { appUIState.showExecutiveSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Higher education (vocational/university) becomes relevant only
@@ -196,7 +195,7 @@ struct FooterView: View {
             if player.age >= GameConstants.minimumTertiaryAge {
                 Button("Education") {
                     appUIState.showTertiarySheet.toggle()
-                }.buttonStyle(.bordered).font(.headline)
+                }
             }
         }
     }

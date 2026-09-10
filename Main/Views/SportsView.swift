@@ -96,7 +96,6 @@ struct SportsView: View {
                     }
                 )
             )
-            .toggleStyle(.automatic)
             .frame(maxWidth: .infinity, alignment: .leading)
             .disabled(!isSelected && atLimit)
             .opacity((!isSelected && atLimit) ? 0.5 : 1.0)

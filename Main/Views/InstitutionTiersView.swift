@@ -147,7 +147,7 @@ struct InstitutionTiersView: View {
                 Spacer()
                 Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
                     .font(.headline)
-                    .foregroundStyle(admission >= 0.6 ? .green : admission >= 0.3 ? .orange : .red)
+                    .foregroundStyle(Color.forOdds(admission))
             }
             .font(.subheadline)
             .padding(.top, 4)

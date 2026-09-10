@@ -399,7 +399,7 @@ struct JobDetail: View {
                 Spacer()
                 Text("\(Int(hireProbability * 100)) %")
                     .font(.headline)
-                    .foregroundStyle(hireProbability >= 0.6 ? .green : hireProbability >= 0.3 ? .orange : .red)
+                    .foregroundStyle(Color.forOdds(hireProbability))
             }
             .padding(.horizontal)
             .padding(.top, 4)
@@ -471,7 +471,7 @@ struct JobDetail: View {
                 Spacer()
                 Text("\(Int(founderProbability * 100)) %")
                     .font(.headline)
-                    .foregroundStyle(founderProbability >= 0.6 ? .green : founderProbability >= 0.3 ? .orange : .red)
+                    .foregroundStyle(Color.forOdds(founderProbability))
             }
             .padding(.horizontal)
             .padding(.top, 4)

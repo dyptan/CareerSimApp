@@ -52,7 +52,7 @@ struct SeniorityOffersView: View {
     @ViewBuilder
     private func seniorityCard(for offer: Job) -> some View {
         let prob = offer.hireProbability(for: player, requestedSalary: Double(offer.annualIncome))
-        let probColor: Color = prob >= 0.6 ? .green : prob >= 0.3 ? .orange : .red
+        let probColor = Color.forOdds(prob)
         let qualifies = offer.allRequirementsMet(for: player)
         let yearsExpected = player.isSimplified ? offer.requirements.minYearsExperience : offer.expectedYearsExperience
         let playerYears = offer.relevantYears(for: player)

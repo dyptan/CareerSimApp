@@ -71,7 +71,6 @@ struct HobbiesView: View {
                                     }
                                 )
                             )
-                            .toggleStyle(.automatic)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .disabled(!isSelected && atLimit)
                             .opacity(dimmed ? 0.5 : 1.0)

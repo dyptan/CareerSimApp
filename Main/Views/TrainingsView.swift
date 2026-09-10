@@ -1,19 +1,5 @@
 import SwiftUI
 
-extension View {
-    /// Toggle style appropriate for the current platform (.checkbox on macOS, .switch on iOS).
-    @ViewBuilder
-    func platformToggleStyle() -> some View {
-        #if os(macOS)
-        self.toggleStyle(.checkbox)
-        #elseif os(iOS)
-        self.toggleStyle(.switch)
-        #else
-        self
-        #endif
-    }
-}
-
 /// The **Trainings** page — the unified home for professional credentials, the
 /// merger of the old Certifications and Licenses sheets. It shares its layout and
 /// the single spare-time slot with Hobbies and Sports: picking a training this
