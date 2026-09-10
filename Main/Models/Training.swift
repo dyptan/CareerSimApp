@@ -453,6 +453,20 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
+    /// Credentials whose `careerBoost` covers a field, keyed by that field and
+    /// pre-sorted for display. Derived from `careerBoost`, so the "preferred
+    /// credentials" the UI lists are exactly the ones the hire odds credit (see
+    /// `Player.trainingCareerBonus`). Deterministic, so it's built once.
+    static let helpfulByCategory: [JobCategory: [Training]] = {
+        var map: [JobCategory: [Training]] = [:]
+        for training in allCases.sorted(by: { $0.rawValue < $1.rawValue }) {
+            for category in training.careerBoost?.categories ?? [] {
+                map[category, default: []].append(training)
+            }
+        }
+        return map
+    }()
+
     /// A credential's soft edge in one or more career fields (see `careerBoost`).
     struct CareerBoost {
         /// Job categories the credential helps you land a role in / found a

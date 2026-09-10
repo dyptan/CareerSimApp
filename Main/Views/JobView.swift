@@ -26,7 +26,7 @@ struct JobDetail: View {
         if player.appliedJobIds.contains(job.applicationKey) { return isFounder ? "Already attempted this year" : "Already applied" }
         if isFounder {
             if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
-            if player.savings + player.maxVentureLoan <= 0 { return "No savings or income to invest" }
+            if player.maxVentureStake <= 0 { return "No savings or income to invest" }
             return "Launch venture 🚀"
         }
         if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
@@ -242,43 +242,22 @@ struct JobDetail: View {
             }
 
             if !isSimplified && !requiredHard.trainings.isEmpty {
-                Text("Trainings:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { training in
-                    let owned = player.hardSkills.trainings.contains(training)
-                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
+                credentialSection(
+                    title: "Trainings:",
+                    trainings: Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue })
+                )
             }
 
             // Preferred (helpful) credentials — non-gating skill-building programs
             // whose careerBoost covers this field. Never required; holding one
             // meaningfully lifts the hire odds (see Player.trainingCareerBonus).
-            let helpfulTrainings = Training.allCases
-                .filter { $0.careerBoost?.categories.contains(job.category) == true }
-                .sorted { $0.rawValue < $1.rawValue }
+            let helpfulTrainings = Training.helpfulByCategory[job.category] ?? []
             if !isSimplified && !helpfulTrainings.isEmpty {
-                Text("Preferred (helpful):")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(helpfulTrainings, id: \.self) { training in
-                    let owned = player.hardSkills.trainings.contains(training)
-                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-
-                Text("Not required — a relevant credential meaningfully raises your hire odds in this field.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
+                credentialSection(
+                    title: "Preferred (helpful):",
+                    trainings: helpfulTrainings,
+                    footnote: "Not required — a relevant credential meaningfully raises your hire odds in this field."
+                )
             }
 
             // Breakthrough fame award: the gateway achievement for gated careers
@@ -343,8 +322,33 @@ struct JobDetail: View {
         .onAppear {
             requestedSalary = Double(job.income)
             if isFounder {
-                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.savings + player.maxVentureLoan))
+                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.maxVentureStake))
             }
+        }
+    }
+
+    /// A titled list of credential rows, marked met/unmet against what the
+    /// player holds — used for both the required and the preferred credentials.
+    @ViewBuilder
+    private func credentialSection(title: String, trainings: [Training], footnote: String? = nil) -> some View {
+        Text(title)
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+
+        ForEach(trainings, id: \.self) { training in
+            let owned = player.hardSkills.trainings.contains(training)
+            RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
+                .foregroundStyle(owned ? .primary : .secondary)
+                .padding(.horizontal)
+        }
+
+        if let footnote {
+            Text(footnote)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
         }
     }
 
@@ -404,9 +408,9 @@ struct JobDetail: View {
     private var founderInvestmentSection: some View {
         // You can stake your savings plus a loan of up to 2× income once savings
         // run out (see Player.maxVentureLoan / foundVenture).
-        let maxInvestable = Double(player.savings + player.maxVentureLoan)
+        let maxInvestable = Double(player.maxVentureStake)
         let canInvest = maxInvestable > 0
-        let borrowed = max(0, Int(investedCapital) - player.savings)
+        let borrowed = player.borrowedPortion(ofStake: Int(investedCapital))
         return VStack(alignment: .leading, spacing: 8) {
             Text("Launch your venture")
                 .font(.title2.bold())
@@ -488,7 +492,7 @@ struct JobDetail: View {
 
     private var applyDisabled: Bool {
         if player.appliedJobIds.contains(job.applicationKey) { return true }
-        if isFounder { return !job.experienceMet(for: player) || player.savings + player.maxVentureLoan <= 0 }
+        if isFounder { return !job.experienceMet(for: player) || player.maxVentureStake <= 0 }
         return !allRequirementsMet
     }
 

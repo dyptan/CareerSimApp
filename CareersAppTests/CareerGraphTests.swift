@@ -167,9 +167,8 @@ final class CareerGraphTests: XCTestCase {
                 XCTFail("Missing spotlight event '\(id)'."); continue
             }
             XCTAssertEqual(event.category, category, "'\(id)' should serve \(category.rawValue).")
-            XCTAssertTrue(event.supportsPresenter, "'\(id)' should offer a stage role.")
             XCTAssertEqual(event.presenterFameTitle, title, "'\(id)' should bank a bespoke accolade.")
-            XCTAssertEqual(event.category?.fameCategory, fame, "'\(id)' fame should land in \(fame).")
+            XCTAssertEqual(event.category.fameCategory, fame, "'\(id)' fame should land in \(fame).")
         }
     }
 

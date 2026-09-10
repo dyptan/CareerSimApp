@@ -178,7 +178,18 @@ final class Player: ObservableObject {
 
     /// Incremented on a celebratory stroke of luck (a promotion, or a long-shot
     /// college admission); the game view watches it to fire the confetti cannon.
+    /// Bump it through `celebrateIfLucky(_:)` rather than directly, so every
+    /// stochastic payoff applies the same threshold.
     @Published var celebrationTrigger: Int = 0
+
+    /// Fires the celebration confetti when a win came in against long odds
+    /// (below `GameConstants.luckyWinThreshold`) — the single home of that rule,
+    /// called by every stochastic payoff. Several bumps inside one `advanceYear`
+    /// coalesce into a single burst, since the view observes the counter once per
+    /// render pass.
+    func celebrateIfLucky(_ odds: Double) {
+        if odds < GameConstants.luckyWinThreshold { celebrationTrigger += 1 }
+    }
 
     /// Running log of player-facing milestones — completions, promotions, hires,
     /// layoffs, unlocked credentials — surfaced by `StatusBarView` (collapsed
@@ -219,6 +230,16 @@ final class Player: ObservableObject {
         Int((Double(currentOccupation?.annualIncome ?? 0) * GameConstants.ventureLoanIncomeMultiple).rounded())
     }
 
+    /// The most the player can stake on a venture right now: their savings plus
+    /// whatever they can borrow against income. The authoritative cap — the
+    /// launch UI and `foundVenture` both read it, so the slider can never offer
+    /// money the model would clamp away.
+    var maxVentureStake: Int { savings + maxVentureLoan }
+
+    /// How much of `stake` has to be borrowed: savings fund a venture first, and
+    /// only the shortfall becomes debt.
+    func borrowedPortion(ofStake stake: Int) -> Int { max(0, stake - savings) }
+
     /// The player's running score, recalculated from current state (so it's
     /// always up to date each year): "wealth velocity" — net worth (savings minus
     /// any outstanding loan) per year of life. Reaching wealth younger scores
@@ -247,9 +268,6 @@ final class Player: ObservableObject {
     /// the event's industry. Improves hiring odds on that field's postings and
     /// the chance of promotion while working in it (see `networkBonus`).
     @Published var networkByCategory: [JobCategory: Int] = [:]
-    /// Network from cross-industry events (`CareerEvent.category == nil`). Counts
-    /// toward every field on top of the industry-specific totals.
-    @Published var generalNetwork: Int = 0
 
     /// Total years trained in each `Sport`. A new year is added at year-end for
     /// every sport the player committed their spare-time slot to. Drives the
@@ -389,47 +407,30 @@ final class Player: ObservableObject {
 
     // MARK: - Professional events & network
 
-    /// Attends a professional event in the given `role`, applying its soft-skill
-    /// nudges and banking its network points (per-industry, or general for a
-    /// cross-industry event). A presenter banks more network; the fame
-    /// award presenting earns is deferred to `advanceYear` so a selection
-    /// toggled off before the year advances stays fully reversible (mirror of
-    /// `dropEvent`).
-    func attendEvent(
-        _ event: CareerEvent,
-        role: EventRole = .participant,
-        into selectedEvents: inout [String: EventRole]
-    ) {
-        guard selectedEvents[event.id] == nil else { return }
-        // Industry events need ≥1 year in that field; presenting needs the full
-        // veteran gate (safety net; the view locks these too).
-        guard event.meetsExperienceRequirement(for: experience) else { return }
-        let role = (role == .presenter && event.canPresent(with: experience)) ? role : .participant
-        selectedEvents[event.id] = role
+    /// Takes the stage at a professional event, applying its soft-skill nudges
+    /// and banking its network points in the event's industry. The fame award
+    /// presenting earns is deferred to `advanceYear` so a selection toggled off
+    /// before the year advances stays fully reversible (mirror of `dropEvent`).
+    func attendEvent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
+        guard !selectedEvents.contains(event.id) else { return }
+        // Taking the stage needs the veteran gate in this event's field
+        // (safety net; the view locks these rows too).
+        guard event.canPresent(with: experience) else { return }
+        selectedEvents.insert(event.id)
         for ability in event.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + ability.weight, 10)
         }
-        let points = event.networkPoints(for: role)
-        if let category = event.category {
-            networkByCategory[category, default: 0] += points
-        } else {
-            generalNetwork += points
-        }
+        networkByCategory[event.category, default: 0] += event.networkPoints
     }
 
-    func dropEvent(_ event: CareerEvent, from selectedEvents: inout [String: EventRole]) {
-        guard let role = selectedEvents.removeValue(forKey: event.id) else { return }
+    func dropEvent(_ event: CareerEvent, from selectedEvents: inout Set<String>) {
+        guard selectedEvents.remove(event.id) != nil else { return }
         for ability in event.abilities {
             let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
             softSkills[keyPath: kp] -= ability.weight
         }
-        let points = event.networkPoints(for: role)
-        if let category = event.category {
-            networkByCategory[category, default: 0] -= points
-        } else {
-            generalNetwork -= points
-        }
+        networkByCategory[event.category, default: 0] -= event.networkPoints
     }
 
     /// Years of work experience that count toward roles in `category`: the years
@@ -446,10 +447,10 @@ final class Player: ObservableObject {
         return own + credited
     }
 
-    /// Total professional-network points relevant to a field: its industry
-    /// network plus the general (cross-industry) network.
+    /// Total professional-network points relevant to a field, built by taking
+    /// the stage at its events.
     func networkPoints(for category: JobCategory) -> Int {
-        networkByCategory[category, default: 0] + generalNetwork
+        networkByCategory[category, default: 0]
     }
 
     /// Additive boost to a job's realistic-mode hire probability from the
@@ -640,10 +641,10 @@ final class Player: ObservableObject {
         // Events applied their network/soft-skill effects when attended. Bank the
         // fame award each presenter role earns (deferred to here so the
         // within-year toggle stayed reversible), then clear this year's picks.
-        for (id, role) in appUIState.selectedEvents where role == .presenter {
-            guard let event = EventCatalog.byId[id],
-                  let title = event.presenterFameTitle else { continue }
-            award(title, icon: event.icon, category: event.category?.fameCategory, weight: event.presenterFameWeight)
+        for id in appUIState.selectedEvents {
+            guard let event = EventCatalog.byId[id] else { continue }
+            award(event.presenterFameTitle, icon: event.icon,
+                  category: event.category.fameCategory, weight: event.presenterFameWeight)
             recordStatus("🎤", "Presented at \(event.name)")
         }
         appUIState.selectedEvents.removeAll()
@@ -728,47 +729,44 @@ final class Player: ObservableObject {
             // by the player's promotion-readiness soft skills, tenure, and network.
             // A win bumps pay and fires the celebration confetti. Frozen during a
             // downturn — no raises while the economy is in a recession.
-            if !isSimplified, !recessionThisYear, let current = currentOccupation,
-               Double.random(in: 0...1) < promotionChance(for: current) {
-                // Confetti only for a promotion that was a genuine long shot.
-                let luckyPromotion = promotionChance(for: current) < GameConstants.luckyWinThreshold
-                // Prefer a real rung change: move up to the next seniority level
-                // in the same ladder the player now qualifies for (its full
-                // requirements — degree, credential, and the tenure just banked).
-                // Only fall back to an in-place merit raise when there's no higher
-                // rung, or the player doesn't yet meet the next one's bar.
-                let nextRung = JobCatalog.allJobs()
-                    .filter { $0.baseTitle == current.baseTitle
-                        && $0.seniorityRank > current.seniorityRank
-                        && $0.allRequirementsMet(for: self) }
-                    .min { $0.seniorityRank < $1.seniorityRank }
+            if !isSimplified, !recessionThisYear, let current = currentOccupation {
+                let odds = promotionChance(for: current)
+                if Double.random(in: 0...1) < odds {
+                    // Prefer a real rung change: move up to the next seniority
+                    // level in the same ladder the player now qualifies for (its
+                    // full requirements — degree, credential, and the tenure just
+                    // banked). Only fall back to an in-place merit raise when
+                    // there's no higher rung, or the player doesn't yet meet the
+                    // next one's bar. Read off this year's postings (regenerated
+                    // above, and unpruned since promotions are frozen in a
+                    // recession) so the rung pays what its posting advertises.
+                    let base = current.baseTitle
+                    let rank = current.seniorityRank
+                    let nextRung = availableJobs
+                        .filter { $0.baseTitle == base && $0.seniorityRank > rank
+                            && $0.allRequirementsMet(for: self) }
+                        .min { $0.seniorityRank < $1.seniorityRank }
 
-                let raise = Double.random(in: GameConstants.promotionRaise)
-                if let next = nextRung {
                     // Never a pay cut on a promotion: take the higher of the new
-                    // rung's pay and a raise on the current salary.
-                    var promoted = next
-                    promoted.annualIncome = max(next.annualIncome,
-                                                Int((Double(current.annualIncome) * (1 + raise)).rounded()))
-                    let pct = current.annualIncome > 0
-                        ? Int((((Double(promoted.annualIncome) / Double(current.annualIncome)) - 1) * 100).rounded())
-                        : 0
+                    // rung's pay and a raise on the current salary. With no rung
+                    // to move into, the raise applies in place.
+                    let raise = Double.random(in: GameConstants.promotionRaise)
+                    let raised = Int((Double(current.annualIncome) * (1 + raise)).rounded())
+                    var promoted = nextRung ?? current
+                    promoted.annualIncome = max(promoted.annualIncome, raised)
                     currentOccupation = promoted
-                    lastPromotionRaisePct = max(0, pct)
-                    if luckyPromotion { celebrationTrigger += 1 }
+                    lastPromotionRaisePct = current.annualIncome > 0
+                        ? max(0, Int((((Double(promoted.annualIncome) / Double(current.annualIncome)) - 1) * 100).rounded()))
+                        : 0
+                    celebrateIfLucky(odds)
                     showPromotionAlert = true
-                    promotionMessage = "Your hard work paid off — you've been promoted from \(current.displayTitle) to \(promoted.displayTitle). Your pay rises to \(promoted.annualIncome.formatted(.number)) $ a year."
-                    recordStatus("⬆️", "Promoted to \(promoted.id)")
-                } else {
-                    // Top of the ladder (or not yet qualified for the next rung):
-                    // a merit raise in place.
-                    let newIncome = Int((Double(current.annualIncome) * (1 + raise)).rounded())
-                    currentOccupation?.annualIncome = newIncome
-                    lastPromotionRaisePct = Int((raise * 100).rounded())
-                    if luckyPromotion { celebrationTrigger += 1 }
-                    showPromotionAlert = true
-                    promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(newIncome.formatted(.number)) $ a year."
-                    recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
+                    if nextRung != nil {
+                        promotionMessage = "Your hard work paid off — you've been promoted from \(current.displayTitle) to \(promoted.displayTitle). Your pay rises to \(promoted.annualIncome.formatted(.number)) $ a year."
+                        recordStatus("⬆️", "Promoted to \(promoted.id)")
+                    } else {
+                        promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(promoted.annualIncome.formatted(.number)) $ a year."
+                        recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
+                    }
                 }
             }
         }
@@ -781,8 +779,6 @@ final class Player: ObservableObject {
         // nothing. Fame ventures snowball with the player's reputation (see
         // SideHustle.successProbability); all are repeatable year after year.
         var sideHustleNet = 0
-        var famedVentures = 0
-        var luckyFame = false
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id],
                   hustle.meetsPrerequisite(for: softSkills) else { continue }
@@ -798,7 +794,6 @@ final class Player: ObservableObject {
                 experience[cat, default: 0] += 1
                 recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
             }
-            let odds = hustle.successProbability(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
             let outcome = hustle.resolve(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
             if outcome.success {
                 savings += outcome.credit
@@ -811,15 +806,13 @@ final class Player: ObservableObject {
                     for ability in hustle.growth {
                         softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
                     }
-                    famedVentures += 1
-                    if odds < GameConstants.luckyWinThreshold { luckyFame = true }
+                    celebrateIfLucky(outcome.odds)
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
             } else {
                 recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
             }
         }
-        if luckyFame { celebrationTrigger += 1 }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
 
@@ -829,7 +822,6 @@ final class Player: ObservableObject {
         // A win pays the prize and banks a lasting achievement (Entertainment
         // fame that helps land spotlight roles), then surfaces a celebration dialog.
         var competitionWins = 0
-        var luckyCompetition = false
         let currentStage = LifeStage.forAge(age)
         for sport in competedSports {
             let years = sportYears[sport, default: 0]
@@ -842,14 +834,13 @@ final class Player: ObservableObject {
                 award(competition.achievement, icon: competition.icon,
                       category: .entertainment, weight: competition.fameWeight)
                 competitionWins += 1
-                if odds < GameConstants.luckyWinThreshold { luckyCompetition = true }
+                celebrateIfLucky(odds)
                 recordStatus("🏆", "Won \(competition.achievement)")
                 competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a \(competition.prize.formatted(.number)) $ prize and a boost to your reputation."
                 showCompetitionWinAlert = true
             }
         }
         lastCompetitionWins = competitionWins
-        if luckyCompetition { celebrationTrigger += 1 }
 
         // Service any venture loan: interest accrues first, then it's repaid from
         // this year's savings as far as they stretch. A flopped venture still owes
@@ -898,12 +889,16 @@ final class Player: ObservableObject {
     }
 
     /// Applies for admission to a school (realistic mode). Records the attempt
-    /// (one per school per year) and returns whether the player was admitted. The
-    /// caller performs enrollment on success.
+    /// (one per school per year) and returns whether the player was admitted,
+    /// celebrating a place won against long odds. The caller performs enrollment
+    /// on success.
     @discardableResult
     func applyToSchool(_ education: Education) -> Bool {
         appliedSchoolIds.insert(education.id)
-        return Double.random(in: 0...1) < education.admissionProbability(player: self)
+        let odds = education.admissionProbability(player: self)
+        guard Double.random(in: 0...1) < odds else { return false }
+        celebrateIfLucky(odds)
+        return true
     }
 
     /// Applies for a job at the given salary. Returns true if hired.
@@ -935,8 +930,8 @@ final class Player: ObservableObject {
         appliedJobIds.insert(job.applicationKey)
         // Savings fund the stake first; anything beyond them (up to the loan cap)
         // is borrowed against income and booked as debt.
-        let stake = min(max(0, investedCapital), savings + maxVentureLoan)
-        let borrowed = max(0, stake - savings)
+        let stake = min(max(0, investedCapital), maxVentureStake)
+        let borrowed = borrowedPortion(ofStake: stake)
         let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
         savings -= (stake - borrowed)          // spend savings first
         if borrowed > 0 {
@@ -1110,7 +1105,7 @@ final class Player: ObservableObject {
             for kp in growthAxes {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
             }
-            if odds < GameConstants.luckyWinThreshold { celebrationTrigger += 1 }
+            celebrateIfLucky(odds)
             recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")
             return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: title)
         }
@@ -1146,7 +1141,6 @@ final class Player: ObservableObject {
         lockedTrainings = fresh.lockedTrainings
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
-        generalNetwork = fresh.generalNetwork
         sportYears = fresh.sportYears
         appliedJobIds = []
         appliedSchoolIds = []

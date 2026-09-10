@@ -303,11 +303,13 @@ extension Job {
         // credential, and no prior experience in the field, an applicant has
         // nothing to show and their odds sit at the floor. Unskilled roles need
         // nothing; regulated fields gate on their mandated degree/licence instead.
-        if !educationIsMandatory && !category.requiresCredentials && !isLowSkilled {
-            let hasEducation = player.degrees.contains { $0.eqf >= GameConstants.promotionMinEQF }
-            let hasCredential = player.trainingCareerBonus(for: category) > 0
-            let hasExperience = relevantYears(for: player) > 0
-            if !hasEducation && !hasCredential && !hasExperience { return 0.05 }
+        // A relevant skill-building credential (coding/game-dev/design/performing
+        // program) demonstrably helps you land a role in its field.
+        let credential = player.trainingCareerBonus(for: category)
+        if !educationIsMandatory, !category.requiresCredentials, !isLowSkilled,
+           !player.degrees.contains(where: { $0.eqf >= GameConstants.promotionMinEQF }),
+           credential == 0, relevantYears(for: player) == 0 {
+            return 0.05
         }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
@@ -329,9 +331,6 @@ extension Job {
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
-        // A relevant skill-building credential (coding/game-dev/design/performing
-        // program) demonstrably helps you land a role in its field.
-        let credential = player.trainingCareerBonus(for: category)
         let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough + credential)
             * salaryAlignmentFactor(requestedSalary: requestedSalary)
         return max(0.05, min(0.95, raw))
@@ -458,15 +457,27 @@ extension Job {
 // MARK: - Seniority helpers
 
 extension Job {
-    /// Title prefixes that mark a seniority variant of a base role. Used to
-    /// group seniority ladders under a single base title and to label the
-    /// rung within that ladder. Order matters only for display.
-    static let seniorityPrefixes: [String] = [
-        "Apprentice ", "Junior ", "Mid-Level ", "Senior ", "Lead ",
-        "Principal ", "Staff ", "Head ", "Sous ",
-        "Executive ", "Master ", "Charge ",
-        "Amateur ", "Professional ", "Elite "
+    /// The seniority ladder: every title prefix that marks a seniority variant
+    /// of a base role, paired with its rank within the ladder. Used to group
+    /// ladders under a single base title, to label a rung, and to find the next
+    /// rung up on promotion. Prefixes marking the same tier share a rank, so a
+    /// ladder climbs one recognised step at a time. Single source of truth —
+    /// adding a prefix here gives it a rank, so the two can't drift apart.
+    static let seniorityLadder: [(prefix: String, rank: Int)] = [
+        ("Apprentice ", 0), ("Junior ", 1), ("Mid-Level ", 2), ("Senior ", 3),
+        ("Lead ", 4), ("Principal ", 5), ("Staff ", 5), ("Head ", 4),
+        ("Sous ", 3), ("Executive ", 5), ("Master ", 5), ("Charge ", 4),
+        ("Amateur ", 0), ("Professional ", 3), ("Elite ", 4)
     ]
+
+    /// Title prefixes that mark a seniority variant of a base role, in ladder
+    /// declaration order. Derived from `seniorityLadder`.
+    static let seniorityPrefixes: [String] = seniorityLadder.map(\.prefix)
+
+    /// Rank keyed by prefix (without the trailing space), for `seniorityRank`.
+    private static let rankBySeniorityPrefix: [String: Int] = Dictionary(
+        uniqueKeysWithValues: seniorityLadder.map { (String($0.prefix.dropLast()), $0.rank) }
+    )
 
     /// Strips a recognised seniority prefix from `id`, returning the base role
     /// title. Jobs with no recognised prefix are their own base title.
@@ -494,20 +505,12 @@ extension Job {
         seniorityPrefix ?? "Standard"
     }
 
-    /// Ordered rank of this rung within its ladder, used to promote to the next
-    /// level up (same `baseTitle`). The bare base title (no prefix) sits
-    /// mid-ladder, between Junior and Senior; prefixes marking the same tier
-    /// share a rank so a ladder climbs one recognised step at a time.
+    /// Ordered rank of this rung within its ladder (see `seniorityLadder`), used
+    /// to promote to the next level up (same `baseTitle`). The bare base title
+    /// (no recognised prefix) sits mid-ladder, between Junior and Senior.
     var seniorityRank: Int {
-        switch seniorityPrefix {
-        case "Apprentice", "Amateur":                      return 0
-        case "Junior":                                     return 1
-        case "Mid-Level", .none:                           return 2
-        case "Senior", "Sous", "Professional":             return 3
-        case "Lead", "Head", "Charge", "Elite":            return 4
-        case "Principal", "Staff", "Executive", "Master":  return 5
-        default:                                           return 2
-        }
+        guard let prefix = seniorityPrefix else { return 2 }
+        return Job.rankBySeniorityPrefix[prefix] ?? 2
     }
 
     /// Player-facing occupation title. Founding a venture makes the player its

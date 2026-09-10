@@ -13,14 +13,14 @@ enum GameConstants {
     /// separate from the hobby/training spare-time slot.
     static let maxEventsPerYear: Int = 1
 
-    /// Years of same-industry work experience required to attend an event as a
-    /// **presenter** rather than a participant. You speak once you're an
-    /// established name in the field. See `CareerEvent.canPresent(with:)`.
+    /// Years of same-industry work experience required to take the stage at one
+    /// of its events. You speak once you're an established name in the field.
+    /// See `CareerEvent.canPresent(with:)`.
     static let presenterExperienceYears: Int = 5
 
-    /// Extra professional-network points a presenter banks over a participant
-    /// at the same event — being on stage puts more of the room in your orbit.
-    /// See `CareerEvent.networkPoints(for:)`.
+    /// Extra professional-network points taking the stage banks over the event's
+    /// raw weight — being on stage puts more of the room in your orbit.
+    /// See `CareerEvent.networkPoints`.
     static let presenterNetworkBonus: Int = 2
 
     /// Realistic mode: how many spare-time ventures (money hustles + fame
@@ -69,11 +69,12 @@ enum GameConstants {
     /// graduating) fire no confetti.
     static let luckyWinThreshold: Double = 0.20
 
-    /// Multiplier applied to the fame a shipped **project** banks (see `SideHustle`
-    /// fame plays). Like taking the stage at an event, a completed project is a
-    /// significant, industry-scoped fame driver — worth well more than its raw
-    /// catalogue weight — feeding the hiring fame bonus (`Player.fameHireBonus`).
-    static let projectFameMultiplier: Double = 2.0
+    /// Multiplier applied to the fame an **accomplishment** banks — a shipped
+    /// project (see `SideHustle` fame plays) or taking the stage at an event
+    /// (see `CareerEvent.presenterFameWeight`). Both are significant,
+    /// industry-scoped fame drivers, worth well more than their raw catalogue
+    /// weight, and feed the hiring fame bonus (`Player.fameHireBonus`).
+    static let accomplishmentFameMultiplier: Double = 2.0
 
     /// How much a founder can borrow to top up a venture stake once their savings
     /// are spent, as a multiple of their current annual income — a bank lends

@@ -163,23 +163,23 @@ struct SideHustle: Identifiable, Hashable {
     /// `experienceYears` lets an experience-building venture's odds rise with the
     /// player's years in its field.
     func resolve(for soft: SoftSkills, fameScore: Double = 0, experienceYears: Int = 0) -> Outcome {
-        let succeeded = Double.random(in: 0...1) < successProbability(for: soft, fameScore: fameScore, experienceYears: experienceYears)
-        guard succeeded else {
-            return Outcome(hustle: self, success: false, credit: 0, grantedFame: nil)
+        let odds = successProbability(for: soft, fameScore: fameScore, experienceYears: experienceYears)
+        guard Double.random(in: 0...1) < odds else {
+            return Outcome(hustle: self, success: false, odds: odds, credit: 0, grantedFame: nil)
         }
         switch payoff {
         case .money(let payoutRange):
             let base = Double(projectedPayout(for: soft))
             let jitter = Double.random(in: 0.75...1.25)
             let payout = max(payoutRange.lowerBound, Int((base * jitter).rounded()))
-            return Outcome(hustle: self, success: true, credit: payout, grantedFame: nil)
+            return Outcome(hustle: self, success: true, odds: odds, credit: payout, grantedFame: nil)
         case .fame(let category, let weight):
             // A shipped project is a strong fame driver, like presenting at an
             // event — the banked reputation is scaled up from the raw catalogue
-            // weight (see GameConstants.projectFameMultiplier).
-            let banked = weight * GameConstants.projectFameMultiplier
+            // weight (see GameConstants.accomplishmentFameMultiplier).
+            let banked = weight * GameConstants.accomplishmentFameMultiplier
             let grant = FameGrant(title: fameTitle ?? label, category: category, weight: banked)
-            return Outcome(hustle: self, success: true, credit: 0, grantedFame: grant)
+            return Outcome(hustle: self, success: true, odds: odds, credit: 0, grantedFame: grant)
         }
     }
 
@@ -194,6 +194,9 @@ struct SideHustle: Identifiable, Hashable {
     struct Outcome {
         let hustle: SideHustle
         let success: Bool
+        /// The success probability this year was rolled against — so a caller can
+        /// judge how long a shot the result was without recomputing the odds.
+        let odds: Double
         /// Money returned this year: the full payout on a money-venture success,
         /// else 0.
         let credit: Int

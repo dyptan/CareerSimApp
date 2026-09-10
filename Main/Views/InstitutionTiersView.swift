@@ -136,11 +136,9 @@ struct InstitutionTiersView: View {
                 .padding(.top, 4)
 
                 Button {
+                    // applyToSchool rolls the odds and fires the celebration for
+                    // a long-shot admission.
                     if player.applyToSchool(education) {
-                        // Beating long odds is worth a celebration.
-                        if admission < GameConstants.luckyWinThreshold {
-                            player.celebrationTrigger += 1
-                        }
                         enroll(in: education)
                     }
                 } label: {
