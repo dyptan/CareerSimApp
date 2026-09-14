@@ -231,7 +231,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .science: return "🔬"
         case .hospitality: return "🍽️"
         case .service: return "🛎️"
-        case .manufacturing: return "🧪"
+        case .manufacturing: return "🏭"
         case .entrepreneurship: return "🚀"
         case .transportation: return "🚚"
         case .administration: return "🗂️"
@@ -348,13 +348,13 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .service:
             return "Hairdresser, barber, beautician"
         case .manufacturing:
-            return "Plumber, electrician, welder"
+            return "Machinist, welder, machine operator, quality inspector"
         case .entrepreneurship:
             return "Side hustler, small business owner, startup founder"
         case .transportation:
             return "Driver, pilot, aircraft mechanic, air traffic controller, dispatcher, warehouse manager"
         case .administration:
-            return "Accountant, HR specialist, recruiter, office manager"
+            return "Accountant, HR specialist, payroll, office manager"
         }
     }
 }
