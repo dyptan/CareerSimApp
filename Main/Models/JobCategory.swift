@@ -188,6 +188,18 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Years that count toward this field: its own plus the industries it
+    /// credits (see `creditedExperienceCategories`). The single definition —
+    /// `Player.industryExperience` and `CareerEvent.canPresent` both read it, so
+    /// a founder's years count the same way when applying for a Business role
+    /// and when taking the stage at a Business event.
+    func creditedYears(in experience: [JobCategory: Int]) -> Int {
+        let own = experience[self] ?? 0
+        return creditedExperienceCategories.reduce(own) { total, other in
+            total + (experience[other] ?? 0)
+        }
+    }
+
     /// Other industries whose accumulated work experience *also* counts toward
     /// roles in this category. Business and Entrepreneurship credit each other:
     /// running your own venture builds the same commercial acumen a Business

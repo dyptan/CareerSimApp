@@ -486,11 +486,7 @@ final class Player: ObservableObject {
     /// from spare-time entrepreneurship projects — counts toward Business roles,
     /// and vice versa.
     func industryExperience(for category: JobCategory) -> Int {
-        let own = experience[category] ?? 0
-        let credited = category.creditedExperienceCategories.reduce(0) { total, other in
-            total + (experience[other] ?? 0)
-        }
-        return own + credited
+        category.creditedYears(in: experience)
     }
 
     /// Total professional-network points relevant to a field, built by taking

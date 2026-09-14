@@ -49,7 +49,7 @@ struct CareerEvent: Identifiable {
     /// Whether the player is established enough in this event's industry to take
     /// the stage: `GameConstants.presenterExperienceYears` of experience in it.
     func canPresent(with experience: [JobCategory: Int]) -> Bool {
-        (experience[category] ?? 0) >= GameConstants.presenterExperienceYears
+        category.creditedYears(in: experience) >= GameConstants.presenterExperienceYears
     }
 
     /// Professional-network points taking the stage here banks — more than the
@@ -239,7 +239,7 @@ enum EventCatalog {
             name: "Pitch Competition",
             icon: "🎤",
             blurb: "Work the room of founders and investors — or take the stage to pitch your idea and win it.",
-            category: .entrepreneurship,
+            category: .business,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1),
                 .init(keyPath: \.persuasionAndNegotiation, weight: 1)

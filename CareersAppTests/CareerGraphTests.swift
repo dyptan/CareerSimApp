@@ -588,7 +588,7 @@ final class CareerGraphTests: XCTestCase {
             "music-festival":   (.showBusiness,    .entertainment, "Festival Performer"),
             "tv-casting":       (.showBusiness,    .entertainment, "TV Personality"),
             "conference-talk":  (.business,        .business,      "Noted Speaker"),
-            "pitch-competition":(.entrepreneurship, .business,     "Pitch Winner"),
+            "pitch-competition":(.business,         .business,     "Pitch Winner"),
         ]
         for (id, (category, fame, title)) in expected {
             guard let event = EventCatalog.byId[id] else {
