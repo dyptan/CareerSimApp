@@ -451,7 +451,7 @@ extension Job {
         if isEntrepreneurial { return true }
         guard isTopLeadership else { return false }
         switch category {
-        case .business, .entrepreneurship, .finance, .technology:
+        case .business, .entrepreneurship, .technology:
             return true
         default:
             return false

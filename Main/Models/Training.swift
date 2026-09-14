@@ -510,7 +510,7 @@ extension Training {
         // or launching a venture in the field, plus the soft skills they build.
         .codingBootcamp:       .init(careerBoost: .init(categories: [.technology, .engineering], weight: 0.15)),
         .gameDevProgram:       .init(careerBoost: .init(categories: [.design, .technology], weight: 0.15)),
-        .productDesign:        .init(careerBoost: .init(categories: [.design, .fashion], weight: 0.15)),
+        .productDesign:        .init(careerBoost: .init(categories: [.design], weight: 0.15)),
         .musicProduction:      .init(careerBoost: .init(categories: [.showBusiness], weight: 0.12)),
     ]
 

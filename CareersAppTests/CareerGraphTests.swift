@@ -608,7 +608,7 @@ final class CareerGraphTests: XCTestCase {
         let expected: [Training: Set<JobCategory>] = [
             .codingBootcamp:     [.technology, .engineering],
             .gameDevProgram:     [.design, .technology],
-            .productDesign:      [.design, .fashion],
+            .productDesign:      [.design],
             .musicProduction:    [.showBusiness],
         ]
         for (training, categories) in expected {
@@ -704,7 +704,7 @@ final class CareerGraphTests: XCTestCase {
         // tops out its ladder but doesn't run a cap table.
         if let nonCommercial = jobs.first(where: {
             $0.isTopLeadership && !$0.isEntrepreneurial
-                && ![.business, .entrepreneurship, .finance, .technology].contains($0.category)
+                && ![.business, .entrepreneurship, .technology].contains($0.category)
         }) {
             XCTAssertFalse(nonCommercial.isExecutive,
                            "'\(nonCommercial.id)' is top leadership but shouldn't unlock the Boardroom.")

@@ -108,7 +108,7 @@ enum EventCatalog {
             name: "Finance & Markets Forum",
             icon: "💰",
             blurb: "Analysts, bankers, and traders comparing notes on the markets.",
-            category: .finance,
+            category: .business,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)

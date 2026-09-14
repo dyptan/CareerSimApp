@@ -77,21 +77,18 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case education = "Education"
     case agriculture = "Agriculture"
     case design = "Design"
-    case language = "Language"
-    case tourism = "Tourism"
     case law = "Law"
     case business = "Business"
     case construction = "Construction"
-    case automotive = "Automotive"
-    case aviation = "Aviation"
-    case maritime = "Maritime"
     case retail = "Retail"
     case science = "Science"
     case hospitality = "Hospitality"
-    case fashion = "Fashion"
     case service = "Personal Services"
     case manufacturing = "Manufacturing"
-    case finance = "Finance"
+    /// No jobs carry this category — ventures keep their real industry. It is
+    /// the experience bucket a founder's years accrue into (see
+    /// `Player.advanceYear` and `creditedExperienceCategories`), which is why it
+    /// stays even though the jobs list never shows it.
     case entrepreneurship = "Entrepreneurship"
     case transportation = "Transportation"
     case administration = "Administration"
@@ -112,11 +109,11 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .technology, .engineering:
             return .technology
-        case .business, .finance, .retail, .entrepreneurship, .administration:
+        case .business, .retail, .entrepreneurship, .administration:
             return .business
         case .science, .health, .education:
             return .science
-        case .design, .fashion, .language:
+        case .design:
             return .arts
         case .showBusiness:
             return .entertainment
@@ -131,15 +128,15 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .entrepreneurship:
             return 0.55   // founder income swings wildly with the venture
-        case .showBusiness, .fashion:
+        case .showBusiness:
             return 0.50   // heavily project-based / performance-driven
-        case .technology, .engineering, .aviation, .science:
+        case .technology, .engineering, .science:
             return 0.40   // bonuses, stock, market swings
-        case .business, .law, .finance:
+        case .business, .law:
             return 0.40
-        case .construction, .manufacturing, .automotive, .maritime:
+        case .construction, .manufacturing:
             return 0.30   // seasonal and contract variability
-        case .agriculture, .transportation, .retail, .service, .hospitality, .tourism:
+        case .agriculture, .transportation, .retail, .service, .hospitality:
             return 0.30
         case .health, .education, .publicServices:
             return 0.10   // salaried / regulated
@@ -154,7 +151,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// industries during an economic downturn (see `Player.applyEconomicTurmoil`).
     var isCyclical: Bool {
         switch self {
-        case .hospitality, .tourism, .retail, .showBusiness, .fashion, .entrepreneurship:
+        case .hospitality, .retail, .showBusiness, .entrepreneurship:
             return true
         default:
             return false
@@ -169,8 +166,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// portfolio work instead (see `Job.hardSkillsMet`).
     var requiresCredentials: Bool {
         switch self {
-        case .health, .transportation, .aviation, .maritime,
-             .law, .publicServices, .construction:
+        case .health, .transportation, .law, .publicServices, .construction:
             return true
         default:
             return false
@@ -216,21 +212,14 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .education: return "📚"
         case .agriculture: return "🌾"
         case .design: return "🖌️"
-        case .language: return "🗣️"
-        case .tourism: return "🧳"
         case .law: return "⚖️"
         case .business: return "💼"
         case .construction: return "🏗️"
-        case .automotive: return "🚗"
-        case .aviation: return "✈️"
-        case .maritime: return "🛳️"
         case .retail: return "🛒"
         case .science: return "🔬"
         case .hospitality: return "🍽️"
-        case .fashion: return "👗"
         case .service: return "🛎️"
         case .manufacturing: return "🧪"
-        case .finance: return "💰"
         case .entrepreneurship: return "🚀"
         case .transportation: return "🚚"
         case .administration: return "🗂️"
@@ -249,31 +238,17 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return .outdoors
         case .design:
             return .creative
-        case .language:
-            return .people
-        case .tourism:
-            return .people
         case .law:
             return .people
         case .business:
             return .people
         case .construction:
             return .tools
-        case .automotive:
-            return .tools
-        case .aviation:
-            return .tools
-        case .maritime:
-            return .outdoors
         case .retail:
             return .people
         case .science:
             return .science
         case .hospitality:
-            return .people
-        case .fashion:
-            return .creative
-        case .finance:
             return .people
         case .entrepreneurship:
             return .people
@@ -302,36 +277,22 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Farming, growing food, and taking care of animals. It's all about nurturing life."
         case .design:
             return "Make things look great and work well — logos, apps, clothes, rooms, and the worlds and characters in video games."
-        case .language:
-            return "Use words to connect people: translate, teach languages, write, and communicate."
-        case .tourism:
-            return "Help people explore new places: plan trips, guide tours, and make travel fun."
         case .law:
             return "Protect rights and follow rules: lawyers, judges, and helpers who know the law."
         case .business:
             return "Manage money, sell products, advise companies, and lead teams to succeed."
         case .construction:
             return "Build homes, roads, and cities with tools, machines, and teamwork."
-        case .automotive:
-            return "Work with cars and trucks: design, fix, and test vehicles."
-        case .aviation:
-            return "Fly and care for airplanes: pilots, mechanics, and air traffic helpers."
-        case .maritime:
-            return "Work on or near the sea: ships, ports, rescue, and caring for oceans."
         case .retail:
             return "Help customers find what they need in stores and online."
         case .science:
             return "Discover how the world works: labs, experiments, and new inventions."
         case .hospitality:
             return "Welcome and care for guests in hotels, restaurants, flights, and events to make their day great."
-        case .fashion:
-            return "Create clothing and styles, follow trends, and help people express themselves."
         case .service:
             return "Personal grooming and beauty services that help people look and feel their best."
         case .manufacturing:
             return "Make products from raw materials: factories, workshops, and artisans."
-        case .finance:
-            return "Manage money, investments, and financial risk: banks, markets, and accounting."
         case .entrepreneurship:
             return "Start your own business! Take a risk, build something new, and be your own boss."
         case .transportation:
@@ -360,36 +321,22 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Agriculturist, horticulturist, livestock"
         case .design:
             return "Graphic, UI/UX, fashion, interior, 3D modelling, game design"
-        case .language:
-            return "Translator, interpreter, language teacher"
-        case .tourism:
-            return "Tour guide, travel agent, event planner"
         case .law:
             return "Lawyer, paralegal, judge, legal assistant"
         case .business:
             return "Analyst, sales manager, consultant, translator"
         case .construction:
             return "Carpenter, electrician, plumber, site manager"
-        case .automotive:
-            return "Mechanic, auto designer, test driver"
-        case .aviation:
-            return "Pilot, flight attendant, aircraft mechanic"
-        case .maritime:
-            return "Sailor, marine engineer, coast guard"
         case .retail:
             return "Sales associate, merchandiser, store manager"
         case .science:
             return "Lab technician, research scientist"
         case .hospitality:
             return "Chef, server, housekeeper, flight attendant, hotel manager"
-        case .fashion:
-            return "Fashion designer, stylist, tailor, merchandiser"
         case .service:
             return "Hairdresser, barber, beautician"
         case .manufacturing:
             return "Plumber, electrician, welder"
-        case .finance:
-            return "Banker, financial analyst, accountant, trader, actuary"
         case .entrepreneurship:
             return "Side hustler, small business owner, startup founder"
         case .transportation:

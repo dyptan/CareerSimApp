@@ -379,15 +379,13 @@ enum JobCatalog {
     /// Where a role in `category` is done, absent an entry above.
     static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
         switch category {
-        case .administration, .business, .design, .engineering, .finance,
-             .language, .law, .science, .technology,
-             .fashion, .entrepreneurship:
+        case .administration, .business, .design, .engineering, .law,
+             .science, .technology, .entrepreneurship:
             return .office
-        case .agriculture, .automotive, .aviation, .construction, .manufacturing,
-             .maritime, .publicServices, .transportation:
+        case .agriculture, .construction, .manufacturing, .publicServices,
+             .transportation:
             return .field
-        case .education, .health, .hospitality, .retail, .service, .showBusiness,
-             .tourism:
+        case .education, .health, .hospitality, .retail, .service, .showBusiness:
             return .peopleFacing
         }
     }
@@ -437,7 +435,7 @@ enum JobCatalog {
                 presentationAndStorytelling: 2
             )
 
-        case .service, .hospitality, .retail, .tourism:
+        case .service, .hospitality, .retail:
             return .init(
                 analyticalReasoningAndProblemSolving: 0,
                 creativityAndInsightfulThinking: 1,
@@ -458,7 +456,7 @@ enum JobCatalog {
                 presentationAndStorytelling: 2
             )
 
-        case .construction, .manufacturing, .automotive:
+        case .construction, .manufacturing:
             return .init(
                 analyticalReasoningAndProblemSolving: 1,
                 creativityAndInsightfulThinking: 0,
@@ -477,7 +475,7 @@ enum JobCatalog {
                 presentationAndStorytelling: 0
             )
 
-        case .design, .showBusiness, .fashion:
+        case .design, .showBusiness:
             return .init(
                 analyticalReasoningAndProblemSolving: 1,
                 creativityAndInsightfulThinking: 4,
@@ -536,7 +534,7 @@ enum JobCatalog {
                 presentationAndStorytelling: 0
             )
 
-        case .agriculture, .maritime:
+        case .agriculture:
             return .init(
                 analyticalReasoningAndProblemSolving: 0,
                 creativityAndInsightfulThinking: 0,
