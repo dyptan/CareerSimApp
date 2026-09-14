@@ -68,23 +68,22 @@ struct JobDetail: View {
         let skillScore = Double(matched) / Double(scoredCount)
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
-        let education = job.educationFitTerm(for: player)
+        let fit = job.requirementFit(for: player)
         let shortfall = job.educationShortfall(for: player)
         let educationFitLabel = shortfall > 0
             ? "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
             : (job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field")
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
-        let experience = job.experienceFitTerm(for: player)
         let topPosition = job.isTopLeadership
         let fame = player.fameHireBonus(for: job.category, topPosition: topPosition)
         let showFame = fame > 0
         let fameLabel = job.category.fameCategory?.rawValue ?? "general"
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame + breakthrough
-        let raw = rawSum * salaryFit
-        let final = max(0.05, min(0.95, raw))
+        let merit = 0.2 + skillContribution + prestige + opportunity + network + fame + breakthrough
+        let raw = merit * fit.factor * salaryFit
+        let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw))
 
         func pct(_ v: Double) -> String {
             "\(Int((v * 100).rounded()))%"
@@ -108,17 +107,24 @@ struct JobDetail: View {
         let playerYears = job.relevantYears(for: player)
 
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(showFame ? " + Fame" : "")\(hasBreakthrough ? " + Breakthrough" : "") + Difficulty) × Salary fit
+        Formula: what you bring × how well you meet the requirements × salary fit.
 
-        Your numbers right now:
+        What you bring:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
-        • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education (\(educationFitLabel)): \(signed(education))" : "")
-        • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
+        • Degree prestige (\(prestigeLabel)): \(signed(prestige))
         • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
         • Difficulty bonus: \(signed(opportunity))
+        Subtotal: \(pct(merit))
+
+        How well you meet the requirements (these multiply — a requirement you
+        can't meet at all is ×0, which closes the role):
+        • Education (\(educationFitLabel)): ×\(String(format: "%.2f", fit.education))
+        • Licences and certificates: ×\(String(format: "%.2f", fit.credentials))
+        • Experience (\(playerYears)/\(expYears) yr expected): ×\(String(format: "%.2f", fit.experience))
         • Salary fit: \(pct(salaryFit))
-        Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
+
+        \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) = \(pct(raw))
         Final (clamped 5–95%): \(pct(final))
         \(softSkillsClause)
         """

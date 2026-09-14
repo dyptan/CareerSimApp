@@ -147,22 +147,30 @@ enum GameConstants {
     // thing an employer screens on after skills, so it carries real weight in
     // the score rather than being a rounding error.
 
-    /// Hire-odds cost per EQF level the applicant falls short of what the role
-    /// expects. Two levels short (high school for a bachelor's role) is −0.30.
-    static let educationShortfallPerLevel: Double = -0.15
+    /// Hire-odds *multiplier* lost per EQF level the applicant falls short of
+    /// what the role expects. Two levels short (high school for a bachelor's
+    /// role) multiplies the odds by 0.70.
+    static let educationShortfallPerLevel: Double = 0.15
 
-    /// Floor on that penalty, so no schooling at all for a degree-level role is
-    /// a long shot rather than an impossibility — an exceptional candidate can
-    /// still talk their way in.
-    static let educationShortfallFloor: Double = -0.60
+    /// Floor on that multiplier, so no schooling at all for a degree-level role
+    /// is a long shot rather than an impossibility — an exceptional candidate
+    /// can still talk their way in.
+    static let educationShortfallFloor: Double = 0.25
 
-    /// Hire-odds lift for holding the expected level in a field the role
-    /// accepts. The right degree, not merely a degree.
-    static let relevantDegreeBonus: Double = 0.10
+    /// Multiplier for holding the expected level in a field the role accepts.
+    /// The right degree, not merely a degree.
+    static let relevantDegreeMultiplier: Double = 1.10
 
-    /// Lift for clearing the level in an unrelated field — the qualification
-    /// counts for something, just not for much.
-    static let unrelatedDegreeBonus: Double = 0.03
+    /// Multiplier for clearing the level in an unrelated field — the
+    /// qualification counts for something, just not for much.
+    static let unrelatedDegreeMultiplier: Double = 1.03
+
+    /// Most a seasoned applicant's surplus experience can multiply the odds by.
+    static let experienceVeteranMultiplier: Double = 1.10
+
+    /// How fast surplus experience earns that lift, per whole extra multiple of
+    /// the expected years.
+    static let experienceVeteranRate: Double = 0.10
 
     /// Promotion-odds cost per EQF level short of the role's expected education.
     /// Smaller than the hiring penalty in absolute terms, but the promotion base

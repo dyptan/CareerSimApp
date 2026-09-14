@@ -58,8 +58,11 @@ enum CareerGraph {
             }
         }
 
-        if !job.experienceMet(for: player) {
-            gaps.append("\(job.requirements.minYearsExperience) yr(s) in \(job.category.rawValue)")
+        // Experience grades rather than gates now (see `Job.experienceFactor`):
+        // partial years scale the odds down, but only *no* relevant years closes
+        // the role outright. Report it as a blocker only when it is one.
+        if job.requirements.minYearsExperience > 0, job.relevantYears(for: player) == 0 {
+            gaps.append("Any experience in \(job.category.rawValue) (role expects \(job.requirements.minYearsExperience) yr)")
         }
         return gaps
     }

@@ -209,22 +209,6 @@ extension Job {
         return relevantYears(for: player) >= required
     }
 
-    /// Additive hire-probability adjustment from how the player's relevant
-    /// experience compares with what this employer expects — a *soft* factor,
-    /// not a gate. Meeting the (tier-scaled) expectation is neutral; falling
-    /// short penalises, down to −0.45 with no experience at all for a senior
-    /// posting; a seasoned, over-experienced applicant earns a small edge
-    /// (up to +0.10).
-    func experienceFitTerm(for player: Player) -> Double {
-        let expected = expectedYearsExperience
-        guard expected > 0 else { return 0.0 }
-        let ratio = Double(relevantYears(for: player)) / Double(expected)
-        if ratio >= 1.0 {
-            return min(0.10, (ratio - 1.0) * 0.10)
-        }
-        return (ratio - 1.0) * 0.45
-    }
-
     func hardSkillsMet(for player: Player) -> Bool {
         let req = requirements.hardSkills
         let held = player.hardSkills.trainings
@@ -266,21 +250,6 @@ extension Job {
         return player.age >= GameConstants.minimumWorkingAge
     }
 
-    func allRequirementsMet(for player: Player) -> Bool {
-        // Simplified mode hires on the degree (where mandatory) plus years in the
-        // field alone — no hard-skill gate.
-        if player.isSimplified {
-            return ageGateMet(for: player) && educationGateMet(for: player) && experienceMet(for: player)
-        }
-        // Hard gates: minimum working age (for unskilled roles), degree (only in
-        // regulated fields), hard skills (licences/certs/portfolio per field &
-        // employer), and a baseline of experience (`minYearsExperience`). Beyond
-        // that baseline, additional years further lift the hire probability
-        // (see `experienceFitTerm`); a non-mandatory degree and soft skills are
-        // helpful only.
-        return ageGateMet(for: player) && educationGateMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
-    }
-
     /// The player's best formal qualification, in EQF levels. Uses the highest
     /// degree held rather than the most recent one, so taking a vocational
     /// course after a degree doesn't read as a downgrade.
@@ -298,8 +267,8 @@ extension Job {
     /// level *in a field the role accepts*. Roles below degree level list no
     /// accepted fields, so any qualification counts there.
     ///
-    /// One definition, read by both the hire and the promotion terms, so "the
-    /// right degree" can't come to mean two different things.
+    /// One definition, read by the hiring factor and the promotion term alike,
+    /// so "the right degree" can't come to mean two different things.
     func hasAcceptedDegree(for player: Player) -> Bool {
         let required = requirements.education.minEQF
         let qualifying = player.degrees.filter { $0.eqf >= required }
@@ -313,28 +282,80 @@ extension Job {
         }
     }
 
-    /// Education's contribution to the hire odds where a degree is *not* a hard
-    /// gate — which is everywhere outside the regulated professions, and 67 of
-    /// the catalogue's roles expect a degree without requiring one.
+    /// Every hard requirement expressed as a factor on the hire odds.
     ///
-    /// Falling short costs `educationShortfallPerLevel` a level down to a floor;
-    /// clearing the bar pays, and pays more when the degree is in a field the
-    /// role actually accepts. Previously this term was penalty-only and capped
-    /// at −0.30, so an applicant with no schooling still reached ~60% for a
-    /// bachelor's role and an unrelated degree scored exactly like a relevant
-    /// one.
-    func educationFitTerm(for player: Player) -> Double {
-        guard !educationIsMandatory else { return 0.0 }
+    /// There used to be two mechanisms: a boolean gate (`allRequirementsMet`)
+    /// beside an additive score, and they disagreed — `experienceFitTerm`'s
+    /// entire shortfall branch was unreachable, because the gate had already
+    /// returned zero for anyone short of the baseline. Here a requirement that
+    /// is genuinely absolute — a statutory licence, a degree in a regulated
+    /// profession, no relevant experience whatsoever — contributes **zero**, and
+    /// zero times anything is zero. That is what makes it absolute; nothing else
+    /// has to agree with it. Everything else grades.
+    struct RequirementFit {
+        let age: Double
+        let education: Double
+        let credentials: Double
+        let experience: Double
+
+        /// The combined multiplier applied to the soft-skill score.
+        var factor: Double { age * education * credentials * experience }
+        /// Nothing can overcome a zero — the role is closed to this player today.
+        var isBlocked: Bool { factor == 0 }
+    }
+
+    /// How well the player satisfies this role's requirements, as factors.
+    func requirementFit(for player: Player) -> RequirementFit {
+        RequirementFit(
+            age: ageGateMet(for: player) ? 1.0 : 0.0,
+            education: educationFactor(for: player),
+            // Simplified mode hires on degree + experience alone — no licence gate.
+            credentials: (player.isSimplified || hardSkillsMet(for: player)) ? 1.0 : 0.0,
+            experience: experienceFactor(for: player)
+        )
+    }
+
+    /// True when no requirement is a hard blocker. Derived from
+    /// `requirementFit` so the gate and the odds can never disagree.
+    func allRequirementsMet(for player: Player) -> Bool {
+        !requirementFit(for: player).isBlocked
+    }
+
+    /// Education as a multiplier. In the regulated professions the degree is
+    /// absolute, so it is 1 or 0. Everywhere else it grades: short of the
+    /// expected level costs `educationShortfallPerLevel` a level down to a
+    /// floor, and clearing the bar pays — more in a field the role accepts than
+    /// in an unrelated one.
+    func educationFactor(for player: Player) -> Double {
+        if educationIsMandatory || player.isSimplified {
+            return educationGateMet(for: player) ? 1.0 : 0.0
+        }
         let required = requirements.education.minEQF
-        guard required > 0 else { return 0.0 }
+        guard required > 0 else { return 1.0 }
         let shortfall = educationShortfall(for: player)
         if shortfall > 0 {
             return max(GameConstants.educationShortfallFloor,
-                       Double(shortfall) * GameConstants.educationShortfallPerLevel)
+                       1.0 - Double(shortfall) * GameConstants.educationShortfallPerLevel)
         }
         return hasAcceptedDegree(for: player)
-            ? GameConstants.relevantDegreeBonus
-            : GameConstants.unrelatedDegreeBonus
+            ? GameConstants.relevantDegreeMultiplier
+            : GameConstants.unrelatedDegreeMultiplier
+    }
+
+    /// Experience as a multiplier: pro-rata up to what the employer expects, a
+    /// modest edge beyond it, and zero with no relevant years at all — you can't
+    /// claim a background you don't have. Simplified mode keeps the old
+    /// all-or-nothing answer, so a young player sees "you qualify" or not.
+    func experienceFactor(for player: Player) -> Double {
+        let required = requirements.minYearsExperience
+        guard required > 0 else { return 1.0 }
+        if player.isSimplified { return experienceMet(for: player) ? 1.0 : 0.0 }
+        let ratio = Double(relevantYears(for: player)) / Double(required)
+        if ratio >= 1.0 {
+            return min(GameConstants.experienceVeteranMultiplier,
+                       1.0 + (ratio - 1.0) * GameConstants.experienceVeteranRate)
+        }
+        return ratio
     }
 
     /// Education's contribution to the annual promotion odds. Being
@@ -364,7 +385,10 @@ extension Job {
         if isEntrepreneurial {
             return founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
         }
-        guard allRequirementsMet(for: player) else { return 0.0 }
+        // One formula: the hard requirements are factors, not a separate gate.
+        // A zero among them closes the role outright.
+        let fit = requirementFit(for: player)
+        guard !fit.isBlocked else { return 0.0 }
         // Breakthrough gate: a career like Professional Player is effectively
         // closed without its signature fame award (a junior-competition win) —
         // odds sit at the floor no matter how skilled the applicant, in every
@@ -379,31 +403,20 @@ extension Job {
         // Simplified mode: meeting the gate (degree + experience) is a sure hire.
         // No skill score, prestige, tier, or salary-fit adjustments.
         if player.isSimplified { return 1.0 }
-        // Unregulated fields never *hard-gate* a role on a degree or credential —
-        // you can always apply. But a skilled role still needs some qualification
-        // behind it: with no post-secondary education, no field-relevant
-        // credential, and no prior experience in the field, an applicant has
-        // nothing to show and their odds sit at the floor. Unskilled roles need
-        // nothing; regulated fields gate on their mandated degree/licence instead.
         // A relevant skill-building credential (coding/game-dev/design/performing
         // program) demonstrably helps you land a role in its field.
+        //
+        // The old "nothing to show" special case lived here — a hardcoded 0.05
+        // for an applicant with no degree, credential or experience. The
+        // requirement factors express that by composition now: missing education
+        // multiplies down to its floor, and the absence of a credential or
+        // experience simply earns nothing.
         let credential = player.trainingCareerBonus(for: category)
-        if !educationIsMandatory, !category.requiresCredentials, !isLowSkilled,
-           !player.degrees.contains(where: { $0.eqf >= GameConstants.promotionMinEQF }),
-           credential == 0, relevantYears(for: player) == 0 {
-            return 0.05
-        }
         let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
         let prestige = relevantPrestigeBonus(for: player)
-        // Where a degree isn't mandatory, falling short of the expected level
-        // still costs probability (a relevant degree helps you stand out).
-        let education = educationFitTerm(for: player)
         // A professional network in this field — built by attending its summits
         // and conferences — tilts the odds in the applicant's favour.
         let network = player.networkBonus(for: category)
-        // Experience the employer expects: a shortfall drags the
-        // odds down, a seasoned applicant nudges them up.
-        let experience = experienceFitTerm(for: player)
         // Industry-scoped fame opens doors — and a body of accomplished projects
         // (the main fame source) is a significant lift for roles in that same
         // field: a strong portfolio nearly rivals the soft-skill fit term, but
@@ -413,8 +426,10 @@ extension Job {
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
-        let raw = (0.2 + skillScore * 0.7 + prestige + education + player.difficulty.opportunityBonus + network + experience + fame + breakthrough + credential)
-            * salaryAlignmentFactor(requestedSalary: requestedSalary)
+        // What the applicant brings, before the requirements are applied.
+        let merit = 0.2 + skillScore * 0.7 + prestige + player.difficulty.opportunityBonus
+            + network + fame + breakthrough + credential
+        let raw = merit * fit.factor * salaryAlignmentFactor(requestedSalary: requestedSalary)
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
         // to the top. Founders make their own seat, so they're exempt.

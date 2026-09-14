@@ -163,11 +163,11 @@ final class CatalogIntegrityTests: XCTestCase {
         XCTAssertTrue(job.educationGateMet(for: none),
                       "A degree must not hard-gate \(job.id) — it isn't a regulated profession.")
 
-        let terms = [none, short, unrelated, relevant].map { job.educationFitTerm(for: $0) }
+        let terms = [none, short, unrelated, relevant].map { job.educationFactor(for: $0) }
         XCTAssertEqual(terms, terms.sorted(),
-                       "Education should improve monotonically: none <= short <= unrelated <= relevant, got \(terms).")
-        XCTAssertLessThan(terms[0], 0, "No degree should cost probability for a degree-level role.")
-        XCTAssertGreaterThan(terms[3], 0, "The expected degree in an accepted field should pay.")
+                       "Education multiplier should improve monotonically: none <= short <= unrelated <= relevant, got \(terms).")
+        XCTAssertLessThan(terms[0], 1, "No degree should scale the odds down for a degree-level role.")
+        XCTAssertGreaterThan(terms[3], 1, "The expected degree in an accepted field should pay.")
         XCTAssertGreaterThan(terms[3] - terms[0], 0.25,
                              "A degree should swing the odds substantially, not marginally.")
         XCTAssertGreaterThan(terms[3], terms[2],
