@@ -178,15 +178,8 @@ private struct RoleGroupRow: View {
                 .background(Color(.systemGray))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(baseTitle)
-                    .font(.headline)
-                if variants.count > 1 {
-                    Text("\(variants.count) seniority levels")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            Text(baseTitle)
+                .font(.headline)
             Spacer()
         }
         .padding()
