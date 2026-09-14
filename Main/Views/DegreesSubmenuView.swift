@@ -3,8 +3,9 @@ import SwiftUI
 /// Second level of the education nav stack — everything this field of study
 /// offers, in the order you would climb it: the degree levels (Vocational /
 /// Bachelor / Master / Doctorate), each navigating into `InstitutionTiersView`,
-/// then the professional courses and licences filed under the same profile (see
-/// `Training.profile`) — a nursing licence sits with the health degrees.
+/// then the professional courses filed under the same profile (see
+/// `Training.profile`) — the EMT course sits with the health degrees. Licences
+/// are not courses of study and stay in their own list on the sheet root.
 struct DegreesSubmenuView: View {
     @ObservedObject var player: Player
     let profile: TertiaryProfile
@@ -64,7 +65,7 @@ struct DegreesSubmenuView: View {
                 }
             }
             if !courses.isEmpty {
-                Section("Courses & licences") {
+                Section("Courses") {
                     ForEach(courses, id: \.rawValue) { training in
                         TrainingRow(
                             training: training,

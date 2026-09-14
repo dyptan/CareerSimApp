@@ -216,27 +216,38 @@ final class CatalogIntegrityTests: XCTestCase {
     private var baseTitles: Set<String> { Set(JobCatalog.allBaseTitles) }
 
     /// The Education sheet files each course under its field of study and lists
-    /// the fieldless ones itself. Every credential must land in exactly one of
+    /// the licences on their own. Every credential must land in exactly one of
     /// those two places, or a course the game still gates jobs on would be
     /// unreachable.
     func testEveryTrainingIsReachableInEducation() {
-        let filed = Set(Training.profileByTraining.keys)
-        let general = Set(Training.allCases).subtracting(filed)
+        let filed = Set(Training.allCases.filter { $0.profile != nil })
+        let general = Set(Training.allCases.filter { $0.profile == nil })
         XCTAssertEqual(filed.union(general), Set(Training.allCases),
                        "Every training is either filed under a profile or general.")
         XCTAssertTrue(filed.isDisjoint(with: general),
                       "No training may be in both places.")
-        // The general bucket is small and deliberate — the licences earned through
-        // an apprenticeship or a school of their own rather than a faculty. A new
-        // credential landing here is a mapping the author forgot, so name them
-        // explicitly.
-        let expectedGeneral: Set<Training> = [
-            .drivers, .cdl, .pilot, .commercialPilot, .airlineTransportPilot, .atcCertification,
-            .electrician, .masterElectrician, .plumber, .masterPlumber,
-        ]
-        XCTAssertEqual(general, expectedGeneral,
-                       "Unfiled credentials: \(general.map(\.rawValue).sorted()). "
-                       + "Add a Training.profileByTraining row, or add it to the expected list.")
+    }
+
+    /// A licence qualifies you to practise rather than teaching you a field, so
+    /// it is never filed under a faculty — it belongs to the general list.
+    func testStatutoryLicencesAreNeverFiledUnderAProfile() {
+        for training in Training.allCases where training.isStatutory {
+            XCTAssertNil(training.profile,
+                         "\(training.rawValue) is a licence and must stay general.")
+            XCTAssertNil(Training.profileByTraining[training],
+                         "\(training.rawValue) is a licence — drop its profileByTraining row.")
+        }
+    }
+
+    /// The converse: every course *is* filed. An unfiled one would silently fall
+    /// into the licence list, where a player looking for it in their field would
+    /// never find it.
+    func testEveryCourseIsFiledUnderAProfile() {
+        for training in Training.allCases where !training.isStatutory {
+            XCTAssertNotNil(training.profile,
+                            "\(training.rawValue) is a course with no field of study. "
+                            + "Add a Training.profileByTraining row.")
+        }
     }
 
     /// A course filed under a profile has to be findable: its profile must be one

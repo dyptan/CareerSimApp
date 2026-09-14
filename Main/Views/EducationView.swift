@@ -6,10 +6,10 @@ import SwiftUI
 /// a nursing licence is found where the health degrees are rather than in a list
 /// of its own.
 ///
-/// The one section that stays here is the general licences — driving, flying and
-/// the building trades — which belong to no field of study. They are picked
-/// inline, since a course is a yes-or-no commitment rather than a choice of
-/// school.
+/// The one section that stays here is the licences. A licence qualifies you to
+/// practise rather than teaching you a field, so it sits on its own rather than
+/// under a faculty. Both kinds are picked inline, since a course is a yes-or-no
+/// commitment rather than a choice of school.
 struct EducationView: View {
     @ObservedObject var player: Player
 
@@ -39,8 +39,8 @@ struct EducationView: View {
         TrainingRow.available(for: player)
     }
 
-    /// Courses that belong to no field of study, so they have nowhere to be
-    /// filed and are listed here instead (see `Training.profile`).
+    /// The licences, which belong to no field of study and so are listed here
+    /// rather than under a faculty (see `Training.profile`).
     private var generalCourses: [Training] {
         availableTrainings.filter { $0.profile == nil }
     }
@@ -98,7 +98,7 @@ struct EducationView: View {
                 }
             }
             if !generalCourses.isEmpty {
-                Section("General licences") {
+                Section("Licences") {
                     ForEach(generalCourses, id: \.rawValue) { training in
                         TrainingRow(
                             training: training,

@@ -384,50 +384,39 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     }()
 
     /// The academic field a credential belongs to, so the **Education** sheet can
-    /// file it under the same profile as the degrees in that field — a nursing
-    /// licence sits with the health degrees, the bar exam with the law degrees.
+    /// file a course under the same profile as the degrees in that field — the
+    /// EMT course sits with the health degrees, the teaching certificate with the
+    /// education degrees.
     ///
-    /// `nil` for the credentials that belong to no field of study — the driving
-    /// and flying licences and the building trades. They are earned through an
-    /// apprenticeship or a school of their own rather than a faculty, so they
-    /// are listed on their own rather than filed under someone else's.
-    var profile: TertiaryProfile? { Training.profileByTraining[self] }
+    /// `nil` for every statutory licence. A licence is not a course of study: it
+    /// is an examination you sit once the law says you may, often after years on
+    /// the job, and it qualifies you to practise rather than teaching you a
+    /// field. They are listed on their own instead of under a faculty.
+    var profile: TertiaryProfile? {
+        guard !isStatutory else { return nil }
+        return Training.profileByTraining[self]
+    }
 
-    /// One row per credential that belongs to a field of study. Anything absent
-    /// is deliberately general (see `profile`) — `CatalogIntegrityTests` checks
-    /// every training is reachable either way.
+    /// One row per *course* — the non-statutory credentials, which do belong to a
+    /// field of study. Statutory licences are general by rule (see `profile`) and
+    /// must not appear here; `CatalogIntegrityTests` enforces both halves.
     static let profileByTraining: [Training: TertiaryProfile] = [
-        // Health: the care ladder from assistant to consultant.
         .cna: .health,
-        .lpn: .health,
-        .nurse: .health,
-        .np: .health,
         .emt: .health,
-        .medicalLicense: .health,
         .boardCertified: .health,
         .dentalAssistant: .health,
-        .dentalLicense: .health,
-        .pharmacistLicense: .health,
-        .veterinaryLicense: .health,
 
         .teachingCertificate: .education,
         .cpa: .business,
-        .bar: .law,
-        .pesticideApplicator: .agriculture,
         .musicProduction: .arts,
-
-        .professionalEngineer: .engineering,
-
-        .architect: .design,
         .productDesign: .design,
 
         .codingBootcamp: .technology,
         .gameDevProgram: .technology,
 
-        // Service: the people-facing credentials.
+        // Service: the people-facing courses.
         .cosmetology: .service,
         .flightAttendantCert: .service,
-        .securityGuard: .service,
     ]
 
     /// A credential's soft edge in one or more career fields (see `careerBoost`).
