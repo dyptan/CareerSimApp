@@ -301,27 +301,10 @@ struct JobDetail: View {
 
             if isFounder {
                 founderInvestmentSection
-            } else if isSimplified {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("Salary:")
-                            .font(.title2.bold())
-                        Spacer()
-                        Text("\(job.income.formatted(.number)) $/yr")
-                            .font(.headline)
-                    }
-                    .padding(.horizontal)
-
-                    HStack(spacing: 6) {
-                        Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
-                            .font(.subheadline)
-                            .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                }
-            } else {
+            } else if canNegotiate {
                 salaryNegotiationSection
+            } else {
+                postedSalarySection
             }
 
             applyButton
@@ -359,7 +342,66 @@ struct JobDetail: View {
         }
     }
 
-    // MARK: - Employee application (salary negotiation)
+    // MARK: - Employee application (pay)
+
+    /// Whether this application offers a salary slider. Simplified mode never
+    /// negotiates — it keeps the money simple — and neither do roles that pay a
+    /// posted rate (see `Job.salaryIsNegotiable`).
+    private var canNegotiate: Bool { !isSimplified && job.salaryIsNegotiable }
+
+    /// Pay for a role you take at the advertised rate. Still shows the hire
+    /// odds in the realistic modes — what you can't argue about, you can still
+    /// weigh.
+    private var postedSalarySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Salary:")
+                    .font(.title2.bold())
+                Spacer()
+                Text("\(job.income.formatted(.number)) $/yr")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+
+            Text(isSimplified
+                 ? "The rate for this role."
+                 : "This role pays the going rate — there's no offer to argue over.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal)
+
+            HStack(spacing: 6) {
+                Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
+                    .font(.subheadline)
+                    .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
+                Spacer()
+            }
+            .padding(.horizontal)
+
+            if !isSimplified {
+                hireProbabilityRow
+            }
+        }
+        .padding(.vertical)
+    }
+
+    /// The odds readout, shared by both pay sections so it reads the same either
+    /// way.
+    private var hireProbabilityRow: some View {
+        HStack(spacing: 6) {
+            Text("Hire probability:")
+            InfoHint(
+                title: "How hire probability is calculated",
+                message: hireProbabilityFormulaText
+            )
+            Spacer()
+            Text("\(Int(hireProbability * 100)) %")
+                .font(.headline)
+                .foregroundStyle(Color.forOdds(hireProbability))
+        }
+        .padding(.horizontal)
+        .padding(.top, 4)
+    }
 
     private var salaryNegotiationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -387,19 +429,7 @@ struct JobDetail: View {
             }
             .padding(.horizontal)
 
-            HStack(spacing: 6) {
-                Text("Hire probability:")
-                InfoHint(
-                    title: "How hire probability is calculated",
-                    message: hireProbabilityFormulaText
-                )
-                Spacer()
-                Text("\(Int(hireProbability * 100)) %")
-                    .font(.headline)
-                    .foregroundStyle(Color.forOdds(hireProbability))
-            }
-            .padding(.horizontal)
-            .padding(.top, 4)
+            hireProbabilityRow
         }
         .padding(.vertical)
     }
@@ -544,7 +574,7 @@ struct JobDetail: View {
         }
 
         var levers: [String] = []
-        if job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
+        if canNegotiate, job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
             levers.append("lower your salary ask")
         }
         levers.append("build the soft skills and experience this role weighs")

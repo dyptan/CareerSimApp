@@ -10,6 +10,32 @@ final class CatalogIntegrityTests: XCTestCase {
     private var fullTitles: Set<String> { Set(JobCatalog.allTitles) }
     private var baseTitles: Set<String> { Set(JobCatalog.allBaseTitles) }
 
+    /// Pay is argued over in professional office work and posted everywhere else.
+    /// Pinning both directions keeps the rule from drifting as roles are added.
+    func testOnlyProfessionalOfficeRolesNegotiateSalary() {
+        let jobs = JobCatalog.allJobs().filter { !$0.isEntrepreneurial }
+        for job in jobs where job.salaryIsNegotiable {
+            XCTAssertEqual(job.workSetting, .office,
+                           "\(job.id) negotiates pay but isn't office work.")
+            XCTAssertGreaterThanOrEqual(job.requirements.education.minEQF,
+                                        GameConstants.negotiableSalaryMinEQF,
+                                        "\(job.id) negotiates pay below the professional bar.")
+        }
+        // Hand-on and people-facing work is always a posted rate, however senior.
+        for job in jobs where job.workSetting != .office {
+            XCTAssertFalse(job.salaryIsNegotiable,
+                           "\(job.id) is \(job.workSetting.rawValue) work — pay should be posted.")
+        }
+        // A founder sets their own terms; there is no offer to negotiate.
+        for job in JobCatalog.allJobs() where job.isEntrepreneurial {
+            XCTAssertFalse(job.salaryIsNegotiable, "\(job.id) is a venture, not an offer.")
+        }
+        // The rule has to actually split the catalogue, not collapse to one side.
+        let negotiable = jobs.filter(\.salaryIsNegotiable).count
+        XCTAssertGreaterThan(negotiable, 0, "No role negotiates — the bar is too high.")
+        XCTAssertLessThan(negotiable, jobs.count, "Every role negotiates — the bar does nothing.")
+    }
+
     /// The Education sheet files each course under its field of study and lists
     /// the licences on their own. Every credential must land in exactly one of
     /// those two places, or a course the game still gates jobs on would be
