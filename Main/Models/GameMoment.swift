@@ -168,3 +168,122 @@ enum MomentCatalog {
             .max { $0.priority < $1.priority }
     }
 }
+
+
+/// What the footer offers this year: the few actions that matter now, with the
+/// rest a tap away under **More**.
+///
+/// A pure function of player state, deliberately kept out of the view so what
+/// the player is steered toward can be reasoned about — and tested — without
+/// rendering anything. Availability is unchanged from when the footer listed
+/// everything at once; only how much of it reaches the surface is new.
+enum FooterActions {
+
+    struct Action: Identifiable, Hashable {
+        let label: String
+        let route: MomentRoute
+        var id: String { label }
+    }
+
+    /// Most actions on the surface at once. Beyond this the row stops reading as
+    /// "what should I do this year?" and starts reading as a menu — which is
+    /// what **More** and the contextual moments are for.
+    static let surfacedLimit = 3
+
+    /// Everything currently available, in catalogue order. Each condition is the
+    /// gate the footer already applied: a button only appears when its sheet
+    /// would have something in it.
+    static func available(for player: Player) -> [Action] {
+        let stage = LifeStage.forAge(player.age)
+        var actions: [Action] = []
+        if hobbies.contains(where: { $0.stages.contains(stage) }) {
+            actions.append(.init(label: "Hobbies", route: .hobbies))
+        }
+        if Sport.allCases.contains(where: { $0.stages.contains(stage) }) {
+            actions.append(.init(label: "Sports", route: .sports))
+        }
+        if !player.isSimplified, !player.experience.isEmpty {
+            actions.append(.init(label: "Events", route: .events))
+        }
+        // Trainings: realistic mode, EQF >= Primary, and a stage-eligible
+        // training in the catalogue.
+        if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1,
+           Training.allCases.contains(where: { $0.stages.contains(stage) }) {
+            actions.append(.init(label: "Trainings", route: .trainings))
+        }
+        // Jobs open at legal working age; before that the player is in school
+        // and nothing in the list applies.
+        if player.age >= GameConstants.minimumWorkingAge {
+            actions.append(.init(label: "Jobs", route: .careers))
+        }
+        if SideHustleCatalog.all.contains(where: { $0.stages.contains(stage) }) {
+            actions.append(.init(label: "Projects", route: .projects))
+        }
+        // The founder path is a realistic-mode adult play, and only one venture
+        // runs at a time — once founded it becomes the occupation, so this hides
+        // until the player exits it.
+        if !player.isSimplified,
+           player.age >= GameConstants.minimumEntrepreneurAge,
+           player.currentOccupation?.isEntrepreneurial != true {
+            actions.append(.init(label: "Ventures", route: .ventures))
+        }
+        if player.canMakeExecutiveDecisions {
+            actions.append(.init(label: "Boardroom", route: .boardroom))
+        }
+        // Higher education matters only after high school; before that schooling
+        // progresses on its own.
+        if player.age >= GameConstants.minimumTertiaryAge {
+            actions.append(.init(label: "Education", route: .education))
+        }
+        return actions
+    }
+
+    /// How much an action matters *right now*. Keyed on the player's situation
+    /// rather than life stage alone, because "unemployed at 30" and "employed at
+    /// 30" want different things first.
+    static func prominence(of route: MomentRoute, for player: Player) -> Int {
+        let stage = LifeStage.forAge(player.age)
+        let schoolAge = stage == .child || stage == .teen
+        switch route {
+        case .careers:
+            // Out of work is the most urgent thing on screen — unless the player
+            // is still school-age, where schooling comes first.
+            if player.currentOccupation != nil { return 45 }
+            return schoolAge ? 60 : 100
+        case .education:
+            // `currentEducation` tracks *all* schooling and a new player starts
+            // enrolled in primary school, so this asks whether the study in
+            // progress is tertiary. Otherwise every player counts as mid-degree
+            // and Education never leaves the surface.
+            let studyingTertiary = (player.currentEducation?.eqf ?? 0) >= 4
+            return studyingTertiary ? 90 : (schoolAge ? 70 : 35)
+        case .boardroom:  return 85   // rare, and the point of having got there
+        case .hobbies:    return schoolAge ? 80 : 30
+        case .sports:     return schoolAge ? 75 : 25
+        case .projects:   return schoolAge ? 40 : 65   // a working adult's staple
+        case .events:     return 60
+        case .trainings:  return 50
+        // A big, rare decision rather than a yearly one — and the coming-of-age
+        // moment already announces it, so it needn't hold a permanent slot.
+        case .ventures:   return 40
+        case .dismiss:    return 0
+        }
+    }
+
+    /// The few that reach the footer itself, in catalogue order so buttons don't
+    /// jump around between turns as prominence shifts.
+    static func surfaced(for player: Player) -> [Action] {
+        let all = available(for: player)
+        let top = all
+            .sorted { prominence(of: $0.route, for: player) > prominence(of: $1.route, for: player) }
+            .prefix(surfacedLimit)
+        let keep = Set(top.map(\.id))
+        return all.filter { keep.contains($0.id) }
+    }
+
+    /// Everything else — one tap away under **More**, never dropped.
+    static func overflow(for player: Player) -> [Action] {
+        let keep = Set(surfaced(for: player).map(\.id))
+        return available(for: player).filter { !keep.contains($0.id) }
+    }
+}

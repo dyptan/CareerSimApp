@@ -105,6 +105,102 @@ final class GameMomentTests: XCTestCase {
     }
 }
 
+/// What the footer puts in front of the player. The footer used to list every
+/// available action at once; it now surfaces the few that matter and keeps the
+/// rest under **More**. These tests guard the two things that would make that a
+/// regression rather than a simplification: losing an action, and steering the
+/// player at the wrong one.
+final class FooterActionTests: XCTestCase {
+
+    private func player(age: Int, job: Job? = nil, degree: Level.Stage? = nil,
+                        enrolledIn: Level.Stage? = nil, experienced: Bool = false,
+                        mode: Difficulty = .default) -> Player {
+        let p = Player()
+        p.age = age
+        p.difficulty = mode
+        p.currentOccupation = job
+        if let degree { p.degrees = [Education(degree)] }
+        p.currentEducation = enrolledIn.map {
+            $0 == .Bachelor ? Education($0, profile: .technology) : Education($0)
+        }
+        if experienced { p.experience[.technology] = 5 }
+        return p
+    }
+
+    /// Nothing may be dropped: hiding an action behind **More** is fine, losing
+    /// it is not. Swept across a whole life and every employment state.
+    func testNothingIsEverLost() {
+        let dev = JobCatalog.allJobs().first { $0.baseTitle == "Software Engineer" }
+        let exec = JobCatalog.allJobs().first { $0.isExecutive && !$0.isEntrepreneurial }
+        for age in 7...70 {
+            for job in [nil, dev, exec] {
+                let p = player(age: age, job: job, degree: .Bachelor, experienced: age > 20)
+                let available = Set(FooterActions.available(for: p).map(\.id))
+                let shown = Set(FooterActions.surfaced(for: p).map(\.id))
+                let more = Set(FooterActions.overflow(for: p).map(\.id))
+                XCTAssertEqual(shown.union(more), available,
+                               "age \(age): surfaced + overflow must equal everything available.")
+                XCTAssertTrue(shown.isDisjoint(with: more),
+                              "age \(age): an action must not be in both places.")
+                XCTAssertLessThanOrEqual(shown.count, FooterActions.surfacedLimit,
+                                         "age \(age): too many actions on the surface.")
+            }
+        }
+    }
+
+    /// Being out of work is the most urgent thing on screen.
+    func testUnemployedAdultIsSteeredAtJobs() {
+        let p = player(age: 30, degree: .Bachelor, experienced: true)
+        XCTAssertTrue(FooterActions.surfaced(for: p).contains { $0.route == .careers },
+                      "An unemployed adult should see Jobs without opening More.")
+    }
+
+    /// Someone who already has a job shouldn't be nagged to find one; their year
+    /// goes on projects, events and training.
+    func testEmployedAdultIsSteeredAtTheirYear() {
+        guard let job = JobCatalog.allJobs().first(where: { $0.baseTitle == "Software Engineer" }) else { return }
+        let p = player(age: 30, job: job, degree: .Bachelor, experienced: true)
+        let shown = FooterActions.surfaced(for: p).map(\.route)
+        XCTAssertTrue(shown.contains(.projects), "An employed adult's staple should be on the surface.")
+        XCTAssertFalse(shown.contains(.careers), "An employed adult shouldn't be steered at Jobs.")
+    }
+
+    /// A child's year is hobbies and sports, not the job market.
+    func testChildIsSteeredAtChildhood() {
+        let p = player(age: 8, enrolledIn: .PrimarySchool)
+        let shown = FooterActions.surfaced(for: p).map(\.route)
+        XCTAssertTrue(shown.contains(.hobbies))
+        XCTAssertTrue(shown.contains(.sports))
+        XCTAssertFalse(shown.contains(.careers))
+    }
+
+    /// The Boardroom is rare and the point of having got there.
+    func testExecutiveSeesTheBoardroom() {
+        guard let exec = JobCatalog.allJobs().first(where: { $0.isExecutive && !$0.isEntrepreneurial }) else { return }
+        let p = player(age: 45, job: exec, degree: .Bachelor, experienced: true)
+        XCTAssertTrue(FooterActions.surfaced(for: p).contains { $0.route == .boardroom },
+                      "An executive should see the Boardroom without opening More.")
+    }
+
+    /// Regression: `currentEducation` tracks *all* schooling and a new player
+    /// starts enrolled in primary school, so a naive "is studying" check made
+    /// every player count as mid-degree and pinned Education to the surface.
+    func testPrimarySchoolEnrolmentDoesNotPinEducationToTheSurface() {
+        let p = player(age: 30, degree: .Bachelor, enrolledIn: .PrimarySchool, experienced: true)
+        XCTAssertLessThan(
+            FooterActions.prominence(of: .education, for: p),
+            FooterActions.prominence(of: .projects, for: p),
+            "Being enrolled in primary school shouldn't outrank an adult's actual options.")
+    }
+
+    /// Someone genuinely mid-degree should see it.
+    func testUniversityStudentSeesEducation() {
+        let p = player(age: 19, degree: .HighSchool, enrolledIn: .Bachelor)
+        XCTAssertTrue(FooterActions.surfaced(for: p).contains { $0.route == .education },
+                      "A student mid-degree should see Education on the surface.")
+    }
+}
+
 /// Structural invariants of the hand-written catalogues.
 ///
 /// The per-title override tables in `JobCatalog` are keyed by title *string*, so

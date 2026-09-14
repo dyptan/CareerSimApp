@@ -531,7 +531,7 @@ struct MomentView: View {
             VStack(spacing: 8) {
                 ForEach(moment.options) { option in
                     Button {
-                        open(option.route)
+                        appUIState.open(option.route)
                         onResolve()
                     } label: {
                         Text(option.label)
@@ -550,21 +550,6 @@ struct MomentView: View {
         #endif
     }
 
-    /// The only place that knows how a route becomes an open sheet.
-    private func open(_ route: MomentRoute) {
-        switch route {
-        case .education:  appUIState.showTertiarySheet = true
-        case .careers:    appUIState.showCareersSheet = true
-        case .trainings:  appUIState.showTrainingsSheet = true
-        case .projects:   appUIState.showSideHustlesSheet = true
-        case .ventures:   appUIState.showEntrepreneurshipSheet = true
-        case .boardroom:  appUIState.showExecutiveSheet = true
-        case .hobbies:    appUIState.showHobbiesSheet = true
-        case .sports:     appUIState.showSportsSheet = true
-        case .events:     appUIState.showEventsSheet = true
-        case .dismiss:    break
-        }
-    }
 }
 
 // MARK: - First-run coach

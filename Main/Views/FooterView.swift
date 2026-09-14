@@ -133,69 +133,25 @@ struct FooterView: View {
         }
     }
 
-    /// Everything the player can *do* with the year, as a row that wraps onto
-    /// extra lines when the window is too narrow to hold it.
+    /// What the player can do with the year: the few that matter now, with the
+    /// rest a tap away. Wraps onto extra lines when the window is narrow. The
+    /// choosing lives in `FooterActions` — this only renders it.
     @ViewBuilder
     private var activityButtons: some View {
+        let surfaced = FooterActions.surfaced(for: player)
+        let overflow = FooterActions.overflow(for: player)
         FooterButtonRow {
-            if hasHobbies {
-                Button("Hobbies") { appUIState.showHobbiesSheet = true }
+            ForEach(surfaced) { action in
+                Button(action.label) { appUIState.open(action.route) }
             }
 
-            if hasSports {
-                Button("Sports") { appUIState.showSportsSheet = true }
-            }
-
-            if !player.isSimplified, !player.experience.isEmpty {
-                Button("Events") { appUIState.showEventsSheet = true }
-            }
-
-            // Trainings (certifications + licences): realistic mode, EQF ≥
-            // Primary, and a stage-eligible training in the catalogue.
-            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
-                Button("Trainings") { appUIState.showTrainingsSheet = true }
-            }
-
-            // Jobs open up once the player reaches legal working age; before
-            // that they're in school and nothing in the list is applicable.
-            if player.age >= GameConstants.minimumWorkingAge {
-                Button("Jobs") {
-                    appUIState.showCareersSheet.toggle()
+            if !overflow.isEmpty {
+                Menu("More") {
+                    ForEach(overflow) { action in
+                        Button(action.label) { appUIState.open(action.route) }
+                    }
                 }
-            }
-
-            if hasSideHustles {
-                Button("Projects") { appUIState.showSideHustlesSheet = true }
-            }
-
-            // The entrepreneurial path (founder ventures + spare-time business
-            // plays) is a realistic-mode feature — it stakes capital and turns
-            // on soft skills, fame, and the economy, none of which exist in
-            // Simplified, so the whole surface is hidden there. It's also an
-            // adult play, so it stays hidden until the player reaches the
-            // entrepreneur age (a 7-year-old shouldn't see a Ventures button).
-            // Only one venture runs at a time: once the player has founded one
-            // (it becomes their occupation), the button hides until they exit
-            // it — sell out or go bankrupt — which clears the occupation.
-            if !player.isSimplified,
-               player.age >= GameConstants.minimumEntrepreneurAge,
-               player.currentOccupation?.isEntrepreneurial != true {
-                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-            }
-
-            // Boardroom: senior-leadership strategy plays, shown only once the
-            // player holds an executive seat (CEO, director, partner, founder).
-            if player.canMakeExecutiveDecisions {
-                Button("Boardroom") { appUIState.showExecutiveSheet = true }
-            }
-
-            // Higher education (vocational/university) becomes relevant only
-            // after high school; until then primary/middle/high school progress
-            // automatically, so the menu stays hidden.
-            if player.age >= GameConstants.minimumTertiaryAge {
-                Button("Education") {
-                    appUIState.showTertiarySheet.toggle()
-                }
+                .fixedSize()
             }
         }
     }
