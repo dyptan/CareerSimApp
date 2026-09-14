@@ -913,8 +913,8 @@ final class Player: ObservableObject {
         // Competitions: training a sport now automatically enters you into its
         // top eligible contest — no menu, no entry fee. Win odds start low and
         // climb with the trained years (and the soft skills training builds).
-        // A win pays the prize and banks a lasting achievement (Entertainment
-        // fame that helps land spotlight roles), then surfaces a celebration dialog.
+        // A win pays no money — it banks a lasting achievement (Entertainment
+        // fame that helps land spotlight roles) and surfaces a celebration dialog.
         var competitionWins = 0
         let currentStage = LifeStage.forAge(age)
         for sport in competedSports {
@@ -924,13 +924,12 @@ final class Player: ObservableObject {
             ) else { continue }
             let odds = competition.winProbability(for: softSkills, years: years)
             if Double.random(in: 0...1) < odds {
-                savings += competition.prize
                 award(competition.achievement, icon: competition.icon,
                       category: .entertainment, weight: competition.fameWeight)
                 competitionWins += 1
                 celebrateIfLucky(odds)
                 recordStatus("🏆", "Won \(competition.achievement)")
-                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a \(competition.prize.formatted(.number)) $ prize and a boost to your reputation."
+                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a lasting boost to your reputation."
                 showCompetitionWinAlert = true
             }
         }
