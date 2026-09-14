@@ -226,11 +226,13 @@ final class CatalogIntegrityTests: XCTestCase {
                        "Every training is either filed under a profile or general.")
         XCTAssertTrue(filed.isDisjoint(with: general),
                       "No training may be in both places.")
-        // The general bucket is small and deliberate — the licences earned at a
-        // school of their own. A new credential landing here is a mapping the
-        // author forgot, so name them explicitly.
+        // The general bucket is small and deliberate — the licences earned through
+        // an apprenticeship or a school of their own rather than a faculty. A new
+        // credential landing here is a mapping the author forgot, so name them
+        // explicitly.
         let expectedGeneral: Set<Training> = [
             .drivers, .cdl, .pilot, .commercialPilot, .airlineTransportPilot, .atcCertification,
+            .electrician, .masterElectrician, .plumber, .masterPlumber,
         ]
         XCTAssertEqual(general, expectedGeneral,
                        "Unfiled credentials: \(general.map(\.rawValue).sorted()). "

@@ -6,10 +6,10 @@ import SwiftUI
 /// a nursing licence is found where the health degrees are rather than in a list
 /// of its own.
 ///
-/// The one section that stays here is the general licences — driving and flying
-/// — which belong to no field of study and qualify you across the whole job
-/// market. They are picked inline, since a course is a yes-or-no commitment
-/// rather than a choice of school.
+/// The one section that stays here is the general licences — driving, flying and
+/// the building trades — which belong to no field of study. They are picked
+/// inline, since a course is a yes-or-no commitment rather than a choice of
+/// school.
 struct EducationView: View {
     @ObservedObject var player: Player
 

@@ -387,10 +387,10 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// file it under the same profile as the degrees in that field — a nursing
     /// licence sits with the health degrees, the bar exam with the law degrees.
     ///
-    /// `nil` for the credentials that belong to no field of study: the driving
-    /// and flying licences are earned at a school of their own and qualify you
-    /// for work across the whole job market, so they are listed on their own
-    /// rather than filed under someone else's faculty.
+    /// `nil` for the credentials that belong to no field of study — the driving
+    /// and flying licences and the building trades. They are earned through an
+    /// apprenticeship or a school of their own rather than a faculty, so they
+    /// are listed on their own rather than filed under someone else's.
     var profile: TertiaryProfile? { Training.profileByTraining[self] }
 
     /// One row per credential that belongs to a field of study. Anything absent
@@ -416,14 +416,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         .pesticideApplicator: .agriculture,
         .musicProduction: .arts,
 
-        // Engineering covers the building trades too: the game has no separate
-        // construction faculty, and a trade licence is the same kind of
-        // qualification — earned on the job, examined, then practised.
         .professionalEngineer: .engineering,
-        .electrician: .engineering,
-        .masterElectrician: .engineering,
-        .plumber: .engineering,
-        .masterPlumber: .engineering,
 
         .architect: .design,
         .productDesign: .design,
