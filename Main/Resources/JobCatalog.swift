@@ -331,6 +331,59 @@ enum JobCatalog {
         "Architect": [.engineering, .design, .arts],
     ]
 
+    // MARK: - Work setting
+
+    /// Roles whose day-to-day setting isn't what their industry suggests. Keyed
+    /// by base title, so every rung of a ladder shares it.
+    static let workSettingByBaseTitle: [String: WorkSetting] = [
+        // Engineering: most of it is desk work, but civil engineering is site work.
+        "Civil Engineer": .field,
+        // Health: the chief medical officer runs the hospital from an office.
+        "Chief Medical Officer": .office,
+        // Hospitality: back of house is hands-on, not customer-facing.
+        "Chef": .field,
+        "Baker": .field,
+        "Dishwasher": .field,
+        "Food Preparation Worker": .field,
+        "Housekeeper": .field,
+        "Janitor/Cleaner": .field,
+        "Event Planner": .office,
+        // Logistics: the warehouse floor, not the planning desk.
+        "Warehouse Manager": .field,
+        // Public services: case work is people work.
+        "Social Worker": .peopleFacing,
+        // Science: bench work is hands-on; writing up the research isn't.
+        "Lab Technician": .field,
+        // Show business: the desk trades behind the spotlight.
+        "Content Writer": .office,
+        "Video Editor": .office,
+        "Social Media Manager": .office,
+        "Art Director": .office,
+        "Editor-in-Chief": .office,
+        // …and the ones that are out chasing the story or the shot.
+        "Journalist": .field,
+        "Photographer": .field,
+        "Painter (Artist)": .field,
+        // Transportation: the tower is a control room, not a cab.
+        "Air Traffic Controller": .office,
+    ]
+
+    /// Where a role in `category` is done, absent an entry above.
+    static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
+        switch category {
+        case .administration, .business, .design, .engineering, .finance,
+             .gaming, .language, .law, .logistics, .science, .technology,
+             .fashion, .entrepreneurship:
+            return .office
+        case .agriculture, .automotive, .aviation, .construction, .manufacturing,
+             .maritime, .publicServices, .transportation:
+            return .field
+        case .education, .health, .hospitality, .retail, .service, .showBusiness,
+             .tourism:
+            return .peopleFacing
+        }
+    }
+
     // MARK: - Category defaults
 
     static func defaultSoftSkills(for category: JobCategory) -> SoftSkills {
@@ -589,7 +642,9 @@ enum JobCatalog {
         return Job(id: title, category: category, income: income,
                    summary: summary, icon: icon, requirements: requirements,
                    targetCapital: targetCapital,
-                   baseTitle: baseTitle, rung: rung, rungLabel: rungLabel)
+                   baseTitle: baseTitle, rung: rung, rungLabel: rungLabel,
+                   workSetting: workSettingByBaseTitle[baseTitle]
+                       ?? defaultWorkSetting(for: category))
     }
 
     /// A role with no ladder: its own base title, sitting at rung 0.

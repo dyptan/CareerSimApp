@@ -7,13 +7,36 @@ struct JobsView: View {
     /// Advances the game year and dismisses, via the shared **Next ▸** control.
     var onNext: (() -> Void)? = nil
 
+    /// Narrows the list to one kind of work; `nil` shows every setting.
+    @State private var settingFilter: WorkSetting?
+    /// Hides roles whose hard requirements the player doesn't meet yet.
+    @State private var qualifiedOnly = false
+
+    /// Whether a posting survives the current filters. Both are catalogue facts,
+    /// so filtering never changes what a role *is* — only what's listed.
+    private func matchesFilters(_ job: Job) -> Bool {
+        if let settingFilter, job.workSetting != settingFilter { return false }
+        if qualifiedOnly, !job.allRequirementsMet(for: player) { return false }
+        return true
+    }
+
+    private var filteredJobs: [Job] {
+        availableJobs.filter { !$0.isEntrepreneurial && matchesFilters($0) }
+    }
+
+    /// Roles left after filtering — the count shown under the filter controls, so
+    /// an empty list reads as "the filter is strict", not "the game is broken".
+    private var matchingRoleCount: Int {
+        Set(filteredJobs.map(\.baseTitle)).count
+    }
+
     func categories() -> [JobCategory] {
         // Ventures live on their own surface (see `EntrepreneurshipView`) — a
         // founder play is a capital-staked bet, not salaried employment. Ventures
         // now keep their true industry category, so they're filtered out by
         // `isEntrepreneurial` rather than by category (a category still lists its
         // ordinary jobs).
-        Array(Set(availableJobs.filter { !$0.isEntrepreneurial }.map(\.category)))
+        Array(Set(filteredJobs.map(\.category)))
             .sorted { $0.rawValue < $1.rawValue }
     }
 
@@ -21,7 +44,7 @@ struct JobsView: View {
     /// role family. Each entry's `variants` are sorted from least to most
     /// senior using `minYearsExperience` (with `income` as a tiebreaker).
     private func roleGroups(in category: JobCategory) -> [RoleGroup] {
-        let inCategory = availableJobs.filter { $0.category == category && !$0.isEntrepreneurial }
+        let inCategory = filteredJobs.filter { $0.category == category }
         let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
         return grouped
             .map { (key, value) -> RoleGroup in
@@ -53,6 +76,8 @@ struct JobsView: View {
 
     private var content: some View {
         List {
+            filterSection
+
             ForEach(categories()) { category in
                 NavigationLink {
                     List {
@@ -87,8 +112,48 @@ struct JobsView: View {
                         .padding(.vertical, 6)
                 }
             }
+            if categories().isEmpty {
+                Text("No roles match these filters. Widen the setting, or turn off \"Only roles I qualify for\".")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 8)
+            }
         }
         .gameSheetClose($showCareersSheet, title: "Jobs", onNext: onNext)
+    }
+
+    /// Filters sit above the list rather than behind a toolbar button: on a small
+    /// screen a hidden filter is a filter nobody finds.
+    @ViewBuilder
+    private var filterSection: some View {
+        Section {
+            HStack(spacing: 6) {
+                Text("Kind of work")
+                InfoHint(
+                    title: "Kind of work",
+                    message: WorkSetting.allCases
+                        .map { "\($0.pictogram) \($0.rawValue) — \($0.blurb)" }
+                        .joined(separator: "\n\n")
+                )
+                Spacer()
+                Picker("Kind of work", selection: $settingFilter) {
+                    Text("Any").tag(WorkSetting?.none)
+                    ForEach(WorkSetting.allCases) { setting in
+                        Text("\(setting.pictogram) \(setting.rawValue)").tag(WorkSetting?.some(setting))
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+            }
+
+            Toggle("Only roles I qualify for", isOn: $qualifiedOnly)
+                .platformToggleStyle()
+        } footer: {
+            Text(matchingRoleCount == 1 ? "1 role" : "\(matchingRoleCount) roles")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 
 }

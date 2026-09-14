@@ -27,6 +27,45 @@ enum FameCategory: String, CaseIterable, Identifiable, Codable {
     }
 }
 
+/// Where a role is actually done — the day-to-day setting rather than the
+/// industry. Lets the jobs list answer "what kind of work is this?", which
+/// `JobCategory` alone can't: technology holds both a support desk and a data
+/// centre, and hospitality holds both a waiter and a dishwasher.
+///
+/// Stated per role (see `JobCatalog.workSettingByBaseTitle`), never inferred
+/// from a proxy such as the outdoor-resilience requirement — a soft-skill bar is
+/// evidence about a role, not a statement of where it happens.
+enum WorkSetting: String, CaseIterable, Identifiable, Codable {
+    /// Desk and screen work: offices, studios, labs of the paperwork kind.
+    case office = "Office"
+    /// Hands-on and on your feet — building sites, kitchens, warehouses, farms,
+    /// vehicles, wards where the work is physical rather than clerical.
+    case field = "Field"
+    /// The job *is* dealing with people face to face: serving, teaching, caring,
+    /// selling, performing.
+    case peopleFacing = "People-facing"
+
+    var id: String { rawValue }
+
+    /// Pictogram for filter chips and role rows.
+    var pictogram: String {
+        switch self {
+        case .office: return "🗄️"
+        case .field: return "🛠️"
+        case .peopleFacing: return "🤝"
+        }
+    }
+
+    /// One-line explanation for the filter's info hint.
+    var blurb: String {
+        switch self {
+        case .office: return "Desk work — planning, analysing, designing, writing."
+        case .field: return "Hands-on work — building, fixing, driving, growing, cooking."
+        case .peopleFacing: return "Working directly with people — serving, teaching, caring, performing."
+        }
+    }
+}
+
 enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case engineering = "Engineering"
     /// Entertainment and the spotlight: performing arts, media/creators, and

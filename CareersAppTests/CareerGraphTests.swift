@@ -23,6 +23,7 @@ final class CatalogIntegrityTests: XCTestCase {
             ("softSkillsByBaseTitle", Array(JobCatalog.softSkillsByBaseTitle.keys)),
             ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
             ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
+            ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
         ]
         let known = baseTitles
         for (name, keys) in tables {
@@ -115,6 +116,26 @@ final class CatalogIntegrityTests: XCTestCase {
         let bases = JobCatalog.allBaseTitles
         let dupes = Set(bases.filter { b in bases.filter { $0 == b }.count > 1 }).sorted()
         XCTAssertTrue(dupes.isEmpty, "Base titles collide: \(dupes).")
+    }
+
+    /// Every work setting must be represented, or the jobs filter would offer a
+    /// chip that matches nothing.
+    func testEveryWorkSettingHasRoles() {
+        let jobs = JobCatalog.allJobs().filter { !$0.isEntrepreneurial }
+        for setting in WorkSetting.allCases {
+            let roles = Set(jobs.filter { $0.workSetting == setting }.map(\.baseTitle))
+            XCTAssertFalse(roles.isEmpty, "No role is \(setting.rawValue) — the filter would show an empty list.")
+        }
+    }
+
+    /// A ladder is one role, so its rungs must share a setting — otherwise the
+    /// same job would appear under two different filters as the player climbs.
+    func testLadderRungsShareAWorkSetting() {
+        for ladder in JobCatalog.ladders {
+            let settings = Set(JobCatalog.jobs(for: ladder).map(\.workSetting))
+            XCTAssertEqual(settings.count, 1,
+                           "\(ladder.name) rungs disagree on work setting: \(settings.map(\.rawValue).sorted()).")
+        }
     }
 
     /// Every credential must have a row in `rulesByTraining`. Without this, a new

@@ -26,10 +26,14 @@ struct Job: Identifiable, Codable, Hashable {
     /// Seniority label for this rung — "Senior", "Lead" — or empty for the rung
     /// that carries the bare role name and for roles with no ladder.
     let rungLabel: String
+    /// Where the work actually happens (see `WorkSetting`). Stated in the
+    /// catalogue, so the jobs list can filter on it.
+    let workSetting: WorkSetting
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
          requirements: Requirements, targetCapital: Int? = nil,
-         baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "") {
+         baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "",
+         workSetting: WorkSetting = .office) {
         self.id = id
         self.category = category
         self.income = income
@@ -40,6 +44,7 @@ struct Job: Identifiable, Codable, Hashable {
         self.baseTitle = baseTitle ?? id
         self.rung = rung
         self.rungLabel = rungLabel
+        self.workSetting = workSetting
         let variance = category.salaryVariance
         let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
         self.annualIncome = Int(Double(income) * factor)
