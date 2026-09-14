@@ -312,49 +312,5 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .administration:
             return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
         }
-
-    }
-
-    var examples: String {
-        switch self {
-        case .publicServices:
-            return "Police, firefighter, municipal worker, security guard, social worker"
-        case .education:
-            return "Tutor, teacher, department head"
-        case .health:
-            return "Doctor, nurse, dentist, paramedic, therapist"
-        case .engineering:
-            return "Civil, mechanical, electrical, robotics"
-        case .technology:
-            return "Developer, tester, security, data, gameplay programming"
-        case .showBusiness:
-            return "Actor, musician, athlete, TV host, content creator, coach"
-        case .agriculture:
-            return "Agriculturist, horticulturist, livestock"
-        case .design:
-            return "Graphic, UI/UX, fashion, interior, 3D modelling, game design"
-        case .law:
-            return "Lawyer, paralegal, judge, legal assistant"
-        case .business:
-            return "Analyst, sales manager, consultant, translator"
-        case .construction:
-            return "Carpenter, electrician, plumber, site manager"
-        case .retail:
-            return "Sales associate, merchandiser, store manager"
-        case .science:
-            return "Lab technician, research scientist"
-        case .hospitality:
-            return "Chef, server, housekeeper, flight attendant, hotel manager"
-        case .service:
-            return "Hairdresser, barber, beautician"
-        case .manufacturing:
-            return "Machinist, welder, machine operator, quality inspector"
-        case .entrepreneurship:
-            return "Side hustler, small business owner, startup founder"
-        case .transportation:
-            return "Driver, pilot, aircraft mechanic, air traffic controller, dispatcher, warehouse manager"
-        case .administration:
-            return "Accountant, HR specialist, payroll, office manager"
-        }
     }
 }
