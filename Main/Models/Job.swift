@@ -13,9 +13,23 @@ struct Job: Identifiable, Codable, Hashable {
     /// this venture. Drives success odds (see `founderSuccessProbability`).
     /// `nil` for ordinary employee jobs.
     let targetCapital: Int?
+    /// The role this job is a rung of, irrespective of seniority — the career
+    /// ladder it belongs to (see `JobCatalog.LadderSpec`). Stored, not parsed
+    /// from the title: two rungs share a ladder because they were declared
+    /// together, not because their titles happen to share a suffix. A role with
+    /// no ladder is its own base title.
+    let baseTitle: String
+    /// Position within that ladder, entry rung first. Promotion moves to
+    /// `rung + 1`, so two rungs can never tie for "next" the way parsed
+    /// seniority prefixes could.
+    let rung: Int
+    /// Seniority label for this rung — "Senior", "Lead" — or empty for the rung
+    /// that carries the bare role name and for roles with no ladder.
+    let rungLabel: String
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
-         requirements: Requirements, targetCapital: Int? = nil) {
+         requirements: Requirements, targetCapital: Int? = nil,
+         baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "") {
         self.id = id
         self.category = category
         self.income = income
@@ -23,6 +37,9 @@ struct Job: Identifiable, Codable, Hashable {
         self.icon = icon
         self.requirements = requirements
         self.targetCapital = targetCapital
+        self.baseTitle = baseTitle ?? id
+        self.rung = rung
+        self.rungLabel = rungLabel
         let variance = category.salaryVariance
         let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
         self.annualIncome = Int(Double(income) * factor)
@@ -165,7 +182,7 @@ extension Job {
     /// Standalone roles credit related industries too — notably, entrepreneurship
     /// experience counts toward Business roles (see `Player.industryExperience`).
     func relevantYears(for player: Player) -> Int {
-        if seniorityPrefix != nil {
+        if isLadderVariant {
             return player.experienceByRole[baseTitle] ?? 0
         }
         return player.industryExperience(for: category)
@@ -469,63 +486,14 @@ extension Job {
 // MARK: - Seniority helpers
 
 extension Job {
-    /// The seniority ladder: every title prefix that marks a seniority variant
-    /// of a base role, paired with its rank within the ladder. Used to group
-    /// ladders under a single base title, to label a rung, and to find the next
-    /// rung up on promotion. Prefixes marking the same tier share a rank, so a
-    /// ladder climbs one recognised step at a time. Single source of truth —
-    /// adding a prefix here gives it a rank, so the two can't drift apart.
-    static let seniorityLadder: [(prefix: String, rank: Int)] = [
-        ("Apprentice ", 0), ("Junior ", 1), ("Mid-Level ", 2), ("Senior ", 3),
-        ("Lead ", 4), ("Principal ", 5), ("Staff ", 5), ("Head ", 4),
-        ("Sous ", 3), ("Executive ", 5), ("Master ", 5), ("Charge ", 4),
-        ("Amateur ", 0), ("Professional ", 3), ("Elite ", 4),
-        // Show-business star ladders (Movie Star / Pop Star): a breakout rung
-        // and an apex, sharing the bare title as the mid rung.
-        ("Rising ", 1), ("A-List ", 5)
-    ]
+    /// Whether this job is a rung of a multi-step ladder rather than a
+    /// standalone role — i.e. it carries a seniority label.
+    var isLadderVariant: Bool { !rungLabel.isEmpty }
 
-    /// Title prefixes that mark a seniority variant of a base role, in ladder
-    /// declaration order. Derived from `seniorityLadder`.
-    static let seniorityPrefixes: [String] = seniorityLadder.map(\.prefix)
-
-    /// Rank keyed by prefix (without the trailing space), for `seniorityRank`.
-    private static let rankBySeniorityPrefix: [String: Int] = Dictionary(
-        uniqueKeysWithValues: seniorityLadder.map { (String($0.prefix.dropLast()), $0.rank) }
-    )
-
-    /// Strips a recognised seniority prefix from `id`, returning the base role
-    /// title. Jobs with no recognised prefix are their own base title.
-    static func baseTitle(of id: String) -> String {
-        for p in seniorityPrefixes where id.hasPrefix(p) {
-            return String(id.dropFirst(p.count))
-        }
-        return id
-    }
-
-    var baseTitle: String { Job.baseTitle(of: id) }
-
-    /// The seniority prefix stripped from `id` (without the trailing space),
-    /// or `nil` for a job whose title has no recognised prefix.
-    var seniorityPrefix: String? {
-        for p in Job.seniorityPrefixes where id.hasPrefix(p) {
-            return String(p.dropLast())
-        }
-        return nil
-    }
-
-    /// Player-facing label for this seniority level. Falls back to "Standard"
-    /// when the job title carries no seniority prefix.
+    /// Player-facing label for this seniority level. "Standard" for the rung
+    /// that carries the bare role name.
     var seniorityLabel: String {
-        seniorityPrefix ?? "Standard"
-    }
-
-    /// Ordered rank of this rung within its ladder (see `seniorityLadder`), used
-    /// to promote to the next level up (same `baseTitle`). The bare base title
-    /// (no recognised prefix) sits mid-ladder, between Junior and Senior.
-    var seniorityRank: Int {
-        guard let prefix = seniorityPrefix else { return 2 }
-        return Job.rankBySeniorityPrefix[prefix] ?? 2
+        rungLabel.isEmpty ? "Standard" : rungLabel
     }
 
     /// Player-facing occupation title. Founding a venture makes the player its
@@ -560,7 +528,7 @@ extension Job {
     /// ("Make it to the top") for the simplified game mode. Covers apex seniority
     /// rungs, chief/director titles, and the explicit manager capstones.
     var isTopLeadership: Bool {
-        if let prefix = seniorityPrefix, Job.leadershipPrefixes.contains(prefix) {
+        if Job.leadershipPrefixes.contains(rungLabel) {
             return true
         }
         if Job.capstoneTitles.contains(id) {

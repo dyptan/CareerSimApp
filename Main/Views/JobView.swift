@@ -203,7 +203,7 @@ struct JobDetail: View {
                     .padding()
 
                 let playerYears = job.relevantYears(for: player)
-                let expLabel = job.seniorityPrefix != nil
+                let expLabel = job.isLadderVariant
                     ? "\(baseYears) yr as \(job.baseTitle)"
                     : "\(baseYears) yr in \(job.category.rawValue)"
                 RequirementRow(
@@ -225,7 +225,7 @@ struct JobDetail: View {
 
                     // Standalone roles credit related industries too — notably,
                     // entrepreneurship experience counts toward Business roles.
-                    let credited = job.seniorityPrefix == nil
+                    let credited = !job.isLadderVariant
                         ? job.category.creditedExperienceCategories
                         : []
                     if !credited.isEmpty {

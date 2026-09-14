@@ -755,20 +755,22 @@ final class Player: ObservableObject {
             if !isSimplified, !recessionThisYear, let current = currentOccupation {
                 let odds = promotionChance(for: current)
                 if Double.random(in: 0...1) < odds {
-                    // Prefer a real rung change: move up to the next seniority
-                    // level in the same ladder the player now qualifies for (its
-                    // full requirements — degree, credential, and the tenure just
+                    // Prefer a real rung change: step to the next rung of the
+                    // same ladder, provided the player now meets its full
+                    // requirements (degree, credential, and the tenure just
                     // banked). Only fall back to an in-place merit raise when
-                    // there's no higher rung, or the player doesn't yet meet the
-                    // next one's bar. Read off this year's postings (regenerated
-                    // above, and unpruned since promotions are frozen in a
-                    // recession) so the rung pays what its posting advertises.
+                    // there's no rung above, or the player doesn't yet meet its
+                    // bar. The ladder declares its own order, so "the next rung"
+                    // is a single unambiguous job. Read off this year's postings
+                    // (regenerated above, and unpruned since promotions are
+                    // frozen in a recession) so the rung pays what its posting
+                    // advertises.
                     let base = current.baseTitle
-                    let rank = current.seniorityRank
-                    var nextRung = availableJobs
-                        .filter { $0.baseTitle == base && $0.seniorityRank > rank
-                            && $0.allRequirementsMet(for: self) }
-                        .min { $0.seniorityRank < $1.seniorityRank }
+                    let nextIndex = current.rung + 1
+                    var nextRung = availableJobs.first {
+                        $0.baseTitle == base && $0.rung == nextIndex
+                            && $0.allRequirementsMet(for: self)
+                    }
 
                     // C-suite scarcity: taking an executive seat clears one more
                     // competitive hurdle — there are few of them and many contenders.

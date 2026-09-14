@@ -14,8 +14,8 @@ import XCTest
 /// a real job, so a rename fails here instead of quietly changing the game.
 final class CatalogIntegrityTests: XCTestCase {
 
-    private var fullTitles: Set<String> { Set(JobCatalog.specs.map(\.title)) }
-    private var baseTitles: Set<String> { Set(JobCatalog.specs.map { Job.baseTitle(of: $0.title) }) }
+    private var fullTitles: Set<String> { Set(JobCatalog.allTitles) }
+    private var baseTitles: Set<String> { Set(JobCatalog.allBaseTitles) }
 
     /// Tables keyed by *base* title, so one entry covers every rung of a ladder.
     func testBaseTitleOverridesNameRealJobs() {
@@ -49,7 +49,7 @@ final class CatalogIntegrityTests: XCTestCase {
     }
 
     func testJobTitlesAreUnique() {
-        let titles = JobCatalog.specs.map(\.title)
+        let titles = JobCatalog.allTitles
         let dupes = Set(titles.filter { t in titles.filter { $0 == t }.count > 1 }).sorted()
         XCTAssertTrue(dupes.isEmpty, "Duplicate job titles would produce two jobs with one id: \(dupes).")
     }
@@ -78,19 +78,43 @@ final class CatalogIntegrityTests: XCTestCase {
         }
     }
 
-    /// `seniorityPrefixes` and the rank map both derive from `seniorityLadder`,
-    /// so a prefix can't exist without a rank. This pins that down.
-    func testEverySeniorityPrefixResolvesToItsRank() {
-        for (prefix, rank) in Job.seniorityLadder {
-            let probe = Job(id: prefix + "Probe", category: .retail, income: 1,
-                            summary: "", icon: "",
-                            requirements: .init(education: .init(minEQF: 0, acceptedProfiles: nil),
-                                                softSkills: .init(), hardSkills: .init()))
-            XCTAssertEqual(probe.seniorityRank, rank,
-                           "Prefix '\(prefix)' should rank \(rank).")
-            XCTAssertEqual(probe.baseTitle, "Probe",
-                           "Prefix '\(prefix)' should be stripped by baseTitle.")
+    /// A ladder's rungs are its promotion chain: every rung must be reachable by
+    /// stepping one index at a time from the entry rung, and no two rungs may
+    /// share a position. Parsed seniority prefixes could tie — staff and
+    /// principal both ranked 5, so the promotion pick was shuffle-dependent and
+    /// staff was a dead end. Declared order cannot.
+    func testLaddersFormAnUnambiguousChain() {
+        for ladder in JobCatalog.ladders {
+            XCTAssertGreaterThan(ladder.rungs.count, 1,
+                                 "\(ladder.name) has one rung — it belongs in standaloneRoles.")
+            let rungs = JobCatalog.jobs(for: ladder)
+            XCTAssertEqual(rungs.map(\.rung), Array(0..<ladder.rungs.count),
+                           "\(ladder.name) rungs must be numbered 0..<n in declared order.")
+            XCTAssertEqual(Set(rungs.map(\.baseTitle)), [ladder.name],
+                           "Every rung of \(ladder.name) should share its base title.")
+            for (lower, upper) in zip(rungs, rungs.dropFirst()) {
+                // Pay climbs with the rung — a promotion is never a demotion.
+                XCTAssertLessThan(lower.income, upper.income,
+                                  "\(ladder.name): \(upper.id) should out-earn \(lower.id).")
+                // Requirements never ease off going up. This is what makes
+                // stepping exactly one rung correct: a rung you don't yet
+                // qualify for can't be hiding an easier one above it.
+                XCTAssertGreaterThanOrEqual(
+                    upper.requirements.minYearsExperience, lower.requirements.minYearsExperience,
+                    "\(ladder.name): \(upper.id) should not expect less experience than \(lower.id).")
+                XCTAssertGreaterThanOrEqual(
+                    upper.requirements.education.minEQF, lower.requirements.education.minEQF,
+                    "\(ladder.name): \(upper.id) should not require less education than \(lower.id).")
+            }
         }
+    }
+
+    /// Ladder names and standalone titles share one namespace — `Job.baseTitle`
+    /// keys tenure and the jobs list, so a collision would merge two roles.
+    func testBaseTitlesAreUnique() {
+        let bases = JobCatalog.allBaseTitles
+        let dupes = Set(bases.filter { b in bases.filter { $0 == b }.count > 1 }).sorted()
+        XCTAssertTrue(dupes.isEmpty, "Base titles collide: \(dupes).")
     }
 
     /// Every credential must have a row in `rulesByTraining`. Without this, a new
@@ -208,7 +232,7 @@ final class CareerGraphTests: XCTestCase {
     func testBusinessRoleCountsEntrepreneurshipYears() {
         guard let job = JobCatalog.allJobs().first(where: {
             $0.category == .business
-                && $0.seniorityPrefix == nil
+                && !$0.isLadderVariant
                 && $0.requirements.minYearsExperience > 0
         }) else {
             return // no such role in the catalogue — nothing to assert
@@ -384,7 +408,7 @@ final class CareerGraphTests: XCTestCase {
             XCTAssertTrue(founder.isExecutive, "Founder ventures should unlock the Boardroom.")
         }
         if let analyst = jobs.first(where: {
-            $0.category == .business && $0.seniorityPrefix == nil && !$0.isTopLeadership
+            $0.category == .business && !$0.isLadderVariant && !$0.isTopLeadership
         }) {
             XCTAssertFalse(analyst.isExecutive, "A rank-and-file role shouldn't unlock the Boardroom.")
         }
@@ -603,7 +627,7 @@ final class CareerGraphTests: XCTestCase {
             // Use the easiest-to-qualify rung of the ladder (lowest seniority).
             guard let job = jobs
                 .filter({ $0.baseTitle == gate.base })
-                .min(by: { $0.seniorityRank < $1.seniorityRank }) else {
+                .min(by: { $0.rung < $1.rung }) else {
                 XCTFail("Missing star career '\(gate.base)' in the catalogue.")
                 continue
             }
