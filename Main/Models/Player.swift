@@ -176,9 +176,13 @@ final class Player: ObservableObject {
         let congratulations = "Congratulations! You completed your \(degree.degreeName)."
         var unlocks: [String] = []
 
-        // Courses and licences that were out of reach at the old level.
+        // Courses and licences that were out of reach at the old level. Narrowed
+        // to this degree's own field once it has one, since a business graduate
+        // being told they may now sit the nursing board exam is technically true
+        // — courses gate on schooling, not subject — and useless.
         let opened = Training.allCases
             .filter { $0.minEQF > previousEQF && $0.minEQF <= degree.eqf }
+            .filter { degree.profile == nil || $0.studyField == degree.profile }
             .sorted { $0.friendlyName < $1.friendlyName }
         if !opened.isEmpty {
             let named = opened.prefix(4).map { "\($0.pictogram) \($0.friendlyName)" }

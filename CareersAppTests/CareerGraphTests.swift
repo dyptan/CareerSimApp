@@ -56,14 +56,15 @@ final class CatalogIntegrityTests: XCTestCase {
     }
 
     /// A licence qualifies you to practise rather than teaching you a field, so
-    /// it is never filed under a faculty — it belongs to the general list.
+    /// the Education sheet never files it under a faculty — even though it may
+    /// still belong to one, which is what tells a graduate it has opened up.
     func testStatutoryLicencesAreNeverFiledUnderAProfile() {
         for training in Training.allCases where training.isStatutory {
             XCTAssertNil(training.profile,
                          "\(training.rawValue) is a licence and must stay general.")
-            XCTAssertNil(Training.profileByTraining[training],
-                         "\(training.rawValue) is a licence — drop its profileByTraining row.")
         }
+        XCTAssertNotNil(Training.bar.studyField,
+                        "A licence still belongs to a faculty — the bar exam is law.")
     }
 
     /// The converse: every course *is* filed. An unfiled one would silently fall
@@ -73,14 +74,13 @@ final class CatalogIntegrityTests: XCTestCase {
         for training in Training.allCases where !training.isStatutory {
             XCTAssertNotNil(training.profile,
                             "\(training.rawValue) is a course with no field of study. "
-                            + "Add a Training.profileByTraining row.")
+                            + "Add a Training.studyFieldByTraining row.")
         }
     }
 
-    /// A course filed under a profile has to be findable: its profile must be one
-    /// the Education sheet can actually reach.
+    /// A credential's field has to be one the Education sheet can actually reach.
     func testFiledTrainingsUseRealProfiles() {
-        for (training, profile) in Training.profileByTraining {
+        for (training, profile) in Training.studyFieldByTraining {
             XCTAssertTrue(TertiaryProfile.allCases.contains(profile),
                           "\(training.rawValue) is filed under an unknown profile.")
         }
