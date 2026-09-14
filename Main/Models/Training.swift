@@ -536,10 +536,14 @@ extension Training {
                                      field: .engineering),
         .architect:            .init(isStatutory: true, minEQF: 5, minYearsExperience: 2,
                                      field: .construction),
-        // Earned on hours and an exam, with no education prerequisite.
-        .atcCertification:     .init(isStatutory: true, minEQF: 0),
+        // The FAA Academy takes applicants with a degree *or* several years of
+        // responsible work behind them. There is no "or" in a Rules row, so this
+        // takes the floor both routes share — you finished school.
+        .atcCertification:     .init(isStatutory: true),
+        // A short course and an exam, open to anyone old enough.
         .pesticideApplicator:  .init(isStatutory: true, minEQF: 0),
-        .securityGuard:        .init(isStatutory: true, minEQF: 0),
+        // Guard training itself asks only for a school-leaving certificate.
+        .securityGuard:        .init(isStatutory: true),
 
         // MARK: Skill-building programs
         // Non-statutory and non-gating: their value is the edge in landing a job
