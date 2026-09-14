@@ -133,10 +133,11 @@ enum GameConstants {
     static let promotionMinEQF: Int = 4
 
     /// The education expectation at which a role's pay becomes negotiable rather
-    /// than a posted rate (EQF 5 = bachelor's). Professional office work puts a
-    /// number on the table; everything below takes the band it is offered.
-    /// See `Job.salaryIsNegotiable`.
-    static let negotiableSalaryMinEQF: Int = 5
+    /// than a posted rate (EQF 4 = vocational/college). Set here rather than at
+    /// bachelor's so the trained creative professions — a designer, an animator,
+    /// an editor — argue over a fee the way they do in life; below it a role
+    /// takes the band it is offered. See `Job.salaryIsNegotiable`.
+    static let negotiableSalaryMinEQF: Int = 4
 
     /// Base annual probability that an employer promotes the player, before the
     /// player's promotion-readiness soft skills, tenure, and network scale it.

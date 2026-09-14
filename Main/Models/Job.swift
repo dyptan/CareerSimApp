@@ -461,12 +461,12 @@ extension Job {
     /// Whether pay for this role is something the player argues for, rather than
     /// a posted rate they take or leave.
     ///
-    /// Negotiation belongs to professional office work: a rate is quoted for a
-    /// welder, a waiter or a receptionist, and an air traffic controller sits on
-    /// a public pay scale, but a consultant, an engineer or a director puts a
-    /// number on the table. The bar is the role's own education expectation, so
-    /// a ladder splits the way a real one does — a junior analyst takes the
-    /// posted band, the senior seat above them negotiates.
+    /// Negotiation belongs to trained office work: a rate is quoted for a welder,
+    /// a waiter or a receptionist, but a consultant, an engineer, a designer or
+    /// an animator puts a number on the table. The bar is the role's own
+    /// education expectation, so a ladder splits the way a real one does — a
+    /// junior paralegal takes the posted band, the senior seat above them
+    /// negotiates.
     var salaryIsNegotiable: Bool {
         guard !isEntrepreneurial else { return false }
         guard workSetting == .office else { return false }
