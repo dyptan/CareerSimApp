@@ -548,10 +548,16 @@ extension Training {
         // MARK: Skill-building programs
         // Non-statutory and non-gating: their value is the edge in landing a job
         // or launching a venture in the field, plus the soft skills they build.
-        .codingBootcamp:       .init(careerBoost: .init(categories: [.technology, .engineering], weight: 0.15)),
-        .gameDevProgram:       .init(careerBoost: .init(categories: [.design, .technology], weight: 0.15)),
-        .productDesign:        .init(careerBoost: .init(categories: [.design], weight: 0.15)),
-        .musicProduction:      .init(careerBoost: .init(categories: [.showBusiness], weight: 0.12)),
+        // Open entry — a bootcamp or a studio course asks for none of your
+        // schooling, only the year.
+        .codingBootcamp:       .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.technology, .engineering], weight: 0.15)),
+        .gameDevProgram:       .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.design, .technology], weight: 0.15)),
+        .productDesign:        .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.design], weight: 0.15)),
+        .musicProduction:      .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.showBusiness], weight: 0.12)),
     ]
 
     /// This credential's rules. Falls back to the defaults for a case with no
