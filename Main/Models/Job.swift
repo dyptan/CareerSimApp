@@ -483,6 +483,7 @@ extension Job {
     /// `baseTitle`, so one entry covers every rung of a ladder.
     static let publicPayScaleTitles: Set<String> = [
         "Air Traffic Controller",
+        "Judge",
     ]
 
     /// Whether this is unskilled work — a role requiring no post-secondary
