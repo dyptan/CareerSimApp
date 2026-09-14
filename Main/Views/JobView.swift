@@ -27,7 +27,6 @@ struct JobDetail: View {
     }
 
     private var applyButtonLabel: String {
-        if player.appliedJobIds.contains(job.applicationKey) { return isFounder ? "Already attempted this year" : "Already applied" }
         if isFounder {
             if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
             if player.maxVentureStake <= 0 { return "No savings or income to invest" }
@@ -585,7 +584,6 @@ struct JobDetail: View {
     }
 
     private var applyDisabled: Bool {
-        if player.appliedJobIds.contains(job.applicationKey) { return true }
         if isFounder { return !job.experienceMet(for: player) || player.maxVentureStake <= 0 }
         return !allRequirementsMet
     }

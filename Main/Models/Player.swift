@@ -402,15 +402,9 @@ final class Player: ObservableObject {
     /// competition sport gate (a sport must have ≥1 year for its tagged
     /// competitions to appear) and the `sportFit` bonus inside `winProbability`.
     @Published var sportYears: [Sport: Int] = [:]
-    @Published var appliedJobIds: Set<String> = []
-    /// Executive decisions (see `ExecutiveDecision`) taken this year, by id. Each
-    /// Boardroom play can be made at most once per year; cleared by `advanceYear`
-    /// alongside `appliedJobIds`.
+    /// Executive decisions (see `ExecutiveDecision`) taken this year, by id.
+    /// Cleared by `advanceYear`.
     @Published var executiveActionsThisYear: Set<String> = []
-    /// Schools (by `Education.id`) the player has already applied to this year.
-    /// One admission attempt per school per year, so a rejection can't be
-    /// brute-forced — the player must try another school or wait a year.
-    @Published var appliedSchoolIds: Set<String> = []
     /// Jobs offered to the player this year. Re-shuffled (and re-rolled for
     /// salary variance) every time `advanceYear` runs, so the listing feels
     /// different each game year.
@@ -820,8 +814,6 @@ final class Player: ObservableObject {
             currentEducation = nil
         }
 
-        appliedJobIds.removeAll()
-        appliedSchoolIds.removeAll()
         executiveActionsThisYear.removeAll()
         // Re-roll the job market for the new year (fresh tiers and salaries).
         regenerateAvailableJobs()
@@ -1092,7 +1084,6 @@ final class Player: ObservableObject {
     /// enrollment on success.
     @discardableResult
     func applyToSchool(_ education: Education) -> Bool {
-        appliedSchoolIds.insert(education.id)
         let odds = education.admissionProbability(player: self)
         guard Double.random(in: 0...1) < odds else { return false }
         celebrateIfLucky(odds)
@@ -1103,7 +1094,6 @@ final class Player: ObservableObject {
     /// Side effects: marks the job as applied; if hired, sets currentOccupation with the agreed salary.
     @discardableResult
     func applyForJob(_ job: Job, requestedSalary: Int) -> Bool {
-        appliedJobIds.insert(job.applicationKey)
         let probability = job.hireProbability(for: self, requestedSalary: Double(requestedSalary))
         let hired = Double.random(in: 0...1) < probability
         if hired {
@@ -1125,7 +1115,6 @@ final class Player: ObservableObject {
     /// with capital a supporting factor). Returns true on success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
-        appliedJobIds.insert(job.applicationKey)
         // Savings fund the stake first; anything beyond them (up to the loan cap)
         // is borrowed against income and booked as debt.
         let stake = min(max(0, investedCapital), maxVentureStake)
@@ -1340,8 +1329,6 @@ final class Player: ObservableObject {
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
         sportYears = fresh.sportYears
-        appliedJobIds = []
-        appliedSchoolIds = []
         executiveActionsThisYear = []
         availableJobs = fresh.availableJobs
     }

@@ -571,9 +571,6 @@ extension Job {
         }
     }
 
-    /// Identifies this role for tracking one application per year.
-    var applicationKey: String { id }
-
     /// The job priced at its published median, with no random variance. Used by
     /// the listing/detail screens so salaries are deterministic and comparable.
     func atBaseSalary() -> Job {
