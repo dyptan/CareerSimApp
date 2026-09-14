@@ -119,7 +119,6 @@ enum JobCatalog {
         "Retail Salesperson":             .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, presentationAndStorytelling: 1),
         "Sales Manager":                  .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 4, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
         "Marketing Specialist":           .init(analyticalReasoningAndProblemSolving: 1, creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 3, visionaryThinkingAndAmbition: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
-        "Recruiter":                      .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 1, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
         // Breakthrough-gated star tracks. These aren't landed on skill alone —
         // a signature achievement (see `Job.breakthroughFameByRole`) is the
         // real key — but a strong profile still shapes the odds once you're in.
@@ -145,7 +144,6 @@ enum JobCatalog {
         // Finance / detail (low persuasion, high carefulness)
         "Business Analyst":               .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
         "Accountant":                     .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 1, carefulnessAndAttentionToDetail: 4, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
-        "Bookkeeper":                     .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
         "Financial Analyst":              .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
 
         // Care / empathy
@@ -700,12 +698,9 @@ enum JobCatalog {
         .init(title: "Cloud Architect", category: .technology, income: 160_000, icon: "☁️", summary: "Designs and runs large-scale cloud infrastructure.", minEQF: 5),
         .init(title: "Translator/Interpreter", category: .business, income: 50_000, icon: "🌐", summary: "Converts text between languages and provides live interpretation.", minEQF: 5),
         // Administration — back-office functions common to every business
-        .init(title: "Office Clerk", category: .administration, income: 33_000, icon: "🗂️", summary: "Performs general administrative duties.", minEQF: 3),
         .init(title: "Administrative Assistant", category: .administration, income: 40_000, icon: "📎", summary: "Supports a team with scheduling, mail, and records.", minEQF: 3),
         .init(title: "Receptionist", category: .administration, income: 33_000, icon: "📞", summary: "Greets visitors and manages front-desk tasks.", minEQF: 3),
-        .init(title: "Bookkeeper", category: .administration, income: 44_000, icon: "🧾", summary: "Maintains financial transaction records.", minEQF: 3),
         .init(title: "Payroll Specialist", category: .administration, income: 52_000, icon: "💵", summary: "Processes payroll and employee benefits.", minEQF: 4),
-        .init(title: "Recruiter", category: .administration, income: 58_000, icon: "🔎", summary: "Finds and screens candidates for roles.", minEQF: 3),
         .init(title: "Human Resources Specialist", category: .administration, income: 62_000, icon: "🧑‍💼", summary: "Manages hiring and employee relations.", minEQF: 5),
         .init(title: "Office Manager", category: .administration, income: 64_000, icon: "🗄️", summary: "Runs day-to-day office operations and admin staff.", minEQF: 4),
         // Construction / Trades
