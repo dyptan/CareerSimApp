@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The **Trainings** page — the unified home for professional credentials, the
-/// merger of the old Certifications and Licenses sheets. It shares its layout and
+/// The **Trainings** page — the home for professional credentials. It shares
+/// its layout and
 /// the single spare-time slot with Hobbies and Sports: picking a training this
 /// year displaces any other activity. Once the hard gates are met the credential
 /// is earned outright (no exam roll), and completing the course nudges the soft

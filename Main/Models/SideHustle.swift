@@ -1,10 +1,8 @@
 import Foundation
 
-/// A spare-time venture the player commits a year to — the unified home for what
-/// used to be two separate features (money-making *side hustles* and fame-earning
-/// *projects*). Every venture is a talent-fit gamble that stakes no money: the
-/// odds scale with how well the player's soft skills fit the work, and a flop
-/// simply yields nothing.
+/// A spare-time venture the player commits a year to — a talent-fit gamble that
+/// stakes no money: the odds scale with how well the player's soft skills fit
+/// the work, and a flop simply yields nothing.
 ///
 /// A venture pays off one of two ways (`Payoff`): a **money** venture banks cash
 /// in full (untaxed, unlike salary), while a **fame** venture banks an

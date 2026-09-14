@@ -15,11 +15,9 @@ enum JobCatalog {
 
     /// One row per job — the single place a job is defined.
     ///
-    /// Named fields rather than a positional tuple: `icon` and `summary` are both
-    /// `String` and adjacent, and the seniority and venture rows used to share
-    /// the identical tuple type `(String, JobCategory, Int, String, String, Int,
-    /// Int)` while their trailing pair meant different things — so a swapped or
-    /// misplaced row compiled cleanly and produced a wrong job.
+    /// Named fields rather than a positional tuple: `icon` and `summary` are
+    /// both `String` and adjacent, so a swapped pair would otherwise compile
+    /// cleanly and produce a wrong job.
     struct JobSpec {
         let title: String
         let category: JobCategory

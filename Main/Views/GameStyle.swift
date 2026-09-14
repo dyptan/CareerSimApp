@@ -18,9 +18,8 @@ private enum OddsPalette {
 extension Color {
     /// Traffic-light colour for a `0...1` probability: green when the odds are
     /// good, amber when they're middling, red when they're a long shot. Shared
-    /// so the hire, founder, promotion-offer, and admission readouts all grade
-    /// on one scale — they used to repeat the same thresholds separately, free
-    /// to drift apart.
+    /// so the hire, founder, promotion-offer and admission readouts all grade on
+    /// one scale.
     static func forOdds(_ probability: Double) -> Color {
         if probability >= OddsPalette.good { return .green }
         if probability >= OddsPalette.fair { return .orange }

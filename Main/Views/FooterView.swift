@@ -142,21 +142,14 @@ struct FooterView: View {
     }
 
     var body: some View {
-        // Trainings and Events are realistic-mode features, so hide them in
-        // simplified mode. Hobbies stay — they build the soft skills that shape
-        // school admission odds. Competitions are no longer a button at all:
-        // they fire automatically each year from the sport trained in Sports.
-        // Single wrapping row: every available button sits on one line when
-        // the window is wide, and reflows onto extra rows as width shrinks.
-        // Certifications / Licenses / Events keep their realistic-mode and
-        // prerequisite gates; the rest are gated only by their stage-eligible
-        // catalogues.
+        // Which actions appear, and which reach the surface, is decided by
+        // `FooterActions`. Competitions have no button at all: they fire
+        // automatically each year from the sport trained in Sports.
         //
-        // **Skip** — advance the year — is deliberately *outside* the wrapping
-        // row: pinned to the trailing edge and bottom-aligned, it stays in the
-        // bottom-right corner no matter how many rows the activity buttons
-        // reflow into, so the one button pressed every turn is always under the
-        // same thumb. The activity row takes whatever width is left.
+        // **Skip** sits deliberately *outside* the wrapping row — pinned to the
+        // trailing edge and bottom-aligned, so the one button pressed every turn
+        // stays under the same thumb however many rows the activity buttons
+        // reflow into. The activity row takes whatever width is left.
         HStack(alignment: .bottom, spacing: 12) {
             activityButtons
                 .frame(maxWidth: .infinity, alignment: .leading)

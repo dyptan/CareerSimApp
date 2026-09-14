@@ -169,11 +169,10 @@ final class Player: ObservableObject {
     /// queue for ordering rather than a backlog.
     @Published var pendingMoments: [GameMoment] = []
 
-    /// The moment currently on screen. Stored rather than derived from
-    /// `pendingMoments.first`: a `.sheet(item:)` bound to a computed
-    /// `Binding(get:set:)` gets `nil` written back during the same update that
-    /// raised the moment, and a setter that pops the queue then discards it
-    /// before it can ever appear.
+    /// The moment currently on screen. Stored, not derived from the queue: a
+    /// `.sheet(item:)` bound to a computed `Binding(get:set:)` has `nil` written
+    /// back during the same update that raised the moment, so a setter that pops
+    /// the queue discards it before it can ever appear.
     @Published var presentedMoment: GameMoment?
 
     /// Ids of the once-only moments already raised this run, so they don't
@@ -1187,7 +1186,7 @@ final class Player: ObservableObject {
         }
         switch decision.kind {
         case .sellShares:
-            // A sale is no longer a sure thing: the player names a price and the
+            // A sale isn't a sure thing: the player names a price and the
             // market decides. Odds fall the higher they ask relative to the fair
             // valuation, and a recession thins the buyers.
             let ask = askPrice ?? shareStakeValue()

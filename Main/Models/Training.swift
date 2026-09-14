@@ -1,7 +1,6 @@
 import Foundation
 
-/// A professional credential the player can earn in their spare time — the
-/// merger of what used to be separate `Certification` and `License` types. The
+/// A professional credential the player can earn in their spare time. The
 /// catalogue is deliberately limited to credentials that are *actually required*
 /// to hold a specific role in real life: statutory occupational licences (a
 /// nurse, electrician, lawyer, or pilot cannot legally practise without one) and
@@ -16,8 +15,8 @@ import Foundation
 /// (EQF), prerequisite trainings, and, for senior credentials, work experience —
 /// decide whether you may *enrol*.
 ///
-/// `isStatutory` marks the legally-mandated credentials (former licences): they
-/// hard-gate hiring in every field, whereas the rest (former certifications)
+/// `isStatutory` marks the legally-mandated credentials: they
+/// hard-gate hiring in every field, whereas the rest
 /// only gate hiring in regulated industries (see `Job.hardSkillsMet`).
 enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     // MARK: Role-defining certifications
@@ -69,8 +68,8 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Legally-mandated credentials (former licences). These hard-gate hiring in
-    /// every field; non-statutory trainings (former certifications) gate hiring
+    /// Legally-mandated credentials. These hard-gate hiring in
+    /// every field; non-statutory trainings gate hiring
     /// only in regulated industries (see `Job.hardSkillsMet`).
     var isStatutory: Bool { rules.isStatutory }
 
@@ -424,15 +423,13 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
 extension Training {
     /// Every gate and classification of one credential, in one place.
     ///
-    /// These eight values used to live in eight separate `switch self`
-    /// statements, each ending in a `default:` arm — so adding a credential and
-    /// forgetting one switch silently handed it the fallback (a new statutory
-    /// licence that quietly stopped gating hiring, say). Collecting them in a
-    /// dictionary makes coverage *checkable*: `Training.allCases` can be compared
-    /// against the table's keys, which `TrainingIntegrityTests` does. Rows state
-    /// only what differs from the defaults below.
+    /// A dictionary rather than a `switch` per value, because coverage is then
+    /// *checkable*: `TrainingIntegrityTests` compares `Training.allCases` against
+    /// the table's keys, where a `default:` arm would silently hand a new
+    /// credential the fallback — a statutory licence that quietly stopped gating
+    /// hiring, say. Rows state only what differs from the defaults below.
     struct Rules {
-        /// Legally-mandated credential (a former "licence"). These hard-gate
+        /// Legally-mandated credential. These hard-gate
         /// hiring in every field; the rest gate only in regulated industries
         /// (see `Job.hardSkillsMet`).
         var isStatutory: Bool = false

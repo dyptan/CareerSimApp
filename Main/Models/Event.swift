@@ -189,9 +189,9 @@ enum EventCatalog {
         ),
         // Spotlight & competitive events — organized happenings you take the
         // stage at (once you're a veteran of the field), banking the field's
-        // network plus industry fame. These were formerly spare-time *projects*,
-        // but they're participation in someone else's event rather than a
-        // self-initiated work, so they belong here.
+        // network plus industry fame. They're participation in someone else's
+        // event rather than a self-initiated work, which is what separates them
+        // from spare-time *projects*.
         CareerEvent(
             id: "music-festival",
             name: "Music Festival",

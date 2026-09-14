@@ -1,7 +1,7 @@
 import Foundation
 
 /// A thin, **derived** dependency graph over the game's discrete unlockables —
-/// trainings (former certifications/licences) and the jobs that consume them.
+/// trainings and the jobs that consume them.
 /// It is built entirely from the existing catalogue declarations (`Training`,
 /// `JobCatalog`); it introduces no new source of truth and is never consulted by
 /// the hiring/odds maths.
@@ -50,7 +50,7 @@ enum CareerGraph {
             let req = job.requirements.hardSkills
             let held = player.hardSkills.trainings
             // Statutory trainings are required everywhere; non-statutory ones
-            // (former certifications) only in regulated fields.
+            // only in regulated fields.
             let needed = req.trainings.filter { $0.isStatutory || job.category.requiresCredentials }
             for training in needed.subtracting(held)
                 .sorted(by: { $0.rawValue < $1.rawValue }) {

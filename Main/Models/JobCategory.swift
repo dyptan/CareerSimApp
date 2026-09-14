@@ -69,7 +69,7 @@ enum WorkSetting: String, CaseIterable, Identifiable, Codable {
 enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case engineering = "Engineering"
     /// Entertainment and the spotlight: performing arts, media/creators, and
-    /// professional sports — merged from the former Arts, Media, and Sports.
+    /// professional sports.
     case showBusiness = "Show Business"
     case publicServices = "Public Services"
     case health = "Health"
@@ -183,7 +183,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// practise — you can't be a doctor, lawyer, engineer, scientist, or teacher
     /// without the qualification, so education stays a HARD hiring gate here. In
     /// every other field a degree only improves the odds (it's folded into the
-    /// hire-probability score via `Job.educationFitTerm`) but never blocks an
+    /// hire-probability score via `Job.educationFactor`) but never blocks an
     /// application — talent, portfolio, and experience can stand in for it.
     var educationIsMandatory: Bool {
         switch self {

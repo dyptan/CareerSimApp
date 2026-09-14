@@ -202,7 +202,7 @@ extension Job {
     /// Whether the player meets the role's *baseline* experience
     /// (`minYearsExperience`). A hard gate in every mode — you can't be hired (or
     /// found a venture) below the baseline. Above it, the tier-scaled
-    /// `experienceFitTerm` rewards extra years probabilistically.
+    /// `experienceFactor` rewards extra years probabilistically.
     func experienceMet(for player: Player) -> Bool {
         let required = requirements.minYearsExperience
         guard required > 0 else { return true }
@@ -212,12 +212,12 @@ extension Job {
     func hardSkillsMet(for player: Player) -> Bool {
         let req = requirements.hardSkills
         let held = player.hardSkills.trainings
-        // Statutory trainings (former licences) are legally enforced regardless
+        // Statutory trainings are legally enforced regardless
         // of employer — always required.
         let statutory = req.trainings.filter(\.isStatutory)
         guard statutory.isSubset(of: held) else { return false }
         // Safety-critical / regulated fields (health, transportation, law, …)
-        // also gate on their non-statutory trainings (former certifications) —
+        // also gate on their non-statutory trainings —
         // you can't practise without the credential.
         if category.requiresCredentials {
             let preference = req.trainings.filter { !$0.isStatutory }
@@ -230,7 +230,7 @@ extension Job {
 
     /// Whether a degree is a *hard* hiring gate for this role. True only in
     /// regulated professions (`category.educationIsMandatory`); everywhere else a
-    /// degree is optional and merely lifts the odds (see `educationFitTerm`).
+    /// degree is optional and merely lifts the odds (see `educationFactor`).
     var educationIsMandatory: Bool { category.educationIsMandatory }
 
     /// The education gate for hiring: enforced only where a degree is mandatory.
@@ -284,14 +284,11 @@ extension Job {
 
     /// Every hard requirement expressed as a factor on the hire odds.
     ///
-    /// There used to be two mechanisms: a boolean gate (`allRequirementsMet`)
-    /// beside an additive score, and they disagreed — `experienceFitTerm`'s
-    /// entire shortfall branch was unreachable, because the gate had already
-    /// returned zero for anyone short of the baseline. Here a requirement that
-    /// is genuinely absolute — a statutory licence, a degree in a regulated
-    /// profession, no relevant experience whatsoever — contributes **zero**, and
-    /// zero times anything is zero. That is what makes it absolute; nothing else
-    /// has to agree with it. Everything else grades.
+    /// A requirement that is genuinely absolute — a statutory licence, a degree
+    /// in a regulated profession, no relevant experience whatsoever —
+    /// contributes **zero**, and zero times anything is zero. That is what makes
+    /// it absolute, so there is no separate boolean gate that something else has
+    /// to agree with. Everything else grades.
     struct RequirementFit {
         let age: Double
         let education: Double

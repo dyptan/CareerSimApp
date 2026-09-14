@@ -416,8 +416,7 @@ struct ModeSelectionView: View {
 /// **Close** button and, when the sheet is passed an `onNext`, a trailing
 /// prominent **Next ▸** button — in a bar pinned along the sheet's bottom edge,
 /// under an inline title, via `gameSheetClose`.
-/// **Next ▸** advances the game year and dismisses the sheet in one tap, so the
-/// player can keep aging up without the old Close-then-tap-Next two-step; this
+/// **Next ▸** advances the game year and dismisses the sheet in one tap, which
 /// makes rapid iteration across career paths cheap. Any in-content commit
 /// (Apply, Enroll, Launch…) still keeps the sheet open on failure and closes on
 /// success — those are separate from Next.

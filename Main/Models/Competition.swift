@@ -14,9 +14,8 @@ struct Competition: Identifiable, Hashable {
     let icon: String
     let blurb: String
     let discipline: Discipline
-    /// Legacy field from when competitions were entered manually for a fee.
-    /// Competing is now automatic and free, so this is no longer charged; kept
-    /// on the model for reference and possible future use.
+    /// Unused: competitions are entered automatically and cost nothing. Kept on
+    /// the model so the catalogue's fee data isn't lost if entry fees return.
     let entryFee: Int
     /// Cash awarded on a win.
     let prize: Int
@@ -32,8 +31,8 @@ struct Competition: Identifiable, Hashable {
     /// Sports that qualify for entry. Set membership is the hard gate: the
     /// competition only auto-enters when the player trains one of these sports
     /// (see `CompetitionCatalog.bestCompetition`). `nil` means open (no sport
-    /// gate), in which case `sportBonus` returns 0 — such events no longer have
-    /// an entry point now that competing is sport-driven.
+    /// gate), in which case `sportBonus` returns 0 — and since entry is
+    /// sport-driven, such an event has no way in.
     let sports: Set<Sport>?
     /// Life stages in which the competition is open (mirrors `Hobby.stages`).
     let stages: Set<LifeStage>

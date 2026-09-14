@@ -1,10 +1,9 @@
 import CoreGraphics
 
 enum GameConstants {
-    /// One spare-time slot per year, shared across hobbies, certifications, and
-    /// licenses (they all draw from `selectedActivities`). The player commits to
-    /// a single self-improvement each year, whatever their life stage — kept
-    /// deliberately simple. (Side projects are free and no longer use this slot.)
+    /// One spare-time slot per year, shared across hobbies, certifications and
+    /// licences (they all draw from `selectedActivities`). The player commits to
+    /// a single self-improvement each year, whatever their life stage.
     static let maxHobbiesPerYear: Int = 1
     static let trainingActivitySlotCost: Int = 1
 
@@ -23,9 +22,9 @@ enum GameConstants {
     /// See `CareerEvent.networkPoints`.
     static let presenterNetworkBonus: Int = 2
 
-    /// Realistic mode: how many spare-time ventures (money hustles + fame
-    /// projects, now one system) the player can take on in one year. Spare time
-    /// is limited, so every venture competes for the same hours.
+    /// Realistic mode: how many spare-time ventures the player can take on in
+    /// one year. Spare time is limited, so every venture competes for the same
+    /// hours.
     static let maxSideHustlesPerYear: Int = 1
 
     static let previewWindowWidth: CGFloat = 1000
@@ -135,7 +134,7 @@ enum GameConstants {
 
     /// Base annual probability that an employer promotes the player, before the
     /// player's promotion-readiness soft skills, tenure, and network scale it.
-    /// Flat across all jobs now that company tiers are gone. See
+    /// Flat across all jobs. See
     /// `Player.promotionChance`.
     static let promotionBaseChance: Double = 0.15
 
@@ -184,12 +183,12 @@ enum GameConstants {
     static let promotionRelevantDegreeBonus: Double = 0.03
 
     /// Salary bump applied on a promotion, as a fraction of current pay. Flat
-    /// across all jobs now that company tiers are gone. See `Player.advanceYear`.
+    /// across all jobs. See `Player.advanceYear`.
     static let promotionRaise: ClosedRange<Double> = 0.06...0.18
 
     /// Calm-economy annual probability that a job is lost involuntarily. Used as
     /// the base layoff risk during a downturn (scaled by `Difficulty.layoffSeverity`).
-    /// Flat across all jobs now that company tiers are gone. See
+    /// Flat across all jobs. See
     /// `Player.applyEconomicTurmoil`.
     static let baseLayoffRisk: Double = 0.08
 }
