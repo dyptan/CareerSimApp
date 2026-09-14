@@ -15,10 +15,20 @@ struct RootView: View {
     private var availableJobs: [Job] { player.availableJobs }
 
     var body: some View {
-        if appUIState.hasSelectedMode {
-            gameView
-        } else {
-            ModeSelectionView(player: player, appUIState: appUIState)
+        Group {
+            if appUIState.hasSelectedMode {
+                gameView
+            } else {
+                ModeSelectionView(player: player, appUIState: appUIState)
+            }
+        }
+        // The year's contextual decision, raised once the turn has settled.
+        // Presented here rather than alongside the activity sheets: stacking a
+        // fourteenth `.sheet` on the same view left it silently never showing.
+        .sheet(item: $player.presentedMoment) { moment in
+            MomentView(moment: moment, appUIState: appUIState) {
+                player.dismissCurrentMoment()
+            }
         }
     }
 
@@ -147,17 +157,6 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
         }
-        // The year's contextual decision, raised once the turn has settled. It
-        // routes into the sheets below, so it's presented alongside them rather
-        // than wrapping them.
-        .sheet(item: Binding(
-            get: { player.currentMoment },
-            set: { if $0 == nil { player.dismissCurrentMoment() } }
-        )) { moment in
-            MomentView(moment: moment, appUIState: appUIState) {
-                player.dismissCurrentMoment()
-            }
-        }
         // The only fixed goal left is Simplified's top-leadership finish line,
         // which turns on when the occupation changes; realistic modes are
         // open-ended and score-based (see `Player.goalMet`).
@@ -178,9 +177,13 @@ struct RootView: View {
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
-                player.graduationMessage = "Congratulations! You finished \(degree.degreeName). Time to figure out the next step — university, vocational training, or straight into work."
-                player.showGraduationAlert = true
                 player.currentEducation = nil
+                // School graduation is handled here rather than in `advanceYear`,
+                // so the moment has to be raised after the fact. It replaces the
+                // old graduation alert: same news, but it also offers the way
+                // forward instead of leaving the player at the footer.
+                player.graduatedThisYear = true
+                player.raiseMomentForThisYear()
             case 68: appUIState.showRetirementSheet.toggle()
             default: break
             }
@@ -545,6 +548,9 @@ struct MomentView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
+        // Sit at the top of the sheet rather than floating in the middle of it.
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding(.top, 24)
         #if os(macOS)
         .frame(minWidth: 420, minHeight: 260)
         #endif

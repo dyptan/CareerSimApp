@@ -169,17 +169,27 @@ final class Player: ObservableObject {
     /// queue for ordering rather than a backlog.
     @Published var pendingMoments: [GameMoment] = []
 
+    /// The moment currently on screen. Stored rather than derived from
+    /// `pendingMoments.first`: a `.sheet(item:)` bound to a computed
+    /// `Binding(get:set:)` gets `nil` written back during the same update that
+    /// raised the moment, and a setter that pops the queue then discards it
+    /// before it can ever appear.
+    @Published var presentedMoment: GameMoment?
+
     /// Ids of the once-only moments already raised this run, so they don't
     /// repeat. Reset with the rest of the run.
     @Published var seenMomentIds: Set<String> = []
 
-    /// The moment to present, if any.
-    var currentMoment: GameMoment? { pendingMoments.first }
+    /// Moves the next queued moment on screen when nothing is showing.
+    func presentNextMomentIfNeeded() {
+        guard presentedMoment == nil, !pendingMoments.isEmpty else { return }
+        presentedMoment = pendingMoments.removeFirst()
+    }
 
-    /// Drops the moment currently on screen.
+    /// Drops the moment currently on screen and shows the next, if any.
     func dismissCurrentMoment() {
-        guard !pendingMoments.isEmpty else { return }
-        pendingMoments.removeFirst()
+        presentedMoment = nil
+        presentNextMomentIfNeeded()
     }
 
     /// The graduation pop-up's message, capturing the degree just earned.
@@ -960,13 +970,14 @@ final class Player: ObservableObject {
     /// Picks at most one contextual decision to put to the player, now that the
     /// year's state has settled. One a year by design — a dialog every turn is
     /// its own kind of clutter.
-    private func raiseMomentForThisYear() {
+    func raiseMomentForThisYear() {
         guard let moment = MomentCatalog.next(for: self,
                                               justGraduated: graduatedThisYear,
                                               justLostJob: lostJobThisYear,
                                               alreadySeen: seenMomentIds) else { return }
         if moment.onlyOnce { seenMomentIds.insert(moment.id) }
         pendingMoments.append(moment)
+        presentNextMomentIfNeeded()
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -1259,6 +1270,7 @@ final class Player: ObservableObject {
         appliedSchoolIds = []
         executiveActionsThisYear = []
         pendingMoments = []
+        presentedMoment = nil
         seenMomentIds = []
         graduatedThisYear = false
         availableJobs = fresh.availableJobs

@@ -96,11 +96,13 @@ final class GameMomentTests: XCTestCase {
         p.configureStart(age: 16)
         let ui = AppUIState()
         for _ in 0..<40 {
-            let before = p.pendingMoments.count
-            p.advanceYear(appUIState: ui)
-            XCTAssertLessThanOrEqual(p.pendingMoments.count - before, 1,
-                                     "At most one moment may be raised per year.")
+            // Count what the year actually raised: the one on screen plus any
+            // still queued behind it.
+            p.presentedMoment = nil
             p.pendingMoments.removeAll()
+            p.advanceYear(appUIState: ui)
+            let raised = p.pendingMoments.count + (p.presentedMoment == nil ? 0 : 1)
+            XCTAssertLessThanOrEqual(raised, 1, "At most one moment may be raised per year.")
         }
     }
 }
