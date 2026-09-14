@@ -77,7 +77,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case education = "Education"
     case agriculture = "Agriculture"
     case design = "Design"
-    case gaming = "Gaming"
     case language = "Language"
     case tourism = "Tourism"
     case law = "Law"
@@ -104,7 +103,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// public reputation doesn't move the hiring needle (trades, services,
     /// regulated/blue-collar work). Fame is earned and spent in these five
     /// curated buckets rather than per job category (see `FameCategory` and
-    /// `Player.fameHireBonus`): tech/engineering/gaming build **Technology**
+    /// `Player.fameHireBonus`): tech/engineering build **Technology**
     /// fame, business/finance/retail/entrepreneurship/administration build
     /// **Business**, science/health/education build **Science**,
     /// design/fashion/language build **Arts**, and the spotlight fields
@@ -112,7 +111,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// build **Entertainment**.
     var fameCategory: FameCategory? {
         switch self {
-        case .technology, .engineering, .gaming:
+        case .technology, .engineering:
             return .technology
         case .business, .finance, .retail, .entrepreneurship, .administration:
             return .business
@@ -135,7 +134,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return 0.55   // founder income swings wildly with the venture
         case .showBusiness, .fashion:
             return 0.50   // heavily project-based / performance-driven
-        case .technology, .engineering, .aviation, .science, .gaming:
+        case .technology, .engineering, .aviation, .science:
             return 0.40   // bonuses, stock, market swings
         case .business, .law, .finance:
             return 0.40
@@ -218,7 +217,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .education: return "📚"
         case .agriculture: return "🌾"
         case .design: return "🖌️"
-        case .gaming: return "🎮"
         case .language: return "🗣️"
         case .tourism: return "🧳"
         case .law: return "⚖️"
@@ -252,8 +250,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .agriculture:
             return .outdoors
         case .design:
-            return .creative
-        case .gaming:
             return .creative
         case .language:
             return .people
@@ -309,9 +305,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .agriculture:
             return "Farming, growing food, and taking care of animals. It's all about nurturing life."
         case .design:
-            return "Make things look great and work well—like logos, apps, clothes, and rooms."
-        case .gaming:
-            return "Build video games: model 3D worlds, design mechanics, animate characters, and code the fun."
+            return "Make things look great and work well — logos, apps, clothes, rooms, and the worlds and characters in video games."
         case .language:
             return "Use words to connect people: translate, teach languages, write, and communicate."
         case .tourism:
@@ -365,15 +359,13 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .engineering:
             return "Civil, mechanical, electrical, robotics"
         case .technology:
-            return "Developer, tester, security, data"
+            return "Developer, tester, security, data, gameplay programming"
         case .showBusiness:
             return "Actor, musician, athlete, TV host, content creator, coach"
         case .agriculture:
             return "Agriculturist, horticulturist, livestock"
         case .design:
-            return "Graphic, UI/UX, fashion, interior"
-        case .gaming:
-            return "3D modeller, game designer, animator, gameplay programmer"
+            return "Graphic, UI/UX, fashion, interior, 3D modelling, game design"
         case .language:
             return "Translator, interpreter, language teacher"
         case .tourism:

@@ -607,7 +607,7 @@ final class CareerGraphTests: XCTestCase {
     func testSkillBuildingTrainingsAreNonGatingBoosts() {
         let expected: [Training: Set<JobCategory>] = [
             .codingBootcamp:     [.technology, .engineering],
-            .gameDevProgram:     [.gaming, .technology],
+            .gameDevProgram:     [.design, .technology],
             .productDesign:      [.design, .fashion],
             .musicProduction:    [.showBusiness],
         ]

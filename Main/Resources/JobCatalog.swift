@@ -170,7 +170,7 @@ enum JobCatalog {
         "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
         "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
 
-        // Gaming industry (art, design, and engineering that ship games)
+        // Games — the art, design and engineering that ship them
         "3D Modeler":                     .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 3, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
         "3D Artist":                      .init(creativityAndInsightfulThinking: 4, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, spacialNavigationAndOrientation: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
         "Game Animator":                  .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
@@ -180,7 +180,6 @@ enum JobCatalog {
         "Gameplay Programmer":            .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
         "Technical Artist":               .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
         "Game Producer":                  .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
-        "Game QA Tester":                 .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
         "Art Director (Games)":           .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 2, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 2, presentationAndStorytelling: 2),
     ]
 
@@ -327,6 +326,14 @@ enum JobCatalog {
     /// engineering/science/technology degrees.
     static let acceptedProfilesByBaseTitle: [String: [TertiaryProfile]] = [
         "Architect": [.engineering, .design, .arts],
+        // Game roles hire from technology, design and arts alike, so they keep
+        // that spread rather than inheriting whichever category now holds them.
+        "Game Designer": [.technology, .design, .arts],
+        "Gameplay Programmer": [.technology, .design, .arts],
+        "Narrative Designer": [.technology, .design, .arts],
+        "Technical Artist": [.technology, .design, .arts],
+        "Game Producer": [.technology, .design, .arts],
+        "Art Director (Games)": [.technology, .design, .arts],
     ]
 
     // MARK: - Work setting
@@ -370,7 +377,7 @@ enum JobCatalog {
     static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
         switch category {
         case .administration, .business, .design, .engineering, .finance,
-             .gaming, .language, .law, .logistics, .science, .technology,
+             .language, .law, .logistics, .science, .technology,
              .fashion, .entrepreneurship:
             return .office
         case .agriculture, .automotive, .aviation, .construction, .manufacturing,
@@ -406,21 +413,6 @@ enum JobCatalog {
                 presentationAndStorytelling: 1
             )
 
-        case .gaming:
-            return .init(
-                analyticalReasoningAndProblemSolving: 2,
-                creativityAndInsightfulThinking: 3,
-                communicationAndNetworking: 1,
-                visionaryThinkingAndAmbition: 1,
-                carefulnessAndAttentionToDetail: 2,
-                tinkeringAndFingerPrecision: 1,
-                spacialNavigationAndOrientation: 2,
-                stressResistanceAndEmotionalRegulation: 1,
-                collaborationAndTeamwork: 2,
-                timeManagementAndPlanning: 2,
-                selfDisciplineAndPerseverance: 2,
-                presentationAndStorytelling: 1
-            )
 
         case .health, .education:
             return .init(
@@ -592,7 +584,6 @@ enum JobCatalog {
         case .law:         return [.law]
         case .education:   return [.education, .science]
         case .design:      return [.design, .arts]
-        case .gaming:      return [.technology, .design, .arts]
         case .showBusiness: return [.arts, .design, .sports]
         case .service:     return [.service, .business]
         case .agriculture: return [.agriculture, .science]
@@ -772,14 +763,13 @@ enum JobCatalog {
         .init(title: "Dancer", category: .showBusiness, income: 35_000, icon: "💃", summary: "Performs choreographed routines on stage and screen.", minEQF: 1),
         .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Creates 2D/3D animation for studios and clients.", minEQF: 4),
         .init(title: "Interior Designer", category: .design, income: 60_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
-        // Gaming — the studios that make video games (art, design, engineering)
-        .init(title: "Game QA Tester", category: .gaming, income: 45_000, icon: "🔍", summary: "Hunts bugs and verifies gameplay before release.", minEQF: 3),
-        .init(title: "3D Modeler", category: .gaming, income: 58_000, icon: "🧊", summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 4),
-        .init(title: "Game Animator", category: .gaming, income: 62_000, icon: "🎞️", summary: "Brings characters and creatures to life in motion.", minEQF: 4),
-        .init(title: "Level Designer", category: .gaming, income: 68_000, icon: "🗺️", summary: "Builds and balances the game's levels and pacing.", minEQF: 4),
-        .init(title: "Narrative Designer", category: .gaming, income: 72_000, icon: "✍️", summary: "Writes the story, characters, and branching dialogue.", minEQF: 5),
-        .init(title: "Technical Artist", category: .gaming, income: 92_000, icon: "🛠️", summary: "Bridges art and code — shaders, tools, and pipelines.", minEQF: 5),
-        .init(title: "Game Producer", category: .gaming, income: 105_000, icon: "📋", summary: "Coordinates team, schedule, and scope to ship the game.", minEQF: 5),
+        // Games — split across design and technology by what the role does
+        .init(title: "3D Modeler", category: .design, income: 58_000, icon: "🧊", summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 4),
+        .init(title: "Game Animator", category: .design, income: 62_000, icon: "🎞️", summary: "Brings characters and creatures to life in motion.", minEQF: 4),
+        .init(title: "Level Designer", category: .design, income: 68_000, icon: "🗺️", summary: "Builds and balances the game's levels and pacing.", minEQF: 4),
+        .init(title: "Narrative Designer", category: .design, income: 72_000, icon: "✍️", summary: "Writes the story, characters, and branching dialogue.", minEQF: 5),
+        .init(title: "Technical Artist", category: .technology, income: 92_000, icon: "🛠️", summary: "Bridges art and code — shaders, tools, and pipelines.", minEQF: 5),
+        .init(title: "Game Producer", category: .technology, income: 105_000, icon: "📋", summary: "Coordinates team, schedule, and scope to ship the game.", minEQF: 5),
 
         // Capstone roles: senior seats that top out a track under their own
         // name rather than as a rung of a ladder.
@@ -788,7 +778,7 @@ enum JobCatalog {
         .init(title: "Nurse Practitioner", category: .health, income: 125_000, icon: "🥼", summary: "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy.", minEQF: 6, minYears: 2),
         .init(title: "Art Director", category: .showBusiness, income: 100_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, or publications.", minEQF: 5, minYears: 8),
         .init(title: "Editor-in-Chief", category: .showBusiness, income: 135_000, icon: "🗞️", summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10),
-        .init(title: "Art Director (Games)", category: .gaming, income: 145_000, icon: "🖌️", summary: "Directs the art team and defines the game's whole look.", minEQF: 5, minYears: 8),
+        .init(title: "Art Director (Games)", category: .design, income: 145_000, icon: "🖌️", summary: "Directs the art team and defines the game's whole look.", minEQF: 5, minYears: 8),
         .init(title: "Chief Medical Officer", category: .health, income: 300_000, icon: "🏥", summary: "Sets clinical strategy and quality across a health system.", minEQF: 7, minYears: 12),
         .init(title: "Chief Technology Officer", category: .technology, income: 320_000, icon: "🧠", summary: "Owns technology strategy for the whole organization.", minEQF: 6, minYears: 12),
         .init(title: "Chief Executive Officer", category: .business, income: 400_000, icon: "👔", summary: "Leads the entire company and answers to the board.", minEQF: 6, minYears: 15),
@@ -801,9 +791,9 @@ enum JobCatalog {
     // rungs can never tie for "next". Credentials and soft skills are inherited
     // from the ladder's name via the per-base-title tables.
     static let ladders: [LadderSpec] = [
-        .init(name: "3D Artist", category: .gaming, icon: "🎨", rungs: [
+        .init(name: "3D Artist", category: .design, icon: "🎨", rungs: [
             .init(label: "", income: 64_000, summary: "Creates textured, lit 3D art for games.", minEQF: 4),
-            // Gaming — art, design, and engineering ladders inside a studio
+            // Games — art, design and engineering ladders inside a studio
             .init(label: "Senior", income: 95_000, summary: "Owns key art and sets the visual bar for the team.", minEQF: 4, minYears: 5),
         ]),
         .init(name: "Accountant", category: .administration, icon: "📒", rungs: [
@@ -868,12 +858,12 @@ enum JobCatalog {
             .init(label: "Senior", income: 85_000, summary: "Experienced firefighter leading a crew on emergency calls.", minEQF: 3, minYears: 6, icon: "🚒"),
             .init(label: "Lead", income: 120_000, summary: "Commands a fire station and emergency operations.", minEQF: 4, minYears: 12, icon: "🚒"),
         ]),
-        .init(name: "Game Designer", category: .gaming, icon: "🎮", rungs: [
+        .init(name: "Game Designer", category: .design, icon: "🎮", rungs: [
             .init(label: "", income: 78_000, summary: "Designs mechanics, systems, and the player experience.", minEQF: 5),
             .init(label: "Senior", income: 115_000, summary: "Owns major game systems and mentors designers.", minEQF: 5, minYears: 5),
             .init(label: "Lead", income: 150_000, summary: "Sets the design vision for the entire title.", minEQF: 5, minYears: 9),
         ]),
-        .init(name: "Gameplay Programmer", category: .gaming, icon: "💻", rungs: [
+        .init(name: "Gameplay Programmer", category: .technology, icon: "💻", rungs: [
             .init(label: "", income: 98_000, summary: "Codes game systems, mechanics, and engine features.", minEQF: 5),
             .init(label: "Senior", income: 150_000, summary: "Owns complex gameplay systems and mentors engineers.", minEQF: 5, minYears: 5),
             .init(label: "Lead", income: 190_000, summary: "Leads the gameplay engineering team and its architecture.", minEQF: 5, minYears: 9),
@@ -1054,7 +1044,7 @@ enum JobCatalog {
         .init(title: "Specialty Coffee Roastery", category: .retail, income: 46_000, icon: "☕", summary: "Source, roast, and sell your own beans through a café and online.", minYears: 1, targetCapital: 30_000),
         .init(title: "Boutique Fitness Studio", category: .health, income: 52_000, icon: "🏋️", summary: "Run your own small-group training studio and build a member community.", minYears: 2, targetCapital: 35_000),
         .init(title: "Farm-to-Table Restaurant", category: .hospitality, income: 60_000, icon: "🍽️", summary: "Open a seasonal restaurant sourcing straight from local growers.", minYears: 3, targetCapital: 80_000),
-        .init(title: "Indie Game Studio", category: .gaming, income: 85_000, icon: "🎮", summary: "Bootstrap a small studio and ship an original game to players.", minYears: 3, targetCapital: 55_000),
+        .init(title: "Indie Game Studio", category: .technology, income: 85_000, icon: "🎮", summary: "Bootstrap a small studio and ship an original game to players.", minYears: 3, targetCapital: 55_000),
         .init(title: "Property Development Firm", category: .construction, income: 110_000, icon: "🏗️", summary: "Buy, build, and sell property — financing projects and managing crews.", minYears: 4, targetCapital: 120_000),
         .init(title: "SaaS App Startup", category: .technology, income: 120_000, icon: "💻", summary: "Build a subscription software product and grow it toward a real raise.", minYears: 3, targetCapital: 60_000),
     ]
