@@ -545,22 +545,50 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
-    /// Relevant work experience should lift an experience-building venture's odds,
-    /// but never beyond the cap; ventures with no experience category are unmoved.
-    func testExperienceLiftRaisesVentureOdds() {
+    /// Work experience should lift any project's odds — not only the ones that
+    /// build experience of their own — and years in the project's own field
+    /// should count twice over.
+    func testExperienceRaisesProjectOdds() {
         guard let venture = SideHustleCatalog.byId["crowdfundingCampaign"],
               let plain = SideHustleCatalog.byId["projectApp"] else {
-            XCTFail("Expected ventures missing from catalogue."); return
+            XCTFail("Expected projects missing from catalogue."); return
         }
         let soft = SoftSkills()
-        let cold = venture.successProbability(for: soft, experienceYears: 0)
-        let seasoned = venture.successProbability(for: soft, experienceYears: 20)
-        XCTAssertGreaterThan(seasoned, cold,
-                             "Experience should raise an entrepreneurship venture's odds.")
-        XCTAssertEqual(venture.experienceLift(years: 100), SideHustle.maxExperienceLift,
-                       "Experience lift should cap out.")
-        XCTAssertEqual(plain.experienceLift(years: 20), 0,
-                       "A venture with no experience category gets no lift.")
+        for project in [venture, plain] {
+            let cold = project.successProbability(for: soft, totalExperienceYears: 0)
+            let seasoned = project.successProbability(for: soft, totalExperienceYears: 10)
+            XCTAssertGreaterThan(seasoned, cold,
+                                 "A working career should raise '\(project.id)' odds.")
+        }
+        XCTAssertEqual(plain.experienceFit(totalYears: 4, fieldYears: 4),
+                       plain.experienceFit(totalYears: 8, fieldYears: 0),
+                       accuracy: 0.0001,
+                       "Years in the project's own field should count twice.")
+        XCTAssertEqual(plain.experienceFit(totalYears: 500, fieldYears: 500), 1.0,
+                       "The experience term should cap out at a full fit.")
+    }
+
+    /// Nothing gates a project any more, so the odds have to carry the meaning:
+    /// a player with no talent and no career rolls against nothing, and no
+    /// player ever exceeds the project's own ceiling.
+    func testProjectOddsSpanZeroToCeiling() {
+        let green = SoftSkills()
+        for project in SideHustleCatalog.all {
+            XCTAssertEqual(project.successProbability(for: green), 0, accuracy: 0.0001,
+                           "'\(project.id)' should be a hopeless shot with no skills and no career.")
+        }
+        var maxed = SoftSkills()
+        for skill in SoftSkills.skillNames { maxed[keyPath: skill.keyPath] = 10 }
+        for project in SideHustleCatalog.all {
+            let best = project.successProbability(
+                for: maxed, fameScore: 1_000,
+                totalExperienceYears: 100, fieldExperienceYears: 100
+            )
+            XCTAssertLessThanOrEqual(best, project.successCeiling + 0.0001,
+                                     "'\(project.id)' must never beat its own ceiling.")
+            XCTAssertGreaterThan(best, 0,
+                                 "'\(project.id)' should be winnable once fully built up.")
+        }
     }
 
     // MARK: - Projects vs. Events taxonomy

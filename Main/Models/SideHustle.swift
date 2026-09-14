@@ -1,16 +1,18 @@
 import Foundation
 
-/// A spare-time venture the player commits a year to — a talent-fit gamble that
-/// stakes no money: the odds scale with how well the player's soft skills fit
-/// the work, and a flop simply yields nothing.
+/// A spare-time venture the player commits a year to — a gamble that stakes no
+/// money, only the year: the odds scale with how well the player's soft skills
+/// fit the work and how much working life stands behind it, and a flop simply
+/// yields nothing.
 ///
 /// A venture pays off one of two ways (`Payoff`): a **money** venture banks cash
 /// in full (untaxed, unlike salary), while a **fame** venture banks an
 /// industry-scoped reputation award (see `Player.fameAwards` / `fameHireBonus`)
 /// and grows the soft skills it drew on — the reward a passive hobby can't give.
 /// Most ventures now chase fame; a handful of business plays still pay cash.
-/// Most also gate behind a `prerequisite` — a minimum level in a relevant soft
-/// skill, so you build the skill (via hobbies) before you can take the project on.
+/// Nothing is locked: any venture can be attempted at any time, and the odds
+/// (see `successProbability`) carry the whole decision — attempt one you have no
+/// talent or career for and you are rolling against essentially nothing.
 struct SideHustle: Identifiable, Hashable {
     /// What a successful year yields. Neither stakes money up front.
     enum Payoff: Hashable {
@@ -41,24 +43,13 @@ struct SideHustle: Identifiable, Hashable {
     /// Title of the fame award banked on a successful fame year. Defaults to
     /// `label` when nil; ignored by money ventures.
     var fameTitle: String? = nil
-    /// A soft-skill prerequisite that gates the venture: the player must reach
-    /// `minLevel` in `keyPath` before it can be taken on. Most ventures set one —
-    /// you build the relevant skill (through hobbies and activities) before you
-    /// can credibly chase the project. `nil` for open, entry-level ventures.
-    var prerequisite: SkillRequirement? = nil
-    /// A hard capital gate: the minimum savings the player must have on hand to
-    /// take the venture on. Set for ventures that need real money up front — a
-    /// shop's fit-out, a property's down payment — so you can't credibly start
-    /// them broke. `nil` for ventures that need no capital.
-    var minCapital: Int? = nil
     /// The industry a committed year of this venture credits as *work
     /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
     /// so years spent building a startup, pitching, or crowdfunding accumulate
     /// like a job would — and, because Business credits entrepreneurship
     /// (`JobCategory.creditedExperienceCategories`), count toward Business roles.
-    /// The player's existing experience in this field also lifts the venture's
-    /// success odds (see `experienceLift`). `nil` for ventures that build no
-    /// formal work experience (most fame plays).
+    /// Years in this field count double toward the odds (see `experienceFit`).
+    /// `nil` for ventures that build no formal work experience (most fame plays).
     var experienceCategory: JobCategory? = nil
     /// The most this venture's success odds can ever reach in a single year,
     /// however talented and famous the player is. Ordinary ventures leave this at
@@ -67,28 +58,8 @@ struct SideHustle: Identifiable, Hashable {
     /// years-long chase, not a formality once your skills are high.
     var successCeiling: Double = 0.9
 
-    /// A minimum-level requirement on one soft-skill axis (see `prerequisite`).
-    struct SkillRequirement: Hashable {
-        let keyPath: WritableKeyPath<SoftSkills, Int>
-        let minLevel: Int
-    }
-
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
-
-    /// Whether the player clears this venture's soft-skill prerequisite (always
-    /// true when it has none).
-    func meetsPrerequisite(for soft: SoftSkills) -> Bool {
-        guard let req = prerequisite else { return true }
-        return soft[keyPath: req.keyPath] >= req.minLevel
-    }
-
-    /// Whether the player has the capital this venture requires on hand (always
-    /// true when it needs none).
-    func meetsCapital(savings: Int) -> Bool {
-        guard let minCapital else { return true }
-        return savings >= minCapital
-    }
 
     /// The fame bucket a fame venture builds reputation in (`nil` for money
     /// ventures).
@@ -119,35 +90,52 @@ struct SideHustle: Identifiable, Hashable {
         return total / Double(talents.count)
     }
 
-    /// Per-year lift to a venture's success odds from relevant work experience,
-    /// and the cap that lift tops out at. Only ventures with an
-    /// `experienceCategory` benefit — a seasoned operator runs a smarter play.
-    static let experienceLiftPerYear = 0.03
-    static let maxExperienceLift = 0.15
+    /// Career years at which the experience term is fully earned. Years in the
+    /// project's own `experienceCategory` count twice, so a directly relevant
+    /// career gets there in half the time.
+    static let experienceReference = 16
 
-    /// Additive success-odds lift from the player's relevant work experience.
-    /// Zero for ventures that build no experience (`experienceCategory == nil`);
-    /// otherwise +`experienceLiftPerYear` per credited year, capped. `years` is
-    /// the player's `industryExperience` for this venture's `experienceCategory`.
-    func experienceLift(years: Int) -> Double {
-        guard experienceCategory != nil else { return 0 }
-        return min(Double(max(0, years)) * SideHustle.experienceLiftPerYear, SideHustle.maxExperienceLift)
+    /// How the two drivers split the fit score. Talent leads — a project is
+    /// mostly about the craft — but a working life still moves the needle.
+    static let talentWeight = 0.7
+    static let experienceWeight = 0.3
+
+    /// Fame snowball: how much each weighted fame point lifts a fame project's
+    /// odds, and the cap that lift tops out at.
+    static let fameLiftPerPoint = 0.03
+    static let maxFameLift = 0.15
+
+    /// 0...1 measure of how far the player's working life backs this project up.
+    /// `fieldYears` — credited years in the project's own `experienceCategory`,
+    /// when it has one — count a second time on top of `totalYears`, since
+    /// directly relevant reps are worth more than a career spent elsewhere.
+    func experienceFit(totalYears: Int, fieldYears: Int) -> Double {
+        let credited = Double(max(0, totalYears) + max(0, fieldYears))
+        return min(credited / Double(SideHustle.experienceReference), 1.0)
     }
 
-    /// Probability (0.05...0.9) that the venture pays off in a given year. The
-    /// floor is deliberately low — a poorly-suited attempt almost always flops —
-    /// and the odds climb steeply with talent fit, so success is earned by
-    /// building the right skills first. Fame ventures snowball with reputation —
-    /// every banked award lifts the odds by +0.03 per weighted fame point, capped
-    /// at +0.15. `fameScore` is the weighted sum of the player's awards.
-    /// Ventures that build work experience also lift with the player's years in
-    /// the field (`experienceYears`, see `experienceLift`) — a startup runs
-    /// smarter the more business you've done.
-    func successProbability(for soft: SoftSkills, fameScore: Double = 0, experienceYears: Int = 0) -> Double {
-        let base = 0.05 + talentFit(for: soft) * 0.7
-        let fameLift = buildsFame ? min(fameScore * 0.03, 0.15) : 0.0
-        let expLift = experienceLift(years: experienceYears)
-        return max(0.05, min(successCeiling, base + fameLift + expLift))
+    /// Probability (0...`successCeiling`) that the project pays off this year.
+    ///
+    /// Nothing gates a project — every one can be attempted at any age, with any
+    /// skills — so this number carries the whole decision. It is the weighted
+    /// blend of two things the player earns over time: how well their soft skills
+    /// fit the work (`talentFit`) and how much working life stands behind it
+    /// (`experienceFit`). There is no floor: attempt a project you have no talent
+    /// or career for and you are rolling against essentially nothing.
+    ///
+    /// Fame projects additionally snowball with reputation — every banked award
+    /// lifts the odds by `fameLiftPerPoint` per weighted fame point, capped at
+    /// `maxFameLift` — so a name already made opens the next door.
+    func successProbability(for soft: SoftSkills, fameScore: Double = 0,
+                            totalExperienceYears: Int = 0,
+                            fieldExperienceYears: Int = 0) -> Double {
+        let fit = SideHustle.talentWeight * talentFit(for: soft)
+            + SideHustle.experienceWeight * experienceFit(totalYears: totalExperienceYears,
+                                                          fieldYears: fieldExperienceYears)
+        let fameLift = buildsFame
+            ? min(fameScore * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
+            : 0.0
+        return min(successCeiling, max(0, fit * successCeiling + fameLift))
     }
 
     /// The payout a successful year would yield at the player's current talent
@@ -163,11 +151,13 @@ struct SideHustle: Identifiable, Hashable {
     /// Rolls a single year of this venture. A money venture returns the takings
     /// (banked in full) on success or nothing on a flop; a fame venture returns a
     /// `FameGrant` on success. No money is staked, so there is nothing to salvage.
-    /// `fameScore` lets a fame venture's odds rise with the player's reputation;
-    /// `experienceYears` lets an experience-building venture's odds rise with the
-    /// player's years in its field.
-    func resolve(for soft: SoftSkills, fameScore: Double = 0, experienceYears: Int = 0) -> Outcome {
-        let odds = successProbability(for: soft, fameScore: fameScore, experienceYears: experienceYears)
+    /// The experience and fame arguments are the odds inputs described on
+    /// `successProbability`.
+    func resolve(for soft: SoftSkills, fameScore: Double = 0,
+                 totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0) -> Outcome {
+        let odds = successProbability(for: soft, fameScore: fameScore,
+                                      totalExperienceYears: totalExperienceYears,
+                                      fieldExperienceYears: fieldExperienceYears)
         guard Double.random(in: 0...1) < odds else {
             return Outcome(hustle: self, success: false, odds: odds, credit: 0, grantedFame: nil)
         }
@@ -235,8 +225,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Course Creator",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
+            fameTitle: "Course Creator"
         ),
     ]
 
@@ -260,8 +249,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Viral Creator",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
+            fameTitle: "Viral Creator"
         ),
         SideHustle(
             id: "selfPublishBook",
@@ -274,8 +262,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Published Author",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 5)
+            fameTitle: "Published Author"
         ),
         SideHustle(
             id: "freelancePerformer",
@@ -288,8 +275,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Rising Performer",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 5)
+            fameTitle: "Rising Performer"
         ),
         SideHustle(
             id: "releaseAlbum",
@@ -302,8 +288,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Recording Artist",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 6)
+            fameTitle: "Recording Artist"
         ),
         // --- The big break: rare, career-defining show-business lotteries. Each
         // banks a signature title that is *the* gateway into the A-list career
@@ -311,8 +296,8 @@ enum SideHustleCatalog {
         // Movie Star track, "Hit Record" the Pop Star track). The odds ceiling is
         // deliberately low: even a gifted, well-known performer only breaks
         // through after chasing it for years — that's the lottery upside show
-        // business is meant to have. High skill prerequisites gate the attempt,
-        // and accumulated show-business fame nudges the long odds upward.
+        // business is meant to have. Talent and a working career set the odds,
+        // and accumulated show-business fame nudges the long shot upward.
         SideHustle(
             id: "bigBreakActing",
             label: "Chase a Breakout Role",
@@ -325,7 +310,6 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.resilienceAndEndurance, weight: 1)],
             fameTitle: "Breakout Role",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 7),
             successCeiling: 0.30
         ),
         SideHustle(
@@ -340,7 +324,6 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Hit Record",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 7),
             successCeiling: 0.30
         ),
         // --- Self-initiated creative works (unlocked to everyone, stage-gated) ---
@@ -356,8 +339,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Demo Developer",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 5)
+            fameTitle: "Demo Developer"
         ),
         SideHustle(
             id: "projectLibrary",
@@ -371,8 +353,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Open-Source Contributor",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 6)
+            fameTitle: "Open-Source Contributor"
         ),
         SideHustle(
             id: "projectArticle",
@@ -386,8 +367,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
-            fameTitle: "Bylined Writer",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
+            fameTitle: "Bylined Writer"
         ),
         SideHustle(
             id: "projectPublishBook",
@@ -401,8 +381,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.leadershipAndInfluence, weight: 1)],
-            fameTitle: "Book Coauthor",
-            prerequisite: .init(keyPath: \.carefulnessAndAttentionToDetail, minLevel: 6)
+            fameTitle: "Book Coauthor"
         ),
         SideHustle(
             id: "projectGame3d",
@@ -416,8 +395,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Game Modder",
-            prerequisite: .init(keyPath: \.spacialNavigationAndOrientation, minLevel: 5)
+            fameTitle: "Game Modder"
         ),
         // --- More spare-time fame plays: personal-brand builders, not businesses.
         // Each is a pure reputation gamble (no capital, no experience) that banks
@@ -434,8 +412,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Podcast Host",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4)
+            fameTitle: "Podcast Host"
         ),
         SideHustle(
             id: "projectShortFilm",
@@ -449,8 +426,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
-            fameTitle: "Indie Filmmaker",
-            prerequisite: .init(keyPath: \.creativityAndInsightfulThinking, minLevel: 5)
+            fameTitle: "Indie Filmmaker"
         ),
         SideHustle(
             id: "projectTechChannel",
@@ -464,8 +440,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1)],
-            fameTitle: "Tech Educator",
-            prerequisite: .init(keyPath: \.presentationAndStorytelling, minLevel: 4)
+            fameTitle: "Tech Educator"
         ),
         SideHustle(
             id: "projectPreprint",
@@ -479,8 +454,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
-            fameTitle: "Published Researcher",
-            prerequisite: .init(keyPath: \.analyticalReasoningAndProblemSolving, minLevel: 6)
+            fameTitle: "Published Researcher"
         ),
         // --- Entrepreneurship venture: the self-initiated path to the founder
         // skillset that hobbies can't teach — leadership, vision, persuasion, and
@@ -489,8 +463,8 @@ enum SideHustleCatalog {
         // `.entrepreneurship` work experience (which counts toward Business
         // roles), banks business-industry fame (toward management and C-suite
         // roles), and grows the entrepreneurial cluster the way running a company
-        // would. Years already spent in business/entrepreneurship also raise the
-        // odds (see `experienceLift`).
+        // would. Years already spent in business/entrepreneurship count twice
+        // toward the odds (see `experienceFit`).
         SideHustle(
             id: "crowdfundingCampaign",
             label: "Run a Crowdfunding Campaign",
@@ -504,7 +478,6 @@ enum SideHustleCatalog {
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Crowdfunded Creator",
-            prerequisite: .init(keyPath: \.communicationAndNetworking, minLevel: 4),
             experienceCategory: .entrepreneurship
         ),
     ]

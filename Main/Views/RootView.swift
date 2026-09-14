@@ -218,6 +218,13 @@ struct RootView: View {
         } message: {
             Text(player.competitionWinMessage)
         }
+        // Reports back on the spare-time project the year was spent on — a hit or
+        // a flop, either way. A hit also fires the confetti (Player.celebrate).
+        .alert(player.projectOutcomeTitle, isPresented: $player.showProjectOutcomeAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(player.projectOutcomeMessage)
+        }
         // Marks the end of a degree with a congrats pop-up. The same milestone
         // is also banked into the StatusBar history so the player can revisit it
         // later. College and Careers stay reachable any year from the footer.

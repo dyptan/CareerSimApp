@@ -214,6 +214,14 @@ final class Player: ObservableObject {
     /// Message for the venture-failure pop-up, naming the venture that folded.
     @Published var ventureFailureMessage: String = ""
 
+    /// One-shot trigger for the spare-time project result pop-up. Every project
+    /// costs the year whether or not it lands, so the year always reports back.
+    @Published var showProjectOutcomeAlert: Bool = false
+    /// Title of the project result pop-up — it differs on a hit and a flop.
+    @Published var projectOutcomeTitle: String = ""
+    /// Body of the project result pop-up, naming the project and what it earned.
+    @Published var projectOutcomeMessage: String = ""
+
     /// Incremented on a celebratory stroke of luck (a promotion, or a long-shot
     /// college admission); the game view watches it to fire the confetti cannon.
     /// Bump it through `celebrateIfLucky(_:)` rather than directly, so every
@@ -226,7 +234,15 @@ final class Player: ObservableObject {
     /// coalesce into a single burst, since the view observes the counter once per
     /// render pass.
     func celebrateIfLucky(_ odds: Double) {
-        if odds < GameConstants.luckyWinThreshold { celebrationTrigger += 1 }
+        if odds < GameConstants.luckyWinThreshold { celebrate() }
+    }
+
+    /// Fires the celebration confetti unconditionally — for wins that are worth
+    /// celebrating however likely they were, such as landing a spare-time
+    /// project. Everything stochastic should go through `celebrateIfLucky(_:)`
+    /// instead, so long-shot wins stay the rule rather than the exception.
+    func celebrate() {
+        celebrationTrigger += 1
     }
 
     /// Running log of player-facing milestones — completions, promotions, hires,
@@ -234,6 +250,44 @@ final class Player: ObservableObject {
     /// shows the latest, expanded shows the full history). Append-only inside
     /// `Player`; cleared on `reset()`.
     @Published var statusEvents: [StatusEvent] = []
+
+    /// This player's odds on a spare-time project right now — the single place
+    /// the inputs are assembled, so the number the Projects sheet shows is the
+    /// one the year actually rolls against.
+    func projectOdds(for hustle: SideHustle) -> Double {
+        hustle.successProbability(
+            for: softSkills,
+            fameScore: fameScore,
+            totalExperienceYears: totalExperienceYears,
+            fieldExperienceYears: hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
+        )
+    }
+
+    /// Raises the result pop-up for a resolved spare-time project. Every project
+    /// costs the year whether or not it lands, so the year always reports back —
+    /// a flop is news too, and the message names the odds it was rolled against
+    /// so a long shot reads as bad luck rather than a broken game.
+    func reportProjectOutcome(_ outcome: SideHustle.Outcome) {
+        let hustle = outcome.hustle
+        let chance = "\(Int((outcome.odds * 100).rounded()))%"
+        if outcome.success {
+            projectOutcomeTitle = "\(hustle.icon) It landed!"
+            var earned: [String] = []
+            if outcome.credit > 0 {
+                earned.append("It paid \(outcome.credit.formatted(.number)) $.")
+            }
+            if let grant = outcome.grantedFame {
+                earned.append("You earned the “\(grant.title)” title and \(grant.category.icon) \(grant.category.rawValue) fame.")
+            }
+            projectOutcomeMessage = "\(hustle.label) paid off — a \(chance) shot that came in. "
+                + earned.joined(separator: " ")
+        } else {
+            projectOutcomeTitle = "\(hustle.icon) It didn't land"
+            projectOutcomeMessage = "\(hustle.label) went nowhere this year — it was a \(chance) shot. "
+                + "Build the skills it draws on and the years behind you, then try again."
+        }
+        showProjectOutcomeAlert = true
+    }
 
     /// Appends a milestone to `statusEvents`, tagged with the player's current
     /// age. Called from year-progression hooks and from the few mutating
@@ -487,6 +541,13 @@ final class Player: ObservableObject {
     /// and vice versa.
     func industryExperience(for category: JobCategory) -> Int {
         category.creditedYears(in: experience)
+    }
+
+    /// Every year the player has worked, in any field. Spare-time projects lean
+    /// on this rather than on one industry: a working life teaches you to finish
+    /// things, whatever the job was (see `SideHustle.experienceFit`).
+    var totalExperienceYears: Int {
+        experience.values.reduce(0, +)
     }
 
     /// Total professional-network points relevant to a field, built by taking
@@ -861,30 +922,35 @@ final class Player: ObservableObject {
             }
         }
 
-        // Spare-time ventures (business ventures + creative projects, one system).
-        // No money is staked. A successful year banks an industry-scoped fame
-        // award — Business fame for the commercial/entrepreneurial ventures,
-        // field fame for the creative projects — and grows the soft skills it
-        // drew on, the founder-cluster axes no hobby can build. A flop yields
-        // nothing. Fame ventures snowball with the player's reputation (see
-        // SideHustle.successProbability); all are repeatable year after year.
+        // Spare-time projects (business ventures + creative projects, one system).
+        // Nothing is staked but the year, and nothing is locked: any project can
+        // be attempted at any time, and the odds — talent fit plus the working
+        // life behind it, see SideHustle.successProbability — carry the whole
+        // decision. A successful year banks an industry-scoped fame award —
+        // Business fame for the commercial/entrepreneurial ventures, field fame
+        // for the creative projects — and grows the soft skills it drew on, the
+        // founder-cluster axes no hobby can build. A flop yields nothing but the
+        // lost year. All are repeatable year after year.
         var sideHustleNet = 0
         for id in appUIState.selectedSideHustles {
-            guard let hustle = SideHustleCatalog.byId[id],
-                  hustle.meetsPrerequisite(for: softSkills) else { continue }
+            guard let hustle = SideHustleCatalog.byId[id] else { continue }
             // A year committed to an experience-building venture (the
             // entrepreneurship plays) counts as real work experience in its
             // field — banked whether or not the venture pays off, because the
             // reps happen either way. Because Business credits entrepreneurship
             // (see `JobCategory.creditedExperienceCategories`), this also moves
-            // the player toward Business roles. The player's existing years then
-            // lift the odds below.
-            let experienceYears = hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
+            // the player toward Business roles. The odds are read *before* the
+            // increment, so this year's attempt rolls against the career the
+            // player brought into it.
+            let fieldYears = hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
+            let careerYears = totalExperienceYears
             if let cat = hustle.experienceCategory {
                 experience[cat, default: 0] += 1
                 recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
             }
-            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore, experienceYears: experienceYears)
+            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore,
+                                         totalExperienceYears: careerYears,
+                                         fieldExperienceYears: fieldYears)
             if outcome.success {
                 savings += outcome.credit
                 sideHustleNet += outcome.credit
@@ -896,12 +962,15 @@ final class Player: ObservableObject {
                     for ability in hustle.growth {
                         softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
                     }
-                    celebrateIfLucky(outcome.odds)
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
+                // A landed project is worth the confetti whatever the odds were —
+                // it cost a year of the player's life to find out.
+                celebrate()
             } else {
                 recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
             }
+            reportProjectOutcome(outcome)
         }
         lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
