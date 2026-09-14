@@ -168,17 +168,24 @@ struct Education: Codable, Hashable, Identifiable {
     /// an applicant who holds the prerequisite degree.
     ///
     /// The prior-degree (EQF) prerequisite is the only hard structural gate;
-    /// beyond that, admission is always possible — the odds simply rise with how
-    /// well the player's soft skills match what the school looks for and fall with
-    /// the institution's selectivity. Matching every target is "fully qualified"
-    /// (per-axis fit caps at 1.0), but an elite school can still turn a
-    /// fully-qualified applicant away, and a school will still take a chance on an
-    /// applicant with no soft skills at all.
+    /// beyond that the odds sit inside the tier's own band: `admissionFloor` is
+    /// what it takes on a thin record, `admissionFitSpan` is what a flawless
+    /// soft-skill match adds. So the school, not the applicant, sets how much
+    /// preparation is worth — building skills barely moves an open-admission
+    /// community college and is the whole difference at a selective one.
+    ///
+    /// Reading the band per tier, rather than one shared curve nudged by a
+    /// selectivity modifier, is what keeps the tier choice a real trade: a
+    /// school-leaver can count on the community college while a state place is
+    /// a coin flip and an elite one a reach. Applying costs the year either way
+    /// (see `InstitutionTiersView`), so the floor has to be somewhere a player
+    /// can afford to gamble from.
     func admissionProbability(player: Player) -> Double {
         guard meetsRequirements(player: player) else { return 0 }
 
-        let raw = 0.1 + 0.9 * softSkillFit(player: player)
-            + tier.admissionSelectivity + player.difficulty.opportunityBonus
+        let raw = tier.admissionFloor
+            + tier.admissionFitSpan * softSkillFit(player: player)
+            + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
     }
 

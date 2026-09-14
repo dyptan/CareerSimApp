@@ -55,16 +55,30 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
-    /// Selectivity modifier folded into the admission-probability calculation
-    /// (see `Education.admissionProbability`). Community runs near-open admission;
-    /// elite turns away even well-qualified applicants.
-    var admissionSelectivity: Double {
+    /// The share of thin applicants this school still takes — the bottom of its
+    /// admission band (see `Education.admissionProbability`). A community college
+    /// runs open admission, which is what a community college *is*, so it takes
+    /// almost anyone who walks in; an elite school takes almost nobody on a thin
+    /// record however open the door formally is.
+    var admissionFloor: Double {
         switch self {
-        case .community: return 0.10
-        case .state:     return 0.0
-        // Elite schools turn away even top applicants: a maxed-out candidate tops
-        // out around 65% here (0.1 + 0.9 − 0.35), so a place is earned, not given.
-        case .elite:     return -0.35
+        case .community: return 0.70
+        case .state:     return 0.30
+        case .elite:     return 0.03
+        }
+    }
+
+    /// How far a flawless soft-skill record lifts the odds above `admissionFloor`.
+    /// Narrow at community, where there was little to earn, and wide above it, so
+    /// the years a player spends building skills are what buys them a better
+    /// school. The sum is the ceiling: 98% community, 90% state, and 65% elite —
+    /// even a perfect applicant is turned away from an elite place a third of the
+    /// time, so getting in is earned over years rather than given.
+    var admissionFitSpan: Double {
+        switch self {
+        case .community: return 0.28
+        case .state:     return 0.60
+        case .elite:     return 0.62
         }
     }
 

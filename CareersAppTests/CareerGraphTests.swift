@@ -856,6 +856,35 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertLessThanOrEqual(odds, 0.66, "An elite school shouldn't be a near-lock even when maxed.")
     }
 
+    /// Applying costs the year whether or not you get in, so a school-leaver with
+    /// nothing built yet has to have somewhere they can count on. The tiers must
+    /// also stay ordered at every strength — otherwise the choice between them is
+    /// not a trade, it is just a worse option.
+    func testAdmissionTiersStayOrderedAndTheOpenDoorStaysOpen() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+
+        func odds(_ tier: EducationTier) -> Double {
+            Education(.Bachelor, profile: .business, tier: tier).admissionProbability(player: player)
+        }
+
+        for level in [0, 2, 5, 10] {
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = level }
+            XCTAssertGreaterThan(odds(.community), odds(.state),
+                                 "At skill \(level) the community college should be the safer bet.")
+            XCTAssertGreaterThan(odds(.state), odds(.elite),
+                                 "At skill \(level) a state place should beat an elite one.")
+        }
+
+        // The floor is what makes a first application affordable: a fresh
+        // school-leaver should expect to get into the open-admission tier, not
+        // burn years being turned away with nothing to show for them.
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
+        XCTAssertGreaterThan(odds(.community), 0.6,
+                             "An open-admission college should take a thin applicant most of the time.")
+    }
+
     /// Soft skills are never a gate: an applicant who holds the prior
     /// qualification can always apply, whatever their soft skills look like.
     func testSoftSkillsNeverBlockAdmission() {
