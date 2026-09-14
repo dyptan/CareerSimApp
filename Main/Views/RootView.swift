@@ -147,6 +147,17 @@ struct RootView: View {
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)
         }
+        // The year's contextual decision, raised once the turn has settled. It
+        // routes into the sheets below, so it's presented alongside them rather
+        // than wrapping them.
+        .sheet(item: Binding(
+            get: { player.currentMoment },
+            set: { if $0 == nil { player.dismissCurrentMoment() } }
+        )) { moment in
+            MomentView(moment: moment, appUIState: appUIState) {
+                player.dismissCurrentMoment()
+            }
+        }
         // The only fixed goal left is Simplified's top-leadership finish line,
         // which turns on when the occupation changes; realistic modes are
         // open-ended and score-based (see `Player.goalMet`).
@@ -488,6 +499,71 @@ extension View {
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 GameSheetButtonBar(isPresented: isPresented, onNext: onNext)
             }
+    }
+}
+
+// MARK: - Contextual moment
+
+/// Presents one `GameMoment` — a decision the game raises at the point it
+/// matters, instead of leaving the player to find the right button. Each option
+/// routes into a sheet that already exists, so this adds guidance rather than
+/// content.
+struct MomentView: View {
+    let moment: GameMoment
+    @ObservedObject var appUIState: AppUIState
+    /// Called once the player has chosen; drops the moment from the queue.
+    let onResolve: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text(moment.icon)
+                    .font(.system(size: 34))
+                Text(moment.title)
+                    .font(.title2.bold())
+            }
+
+            Text(moment.body)
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(spacing: 8) {
+                ForEach(moment.options) { option in
+                    Button {
+                        open(option.route)
+                        onResolve()
+                    } label: {
+                        Text(option.label)
+                            .font(option.isPrimary ? .headline : .body)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .momentOptionStyle(primary: option.isPrimary)
+                }
+            }
+            .padding(.top, 4)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        #if os(macOS)
+        .frame(minWidth: 420, minHeight: 260)
+        #endif
+    }
+
+    /// The only place that knows how a route becomes an open sheet.
+    private func open(_ route: MomentRoute) {
+        switch route {
+        case .education:  appUIState.showTertiarySheet = true
+        case .careers:    appUIState.showCareersSheet = true
+        case .trainings:  appUIState.showTrainingsSheet = true
+        case .projects:   appUIState.showSideHustlesSheet = true
+        case .ventures:   appUIState.showEntrepreneurshipSheet = true
+        case .boardroom:  appUIState.showExecutiveSheet = true
+        case .hobbies:    appUIState.showHobbiesSheet = true
+        case .sports:     appUIState.showSportsSheet = true
+        case .events:     appUIState.showEventsSheet = true
+        case .dismiss:    break
+        }
     }
 }
 

@@ -5,6 +5,106 @@ import XCTest
 /// invariants — reachability over the prerequisite DAG — so they run in
 /// O(catalogue size), not as a combinatorial sweep of player states.
 
+/// The contextual moments the game raises. These guard the *pacing* as much as
+/// the content: a dialog every turn is its own kind of clutter, so the rules are
+/// one a year, always skippable, and fired by a change rather than a standing
+/// condition.
+final class GameMomentTests: XCTestCase {
+
+    private func player(age: Int) -> Player {
+        let p = Player(); p.age = age; return p
+    }
+
+    /// An uneventful year must raise nothing. This is the whole guardrail — a
+    /// moment keyed on a condition rather than a change would fire every turn.
+    func testQuietYearRaisesNoMoment() {
+        let quiet = player(age: 30)
+        XCTAssertNil(MomentCatalog.next(for: quiet, justGraduated: false,
+                                        justLostJob: false, alreadySeen: []),
+                     "A year in which nothing changed should raise no moment.")
+    }
+
+    func testLifeEventsRaiseTheirMoment() {
+        XCTAssertEqual(MomentCatalog.next(for: player(age: 22), justGraduated: true,
+                                          justLostJob: false, alreadySeen: [])?.id,
+                       "graduated")
+        XCTAssertEqual(MomentCatalog.next(for: player(age: 30), justGraduated: false,
+                                          justLostJob: true, alreadySeen: [])?.id,
+                       "laid-off")
+        XCTAssertEqual(MomentCatalog.next(for: player(age: GameConstants.minimumEntrepreneurAge),
+                                          justGraduated: false, justLostJob: false,
+                                          alreadySeen: [])?.id,
+                       "old-enough-to-found")
+    }
+
+    /// Holding a degree-level role without the degree now has a measurable cost
+    /// (see `Job.educationPromotionTerm`), so the moment can say something
+    /// specific rather than nagging in general.
+    func testUnderCredentialledRaisesTheEducationMoment() {
+        let p = player(age: 30)
+        p.currentOccupation = JobCatalog.allJobs().first {
+            !$0.educationIsMandatory && $0.requirements.education.minEQF >= 5 && !$0.isLowSkilled
+        }
+        XCTAssertEqual(MomentCatalog.next(for: p, justGraduated: false,
+                                          justLostJob: false, alreadySeen: [])?.id,
+                       "under-credentialled")
+    }
+
+    /// Only one moment a year, and the most urgent one wins.
+    func testOnlyTheHighestPriorityMomentIsRaised() {
+        let p = player(age: GameConstants.minimumEntrepreneurAge)
+        let candidates = MomentCatalog.candidates(for: p, justGraduated: true, justLostJob: true)
+        XCTAssertGreaterThan(candidates.count, 1, "Expected several candidates to choose between.")
+        let raised = MomentCatalog.next(for: p, justGraduated: true,
+                                        justLostJob: true, alreadySeen: [])
+        XCTAssertEqual(raised?.id, candidates.max { $0.priority < $1.priority }?.id,
+                       "The highest-priority candidate should be the one raised.")
+    }
+
+    /// A once-only moment must not come back.
+    func testSeenMomentsDoNotRepeat() {
+        let p = player(age: GameConstants.minimumEntrepreneurAge)
+        guard let first = MomentCatalog.next(for: p, justGraduated: false,
+                                             justLostJob: false, alreadySeen: []) else {
+            return XCTFail("Expected a moment at the founding age.")
+        }
+        XCTAssertTrue(first.onlyOnce, "The coming-of-age moment should fire once per run.")
+        XCTAssertNil(MomentCatalog.next(for: p, justGraduated: false,
+                                        justLostJob: false, alreadySeen: [first.id]),
+                     "A once-only moment must not repeat once seen.")
+    }
+
+    /// Every moment must be escapable and must lead somewhere.
+    func testEveryMomentIsSkippableAndActionable() {
+        let p = player(age: GameConstants.minimumEntrepreneurAge)
+        p.currentOccupation = JobCatalog.allJobs().first { $0.isExecutive && !$0.isEntrepreneurial }
+        let all = MomentCatalog.candidates(for: p, justGraduated: true, justLostJob: true)
+        XCTAssertFalse(all.isEmpty)
+        for moment in all {
+            XCTAssertTrue(moment.options.contains { $0.route == .dismiss },
+                          "\(moment.id) must be skippable.")
+            XCTAssertTrue(moment.options.contains(where: \.isPrimary),
+                          "\(moment.id) needs a primary option.")
+            XCTAssertFalse(moment.body.isEmpty, "\(moment.id) needs an explanation.")
+        }
+        XCTAssertEqual(Set(all.map(\.id)).count, all.count, "Moment ids must be unique.")
+    }
+
+    /// Advancing a year must never stack up more than one moment.
+    func testAdvancingAYearRaisesAtMostOneMoment() {
+        let p = Player()
+        p.configureStart(age: 16)
+        let ui = AppUIState()
+        for _ in 0..<40 {
+            let before = p.pendingMoments.count
+            p.advanceYear(appUIState: ui)
+            XCTAssertLessThanOrEqual(p.pendingMoments.count - before, 1,
+                                     "At most one moment may be raised per year.")
+            p.pendingMoments.removeAll()
+        }
+    }
+}
+
 /// Structural invariants of the hand-written catalogues.
 ///
 /// The per-title override tables in `JobCatalog` are keyed by title *string*, so

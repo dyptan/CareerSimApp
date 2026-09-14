@@ -164,12 +164,34 @@ final class Player: ObservableObject {
     /// dismiss; `StatusBarView` still keeps the milestone in its history.
     @Published var showGraduationAlert: Bool = false
 
+    /// Contextual decisions waiting to be shown, newest last. `advanceYear`
+    /// enqueues at most one a year (see `MomentCatalog.next`), so this is a
+    /// queue for ordering rather than a backlog.
+    @Published var pendingMoments: [GameMoment] = []
+
+    /// Ids of the once-only moments already raised this run, so they don't
+    /// repeat. Reset with the rest of the run.
+    @Published var seenMomentIds: Set<String> = []
+
+    /// The moment to present, if any.
+    var currentMoment: GameMoment? { pendingMoments.first }
+
+    /// Drops the moment currently on screen.
+    func dismissCurrentMoment() {
+        guard !pendingMoments.isEmpty else { return }
+        pendingMoments.removeFirst()
+    }
+
     /// The graduation pop-up's message, capturing the degree just earned.
     @Published var graduationMessage: String = ""
 
     /// Whether a downturn cost the player their job in the year just advanced.
     /// Drives the header layoff notice so a sudden firing doesn't go unnoticed.
     @Published var lostJobThisYear: Bool = false
+
+    /// Whether a qualification completed this turn — drives the graduation
+    /// moment. Distinct from `showGraduationAlert`, which the alert clears.
+    @Published var graduatedThisYear: Bool = false
 
     /// One-shot trigger for the layoff pop-up. Set the moment a downturn fires
     /// the player; the alert clears it when dismissed (the header note, driven
@@ -624,6 +646,8 @@ final class Player: ObservableObject {
 
     func advanceYear(appUIState: AppUIState) {
         age += 1
+        // Moments fire on what changed *this* turn, not on standing conditions.
+        graduatedThisYear = false
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
         showCompetitionWinAlert = false
@@ -698,6 +722,7 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
                 graduationMessage = "Congratulations! You completed your \(currentEducation.degreeName). Time to figure out the next step."
                 showGraduationAlert = true
+                graduatedThisYear = true
             }
             appUIState.yearsLeftToGraduation = nil
             currentEducation = nil
@@ -928,6 +953,20 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Paid off your student loan")
             }
         }
+
+        raiseMomentForThisYear()
+    }
+
+    /// Picks at most one contextual decision to put to the player, now that the
+    /// year's state has settled. One a year by design — a dialog every turn is
+    /// its own kind of clutter.
+    private func raiseMomentForThisYear() {
+        guard let moment = MomentCatalog.next(for: self,
+                                              justGraduated: graduatedThisYear,
+                                              justLostJob: lostJobThisYear,
+                                              alreadySeen: seenMomentIds) else { return }
+        if moment.onlyOnce { seenMomentIds.insert(moment.id) }
+        pendingMoments.append(moment)
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -1219,6 +1258,9 @@ final class Player: ObservableObject {
         appliedJobIds = []
         appliedSchoolIds = []
         executiveActionsThisYear = []
+        pendingMoments = []
+        seenMomentIds = []
+        graduatedThisYear = false
         availableJobs = fresh.availableJobs
     }
 }
