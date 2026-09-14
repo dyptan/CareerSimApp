@@ -6,7 +6,6 @@ import Foundation
 enum MomentRoute: String, Codable, Hashable {
     case education
     case careers
-    case trainings
     case projects
     case ventures
     case boardroom
@@ -96,7 +95,7 @@ enum MomentCatalog {
                 body: "The role is gone. You can look for another, retrain for a different field, or back yourself and start something.",
                 options: [
                     .init(label: "Find work", route: .careers, isPrimary: true),
-                    .init(label: "Retrain", route: .trainings),
+                    .init(label: "Retrain", route: .education),
                     .init(label: "Start a venture", route: .ventures),
                     .init(label: "Take the year off", route: .dismiss),
                 ],
@@ -205,12 +204,6 @@ enum FooterActions {
         if !player.isSimplified, !player.experience.isEmpty {
             actions.append(.init(label: "Events", route: .events))
         }
-        // Trainings: realistic mode, EQF >= Primary, and a stage-eligible
-        // training in the catalogue.
-        if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1,
-           Training.allCases.contains(where: { $0.stages.contains(stage) }) {
-            actions.append(.init(label: "Trainings", route: .trainings))
-        }
         // Jobs open at legal working age; before that the player is in school
         // and nothing in the list applies.
         if player.age >= GameConstants.minimumWorkingAge {
@@ -230,9 +223,15 @@ enum FooterActions {
         if player.canMakeExecutiveDecisions {
             actions.append(.init(label: "Boardroom", route: .boardroom))
         }
-        // Higher education matters only after high school; before that schooling
-        // progresses on its own.
-        if player.age >= GameConstants.minimumTertiaryAge {
+        // Education covers degrees *and* the professional courses, so it
+        // surfaces for either: after high school, when a degree becomes a
+        // choice, or once a stage-eligible course is on offer (realistic mode,
+        // primary schooling behind you). Before that, schooling progresses on
+        // its own and nothing here applies.
+        let coursesOnOffer = !player.isSimplified
+            && (player.degrees.last?.eqf ?? 0) >= 1
+            && Training.allCases.contains { $0.stages.contains(stage) }
+        if player.age >= GameConstants.minimumTertiaryAge || coursesOnOffer {
             actions.append(.init(label: "Education", route: .education))
         }
         return actions
@@ -256,13 +255,17 @@ enum FooterActions {
             // progress is tertiary. Otherwise every player counts as mid-degree
             // and Education never leaves the surface.
             let studyingTertiary = (player.currentEducation?.eqf ?? 0) >= 4
-            return studyingTertiary ? 90 : (schoolAge ? 70 : 35)
+            if studyingTertiary { return 90 }
+            if schoolAge { return 70 }
+            // Education carries the professional courses as well as degrees, so
+            // for a working adult it is the "invest in your career" slot — worth
+            // more of their year than a job hunt they aren't on.
+            return 50
         case .boardroom:  return 85   // rare, and the point of having got there
         case .hobbies:    return schoolAge ? 80 : 30
         case .sports:     return schoolAge ? 75 : 25
         case .projects:   return schoolAge ? 40 : 65   // a working adult's staple
         case .events:     return 60
-        case .trainings:  return 50
         // A big, rare decision rather than a yearly one — and the coming-of-age
         // moment already announces it, so it needn't hold a permanent slot.
         case .ventures:   return 40

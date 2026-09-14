@@ -6,7 +6,6 @@ final class AppUIState: ObservableObject {
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showHobbiesSheet: Bool = false
-    @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
     @Published var showEntrepreneurshipSheet: Bool = false
     /// The Boardroom sheet — senior-leadership strategy plays. Gated in the
@@ -53,7 +52,6 @@ final class AppUIState: ObservableObject {
         selectedTrainings: Set<Training> = [],
         yearsLeftToGraduation: Int? = nil,
         showHobbiesSheet: Bool = false,
-        showTrainingsSheet: Bool = false,
         showRetirementSheet: Bool = false
     ) {
         self.showTertiarySheet = showTertiarySheet
@@ -62,7 +60,6 @@ final class AppUIState: ObservableObject {
         self.selectedTrainings = selectedTrainings
         self.yearsLeftToGraduation = yearsLeftToGraduation
         self.showHobbiesSheet = showHobbiesSheet
-        self.showTrainingsSheet = showTrainingsSheet
         self.showRetirementSheet = showRetirementSheet
     }
 
@@ -73,7 +70,6 @@ final class AppUIState: ObservableObject {
         switch route {
         case .education:  showTertiarySheet = true
         case .careers:    showCareersSheet = true
-        case .trainings:  showTrainingsSheet = true
         case .projects:   showSideHustlesSheet = true
         case .ventures:   showEntrepreneurshipSheet = true
         case .boardroom:  showExecutiveSheet = true
@@ -88,7 +84,6 @@ final class AppUIState: ObservableObject {
         showTertiarySheet = false
         showCareersSheet = true
         showHobbiesSheet = false
-        showTrainingsSheet = false
         showSideHustlesSheet = false
         showEntrepreneurshipSheet = false
         showExecutiveSheet = false

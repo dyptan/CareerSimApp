@@ -20,7 +20,7 @@
 		555CC10D2FF1341B00426E7E /* Sport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10C2FF1341B00426E7E /* Sport.swift */; };
 		555CC10F2FF134D000426E7E /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10E2FF134D000426E7E /* SportsView.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
-		5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingsView.swift */; };
+		5598FA292EE62F57006C4D36 /* TrainingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingRow.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
@@ -101,7 +101,7 @@
 		555CC10C2FF1341B00426E7E /* Sport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sport.swift; sourceTree = "<group>"; };
 		555CC10E2FF134D000426E7E /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
-		5598FA282EE62F57006C4D36 /* TrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingsView.swift; sourceTree = "<group>"; };
+		5598FA282EE62F57006C4D36 /* TrainingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingRow.swift; sourceTree = "<group>"; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
 		55A6ED002E9542000033B674 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
@@ -267,7 +267,7 @@
 				551B66F72EBFB9CD00092DC7 /* HobbiesView.swift */,
 				AA00000000000000000000E3 /* SideHustlesView.swift */,
 				AA00000000000000000000E7 /* EventsView.swift */,
-				5598FA282EE62F57006C4D36 /* TrainingsView.swift */,
+				5598FA282EE62F57006C4D36 /* TrainingRow.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
 				55AFFB6B2EF09DAC009FC04C /* GameStyle.swift */,
 				AA00000000000000000000A5 /* RetirementView.swift */,
@@ -403,7 +403,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				555CC10F2FF134D000426E7E /* SportsView.swift in Sources */,
-				5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */,
+				5598FA292EE62F57006C4D36 /* TrainingRow.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* HobbiesView.swift in Sources */,
 				55B4351C2F470E910022ACAA /* FooterView.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,

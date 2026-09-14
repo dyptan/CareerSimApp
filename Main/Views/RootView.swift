@@ -70,6 +70,8 @@ struct RootView: View {
                 yearsLeftToGraduation: $appUIState.yearsLeftToGraduation,
                 showTertiarySheet: $appUIState.showTertiarySheet,
                 showCareersSheet: $appUIState.showCareersSheet,
+                selectedTrainings: $appUIState.selectedTrainings,
+                selectedActivities: $appUIState.selectedActivities,
                 onNext: { player.advanceYear(appUIState: appUIState) }
             )
             #if os(macOS)
@@ -109,16 +111,6 @@ struct RootView: View {
             #if os(macOS)
             .frame(minWidth: 520, minHeight: 480)
             #endif
-        }
-        .sheet(isPresented: $appUIState.showTrainingsSheet) {
-            GameSheet(title: "Trainings", isPresented: $appUIState.showTrainingsSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
-                TrainingsView(
-                    player: player,
-                    selectedTrainings: $appUIState.selectedTrainings,
-                    selectedActivities: $appUIState.selectedActivities
-                )
-            }
         }
         .sheet(isPresented: $appUIState.showHobbiesSheet) {
             GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet,

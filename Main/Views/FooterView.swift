@@ -117,30 +117,6 @@ struct FooterView: View {
     /// button plus a confirmation dialog.
     @State private var showingMore = false
 
-    /// The player's current life stage, used to gate sheet buttons on whether
-    /// the underlying catalogue actually has anything to show. The matching
-    /// views all filter by this same stage internally, so an empty button row
-    /// means the dialog would open onto an empty list.
-    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
-
-    /// Per-button visibility: each predicate mirrors the catalogue filter the
-    /// corresponding view applies, so we only render buttons that would lead
-    /// to a non-empty sheet. (Existing prerequisite gates — degree EQF for
-    /// Certifications/Licenses, work history for Events — stay in their own
-    /// inline checks below.)
-    private var hasHobbies: Bool {
-        hobbies.contains { $0.stages.contains(currentStage) }
-    }
-    private var hasSports: Bool {
-        Sport.allCases.contains { $0.stages.contains(currentStage) }
-    }
-    private var hasSideHustles: Bool {
-        SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
-    }
-    private var hasTrainings: Bool {
-        Training.allCases.contains { $0.stages.contains(currentStage) }
-    }
-
     var body: some View {
         // Which actions appear, and which reach the surface, is decided by
         // `FooterActions`. Competitions have no button at all: they fire
