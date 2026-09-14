@@ -63,23 +63,6 @@ final class AppUIState: ObservableObject {
         self.showRetirementSheet = showRetirementSheet
     }
 
-    /// Opens the surface a `MomentRoute` names. The single place that knows how
-    /// a route becomes an open sheet — read by the contextual moments and by the
-    /// footer, so the two can't come to disagree about where "Ventures" leads.
-    func open(_ route: MomentRoute) {
-        switch route {
-        case .education:  showTertiarySheet = true
-        case .careers:    showCareersSheet = true
-        case .projects:   showSideHustlesSheet = true
-        case .ventures:   showEntrepreneurshipSheet = true
-        case .boardroom:  showExecutiveSheet = true
-        case .hobbies:    showHobbiesSheet = true
-        case .sports:     showSportsSheet = true
-        case .events:     showEventsSheet = true
-        case .dismiss:    break
-        }
-    }
-
     func reset() {
         showTertiarySheet = false
         showCareersSheet = true

@@ -110,22 +110,44 @@ struct FooterView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
-    /// Drives the overflow chooser. A `Menu` was the obvious control here and
-    /// renders correctly inside the footer's wrapping row, but never presents —
-    /// the row applies a `ButtonStyle` to everything in it, and a styled `Menu`
-    /// in this layout swallows the tap. Plain buttons work, so the overflow is a
-    /// button plus a confirmation dialog.
-    @State private var showingMore = false
+    /// The player's current life stage, used to gate sheet buttons on whether
+    /// the underlying catalogue actually has anything to show. The matching
+    /// views all filter by this same stage internally, so an empty button row
+    /// means the dialog would open onto an empty list.
+    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
+
+    /// Per-button visibility: each predicate mirrors the catalogue filter the
+    /// corresponding view applies, so we only render buttons that would lead to
+    /// a non-empty sheet.
+    private var hasHobbies: Bool {
+        hobbies.contains { $0.stages.contains(currentStage) }
+    }
+    private var hasSports: Bool {
+        Sport.allCases.contains { $0.stages.contains(currentStage) }
+    }
+    private var hasSideHustles: Bool {
+        SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
+    }
+    /// Education holds the professional courses as well as the degrees, so it
+    /// opens for either: after high school, when a degree becomes a choice, or
+    /// once a stage-eligible course is on offer.
+    private var hasCourses: Bool {
+        !player.isSimplified
+            && (player.degrees.last?.eqf ?? 0) >= 1
+            && Training.allCases.contains { $0.stages.contains(currentStage) }
+    }
 
     var body: some View {
-        // Which actions appear, and which reach the surface, is decided by
-        // `FooterActions`. Competitions have no button at all: they fire
+        // Events are a realistic-mode feature, so they hide in simplified mode.
+        // Hobbies stay — they build the soft skills that shape school admission
+        // odds. Competitions are no longer a button at all: they fire
         // automatically each year from the sport trained in Sports.
         //
-        // **Skip** sits deliberately *outside* the wrapping row — pinned to the
-        // trailing edge and bottom-aligned, so the one button pressed every turn
-        // stays under the same thumb however many rows the activity buttons
-        // reflow into. The activity row takes whatever width is left.
+        // **Skip** — advance the year — is deliberately *outside* the wrapping
+        // row: pinned to the trailing edge and bottom-aligned, it stays in the
+        // bottom-right corner no matter how many rows the activity buttons
+        // reflow into, so the one button pressed every turn is always under the
+        // same thumb. The activity row takes whatever width is left.
         HStack(alignment: .bottom, spacing: 12) {
             activityButtons
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -137,28 +159,53 @@ struct FooterView: View {
             .font(.headline)
             .layoutPriority(1)
         }
-        .confirmationDialog("More", isPresented: $showingMore, titleVisibility: .hidden) {
-            ForEach(FooterActions.overflow(for: player)) { action in
-                Button(action.label) { appUIState.open(action.route) }
-            }
-            Button("Cancel", role: .cancel) { }
-        }
     }
 
-    /// What the player can do with the year: the few that matter now, with the
-    /// rest a tap away. Wraps onto extra lines when the window is narrow. The
-    /// choosing lives in `FooterActions` — this only renders it.
+    /// Everything the player can *do* with the year, as a row that wraps onto
+    /// extra lines when the window is too narrow to hold it. Each button is
+    /// gated only on whether its sheet would have anything in it.
     @ViewBuilder
     private var activityButtons: some View {
-        let surfaced = FooterActions.surfaced(for: player)
-        let overflow = FooterActions.overflow(for: player)
         FooterButtonRow {
-            ForEach(surfaced) { action in
-                Button(action.label) { appUIState.open(action.route) }
+            if hasHobbies {
+                Button("Hobbies") { appUIState.showHobbiesSheet = true }
             }
 
-            if !overflow.isEmpty {
-                Button("More") { showingMore = true }
+            if hasSports {
+                Button("Sports") { appUIState.showSportsSheet = true }
+            }
+
+            if !player.isSimplified, !player.experience.isEmpty {
+                Button("Events") { appUIState.showEventsSheet = true }
+            }
+
+            // Jobs open up once the player reaches legal working age; before
+            // that they're in school and nothing in the list is applicable.
+            if player.age >= GameConstants.minimumWorkingAge {
+                Button("Jobs") { appUIState.showCareersSheet.toggle() }
+            }
+
+            if hasSideHustles {
+                Button("Projects") { appUIState.showSideHustlesSheet = true }
+            }
+
+            // The founder path is a realistic-mode adult play, and only one
+            // venture runs at a time — once founded it becomes the occupation,
+            // so this hides until the player exits it.
+            if !player.isSimplified,
+               player.age >= GameConstants.minimumEntrepreneurAge,
+               player.currentOccupation?.isEntrepreneurial != true {
+                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+            }
+
+            // Boardroom: senior-leadership strategy plays, shown only once the
+            // player holds an executive seat (CEO, director, partner, founder).
+            if player.canMakeExecutiveDecisions {
+                Button("Boardroom") { appUIState.showExecutiveSheet = true }
+            }
+
+            if player.age >= GameConstants.minimumTertiaryAge || hasCourses {
+                Button("Education") { appUIState.showTertiarySheet.toggle() }
             }
         }
     }

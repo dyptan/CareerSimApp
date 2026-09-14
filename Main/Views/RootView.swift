@@ -22,14 +22,6 @@ struct RootView: View {
                 ModeSelectionView(player: player, appUIState: appUIState)
             }
         }
-        // The year's contextual decision, raised once the turn has settled.
-        // Presented here rather than alongside the activity sheets: stacking a
-        // fourteenth `.sheet` on the same view left it silently never showing.
-        .sheet(item: $player.presentedMoment) { moment in
-            MomentView(moment: moment, appUIState: appUIState) {
-                player.dismissCurrentMoment()
-            }
-        }
     }
 
     private var gameView: some View {
@@ -169,13 +161,9 @@ struct RootView: View {
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+                player.graduationMessage = player.graduationMessage(for: degree, previousEQF: 2)
+                player.showGraduationAlert = true
                 player.currentEducation = nil
-                // School graduation is handled here rather than in `advanceYear`,
-                // so the moment has to be raised after the fact. It replaces the
-                // old graduation alert: same news, but it also offers the way
-                // forward instead of leaving the player at the footer.
-                player.graduatedThisYear = true
-                player.raiseMomentForThisYear()
             case 68: appUIState.showRetirementSheet.toggle()
             default: break
             }
@@ -221,7 +209,7 @@ struct RootView: View {
         // is also banked into the StatusBar history so the player can revisit it
         // later. College and Careers stay reachable any year from the footer.
         .alert("Congratulations! 🎓", isPresented: $player.showGraduationAlert) {
-            Button("Thanks!", role: .cancel) { }
+            Button("OK", role: .cancel) { }
         } message: {
             Text(player.graduationMessage)
         }
@@ -501,59 +489,6 @@ extension View {
                 GameSheetButtonBar(isPresented: isPresented, onNext: onNext)
             }
     }
-}
-
-// MARK: - Contextual moment
-
-/// Presents one `GameMoment` — a decision the game raises at the point it
-/// matters, instead of leaving the player to find the right button. Each option
-/// routes into a sheet that already exists, so this adds guidance rather than
-/// content.
-struct MomentView: View {
-    let moment: GameMoment
-    @ObservedObject var appUIState: AppUIState
-    /// Called once the player has chosen; drops the moment from the queue.
-    let onResolve: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text(moment.icon)
-                    .font(.system(size: 34))
-                Text(moment.title)
-                    .font(.title2.bold())
-            }
-
-            Text(moment.body)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(spacing: 8) {
-                ForEach(moment.options) { option in
-                    Button {
-                        appUIState.open(option.route)
-                        onResolve()
-                    } label: {
-                        Text(option.label)
-                            .font(option.isPrimary ? .headline : .body)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .momentOptionStyle(primary: option.isPrimary)
-                }
-            }
-            .padding(.top, 4)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        // Sit at the top of the sheet rather than floating in the middle of it.
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding(.top, 24)
-        #if os(macOS)
-        .frame(minWidth: 420, minHeight: 260)
-        #endif
-    }
-
 }
 
 // MARK: - First-run coach

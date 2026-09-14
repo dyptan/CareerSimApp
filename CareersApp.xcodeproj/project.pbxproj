@@ -36,7 +36,6 @@
 		84F851CB2EA0F3130066C41A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CA2EA0F3130066C41A /* RootView.swift */; };
 		84F851CD2EA16C290066C41A /* Education.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F851CC2EA16C290066C41A /* Education.swift */; };
 		AA00000000000000000000A2 /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A1 /* GameConstants.swift */; };
-		55AFFB7A2EF09DAC009FC04C /* GameMoment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB7B2EF09DAC009FC04C /* GameMoment.swift */; };
 		AA00000000000000000000A6 /* RetirementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A5 /* RetirementView.swift */; };
 		AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000A7 /* DegreesSubmenuView.swift */; };
 		AA00000000000000000000B2 /* EducationLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000B1 /* EducationLevel.swift */; };
@@ -117,7 +116,6 @@
 		84F851CA2EA0F3130066C41A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		84F851CC2EA16C290066C41A /* Education.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Education.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A1 /* GameConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
-		55AFFB7B2EF09DAC009FC04C /* GameMoment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMoment.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A5 /* RetirementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A7 /* DegreesSubmenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DegreesSubmenuView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000B1 /* EducationLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EducationLevel.swift; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 				550618412ED2245900C56E99 /* Training.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
 				AA00000000000000000000A1 /* GameConstants.swift */,
-				55AFFB7B2EF09DAC009FC04C /* GameMoment.swift */,
 				555CC10C2FF1341B00426E7E /* Sport.swift */,
 			);
 			path = Models;
@@ -431,7 +428,6 @@
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
 				555CC10D2FF1341B00426E7E /* Sport.swift in Sources */,
 				AA00000000000000000000A2 /* GameConstants.swift in Sources */,
-				55AFFB7A2EF09DAC009FC04C /* GameMoment.swift in Sources */,
 				AA00000000000000000000A6 /* RetirementView.swift in Sources */,
 				AA00000000000000000000A8 /* DegreesSubmenuView.swift in Sources */,
 				AA00000000000000000000B2 /* EducationLevel.swift in Sources */,

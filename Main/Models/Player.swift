@@ -164,43 +164,55 @@ final class Player: ObservableObject {
     /// dismiss; `StatusBarView` still keeps the milestone in its history.
     @Published var showGraduationAlert: Bool = false
 
-    /// Contextual decisions waiting to be shown, newest last. `advanceYear`
-    /// enqueues at most one a year (see `MomentCatalog.next`), so this is a
-    /// queue for ordering rather than a backlog.
-    @Published var pendingMoments: [GameMoment] = []
-
-    /// The moment currently on screen. Stored, not derived from the queue: a
-    /// `.sheet(item:)` bound to a computed `Binding(get:set:)` has `nil` written
-    /// back during the same update that raised the moment, so a setter that pops
-    /// the queue discards it before it can ever appear.
-    @Published var presentedMoment: GameMoment?
-
-    /// Ids of the once-only moments already raised this run, so they don't
-    /// repeat. Reset with the rest of the run.
-    @Published var seenMomentIds: Set<String> = []
-
-    /// Moves the next queued moment on screen when nothing is showing.
-    func presentNextMomentIfNeeded() {
-        guard presentedMoment == nil, !pendingMoments.isEmpty else { return }
-        presentedMoment = pendingMoments.removeFirst()
-    }
-
-    /// Drops the moment currently on screen and shows the next, if any.
-    func dismissCurrentMoment() {
-        presentedMoment = nil
-        presentNextMomentIfNeeded()
-    }
-
     /// The graduation pop-up's message, capturing the degree just earned.
     @Published var graduationMessage: String = ""
+
+    /// The graduation pop-up's text: congratulations, then what the qualification
+    /// actually opens — the courses and licences that needed this much schooling,
+    /// the roles whose education bar it clears, and the degree above it. Named
+    /// concretely rather than as "the next step", so the years just spent read as
+    /// a door opening rather than a number going up.
+    func graduationMessage(for degree: Education, previousEQF: Int) -> String {
+        let congratulations = "Congratulations! You completed your \(degree.degreeName)."
+        var unlocks: [String] = []
+
+        // Courses and licences that were out of reach at the old level.
+        let opened = Training.allCases
+            .filter { $0.minEQF > previousEQF && $0.minEQF <= degree.eqf }
+            .sorted { $0.friendlyName < $1.friendlyName }
+        if !opened.isEmpty {
+            let named = opened.prefix(4).map { "\($0.pictogram) \($0.friendlyName)" }
+            let rest = opened.count - named.count
+            let tail = rest > 0 ? ", and \(rest) more" : ""
+            unlocks.append("Courses and licences you can now take: \(named.joined(separator: ", "))\(tail).")
+        }
+
+        // Roles whose education bar this clears, counted by role family so a
+        // ladder's four rungs don't read as four separate openings.
+        let roles = Set(
+            JobCatalog.allJobs()
+                .filter { !$0.isEntrepreneurial }
+                .filter { $0.requirements.education.minEQF > previousEQF }
+                .filter { $0.requirements.education.minEQF <= degree.eqf }
+                .map(\.baseTitle)
+        )
+        if !roles.isEmpty {
+            unlocks.append("\(roles.count) role\(roles.count == 1 ? "" : "s") that ask for this level of schooling.")
+        }
+
+        // The rung above, when there is one.
+        if let next = availableNextEducations(holds: degrees + [degree]).map(\.eqf).max(),
+           next > degree.eqf {
+            unlocks.append("You can study further: \(Education.Requirements(minEQF: next).educationLabel()).")
+        }
+
+        guard !unlocks.isEmpty else { return congratulations }
+        return congratulations + "\n\nThis opens up:\n\n• " + unlocks.joined(separator: "\n\n• ")
+    }
 
     /// Whether a downturn cost the player their job in the year just advanced.
     /// Drives the header layoff notice so a sudden firing doesn't go unnoticed.
     @Published var lostJobThisYear: Bool = false
-
-    /// Whether a qualification completed this turn — drives the graduation
-    /// moment. Distinct from `showGraduationAlert`, which the alert clears.
-    @Published var graduatedThisYear: Bool = false
 
     /// One-shot trigger for the layoff pop-up. Set the moment a downturn fires
     /// the player; the alert clears it when dismissed (the header note, driven
@@ -712,8 +724,6 @@ final class Player: ObservableObject {
 
     func advanceYear(appUIState: AppUIState) {
         age += 1
-        // Moments fire on what changed *this* turn, not on standing conditions.
-        graduatedThisYear = false
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
         showCompetitionWinAlert = false
@@ -783,12 +793,12 @@ final class Player: ObservableObject {
 
         appUIState.yearsLeftToGraduation? -= 1
         if appUIState.yearsLeftToGraduation == 0 {
+            let priorEQF = degrees.map(\.eqf).max() ?? 0
             if let currentEducation {
                 degrees.append(currentEducation)
                 recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
-                graduationMessage = "Congratulations! You completed your \(currentEducation.degreeName). Time to figure out the next step."
+                graduationMessage = graduationMessage(for: currentEducation, previousEQF: priorEQF)
                 showGraduationAlert = true
-                graduatedThisYear = true
             }
             appUIState.yearsLeftToGraduation = nil
             currentEducation = nil
@@ -1026,21 +1036,6 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Paid off your student loan")
             }
         }
-
-        raiseMomentForThisYear()
-    }
-
-    /// Picks at most one contextual decision to put to the player, now that the
-    /// year's state has settled. One a year by design — a dialog every turn is
-    /// its own kind of clutter.
-    func raiseMomentForThisYear() {
-        guard let moment = MomentCatalog.next(for: self,
-                                              justGraduated: graduatedThisYear,
-                                              justLostJob: lostJobThisYear,
-                                              alreadySeen: seenMomentIds) else { return }
-        if moment.onlyOnce { seenMomentIds.insert(moment.id) }
-        pendingMoments.append(moment)
-        presentNextMomentIfNeeded()
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -1332,10 +1327,6 @@ final class Player: ObservableObject {
         appliedJobIds = []
         appliedSchoolIds = []
         executiveActionsThisYear = []
-        pendingMoments = []
-        presentedMoment = nil
-        seenMomentIds = []
-        graduatedThisYear = false
         availableJobs = fresh.availableJobs
     }
 }

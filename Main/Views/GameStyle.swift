@@ -43,17 +43,6 @@ extension View {
         #endif
     }
 
-    /// A moment dialog's option buttons: the choice the player most likely
-    /// wants is prominent, the rest are bordered.
-    @ViewBuilder
-    func momentOptionStyle(primary: Bool) -> some View {
-        if primary {
-            self.buttonStyle(.borderedProminent)
-        } else {
-            self.buttonStyle(.bordered)
-        }
-    }
-
     /// The standard style for the footer's dialog buttons. Applied once by
     /// `FooterButtonRow` rather than per button.
     func gameFooterButtonStyle() -> some View {
