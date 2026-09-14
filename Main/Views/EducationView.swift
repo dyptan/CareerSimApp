@@ -1,10 +1,15 @@
 import SwiftUI
 
 /// The **Education** sheet — every way to spend a year learning, in one place.
-/// Degrees lead into the profile → degree → institution flow; the courses below
-/// them are the professional credentials and licences (see `TrainingRow`), which
-/// are picked inline because a course is a single yes-or-no commitment rather
-/// than a choice of school.
+/// The top level is the fields of study; each one leads to its degrees *and* the
+/// professional courses and licences filed under it (see `Training.profile`), so
+/// a nursing licence is found where the health degrees are rather than in a list
+/// of its own.
+///
+/// The one section that stays here is the general licences — driving and flying
+/// — which belong to no field of study and qualify you across the whole job
+/// market. They are picked inline, since a course is a yes-or-no commitment
+/// rather than a choice of school.
 struct EducationView: View {
     @ObservedObject var player: Player
 
@@ -20,14 +25,24 @@ struct EducationView: View {
         availableNextEducations(holds: player.degrees)
     }
 
+    /// Fields of study with something to offer this year — a degree still to
+    /// take, a course still to earn, or both. A field whose degrees are all
+    /// behind the player still appears while it has courses left, which is how
+    /// a qualified doctor still finds their board certification.
     private var availableProfiles: [TertiaryProfile] {
-        let profiles = availableEducations.compactMap { $0.profile }
-        let unique = Set(profiles)
-        return unique.sorted { $0.rawValue < $1.rawValue }
+        let fromDegrees = availableEducations.compactMap { $0.profile }
+        let fromCourses = availableTrainings.compactMap { $0.profile }
+        return Set(fromDegrees + fromCourses).sorted { $0.rawValue < $1.rawValue }
     }
 
     private var availableTrainings: [Training] {
         TrainingRow.available(for: player)
+    }
+
+    /// Courses that belong to no field of study, so they have nowhere to be
+    /// filed and are listed here instead (see `Training.profile`).
+    private var generalCourses: [Training] {
+        availableTrainings.filter { $0.profile == nil }
     }
 
     var body: some View {
@@ -51,14 +66,16 @@ struct EducationView: View {
     private var content: some View {
         List {
             if !availableProfiles.isEmpty {
-                Section("Degrees") {
+                Section("Fields of study") {
                     ForEach(availableProfiles, id: \.self) { profile in
                         NavigationLink {
                             DegreesSubmenuView(
                                 player: player,
                                 profile: profile,
                                 yearsLeftToGraduation: $yearsLeftToGraduation,
-                                showTertiarySheet: $showTertiarySheet
+                                showTertiarySheet: $showTertiarySheet,
+                                selectedTrainings: $selectedTrainings,
+                                selectedActivities: $selectedActivities
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
@@ -80,9 +97,9 @@ struct EducationView: View {
                     }
                 }
             }
-            if !availableTrainings.isEmpty {
-                Section("Courses & licences") {
-                    ForEach(availableTrainings, id: \.rawValue) { training in
+            if !generalCourses.isEmpty {
+                Section("General licences") {
+                    ForEach(generalCourses, id: \.rawValue) { training in
                         TrainingRow(
                             training: training,
                             player: player,
@@ -92,7 +109,7 @@ struct EducationView: View {
                     }
                 }
             }
-            if availableProfiles.isEmpty, availableTrainings.isEmpty {
+            if availableProfiles.isEmpty, generalCourses.isEmpty {
                 Text("Degrees and professional courses unlock as you get older and finish school.")
                     .font(.callout)
                     .foregroundStyle(.secondary)

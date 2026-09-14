@@ -215,6 +215,37 @@ final class CatalogIntegrityTests: XCTestCase {
     private var fullTitles: Set<String> { Set(JobCatalog.allTitles) }
     private var baseTitles: Set<String> { Set(JobCatalog.allBaseTitles) }
 
+    /// The Education sheet files each course under its field of study and lists
+    /// the fieldless ones itself. Every credential must land in exactly one of
+    /// those two places, or a course the game still gates jobs on would be
+    /// unreachable.
+    func testEveryTrainingIsReachableInEducation() {
+        let filed = Set(Training.profileByTraining.keys)
+        let general = Set(Training.allCases).subtracting(filed)
+        XCTAssertEqual(filed.union(general), Set(Training.allCases),
+                       "Every training is either filed under a profile or general.")
+        XCTAssertTrue(filed.isDisjoint(with: general),
+                      "No training may be in both places.")
+        // The general bucket is small and deliberate — the licences earned at a
+        // school of their own. A new credential landing here is a mapping the
+        // author forgot, so name them explicitly.
+        let expectedGeneral: Set<Training> = [
+            .drivers, .cdl, .pilot, .commercialPilot, .airlineTransportPilot, .atcCertification,
+        ]
+        XCTAssertEqual(general, expectedGeneral,
+                       "Unfiled credentials: \(general.map(\.rawValue).sorted()). "
+                       + "Add a Training.profileByTraining row, or add it to the expected list.")
+    }
+
+    /// A course filed under a profile has to be findable: its profile must be one
+    /// the Education sheet can actually reach.
+    func testFiledTrainingsUseRealProfiles() {
+        for (training, profile) in Training.profileByTraining {
+            XCTAssertTrue(TertiaryProfile.allCases.contains(profile),
+                          "\(training.rawValue) is filed under an unknown profile.")
+        }
+    }
+
     /// Tables keyed by *base* title, so one entry covers every rung of a ladder.
     func testBaseTitleOverridesNameRealJobs() {
         let tables: [(String, [String])] = [

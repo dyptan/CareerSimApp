@@ -383,6 +383,60 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         return map
     }()
 
+    /// The academic field a credential belongs to, so the **Education** sheet can
+    /// file it under the same profile as the degrees in that field — a nursing
+    /// licence sits with the health degrees, the bar exam with the law degrees.
+    ///
+    /// `nil` for the credentials that belong to no field of study: the driving
+    /// and flying licences are earned at a school of their own and qualify you
+    /// for work across the whole job market, so they are listed on their own
+    /// rather than filed under someone else's faculty.
+    var profile: TertiaryProfile? { Training.profileByTraining[self] }
+
+    /// One row per credential that belongs to a field of study. Anything absent
+    /// is deliberately general (see `profile`) — `CatalogIntegrityTests` checks
+    /// every training is reachable either way.
+    static let profileByTraining: [Training: TertiaryProfile] = [
+        // Health: the care ladder from assistant to consultant.
+        .cna: .health,
+        .lpn: .health,
+        .nurse: .health,
+        .np: .health,
+        .emt: .health,
+        .medicalLicense: .health,
+        .boardCertified: .health,
+        .dentalAssistant: .health,
+        .dentalLicense: .health,
+        .pharmacistLicense: .health,
+        .veterinaryLicense: .health,
+
+        .teachingCertificate: .education,
+        .cpa: .business,
+        .bar: .law,
+        .pesticideApplicator: .agriculture,
+        .musicProduction: .arts,
+
+        // Engineering covers the building trades too: the game has no separate
+        // construction faculty, and a trade licence is the same kind of
+        // qualification — earned on the job, examined, then practised.
+        .professionalEngineer: .engineering,
+        .electrician: .engineering,
+        .masterElectrician: .engineering,
+        .plumber: .engineering,
+        .masterPlumber: .engineering,
+
+        .architect: .design,
+        .productDesign: .design,
+
+        .codingBootcamp: .technology,
+        .gameDevProgram: .technology,
+
+        // Service: the people-facing credentials.
+        .cosmetology: .service,
+        .flightAttendantCert: .service,
+        .securityGuard: .service,
+    ]
+
     /// A credential's soft edge in one or more career fields (see `careerBoost`).
     struct CareerBoost {
         /// Job categories the credential helps you land a role in / found a
