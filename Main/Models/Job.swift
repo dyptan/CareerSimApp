@@ -467,11 +467,23 @@ extension Job {
     /// education expectation, so a ladder splits the way a real one does — a
     /// junior paralegal takes the posted band, the senior seat above them
     /// negotiates.
+    ///
+    /// `publicPayScaleTitles` is the exception the bar can't express: a role can
+    /// be as trained and as office-bound as you like and still have its pay set
+    /// by statute rather than by an offer.
     var salaryIsNegotiable: Bool {
         guard !isEntrepreneurial else { return false }
         guard workSetting == .office else { return false }
+        guard !Job.publicPayScaleTitles.contains(baseTitle) else { return false }
         return requirements.education.minEQF >= GameConstants.negotiableSalaryMinEQF
     }
+
+    /// Roles whose pay is a published government scale, not an offer — no
+    /// candidate argues their way onto a different step of it. Keyed by
+    /// `baseTitle`, so one entry covers every rung of a ladder.
+    static let publicPayScaleTitles: Set<String> = [
+        "Air Traffic Controller",
+    ]
 
     /// Whether this is unskilled work — a role requiring no post-secondary
     /// education or training (below `GameConstants.promotionMinEQF`). Such jobs

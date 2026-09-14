@@ -30,6 +30,12 @@ final class CatalogIntegrityTests: XCTestCase {
         for job in JobCatalog.allJobs() where job.isEntrepreneurial {
             XCTAssertFalse(job.salaryIsNegotiable, "\(job.id) is a venture, not an offer.")
         }
+        // A public pay scale is a scale whatever the seniority: no rung of such a
+        // ladder negotiates, however senior or well-schooled.
+        for job in jobs where Job.publicPayScaleTitles.contains(job.baseTitle) {
+            XCTAssertFalse(job.salaryIsNegotiable,
+                           "\(job.id) is on a public pay scale — no rung of it negotiates.")
+        }
         // The rule has to actually split the catalogue, not collapse to one side.
         let negotiable = jobs.filter(\.salaryIsNegotiable).count
         XCTAssertGreaterThan(negotiable, 0, "No role negotiates — the bar is too high.")
@@ -87,6 +93,7 @@ final class CatalogIntegrityTests: XCTestCase {
             ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
             ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
             ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
+            ("Job.publicPayScaleTitles", Array(Job.publicPayScaleTitles)),
         ]
         let known = baseTitles
         for (name, keys) in tables {
