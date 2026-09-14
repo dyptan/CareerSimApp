@@ -69,6 +69,10 @@ struct JobDetail: View {
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
         let education = job.educationFitTerm(for: player)
+        let shortfall = job.educationShortfall(for: player)
+        let educationFitLabel = shortfall > 0
+            ? "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
+            : (job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field")
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
         let experience = job.experienceFitTerm(for: player)
@@ -109,7 +113,7 @@ struct JobDetail: View {
         Your numbers right now:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
-        • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
+        • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education (\(educationFitLabel)): \(signed(education))" : "")
         • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
         • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
         • Difficulty bonus: \(signed(opportunity))
@@ -163,7 +167,7 @@ struct JobDetail: View {
                 .frame(maxWidth: .infinity ,alignment: .leading)
                 .padding()
 
-            let eduPlayerLevel = player.degrees.last?.eqf ?? 0
+            let eduPlayerLevel = job.playerEducationLevel(for: player)
             let eduRequired = job.requirements.education.minEQF
             RequirementRow(
                 label: job.requirements.education.educationLabel(),
@@ -174,7 +178,7 @@ struct JobDetail: View {
             .padding(.horizontal)
 
             if !job.educationIsMandatory && eduRequired > 0 {
-                Text("Not required for this role — but a relevant degree improves your hire chances.")
+                Text("Not required for this role — but employers weigh it heavily. A degree in an accepted field is worth the most, an unrelated one counts for a little, and falling short of the expected level costs you on every application and every promotion.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)

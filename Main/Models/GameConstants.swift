@@ -139,6 +139,42 @@ enum GameConstants {
     /// `Player.promotionChance`.
     static let promotionBaseChance: Double = 0.15
 
+    // MARK: - Education's pull on the odds
+    //
+    // Outside the regulated professions a degree is deliberately not a hard gate
+    // — talent, portfolio and experience can stand in for it (see
+    // `JobCategory.educationIsMandatory`). It is, however, the single biggest
+    // thing an employer screens on after skills, so it carries real weight in
+    // the score rather than being a rounding error.
+
+    /// Hire-odds cost per EQF level the applicant falls short of what the role
+    /// expects. Two levels short (high school for a bachelor's role) is −0.30.
+    static let educationShortfallPerLevel: Double = -0.15
+
+    /// Floor on that penalty, so no schooling at all for a degree-level role is
+    /// a long shot rather than an impossibility — an exceptional candidate can
+    /// still talk their way in.
+    static let educationShortfallFloor: Double = -0.60
+
+    /// Hire-odds lift for holding the expected level in a field the role
+    /// accepts. The right degree, not merely a degree.
+    static let relevantDegreeBonus: Double = 0.10
+
+    /// Lift for clearing the level in an unrelated field — the qualification
+    /// counts for something, just not for much.
+    static let unrelatedDegreeBonus: Double = 0.03
+
+    /// Promotion-odds cost per EQF level short of the role's expected education.
+    /// Smaller than the hiring penalty in absolute terms, but the promotion base
+    /// is far smaller too — being under-credentialled caps your ceiling.
+    static let promotionEducationPerLevel: Double = -0.03
+
+    /// Floor on the promotion education penalty.
+    static let promotionEducationFloor: Double = -0.10
+
+    /// Promotion-odds lift for holding an accepted degree at or above the bar.
+    static let promotionRelevantDegreeBonus: Double = 0.03
+
     /// Salary bump applied on a promotion, as a fraction of current pay. Flat
     /// across all jobs now that company tiers are gone. See `Player.advanceYear`.
     static let promotionRaise: ClosedRange<Double> = 0.06...0.18

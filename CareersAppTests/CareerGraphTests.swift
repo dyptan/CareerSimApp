@@ -138,6 +138,75 @@ final class CatalogIntegrityTests: XCTestCase {
         }
     }
 
+    /// Outside the regulated professions a degree must never *block* an
+    /// application — that is the whole point of the split — but it must move the
+    /// odds a lot. Shape assertions rather than magic numbers, so retuning the
+    /// constants doesn't break the suite; only reversing the design would.
+    func testDegreeIsASignificantHiringFactorWhereItIsNotAGate() {
+        // A role that declares accepted degree fields — some categories list
+        // none, and there any degree at the right level counts as relevant.
+        let jobs = JobCatalog.allJobs().filter {
+            !$0.isEntrepreneurial && !$0.educationIsMandatory
+                && $0.requirements.education.minEQF >= 5
+                && !($0.requirements.education.acceptedProfiles ?? []).isEmpty
+        }
+        guard let job = jobs.first else { return XCTFail("No non-regulated degree-level role.") }
+        let accepted = job.requirements.education.acceptedProfiles ?? []
+
+        let none = Self.candidate(eqf: nil, profile: nil)
+        let short = Self.candidate(eqf: .HighSchool, profile: nil)
+        let unrelated = Self.candidate(eqf: .Bachelor,
+                                       profile: TertiaryProfile.allCases.first { !accepted.contains($0) })
+        let relevant = Self.candidate(eqf: .Bachelor, profile: accepted.first)
+
+        // Never a gate: no degree still leaves the application open.
+        XCTAssertTrue(job.educationGateMet(for: none),
+                      "A degree must not hard-gate \(job.id) — it isn't a regulated profession.")
+
+        let terms = [none, short, unrelated, relevant].map { job.educationFitTerm(for: $0) }
+        XCTAssertEqual(terms, terms.sorted(),
+                       "Education should improve monotonically: none <= short <= unrelated <= relevant, got \(terms).")
+        XCTAssertLessThan(terms[0], 0, "No degree should cost probability for a degree-level role.")
+        XCTAssertGreaterThan(terms[3], 0, "The expected degree in an accepted field should pay.")
+        XCTAssertGreaterThan(terms[3] - terms[0], 0.25,
+                             "A degree should swing the odds substantially, not marginally.")
+        XCTAssertGreaterThan(terms[3], terms[2],
+                             "A degree in an accepted field should beat an unrelated one.")
+    }
+
+    /// The same factor has to reach promotions, not just hiring — being
+    /// under-credentialled for the role you hold should cap how far you climb.
+    func testDegreeMovesPromotionOdds() {
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && !$0.educationIsMandatory
+                && $0.requirements.education.minEQF >= 5 && !$0.isLowSkilled
+        }) else { return XCTFail("No non-regulated degree-level skilled role.") }
+
+        let none = Self.candidate(eqf: nil, profile: nil)
+        let relevant = Self.candidate(eqf: .Bachelor,
+                                      profile: job.requirements.education.acceptedProfiles?.first)
+        let withoutDegree = none.promotionOdds(for: job)
+        let withDegree = relevant.promotionOdds(for: job)
+
+        XCTAssertLessThan(withoutDegree.education, 0,
+                          "Holding a degree-level role without the degree should hold promotions back.")
+        XCTAssertGreaterThan(withDegree.total, withoutDegree.total,
+                             "The degree should raise the annual promotion odds.")
+        XCTAssertGreaterThanOrEqual(withoutDegree.total, 0, "Odds must never go negative.")
+    }
+
+    /// A candidate identical but for their education, for the tests above.
+    private static func candidate(eqf: Level.Stage?, profile: TertiaryProfile?) -> Player {
+        let player = Player()
+        player.age = 40
+        for keyPath in SoftSkills.skillNames.map(\.keyPath) { player.softSkills[keyPath: keyPath] = 5 }
+        for category in JobCategory.allCases { player.experience[category] = 20 }
+        if let eqf {
+            player.degrees = profile.map { [Education(eqf, profile: $0)] } ?? [Education(eqf)]
+        }
+        return player
+    }
+
     /// Every credential must have a row in `rulesByTraining`. Without this, a new
     /// `Training` case silently takes the struct defaults — a statutory licence
     /// that quietly stops gating hiring, for instance.

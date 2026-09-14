@@ -573,6 +573,9 @@ final class Player: ObservableObject {
         let fame: Double
         let tenure: Double
         let tenureYears: Int
+        /// Formal education measured against what the role expects — negative
+        /// while under-credentialled (see `Job.educationPromotionTerm`).
+        let education: Double
         let total: Double
     }
 
@@ -584,7 +587,7 @@ final class Player: ObservableObject {
         // player advances by applying upward instead.
         guard !job.isLowSkilled else {
             return PromotionOdds(promotes: false, readinessBase: 0, network: 0,
-                                 fame: 0, tenure: 0, tenureYears: 0, total: 0)
+                                 fame: 0, tenure: 0, tenureYears: 0, education: 0, total: 0)
         }
         let base = GameConstants.promotionBaseChance
         // Base chance scaled by promotion readiness (40%–100% of the base, so
@@ -596,9 +599,14 @@ final class Player: ObservableObject {
         let tenureBoost = min(0.10, Double(years) * 0.02)
         let network = networkPromotionBonus(for: job.category)
         let fame = famePromotionBonus(for: job.category)
-        let total = min(1.0, core + network + fame + tenureBoost)
+        // Formal education against what the role expects. Being hired without
+        // the qualification is possible outside the regulated professions, but
+        // it holds back the climb until you go and earn it.
+        let education = job.educationPromotionTerm(for: self)
+        let total = max(0, min(1.0, core + network + fame + tenureBoost + education))
         return PromotionOdds(promotes: true, readinessBase: core, network: network,
-                             fame: fame, tenure: tenureBoost, tenureYears: years, total: total)
+                             fame: fame, tenure: tenureBoost, tenureYears: years,
+                             education: education, total: total)
     }
 
     /// Annual promotion probability for a job: a flat base chance

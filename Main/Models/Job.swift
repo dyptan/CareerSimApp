@@ -281,19 +281,74 @@ extension Job {
         return ageGateMet(for: player) && educationGateMet(for: player) && hardSkillsMet(for: player) && experienceMet(for: player)
     }
 
-    /// Additive hire-probability adjustment from formal education when the degree
-    /// is *not* a hard gate. Meeting (or exceeding) the role's expected level is
-    /// neutral — the upside of a strong degree comes from `relevantPrestigeBonus`.
-    /// Falling short penalises, −0.10 per education level below the expectation
-    /// (capped at −0.30), so a relevant degree still meaningfully helps even
-    /// where it isn't strictly required.
+    /// The player's best formal qualification, in EQF levels. Uses the highest
+    /// degree held rather than the most recent one, so taking a vocational
+    /// course after a degree doesn't read as a downgrade.
+    func playerEducationLevel(for player: Player) -> Int {
+        player.degrees.map(\.eqf).max() ?? 0
+    }
+
+    /// How many EQF levels the player is short of what this role expects.
+    /// Zero once they meet or exceed the bar.
+    func educationShortfall(for player: Player) -> Int {
+        max(0, requirements.education.minEQF - playerEducationLevel(for: player))
+    }
+
+    /// Whether the player holds a qualification at or above the role's expected
+    /// level *in a field the role accepts*. Roles below degree level list no
+    /// accepted fields, so any qualification counts there.
+    ///
+    /// One definition, read by both the hire and the promotion terms, so "the
+    /// right degree" can't come to mean two different things.
+    func hasAcceptedDegree(for player: Player) -> Bool {
+        let required = requirements.education.minEQF
+        let qualifying = player.degrees.filter { $0.eqf >= required }
+        guard !qualifying.isEmpty else { return false }
+        guard let accepted = requirements.education.acceptedProfiles, !accepted.isEmpty else {
+            return true
+        }
+        return qualifying.contains { degree in
+            guard let profile = degree.profile else { return false }
+            return accepted.contains(profile)
+        }
+    }
+
+    /// Education's contribution to the hire odds where a degree is *not* a hard
+    /// gate — which is everywhere outside the regulated professions, and 67 of
+    /// the catalogue's roles expect a degree without requiring one.
+    ///
+    /// Falling short costs `educationShortfallPerLevel` a level down to a floor;
+    /// clearing the bar pays, and pays more when the degree is in a field the
+    /// role actually accepts. Previously this term was penalty-only and capped
+    /// at −0.30, so an applicant with no schooling still reached ~60% for a
+    /// bachelor's role and an unrelated degree scored exactly like a relevant
+    /// one.
     func educationFitTerm(for player: Player) -> Double {
         guard !educationIsMandatory else { return 0.0 }
         let required = requirements.education.minEQF
         guard required > 0 else { return 0.0 }
-        let playerEQF = player.degrees.last?.eqf ?? 0
-        guard playerEQF < required else { return 0.0 }
-        return max(-0.30, Double(required - playerEQF) * -0.10)
+        let shortfall = educationShortfall(for: player)
+        if shortfall > 0 {
+            return max(GameConstants.educationShortfallFloor,
+                       Double(shortfall) * GameConstants.educationShortfallPerLevel)
+        }
+        return hasAcceptedDegree(for: player)
+            ? GameConstants.relevantDegreeBonus
+            : GameConstants.unrelatedDegreeBonus
+    }
+
+    /// Education's contribution to the annual promotion odds. Being
+    /// under-credentialled for the role you hold caps how far you climb in it —
+    /// the way to lift it is to go and earn the qualification.
+    func educationPromotionTerm(for player: Player) -> Double {
+        let required = requirements.education.minEQF
+        guard required > 0 else { return 0.0 }
+        let shortfall = educationShortfall(for: player)
+        if shortfall > 0 {
+            return max(GameConstants.promotionEducationFloor,
+                       Double(shortfall) * GameConstants.promotionEducationPerLevel)
+        }
+        return hasAcceptedDegree(for: player) ? GameConstants.promotionRelevantDegreeBonus : 0.0
     }
 
     func salaryAlignmentFactor(requestedSalary: Double) -> Double {

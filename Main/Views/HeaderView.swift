@@ -116,6 +116,7 @@ struct HeaderView: View {
         • Network (\(job.category.rawValue)): \(signed(odds.network))
         • Fame (\(job.category.rawValue)): \(signed(odds.fame))
         • Tenure (\(odds.tenureYears) yr in role): \(signed(odds.tenure))
+        • Education vs. what the role expects: \(signed(odds.education))
         Total: \(pct(odds.total))
 
         Raises are paused during a recession.
