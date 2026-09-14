@@ -18,6 +18,8 @@ import SwiftUI
 struct PrivateProjectsView: View {
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
+    /// Taking a project on spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
@@ -46,7 +48,8 @@ struct PrivateProjectsView: View {
                         SideHustleRow(
                             hustle: hustle,
                             player: player,
-                            selectedSideHustles: $selectedSideHustles
+                            selectedSideHustles: $selectedSideHustles,
+                            onCommit: onCommit
                         )
                     }
                 }
@@ -63,6 +66,7 @@ struct SideHustleRow: View {
     let hustle: SideHustle
     @ObservedObject var player: Player
     @Binding var selectedSideHustles: Set<String>
+    var onCommit: () -> Void = {}
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -103,14 +107,11 @@ struct SideHustleRow: View {
                             selectedSideHustles.remove(hustle.id)
                             return
                         }
-                        // Spare time is finite, so picking a project when the
-                        // year is already spoken for replaces the earlier pick
-                        // rather than greying every other row out.
-                        if selectedSideHustles.count >= GameConstants.maxSideHustlesPerYear {
-                            selectedSideHustles = [hustle.id]
-                        } else {
-                            selectedSideHustles.insert(hustle.id)
-                        }
+                        // Picking a project is committing the year to it — the
+                        // sheet closes and the year runs, so there is only ever
+                        // one pick to hold.
+                        selectedSideHustles = [hustle.id]
+                        onCommit()
                     }
                 )
             ) {

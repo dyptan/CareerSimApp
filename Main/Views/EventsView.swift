@@ -12,6 +12,8 @@ import SwiftUI
 struct EventsView: View {
     @ObservedObject var player: Player
     @Binding var selectedEvents: Set<String>
+    /// Attending an event spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     /// Deterministic, so it's built once rather than per render.
     private static let skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] =
@@ -74,6 +76,7 @@ struct EventsView: View {
                         if isOn {
                             guard !atLimit else { return }
                             player.attendEvent(event, into: &selectedEvents)
+                            onCommit()
                         } else {
                             player.dropEvent(event, from: &selectedEvents)
                         }

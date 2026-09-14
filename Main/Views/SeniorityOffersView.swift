@@ -8,6 +8,7 @@ struct SeniorityOffersView: View {
     let variants: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+    var onCommit: () -> Void = {}
 
     private var baseTitle: String { variants.first?.baseTitle ?? "" }
 
@@ -36,7 +37,8 @@ struct SeniorityOffersView: View {
                         JobDetail(
                             job: adjusted,
                             player: player,
-                            showCareersSheet: $showCareersSheet
+                            showCareersSheet: $showCareersSheet,
+                            onCommit: onCommit
                         )
                     } label: {
                         seniorityCard(for: adjusted)

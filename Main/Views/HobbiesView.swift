@@ -3,6 +3,9 @@ import SwiftUI
 struct HobbiesView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
+    /// Choosing a hobby *is* choosing how the year goes, so this closes the
+    /// sheet and runs the year. Default no-op keeps the preview simple.
+    var onCommit: () -> Void = {}
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -65,6 +68,7 @@ struct HobbiesView: View {
                                     set: { isOn in
                                         if isOn && !atLimit {
                                             player.selectHobby(hobby, into: &selectedActivities)
+                                            onCommit()
                                         } else if !isOn {
                                             player.deselectHobby(hobby, from: &selectedActivities)
                                         }

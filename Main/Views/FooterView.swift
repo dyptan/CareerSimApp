@@ -138,27 +138,14 @@ struct FooterView: View {
     }
 
     var body: some View {
-        // Events are a realistic-mode feature, so they hide in simplified mode.
-        // Hobbies stay — they build the soft skills that shape school admission
-        // odds. Competitions are no longer a button at all: they fire
-        // automatically each year from the sport trained in Sports.
-        //
-        // **Skip** — advance the year — is deliberately *outside* the wrapping
-        // row: pinned to the trailing edge and bottom-aligned, it stays in the
-        // bottom-right corner no matter how many rows the activity buttons
-        // reflow into, so the one button pressed every turn is always under the
-        // same thumb. The activity row takes whatever width is left.
-        HStack(alignment: .bottom, spacing: 12) {
-            activityButtons
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Button("Skip") {
-                player.advanceYear(appUIState: appUIState)
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.headline)
-            .layoutPriority(1)
-        }
+        // Everything the year can be spent on, and nothing else: letting a year
+        // pass without spending it is **Skip**, up in the header. Events are a
+        // realistic-mode feature, so they hide in simplified mode; hobbies stay,
+        // since they build the soft skills that shape school admission odds.
+        // Competitions have no button at all — they fire automatically each year
+        // from the sport trained in Sports.
+        activityButtons
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// Everything the player can *do* with the year, as a row that wraps onto

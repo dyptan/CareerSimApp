@@ -18,8 +18,9 @@ struct EducationView: View {
     @Binding var showCareersSheet: Bool
     @Binding var selectedTrainings: Set<Training>
     @Binding var selectedActivities: Set<String>
-    /// Advances the game year and dismisses, via the shared **Next ▸** control.
-    var onNext: (() -> Void)? = nil
+    /// Enrolling — in a degree or a course — spends the year: closes the sheet
+    /// and runs it.
+    var onCommit: () -> Void = {}
 
     private var availableEducations: [Education] {
         availableNextEducations(holds: player.degrees)
@@ -75,7 +76,8 @@ struct EducationView: View {
                                 yearsLeftToGraduation: $yearsLeftToGraduation,
                                 showTertiarySheet: $showTertiarySheet,
                                 selectedTrainings: $selectedTrainings,
-                                selectedActivities: $selectedActivities
+                                selectedActivities: $selectedActivities,
+                                onCommit: onCommit
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
@@ -104,7 +106,8 @@ struct EducationView: View {
                             training: training,
                             player: player,
                             selectedTrainings: $selectedTrainings,
-                            selectedActivities: $selectedActivities
+                            selectedActivities: $selectedActivities,
+                            onCommit: onCommit
                         )
                     }
                 }
@@ -116,7 +119,7 @@ struct EducationView: View {
                     .padding(.vertical, 8)
             }
         }
-        .gameSheetClose($showTertiarySheet, title: "Education", onNext: onNext)
+        .gameSheetClose($showTertiarySheet, title: "Education")
     }
 
     private func degrees(for profile: TertiaryProfile) -> [Education] {

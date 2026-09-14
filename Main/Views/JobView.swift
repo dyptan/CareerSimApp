@@ -4,9 +4,13 @@ struct JobDetail: View {
     var job: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+    /// Applying spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     @State private var requestedSalary: Double = 0
     @State private var investedCapital: Double = 0
+    /// The outcome of the attempt just made. Kept only long enough to build the
+    /// pop-up's text — the sheet closes, so nothing renders it inline.
     @State private var applicationResult: ApplicationResult? = nil
 
     enum ApplicationResult { case hired, rejected }
@@ -320,23 +324,6 @@ struct JobDetail: View {
                 salaryNegotiationSection
             }
 
-            if let result = applicationResult {
-                VStack(spacing: 4) {
-                    Text(resultMessage(result))
-                        .font(.headline)
-                    if let advice = rejectionAdvice {
-                        Text(advice)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
-                .padding(.horizontal)
-            }
-
             applyButton
         }
         .onAppear {
@@ -515,6 +502,15 @@ struct JobDetail: View {
         }
     }
 
+    /// What to say on a win. The header already shows the new job, so this says
+    /// what it means rather than repeating the title.
+    private var successMessage: String {
+        if isFounder {
+            return "You put \(Int(investedCapital.isFinite ? investedCapital : 0).formatted(.number)) $ in and the venture is running. It's your occupation now — sell out or go under to move on."
+        }
+        return "You start as \(job.displayTitle) on \(Int(requestedSalary).formatted(.number)) $ a year."
+    }
+
     private func resultMessage(_ result: ApplicationResult) -> String {
         if isFounder {
             return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you lost your stake."
@@ -573,17 +569,16 @@ struct JobDetail: View {
             let success = isFounder
                 ? player.foundVenture(job, investedCapital: capital)
                 : player.applyForJob(job, requestedSalary: salary)
-            if success {
-                // Hired (or venture launched): close the careers dialog right away
-                // so the player lands back on the game view — the header shows the
-                // new job and the celebration plays there.
-                applicationResult = .hired
-                showCareersSheet = false
-            } else {
-                // Rejected: keep the dialog open and show the outcome inline so the
-                // player can adjust their salary ask or try a different role.
-                applicationResult = .rejected
-            }
+            // Applying is how the year was spent, offer or no offer, so the
+            // answer is a pop-up on the game view rather than a banner in a
+            // sheet the player is about to leave. A "no" still explains itself
+            // and what to change before next year.
+            applicationResult = success ? .hired : .rejected
+            player.reportApplicationOutcome(
+                title: resultMessage(success ? .hired : .rejected),
+                message: rejectionAdvice ?? successMessage
+            )
+            onCommit()
         } label: {
             Text(applyButtonLabel)
                 .frame(maxWidth: .infinity)

@@ -11,8 +11,8 @@ import SwiftUI
 struct ExecutiveDecisionsView: View {
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
-    /// Advances the game year and dismisses, via the shared **Next ▸** control.
-    var onNext: (() -> Void)? = nil
+    /// Making a play spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     /// The outcome of the most recent decision this session, shown inline under
     /// its row. Keyed by decision id so each row shows only its own result.
@@ -49,7 +49,7 @@ struct ExecutiveDecisionsView: View {
                 .padding()
             }
         }
-        .gameSheetClose($showSheet, title: "Boardroom", onNext: onNext)
+        .gameSheetClose($showSheet, title: "Boardroom")
     }
 
     private var header: some View {
@@ -102,6 +102,11 @@ struct ExecutiveDecisionsView: View {
                     ? player.resolveExecutiveDecision(decision, askPrice: currentAsk)
                     : player.resolveExecutiveDecision(decision)
                 outcomes[decision.id] = result
+                player.reportApplicationOutcome(
+                    title: result.success ? "\(decision.icon) It worked" : "\(decision.icon) It didn't land",
+                    message: resultLine(for: result)
+                )
+                onCommit()
             } label: {
                 Text(used ? "Done for this year" : actionLabel(for: decision))
                     .font(.headline)

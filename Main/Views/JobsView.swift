@@ -4,8 +4,8 @@ struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
-    /// Advances the game year and dismisses, via the shared **Next ▸** control.
-    var onNext: (() -> Void)? = nil
+    /// Applying spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     /// Narrows the list to one kind of work; `nil` shows every setting.
     @State private var settingFilter: WorkSetting?
@@ -89,13 +89,15 @@ struct JobsView: View {
                                     SeniorityOffersView(
                                         variants: group.variants,
                                         player: player,
-                                        showCareersSheet: $showCareersSheet
+                                        showCareersSheet: $showCareersSheet,
+                                        onCommit: onCommit
                                     )
                                 } else {
                                     JobDetail(
                                         job: group.variants[0].atBaseSalary(),
                                         player: player,
-                                        showCareersSheet: $showCareersSheet
+                                        showCareersSheet: $showCareersSheet,
+                                        onCommit: onCommit
                                     )
                                 }
                             } label: {
@@ -120,7 +122,7 @@ struct JobsView: View {
                     .padding(.vertical, 8)
             }
         }
-        .gameSheetClose($showCareersSheet, title: "Jobs", onNext: onNext)
+        .gameSheetClose($showCareersSheet, title: "Jobs")
     }
 
     /// Filters sit above the list rather than behind a toolbar button: on a small
@@ -201,8 +203,8 @@ struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showSheet: Bool
-    /// Advances the game year and dismisses, via the shared **Next ▸** control.
-    var onNext: (() -> Void)? = nil
+    /// Launching a venture spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     /// All ventures on offer — every capital-staked founder play — sorted by
     /// experience gate then stake size (least to most), so the most accessible
@@ -235,7 +237,7 @@ struct EntrepreneurshipView: View {
                 ventureLink(venture)
             }
         }
-        .gameSheetClose($showSheet, title: "Ventures", onNext: onNext)
+        .gameSheetClose($showSheet, title: "Ventures")
     }
 
     private func ventureLink(_ venture: Job) -> some View {
@@ -243,7 +245,8 @@ struct EntrepreneurshipView: View {
             JobDetail(
                 job: venture.atBaseSalary(),
                 player: player,
-                showCareersSheet: $showSheet
+                showCareersSheet: $showSheet,
+                onCommit: onCommit
             )
         } label: {
             VentureRow(job: venture)

@@ -226,6 +226,22 @@ final class Player: ObservableObject {
     /// Message for the venture-failure pop-up, naming the venture that folded.
     @Published var ventureFailureMessage: String = ""
 
+    /// One-shot trigger for the job-application result pop-up. Applying spends
+    /// the year whether or not it lands, so the sheet closes and the answer
+    /// arrives here instead of inline.
+    @Published var showApplicationOutcomeAlert: Bool = false
+    /// Title of the application result pop-up — it differs on an offer and a no.
+    @Published var applicationOutcomeTitle: String = ""
+    /// Body of the application result pop-up: on a rejection, why and what to do.
+    @Published var applicationOutcomeMessage: String = ""
+
+    /// Raises the result pop-up for a job application or a venture launch.
+    func reportApplicationOutcome(title: String, message: String) {
+        applicationOutcomeTitle = title
+        applicationOutcomeMessage = message
+        showApplicationOutcomeAlert = true
+    }
+
     /// One-shot trigger for the spare-time project result pop-up. Every project
     /// costs the year whether or not it lands, so the year always reports back.
     @Published var showProjectOutcomeAlert: Bool = false

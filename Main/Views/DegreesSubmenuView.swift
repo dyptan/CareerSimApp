@@ -13,6 +13,7 @@ struct DegreesSubmenuView: View {
     @Binding var showTertiarySheet: Bool
     @Binding var selectedTrainings: Set<Training>
     @Binding var selectedActivities: Set<String>
+    var onCommit: () -> Void = {}
 
     private var courses: [Training] {
         TrainingRow.available(for: player).filter { $0.profile == profile }
@@ -41,7 +42,8 @@ struct DegreesSubmenuView: View {
                                 level: education.level,
                                 profile: profile,
                                 yearsLeftToGraduation: $yearsLeftToGraduation,
-                                showTertiarySheet: $showTertiarySheet
+                                showTertiarySheet: $showTertiarySheet,
+                                onCommit: onCommit
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
@@ -71,7 +73,8 @@ struct DegreesSubmenuView: View {
                             training: training,
                             player: player,
                             selectedTrainings: $selectedTrainings,
-                            selectedActivities: $selectedActivities
+                            selectedActivities: $selectedActivities,
+                            onCommit: onCommit
                         )
                     }
                 }

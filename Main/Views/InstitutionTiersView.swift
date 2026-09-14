@@ -9,6 +9,8 @@ struct InstitutionTiersView: View {
 
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
+    /// Enrolling spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     private var tiers: [Education] {
         // Simplified mode has no institution tiers — a single neutral school
@@ -193,12 +195,13 @@ struct InstitutionTiersView: View {
         """
     }
 
-    /// Locks in the chosen school: drops any job, starts the degree, closes sheet.
+    /// Locks in the chosen school: drops any job, starts the degree, then spends
+    /// the year on it — enrolling *is* the year's choice.
     private func enroll(in education: Education) {
         player.currentOccupation = nil
         player.currentEducation = education
         yearsLeftToGraduation = education.yearsToComplete
-        showTertiarySheet = false
+        onCommit()
     }
 
     private func applyLabel(eqfMet: Bool, alreadyApplied: Bool, education: Education) -> String {

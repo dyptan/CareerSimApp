@@ -13,6 +13,8 @@ struct TrainingRow: View {
 
     @Binding var selectedTrainings: Set<Training>
     @Binding var selectedActivities: Set<String>
+    /// Enrolling spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     /// The courses on offer this year. Age is a visibility gate, not a disabled
     /// row: a course the player is too young for simply doesn't appear until
@@ -98,6 +100,7 @@ struct TrainingRow: View {
                             if isOn {
                                 guard canToggleOn else { return }
                                 player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
+                                onCommit()
                             } else {
                                 player.cancelTraining(training, from: &selectedTrainings, activities: &selectedActivities)
                             }
