@@ -15,6 +15,15 @@ final class AppUIState: ObservableObject {
     @Published var showSportsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
 
+    // Jobs-list filters. They live here rather than in `JobsView` so a choice
+    // survives the sheet closing: every application costs a year, so the list is
+    // reopened every year, and a filter that forgot itself each time would have
+    // to be set again on every visit.
+    /// Narrows the jobs list to one kind of work; `nil` shows every setting.
+    @Published var jobSettingFilter: WorkSetting?
+    /// Hides roles whose hard requirements the player doesn't meet yet.
+    @Published var jobQualifiedOnly: Bool = false
+
     // Selections
     @Published var selectedActivities: Set<String>
     /// Trainings the player is attempting this year (former certifications +
@@ -64,6 +73,8 @@ final class AppUIState: ObservableObject {
     }
 
     func reset() {
+        jobSettingFilter = nil
+        jobQualifiedOnly = false
         showTertiarySheet = false
         showCareersSheet = true
         showHobbiesSheet = false

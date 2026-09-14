@@ -84,6 +84,8 @@ struct RootView: View {
                 availableJobs: availableJobs,
                 player: player,
                 showCareersSheet: $appUIState.showCareersSheet,
+                settingFilter: $appUIState.jobSettingFilter,
+                qualifiedOnly: $appUIState.jobQualifiedOnly,
                 onCommit: { spendYear(closing: \.showCareersSheet) }
             )
             .frame(idealHeight: 500, alignment: .leading)

@@ -4,13 +4,12 @@ struct JobsView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+    /// The list's filters. Held by `AppUIState` rather than as view state, so a
+    /// choice survives the sheet closing — which it now does every year.
+    @Binding var settingFilter: WorkSetting?
+    @Binding var qualifiedOnly: Bool
     /// Applying spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
-
-    /// Narrows the list to one kind of work; `nil` shows every setting.
-    @State private var settingFilter: WorkSetting?
-    /// Hides roles whose hard requirements the player doesn't meet yet.
-    @State private var qualifiedOnly = false
 
     /// Whether a posting survives the current filters. Both are catalogue facts,
     /// so filtering never changes what a role *is* — only what's listed.
@@ -296,6 +295,8 @@ private struct VentureRow: View {
 
 private struct CareersSheetPreviewContainer: View {
     @State private var show = true
+    @State private var settingFilter: WorkSetting?
+    @State private var qualifiedOnly = false
     let sampleJobs: [Job]
     let player = Player()
 
@@ -303,7 +304,9 @@ private struct CareersSheetPreviewContainer: View {
         JobsView(
             availableJobs: sampleJobs,
             player: player,
-            showCareersSheet: $show
+            showCareersSheet: $show,
+            settingFilter: $settingFilter,
+            qualifiedOnly: $qualifiedOnly
         )
     }
 }
