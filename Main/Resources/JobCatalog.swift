@@ -353,8 +353,13 @@ enum JobCatalog {
         "Housekeeper": .field,
         "Janitor/Cleaner": .field,
         "Event Planner": .office,
-        // Logistics: the warehouse floor, not the planning desk.
+        // Moving goods: the warehouse floor is hands-on, the planning desks
+        // behind it are not — transportation defaults to field.
         "Warehouse Manager": .field,
+        "Dispatcher": .office,
+        "Logistics Coordinator": .office,
+        "Fleet Manager": .office,
+        "Supply Chain Manager": .office,
         // Public services: case work is people work.
         "Social Worker": .peopleFacing,
         // Science: bench work is hands-on; writing up the research isn't.
@@ -377,7 +382,7 @@ enum JobCatalog {
     static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
         switch category {
         case .administration, .business, .design, .engineering, .finance,
-             .language, .law, .logistics, .science, .technology,
+             .language, .law, .science, .technology,
              .fashion, .entrepreneurship:
             return .office
         case .agriculture, .automotive, .aviation, .construction, .manufacturing,
@@ -514,7 +519,7 @@ enum JobCatalog {
                 presentationAndStorytelling: 2
             )
 
-        case .logistics, .transportation:
+        case .transportation:
             return .init(
                 analyticalReasoningAndProblemSolving: 1,
                 creativityAndInsightfulThinking: 0,
@@ -729,12 +734,12 @@ enum JobCatalog {
         .init(title: "First Officer", category: .transportation, income: 95_000, icon: "🧑‍✈️", summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5),
         .init(title: "Pilot", category: .transportation, income: 155_000, icon: "✈️", summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5),
         .init(title: "Airline Captain", category: .transportation, income: 205_000, icon: "👨‍✈️", summary: "Commands the flight deck of commercial airliners.", minEQF: 5),
-        // Logistics — planning and management of the supply chain
-        .init(title: "Dispatcher", category: .logistics, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
-        .init(title: "Logistics Coordinator", category: .logistics, income: 52_000, icon: "🗒️", summary: "Schedules shipments and coordinates carriers.", minEQF: 4),
-        .init(title: "Warehouse Manager", category: .logistics, income: 66_000, icon: "🏬", summary: "Runs a warehouse's staff, inventory, and throughput.", minEQF: 4),
-        .init(title: "Fleet Manager", category: .logistics, income: 74_000, icon: "🚛", summary: "Manages a fleet of vehicles, maintenance, and routing.", minEQF: 5),
-        .init(title: "Supply Chain Manager", category: .logistics, income: 98_000, icon: "🔗", summary: "Optimizes sourcing, inventory, and distribution end-to-end.", minEQF: 5),
+        // Moving goods: the planning and management behind the vehicles
+        .init(title: "Dispatcher", category: .transportation, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
+        .init(title: "Logistics Coordinator", category: .transportation, income: 52_000, icon: "🗒️", summary: "Schedules shipments and coordinates carriers.", minEQF: 4),
+        .init(title: "Warehouse Manager", category: .transportation, income: 66_000, icon: "🏬", summary: "Runs a warehouse's staff, inventory, and throughput.", minEQF: 4),
+        .init(title: "Fleet Manager", category: .transportation, income: 74_000, icon: "🚛", summary: "Manages a fleet of vehicles, maintenance, and routing.", minEQF: 5),
+        .init(title: "Supply Chain Manager", category: .transportation, income: 98_000, icon: "🔗", summary: "Optimizes sourcing, inventory, and distribution end-to-end.", minEQF: 5),
         .init(title: "Judge", category: .law, income: 155_000, icon: "👨‍⚖️", summary: "Presides over court proceedings and rulings.", minEQF: 7),
         .init(title: "Security Guard", category: .publicServices, income: 32_000, icon: "🛡️", summary: "Protects property and ensures public safety.", minEQF: 3),
         // Engineering

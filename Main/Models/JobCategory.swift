@@ -85,7 +85,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     case automotive = "Automotive"
     case aviation = "Aviation"
     case maritime = "Maritime"
-    case logistics = "Logistics"
     case retail = "Retail"
     case science = "Science"
     case hospitality = "Hospitality"
@@ -140,7 +139,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return 0.40
         case .construction, .manufacturing, .automotive, .maritime:
             return 0.30   // seasonal and contract variability
-        case .agriculture, .logistics, .transportation, .retail, .service, .hospitality, .tourism:
+        case .agriculture, .transportation, .retail, .service, .hospitality, .tourism:
             return 0.30
         case .health, .education, .publicServices:
             return 0.10   // salaried / regulated
@@ -225,7 +224,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .automotive: return "🚗"
         case .aviation: return "✈️"
         case .maritime: return "🛳️"
-        case .logistics: return "📦"
         case .retail: return "🛒"
         case .science: return "🔬"
         case .hospitality: return "🍽️"
@@ -267,8 +265,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return .tools
         case .maritime:
             return .outdoors
-        case .logistics:
-            return .tools
         case .retail:
             return .people
         case .science:
@@ -322,8 +318,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Fly and care for airplanes: pilots, mechanics, and air traffic helpers."
         case .maritime:
             return "Work on or near the sea: ships, ports, rescue, and caring for oceans."
-        case .logistics:
-            return "Move things where they need to go: plan routes, track packages, and manage warehouses."
         case .retail:
             return "Help customers find what they need in stores and online."
         case .science:
@@ -341,7 +335,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .entrepreneurship:
             return "Start your own business! Take a risk, build something new, and be your own boss."
         case .transportation:
-            return "Move people and goods by road and air: drive, fly, operate, and keep vehicles running safely."
+            return "Move people and goods by road and air: drive, fly, operate, keep vehicles running safely, and plan the routes and warehouses behind it."
         case .administration:
             return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
         }
@@ -382,8 +376,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Pilot, flight attendant, aircraft mechanic"
         case .maritime:
             return "Sailor, marine engineer, coast guard"
-        case .logistics:
-            return "Dispatcher, supply chain, warehouse manager"
         case .retail:
             return "Sales associate, merchandiser, store manager"
         case .science:
@@ -401,7 +393,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         case .entrepreneurship:
             return "Side hustler, small business owner, startup founder"
         case .transportation:
-            return "Driver, pilot, aircraft mechanic, air traffic controller"
+            return "Driver, pilot, aircraft mechanic, air traffic controller, dispatcher, warehouse manager"
         case .administration:
             return "Accountant, HR specialist, recruiter, office manager"
         }
