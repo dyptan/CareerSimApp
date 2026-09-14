@@ -14,9 +14,6 @@ struct Competition: Identifiable, Hashable {
     let icon: String
     let blurb: String
     let discipline: Discipline
-    /// Unused: competitions are entered automatically and cost nothing. Kept on
-    /// the model so the catalogue's fee data isn't lost if entry fees return.
-    let entryFee: Int
     /// Cash awarded on a win.
     let prize: Int
     /// The titled trophy granted on a win, banked as a `Player.FameAward`.
@@ -104,7 +101,6 @@ enum CompetitionCatalog {
             icon: "🏅",
             blurb: "The youth league final — where scouts spot the next generation of pro players.",
             discipline: .athletic,
-            entryFee: 0,
             prize: 3_000,
             achievement: "Junior Champion",
             fameWeight: 1.0,
@@ -120,7 +116,6 @@ enum CompetitionCatalog {
             icon: "🏃",
             blurb: "A weekend road race — an accessible first taste of competition.",
             discipline: .athletic,
-            entryFee: 100,
             prize: 1_500,
             achievement: "5K Race Winner",
             fameWeight: 0.5,
@@ -135,7 +130,6 @@ enum CompetitionCatalog {
             icon: "🥇",
             blurb: "26.2 miles against thousands. A few seasons of training under your belt to even finish.",
             discipline: .athletic,
-            entryFee: 400,
             prize: 12_000,
             achievement: "Marathon Champion",
             fameWeight: 1.0,
@@ -150,7 +144,6 @@ enum CompetitionCatalog {
             icon: "🏅",
             blurb: "The step up to serious competition — qualify against your region's best. Years of training required.",
             discipline: .athletic,
-            entryFee: 800,
             prize: 30_000,
             achievement: "Regional Champion",
             fameWeight: 1.5,
@@ -165,7 +158,6 @@ enum CompetitionCatalog {
             icon: "🏆",
             blurb: "The premier athletic title — the country is watching. Only for seasoned competitors.",
             discipline: .athletic,
-            entryFee: 1_500,
             prize: 60_000,
             achievement: "National Champion",
             fameWeight: 2.0,
@@ -180,7 +172,6 @@ enum CompetitionCatalog {
             icon: "🥇",
             blurb: "The world stage. Medal here and you're a household name for life — the summit of a long career.",
             discipline: .athletic,
-            entryFee: 3_000,
             prize: 150_000,
             achievement: "Olympic Medalist",
             fameWeight: 3.0,
@@ -196,7 +187,6 @@ enum CompetitionCatalog {
             icon: "🎮",
             blurb: "Climb the seasonal ranks from your own setup. Cheap to enter, a real grind.",
             discipline: .esports,
-            entryFee: 50,
             prize: 2_000,
             achievement: "Ladder Season Champion",
             fameWeight: 0.5,
@@ -211,7 +201,6 @@ enum CompetitionCatalog {
             icon: "🕹️",
             blurb: "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.",
             discipline: .esports,
-            entryFee: 300,
             prize: 15_000,
             achievement: "LAN Tournament Champion",
             fameWeight: 1.0,
@@ -226,7 +215,6 @@ enum CompetitionCatalog {
             icon: "🌐",
             blurb: "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.",
             discipline: .esports,
-            entryFee: 1_200,
             prize: 120_000,
             achievement: "Esports World Champion",
             fameWeight: 2.5,
