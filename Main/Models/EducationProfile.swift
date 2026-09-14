@@ -36,7 +36,7 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// Short kid-friendly summary (very brief)
+    /// Short kid-friendly summary.
     var shortKidSummary: String {
         switch self {
         case .business: return "Learn how to start, run, and grow a company."

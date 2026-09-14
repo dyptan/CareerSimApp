@@ -80,11 +80,20 @@ struct HeaderView: View {
 
             Spacer()
 
-            // End the run early and record the score, at any age. Advancing a
-            // single year is the footer's **Skip** button, not this.
-            Button("Finish game") { showFinishConfirm = true }
-                .buttonStyle(.bordered)
-                .font(.headline)
+            // The two controls that move the run itself, stacked together: end
+            // it, or let a year pass. **Skip** lives here rather than in the
+            // footer so the row below stays what the year can be *spent* on —
+            // every button there opens a choice, and this one is the choice to
+            // make none.
+            VStack(alignment: .trailing, spacing: 8) {
+                Button("Finish game") { showFinishConfirm = true }
+                    .buttonStyle(.bordered)
+                    .font(.headline)
+
+                Button("Skip") { player.advanceYear(appUIState: appUIState) }
+                    .buttonStyle(.borderedProminent)
+                    .font(.headline)
+            }
         }
         .alert("Finish game?", isPresented: $showFinishConfirm) {
             Button("Finish & save record", role: .destructive) {
@@ -116,6 +125,7 @@ struct HeaderView: View {
         • Network (\(job.category.rawValue)): \(signed(odds.network))
         • Fame (\(job.category.rawValue)): \(signed(odds.fame))
         • Tenure (\(odds.tenureYears) yr in role): \(signed(odds.tenure))
+        • Education vs. what the role expects: \(signed(odds.education))
         Total: \(pct(odds.total))
 
         Raises are paused during a recession.

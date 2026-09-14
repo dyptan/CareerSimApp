@@ -7,7 +7,7 @@ struct RetirementView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text("Game Over")
-                .font(.title2.bold())
+                .font(.largeTitle.bold())
                 .padding(.top)
 
             Text("You wrapped up your career at age \(player.age).")
@@ -35,7 +35,7 @@ struct RetirementView: View {
             .padding(.top, 8)
         }
         .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
         #if os(macOS)
         .frame(minWidth: 700, minHeight: 400)
         #endif

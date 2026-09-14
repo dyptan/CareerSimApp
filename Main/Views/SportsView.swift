@@ -12,6 +12,8 @@ struct SportsView: View {
     @ObservedObject var player: Player
     @Binding var selectedActivities: Set<String>
     @Binding var selectedSports: Set<Sport>
+    /// Training a sport spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
         Dictionary(
@@ -90,13 +92,13 @@ struct SportsView: View {
                     set: { isOn in
                         if isOn && !atLimit {
                             player.selectSport(sport, into: &selectedActivities, sports: &selectedSports)
+                            onCommit()
                         } else if !isOn {
                             player.deselectSport(sport, from: &selectedActivities, sports: &selectedSports)
                         }
                     }
                 )
             )
-            .toggleStyle(.automatic)
             .frame(maxWidth: .infinity, alignment: .leading)
             .disabled(!isSelected && atLimit)
             .opacity((!isSelected && atLimit) ? 0.5 : 1.0)

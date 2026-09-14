@@ -4,9 +4,13 @@ struct JobDetail: View {
     var job: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
+    /// Applying spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     @State private var requestedSalary: Double = 0
     @State private var investedCapital: Double = 0
+    /// The outcome of the attempt just made. Kept only long enough to build the
+    /// pop-up's text — the sheet closes, so nothing renders it inline.
     @State private var applicationResult: ApplicationResult? = nil
 
     enum ApplicationResult { case hired, rejected }
@@ -23,10 +27,9 @@ struct JobDetail: View {
     }
 
     private var applyButtonLabel: String {
-        if player.appliedJobIds.contains(job.applicationKey) { return isFounder ? "Already attempted this year" : "Already applied" }
         if isFounder {
             if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
-            if player.savings + player.maxVentureLoan <= 0 { return "No savings or income to invest" }
+            if player.maxVentureStake <= 0 { return "No savings or income to invest" }
             return "Launch venture 🚀"
         }
         if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
@@ -68,19 +71,22 @@ struct JobDetail: View {
         let skillScore = Double(matched) / Double(scoredCount)
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
-        let education = job.educationFitTerm(for: player)
+        let fit = job.requirementFit(for: player)
+        let shortfall = job.educationShortfall(for: player)
+        let educationFitLabel = shortfall > 0
+            ? "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
+            : (job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field")
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
-        let experience = job.experienceFitTerm(for: player)
         let topPosition = job.isTopLeadership
         let fame = player.fameHireBonus(for: job.category, topPosition: topPosition)
         let showFame = fame > 0
         let fameLabel = job.category.fameCategory?.rawValue ?? "general"
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let rawSum = 0.2 + skillContribution + prestige + education + opportunity + network + experience + fame + breakthrough
-        let raw = rawSum * salaryFit
-        let final = max(0.05, min(0.95, raw))
+        let merit = 0.2 + skillContribution + prestige + opportunity + network + fame + breakthrough
+        let raw = merit * fit.factor * salaryFit
+        let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw))
 
         func pct(_ v: Double) -> String {
             "\(Int((v * 100).rounded()))%"
@@ -104,17 +110,24 @@ struct JobDetail: View {
         let playerYears = job.relevantYears(for: player)
 
         return """
-        Formula: (Base 20% + Skill match × 70% + Degree prestige + Experience fit + Network\(showFame ? " + Fame" : "")\(hasBreakthrough ? " + Breakthrough" : "") + Difficulty) × Salary fit
+        Formula: what you bring × how well you meet the requirements × salary fit.
 
-        Your numbers right now:
+        What you bring:
         • Base: 20%
         • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
-        • Degree prestige (\(prestigeLabel)): \(signed(prestige))\(education != 0 ? "\n        • Education fit (below preferred level): \(signed(education))" : "")
-        • Experience (\(playerYears)/\(expYears) yr expected): \(signed(experience))
+        • Degree prestige (\(prestigeLabel)): \(signed(prestige))
         • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
         • Difficulty bonus: \(signed(opportunity))
+        Subtotal: \(pct(merit))
+
+        How well you meet the requirements (these multiply — a requirement you
+        can't meet at all is ×0, which closes the role):
+        • Education (\(educationFitLabel)): ×\(String(format: "%.2f", fit.education))
+        • Licences and certificates: ×\(String(format: "%.2f", fit.credentials))
+        • Experience (\(playerYears)/\(expYears) yr expected): ×\(String(format: "%.2f", fit.experience))
         • Salary fit: \(pct(salaryFit))
-        Subtotal: \(pct(rawSum)) × \(pct(salaryFit)) = \(pct(raw))
+
+        \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) = \(pct(raw))
         Final (clamped 5–95%): \(pct(final))
         \(softSkillsClause)
         """
@@ -163,7 +176,7 @@ struct JobDetail: View {
                 .frame(maxWidth: .infinity ,alignment: .leading)
                 .padding()
 
-            let eduPlayerLevel = player.degrees.last?.eqf ?? 0
+            let eduPlayerLevel = job.playerEducationLevel(for: player)
             let eduRequired = job.requirements.education.minEQF
             RequirementRow(
                 label: job.requirements.education.educationLabel(),
@@ -174,7 +187,7 @@ struct JobDetail: View {
             .padding(.horizontal)
 
             if !job.educationIsMandatory && eduRequired > 0 {
-                Text("Not required for this role — but a relevant degree improves your hire chances.")
+                Text("Not required for this role — but employers weigh it heavily. A degree in an accepted field is worth the most, an unrelated one counts for a little, and falling short of the expected level costs you on every application and every promotion.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -203,7 +216,7 @@ struct JobDetail: View {
                     .padding()
 
                 let playerYears = job.relevantYears(for: player)
-                let expLabel = job.seniorityPrefix != nil
+                let expLabel = job.isLadderVariant
                     ? "\(baseYears) yr as \(job.baseTitle)"
                     : "\(baseYears) yr in \(job.category.rawValue)"
                 RequirementRow(
@@ -225,7 +238,7 @@ struct JobDetail: View {
 
                     // Standalone roles credit related industries too — notably,
                     // entrepreneurship experience counts toward Business roles.
-                    let credited = job.seniorityPrefix == nil
+                    let credited = !job.isLadderVariant
                         ? job.category.creditedExperienceCategories
                         : []
                     if !credited.isEmpty {
@@ -242,43 +255,22 @@ struct JobDetail: View {
             }
 
             if !isSimplified && !requiredHard.trainings.isEmpty {
-                Text("Trainings:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { training in
-                    let owned = player.hardSkills.trainings.contains(training)
-                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
+                credentialSection(
+                    title: "Trainings:",
+                    trainings: Array(requiredHard.trainings).sorted(by: { $0.rawValue < $1.rawValue })
+                )
             }
 
             // Preferred (helpful) credentials — non-gating skill-building programs
             // whose careerBoost covers this field. Never required; holding one
             // meaningfully lifts the hire odds (see Player.trainingCareerBonus).
-            let helpfulTrainings = Training.allCases
-                .filter { $0.careerBoost?.categories.contains(job.category) == true }
-                .sorted { $0.rawValue < $1.rawValue }
+            let helpfulTrainings = Training.helpfulByCategory[job.category] ?? []
             if !isSimplified && !helpfulTrainings.isEmpty {
-                Text("Preferred (helpful):")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-
-                ForEach(helpfulTrainings, id: \.self) { training in
-                    let owned = player.hardSkills.trainings.contains(training)
-                    RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
-                        .foregroundStyle(owned ? .primary : .secondary)
-                        .padding(.horizontal)
-                }
-
-                Text("Not required — a relevant credential meaningfully raises your hire odds in this field.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
+                credentialSection(
+                    title: "Preferred (helpful):",
+                    trainings: helpfulTrainings,
+                    footnote: "Not required — a relevant credential meaningfully raises your hire odds in this field."
+                )
             }
 
             // Breakthrough fame award: the gateway achievement for gated careers
@@ -308,44 +300,10 @@ struct JobDetail: View {
 
             if isFounder {
                 founderInvestmentSection
-            } else if isSimplified {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("Salary:")
-                            .font(.title2.bold())
-                        Spacer()
-                        Text("\(job.income.formatted(.number)) $/yr")
-                            .font(.headline)
-                    }
-                    .padding(.horizontal)
-
-                    HStack(spacing: 6) {
-                        Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
-                            .font(.subheadline)
-                            .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                }
-            } else {
+            } else if canNegotiate {
                 salaryNegotiationSection
-            }
-
-            if let result = applicationResult {
-                VStack(spacing: 4) {
-                    Text(resultMessage(result))
-                        .font(.headline)
-                    if let advice = rejectionAdvice {
-                        Text(advice)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
-                .padding(.horizontal)
+            } else {
+                postedSalarySection
             }
 
             applyButton
@@ -353,12 +311,96 @@ struct JobDetail: View {
         .onAppear {
             requestedSalary = Double(job.income)
             if isFounder {
-                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.savings + player.maxVentureLoan))
+                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.maxVentureStake))
             }
         }
     }
 
-    // MARK: - Employee application (salary negotiation)
+    /// A titled list of credential rows, marked met/unmet against what the
+    /// player holds — used for both the required and the preferred credentials.
+    @ViewBuilder
+    private func credentialSection(title: String, trainings: [Training], footnote: String? = nil) -> some View {
+        Text(title)
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+
+        ForEach(trainings, id: \.self) { training in
+            let owned = player.hardSkills.trainings.contains(training)
+            RequirementRow(label: training.friendlyName, emoji: training.pictogram, style: .badge(isMet: owned))
+                .foregroundStyle(owned ? .primary : .secondary)
+                .padding(.horizontal)
+        }
+
+        if let footnote {
+            Text(footnote)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+        }
+    }
+
+    // MARK: - Employee application (pay)
+
+    /// Whether this application offers a salary slider. Simplified mode never
+    /// negotiates — it keeps the money simple — and neither do roles that pay a
+    /// posted rate (see `Job.salaryIsNegotiable`).
+    private var canNegotiate: Bool { !isSimplified && job.salaryIsNegotiable }
+
+    /// Pay for a role you take at the advertised rate. Still shows the hire
+    /// odds in the realistic modes — what you can't argue about, you can still
+    /// weigh.
+    private var postedSalarySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Salary:")
+                    .font(.title2.bold())
+                Spacer()
+                Text("\(job.income.formatted(.number)) $/yr")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+
+            Text(isSimplified
+                 ? "The rate for this role."
+                 : "This role pays the going rate — there's no offer to argue over.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal)
+
+            HStack(spacing: 6) {
+                Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
+                    .font(.subheadline)
+                    .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
+                Spacer()
+            }
+            .padding(.horizontal)
+
+            if !isSimplified {
+                hireProbabilityRow
+            }
+        }
+        .padding(.vertical)
+    }
+
+    /// The odds readout, shared by both pay sections so it reads the same either
+    /// way.
+    private var hireProbabilityRow: some View {
+        HStack(spacing: 6) {
+            Text("Hire probability:")
+            InfoHint(
+                title: "How hire probability is calculated",
+                message: hireProbabilityFormulaText
+            )
+            Spacer()
+            Text("\(Int(hireProbability * 100)) %")
+                .font(.headline)
+                .foregroundStyle(Color.forOdds(hireProbability))
+        }
+        .padding(.horizontal)
+        .padding(.top, 4)
+    }
 
     private var salaryNegotiationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -386,19 +428,7 @@ struct JobDetail: View {
             }
             .padding(.horizontal)
 
-            HStack(spacing: 6) {
-                Text("Hire probability:")
-                InfoHint(
-                    title: "How hire probability is calculated",
-                    message: hireProbabilityFormulaText
-                )
-                Spacer()
-                Text("\(Int(hireProbability * 100)) %")
-                    .font(.headline)
-                    .foregroundStyle(hireProbability >= 0.6 ? .green : hireProbability >= 0.3 ? .orange : .red)
-            }
-            .padding(.horizontal)
-            .padding(.top, 4)
+            hireProbabilityRow
         }
         .padding(.vertical)
     }
@@ -414,9 +444,9 @@ struct JobDetail: View {
     private var founderInvestmentSection: some View {
         // You can stake your savings plus a loan of up to 2× income once savings
         // run out (see Player.maxVentureLoan / foundVenture).
-        let maxInvestable = Double(player.savings + player.maxVentureLoan)
+        let maxInvestable = Double(player.maxVentureStake)
         let canInvest = maxInvestable > 0
-        let borrowed = max(0, Int(investedCapital) - player.savings)
+        let borrowed = player.borrowedPortion(ofStake: Int(investedCapital))
         return VStack(alignment: .leading, spacing: 8) {
             Text("Launch your venture")
                 .font(.title2.bold())
@@ -467,7 +497,7 @@ struct JobDetail: View {
                 Spacer()
                 Text("\(Int(founderProbability * 100)) %")
                     .font(.headline)
-                    .foregroundStyle(founderProbability >= 0.6 ? .green : founderProbability >= 0.3 ? .orange : .red)
+                    .foregroundStyle(Color.forOdds(founderProbability))
             }
             .padding(.horizontal)
             .padding(.top, 4)
@@ -499,6 +529,15 @@ struct JobDetail: View {
         case "Hit Record":      return "Chase a Hit Single under Projects — it takes years and high performing skills."
         default:                return "Earn the “\(key)” title first."
         }
+    }
+
+    /// What to say on a win. The header already shows the new job, so this says
+    /// what it means rather than repeating the title.
+    private var successMessage: String {
+        if isFounder {
+            return "You put \(Int(investedCapital.isFinite ? investedCapital : 0).formatted(.number)) $ in and the venture is running. It's your occupation now — sell out or go under to move on."
+        }
+        return "You start as \(job.displayTitle) on \(Int(requestedSalary).formatted(.number)) $ a year."
     }
 
     private func resultMessage(_ result: ApplicationResult) -> String {
@@ -534,7 +573,7 @@ struct JobDetail: View {
         }
 
         var levers: [String] = []
-        if job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
+        if canNegotiate, job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
             levers.append("lower your salary ask")
         }
         levers.append("build the soft skills and experience this role weighs")
@@ -545,8 +584,7 @@ struct JobDetail: View {
     }
 
     private var applyDisabled: Bool {
-        if player.appliedJobIds.contains(job.applicationKey) { return true }
-        if isFounder { return !job.experienceMet(for: player) || player.savings + player.maxVentureLoan <= 0 }
+        if isFounder { return !job.experienceMet(for: player) || player.maxVentureStake <= 0 }
         return !allRequirementsMet
     }
 
@@ -559,17 +597,16 @@ struct JobDetail: View {
             let success = isFounder
                 ? player.foundVenture(job, investedCapital: capital)
                 : player.applyForJob(job, requestedSalary: salary)
-            if success {
-                // Hired (or venture launched): close the careers dialog right away
-                // so the player lands back on the game view — the header shows the
-                // new job and the celebration plays there.
-                applicationResult = .hired
-                showCareersSheet = false
-            } else {
-                // Rejected: keep the dialog open and show the outcome inline so the
-                // player can adjust their salary ask or try a different role.
-                applicationResult = .rejected
-            }
+            // Applying is how the year was spent, offer or no offer, so the
+            // answer is a pop-up on the game view rather than a banner in a
+            // sheet the player is about to leave. A "no" still explains itself
+            // and what to change before next year.
+            applicationResult = success ? .hired : .rejected
+            player.reportApplicationOutcome(
+                title: resultMessage(success ? .hired : .rejected),
+                message: rejectionAdvice ?? successMessage
+            )
+            onCommit()
         } label: {
             Text(applyButtonLabel)
                 .frame(maxWidth: .infinity)

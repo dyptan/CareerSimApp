@@ -3,10 +3,10 @@ import Foundation
 /// A contest tied to a sport — an athletic event or an e-sports tournament.
 /// The player never enters one directly: training a sport automatically enters
 /// its top eligible contest each year (see `CompetitionCatalog.bestCompetition`
-/// and `Player.advanceYear`). Winning is a skill-based gamble that pays prize
-/// money AND grants a lasting **achievement** (a titled trophy). Achievements
-/// are reputation: they bank **Entertainment** fame, which merges sports and
-/// show business into one spotlight bucket (see `FameCategory` and
+/// and `Player.advanceYear`). Winning is a skill-based gamble that pays no money
+/// — the reward is a lasting **achievement** (a titled trophy). Achievements are
+/// reputation: they bank **Entertainment** fame, which merges sports and show
+/// business into one spotlight bucket (see `FameCategory` and
 /// `Player.fameHireBonus(for:)`).
 struct Competition: Identifiable, Hashable {
     let id: String
@@ -14,12 +14,6 @@ struct Competition: Identifiable, Hashable {
     let icon: String
     let blurb: String
     let discipline: Discipline
-    /// Legacy field from when competitions were entered manually for a fee.
-    /// Competing is now automatic and free, so this is no longer charged; kept
-    /// on the model for reference and possible future use.
-    let entryFee: Int
-    /// Cash awarded on a win.
-    let prize: Int
     /// The titled trophy granted on a win, banked as a `Player.FameAward`.
     let achievement: String
     /// Reputation weight this trophy carries when totalled into the player's
@@ -32,8 +26,8 @@ struct Competition: Identifiable, Hashable {
     /// Sports that qualify for entry. Set membership is the hard gate: the
     /// competition only auto-enters when the player trains one of these sports
     /// (see `CompetitionCatalog.bestCompetition`). `nil` means open (no sport
-    /// gate), in which case `sportBonus` returns 0 — such events no longer have
-    /// an entry point now that competing is sport-driven.
+    /// gate), in which case `sportBonus` returns 0 — and since entry is
+    /// sport-driven, such an event has no way in.
     let sports: Set<Sport>?
     /// Life stages in which the competition is open (mirrors `Hobby.stages`).
     let stages: Set<LifeStage>
@@ -91,9 +85,9 @@ struct Competition: Identifiable, Hashable {
 }
 
 enum CompetitionCatalog {
-    /// Athletic and e-sports contests, mixing accessible local events (cheap,
-    /// modest prizes) with marquee championships (steep entry, big purse and a
-    /// prestigious trophy). Open from the teen years onward.
+    /// Athletic and e-sports contests, mixing accessible local events with
+    /// marquee championships carrying a far more prestigious trophy. Open from
+    /// the teen years onward.
     static let all: [Competition] = [
         // MARK: - Junior (teen-only)
         // The youth pathway into team sport. Winning it as a teen banks the
@@ -105,8 +99,6 @@ enum CompetitionCatalog {
             icon: "🏅",
             blurb: "The youth league final — where scouts spot the next generation of pro players.",
             discipline: .athletic,
-            entryFee: 0,
-            prize: 3_000,
             achievement: "Junior Champion",
             fameWeight: 1.0,
             skills: [\.collaborationAndTeamwork, \.spacialNavigationAndOrientation, \.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation],
@@ -121,8 +113,6 @@ enum CompetitionCatalog {
             icon: "🏃",
             blurb: "A weekend road race — an accessible first taste of competition.",
             discipline: .athletic,
-            entryFee: 100,
-            prize: 1_500,
             achievement: "5K Race Winner",
             fameWeight: 0.5,
             skills: [\.resilienceAndEndurance, \.selfDisciplineAndPerseverance, \.stressResistanceAndEmotionalRegulation],
@@ -136,8 +126,6 @@ enum CompetitionCatalog {
             icon: "🥇",
             blurb: "26.2 miles against thousands. A few seasons of training under your belt to even finish.",
             discipline: .athletic,
-            entryFee: 400,
-            prize: 12_000,
             achievement: "Marathon Champion",
             fameWeight: 1.0,
             skills: [\.resilienceAndEndurance, \.selfDisciplineAndPerseverance, \.stressResistanceAndEmotionalRegulation],
@@ -151,8 +139,6 @@ enum CompetitionCatalog {
             icon: "🏅",
             blurb: "The step up to serious competition — qualify against your region's best. Years of training required.",
             discipline: .athletic,
-            entryFee: 800,
-            prize: 30_000,
             achievement: "Regional Champion",
             fameWeight: 1.5,
             skills: [\.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance],
@@ -166,8 +152,6 @@ enum CompetitionCatalog {
             icon: "🏆",
             blurb: "The premier athletic title — the country is watching. Only for seasoned competitors.",
             discipline: .athletic,
-            entryFee: 1_500,
-            prize: 60_000,
             achievement: "National Champion",
             fameWeight: 2.0,
             skills: [\.resilienceAndEndurance, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance],
@@ -181,8 +165,6 @@ enum CompetitionCatalog {
             icon: "🥇",
             blurb: "The world stage. Medal here and you're a household name for life — the summit of a long career.",
             discipline: .athletic,
-            entryFee: 3_000,
-            prize: 150_000,
             achievement: "Olympic Medalist",
             fameWeight: 3.0,
             skills: [\.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation, \.selfDisciplineAndPerseverance, \.visionaryThinkingAndAmbition],
@@ -197,8 +179,6 @@ enum CompetitionCatalog {
             icon: "🎮",
             blurb: "Climb the seasonal ranks from your own setup. Cheap to enter, a real grind.",
             discipline: .esports,
-            entryFee: 50,
-            prize: 2_000,
             achievement: "Ladder Season Champion",
             fameWeight: 0.5,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.stressResistanceAndEmotionalRegulation],
@@ -212,8 +192,6 @@ enum CompetitionCatalog {
             icon: "🕹️",
             blurb: "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.",
             discipline: .esports,
-            entryFee: 300,
-            prize: 15_000,
             achievement: "LAN Tournament Champion",
             fameWeight: 1.0,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation],
@@ -227,8 +205,6 @@ enum CompetitionCatalog {
             icon: "🌐",
             blurb: "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.",
             discipline: .esports,
-            entryFee: 1_200,
-            prize: 120_000,
             achievement: "Esports World Champion",
             fameWeight: 2.5,
             skills: [\.tinkeringAndFingerPrecision, \.analyticalReasoningAndProblemSolving, \.collaborationAndTeamwork, \.stressResistanceAndEmotionalRegulation, \.visionaryThinkingAndAmbition],
@@ -244,7 +220,7 @@ enum CompetitionCatalog {
     /// The top competition a player training `sport` currently qualifies for:
     /// stage-eligible, explicitly tagged for that sport, and within `years` of
     /// training in *that* sport (the gate is per-sport). The highest tier wins
-    /// (max `minSportYears`, then max `prize`); returns nil if none qualify —
+    /// (max `minSportYears`, then max `fameWeight`); returns nil if none qualify —
     /// e.g. a child, or year 0 in the sport. Drives the automatic yearly contest
     /// resolved in `Player.advanceYear`.
     static func bestCompetition(
@@ -259,7 +235,7 @@ enum CompetitionCatalog {
                     && competition.meetsTrainingRequirement(forYears: years)
             }
             .max { lhs, rhs in
-                (lhs.minSportYears, lhs.prize) < (rhs.minSportYears, rhs.prize)
+                (lhs.minSportYears, lhs.fameWeight) < (rhs.minSportYears, rhs.fameWeight)
             }
     }
 }

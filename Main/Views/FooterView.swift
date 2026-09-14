@@ -5,51 +5,81 @@ import SwiftUI
 /// instead of clipping. iOS 16 / macOS 13 minimum (the deployment target's
 /// `if #available` guards in `FooterView` provide a fallback).
 @available(iOS 16, macOS 13, *)
+/// A wrapping row: items flow left to right and wrap onto further lines.
+///
+/// Measurement and placement share one row-breaking pass, and the reported size
+/// is the width actually used rather than the whole proposal. They used to
+/// disagree — `sizeThatFits` wrapped against `proposal.width` and returned that
+/// full width, while `placeSubviews` wrapped against `bounds.maxX`. When a
+/// parent handed back a narrower bounds (here the footer's `Skip` button takes
+/// its share first), placement produced more rows than measurement had reported,
+/// so every row after the first rendered *outside* the layout's frame and
+/// silently took no taps.
 private struct FlowLayout: Layout {
     var spacing: CGFloat = 8
     var lineSpacing: CGFloat = 8
 
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let maxWidth = proposal.width ?? .infinity
-        var totalHeight: CGFloat = 0
-        var rowHeight: CGFloat = 0
+    /// One row-breaking pass, shared by measurement and placement so the two can
+    /// never disagree about how many rows there are.
+    private func rows(of subviews: Subviews, maxWidth: CGFloat) -> [[(index: Int, size: CGSize)]] {
+        var rows: [[(index: Int, size: CGSize)]] = []
+        var row: [(index: Int, size: CGSize)] = []
         var rowWidth: CGFloat = 0
-        var widestRow: CGFloat = 0
 
-        for subview in subviews {
+        for (index, subview) in subviews.enumerated() {
             let size = subview.sizeThatFits(.unspecified)
-            // The first item on a row never wraps; only check from item 2+.
-            let prospective = rowWidth == 0 ? size.width : rowWidth + spacing + size.width
-            if prospective > maxWidth, rowWidth > 0 {
-                totalHeight += rowHeight + lineSpacing
-                widestRow = max(widestRow, rowWidth)
+            let prospective = row.isEmpty ? size.width : rowWidth + spacing + size.width
+            // The first item on a row never wraps, however narrow the space.
+            if prospective > maxWidth, !row.isEmpty {
+                rows.append(row)
+                row = [(index, size)]
                 rowWidth = size.width
-                rowHeight = size.height
             } else {
+                row.append((index, size))
                 rowWidth = prospective
-                rowHeight = max(rowHeight, size.height)
             }
         }
-        totalHeight += rowHeight
-        widestRow = max(widestRow, rowWidth)
-        return CGSize(width: maxWidth.isFinite ? maxWidth : widestRow, height: totalHeight)
+        if !row.isEmpty { rows.append(row) }
+        return rows
+    }
+
+    private func height(of rows: [[(index: Int, size: CGSize)]]) -> CGFloat {
+        guard !rows.isEmpty else { return 0 }
+        var total: CGFloat = 0
+        for row in rows {
+            total += row.reduce(0) { max($0, $1.size.height) }
+        }
+        return total + lineSpacing * CGFloat(rows.count - 1)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+        let rows = rows(of: subviews, maxWidth: maxWidth)
+        var widest: CGFloat = 0
+        for row in rows {
+            let content: CGFloat = row.reduce(0) { $0 + $1.size.width }
+            let gaps: CGFloat = spacing * CGFloat(max(0, row.count - 1))
+            widest = max(widest, content + gaps)
+        }
+        // Claim only the width actually used: over-claiming lets a parent hand
+        // back narrower bounds than were measured, which is what broke wrapping.
+        return CGSize(width: min(widest, maxWidth), height: height(of: rows))
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x = bounds.minX
+        let rows = rows(of: subviews, maxWidth: bounds.width)
         var y = bounds.minY
-        var rowHeight: CGFloat = 0
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if x + size.width > bounds.maxX, x > bounds.minX {
-                y += rowHeight + lineSpacing
-                x = bounds.minX
-                rowHeight = 0
+        for row in rows {
+            var x = bounds.minX
+            let rowHeight: CGFloat = row.reduce(0) { max($0, $1.size.height) }
+            for item in row {
+                subviews[item.index].place(
+                    at: CGPoint(x: x, y: y + (rowHeight - item.size.height) / 2),
+                    proposal: ProposedViewSize(item.size)
+                )
+                x += item.size.width + spacing
             }
-            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
+            y += rowHeight + lineSpacing
         }
     }
 }
@@ -61,11 +91,17 @@ private struct FooterButtonRow<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            FlowLayout(spacing: 8, lineSpacing: 8) { content() }
-        } else {
-            HStack { content() }
+        Group {
+            if #available(iOS 16, macOS 13, *) {
+                FlowLayout(spacing: 8, lineSpacing: 8) { content() }
+            } else {
+                HStack { content() }
+            }
         }
+        // Styled once here rather than on each button, so the row stays uniform
+        // as buttons are added. **Skip** sits outside this row and keeps its own
+        // prominent style.
+        .gameFooterButtonStyle()
     }
 }
 
@@ -81,10 +117,8 @@ struct FooterView: View {
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     /// Per-button visibility: each predicate mirrors the catalogue filter the
-    /// corresponding view applies, so we only render buttons that would lead
-    /// to a non-empty sheet. (Existing prerequisite gates — degree EQF for
-    /// Certifications/Licenses, work history for Events — stay in their own
-    /// inline checks below.)
+    /// corresponding view applies, so we only render buttons that would lead to
+    /// a non-empty sheet.
     private var hasHobbies: Bool {
         hobbies.contains { $0.stages.contains(currentStage) }
     }
@@ -94,109 +128,71 @@ struct FooterView: View {
     private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
     }
-    private var hasTrainings: Bool {
-        Training.allCases.contains { $0.stages.contains(currentStage) }
+    /// Education holds the professional courses as well as the degrees, so it
+    /// opens for either: after high school, when a degree becomes a choice, or
+    /// once a stage-eligible course is on offer.
+    private var hasCourses: Bool {
+        !player.isSimplified
+            && (player.degrees.last?.eqf ?? 0) >= 1
+            && Training.allCases.contains { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
-        // Trainings and Events are realistic-mode features, so hide them in
-        // simplified mode. Hobbies stay — they build the soft skills that shape
-        // school admission odds. Competitions are no longer a button at all:
-        // they fire automatically each year from the sport trained in Sports.
-        // Single wrapping row: every available button sits on one line when
-        // the window is wide, and reflows onto extra rows as width shrinks.
-        // Certifications / Licenses / Events keep their realistic-mode and
-        // prerequisite gates; the rest are gated only by their stage-eligible
-        // catalogues.
-        //
-        // **Skip** — advance the year — is deliberately *outside* the wrapping
-        // row: pinned to the trailing edge and bottom-aligned, it stays in the
-        // bottom-right corner no matter how many rows the activity buttons
-        // reflow into, so the one button pressed every turn is always under the
-        // same thumb. The activity row takes whatever width is left.
-        HStack(alignment: .bottom, spacing: 12) {
-            activityButtons
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Button("Skip") {
-                player.advanceYear(appUIState: appUIState)
-            }
-            .buttonStyle(.borderedProminent)
-            .font(.headline)
-            .layoutPriority(1)
-        }
+        // Everything the year can be spent on, and nothing else: letting a year
+        // pass without spending it is **Skip**, up in the header. Events are a
+        // realistic-mode feature, so they hide in simplified mode; hobbies stay,
+        // since they build the soft skills that shape school admission odds.
+        // Competitions have no button at all — they fire automatically each year
+        // from the sport trained in Sports.
+        activityButtons
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// Everything the player can *do* with the year, as a row that wraps onto
-    /// extra lines when the window is too narrow to hold it.
+    /// extra lines when the window is too narrow to hold it. Each button is
+    /// gated only on whether its sheet would have anything in it.
     @ViewBuilder
     private var activityButtons: some View {
         FooterButtonRow {
             if hasHobbies {
                 Button("Hobbies") { appUIState.showHobbiesSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             if hasSports {
                 Button("Sports") { appUIState.showSportsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             if !player.isSimplified, !player.experience.isEmpty {
                 Button("Events") { appUIState.showEventsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
-            }
-
-            // Trainings (certifications + licences): realistic mode, EQF ≥
-            // Primary, and a stage-eligible training in the catalogue.
-            if !player.isSimplified, (player.degrees.last?.eqf ?? 0) >= 1, hasTrainings {
-                Button("Trainings") { appUIState.showTrainingsSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Jobs open up once the player reaches legal working age; before
             // that they're in school and nothing in the list is applicable.
             if player.age >= GameConstants.minimumWorkingAge {
-                Button("Jobs") {
-                    appUIState.showCareersSheet.toggle()
-                }.buttonStyle(.bordered).font(.headline)
+                Button("Jobs") { appUIState.showCareersSheet.toggle() }
             }
 
             if hasSideHustles {
                 Button("Projects") { appUIState.showSideHustlesSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
-            // The entrepreneurial path (founder ventures + spare-time business
-            // plays) is a realistic-mode feature — it stakes capital and turns
-            // on soft skills, fame, and the economy, none of which exist in
-            // Simplified, so the whole surface is hidden there. It's also an
-            // adult play, so it stays hidden until the player reaches the
-            // entrepreneur age (a 7-year-old shouldn't see a Ventures button).
-            // Only one venture runs at a time: once the player has founded one
-            // (it becomes their occupation), the button hides until they exit
-            // it — sell out or go bankrupt — which clears the occupation.
+            // The founder path is a realistic-mode adult play, and only one
+            // venture runs at a time — once founded it becomes the occupation,
+            // so this hides until the player exits it.
             if !player.isSimplified,
                player.age >= GameConstants.minimumEntrepreneurAge,
                player.currentOccupation?.isEntrepreneurial != true {
                 Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).
             if player.canMakeExecutiveDecisions {
                 Button("Boardroom") { appUIState.showExecutiveSheet = true }
-                    .buttonStyle(.bordered).font(.headline)
             }
 
-            // Higher education (vocational/university) becomes relevant only
-            // after high school; until then primary/middle/high school progress
-            // automatically, so the menu stays hidden.
-            if player.age >= GameConstants.minimumTertiaryAge {
-                Button("Education") {
-                    appUIState.showTertiarySheet.toggle()
-                }.buttonStyle(.bordered).font(.headline)
+            if player.age >= GameConstants.minimumTertiaryAge || hasCourses {
+                Button("Education") { appUIState.showTertiarySheet.toggle() }
             }
         }
     }

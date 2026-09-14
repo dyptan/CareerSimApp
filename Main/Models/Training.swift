@@ -1,7 +1,6 @@
 import Foundation
 
-/// A professional credential the player can earn in their spare time — the
-/// merger of what used to be separate `Certification` and `License` types. The
+/// A professional credential the player can earn in their spare time. The
 /// catalogue is deliberately limited to credentials that are *actually required*
 /// to hold a specific role in real life: statutory occupational licences (a
 /// nurse, electrician, lawyer, or pilot cannot legally practise without one) and
@@ -16,8 +15,8 @@ import Foundation
 /// (EQF), prerequisite trainings, and, for senior credentials, work experience —
 /// decide whether you may *enrol*.
 ///
-/// `isStatutory` marks the legally-mandated credentials (former licences): they
-/// hard-gate hiring in every field, whereas the rest (former certifications)
+/// `isStatutory` marks the legally-mandated credentials: they
+/// hard-gate hiring in every field, whereas the rest
 /// only gate hiring in regulated industries (see `Job.hardSkillsMet`).
 enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     // MARK: Role-defining certifications
@@ -69,21 +68,10 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Legally-mandated credentials (former licences). These hard-gate hiring in
-    /// every field; non-statutory trainings (former certifications) gate hiring
+    /// Legally-mandated credentials. These hard-gate hiring in
+    /// every field; non-statutory trainings gate hiring
     /// only in regulated industries (see `Job.hardSkillsMet`).
-    var isStatutory: Bool {
-        switch self {
-        case .drivers, .cdl, .pilot, .commercialPilot, .lpn, .nurse, .np,
-             .medicalLicense, .dentalLicense, .pharmacistLicense, .veterinaryLicense,
-             .atcCertification, .electrician, .plumber, .bar, .professionalEngineer,
-             .architect, .pesticideApplicator, .securityGuard, .masterElectrician,
-             .masterPlumber, .airlineTransportPilot:
-            return true
-        default:
-            return false
-        }
-    }
+    var isStatutory: Bool { rules.isStatutory }
 
     /// Display name in the activity → (credential) style: the course or school
     /// you attend, with the qualification it earns in parentheses.
@@ -208,51 +196,17 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// Life stages in which this training is offered. Driver's and private pilot
     /// are reachable at 16/17 so they surface in the teen sheet; every other
     /// training presumes the player is a young adult or older.
-    var stages: Set<LifeStage> {
-        switch self {
-        case .drivers, .pilot:
-            return [.teen, .youngAdult, .adult]
-        default:
-            return [.youngAdult, .adult]
-        }
-    }
+    var stages: Set<LifeStage> { rules.stages }
 
     /// Minimum age required to attempt this training.
-    var minAge: Int {
-        switch self {
-        case .drivers: return 16
-        case .pilot: return 17
-        default: return 18
-        }
-    }
+    var minAge: Int { rules.minAge }
 
     /// Minimum EQF (education) level required before attempting this training.
     /// Only credentials that *genuinely* require a university degree carry a
     /// tertiary gate (Bar, Board, CPA, Teaching, Nurse, PE, Architect). Trade
     /// licences and the rest are earned through work and an exam, not a diploma,
     /// so they gate on experience (see `minYearsExperience` / `field`) instead.
-    var minEQF: Int {
-        switch self {
-        case .bar:
-            return 7  // requires a Doctor of Law (J.D.)
-        case .boardCertified:
-            return 7  // requires a completed medical doctorate
-        case .medicalLicense, .dentalLicense, .pharmacistLicense, .veterinaryLicense:
-            return 7  // requires the profession's doctorate (MD/DDS/PharmD/DVM)
-        case .np:
-            return 6  // requires a Master of Science in Nursing (MSN)
-        case .teachingCertificate, .cpa, .architect, .professionalEngineer:
-            return 5  // requires a Bachelor (or final-year status)
-        case .nurse:
-            return 4  // requires a nursing associate/bachelor degree
-        case .drivers, .pilot, .cdl, .commercialPilot,
-             .airlineTransportPilot, .securityGuard, .pesticideApplicator,
-             .atcCertification:
-            return 0  // no education prerequisite — training/hours/exam only
-        default:
-            return 3  // a high-school baseline for the rest
-        }
-    }
+    var minEQF: Int { rules.minEQF }
 
     /// Minimum years of work experience required before attempting this training.
     /// This is the primary gate for the credentials that are earned on the job
@@ -260,18 +214,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// airline transport pilot (flight hours), the master trades, and the senior
     /// professional licences. Counted against experience in `field` when set,
     /// else `totalYearsWorked`.
-    var minYearsExperience: Int {
-        switch self {
-        case .airlineTransportPilot: return 5
-        case .masterElectrician, .masterPlumber: return 4
-        case .professionalEngineer: return 4
-        case .boardCertified: return 3
-        case .np: return 2
-        case .electrician, .plumber: return 3
-        case .architect: return 2
-        default: return 0
-        }
-    }
+    var minYearsExperience: Int { rules.minYearsExperience }
 
     /// The industry whose on-the-job experience counts toward `minYearsExperience`
     /// — a credential is earned by working *in its field*, not by clocking years
@@ -279,33 +222,14 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// `minYearsExperience > 0`. Categories are chosen from those the job
     /// catalogue actually uses (pilots sit under `.transportation`) so every
     /// gated credential stays reachable through real jobs.
-    var field: JobCategory? {
-        switch self {
-        case .boardCertified, .np: return .health
-        case .professionalEngineer: return .engineering
-        case .electrician, .plumber, .masterElectrician, .masterPlumber, .architect:
-            return .construction
-        case .airlineTransportPilot: return .transportation
-        default: return nil
-        }
-    }
+    var field: JobCategory? { rules.field }
 
     /// Trainings that must already be held before this one can be attempted — the
     /// prerequisite chain (a CDL needs a Driver's License first, an ATP builds on
     /// a Commercial Pilot License, a master trade licence on its journeyman
     /// licence). `requirements` enforces it at runtime and `CareerGraph` reads it
     /// to validate the chain stays acyclic.
-    var prerequisites: [Training] {
-        switch self {
-        case .cdl: return [.drivers]
-        case .commercialPilot: return [.pilot]
-        case .np: return [.nurse]
-        case .masterElectrician: return [.electrician]
-        case .masterPlumber: return [.plumber]
-        case .airlineTransportPilot: return [.commercialPilot]
-        default: return []
-        }
-    }
+    var prerequisites: [Training] { rules.prerequisites }
 
     /// Soft skills a completed course nudges upward — the transferable skills the
     /// training builds along the way. Modest by design (a +1 or two): a course is
@@ -443,15 +367,75 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// odds of being hired into the field (`Job.hireProbability`) and of a venture
     /// in it succeeding (`Job.founderSuccessProbability`). `nil` for the licences,
     /// which don't move the odds — they open (or close) the door outright.
-    var careerBoost: CareerBoost? {
-        switch self {
-        case .codingBootcamp:     return CareerBoost(categories: [.technology, .engineering], weight: 0.15)
-        case .gameDevProgram:     return CareerBoost(categories: [.gaming, .technology], weight: 0.15)
-        case .productDesign:      return CareerBoost(categories: [.design, .fashion], weight: 0.15)
-        case .musicProduction:    return CareerBoost(categories: [.showBusiness], weight: 0.12)
-        default:                  return nil
+    var careerBoost: CareerBoost? { rules.careerBoost }
+
+    /// Credentials whose `careerBoost` covers a field, keyed by that field and
+    /// pre-sorted for display. Derived from `careerBoost`, so the "preferred
+    /// credentials" the UI lists are exactly the ones the hire odds credit (see
+    /// `Player.trainingCareerBonus`). Deterministic, so it's built once.
+    static let helpfulByCategory: [JobCategory: [Training]] = {
+        var map: [JobCategory: [Training]] = [:]
+        for training in allCases.sorted(by: { $0.rawValue < $1.rawValue }) {
+            for category in training.careerBoost?.categories ?? [] {
+                map[category, default: []].append(training)
+            }
         }
+        return map
+    }()
+
+    /// The field of study a credential belongs to — a nursing licence is health,
+    /// the bar exam is law — whether or not the Education sheet files it there.
+    /// Says what a degree opens up (see `Player.graduationMessage`), so it has to
+    /// know about licences too, which `profile` deliberately doesn't.
+    ///
+    /// `nil` for the credentials that belong to no faculty: the driving and
+    /// flying licences and the building trades, all earned at a school of their
+    /// own or on the job.
+    var studyField: TertiaryProfile? { Training.studyFieldByTraining[self] }
+
+    /// Where the **Education** sheet lists this credential: under its field of
+    /// study, or — for a statutory licence, which qualifies you to practise
+    /// rather than teaching you a field — in the licences list of its own.
+    var profile: TertiaryProfile? {
+        guard !isStatutory else { return nil }
+        return studyField
     }
+
+    /// The faculty each credential belongs to. Anything absent belongs to none;
+    /// `CatalogIntegrityTests` checks every course has a row, since a course with
+    /// no field would be unreachable in the Education sheet.
+    static let studyFieldByTraining: [Training: TertiaryProfile] = [
+        // Health: the care ladder from assistant to consultant.
+        .cna: .health,
+        .emt: .health,
+        .lpn: .health,
+        .nurse: .health,
+        .np: .health,
+        .boardCertified: .health,
+        .medicalLicense: .health,
+        .dentalAssistant: .health,
+        .dentalLicense: .health,
+        .pharmacistLicense: .health,
+        .veterinaryLicense: .health,
+
+        .teachingCertificate: .education,
+        .cpa: .business,
+        .bar: .law,
+        .pesticideApplicator: .agriculture,
+        .musicProduction: .arts,
+        .professionalEngineer: .engineering,
+
+        .architect: .design,
+        .productDesign: .design,
+
+        .codingBootcamp: .technology,
+        .gameDevProgram: .technology,
+
+        // Service: the people-facing credentials.
+        .cosmetology: .service,
+        .flightAttendantCert: .service,
+        .securityGuard: .service,
+    ]
 
     /// A credential's soft edge in one or more career fields (see `careerBoost`).
     struct CareerBoost {
@@ -486,4 +470,115 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         }
         return .ok
     }
+}
+
+// MARK: - Credential rules
+
+extension Training {
+    /// Every gate and classification of one credential, in one place.
+    ///
+    /// A dictionary rather than a `switch` per value, because coverage is then
+    /// *checkable*: `TrainingIntegrityTests` compares `Training.allCases` against
+    /// the table's keys, where a `default:` arm would silently hand a new
+    /// credential the fallback — a statutory licence that quietly stopped gating
+    /// hiring, say. Rows state only what differs from the defaults below.
+    struct Rules {
+        /// Legally-mandated credential. These hard-gate
+        /// hiring in every field; the rest gate only in regulated industries
+        /// (see `Job.hardSkillsMet`).
+        var isStatutory: Bool = false
+        /// Minimum age required to attempt the training.
+        var minAge: Int = 18
+        /// Education (EQF) level required before attempting it. Only credentials
+        /// that genuinely require a degree carry a tertiary gate; trade licences
+        /// are earned through work and an exam, so they gate on experience.
+        var minEQF: Int = 3
+        /// Work experience required before attempting it — the primary gate for
+        /// credentials earned on the job rather than in a lecture hall.
+        var minYearsExperience: Int = 0
+        /// Industry whose experience counts toward `minYearsExperience`.
+        /// `nil` falls back to total years worked.
+        var field: JobCategory? = nil
+        /// Credentials that must already be held — the prerequisite chain.
+        /// `CareerGraph` reads this to validate the chain stays acyclic.
+        var prerequisites: [Training] = []
+        /// Non-statutory edge in one or more fields (see `CareerBoost`).
+        var careerBoost: CareerBoost? = nil
+        /// Life stages the training is offered in.
+        var stages: Set<LifeStage> = [.youngAdult, .adult]
+    }
+
+    /// One row per credential. Every `Training` case must appear here.
+    static let rulesByTraining: [Training: Rules] = [
+        // MARK: Role-defining certifications
+        .cna:                  .init(),
+        .dentalAssistant:      .init(),
+        .flightAttendantCert:  .init(),
+        .teachingCertificate:  .init(minEQF: 5),
+        .cosmetology:          .init(),
+        .emt:                  .init(),
+        .cpa:                  .init(minEQF: 5),
+        .boardCertified:       .init(minEQF: 7, minYearsExperience: 3, field: .health),
+
+        // MARK: Statutory licences
+        // The driving and flying entry licences are the only ones a teen may take.
+        .drivers:              .init(isStatutory: true, minAge: 16, minEQF: 0,
+                                     stages: [.teen, .youngAdult, .adult]),
+        .pilot:                .init(isStatutory: true, minAge: 17, minEQF: 0,
+                                     stages: [.teen, .youngAdult, .adult]),
+        .cdl:                  .init(isStatutory: true, minEQF: 0, prerequisites: [.drivers]),
+        .commercialPilot:      .init(isStatutory: true, minEQF: 0, prerequisites: [.pilot]),
+        .airlineTransportPilot: .init(isStatutory: true, minEQF: 0, minYearsExperience: 5,
+                                      field: .transportation, prerequisites: [.commercialPilot]),
+        // Nursing ladder: practical nurse → registered nurse → nurse practitioner.
+        .lpn:                  .init(isStatutory: true),
+        .nurse:                .init(isStatutory: true, minEQF: 4),
+        .np:                   .init(isStatutory: true, minEQF: 6, minYearsExperience: 2,
+                                     field: .health, prerequisites: [.nurse]),
+        // Doctorate-gated health and law licences.
+        .medicalLicense:       .init(isStatutory: true, minEQF: 7),
+        .dentalLicense:        .init(isStatutory: true, minEQF: 7),
+        .pharmacistLicense:    .init(isStatutory: true, minEQF: 7),
+        .veterinaryLicense:    .init(isStatutory: true, minEQF: 7),
+        .bar:                  .init(isStatutory: true, minEQF: 7),
+        // Trades: journeyman licences gate on apprenticeship years, master
+        // licences on the journeyman licence plus more years.
+        .electrician:          .init(isStatutory: true, minYearsExperience: 3, field: .construction),
+        .plumber:              .init(isStatutory: true, minYearsExperience: 3, field: .construction),
+        .masterElectrician:    .init(isStatutory: true, minYearsExperience: 4,
+                                     field: .construction, prerequisites: [.electrician]),
+        .masterPlumber:        .init(isStatutory: true, minYearsExperience: 4,
+                                     field: .construction, prerequisites: [.plumber]),
+        // Degree-gated engineering licences.
+        .professionalEngineer: .init(isStatutory: true, minEQF: 5, minYearsExperience: 4,
+                                     field: .engineering),
+        .architect:            .init(isStatutory: true, minEQF: 5, minYearsExperience: 2,
+                                     field: .construction),
+        // The FAA Academy takes applicants with a degree *or* several years of
+        // responsible work behind them. There is no "or" in a Rules row, so this
+        // takes the floor both routes share — you finished school.
+        .atcCertification:     .init(isStatutory: true),
+        // A short course and an exam, open to anyone old enough.
+        .pesticideApplicator:  .init(isStatutory: true, minEQF: 0),
+        // Guard training itself asks only for a school-leaving certificate.
+        .securityGuard:        .init(isStatutory: true),
+
+        // MARK: Skill-building programs
+        // Non-statutory and non-gating: their value is the edge in landing a job
+        // or launching a venture in the field, plus the soft skills they build.
+        // Open entry — a bootcamp or a studio course asks for none of your
+        // schooling, only the year.
+        .codingBootcamp:       .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.technology, .engineering], weight: 0.15)),
+        .gameDevProgram:       .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.design, .technology], weight: 0.15)),
+        .productDesign:        .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.design], weight: 0.15)),
+        .musicProduction:      .init(minEQF: 0,
+                                     careerBoost: .init(categories: [.showBusiness], weight: 0.12)),
+    ]
+
+    /// This credential's rules. Falls back to the defaults for a case with no
+    /// row — a state `TrainingIntegrityTests` exists to prevent.
+    var rules: Rules { Training.rulesByTraining[self] ?? Rules() }
 }

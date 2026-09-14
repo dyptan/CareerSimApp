@@ -1,12 +1,23 @@
 import SwiftUI
 
-/// Second level of the education nav stack — lists the degree levels available for a profile
-/// (Vocational / Bachelor / Master / Doctorate). Each row navigates into InstitutionTiersView.
+/// Second level of the education nav stack — everything this field of study
+/// offers, in the order you would climb it: the degree levels (Vocational /
+/// Bachelor / Master / Doctorate), each navigating into `InstitutionTiersView`,
+/// then the professional courses filed under the same profile (see
+/// `Training.profile`) — the EMT course sits with the health degrees. Licences
+/// are not courses of study and stay in their own list on the sheet root.
 struct DegreesSubmenuView: View {
     @ObservedObject var player: Player
     let profile: TertiaryProfile
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
+    @Binding var selectedTrainings: Set<Training>
+    @Binding var selectedActivities: Set<String>
+    var onCommit: () -> Void = {}
+
+    private var courses: [Training] {
+        TrainingRow.available(for: player).filter { $0.profile == profile }
+    }
 
     private var degrees: [Education] {
         let availableEducations = availableNextEducations(holds: player.degrees)
@@ -22,32 +33,50 @@ struct DegreesSubmenuView: View {
 
     var body: some View {
         List {
-            ForEach(Array(degrees.enumerated()), id: \.element.id) { _, education in
-                NavigationLink {
-                    InstitutionTiersView(
-                        player: player,
-                        level: education.level,
-                        profile: profile,
-                        yearsLeftToGraduation: $yearsLeftToGraduation,
-                        showTertiarySheet: $showTertiarySheet
-                    )
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 6) {
-                            Text(education.degreeName)
-                                .font(.headline)
-                            InfoHint(
-                                title: "\(education.pictogram) \(education.degreeName)",
-                                message: degreeHintBody(for: education)
+            if !degrees.isEmpty {
+                Section("Degrees") {
+                    ForEach(Array(degrees.enumerated()), id: \.element.id) { _, education in
+                        NavigationLink {
+                            InstitutionTiersView(
+                                player: player,
+                                level: education.level,
+                                profile: profile,
+                                yearsLeftToGraduation: $yearsLeftToGraduation,
+                                showTertiarySheet: $showTertiarySheet,
+                                onCommit: onCommit
                             )
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    Text(education.degreeName)
+                                        .font(.headline)
+                                    InfoHint(
+                                        title: "\(education.pictogram) \(education.degreeName)",
+                                        message: degreeHintBody(for: education)
+                                    )
+                                }
+                                Text(player.isSimplified
+                                     ? "\(education.yearsToComplete) years"
+                                     : "\(education.yearsToComplete) years • compare schools")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 6)
                         }
-                        Text(player.isSimplified
-                             ? "\(education.yearsToComplete) years"
-                             : "\(education.yearsToComplete) years • compare schools")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                     }
-                    .padding(.vertical, 6)
+                }
+            }
+            if !courses.isEmpty {
+                Section("Courses") {
+                    ForEach(courses, id: \.rawValue) { training in
+                        TrainingRow(
+                            training: training,
+                            player: player,
+                            selectedTrainings: $selectedTrainings,
+                            selectedActivities: $selectedActivities,
+                            onCommit: onCommit
+                        )
+                    }
                 }
             }
         }

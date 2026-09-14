@@ -1,67 +1,33 @@
 import SwiftUI
 
-extension View {
-    /// Toggle style appropriate for the current platform (.checkbox on macOS, .switch on iOS).
-    @ViewBuilder
-    func platformToggleStyle() -> some View {
-        #if os(macOS)
-        self.toggleStyle(.checkbox)
-        #elseif os(iOS)
-        self.toggleStyle(.switch)
-        #else
-        self
-        #endif
-    }
-}
-
-/// The **Trainings** page — the unified home for professional credentials, the
-/// merger of the old Certifications and Licenses sheets. It shares its layout and
-/// the single spare-time slot with Hobbies and Sports: picking a training this
-/// year displaces any other activity. Once the hard gates are met the credential
-/// is earned outright (no exam roll), and completing the course nudges the soft
-/// skills it builds. Age, education, prerequisite trainings, and — for senior
-/// credentials — work experience are the hard gates; a blocked training shows why.
-struct TrainingsView: View {
+/// One professional credential in the **Education** sheet — a course under its
+/// field of study, or a licence in the list of its own. It shares the single spare-time
+/// slot with Hobbies and Sports: picking a course this year displaces any other
+/// activity. Once the hard gates are met the credential is earned outright (no
+/// exam roll), and completing the course nudges the soft skills it builds. Age,
+/// education, prerequisite trainings, and — for senior credentials — work
+/// experience are the hard gates; a blocked course shows why.
+struct TrainingRow: View {
+    let training: Training
     @ObservedObject var player: Player
 
     @Binding var selectedTrainings: Set<Training>
     @Binding var selectedActivities: Set<String>
+    /// Enrolling spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
-    private var currentStage: LifeStage { LifeStage.forAge(player.age) }
-
-    private var sortedTrainings: [Training] {
-        Training.allCases
-            .filter { $0.stages.contains(currentStage) }
-            // Age is a visibility gate, not a disabled row: a training the player
-            // is too young for simply doesn't appear until they can attempt it.
+    /// The courses on offer this year. Age is a visibility gate, not a disabled
+    /// row: a course the player is too young for simply doesn't appear until
+    /// they can attempt it.
+    static func available(for player: Player) -> [Training] {
+        let stage = LifeStage.forAge(player.age)
+        return Training.allCases
+            .filter { $0.stages.contains(stage) }
             .filter { player.age >= $0.minAge }
             .sorted { $0.friendlyName < $1.friendlyName }
     }
 
     var body: some View {
-        // No header strip — see `HobbiesView`: the sheet opens on the course
-        // list, and a spent activity slot shows as dimmed rows.
-        VStack {
-            ScrollView {
-                VStack(spacing: 10) {
-                    if sortedTrainings.isEmpty {
-                        Text("Professional trainings unlock as you get older and finish school.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .padding()
-                    } else {
-                        ForEach(sortedTrainings, id: \.rawValue) { training in
-                            row(for: training)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func row(for training: Training) -> some View {
         // Earned in a prior year (permanent) vs. picked this year (reversible).
         let isEarned = player.lockedTrainings.contains(training)
             || player.hardSkills.trainings.contains(training)
@@ -134,6 +100,7 @@ struct TrainingsView: View {
                             if isOn {
                                 guard canToggleOn else { return }
                                 player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
+                                onCommit()
                             } else {
                                 player.cancelTraining(training, from: &selectedTrainings, activities: &selectedActivities)
                             }
@@ -195,9 +162,8 @@ struct TrainingsView: View {
         @State var acts: Set<String> = []
         @StateObject var player = Player()
         var body: some View {
-            NavigationView {
-                TrainingsView(player: player, selectedTrainings: $selected, selectedActivities: $acts)
-            }
+            TrainingRow(training: .drivers, player: player,
+                        selectedTrainings: $selected, selectedActivities: $acts)
         }
     }
     return Container()

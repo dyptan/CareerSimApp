@@ -4,6 +4,306 @@ import XCTest
 /// Structural validation of the career dependency graph. These are *catalogue*
 /// invariants — reachability over the prerequisite DAG — so they run in
 /// O(catalogue size), not as a combinatorial sweep of player states.
+
+final class CatalogIntegrityTests: XCTestCase {
+
+    private var fullTitles: Set<String> { Set(JobCatalog.allTitles) }
+    private var baseTitles: Set<String> { Set(JobCatalog.allBaseTitles) }
+
+    /// Pay is argued over in professional office work and posted everywhere else.
+    /// Pinning both directions keeps the rule from drifting as roles are added.
+    func testOnlyProfessionalOfficeRolesNegotiateSalary() {
+        let jobs = JobCatalog.allJobs().filter { !$0.isEntrepreneurial }
+        for job in jobs where job.salaryIsNegotiable {
+            XCTAssertEqual(job.workSetting, .office,
+                           "\(job.id) negotiates pay but isn't office work.")
+            XCTAssertGreaterThanOrEqual(job.requirements.education.minEQF,
+                                        GameConstants.negotiableSalaryMinEQF,
+                                        "\(job.id) negotiates pay below the professional bar.")
+        }
+        // Hand-on and people-facing work is always a posted rate, however senior.
+        for job in jobs where job.workSetting != .office {
+            XCTAssertFalse(job.salaryIsNegotiable,
+                           "\(job.id) is \(job.workSetting.rawValue) work — pay should be posted.")
+        }
+        // A founder sets their own terms; there is no offer to negotiate.
+        for job in JobCatalog.allJobs() where job.isEntrepreneurial {
+            XCTAssertFalse(job.salaryIsNegotiable, "\(job.id) is a venture, not an offer.")
+        }
+        // A public pay scale is a scale whatever the seniority: no rung of such a
+        // ladder negotiates, however senior or well-schooled.
+        for job in jobs where Job.publicPayScaleTitles.contains(job.baseTitle) {
+            XCTAssertFalse(job.salaryIsNegotiable,
+                           "\(job.id) is on a public pay scale — no rung of it negotiates.")
+        }
+        // The rule has to actually split the catalogue, not collapse to one side.
+        let negotiable = jobs.filter(\.salaryIsNegotiable).count
+        XCTAssertGreaterThan(negotiable, 0, "No role negotiates — the bar is too high.")
+        XCTAssertLessThan(negotiable, jobs.count, "Every role negotiates — the bar does nothing.")
+    }
+
+    /// The Education sheet files each course under its field of study and lists
+    /// the licences on their own. Every credential must land in exactly one of
+    /// those two places, or a course the game still gates jobs on would be
+    /// unreachable.
+    func testEveryTrainingIsReachableInEducation() {
+        let filed = Set(Training.allCases.filter { $0.profile != nil })
+        let general = Set(Training.allCases.filter { $0.profile == nil })
+        XCTAssertEqual(filed.union(general), Set(Training.allCases),
+                       "Every training is either filed under a profile or general.")
+        XCTAssertTrue(filed.isDisjoint(with: general),
+                      "No training may be in both places.")
+    }
+
+    /// A licence qualifies you to practise rather than teaching you a field, so
+    /// the Education sheet never files it under a faculty — even though it may
+    /// still belong to one, which is what tells a graduate it has opened up.
+    func testStatutoryLicencesAreNeverFiledUnderAProfile() {
+        for training in Training.allCases where training.isStatutory {
+            XCTAssertNil(training.profile,
+                         "\(training.rawValue) is a licence and must stay general.")
+        }
+        XCTAssertNotNil(Training.bar.studyField,
+                        "A licence still belongs to a faculty — the bar exam is law.")
+    }
+
+    /// The converse: every course *is* filed. An unfiled one would silently fall
+    /// into the licence list, where a player looking for it in their field would
+    /// never find it.
+    func testEveryCourseIsFiledUnderAProfile() {
+        for training in Training.allCases where !training.isStatutory {
+            XCTAssertNotNil(training.profile,
+                            "\(training.rawValue) is a course with no field of study. "
+                            + "Add a Training.studyFieldByTraining row.")
+        }
+    }
+
+    /// A credential's field has to be one the Education sheet can actually reach.
+    func testFiledTrainingsUseRealProfiles() {
+        for (training, profile) in Training.studyFieldByTraining {
+            XCTAssertTrue(TertiaryProfile.allCases.contains(profile),
+                          "\(training.rawValue) is filed under an unknown profile.")
+        }
+    }
+
+    /// Tables keyed by *base* title, so one entry covers every rung of a ladder.
+    func testBaseTitleOverridesNameRealJobs() {
+        let tables: [(String, [String])] = [
+            ("softSkillsByBaseTitle", Array(JobCatalog.softSkillsByBaseTitle.keys)),
+            ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
+            ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
+            ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
+            ("Job.publicPayScaleTitles", Array(Job.publicPayScaleTitles)),
+        ]
+        let known = baseTitles
+        for (name, keys) in tables {
+            let orphans = Set(keys).subtracting(known).sorted()
+            XCTAssertTrue(orphans.isEmpty,
+                          "\(name) has keys that are not the base title of any job: \(orphans). "
+                          + "Either the job was renamed or the key carries a seniority prefix "
+                          + "(this table is looked up through Job.baseTitle, so a prefixed key can never match).")
+        }
+    }
+
+    /// Tables keyed by *full* title, so they attach to one rung only.
+    func testFullTitleOverridesNameRealJobs() {
+        let tables: [(String, [String])] = [
+            ("credentialsByFullTitle", Array(JobCatalog.credentialsByFullTitle.keys)),
+            ("minYearsByTitle", Array(JobCatalog.minYearsByTitle.keys)),
+        ]
+        let known = fullTitles
+        for (name, keys) in tables {
+            let orphans = Set(keys).subtracting(known).sorted()
+            XCTAssertTrue(orphans.isEmpty,
+                          "\(name) has keys matching no job title: \(orphans). The job was probably renamed.")
+        }
+    }
+
+    func testJobTitlesAreUnique() {
+        let titles = JobCatalog.allTitles
+        let dupes = Set(titles.filter { t in titles.filter { $0 == t }.count > 1 }).sorted()
+        XCTAssertTrue(dupes.isEmpty, "Duplicate job titles would produce two jobs with one id: \(dupes).")
+    }
+
+    /// `job(from:)` raises a role's education floor to whatever its mandated
+    /// credentials require, so a job can never demand a credential the player
+    /// couldn't have earned at its stated level.
+    func testStatedEducationCoversMandatedCredentials() {
+        for job in JobCatalog.allJobs() {
+            let needed = job.requirements.hardSkills.trainings.map(\.minEQF).max() ?? 0
+            XCTAssertGreaterThanOrEqual(
+                job.requirements.education.minEQF, needed,
+                "\(job.id) states EQF \(job.requirements.education.minEQF) but mandates a credential needing \(needed).")
+        }
+    }
+
+    /// Carrying `targetCapital` is what makes a role a venture — not its category.
+    func testVentureFlagAndCapitalAgree() {
+        for job in JobCatalog.allJobs() {
+            XCTAssertEqual(job.targetCapital != nil, job.isEntrepreneurial,
+                           "\(job.id): targetCapital and isEntrepreneurial disagree.")
+        }
+        for venture in JobCatalog.ventures {
+            XCTAssertGreaterThan(venture.targetCapital ?? 0, 0,
+                                 "Venture \(venture.title) must stake capital.")
+        }
+    }
+
+    /// A ladder's rungs are its promotion chain: every rung must be reachable by
+    /// stepping one index at a time from the entry rung, and no two rungs may
+    /// share a position. Parsed seniority prefixes could tie — staff and
+    /// principal both ranked 5, so the promotion pick was shuffle-dependent and
+    /// staff was a dead end. Declared order cannot.
+    func testLaddersFormAnUnambiguousChain() {
+        for ladder in JobCatalog.ladders {
+            XCTAssertGreaterThan(ladder.rungs.count, 1,
+                                 "\(ladder.name) has one rung — it belongs in standaloneRoles.")
+            let rungs = JobCatalog.jobs(for: ladder)
+            XCTAssertEqual(rungs.map(\.rung), Array(0..<ladder.rungs.count),
+                           "\(ladder.name) rungs must be numbered 0..<n in declared order.")
+            XCTAssertEqual(Set(rungs.map(\.baseTitle)), [ladder.name],
+                           "Every rung of \(ladder.name) should share its base title.")
+            for (lower, upper) in zip(rungs, rungs.dropFirst()) {
+                // Pay climbs with the rung — a promotion is never a demotion.
+                XCTAssertLessThan(lower.income, upper.income,
+                                  "\(ladder.name): \(upper.id) should out-earn \(lower.id).")
+                // Requirements never ease off going up. This is what makes
+                // stepping exactly one rung correct: a rung you don't yet
+                // qualify for can't be hiding an easier one above it.
+                XCTAssertGreaterThanOrEqual(
+                    upper.requirements.minYearsExperience, lower.requirements.minYearsExperience,
+                    "\(ladder.name): \(upper.id) should not expect less experience than \(lower.id).")
+                XCTAssertGreaterThanOrEqual(
+                    upper.requirements.education.minEQF, lower.requirements.education.minEQF,
+                    "\(ladder.name): \(upper.id) should not require less education than \(lower.id).")
+            }
+        }
+    }
+
+    /// Ladder names and standalone titles share one namespace — `Job.baseTitle`
+    /// keys tenure and the jobs list, so a collision would merge two roles.
+    func testBaseTitlesAreUnique() {
+        let bases = JobCatalog.allBaseTitles
+        let dupes = Set(bases.filter { b in bases.filter { $0 == b }.count > 1 }).sorted()
+        XCTAssertTrue(dupes.isEmpty, "Base titles collide: \(dupes).")
+    }
+
+    /// Every work setting must be represented, or the jobs filter would offer a
+    /// chip that matches nothing.
+    func testEveryWorkSettingHasRoles() {
+        let jobs = JobCatalog.allJobs().filter { !$0.isEntrepreneurial }
+        for setting in WorkSetting.allCases {
+            let roles = Set(jobs.filter { $0.workSetting == setting }.map(\.baseTitle))
+            XCTAssertFalse(roles.isEmpty, "No role is \(setting.rawValue) — the filter would show an empty list.")
+        }
+    }
+
+    /// A ladder is one role, so its rungs must share a setting — otherwise the
+    /// same job would appear under two different filters as the player climbs.
+    func testLadderRungsShareAWorkSetting() {
+        for ladder in JobCatalog.ladders {
+            let settings = Set(JobCatalog.jobs(for: ladder).map(\.workSetting))
+            XCTAssertEqual(settings.count, 1,
+                           "\(ladder.name) rungs disagree on work setting: \(settings.map(\.rawValue).sorted()).")
+        }
+    }
+
+    /// Outside the regulated professions a degree must never *block* an
+    /// application — that is the whole point of the split — but it must move the
+    /// odds a lot. Shape assertions rather than magic numbers, so retuning the
+    /// constants doesn't break the suite; only reversing the design would.
+    func testDegreeIsASignificantHiringFactorWhereItIsNotAGate() {
+        // A role that declares accepted degree fields — some categories list
+        // none, and there any degree at the right level counts as relevant.
+        let jobs = JobCatalog.allJobs().filter {
+            !$0.isEntrepreneurial && !$0.educationIsMandatory
+                && $0.requirements.education.minEQF >= 5
+                && !($0.requirements.education.acceptedProfiles ?? []).isEmpty
+        }
+        guard let job = jobs.first else { return XCTFail("No non-regulated degree-level role.") }
+        let accepted = job.requirements.education.acceptedProfiles ?? []
+
+        let none = Self.candidate(eqf: nil, profile: nil)
+        let short = Self.candidate(eqf: .HighSchool, profile: nil)
+        let unrelated = Self.candidate(eqf: .Bachelor,
+                                       profile: TertiaryProfile.allCases.first { !accepted.contains($0) })
+        let relevant = Self.candidate(eqf: .Bachelor, profile: accepted.first)
+
+        // Never a gate: no degree still leaves the application open.
+        XCTAssertTrue(job.educationGateMet(for: none),
+                      "A degree must not hard-gate \(job.id) — it isn't a regulated profession.")
+
+        let terms = [none, short, unrelated, relevant].map { job.educationFactor(for: $0) }
+        XCTAssertEqual(terms, terms.sorted(),
+                       "Education multiplier should improve monotonically: none <= short <= unrelated <= relevant, got \(terms).")
+        XCTAssertLessThan(terms[0], 1, "No degree should scale the odds down for a degree-level role.")
+        XCTAssertGreaterThan(terms[3], 1, "The expected degree in an accepted field should pay.")
+        XCTAssertGreaterThan(terms[3] - terms[0], 0.25,
+                             "A degree should swing the odds substantially, not marginally.")
+        XCTAssertGreaterThan(terms[3], terms[2],
+                             "A degree in an accepted field should beat an unrelated one.")
+    }
+
+    /// The same factor has to reach promotions, not just hiring — being
+    /// under-credentialled for the role you hold should cap how far you climb.
+    func testDegreeMovesPromotionOdds() {
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && !$0.educationIsMandatory
+                && $0.requirements.education.minEQF >= 5 && !$0.isLowSkilled
+        }) else { return XCTFail("No non-regulated degree-level skilled role.") }
+
+        let none = Self.candidate(eqf: nil, profile: nil)
+        let relevant = Self.candidate(eqf: .Bachelor,
+                                      profile: job.requirements.education.acceptedProfiles?.first)
+        let withoutDegree = none.promotionOdds(for: job)
+        let withDegree = relevant.promotionOdds(for: job)
+
+        XCTAssertLessThan(withoutDegree.education, 0,
+                          "Holding a degree-level role without the degree should hold promotions back.")
+        XCTAssertGreaterThan(withDegree.total, withoutDegree.total,
+                             "The degree should raise the annual promotion odds.")
+        XCTAssertGreaterThanOrEqual(withoutDegree.total, 0, "Odds must never go negative.")
+    }
+
+    /// A candidate identical but for their education, for the tests above.
+    private static func candidate(eqf: Level.Stage?, profile: TertiaryProfile?) -> Player {
+        let player = Player()
+        player.age = 40
+        for keyPath in SoftSkills.skillNames.map(\.keyPath) { player.softSkills[keyPath: keyPath] = 5 }
+        for category in JobCategory.allCases { player.experience[category] = 20 }
+        if let eqf {
+            player.degrees = profile.map { [Education(eqf, profile: $0)] } ?? [Education(eqf)]
+        }
+        return player
+    }
+
+    /// Every credential must have a row in `rulesByTraining`. Without this, a new
+    /// `Training` case silently takes the struct defaults — a statutory licence
+    /// that quietly stops gating hiring, for instance.
+    func testEveryTrainingHasRules() {
+        let missing = Training.allCases.filter { Training.rulesByTraining[$0] == nil }
+        XCTAssertTrue(missing.isEmpty,
+                      "Trainings with no rules row: \(missing.map(\.rawValue)). Add them to Training.rulesByTraining.")
+    }
+
+    /// A prerequisite chain must terminate, or a credential could never be earned.
+    func testTrainingPrerequisitesTerminate() {
+        /// The chain that revisits a credential, or nil when it terminates.
+        func cycle(from training: Training, seen: [Training] = []) -> [Training]? {
+            if let loop = seen.firstIndex(of: training) { return Array(seen[loop...]) + [training] }
+            for prerequisite in training.prerequisites {
+                if let found = cycle(from: prerequisite, seen: seen + [training]) { return found }
+            }
+            return nil
+        }
+        for training in Training.allCases {
+            let found = cycle(from: training)
+            XCTAssertNil(found, "\(training.rawValue) has a cyclic prerequisite chain: "
+                         + (found?.map(\.rawValue).joined(separator: " -> ") ?? ""))
+        }
+    }
+}
+
 final class CareerGraphTests: XCTestCase {
 
     /// The headline guarantee: the catalogue is internally consistent. No
@@ -92,7 +392,7 @@ final class CareerGraphTests: XCTestCase {
     func testBusinessRoleCountsEntrepreneurshipYears() {
         guard let job = JobCatalog.allJobs().first(where: {
             $0.category == .business
-                && $0.seniorityPrefix == nil
+                && !$0.isLadderVariant
                 && $0.requirements.minYearsExperience > 0
         }) else {
             return // no such role in the catalogue — nothing to assert
@@ -117,22 +417,50 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
-    /// Relevant work experience should lift an experience-building venture's odds,
-    /// but never beyond the cap; ventures with no experience category are unmoved.
-    func testExperienceLiftRaisesVentureOdds() {
+    /// Work experience should lift any project's odds — not only the ones that
+    /// build experience of their own — and years in the project's own field
+    /// should count twice over.
+    func testExperienceRaisesProjectOdds() {
         guard let venture = SideHustleCatalog.byId["crowdfundingCampaign"],
               let plain = SideHustleCatalog.byId["projectApp"] else {
-            XCTFail("Expected ventures missing from catalogue."); return
+            XCTFail("Expected projects missing from catalogue."); return
         }
         let soft = SoftSkills()
-        let cold = venture.successProbability(for: soft, experienceYears: 0)
-        let seasoned = venture.successProbability(for: soft, experienceYears: 20)
-        XCTAssertGreaterThan(seasoned, cold,
-                             "Experience should raise an entrepreneurship venture's odds.")
-        XCTAssertEqual(venture.experienceLift(years: 100), SideHustle.maxExperienceLift,
-                       "Experience lift should cap out.")
-        XCTAssertEqual(plain.experienceLift(years: 20), 0,
-                       "A venture with no experience category gets no lift.")
+        for project in [venture, plain] {
+            let cold = project.successProbability(for: soft, totalExperienceYears: 0)
+            let seasoned = project.successProbability(for: soft, totalExperienceYears: 10)
+            XCTAssertGreaterThan(seasoned, cold,
+                                 "A working career should raise '\(project.id)' odds.")
+        }
+        XCTAssertEqual(plain.experienceFit(totalYears: 4, fieldYears: 4),
+                       plain.experienceFit(totalYears: 8, fieldYears: 0),
+                       accuracy: 0.0001,
+                       "Years in the project's own field should count twice.")
+        XCTAssertEqual(plain.experienceFit(totalYears: 500, fieldYears: 500), 1.0,
+                       "The experience term should cap out at a full fit.")
+    }
+
+    /// Nothing gates a project any more, so the odds have to carry the meaning:
+    /// a player with no talent and no career rolls against nothing, and no
+    /// player ever exceeds the project's own ceiling.
+    func testProjectOddsSpanZeroToCeiling() {
+        let green = SoftSkills()
+        for project in SideHustleCatalog.all {
+            XCTAssertEqual(project.successProbability(for: green), 0, accuracy: 0.0001,
+                           "'\(project.id)' should be a hopeless shot with no skills and no career.")
+        }
+        var maxed = SoftSkills()
+        for skill in SoftSkills.skillNames { maxed[keyPath: skill.keyPath] = 10 }
+        for project in SideHustleCatalog.all {
+            let best = project.successProbability(
+                for: maxed, fameScore: 1_000,
+                totalExperienceYears: 100, fieldExperienceYears: 100
+            )
+            XCTAssertLessThanOrEqual(best, project.successCeiling + 0.0001,
+                                     "'\(project.id)' must never beat its own ceiling.")
+            XCTAssertGreaterThan(best, 0,
+                                 "'\(project.id)' should be winnable once fully built up.")
+        }
     }
 
     // MARK: - Projects vs. Events taxonomy
@@ -160,16 +488,15 @@ final class CareerGraphTests: XCTestCase {
             "music-festival":   (.showBusiness,    .entertainment, "Festival Performer"),
             "tv-casting":       (.showBusiness,    .entertainment, "TV Personality"),
             "conference-talk":  (.business,        .business,      "Noted Speaker"),
-            "pitch-competition":(.entrepreneurship, .business,     "Pitch Winner"),
+            "pitch-competition":(.business,         .business,     "Pitch Winner"),
         ]
         for (id, (category, fame, title)) in expected {
             guard let event = EventCatalog.byId[id] else {
                 XCTFail("Missing spotlight event '\(id)'."); continue
             }
             XCTAssertEqual(event.category, category, "'\(id)' should serve \(category.rawValue).")
-            XCTAssertTrue(event.supportsPresenter, "'\(id)' should offer a stage role.")
             XCTAssertEqual(event.presenterFameTitle, title, "'\(id)' should bank a bespoke accolade.")
-            XCTAssertEqual(event.category?.fameCategory, fame, "'\(id)' fame should land in \(fame).")
+            XCTAssertEqual(event.category.fameCategory, fame, "'\(id)' fame should land in \(fame).")
         }
     }
 
@@ -180,8 +507,8 @@ final class CareerGraphTests: XCTestCase {
     func testSkillBuildingTrainingsAreNonGatingBoosts() {
         let expected: [Training: Set<JobCategory>] = [
             .codingBootcamp:     [.technology, .engineering],
-            .gameDevProgram:     [.gaming, .technology],
-            .productDesign:      [.design, .fashion],
+            .gameDevProgram:     [.design, .technology],
+            .productDesign:      [.design],
             .musicProduction:    [.showBusiness],
         ]
         for (training, categories) in expected {
@@ -269,7 +596,7 @@ final class CareerGraphTests: XCTestCase {
             XCTAssertTrue(founder.isExecutive, "Founder ventures should unlock the Boardroom.")
         }
         if let analyst = jobs.first(where: {
-            $0.category == .business && $0.seniorityPrefix == nil && !$0.isTopLeadership
+            $0.category == .business && !$0.isLadderVariant && !$0.isTopLeadership
         }) {
             XCTAssertFalse(analyst.isExecutive, "A rank-and-file role shouldn't unlock the Boardroom.")
         }
@@ -277,7 +604,7 @@ final class CareerGraphTests: XCTestCase {
         // tops out its ladder but doesn't run a cap table.
         if let nonCommercial = jobs.first(where: {
             $0.isTopLeadership && !$0.isEntrepreneurial
-                && ![.business, .entrepreneurship, .finance, .technology].contains($0.category)
+                && ![.business, .entrepreneurship, .technology].contains($0.category)
         }) {
             XCTAssertFalse(nonCommercial.isExecutive,
                            "'\(nonCommercial.id)' is top leadership but shouldn't unlock the Boardroom.")
@@ -488,7 +815,7 @@ final class CareerGraphTests: XCTestCase {
             // Use the easiest-to-qualify rung of the ladder (lowest seniority).
             guard let job = jobs
                 .filter({ $0.baseTitle == gate.base })
-                .min(by: { $0.seniorityRank < $1.seniorityRank }) else {
+                .min(by: { $0.rung < $1.rung }) else {
                 XCTFail("Missing star career '\(gate.base)' in the catalogue.")
                 continue
             }
@@ -527,6 +854,35 @@ final class CareerGraphTests: XCTestCase {
         let odds = elite.admissionProbability(player: player)
         XCTAssertGreaterThan(odds, 0.5, "A perfect applicant should still have a real shot.")
         XCTAssertLessThanOrEqual(odds, 0.66, "An elite school shouldn't be a near-lock even when maxed.")
+    }
+
+    /// Applying costs the year whether or not you get in, so a school-leaver with
+    /// nothing built yet has to have somewhere they can count on. The tiers must
+    /// also stay ordered at every strength — otherwise the choice between them is
+    /// not a trade, it is just a worse option.
+    func testAdmissionTiersStayOrderedAndTheOpenDoorStaysOpen() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+
+        func odds(_ tier: EducationTier) -> Double {
+            Education(.Bachelor, profile: .business, tier: tier).admissionProbability(player: player)
+        }
+
+        for level in [0, 2, 5, 10] {
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = level }
+            XCTAssertGreaterThan(odds(.community), odds(.state),
+                                 "At skill \(level) the community college should be the safer bet.")
+            XCTAssertGreaterThan(odds(.state), odds(.elite),
+                                 "At skill \(level) a state place should beat an elite one.")
+        }
+
+        // The floor is what makes a first application affordable: a fresh
+        // school-leaver should expect to get into the open-admission tier, not
+        // burn years being turned away with nothing to show for them.
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
+        XCTAssertGreaterThan(odds(.community), 0.6,
+                             "An open-admission college should take a thin applicant most of the time.")
     }
 
     /// Soft skills are never a gate: an applicant who holds the prior

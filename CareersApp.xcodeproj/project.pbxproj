@@ -20,10 +20,11 @@
 		555CC10D2FF1341B00426E7E /* Sport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10C2FF1341B00426E7E /* Sport.swift */; };
 		555CC10F2FF134D000426E7E /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555CC10E2FF134D000426E7E /* SportsView.swift */; };
 		5596D8732E9AF67D00E98CEF /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5596D81B2E9AE4EF00E98CEF /* Job.swift */; };
-		5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingsView.swift */; };
+		5598FA292EE62F57006C4D36 /* TrainingRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5598FA282EE62F57006C4D36 /* TrainingRow.swift */; };
 		55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ECFE2E9541FD0033B674 /* JobRow.swift */; };
 		55A6ED012E9542000033B674 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A6ED002E9542000033B674 /* JobView.swift */; };
 		55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */; };
+		55AFFB6A2EF09DAC009FC04C /* GameStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AFFB6B2EF09DAC009FC04C /* GameStyle.swift */; };
 		55B4351C2F470E910022ACAA /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B4351B2F470E910022ACAA /* FooterView.swift */; };
 		55C06F5E2E96DEB600BD5017 /* CategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */; };
 		55D6AEE22F01A8BB00B2C113 /* Requirement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6AEE12F01A8BB00B2C113 /* Requirement.swift */; };
@@ -99,10 +100,11 @@
 		555CC10C2FF1341B00426E7E /* Sport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sport.swift; sourceTree = "<group>"; };
 		555CC10E2FF134D000426E7E /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
 		5596D81B2E9AE4EF00E98CEF /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
-		5598FA282EE62F57006C4D36 /* TrainingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingsView.swift; sourceTree = "<group>"; };
+		5598FA282EE62F57006C4D36 /* TrainingRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingRow.swift; sourceTree = "<group>"; };
 		55A6ECFE2E9541FD0033B674 /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
 		55A6ED002E9542000033B674 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementRow.swift; sourceTree = "<group>"; };
+		55AFFB6B2EF09DAC009FC04C /* GameStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStyle.swift; sourceTree = "<group>"; };
 		55B4351B2F470E910022ACAA /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRow.swift; sourceTree = "<group>"; };
 		55D6AEE12F01A8BB00B2C113 /* Requirement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Requirement.swift; sourceTree = "<group>"; };
@@ -262,8 +264,9 @@
 				551B66F72EBFB9CD00092DC7 /* HobbiesView.swift */,
 				AA00000000000000000000E3 /* SideHustlesView.swift */,
 				AA00000000000000000000E7 /* EventsView.swift */,
-				5598FA282EE62F57006C4D36 /* TrainingsView.swift */,
+				5598FA282EE62F57006C4D36 /* TrainingRow.swift */,
 				55AFFB3A2EF09DAC009FC04C /* RequirementRow.swift */,
+				55AFFB6B2EF09DAC009FC04C /* GameStyle.swift */,
 				AA00000000000000000000A5 /* RetirementView.swift */,
 				AA00000000000000000000A7 /* DegreesSubmenuView.swift */,
 				AA00000000000000000000B5 /* InfoHint.swift */,
@@ -397,7 +400,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				555CC10F2FF134D000426E7E /* SportsView.swift in Sources */,
-				5598FA292EE62F57006C4D36 /* TrainingsView.swift in Sources */,
+				5598FA292EE62F57006C4D36 /* TrainingRow.swift in Sources */,
 				551B66F82EBFB9CD00092DC7 /* HobbiesView.swift in Sources */,
 				55B4351C2F470E910022ACAA /* FooterView.swift in Sources */,
 				55A6ECFF2E9541FD0033B674 /* JobRow.swift in Sources */,
@@ -415,6 +418,7 @@
 				5596D8732E9AF67D00E98CEF /* Job.swift in Sources */,
 				84F851CD2EA16C290066C41A /* Education.swift in Sources */,
 				55AFFB3B2EF09DAC009FC04C /* RequirementRow.swift in Sources */,
+				55AFFB6A2EF09DAC009FC04C /* GameStyle.swift in Sources */,
 				55189E932F4DD9E9005FAC2C /* AppUIState.swift in Sources */,
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Training.swift in Sources */,

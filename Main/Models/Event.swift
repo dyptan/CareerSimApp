@@ -1,15 +1,5 @@
 import Foundation
 
-/// The capacity in which the player attends an event.
-enum EventRole: String {
-    /// You're in the audience: soft-skill nudges plus network points.
-    case participant
-    /// You're on stage: more network, and a fame **award** banked in the
-    /// event's industry when the year advances. Restricted to industry events
-    /// and gated behind years of experience (see `CareerEvent.canPresent`).
-    case presenter
-}
-
 /// A professional event — a summit, conference, expo, festival, or pitch
 /// competition. Distinct from a `Hobby`: events are a realistic-mode feature
 /// that build an industry **professional network** improving both the hiring
@@ -24,25 +14,24 @@ struct CareerEvent: Identifiable {
     let name: String
     let icon: String
     let blurb: String
-    /// Industry this event serves. `nil` marks a cross-industry event whose
-    /// network counts toward **every** field (general professional exposure).
-    /// Only industry events (`category != nil`) can be presented at.
-    let category: JobCategory?
+    /// Industry this event serves: presenting here builds that field's network
+    /// and banks a fame award in it.
+    let category: JobCategory
     /// Soft-skill nudges, applied immediately on attendance (like a hobby).
     let abilities: [WeightedAbility]
-    /// Professional-network points one attendance as a *participant* adds (1–3).
-    /// Accumulates in `Player.networkByCategory`/`Player.generalNetwork` and
-    /// feeds hiring + promotion. A presenter banks more (see `networkPoints`).
+    /// Base professional-network points this event is worth (1–3). Accumulates
+    /// in `Player.networkByCategory` and feeds hiring + promotion; taking the
+    /// stage banks more than this (see `networkPoints`).
     let networkWeight: Int
     /// Verb for the "take the stage" role on this event's row — "Present" for a
     /// conference, but "Perform" at a festival, "Compete" at a pitch, and so on.
-    /// Purely cosmetic; the mechanic is identical (see `EventRole.presenter`).
+    /// Purely cosmetic; the mechanic is identical.
     let presenterActionLabel: String
     /// Bespoke title for the fame award a presenter banks (e.g. "Festival
     /// Performer", "Pitch Winner"). `nil` falls back to "<name> — Speaker".
     let presenterFameTitleOverride: String?
 
-    init(id: String, name: String, icon: String, blurb: String, category: JobCategory?,
+    init(id: String, name: String, icon: String, blurb: String, category: JobCategory,
          abilities: [WeightedAbility], networkWeight: Int,
          presenterActionLabel: String = "Present",
          presenterFameTitleOverride: String? = nil) {
@@ -57,38 +46,22 @@ struct CareerEvent: Identifiable {
         self.presenterFameTitleOverride = presenterFameTitleOverride
     }
 
-    /// Whether the player has the ≥1 year of same-industry work experience
-    /// needed to get into this event — you network your way in once you're
-    /// actually in the field. Cross-industry events (nil `category`) are open to
-    /// everyone.
-    func meetsExperienceRequirement(for experience: [JobCategory: Int]) -> Bool {
-        guard let category else { return true }
-        return (experience[category] ?? 0) >= 1
-    }
-
-    /// Whether this event offers a presenter role at all — industry events only;
-    /// a general, cross-industry gathering has no single field to headline in.
-    var supportsPresenter: Bool { category != nil }
-
     /// Whether the player is established enough in this event's industry to take
     /// the stage: `GameConstants.presenterExperienceYears` of experience in it.
     func canPresent(with experience: [JobCategory: Int]) -> Bool {
-        guard let category else { return false }
-        return (experience[category] ?? 0) >= GameConstants.presenterExperienceYears
+        category.creditedYears(in: experience) >= GameConstants.presenterExperienceYears
     }
 
-    /// Professional-network points a given role banks. A presenter draws more of
-    /// the room than a participant (see `GameConstants.presenterNetworkBonus`).
-    func networkPoints(for role: EventRole) -> Int {
-        role == .presenter ? networkWeight + GameConstants.presenterNetworkBonus : networkWeight
-    }
+    /// Professional-network points taking the stage here banks — more than the
+    /// raw weight, since a presenter draws the room (see
+    /// `GameConstants.presenterNetworkBonus`).
+    var networkPoints: Int { networkWeight + GameConstants.presenterNetworkBonus }
 
     /// The fame accolade banked (when the year advances) for presenting here,
-    /// scoped to the event's industry. `nil` for general events, which have no
-    /// presenter role. Spotlight events override the default speaker wording.
-    var presenterFameTitle: String? {
-        guard supportsPresenter else { return nil }
-        return presenterFameTitleOverride ?? "\(name) — Speaker"
+    /// scoped to the event's industry. Spotlight events override the default
+    /// speaker wording.
+    var presenterFameTitle: String {
+        presenterFameTitleOverride ?? "\(name) — Speaker"
     }
 
     /// Reputation weight of the presenter fame award. Taking the stage at an
@@ -98,7 +71,9 @@ struct CareerEvent: Identifiable {
     /// industry (see `Player.fameHireBonus`), and it compounds each year you
     /// present. Flagship summits (higher `networkWeight`) are worth proportionally
     /// more.
-    var presenterFameWeight: Double { Double(networkWeight) * 2.0 }
+    var presenterFameWeight: Double {
+        Double(networkWeight) * GameConstants.accomplishmentFameMultiplier
+    }
 }
 
 enum EventCatalog {
@@ -133,7 +108,7 @@ enum EventCatalog {
             name: "Finance & Markets Forum",
             icon: "💰",
             blurb: "Analysts, bankers, and traders comparing notes on the markets.",
-            category: .finance,
+            category: .business,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
@@ -214,9 +189,9 @@ enum EventCatalog {
         ),
         // Spotlight & competitive events — organized happenings you take the
         // stage at (once you're a veteran of the field), banking the field's
-        // network plus industry fame. These were formerly spare-time *projects*,
-        // but they're participation in someone else's event rather than a
-        // self-initiated work, so they belong here.
+        // network plus industry fame. They're participation in someone else's
+        // event rather than a self-initiated work, which is what separates them
+        // from spare-time *projects*.
         CareerEvent(
             id: "music-festival",
             name: "Music Festival",
@@ -264,7 +239,7 @@ enum EventCatalog {
             name: "Pitch Competition",
             icon: "🎤",
             blurb: "Work the room of founders and investors — or take the stage to pitch your idea and win it.",
-            category: .entrepreneurship,
+            category: .business,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1),
                 .init(keyPath: \.persuasionAndNegotiation, weight: 1)

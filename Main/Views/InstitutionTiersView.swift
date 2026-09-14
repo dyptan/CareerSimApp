@@ -9,6 +9,8 @@ struct InstitutionTiersView: View {
 
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
+    /// Enrolling spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
     private var tiers: [Education] {
         // Simplified mode has no institution tiers — a single neutral school
@@ -46,7 +48,6 @@ struct InstitutionTiersView: View {
         // odds of the admission roll, in every mode.
         let eqfMet = education.meetsRequirements(player: player)
         let admission = education.admissionProbability(player: player)
-        let alreadyApplied = player.appliedSchoolIds.contains(education.id)
 
         VStack(alignment: .leading, spacing: 10) {
             if player.isSimplified {
@@ -142,39 +143,26 @@ struct InstitutionTiersView: View {
                 Text("Admission chance:")
                 InfoHint(
                     title: "How admission works",
-                    message: "Your current education level is the only hard requirement — once you have it you can always apply. From there, your odds rise with how well your soft skills overlap with what this school looks for and fall with how selective the school is. Matching every one makes you fully qualified, but selective schools still turn away strong applicants — and a school may still take a chance on you when your soft skills are thin. Build the skills listed above through hobbies, sports and projects to improve your chances. You get one application per school each year."
+                    message: "Your current education level is the only hard requirement — once you have it you can always apply. From there, your odds rise with how well your soft skills overlap with what this school looks for and fall with how selective the school is. Matching every one makes you fully qualified, but selective schools still turn away strong applicants — and a school may still take a chance on you when your soft skills are thin. Build the skills listed above through hobbies, sports and projects to improve your chances. Applying is how you spend the year, so it costs a year whether or not you get in."
                 )
                 Spacer()
                 Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
                     .font(.headline)
-                    .foregroundStyle(admission >= 0.6 ? .green : admission >= 0.3 ? .orange : .red)
+                    .foregroundStyle(Color.forOdds(admission))
             }
             .font(.subheadline)
             .padding(.top, 4)
 
             Button {
-                if player.applyToSchool(education) {
-                    // Beating long odds is worth a celebration.
-                    if admission < GameConstants.luckyWinThreshold {
-                        player.celebrationTrigger += 1
-                    }
-                    enroll(in: education)
-                }
+                apply(to: education, admission: admission)
             } label: {
-                Text(applyLabel(eqfMet: eqfMet, alreadyApplied: alreadyApplied, education: education))
+                Text(applyLabel(eqfMet: eqfMet, education: education))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(!eqfMet || alreadyApplied)
-            .opacity(!eqfMet || alreadyApplied ? 0.5 : 1.0)
+            .disabled(!eqfMet)
+            .opacity(eqfMet ? 1.0 : 0.5)
             .padding(.top, 4)
-
-            if alreadyApplied {
-                Text("❌ Not admitted this year (your odds were \(Int((admission * 100).rounded()))%). Even a strong applicant can be turned away — build the skills listed above, try a less selective school, or apply again next year.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
         }
         .padding()
         .background(Color.secondary.opacity(0.08))
@@ -195,17 +183,46 @@ struct InstitutionTiersView: View {
         """
     }
 
-    /// Locks in the chosen school: drops any job, starts the degree, closes sheet.
+    /// How the school reads in a message: the tier when tiers are shown, the
+    /// degree itself in simplified mode, where there is only one school.
+    private func schoolName(_ education: Education) -> String {
+        player.isSimplified ? "The school" : education.tier.friendlyName
+    }
+
+    /// Sends the application, which is how this year gets spent — an admission
+    /// starts the degree, a rejection costs the year anyway. Either way the
+    /// sheet closes and the answer arrives as a pop-up on the game view, the
+    /// same as a job application.
+    private func apply(to education: Education, admission: Double) {
+        if player.applyToSchool(education) {
+            player.reportApplicationOutcome(
+                title: "🎓 You're in!",
+                message: "\(schoolName(education)) accepted you onto \(education.degreeName). "
+                    + "It takes \(education.yearsToComplete) year\(education.yearsToComplete == 1 ? "" : "s")."
+            )
+            enroll(in: education)
+        } else {
+            player.reportApplicationOutcome(
+                title: "🎓 Not this year",
+                message: "\(schoolName(education)) turned you down — your odds were "
+                    + "\(Int((admission * 100).rounded()))%. Even a strong applicant gets turned away. "
+                    + "Build the skills the school looks for, try a less selective one, or apply again next year."
+            )
+            onCommit()
+        }
+    }
+
+    /// Locks in the chosen school: drops any job and starts the degree. The
+    /// caller spends the year.
     private func enroll(in education: Education) {
         player.currentOccupation = nil
         player.currentEducation = education
         yearsLeftToGraduation = education.yearsToComplete
-        showTertiarySheet = false
+        onCommit()
     }
 
-    private func applyLabel(eqfMet: Bool, alreadyApplied: Bool, education: Education) -> String {
+    private func applyLabel(eqfMet: Bool, education: Education) -> String {
         if !eqfMet { return "Need \(education.requirements.educationLabel()) first" }
-        if alreadyApplied { return "Applied — not admitted this year" }
         return "Apply"
     }
 

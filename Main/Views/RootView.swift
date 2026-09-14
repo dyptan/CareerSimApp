@@ -15,11 +15,22 @@ struct RootView: View {
     private var availableJobs: [Job] { player.availableJobs }
 
     var body: some View {
-        if appUIState.hasSelectedMode {
-            gameView
-        } else {
-            ModeSelectionView(player: player, appUIState: appUIState)
+        Group {
+            if appUIState.hasSelectedMode {
+                gameView
+            } else {
+                ModeSelectionView(player: player, appUIState: appUIState)
+            }
         }
+    }
+
+    /// Spending the year on what the player just chose: close the sheet the
+    /// choice was made in, then let the year run. Dismissing *first* keeps any
+    /// pop-up the year raises — a graduation, a project result, an offer — from
+    /// having to fight an open sheet for the screen.
+    private func spendYear(closing sheet: ReferenceWritableKeyPath<AppUIState, Bool>) {
+        appUIState[keyPath: sheet] = false
+        player.advanceYear(appUIState: appUIState)
     }
 
     private var gameView: some View {
@@ -60,7 +71,9 @@ struct RootView: View {
                 yearsLeftToGraduation: $appUIState.yearsLeftToGraduation,
                 showTertiarySheet: $appUIState.showTertiarySheet,
                 showCareersSheet: $appUIState.showCareersSheet,
-                onNext: { player.advanceYear(appUIState: appUIState) }
+                selectedTrainings: $appUIState.selectedTrainings,
+                selectedActivities: $appUIState.selectedActivities,
+                onCommit: { spendYear(closing: \.showTertiarySheet) }
             )
             #if os(macOS)
             .frame(minWidth: 800, minHeight: 500)
@@ -71,7 +84,9 @@ struct RootView: View {
                 availableJobs: availableJobs,
                 player: player,
                 showCareersSheet: $appUIState.showCareersSheet,
-                onNext: { player.advanceYear(appUIState: appUIState) }
+                settingFilter: $appUIState.jobSettingFilter,
+                qualifiedOnly: $appUIState.jobQualifiedOnly,
+                onCommit: { spendYear(closing: \.showCareersSheet) }
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
@@ -83,7 +98,7 @@ struct RootView: View {
                 availableJobs: availableJobs,
                 player: player,
                 showSheet: $appUIState.showEntrepreneurshipSheet,
-                onNext: { player.advanceYear(appUIState: appUIState) }
+                onCommit: { spendYear(closing: \.showEntrepreneurshipSheet) }
             )
             .frame(idealHeight: 500, alignment: .leading)
             #if os(macOS)
@@ -94,50 +109,42 @@ struct RootView: View {
             ExecutiveDecisionsView(
                 player: player,
                 showSheet: $appUIState.showExecutiveSheet,
-                onNext: { player.advanceYear(appUIState: appUIState) }
+                onCommit: { spendYear(closing: \.showExecutiveSheet) }
             )
             #if os(macOS)
             .frame(minWidth: 520, minHeight: 480)
             #endif
         }
-        .sheet(isPresented: $appUIState.showTrainingsSheet) {
-            GameSheet(title: "Trainings", isPresented: $appUIState.showTrainingsSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
-                TrainingsView(
-                    player: player,
-                    selectedTrainings: $appUIState.selectedTrainings,
-                    selectedActivities: $appUIState.selectedActivities
-                )
-            }
-        }
         .sheet(isPresented: $appUIState.showHobbiesSheet) {
-            GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
-                HobbiesView(player: player, selectedActivities: $appUIState.selectedActivities)
+            GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet) {
+                HobbiesView(player: player,
+                            selectedActivities: $appUIState.selectedActivities,
+                            onCommit: { spendYear(closing: \.showHobbiesSheet) })
             }
         }
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
-            GameSheet(title: "Projects", isPresented: $appUIState.showSideHustlesSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+            GameSheet(title: "Projects", isPresented: $appUIState.showSideHustlesSheet) {
                 PrivateProjectsView(
                     player: player,
-                    selectedSideHustles: $appUIState.selectedSideHustles
+                    selectedSideHustles: $appUIState.selectedSideHustles,
+                    onCommit: { spendYear(closing: \.showSideHustlesSheet) }
                 )
             }
         }
         .sheet(isPresented: $appUIState.showEventsSheet) {
-            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
-                EventsView(player: player, selectedEvents: $appUIState.selectedEvents)
+            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet) {
+                EventsView(player: player,
+                           selectedEvents: $appUIState.selectedEvents,
+                           onCommit: { spendYear(closing: \.showEventsSheet) })
             }
         }
         .sheet(isPresented: $appUIState.showSportsSheet) {
-            GameSheet(title: "Sports", isPresented: $appUIState.showSportsSheet,
-                      onNext: { player.advanceYear(appUIState: appUIState) }) {
+            GameSheet(title: "Sports", isPresented: $appUIState.showSportsSheet) {
                 SportsView(
                     player: player,
                     selectedActivities: $appUIState.selectedActivities,
-                    selectedSports: $appUIState.selectedSports
+                    selectedSports: $appUIState.selectedSports,
+                    onCommit: { spendYear(closing: \.showSportsSheet) }
                 )
             }
         }
@@ -167,7 +174,7 @@ struct RootView: View {
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
-                player.graduationMessage = "Congratulations! You finished \(degree.degreeName). Time to figure out the next step — university, vocational training, or straight into work."
+                player.graduationMessage = player.graduationMessage(for: degree, previousEQF: 2)
                 player.showGraduationAlert = true
                 player.currentEducation = nil
             case 68: appUIState.showRetirementSheet.toggle()
@@ -204,11 +211,26 @@ struct RootView: View {
         } message: {
             Text(player.competitionWinMessage)
         }
+        // Reports back on an application or a venture launch — an offer, or a
+        // no with what to change. Applying spends the year either way, so the
+        // answer arrives here rather than inside a sheet that has closed.
+        .alert(player.applicationOutcomeTitle, isPresented: $player.showApplicationOutcomeAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(player.applicationOutcomeMessage)
+        }
+        // Reports back on the spare-time project the year was spent on — a hit or
+        // a flop, either way. A hit also fires the confetti (Player.celebrate).
+        .alert(player.projectOutcomeTitle, isPresented: $player.showProjectOutcomeAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(player.projectOutcomeMessage)
+        }
         // Marks the end of a degree with a congrats pop-up. The same milestone
         // is also banked into the StatusBar history so the player can revisit it
         // later. College and Careers stay reachable any year from the footer.
         .alert("Congratulations! 🎓", isPresented: $player.showGraduationAlert) {
-            Button("Thanks!", role: .cancel) { }
+            Button("OK", role: .cancel) { }
         } message: {
             Text(player.graduationMessage)
         }
@@ -398,33 +420,27 @@ struct ModeSelectionView: View {
 // MARK: - Standard sheet chrome
 
 /// Standard chrome for every action sheet in the game. Wraps plain content in a
-/// navigation container and gives it the two uniform controls — a leading
-/// **Close** button and, when the sheet is passed an `onNext`, a trailing
-/// prominent **Next ▸** button — in a bar pinned along the sheet's bottom edge,
-/// under an inline title, via `gameSheetClose`.
-/// **Next ▸** advances the game year and dismisses the sheet in one tap, so the
-/// player can keep aging up without the old Close-then-tap-Next two-step; this
-/// makes rapid iteration across career paths cheap. Any in-content commit
-/// (Apply, Enroll, Launch…) still keeps the sheet open on failure and closes on
-/// success — those are separate from Next.
+/// navigation container and gives it a **Close** button in a bar pinned along
+/// the sheet's bottom edge, under an inline title, via `gameSheetClose`.
+///
+/// There is no **Next** control: choosing something *is* committing to the year,
+/// so every sheet closes and the year advances as soon as the player picks. The
+/// only button here is **Close**, for leaving without spending the year.
 ///
 /// The four dialogs that manage their own `NavigationStack` (Jobs, Education,
 /// Ventures, Boardroom) don't use this wrapper — they apply `gameSheetClose`
-/// directly to their root content — but they thread `onNext` through the same
-/// way, so the controls end up identical.
+/// directly to their root content — so the chrome ends up identical either way.
 struct GameSheet<Content: View>: View {
     let title: String
     @Binding var isPresented: Bool
-    /// Advances the game year; when nil the sheet shows only **Close**.
-    var onNext: (() -> Void)? = nil
     @ViewBuilder var content: () -> Content
 
     var body: some View {
         Group {
             if #available(iOS 16, macOS 13, *) {
-                NavigationStack { content().gameSheetClose($isPresented, title: title, onNext: onNext) }
+                NavigationStack { content().gameSheetClose($isPresented, title: title) }
             } else {
-                NavigationView { content().gameSheetClose($isPresented, title: title, onNext: onNext) }
+                NavigationView { content().gameSheetClose($isPresented, title: title) }
                 #if os(iOS)
                 .navigationViewStyle(.stack)
                 #endif
@@ -436,16 +452,13 @@ struct GameSheet<Content: View>: View {
     }
 }
 
-/// The uniform button bar every sheet carries along its bottom edge: **Close**
-/// on the leading side and, when the sheet advances the year, a prominent
-/// **Next ▸** on the trailing side. Pinned to the bottom rather than tucked in
-/// the navigation bar, so both controls sit where the hand already is — right
-/// next to the game's own bottom button row — after the player has scrolled
-/// through the sheet's options.
+/// The uniform button bar every sheet carries along its bottom edge: **Close**,
+/// and nothing else. Pinned to the bottom rather than tucked in the navigation
+/// bar, so it sits where the hand already is after the player has scrolled
+/// through the sheet's options. Choosing an option spends the year and closes
+/// the sheet on its own, so there is nothing to confirm here.
 struct GameSheetButtonBar: View {
     @Binding var isPresented: Bool
-    /// Advances the game year; when nil the bar shows only **Close**.
-    var onNext: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -454,15 +467,6 @@ struct GameSheetButtonBar: View {
                 Button("Close") { isPresented = false }
                     .buttonStyle(.bordered)
                 Spacer()
-                if let onNext {
-                    Button {
-                        onNext()
-                        isPresented = false
-                    } label: {
-                        Text("Next ▸")
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
             }
             .padding(.horizontal)
             .padding(.vertical, 10)
@@ -474,19 +478,17 @@ struct GameSheetButtonBar: View {
 
 extension View {
     /// Applies the game's standard sheet chrome: an inline navigation title and a
-    /// bottom button bar holding **Close** and — when `onNext` is supplied — a
-    /// prominent **Next ▸** button that runs `onNext` (advance the year) and then
-    /// dismisses. Used by `GameSheet` for plain content and directly by the
-    /// dialogs that own their navigation stack, so every sheet is dismissed the
-    /// same way and advances the year the same way, from the same place.
-    func gameSheetClose(_ isPresented: Binding<Bool>, title: String, onNext: (() -> Void)? = nil) -> some View {
+    /// bottom button bar holding **Close**. Used by `GameSheet` for plain content
+    /// and directly by the dialogs that own their navigation stack, so every
+    /// sheet is dismissed the same way, from the same place.
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: String) -> some View {
         self
             .navigationTitle(title)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                GameSheetButtonBar(isPresented: isPresented, onNext: onNext)
+                GameSheetButtonBar(isPresented: isPresented)
             }
     }
 }
@@ -494,8 +496,8 @@ extension View {
 // MARK: - First-run coach
 
 /// One-time onboarding shown the first time a game starts. Explains the core
-/// loop — age up with **Next ▸**, use the bottom buttons to build a life, chase
-/// the goal — in plain, friendly language so a first-time (or young) player
+/// loop — choosing something spends the year, Skip passes it, the bottom buttons
+/// are what a year can be spent on — in plain, friendly language so a first-time (or young) player
 /// isn't dropped in cold. Presented once via the `hasSeenCoach` @AppStorage flag
 /// in `RootView`; the single **Let's go** button (or Close) dismisses it.
 struct CoachView: View {
@@ -512,9 +514,9 @@ struct CoachView: View {
     private var tips: [Tip] {
         [
             Tip(icon: "🎂", title: "One turn = one year",
-                body: "Your character grows a year older each turn. Tap the blue Skip button in the bottom-right corner to move on to the next year — or the Next ▸ button at the bottom of any dialog, which does exactly the same thing."),
+                body: "Your character grows a year older each turn. Choosing something — a hobby, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you fancy this year? Tap the blue Skip button at the top."),
             Tip(icon: "🎒", title: "Build your life from the buttons",
-                body: "The buttons along the bottom — School, Hobbies, Sports, Jobs and more — are how you decide what to do each year. Every choice shapes who you become."),
+                body: "The buttons along the bottom — Education, Hobbies, Sports, Jobs and more — are what a year can be spent on. Every choice shapes who you become."),
             Tip(icon: "📈", title: "Watch yourself grow",
                 body: "The middle of the screen tracks the skills, titles, and money you pile up over the years."),
             Tip(icon: difficulty.goalIcon, title: "Your goal",

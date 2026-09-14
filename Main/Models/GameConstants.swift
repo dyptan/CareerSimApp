@@ -1,10 +1,9 @@
 import CoreGraphics
 
 enum GameConstants {
-    /// One spare-time slot per year, shared across hobbies, certifications, and
-    /// licenses (they all draw from `selectedActivities`). The player commits to
-    /// a single self-improvement each year, whatever their life stage — kept
-    /// deliberately simple. (Side projects are free and no longer use this slot.)
+    /// One spare-time slot per year, shared across hobbies, certifications and
+    /// licences (they all draw from `selectedActivities`). The player commits to
+    /// a single self-improvement each year, whatever their life stage.
     static let maxHobbiesPerYear: Int = 1
     static let trainingActivitySlotCost: Int = 1
 
@@ -13,19 +12,19 @@ enum GameConstants {
     /// separate from the hobby/training spare-time slot.
     static let maxEventsPerYear: Int = 1
 
-    /// Years of same-industry work experience required to attend an event as a
-    /// **presenter** rather than a participant. You speak once you're an
-    /// established name in the field. See `CareerEvent.canPresent(with:)`.
+    /// Years of same-industry work experience required to take the stage at one
+    /// of its events. You speak once you're an established name in the field.
+    /// See `CareerEvent.canPresent(with:)`.
     static let presenterExperienceYears: Int = 5
 
-    /// Extra professional-network points a presenter banks over a participant
-    /// at the same event — being on stage puts more of the room in your orbit.
-    /// See `CareerEvent.networkPoints(for:)`.
+    /// Extra professional-network points taking the stage banks over the event's
+    /// raw weight — being on stage puts more of the room in your orbit.
+    /// See `CareerEvent.networkPoints`.
     static let presenterNetworkBonus: Int = 2
 
-    /// Realistic mode: how many spare-time ventures (money hustles + fame
-    /// projects, now one system) the player can take on in one year. Spare time
-    /// is limited, so every venture competes for the same hours.
+    /// Realistic mode: how many spare-time ventures the player can take on in
+    /// one year. Spare time is limited, so every venture competes for the same
+    /// hours.
     static let maxSideHustlesPerYear: Int = 1
 
     static let previewWindowWidth: CGFloat = 1000
@@ -76,11 +75,12 @@ enum GameConstants {
     /// graduating) fire no confetti.
     static let luckyWinThreshold: Double = 0.20
 
-    /// Multiplier applied to the fame a shipped **project** banks (see `SideHustle`
-    /// fame plays). Like taking the stage at an event, a completed project is a
-    /// significant, industry-scoped fame driver — worth well more than its raw
-    /// catalogue weight — feeding the hiring fame bonus (`Player.fameHireBonus`).
-    static let projectFameMultiplier: Double = 2.0
+    /// Multiplier applied to the fame an **accomplishment** banks — a shipped
+    /// project (see `SideHustle` fame plays) or taking the stage at an event
+    /// (see `CareerEvent.presenterFameWeight`). Both are significant,
+    /// industry-scoped fame drivers, worth well more than their raw catalogue
+    /// weight, and feed the hiring fame bonus (`Player.fameHireBonus`).
+    static let accomplishmentFameMultiplier: Double = 2.0
 
     /// How much a founder can borrow to top up a venture stake once their savings
     /// are spent, as a multiple of their current annual income — a bank lends
@@ -132,19 +132,70 @@ enum GameConstants {
     /// See `Job.isLowSkilled` / `Player.promotionChance`.
     static let promotionMinEQF: Int = 4
 
+    /// The education expectation at which a role's pay becomes negotiable rather
+    /// than a posted rate (EQF 4 = vocational/college). Set here rather than at
+    /// bachelor's so the trained creative professions — a designer, an animator,
+    /// an editor — argue over a fee the way they do in life; below it a role
+    /// takes the band it is offered. See `Job.salaryIsNegotiable`.
+    static let negotiableSalaryMinEQF: Int = 4
+
     /// Base annual probability that an employer promotes the player, before the
     /// player's promotion-readiness soft skills, tenure, and network scale it.
-    /// Flat across all jobs now that company tiers are gone. See
+    /// Flat across all jobs. See
     /// `Player.promotionChance`.
     static let promotionBaseChance: Double = 0.15
 
+    // MARK: - Education's pull on the odds
+    //
+    // Outside the regulated professions a degree is deliberately not a hard gate
+    // — talent, portfolio and experience can stand in for it (see
+    // `JobCategory.educationIsMandatory`). It is, however, the single biggest
+    // thing an employer screens on after skills, so it carries real weight in
+    // the score rather than being a rounding error.
+
+    /// Hire-odds *multiplier* lost per EQF level the applicant falls short of
+    /// what the role expects. Two levels short (high school for a bachelor's
+    /// role) multiplies the odds by 0.70.
+    static let educationShortfallPerLevel: Double = 0.15
+
+    /// Floor on that multiplier, so no schooling at all for a degree-level role
+    /// is a long shot rather than an impossibility — an exceptional candidate
+    /// can still talk their way in.
+    static let educationShortfallFloor: Double = 0.25
+
+    /// Multiplier for holding the expected level in a field the role accepts.
+    /// The right degree, not merely a degree.
+    static let relevantDegreeMultiplier: Double = 1.10
+
+    /// Multiplier for clearing the level in an unrelated field — the
+    /// qualification counts for something, just not for much.
+    static let unrelatedDegreeMultiplier: Double = 1.03
+
+    /// Most a seasoned applicant's surplus experience can multiply the odds by.
+    static let experienceVeteranMultiplier: Double = 1.10
+
+    /// How fast surplus experience earns that lift, per whole extra multiple of
+    /// the expected years.
+    static let experienceVeteranRate: Double = 0.10
+
+    /// Promotion-odds cost per EQF level short of the role's expected education.
+    /// Smaller than the hiring penalty in absolute terms, but the promotion base
+    /// is far smaller too — being under-credentialled caps your ceiling.
+    static let promotionEducationPerLevel: Double = -0.03
+
+    /// Floor on the promotion education penalty.
+    static let promotionEducationFloor: Double = -0.10
+
+    /// Promotion-odds lift for holding an accepted degree at or above the bar.
+    static let promotionRelevantDegreeBonus: Double = 0.03
+
     /// Salary bump applied on a promotion, as a fraction of current pay. Flat
-    /// across all jobs now that company tiers are gone. See `Player.advanceYear`.
+    /// across all jobs. See `Player.advanceYear`.
     static let promotionRaise: ClosedRange<Double> = 0.06...0.18
 
     /// Calm-economy annual probability that a job is lost involuntarily. Used as
     /// the base layoff risk during a downturn (scaled by `Difficulty.layoffSeverity`).
-    /// Flat across all jobs now that company tiers are gone. See
+    /// Flat across all jobs. See
     /// `Player.applyEconomicTurmoil`.
     static let baseLayoffRisk: Double = 0.08
 }

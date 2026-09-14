@@ -11,21 +11,17 @@ import SwiftUI
 /// advances, while presenter fame is banked when the year advances.
 struct EventsView: View {
     @ObservedObject var player: Player
-    @Binding var selectedEvents: [String: EventRole]
+    @Binding var selectedEvents: Set<String>
+    /// Attending an event spends the year: closes the sheet and runs it.
+    var onCommit: () -> Void = {}
 
-    /// Presentable events only — every offered event is taken in the presenter
-    /// capacity. (The audience/"attend" role has been retired.)
-    private var events: [CareerEvent] {
-        EventCatalog.all.filter { $0.supportsPresenter }
-    }
-
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
+    /// Deterministic, so it's built once rather than per render.
+    private static let skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] =
         Dictionary(
             uniqueKeysWithValues: SoftSkills.skillNames.map {
                 ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
             }
         )
-    }
 
     var body: some View {
         VStack {
@@ -38,7 +34,7 @@ struct EventsView: View {
 
             ScrollView {
                 VStack(spacing: 10) {
-                    ForEach(events) { event in
+                    ForEach(EventCatalog.all) { event in
                         row(for: event)
                     }
                 }
@@ -49,7 +45,7 @@ struct EventsView: View {
 
     @ViewBuilder
     private func row(for event: CareerEvent) -> some View {
-        let isSelected = selectedEvents[event.id] != nil
+        let isSelected = selectedEvents.contains(event.id)
         let atLimit = selectedEvents.count >= GameConstants.maxEventsPerYear
 
         // Taking the stage stays locked until the veteran gate is cleared.
@@ -60,19 +56,14 @@ struct EventsView: View {
 
         let roleLabel = event.presenterActionLabel
 
-        let netPoints = event.networkPoints(for: .presenter)
-        let networkLabel: String = {
-            if let category = event.category {
-                return "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(netPoints)"
-            }
-            return "🌐 All-industry network +\(netPoints)"
-        }()
+        let category = event.category
+        let networkLabel = "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(event.networkPoints)"
 
         let hintMessage: String = event.abilities
             .map { ability -> String in
                 let kp = ability.keyPath as PartialKeyPath<SoftSkills>
                 let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                let pic = skillPictogramByKeyPath[kp] ?? ""
+                let pic = Self.skillPictogramByKeyPath[kp] ?? ""
                 return "\(pic) \(label) (+\(ability.weight))"
             }
             .joined(separator: "\n")
@@ -84,7 +75,8 @@ struct EventsView: View {
                     set: { isOn in
                         if isOn {
                             guard !atLimit else { return }
-                            player.attendEvent(event, role: .presenter, into: &selectedEvents)
+                            player.attendEvent(event, into: &selectedEvents)
+                            onCommit()
                         } else {
                             player.dropEvent(event, from: &selectedEvents)
                         }
@@ -102,16 +94,14 @@ struct EventsView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    if let category = event.category {
-                        if locked {
-                            Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
-                                .font(.caption2)
-                                .foregroundStyle(.orange)
-                        } else {
-                            Text("🎤 Earns reputation in \(category.rawValue)")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
+                    if locked {
+                        Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text("🎤 Earns reputation in \(category.rawValue)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -121,7 +111,7 @@ struct EventsView: View {
             .opacity(isDisabled ? 0.5 : 1.0)
             .help(
                 locked
-                    ? "Spend \(GameConstants.presenterExperienceYears) years in \(event.category?.rawValue ?? "this field") to \(roleLabel.lowercased()) here."
+                    ? "Spend \(GameConstants.presenterExperienceYears) years in \(category.rawValue) to \(roleLabel.lowercased()) here."
                     : (noSlot
                         ? "You can take the stage at up to \(GameConstants.maxEventsPerYear) events this year."
                         : "")
@@ -129,7 +119,7 @@ struct EventsView: View {
 
             InfoHint(
                 title: "🎤 \(event.name) — \(roleLabel)",
-                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nTaking the stage builds your network in \(event.category?.rawValue ?? "the field") and banks a fame award there — raising your hiring odds and your chance of promotion."
+                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nTaking the stage builds your network in \(category.rawValue) and banks a fame award there — raising your hiring odds and your chance of promotion."
             )
         }
         .padding(5)
@@ -139,7 +129,7 @@ struct EventsView: View {
 #Preview {
     EventsView(
         player: Player(),
-        selectedEvents: .constant([:])
+        selectedEvents: .constant([])
     )
     .padding()
 }

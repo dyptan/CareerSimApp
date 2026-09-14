@@ -1,7 +1,7 @@
 import Foundation
 
 /// A thin, **derived** dependency graph over the game's discrete unlockables —
-/// trainings (former certifications/licences) and the jobs that consume them.
+/// trainings and the jobs that consume them.
 /// It is built entirely from the existing catalogue declarations (`Training`,
 /// `JobCatalog`); it introduces no new source of truth and is never consulted by
 /// the hiring/odds maths.
@@ -50,7 +50,7 @@ enum CareerGraph {
             let req = job.requirements.hardSkills
             let held = player.hardSkills.trainings
             // Statutory trainings are required everywhere; non-statutory ones
-            // (former certifications) only in regulated fields.
+            // only in regulated fields.
             let needed = req.trainings.filter { $0.isStatutory || job.category.requiresCredentials }
             for training in needed.subtracting(held)
                 .sorted(by: { $0.rawValue < $1.rawValue }) {
@@ -58,8 +58,11 @@ enum CareerGraph {
             }
         }
 
-        if !job.experienceMet(for: player) {
-            gaps.append("\(job.requirements.minYearsExperience) yr(s) in \(job.category.rawValue)")
+        // Experience grades rather than gates now (see `Job.experienceFactor`):
+        // partial years scale the odds down, but only *no* relevant years closes
+        // the role outright. Report it as a blocker only when it is one.
+        if job.requirements.minYearsExperience > 0, job.relevantYears(for: player) == 0 {
+            gaps.append("Any experience in \(job.category.rawValue) (role expects \(job.requirements.minYearsExperience) yr)")
         }
         return gaps
     }

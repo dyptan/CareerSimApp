@@ -6,7 +6,6 @@ final class AppUIState: ObservableObject {
     @Published var showTertiarySheet: Bool
     @Published var showCareersSheet: Bool
     @Published var showHobbiesSheet: Bool = false
-    @Published var showTrainingsSheet: Bool = false
     @Published var showSideHustlesSheet: Bool = false
     @Published var showEntrepreneurshipSheet: Bool = false
     /// The Boardroom sheet — senior-leadership strategy plays. Gated in the
@@ -15,6 +14,15 @@ final class AppUIState: ObservableObject {
     @Published var showEventsSheet: Bool = false
     @Published var showSportsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
+
+    // Jobs-list filters. They live here rather than in `JobsView` so a choice
+    // survives the sheet closing: every application costs a year, so the list is
+    // reopened every year, and a filter that forgot itself each time would have
+    // to be set again on every visit.
+    /// Narrows the jobs list to one kind of work; `nil` shows every setting.
+    @Published var jobSettingFilter: WorkSetting?
+    /// Hides roles whose hard requirements the player doesn't meet yet.
+    @Published var jobQualifiedOnly: Bool = false
 
     // Selections
     @Published var selectedActivities: Set<String>
@@ -25,11 +33,10 @@ final class AppUIState: ObservableObject {
     /// system) the player is attempting this year (see `SideHustleCatalog`).
     /// Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
-    /// The professional events the player is attending this year, keyed by event
-    /// id and mapped to the role (participant/presenter) they're attending in
-    /// (see `EventCatalog`). Network/soft-skill effects apply on attendance;
+    /// Ids of the professional events the player is taking the stage at this
+    /// year (see `EventCatalog`). Network/soft-skill effects apply on selection;
     /// presenter fame is banked — and picks cleared — by `Player.advanceYear`.
-    @Published var selectedEvents: [String: EventRole] = [:]
+    @Published var selectedEvents: Set<String> = []
     /// Sports the player is committing this year's spare-time slot to.
     /// Banked into `Player.sportYears` and cleared by `Player.advanceYear`.
     @Published var selectedSports: Set<Sport> = []
@@ -54,7 +61,6 @@ final class AppUIState: ObservableObject {
         selectedTrainings: Set<Training> = [],
         yearsLeftToGraduation: Int? = nil,
         showHobbiesSheet: Bool = false,
-        showTrainingsSheet: Bool = false,
         showRetirementSheet: Bool = false
     ) {
         self.showTertiarySheet = showTertiarySheet
@@ -63,15 +69,15 @@ final class AppUIState: ObservableObject {
         self.selectedTrainings = selectedTrainings
         self.yearsLeftToGraduation = yearsLeftToGraduation
         self.showHobbiesSheet = showHobbiesSheet
-        self.showTrainingsSheet = showTrainingsSheet
         self.showRetirementSheet = showRetirementSheet
     }
 
     func reset() {
+        jobSettingFilter = nil
+        jobQualifiedOnly = false
         showTertiarySheet = false
         showCareersSheet = true
         showHobbiesSheet = false
-        showTrainingsSheet = false
         showSideHustlesSheet = false
         showEntrepreneurshipSheet = false
         showExecutiveSheet = false
@@ -84,7 +90,7 @@ final class AppUIState: ObservableObject {
         selectedActivities = []
         selectedTrainings = []
         selectedSideHustles = []
-        selectedEvents = [:]
+        selectedEvents = []
         selectedSports = []
         yearsLeftToGraduation = nil
     }
