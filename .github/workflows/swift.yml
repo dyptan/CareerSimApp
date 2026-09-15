@@ -14,6 +14,15 @@
 # (github-actions renderer). On failure the tail of the log is emitted
 # as a ::error:: block so the real xcodebuild error surfaces on the run
 # summary even when the per-step logs aren't easily reachable.
+#
+# This is the check that guards pull requests, and it is deliberately the
+# only one: it signs nothing and never talks to App Store Connect. The
+# Xcode Cloud workflow archives and uploads, so it runs on tags instead of
+# on every push — App Store Connect caps uploads per app per day (error
+# 90382, "Upload limit reached"), and archiving on each push exhausted that
+# cap in a single afternoon, after which every build failed at "Preparing
+# build for App Store Connect" with a clean compile behind it. Validation
+# belongs here; releases go through Xcode Cloud on a tag.
 
 name: Swift
 
