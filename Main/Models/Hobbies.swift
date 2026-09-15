@@ -57,7 +57,7 @@ let hobbies: [Hobby] = [
     // MARK: - Creative output
 
     Hobby(
-        label: "Playing music instrument",
+        label: "Take music lessons",
         abilities: [
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
@@ -68,7 +68,7 @@ let hobbies: [Hobby] = [
     ),
     // Builds the eye and craft for creative competitions (see CompetitionCatalog).
     Hobby(
-        label: "Drawing and Sketching",
+        label: "Take up drawing and sketching",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
@@ -79,7 +79,7 @@ let hobbies: [Hobby] = [
     ),
     // Builds the eye and craft for creative competitions (see CompetitionCatalog).
     Hobby(
-        label: "Photography",
+        label: "Practise photography",
         abilities: [
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
             .init(keyPath: \.timeManagementAndPlanning, weight: 1),
@@ -89,7 +89,7 @@ let hobbies: [Hobby] = [
         stages: [.child, .teen, .youngAdult, .adult]
     ),
     Hobby(
-        label: "Cooking",
+        label: "Take cooking lessons",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -99,7 +99,7 @@ let hobbies: [Hobby] = [
         stages: [.child, .teen, .youngAdult, .adult]
     ),
     Hobby(
-        label: "Diary Writing",
+        label: "Keep a diary",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
@@ -108,21 +108,13 @@ let hobbies: [Hobby] = [
         ],
         stages: [.child, .teen, .youngAdult, .adult]
     ),
-    Hobby(
-        label: "Journalism",
-        abilities: [
-            .init(keyPath: \.presentationAndStorytelling, weight: 2),
-            .init(keyPath: \.communicationAndNetworking, weight: 2),
-            .init(keyPath: \.timeManagementAndPlanning, weight: 1),
-            .init(keyPath: \.empathyAndInterpersonalCare, weight: 1)
-        ],
-        stages: [.teen, .youngAdult, .adult]
-    ),
+    // (Journalism lives in Projects as the "Write a Long-Form Article" fame
+    // play — writing for an audience is a self-initiated work, not a pastime.)
 
     // MARK: - Technical / analytical output
 
     Hobby(
-        label: "Coding and Programming",
+        label: "Learn coding and programming",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
@@ -131,7 +123,7 @@ let hobbies: [Hobby] = [
         stages: [.teen, .youngAdult, .adult]
     ),
     Hobby(
-        label: "3D Modelling",
+        label: "Learn 3D modelling",
         abilities: [
             .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -145,7 +137,7 @@ let hobbies: [Hobby] = [
 
     // Builds toward dance competitions and showcases (see CompetitionCatalog).
     Hobby(
-        label: "Dancing",
+        label: "Take dance classes",
         abilities: [
             .init(keyPath: \.presentationAndStorytelling, weight: 2),
             .init(keyPath: \.resilienceAndEndurance, weight: 1),
@@ -157,7 +149,7 @@ let hobbies: [Hobby] = [
     // Physical street activity — balance, coordination, and composure under the
     // risk of a spill. A pure soft-skill builder.
     Hobby(
-        label: "Urban Leisure (Skating, BMX)",
+        label: "Ride skate parks (skating, BMX)",
         abilities: [
             .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
             .init(keyPath: \.resilienceAndEndurance, weight: 1),
@@ -169,7 +161,7 @@ let hobbies: [Hobby] = [
     // A pure soft-skill builder — sharpens strategy and table manners, but has
     // no matching portfolio project.
     Hobby(
-        label: "Board Games",
+        label: "Join a board-game club",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 2),
             .init(keyPath: \.collaborationAndTeamwork, weight: 1),
@@ -182,7 +174,7 @@ let hobbies: [Hobby] = [
 
     // Builds toward craft fairs and maker competitions (see CompetitionCatalog).
     Hobby(
-        label: "Hand Crafting",
+        label: "Craft things by hand",
         abilities: [
             .init(keyPath: \.tinkeringAndFingerPrecision, weight: 2),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -192,7 +184,7 @@ let hobbies: [Hobby] = [
     ),
     // Pure soft-skill builders — no matching portfolio project.
     Hobby(
-        label: "Language Learning",
+        label: "Learn a foreign language",
         abilities: [
             .init(keyPath: \.communicationAndNetworking, weight: 2),
             .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
@@ -201,7 +193,7 @@ let hobbies: [Hobby] = [
         stages: [.child, .teen, .youngAdult, .adult]
     ),
     Hobby(
-        label: "Watching Educational TV",
+        label: "Watch educational TV",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
             .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
@@ -209,7 +201,7 @@ let hobbies: [Hobby] = [
         stages: [.child, .teen, .youngAdult, .adult]
     ),
     Hobby(
-        label: "Playing Simulator Games",
+        label: "Play simulator games",
         abilities: [
             .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
             .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),

@@ -7,14 +7,6 @@ struct HobbiesView: View {
     /// sheet and runs the year. Default no-op keeps the preview simple.
     var onCommit: () -> Void = {}
 
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-    }
-
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     private var stageHobbies: [Hobby] {
@@ -25,65 +17,35 @@ struct HobbiesView: View {
     }
 
     var body: some View {
-        // No header strip: the sheet opens straight onto the hobbies. The
-        // year's slot budget shows itself where it bites — rows dim once the
-        // limit is reached — and the age lives in the game's own header.
+        // No header strip: the sheet opens straight onto the hobbies. Tapping
+        // **Take** on a row spends the year on it — the sheet closes and the
+        // year runs — so there is no selection state to manage here.
         VStack {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(stageHobbies, id: \.label) { hobby in
-                        // Each ability rendered once, prefixed with a Nx multiplier
-                        // when the boost is greater than 1 (e.g. "2x🧠 🪡 🎤").
-                        let pictos: String = hobby.abilities
-                            .compactMap { ability -> String? in
-                                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                                guard let pic = skillPictogramByKeyPath[kp] else { return nil }
-                                return ability.weight > 1 ? "\(ability.weight)x\(pic)" : pic
-                            }
-                            .joined(separator: " ")
-
                         // One line per soft skill the hobby boosts, with the
                         // exact +N gain so the player knows what they're getting.
+                        // The row itself stays clean — the skills live here, in
+                        // the info hint.
                         let hintMessage: String = hobby.abilities
                             .map { ability -> String in
-                                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                                let pic = skillPictogramByKeyPath[kp] ?? ""
+                                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
+                                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
                                 return "\(pic) \(label) (+\(ability.weight))"
                             }
                             .joined(separator: "\n")
 
-                        let atLimit = selectedActivities.count >= GameConstants.maxHobbiesPerYear
-                        let isSelected = selectedActivities.contains(hobby.label)
                         // Hobbies are repeatable — the same one can be practised
-                        // every year to keep building its skills. Only an
-                        // at-limit, not-yet-taken hobby dims.
-                        let dimmed = !isSelected && atLimit
-
+                        // every year to keep building its skills.
                         HStack(spacing: 8) {
-                            Toggle(
-                                "\(hobby.label) \n \(pictos)",
-                                isOn: Binding(
-                                    get: { isSelected },
-                                    set: { isOn in
-                                        if isOn && !atLimit {
-                                            player.selectHobby(hobby, into: &selectedActivities)
-                                            onCommit()
-                                        } else if !isOn {
-                                            player.deselectHobby(hobby, from: &selectedActivities)
-                                        }
-                                    }
-                                )
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .disabled(!isSelected && atLimit)
-                            .opacity(dimmed ? 0.5 : 1.0)
-                            .help(
-                                (!isSelected && atLimit)
-                                    ? "You can take up to \(GameConstants.maxHobbiesPerYear) hobbies this year."
-                                    : ""
-                            )
-                            .platformToggleStyle()
+                            Text(hobby.label)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            TakeButton {
+                                player.selectHobby(hobby, into: &selectedActivities)
+                                onCommit()
+                            }
 
                             InfoHint(
                                 title: hobby.label,

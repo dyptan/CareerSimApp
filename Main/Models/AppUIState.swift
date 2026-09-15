@@ -76,7 +76,7 @@ final class AppUIState: ObservableObject {
         jobSettingFilter = nil
         jobQualifiedOnly = false
         showTertiarySheet = false
-        showCareersSheet = true
+        showCareersSheet = false
         showHobbiesSheet = false
         showSideHustlesSheet = false
         showEntrepreneurshipSheet = false

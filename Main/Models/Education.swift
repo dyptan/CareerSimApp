@@ -38,8 +38,6 @@ struct Education: Codable, Hashable, Identifiable {
     /// Total tuition over the duration of the degree.
     var totalTuition: Int { annualTuition * yearsToComplete }
 
-    /// Convenience accessor for tier prestige (1/2/3); 0 for K-12.
-    var prestige: Int { profile == nil ? 0 : tier.prestige }
 
     // Admission preferences mirror the Job model: soft-skill levels reuse
     // `SoftSkills` so the whole app shares one soft-skill field list. The
@@ -115,8 +113,7 @@ struct Education: Codable, Hashable, Identifiable {
     /// without a Bachelor's. Soft skills never block an application; they only
     /// move the odds (see `admissionProbability`).
     func meetsRequirements(player: Player) -> Bool {
-        let highestEQF = player.degrees.last?.eqf ?? 0
-        return highestEQF >= requirements.minEQF
+        player.highestEQF >= requirements.minEQF
     }
 
     /// One soft skill this school weighs at admission: the level it prefers next
@@ -485,30 +482,35 @@ struct Education: Codable, Hashable, Identifiable {
 }
 
 func availableNextEducations(holds: [Education]) -> [Education] {
+    // A degree already held (same level and field) is never offered again —
+    // re-earning a qualification you hold opens nothing.
+    func alreadyHeld(_ level: Level.Stage, _ profile: TertiaryProfile) -> Bool {
+        holds.contains { $0.level == level && $0.profile == profile }
+    }
+
     var available: [Education] = []
     for profile in TertiaryProfile.allCases {
-        let bachelor = Education(.Bachelor, profile: profile)
-        available.append(bachelor)
-        if profile.allowsVocational {
-            let vocational = Education(.Vocational, profile: profile)
-            available.append(vocational)
+        if !alreadyHeld(.Bachelor, profile) {
+            available.append(Education(.Bachelor, profile: profile))
+        }
+        if profile.allowsVocational, !alreadyHeld(.Vocational, profile) {
+            available.append(Education(.Vocational, profile: profile))
         }
     }
 
-    let bachelorDegrees = holds.filter { $0.level == .Bachelor }
-    for bachelor in bachelorDegrees {
-        if let profile = bachelor.profile {
-            let master = Education(.Master, profile: profile)
-            available.append(master)
-        }
+    // A Master's opens in every field the player holds a Bachelor's in, and a
+    // Doctorate in every field with a Master's — one entry per field, however
+    // many qualifying degrees back it.
+    let bachelorProfiles = Set(holds.filter { $0.level == .Bachelor }.compactMap(\.profile))
+    for profile in TertiaryProfile.allCases
+    where bachelorProfiles.contains(profile) && !alreadyHeld(.Master, profile) {
+        available.append(Education(.Master, profile: profile))
     }
 
-    let masterDegrees = holds.filter { $0.level == .Master }
-    for master in masterDegrees {
-        if let profile = master.profile {
-            let doctorate = Education(.Doctorate, profile: profile)
-            available.append(doctorate)
-        }
+    let masterProfiles = Set(holds.filter { $0.level == .Master }.compactMap(\.profile))
+    for profile in TertiaryProfile.allCases
+    where masterProfiles.contains(profile) && !alreadyHeld(.Doctorate, profile) {
+        available.append(Education(.Doctorate, profile: profile))
     }
 
     return available

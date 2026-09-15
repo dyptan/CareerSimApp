@@ -106,13 +106,4 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
-    /// Hire-probability bonus a degree from this tier confers post-graduation.
-    /// Compounds with the rest of the hire-probability calculation.
-    var hireBonus: Double {
-        switch self {
-        case .community: return 0.0
-        case .state:     return 0.05
-        case .elite:     return 0.10
-        }
-    }
 }

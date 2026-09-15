@@ -42,7 +42,7 @@ struct InstitutionTiersView: View {
     @ViewBuilder
     private func tierCard(for education: Education) -> some View {
         let r = education.requirements
-        let highestEQF = player.degrees.last?.eqf ?? 0
+        let highestEQF = player.highestEQF
         let canAfford = player.savings >= education.totalTuition
         // The qualification level is the only hard gate; soft skills just move the
         // odds of the admission roll, in every mode.
@@ -195,18 +195,21 @@ struct InstitutionTiersView: View {
     /// same as a job application.
     private func apply(to education: Education, admission: Double) {
         if player.applyToSchool(education) {
+            // Enrolling means studying full-time — say so when it costs a job,
+            // rather than letting the salary silently vanish from the header.
+            let leavingNote = player.currentOccupation.map {
+                " You've left your job as \($0.baseTitle) to study full-time."
+            } ?? ""
             player.reportApplicationOutcome(
                 title: "🎓 You're in!",
-                message: "\(schoolName(education)) accepted you onto \(education.degreeName). "
-                    + "It takes \(education.yearsToComplete) year\(education.yearsToComplete == 1 ? "" : "s")."
+                message: "\(schoolName(education)) accepted you onto \(education.degreeName)." + leavingNote
             )
             enroll(in: education)
         } else {
             player.reportApplicationOutcome(
                 title: "🎓 Not this year",
                 message: "\(schoolName(education)) turned you down — your odds were "
-                    + "\(Int((admission * 100).rounded()))%. Even a strong applicant gets turned away. "
-                    + "Build the skills the school looks for, try a less selective one, or apply again next year."
+                    + "\(Int((admission * 100).rounded()))%. Try again next year."
             )
             onCommit()
         }

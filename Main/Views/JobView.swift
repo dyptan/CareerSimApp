@@ -8,7 +8,6 @@ struct JobDetail: View {
     var onCommit: () -> Void = {}
 
     @State private var requestedSalary: Double = 0
-    @State private var investedCapital: Double = 0
     /// The outcome of the attempt just made. Kept only long enough to build the
     /// pop-up's text — the sheet closes, so nothing renders it inline.
     @State private var applicationResult: ApplicationResult? = nil
@@ -27,11 +26,6 @@ struct JobDetail: View {
     }
 
     private var applyButtonLabel: String {
-        if isFounder {
-            if !job.experienceMet(for: player) { return "Need more entrepreneurship experience" }
-            if player.maxVentureStake <= 0 { return "No savings or income to invest" }
-            return "Launch venture 🚀"
-        }
         if !allRequirementsMet { return isSimplified ? "Requirements not met" : "Hard requirements not met" }
         return "Apply"
     }
@@ -228,13 +222,11 @@ struct JobDetail: View {
                 .padding(.horizontal)
 
                 if !isSimplified {
-                    if !isFounder {
-                        Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                    }
+                    Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
 
                     // Standalone roles credit related industries too — notably,
                     // entrepreneurship experience counts toward Business roles.
@@ -298,9 +290,7 @@ struct JobDetail: View {
 
             Divider()
 
-            if isFounder {
-                founderInvestmentSection
-            } else if canNegotiate {
+            if canNegotiate {
                 salaryNegotiationSection
             } else {
                 postedSalarySection
@@ -310,9 +300,6 @@ struct JobDetail: View {
         }
         .onAppear {
             requestedSalary = Double(job.income)
-            if isFounder {
-                investedCapital = min(Double(job.targetCapital ?? 0), Double(player.maxVentureStake))
-            }
         }
     }
 
@@ -433,90 +420,6 @@ struct JobDetail: View {
         .padding(.vertical)
     }
 
-    // MARK: - Founder launch (capital investment)
-
-    private var isFounder: Bool { job.isEntrepreneurial }
-
-    private var founderProbability: Double {
-        job.founderSuccessProbability(for: player, investedCapital: Int(investedCapital))
-    }
-
-    private var founderInvestmentSection: some View {
-        // You can stake your savings plus a loan of up to 2× income once savings
-        // run out (see Player.maxVentureLoan / foundVenture).
-        let maxInvestable = Double(player.maxVentureStake)
-        let canInvest = maxInvestable > 0
-        let borrowed = player.borrowedPortion(ofStake: Int(investedCapital))
-        return VStack(alignment: .leading, spacing: 8) {
-            Text("Launch your venture")
-                .font(.title2.bold())
-                .padding(.horizontal)
-
-            HStack {
-                Text("Capital to invest:")
-                Spacer()
-                Text("\(Int(investedCapital).formatted(.number)) $")
-                    .font(.headline)
-            }
-            .padding(.horizontal)
-
-            if canInvest {
-                // Guard against a degenerate slider: when the investable span is
-                // smaller than the usual 500 increment, a step wider than the
-                // range crashes SwiftUI's Slider. Cap the step to the available
-                // span (and keep ~10 stops on small ranges) so the range is always
-                // valid regardless of how little the player has.
-                let step = max(1, min(500, (maxInvestable / 10).rounded()))
-                Slider(value: $investedCapital, in: 0...maxInvestable, step: step)
-                    .padding(.horizontal)
-                HStack {
-                    Text("0 $")
-                        .font(.caption).foregroundStyle(.secondary)
-                    Spacer()
-                    Text("savings \(player.savings.formatted(.number)) $ + loan \(player.maxVentureLoan.formatted(.number)) $")
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                .padding(.horizontal)
-                if borrowed > 0 {
-                    Text("🏦 Borrowing \(borrowed.formatted(.number)) $ against your income — repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, even if the venture flops.")
-                        .font(.caption).foregroundStyle(.orange)
-                        .padding(.horizontal)
-                }
-            } else {
-                Text("You have no savings or income to invest yet. Earn and save first, then come back to launch.")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .padding(.horizontal)
-            }
-
-            HStack(spacing: 6) {
-                Text("Success chance:")
-                InfoHint(
-                    title: "How founding works",
-                    message: founderFormulaText
-                )
-                Spacer()
-                Text("\(Int(founderProbability * 100)) %")
-                    .font(.headline)
-                    .foregroundStyle(Color.forOdds(founderProbability))
-            }
-            .padding(.horizontal)
-            .padding(.top, 4)
-        }
-        .padding(.vertical)
-    }
-
-    private var founderFormulaText: String {
-        guard job.experienceMet(for: player) else {
-            return "You need more years as an entrepreneur before you can take on this venture. Start with a smaller one first."
-        }
-        let target = (job.targetCapital ?? 0).formatted(.number)
-        return """
-        Your odds come mostly from how much capital you put in versus the \(target) $ this venture really needs, plus your founder skills (Risk-Taker 🎲, Visionary 🔭, Persuader 💬).
-
-        Invest more to raise your odds. Succeed and you're in business; fail and you lose your stake.
-        """
-    }
-
     // MARK: - Shared apply button
 
     /// How the player earns a gated career's breakthrough award — the rare
@@ -534,17 +437,11 @@ struct JobDetail: View {
     /// What to say on a win. The header already shows the new job, so this says
     /// what it means rather than repeating the title.
     private var successMessage: String {
-        if isFounder {
-            return "You put \(Int(investedCapital.isFinite ? investedCapital : 0).formatted(.number)) $ in and the venture is running. It's your occupation now — sell out or go under to move on."
-        }
-        return "You start as \(job.displayTitle) on \(Int(requestedSalary).formatted(.number)) $ a year."
+        "You start as \(job.displayTitle) on \(Int(requestedSalary).formatted(.number)) $ a year."
     }
 
     private func resultMessage(_ result: ApplicationResult) -> String {
-        if isFounder {
-            return result == .hired ? "🎉 Venture launched!" : "❌ The venture flopped — you lost your stake."
-        }
-        return result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time."
+        result == .hired ? "🎉 Offer accepted!" : "❌ No offer this time."
     }
 
     /// Explains *why* an application was turned down and what the player can do
@@ -558,45 +455,25 @@ struct JobDetail: View {
         guard applicationResult == .rejected else { return nil }
         func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
 
-        if isFounder {
-            let capital = investedCapital.isFinite ? Int(investedCapital) : 0
-            let odds = job.founderSuccessProbability(for: player, investedCapital: capital)
-            return "The launch had \(pct(odds)) odds and didn't pan out. Backing it with a larger stake, or more experience in \(job.category.rawValue), improves the next attempt. You can try again next year."
-        }
-
         // The breakthrough gate (e.g. a pro-player role needing a junior title)
         // pins odds at the 5% floor — by far the likeliest reason for a "no", so
         // call it out first.
         if let key = job.breakthroughFame,
            !player.fameAwards.contains(where: { $0.title == key }) {
-            return "Employers here look for the “\(key)” title — without it your odds sit at the 5% floor. Win a Junior Championship to unlock this career."
+            return "Employers here look for the “\(key)” title — earn it first to unlock this career."
         }
 
-        var levers: [String] = []
-        if canNegotiate, job.salaryAlignmentFactor(requestedSalary: requestedSalary) < 0.98 {
-            levers.append("lower your salary ask")
-        }
-        levers.append("build the soft skills and experience this role weighs")
-        if !isSimplified {
-            levers.append("grow your network and fame in \(job.category.rawValue)")
-        }
-        return "Hiring is part chance — your odds were \(pct(hireProbability)) and the roll didn't land this year. To improve: \(levers.joined(separator: ", ")). Tap the ⓘ next to “Hire probability” for the full breakdown, then try again next year."
+        return "Your odds were \(pct(hireProbability)) and the roll didn't land. Try again next year."
     }
 
-    private var applyDisabled: Bool {
-        if isFounder { return !job.experienceMet(for: player) || player.maxVentureStake <= 0 }
-        return !allRequirementsMet
-    }
+    private var applyDisabled: Bool { !allRequirementsMet }
 
     private var applyButton: some View {
         Button {
             // Convert defensively: a degenerate slider state could leave the
             // bound value non-finite, and Int(_:) traps on NaN/infinity.
-            let capital = investedCapital.isFinite ? Int(investedCapital) : 0
             let salary = requestedSalary.isFinite ? Int(requestedSalary) : job.income
-            let success = isFounder
-                ? player.foundVenture(job, investedCapital: capital)
-                : player.applyForJob(job, requestedSalary: salary)
+            let success = player.applyForJob(job, requestedSalary: salary)
             // Applying is how the year was spent, offer or no offer, so the
             // answer is a pop-up on the game view rather than a banner in a
             // sheet the player is about to leave. A "no" still explains itself
@@ -619,7 +496,7 @@ struct JobDetail: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         JobDetail(
             job: jobExample,
             player: Player(),

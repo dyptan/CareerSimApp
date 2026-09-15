@@ -70,7 +70,6 @@ struct RootView: View {
                 player: player,
                 yearsLeftToGraduation: $appUIState.yearsLeftToGraduation,
                 showTertiarySheet: $appUIState.showTertiarySheet,
-                showCareersSheet: $appUIState.showCareersSheet,
                 selectedTrainings: $appUIState.selectedTrainings,
                 selectedActivities: $appUIState.selectedActivities,
                 onCommit: { spendYear(closing: \.showTertiarySheet) }
@@ -174,10 +173,10 @@ struct RootView: View {
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
                 player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
-                player.graduationMessage = player.graduationMessage(for: degree, previousEQF: 2)
+                player.graduationMessage = player.graduationMessage(for: degree)
                 player.showGraduationAlert = true
                 player.currentEducation = nil
-            case 68: appUIState.showRetirementSheet.toggle()
+            case 68: appUIState.showRetirementSheet = true
             default: break
             }
         }
@@ -187,7 +186,7 @@ struct RootView: View {
         .alert("Laid Off", isPresented: $player.showLayoffAlert) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("A downturn hit your employer and your position was cut. You'll need to find a new job — open Careers to start applying.")
+            Text("A downturn hit your employer and your position was cut.")
         }
         // A founder's venture folding is a major setback worth a pop-up — they're
         // not laid off, their business fails (see the ongoing venture risk).
@@ -436,16 +435,7 @@ struct GameSheet<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        Group {
-            if #available(iOS 16, macOS 13, *) {
-                NavigationStack { content().gameSheetClose($isPresented, title: title) }
-            } else {
-                NavigationView { content().gameSheetClose($isPresented, title: title) }
-                #if os(iOS)
-                .navigationViewStyle(.stack)
-                #endif
-            }
-        }
+        NavigationStack { content().gameSheetClose($isPresented, title: title) }
         #if os(macOS)
         .frame(minWidth: 520, minHeight: 480)
         #endif
@@ -527,7 +517,7 @@ struct CoachView: View {
     }
 
     var body: some View {
-        NavigationStackOrView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -574,22 +564,5 @@ struct CoachView: View {
         #if os(macOS)
         .frame(minWidth: 520, minHeight: 520)
         #endif
-    }
-}
-
-/// Wraps content in the era-appropriate navigation container (`NavigationStack`
-/// on modern OSes, `NavigationView` otherwise) so `CoachView` can reuse the
-/// shared `gameSheetClose` chrome without repeating the availability scaffolding.
-private struct NavigationStackOrView<Content: View>: View {
-    @ViewBuilder var content: () -> Content
-    var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            NavigationStack { content() }
-        } else {
-            NavigationView { content() }
-            #if os(iOS)
-            .navigationViewStyle(.stack)
-            #endif
-        }
     }
 }

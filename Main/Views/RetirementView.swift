@@ -33,6 +33,17 @@ struct RetirementView: View {
             }
             .buttonStyle(.borderedProminent)
             .padding(.top, 8)
+
+            // The sheet also opens from the header's finish-game control, so an
+            // accidental visit needs a way back that isn't wiping the run —
+            // especially on macOS, where a sheet can't be swiped away.
+            Button {
+                appUIState.showRetirementSheet = false
+            } label: {
+                Text("Keep playing")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .center)

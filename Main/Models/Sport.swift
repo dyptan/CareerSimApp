@@ -80,7 +80,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
     }
 
     /// Soft-skill bumps applied each year the player trains in this sport.
-    /// Mirrors `Hobby.abilities` so `Player.selectSport` / `deselectSport` can
+    /// Mirrors `Hobby.abilities` so `Player.selectSport` can
     /// reuse the bump-and-reverse pattern.
     var abilities: [WeightedAbility] {
         switch self {

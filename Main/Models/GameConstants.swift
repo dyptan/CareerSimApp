@@ -1,16 +1,9 @@
 import CoreGraphics
 
 enum GameConstants {
-    /// One spare-time slot per year, shared across hobbies, certifications and
-    /// licences (they all draw from `selectedActivities`). The player commits to
-    /// a single self-improvement each year, whatever their life stage.
-    static let maxHobbiesPerYear: Int = 1
-    static let trainingActivitySlotCost: Int = 1
-
-    /// Realistic mode: how many professional events (summits, conferences,
-    /// networking mixers) the player can attend in one year. Free to attend;
-    /// separate from the hobby/training spare-time slot.
-    static let maxEventsPerYear: Int = 1
+    // One activity per year needs no constant: taking anything — a hobby, a
+    // sport, a course, an event, a project — spends the year on the spot, so
+    // the "one slot" rule is enforced by the flow itself.
 
     /// Years of same-industry work experience required to take the stage at one
     /// of its events. You speak once you're an established name in the field.
@@ -21,11 +14,6 @@ enum GameConstants {
     /// raw weight — being on stage puts more of the room in your orbit.
     /// See `CareerEvent.networkPoints`.
     static let presenterNetworkBonus: Int = 2
-
-    /// Realistic mode: how many spare-time ventures the player can take on in
-    /// one year. Spare time is limited, so every venture competes for the same
-    /// hours.
-    static let maxSideHustlesPerYear: Int = 1
 
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700
@@ -68,12 +56,12 @@ enum GameConstants {
     /// See `Difficulty.layoffSeverity`.
     static let turmoilMaxLayoffChance: Double = 0.85
 
-    /// A gain whose success probability was below this counts as a genuine long
-    /// shot — the only kind of win the confetti celebrates. Applied uniformly to
+    /// A gain whose success probability was below this counts as a win worth
+    /// celebrating — the only kind the confetti fires for. Applied uniformly to
     /// every stochastic payoff: admissions, promotions, competition wins, fame
     /// projects, and investment rounds. Likely or guaranteed gains (e.g. simply
     /// graduating) fire no confetti.
-    static let luckyWinThreshold: Double = 0.20
+    static let luckyWinThreshold: Double = 0.50
 
     /// Multiplier applied to the fame an **accomplishment** banks — a shipped
     /// project (see `SideHustle` fame plays) or taking the stage at an event

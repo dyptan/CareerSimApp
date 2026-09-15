@@ -5,43 +5,31 @@ import Foundation
 /// fit the work and how much working life stands behind it, and a flop simply
 /// yields nothing.
 ///
-/// A venture pays off one of two ways (`Payoff`): a **money** venture banks cash
-/// in full (untaxed, unlike salary), while a **fame** venture banks an
-/// industry-scoped reputation award (see `Player.fameAwards` / `fameHireBonus`)
-/// and grows the soft skills it drew on — the reward a passive hobby can't give.
-/// Most ventures now chase fame; a handful of business plays still pay cash.
+/// A successful year banks an industry-scoped reputation award (see
+/// `Player.fameAwards` / `fameHireBonus`) and grows the soft skills it drew on —
+/// the reward a passive hobby can't give.
 /// Nothing is locked: any venture can be attempted at any time, and the odds
 /// (see `successProbability`) carry the whole decision — attempt one you have no
 /// talent or career for and you are rolling against essentially nothing.
 struct SideHustle: Identifiable, Hashable {
-    /// What a successful year yields. Neither stakes money up front.
-    enum Payoff: Hashable {
-        /// A successful year pays out within `payoutRange`, banked in full; a
-        /// flop earns nothing.
-        case money(payoutRange: ClosedRange<Int>)
-        /// A successful year banks a fame award in `category`, worth `weight`
-        /// reputation points (see `Player.award`); a flop earns nothing.
-        case fame(category: FameCategory, weight: Double)
-    }
-
     let id: String
     let label: String
     let icon: String
     let blurb: String
     /// The soft-skill axes this venture draws on. The player's levels in these
-    /// talents drive the success odds and — for money ventures — the payout.
+    /// talents drive the success odds.
     let talents: [WritableKeyPath<SoftSkills, Int>]
-    /// Whether this venture pays cash or builds fame.
-    let payoff: Payoff
+    /// The fame bucket a successful year banks reputation in, and the award's
+    /// weight in reputation points (see `Player.award`).
+    let fameCategory: FameCategory
+    let fameWeight: Double
     /// Life stages in which the venture is offered (mirrors `Activity.stages`).
     let stages: Set<LifeStage>
     /// Soft-skill gains applied on a *successful* year (each capped at 10 in
-    /// `advanceYear`). Fame ventures grow the player the way a shipped project
-    /// does — the craft axes drawn on plus a founder-cluster bump — while money
-    /// ventures usually leave this empty.
+    /// `advanceYear`) — the craft axes drawn on plus a founder-cluster bump.
     var growth: [WeightedAbility] = []
-    /// Title of the fame award banked on a successful fame year. Defaults to
-    /// `label` when nil; ignored by money ventures.
+    /// Title of the fame award banked on a successful year. Defaults to `label`
+    /// when nil.
     var fameTitle: String? = nil
     /// The industry a committed year of this venture credits as *work
     /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
@@ -60,19 +48,6 @@ struct SideHustle: Identifiable, Hashable {
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
-
-    /// The fame bucket a fame venture builds reputation in (`nil` for money
-    /// ventures).
-    var fameCategory: FameCategory? {
-        if case .fame(let category, _) = payoff { return category }
-        return nil
-    }
-
-    /// Whether a successful year of this venture banks fame.
-    var buildsFame: Bool {
-        if case .fame = payoff { return true }
-        return false
-    }
 
     /// Talent level at which a single axis is considered a perfect fit (caps the
     /// per-axis contribution at 1.0). Set high so a venture only pays off
@@ -123,7 +98,7 @@ struct SideHustle: Identifiable, Hashable {
     /// (`experienceFit`). There is no floor: attempt a project you have no talent
     /// or career for and you are rolling against essentially nothing.
     ///
-    /// Fame projects additionally snowball with reputation — every banked award
+    /// Projects additionally snowball with reputation — every banked award
     /// lifts the odds by `fameLiftPerPoint` per weighted fame point, capped at
     /// `maxFameLift` — so a name already made opens the next door.
     func successProbability(for soft: SoftSkills, fameScore: Double = 0,
@@ -132,52 +107,30 @@ struct SideHustle: Identifiable, Hashable {
         let fit = SideHustle.talentWeight * talentFit(for: soft)
             + SideHustle.experienceWeight * experienceFit(totalYears: totalExperienceYears,
                                                           fieldYears: fieldExperienceYears)
-        let fameLift = buildsFame
-            ? min(fameScore * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
-            : 0.0
+        let fameLift = min(fameScore * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
         return min(successCeiling, max(0, fit * successCeiling + fameLift))
     }
 
-    /// The payout a successful year would yield at the player's current talent
-    /// fit, without the random jitter — used to preview the upside in the UI.
-    /// Zero for fame ventures, which pay no money.
-    func projectedPayout(for soft: SoftSkills) -> Int {
-        guard case .money(let payoutRange) = payoff else { return 0 }
-        let lo = Double(payoutRange.lowerBound)
-        let hi = Double(payoutRange.upperBound)
-        return Int((lo + (hi - lo) * talentFit(for: soft)).rounded())
-    }
-
-    /// Rolls a single year of this venture. A money venture returns the takings
-    /// (banked in full) on success or nothing on a flop; a fame venture returns a
-    /// `FameGrant` on success. No money is staked, so there is nothing to salvage.
-    /// The experience and fame arguments are the odds inputs described on
-    /// `successProbability`.
+    /// Rolls a single year of this venture: a `FameGrant` on success, nothing on
+    /// a flop. No money is staked, so there is nothing to salvage. The experience
+    /// and fame arguments are the odds inputs described on `successProbability`.
     func resolve(for soft: SoftSkills, fameScore: Double = 0,
                  totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0) -> Outcome {
         let odds = successProbability(for: soft, fameScore: fameScore,
                                       totalExperienceYears: totalExperienceYears,
                                       fieldExperienceYears: fieldExperienceYears)
         guard Double.random(in: 0...1) < odds else {
-            return Outcome(hustle: self, success: false, odds: odds, credit: 0, grantedFame: nil)
+            return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil)
         }
-        switch payoff {
-        case .money(let payoutRange):
-            let base = Double(projectedPayout(for: soft))
-            let jitter = Double.random(in: 0.75...1.25)
-            let payout = max(payoutRange.lowerBound, Int((base * jitter).rounded()))
-            return Outcome(hustle: self, success: true, odds: odds, credit: payout, grantedFame: nil)
-        case .fame(let category, let weight):
-            // A shipped project is a strong fame driver, like presenting at an
-            // event — the banked reputation is scaled up from the raw catalogue
-            // weight (see GameConstants.accomplishmentFameMultiplier).
-            let banked = weight * GameConstants.accomplishmentFameMultiplier
-            let grant = FameGrant(title: fameTitle ?? label, category: category, weight: banked)
-            return Outcome(hustle: self, success: true, odds: odds, credit: 0, grantedFame: grant)
-        }
+        // A shipped project is a strong fame driver, like presenting at an
+        // event — the banked reputation is scaled up from the raw catalogue
+        // weight (see GameConstants.accomplishmentFameMultiplier).
+        let banked = fameWeight * GameConstants.accomplishmentFameMultiplier
+        let grant = FameGrant(title: fameTitle ?? label, category: fameCategory, weight: banked)
+        return Outcome(hustle: self, success: true, odds: odds, grantedFame: grant)
     }
 
-    /// The fame award banked by a successful fame venture.
+    /// The fame award banked by a successful year.
     struct FameGrant {
         let title: String
         let category: FameCategory
@@ -191,10 +144,7 @@ struct SideHustle: Identifiable, Hashable {
         /// The success probability this year was rolled against — so a caller can
         /// judge how long a shot the result was without recomputing the odds.
         let odds: Double
-        /// Money returned this year: the full payout on a money-venture success,
-        /// else 0.
-        let credit: Int
-        /// The fame award banked this year, if a fame venture succeeded.
+        /// The fame award banked this year, on a success.
         let grantedFame: FameGrant?
     }
 }
@@ -207,44 +157,37 @@ struct SideHustle: Identifiable, Hashable {
 /// instead. Every project banks industry-scoped fame and all resolve identically
 /// under the hood as talent-fit gambles.
 enum SideHustleCatalog {
-    /// Commercial ventures — a spare-time play with prospects of becoming a
-    /// business, so a successful year banks 🚀 **Business** fame (like the
-    /// entrepreneurship plays) and grows the founder-cluster talents it drew on.
-    /// The capital-staked business plays (selling online, flipping property) now
-    /// live in the Ventures sheet as standalone founder Jobs; what remains here is
-    /// the no-capital course play, open once the player is a young adult.
-    static let commercialVentures: [SideHustle] = [
+    /// Every spare-time project on offer, all shown in the **Projects** sheet: a
+    /// successful year banks a `FameCategory`-scoped reputation award and grows
+    /// the soft skills it drew on. All are self-initiated works — the business
+    /// plays (a MOOC course, a crowdfunding campaign), the creative
+    /// personal-brand plays (influencer, book, album, freelance performer), and
+    /// things you build in the open (app, open source, article, podcast, short
+    /// film, tech channel, preprint, game mod) — spread across the Business,
+    /// Entertainment, Arts, Technology, and Science buckets. The capital-staked
+    /// business plays live in the Ventures sheet as standalone founder Jobs.
+    static let all: [SideHustle] = [
         SideHustle(
             id: "moocCourse",
             label: "Create a MOOC Course",
             icon: "🎓",
             blurb: "Record an online course and build an audience of learners. Grow it into a name and the business world takes note.",
             talents: [\.analyticalReasoningAndProblemSolving, \.presentationAndStorytelling, \.communicationAndNetworking],
-            payoff: .fame(category: .business, weight: 1.0),
+            fameCategory: .business, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Course Creator"
         ),
-    ]
-
-    /// Fame-earning projects: a successful year banks a `FameCategory`-scoped
-    /// reputation award and grows the soft skills it drew on. All are
-    /// self-initiated works — creative personal-brand plays (influencer, book,
-    /// album, freelance performer) and things you build in the open (app, open
-    /// source, article, podcast, short film, tech channel, preprint, coauthored
-    /// book/paper, game mod) — spread across the Entertainment, Arts, Technology,
-    /// Business, and Science buckets.
-    static let fameVentures: [SideHustle] = [
-        // --- Creative personal-brand ventures (were money+fame side hustles) ---
+        // --- Creative personal-brand ventures ---
         SideHustle(
             id: "influencer",
             label: "Influencer / Content Creator",
             icon: "📱",
             blurb: "Build an audience across social, a blog, and a podcast, and chase the spotlight. Most channels fizzle — a viral one makes your name.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
-            payoff: .fame(category: .entertainment, weight: 1.0),
+            fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -257,7 +200,7 @@ enum SideHustleCatalog {
             icon: "📚",
             blurb: "Spend the year writing and publishing. Most titles sink; a hit puts your name on shelves everywhere.",
             talents: [\.presentationAndStorytelling, \.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking],
-            payoff: .fame(category: .arts, weight: 1.5),
+            fameCategory: .arts, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
@@ -270,7 +213,7 @@ enum SideHustleCatalog {
             icon: "🎭",
             blurb: "Go independent in show business — gig as a musician, dancer, or actor and take commissions. Feast or famine, but every show gets you seen.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
-            payoff: .fame(category: .entertainment, weight: 1.0),
+            fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -283,7 +226,7 @@ enum SideHustleCatalog {
             icon: "🎵",
             blurb: "Book studio time and put your music out there. Long odds, but a breakout single makes you a name.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
-            payoff: .fame(category: .entertainment, weight: 2.0),
+            fameCategory: .entertainment, fameWeight: 2.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -304,7 +247,7 @@ enum SideHustleCatalog {
             icon: "🎬",
             blurb: "Audition for the part that could change everything — a lead that puts your face on every screen. The odds are long and you'll chase it for years, but land it and you're a movie star.",
             talents: [\.presentationAndStorytelling, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
-            payoff: .fame(category: .entertainment, weight: 3.0),
+            fameCategory: .entertainment, fameWeight: 3.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -318,7 +261,7 @@ enum SideHustleCatalog {
             icon: "🎤",
             blurb: "Pour everything into the song that could top the charts. Most never land it — but a genuine hit turns a working musician into a pop star overnight.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
-            payoff: .fame(category: .entertainment, weight: 3.0),
+            fameCategory: .entertainment, fameWeight: 3.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -333,7 +276,7 @@ enum SideHustleCatalog {
             icon: "📱",
             blurb: "A small demo app you build to show off an idea. Get it in front of people and word gets around.",
             talents: [\.analyticalReasoningAndProblemSolving, \.creativityAndInsightfulThinking, \.timeManagementAndPlanning],
-            payoff: .fame(category: .technology, weight: 1.0),
+            fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -347,7 +290,7 @@ enum SideHustleCatalog {
             icon: "📦",
             blurb: "An open-source project you contribute to in the open. Land your work in something people depend on and your name travels with it.",
             talents: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail, \.selfDisciplineAndPerseverance],
-            payoff: .fame(category: .technology, weight: 1.0),
+            fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -361,8 +304,8 @@ enum SideHustleCatalog {
             icon: "📝",
             blurb: "A deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.carefulnessAndAttentionToDetail],
-            payoff: .fame(category: .arts, weight: 1.0),
-            stages: [.child, .teen, .youngAdult, .adult],
+            fameCategory: .arts, fameWeight: 1.0,
+            stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
@@ -370,26 +313,12 @@ enum SideHustleCatalog {
             fameTitle: "Bylined Writer"
         ),
         SideHustle(
-            id: "projectPublishBook",
-            label: "Coauthor a Book or Paper",
-            icon: "📖",
-            blurb: "You coauthor a book or a paper and see it published. A title with your name on the spine carries lasting fame.",
-            talents: [\.communicationAndNetworking, \.carefulnessAndAttentionToDetail, \.timeManagementAndPlanning],
-            payoff: .fame(category: .science, weight: 1.0),
-            stages: [.youngAdult, .adult],
-            growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
-                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-                     .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
-                     .init(keyPath: \.leadershipAndInfluence, weight: 1)],
-            fameTitle: "Book Coauthor"
-        ),
-        SideHustle(
             id: "projectGame3d",
             label: "Build a Game Mod",
             icon: "🎮",
             blurb: "A mod for a game you love — new levels, mechanics, or art built on someone else's engine. A mod the community adopts gets your name known.",
             talents: [\.creativityAndInsightfulThinking, \.spacialNavigationAndOrientation, \.analyticalReasoningAndProblemSolving],
-            payoff: .fame(category: .technology, weight: 1.0),
+            fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
@@ -406,7 +335,7 @@ enum SideHustleCatalog {
             icon: "🎙️",
             blurb: "A podcast you record and put out episode by episode. Build a loyal audience and your voice becomes a name people know.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
-            payoff: .fame(category: .entertainment, weight: 1.0),
+            fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -420,7 +349,7 @@ enum SideHustleCatalog {
             icon: "🎞️",
             blurb: "A short film you write, shoot, and edit yourself. Land it in a festival lineup and the art world starts to notice.",
             talents: [\.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.timeManagementAndPlanning],
-            payoff: .fame(category: .arts, weight: 1.5),
+            fameCategory: .arts, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.presentationAndStorytelling, weight: 1),
@@ -434,7 +363,7 @@ enum SideHustleCatalog {
             icon: "🎥",
             blurb: "A channel of tutorials and deep-dives you record on the side. Explain things well enough and you become a name developers follow.",
             talents: [\.presentationAndStorytelling, \.communicationAndNetworking, \.analyticalReasoningAndProblemSolving],
-            payoff: .fame(category: .technology, weight: 1.0),
+            fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
             growth: [.init(keyPath: \.presentationAndStorytelling, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
@@ -448,7 +377,7 @@ enum SideHustleCatalog {
             icon: "🧪",
             blurb: "A piece of independent research you write up and post for the world to read. A preprint that gets cited earns you a name in the field.",
             talents: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail, \.selfDisciplineAndPerseverance],
-            payoff: .fame(category: .science, weight: 1.5),
+            fameCategory: .science, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -471,7 +400,7 @@ enum SideHustleCatalog {
             icon: "💸",
             blurb: "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision, lead a crowd, and run a venture end to end.",
             talents: [\.communicationAndNetworking, \.presentationAndStorytelling, \.creativityAndInsightfulThinking],
-            payoff: .fame(category: .business, weight: 1.0),
+            fameCategory: .business, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.persuasionAndNegotiation, weight: 1),
                      .init(keyPath: \.riskTakingAndInitiative, weight: 1),
@@ -481,10 +410,6 @@ enum SideHustleCatalog {
             experienceCategory: .entrepreneurship
         ),
     ]
-
-    /// Every spare-time project on offer — all shown in the **Projects** sheet:
-    /// the commercial (Business-fame) plays first, then the creative fame set.
-    static let all: [SideHustle] = commercialVentures + fameVentures
 
     /// Lookup by stable id, used when resolving the year's selected ventures.
     static let byId: [String: SideHustle] =

@@ -59,17 +59,8 @@ struct JobsView: View {
     }
 
     var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            NavigationStack {
-                content
-            }
-        } else {
-            NavigationView {
-                content
-            }
-            #if os(iOS)
-                .navigationViewStyle(.stack)
-            #endif
+        NavigationStack {
+            content
         }
     }
 
@@ -194,8 +185,11 @@ private struct RoleGroupRow: View {
 /// at a time (a launched venture becomes the player's occupation until they sell
 /// out or go bankrupt). Launch success turns on the player's experience in that
 /// industry and their soft-skill fit, not mainly capital (see
-/// `Job.founderSuccessProbability` and `Player.foundVenture`). Every venture
-/// routes into the same `JobDetail` invest flow. The spare-time plays (course,
+/// `Job.founderSuccessProbability` and `Player.foundVenture`).
+///
+/// There is no invest submenu: tapping **Launch** on a row founds the venture on
+/// the spot, staking its target capital as far as savings-plus-loan reach — the
+/// same stake the old invest slider opened at. The spare-time plays (course,
 /// app, game, and the creative fame gambles) live in the **Projects** sheet
 /// instead (see `PrivateProjectsView`).
 struct EntrepreneurshipView: View {
@@ -220,41 +214,51 @@ struct EntrepreneurshipView: View {
     }
 
     var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            NavigationStack { content }
-        } else {
-            NavigationView { content }
-            #if os(iOS)
-                .navigationViewStyle(.stack)
-            #endif
-        }
+        NavigationStack { content }
     }
 
     private var content: some View {
         List {
             ForEach(ventures) { venture in
-                ventureLink(venture)
+                VentureRow(job: venture.atBaseSalary(), player: player) { launch($0) }
             }
         }
         .gameSheetClose($showSheet, title: "Ventures")
     }
 
-    private func ventureLink(_ venture: Job) -> some View {
-        NavigationLink {
-            JobDetail(
-                job: venture.atBaseSalary(),
-                player: player,
-                showCareersSheet: $showSheet,
-                onCommit: onCommit
+    /// Founds the venture with its one-tap stake and reports back through the
+    /// same pop-up an application uses — launching spends the year either way.
+    private func launch(_ venture: Job) {
+        let capital = VentureRow.stake(for: venture, player: player)
+        let odds = venture.founderSuccessProbability(for: player, investedCapital: capital)
+        if player.foundVenture(venture, investedCapital: capital) {
+            player.reportApplicationOutcome(
+                title: "🎉 Venture launched!",
+                message: "You put \(capital.formatted(.number)) $ in and the venture is running — it's your occupation now."
             )
-        } label: {
-            VentureRow(job: venture)
+        } else {
+            player.reportApplicationOutcome(
+                title: "❌ The venture flopped",
+                message: "The launch had \(Int((odds * 100).rounded()))% odds and didn't pan out. You lost your stake."
+            )
         }
+        onCommit()
     }
 }
 
 private struct VentureRow: View {
     let job: Job
+    @ObservedObject var player: Player
+    /// Tapping **Launch** founds this venture immediately (the year is spent).
+    let onLaunch: (Job) -> Void
+
+    /// The stake a one-tap launch commits: the venture's target capital, funded
+    /// as far as savings-plus-loan reach — the same value the old invest
+    /// slider opened at. Savings go in first; any shortfall up to the loan cap
+    /// is borrowed (see `Player.foundVenture`).
+    static func stake(for job: Job, player: Player) -> Int {
+        min(job.targetCapital ?? 0, player.maxVentureStake)
+    }
 
     /// One-line facts strip: the industry the venture draws experience from, the
     /// years of that experience it expects, and the capital stake.
@@ -269,7 +273,13 @@ private struct VentureRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        let stake = Self.stake(for: job, player: player)
+        let borrowed = player.borrowedPortion(ofStake: stake)
+        let odds = job.founderSuccessProbability(for: player, investedCapital: stake)
+        let experienceMet = job.experienceMet(for: player)
+        let locked = !experienceMet || player.maxVentureStake <= 0
+
+        HStack(alignment: .top, spacing: 12) {
             Text(job.icon)
                 .font(.system(size: 28))
                 .frame(width: 40, height: 40)
@@ -286,10 +296,60 @@ private struct VentureRow: View {
                 Text(ventureFacts)
                     .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
+
+                if !experienceMet {
+                    Text("🔒 \(job.requirements.minYearsExperience)+ yrs in \(job.category.rawValue) first")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else if player.maxVentureStake <= 0 {
+                    Text("🔒 Nothing to stake yet — earn and save first")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else {
+                    Text("🎲 \(Int((odds * 100).rounded()))% · you'd stake \(stake.formatted(.number)) $")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(Color.forOdds(odds))
+                    if borrowed > 0 {
+                        Text("🏦 Borrows \(borrowed.formatted(.number)) $ against your income — repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, even if the venture flops.")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
             }
-            Spacer()
+            .opacity(locked ? 0.5 : 1.0)
+
+            Spacer(minLength: 8)
+
+            TakeButton(label: "Launch") { onLaunch(job) }
+                .disabled(locked)
+                .opacity(locked ? 0.5 : 1.0)
+
+            InfoHint(
+                title: "\(job.icon) \(job.baseTitle)",
+                message: infoMessage(stake: stake, borrowed: borrowed, odds: odds)
+            )
         }
         .padding(.vertical, 4)
+    }
+
+    private func infoMessage(stake: Int, borrowed: Int, odds: Double) -> String {
+        guard job.experienceMet(for: player) else {
+            return "You need \(job.requirements.minYearsExperience)+ years of experience in \(job.category.rawValue) before you can take on this venture. Start with a smaller one first."
+        }
+        let target = (job.targetCapital ?? 0).formatted(.number)
+        let funding = borrowed > 0
+            ? "Launching stakes \(stake.formatted(.number)) $: your savings first, plus \(borrowed.formatted(.number)) $ borrowed against your income (repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, win or lose)."
+            : "Launching stakes \(stake.formatted(.number)) $ of your savings."
+        return """
+        \(job.summary)
+
+        \(funding)
+
+        Your odds (\(Int((odds * 100).rounded()))%) come mostly from how much capital you put in versus the \(target) $ this venture really needs, plus your founder skills (Risk-Taker 🎲, Visionary 🔭, Persuader 💬) and your years in \(job.category.rawValue).
+
+        Succeed and the venture becomes your occupation, earning its income until you sell out or it folds. Fail and you lose the stake — but any loan still has to be repaid.
+        """
     }
 }
 

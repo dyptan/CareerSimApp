@@ -28,20 +28,15 @@ struct TrainingRow: View {
     }
 
     var body: some View {
-        // Earned in a prior year (permanent) vs. picked this year (reversible).
+        // Earned in a prior year — permanent, so the row shows a checkmark
+        // instead of a Take button.
         let isEarned = player.lockedTrainings.contains(training)
             || player.hardSkills.trainings.contains(training)
-        let isSelectedThisYear = selectedTrainings.contains(training)
-        let atLimit = selectedActivities.count >= GameConstants.trainingActivitySlotCost
 
         let blockedReason: String? = {
             if case .blocked(let reason) = training.requirements(player) { return reason }
             return nil
         }()
-        let gatesMet = blockedReason == nil
-        // Can switch on only if eligible and the shared slot is free.
-        let canToggleOn = gatesMet && !atLimit
-        let isDisabled = isEarned || (!isSelectedThisYear && !canToggleOn)
 
         // Soft skills the completed course builds — surfaced in the hint.
         let boostsHint: String = training.softSkillBoosts
@@ -56,7 +51,7 @@ struct TrainingRow: View {
         // inline badges, so the row itself stays compact.
         let requirementsHint: String = {
             guard !isEarned else { return "" }
-            let highestEQF = player.degrees.map(\.eqf).max() ?? 0
+            let highestEQF = player.highestEQF
             var lines: [String] = []
             if training.minEQF > 0 {
                 let met = highestEQF >= training.minEQF
@@ -67,7 +62,7 @@ struct TrainingRow: View {
                 lines.append("\(met ? "✅" : "❌") \(prereq.pictogram) \(prereq.friendlyName)")
             }
             if training.minYearsExperience > 0 {
-                let fieldYears = training.field.map { player.experience[$0] ?? 0 } ?? player.totalYearsWorked
+                let fieldYears = training.field.map { player.industryExperience(for: $0) } ?? player.totalExperienceYears
                 let met = fieldYears >= training.minYearsExperience
                 let expLabel = training.field.map { "\(training.minYearsExperience) yrs in \($0.rawValue)" }
                     ?? "\(training.minYearsExperience) yrs work experience"
@@ -93,42 +88,34 @@ struct TrainingRow: View {
 
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
-                Toggle(
-                    isOn: Binding(
-                        get: { isEarned || isSelectedThisYear },
-                        set: { isOn in
-                            if isOn {
-                                guard canToggleOn else { return }
-                                player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
-                                onCommit()
-                            } else {
-                                player.cancelTraining(training, from: &selectedTrainings, activities: &selectedActivities)
-                            }
-                        }
-                    )
-                ) {
-                    HStack(spacing: 6) {
-                        Text("\(training.pictogram) \(training.friendlyName)")
-                            .font(.body)
-                        if training.isStatutory {
-                            Text("licence")
-                                .font(.caption2)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 1)
-                                .background(Color.blue.opacity(0.15), in: Capsule())
-                        }
-                        if isEarned {
-                            Text("✓ Earned")
-                                .font(.caption.bold())
-                                .foregroundStyle(.green)
-                        }
+                HStack(spacing: 6) {
+                    Text("\(training.pictogram) \(training.friendlyName)")
+                        .font(.body)
+                    if training.isStatutory {
+                        Text("licence")
+                            .font(.caption2)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Color.blue.opacity(0.15), in: Capsule())
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    if isEarned {
+                        Text("✓ Earned")
+                            .font(.caption.bold())
+                            .foregroundStyle(.green)
+                    }
                 }
-                .platformToggleStyle()
-                .disabled(isDisabled)
-                .opacity(isDisabled && !isEarned ? 0.5 : 1.0)
-                .help(helpText(blockedReason: blockedReason, atLimit: atLimit, isSelected: isSelectedThisYear))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .opacity(blockedReason != nil && !isEarned ? 0.5 : 1.0)
+
+                if !isEarned {
+                    TakeButton {
+                        player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
+                        onCommit()
+                    }
+                    .disabled(blockedReason != nil)
+                    .opacity(blockedReason != nil ? 0.5 : 1.0)
+                    .help(blockedReason ?? "")
+                }
 
                 InfoHint(title: "\(training.pictogram) \(training.friendlyName)", message: hintMessage)
             }
@@ -145,14 +132,6 @@ struct TrainingRow: View {
             }
         }
         .padding(5)
-    }
-
-    private func helpText(blockedReason: String?, atLimit: Bool, isSelected: Bool) -> String {
-        if let blockedReason { return blockedReason }
-        if atLimit && !isSelected {
-            return "You can commit to one activity per year — drop your current pick first."
-        }
-        return ""
     }
 }
 

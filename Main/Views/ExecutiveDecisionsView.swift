@@ -4,8 +4,9 @@ import SwiftUI
 /// only while the player holds an executive seat (`Job.isExecutive`): a CEO,
 /// director, partner, or founder. Each row is an optional `ExecutiveDecision`
 /// resolved *immediately* on tap (unlike the deferred spare-time ventures),
-/// mirroring the founder invest/sell flows. A decision can be taken once per
-/// year; the result is shown inline and banked into the status log.
+/// mirroring the founder invest/sell flows. Making a play spends the year, so
+/// the sheet closes on tap and the result arrives as a pop-up on the game view
+/// (see `Player.reportApplicationOutcome`) and is banked into the status log.
 ///
 /// Presented from `RootView`, gated by the "Boardroom" footer button.
 struct ExecutiveDecisionsView: View {
@@ -13,10 +14,6 @@ struct ExecutiveDecisionsView: View {
     @Binding var showSheet: Bool
     /// Making a play spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
-
-    /// The outcome of the most recent decision this session, shown inline under
-    /// its row. Keyed by decision id so each row shows only its own result.
-    @State private var outcomes: [String: ExecutiveDecision.Outcome] = [:]
 
     /// The asking price the player has dialled in on the Sell-Your-Stake slider,
     /// in dollars. `nil` until they touch it, so the slider seeds at fair value.
@@ -27,14 +24,7 @@ struct ExecutiveDecisionsView: View {
     }
 
     var body: some View {
-        if #available(iOS 16, macOS 13, *) {
-            NavigationStack { content }
-        } else {
-            NavigationView { content }
-            #if os(iOS)
-                .navigationViewStyle(.stack)
-            #endif
-        }
+        NavigationStack { content }
     }
 
     private var content: some View {
@@ -70,9 +60,6 @@ struct ExecutiveDecisionsView: View {
 
     @ViewBuilder
     private func card(for decision: ExecutiveDecision) -> some View {
-        let used = player.hasUsedExecutiveDecision(decision)
-        let outcome = outcomes[decision.id]
-
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 8) {
                 Text(decision.icon).font(.title2)
@@ -87,40 +74,29 @@ struct ExecutiveDecisionsView: View {
                 InfoHint(title: "\(decision.icon) \(decision.label)", message: infoMessage(for: decision))
             }
 
-            if !used {
-                if decision.kind == .sellShares {
-                    sellControls
-                } else {
-                    Text(previewLine(for: decision))
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                }
+            if decision.kind == .sellShares {
+                sellControls
+            } else {
+                Text(previewLine(for: decision))
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
             }
 
             Button {
                 let result = decision.kind == .sellShares
                     ? player.resolveExecutiveDecision(decision, askPrice: currentAsk)
                     : player.resolveExecutiveDecision(decision)
-                outcomes[decision.id] = result
                 player.reportApplicationOutcome(
                     title: result.success ? "\(decision.icon) It worked" : "\(decision.icon) It didn't land",
                     message: resultLine(for: result)
                 )
                 onCommit()
             } label: {
-                Text(used ? "Done for this year" : actionLabel(for: decision))
+                Text(actionLabel(for: decision))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .disabled(used)
-
-            if let outcome {
-                Text(resultLine(for: outcome))
-                    .font(.callout.bold())
-                    .foregroundStyle(outcome.success ? .green : .orange)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
         }
         .padding()
         .background(Color.secondary.opacity(0.08))

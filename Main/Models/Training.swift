@@ -212,8 +212,8 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// This is the primary gate for the credentials that are earned on the job
     /// rather than in a lecture hall — trade licences (apprenticeship years), the
     /// airline transport pilot (flight hours), the master trades, and the senior
-    /// professional licences. Counted against experience in `field` when set,
-    /// else `totalYearsWorked`.
+    /// professional licences. Counted against credited experience in `field`
+    /// when set (see `Player.industryExperience`), else `totalExperienceYears`.
     var minYearsExperience: Int { rules.minYearsExperience }
 
     /// The industry whose on-the-job experience counts toward `minYearsExperience`
@@ -462,7 +462,10 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
             return .blocked(reason: "Requires \(label)")
         }
         if minYearsExperience > 0 {
-            let years = field.map { player.experience[$0] ?? 0 } ?? player.totalYearsWorked
+            // Credited years, not raw category years — the same rule as every
+            // other experience gate (see `JobCategory.creditedYears`), so a
+            // founder's entrepreneurship years count toward a Business credential.
+            let years = field.map { player.industryExperience(for: $0) } ?? player.totalExperienceYears
             if years < minYearsExperience {
                 let fieldName = field?.rawValue ?? "the workforce"
                 return .blocked(reason: "Requires \(minYearsExperience)+ yr(s) in \(fieldName)")
