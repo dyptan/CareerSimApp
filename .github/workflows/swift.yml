@@ -23,12 +23,18 @@
 # cap in a single afternoon, after which every build failed at "Preparing
 # build for App Store Connect" with a clean compile behind it. Validation
 # belongs here; releases go through Xcode Cloud on a tag.
+#
+# A tag also builds here, and keeps the Release app as a downloadable
+# artifact. It is unsigned — a GitHub runner carries no Apple certificate —
+# so it is a build to inspect or run locally, not one to hand to anybody.
+# The signed, notarised build is Xcode Cloud's job.
 
 name: Swift
 
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 
@@ -99,4 +105,53 @@ jobs:
         path: |
           build.log
           test.log
+          release-build.log
         if-no-files-found: ignore
+
+    # Everything below runs only for a tag. The job above has already built and
+    # tested Debug; this rebuilds at Release so the artifact is the optimized
+    # app rather than a debug one.
+    - name: Build the release app
+      if: startsWith(github.ref, 'refs/tags/')
+      id: release_build
+      run: |
+        set -o pipefail
+        xcodebuild \
+          -project CareersApp.xcodeproj \
+          -scheme CareersApp \
+          -destination 'generic/platform=macOS' \
+          -configuration Release \
+          -derivedDataPath release-build \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          build \
+          2>&1 | tee release-build.log | xcbeautify --renderer github-actions
+
+    - name: Surface release build log tail on failure
+      if: failure() && steps.release_build.conclusion == 'failure'
+      run: |
+        echo "::group::xcodebuild tail (release-build.log)"
+        tail -n 120 release-build.log || true
+        echo "::endgroup::"
+        echo "::error title=release build failed::$(grep -E '^(error:|.*: error:)' release-build.log | tail -n 5 | tr '\n' ' ' || echo 'see log tail above')"
+
+    - name: Package the app
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        set -euo pipefail
+        APP="release-build/Build/Products/Release/CareersApp.app"
+        test -d "$APP"
+        # ditto, not zip: a .app is a bundle of symlinks and exec permissions,
+        # and uploading the directory directly would flatten them into something
+        # that no longer launches.
+        ditto -c -k --keepParent "$APP" "CareersApp-${GITHUB_REF_NAME}-macOS.zip"
+        ls -lh "CareersApp-${GITHUB_REF_NAME}-macOS.zip"
+
+    - name: Upload the app
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-artifact@v4
+      with:
+        name: CareersApp-${{ github.ref_name }}-macOS
+        path: CareersApp-*-macOS.zip
+        if-no-files-found: error
