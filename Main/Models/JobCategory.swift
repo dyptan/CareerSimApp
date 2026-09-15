@@ -238,39 +238,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    var persona: JobGroup {
-        switch self {
-        case .publicServices, .education, .health, .service:
-            return .people
-        case .engineering, .technology, .manufacturing:
-            return .tools
-        case .showBusiness:
-            return .creative
-        case .agriculture:
-            return .outdoors
-        case .design:
-            return .creative
-        case .law:
-            return .people
-        case .business:
-            return .people
-        case .construction:
-            return .tools
-        case .retail:
-            return .people
-        case .science:
-            return .science
-        case .hospitality:
-            return .people
-        case .entrepreneurship:
-            return .people
-        case .transportation:
-            return .tools
-        case .administration:
-            return .people
-        }
-    }
-
     var description: String {
         switch self {
         case .publicServices:

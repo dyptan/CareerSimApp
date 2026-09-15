@@ -139,6 +139,76 @@ final class VentureLaunchTests: XCTestCase {
                        "A failed founding loses the entire committed stake.")
     }
 
+    // MARK: - Venture loans
+
+    /// A salaried non-founder day job with a known income, for loan-headroom math.
+    private func dayJob(income: Int) throws -> Job {
+        var job = try XCTUnwrap(JobCatalog.allJobs().first { !$0.isEntrepreneurial },
+                                "The catalogue has no salaried role.")
+        job.annualIncome = income
+        return job
+    }
+
+    /// Staking beyond savings borrows the shortfall: savings fund the stake
+    /// first, the rest — up to 2× income — is booked as an outstanding loan,
+    /// whatever the launch roll says.
+    func testStakeBeyondSavingsBooksALoan() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 10_000)
+        player.currentOccupation = try dayJob(income: 50_000)
+
+        XCTAssertEqual(player.maxVentureLoan, 100_000, "A bank lends 2× annual income.")
+        XCTAssertEqual(player.maxVentureStake, 110_000, "Savings plus loan headroom.")
+        XCTAssertEqual(player.borrowedPortion(ofStake: 110_000), 100_000)
+
+        player.foundVenture(job, investedCapital: 110_000)
+        XCTAssertEqual(player.savings, 0, "Savings fund the stake first.")
+        XCTAssertEqual(player.outstandingLoan, 100_000, "The shortfall becomes debt.")
+    }
+
+    /// The debt — and its interest — outlives the venture that borrowed it: a
+    /// flopped launch still owes, and with nothing coming in the balance
+    /// compounds at the venture-loan rate.
+    func testLoanOutlivesAFailedLaunchAndAccruesInterest() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 10_000, retailYears: 0)  // gated → certain flop
+        player.currentOccupation = try dayJob(income: 50_000)
+
+        XCTAssertFalse(player.foundVenture(job, investedCapital: 110_000))
+        XCTAssertEqual(player.outstandingLoan, 100_000, "A flop doesn't erase the debt.")
+
+        // Strip income and savings so the servicing is deterministic: with no
+        // repayment funds, a year adds exactly one year's interest.
+        player.currentOccupation = nil
+        player.savings = 0
+        player.advanceYear(appUIState: AppUIState())
+        let expected = Int((100_000.0 * (1 + GameConstants.ventureLoanAnnualInterest)).rounded())
+        XCTAssertEqual(player.outstandingLoan, expected,
+                       "An unserviced loan compounds at the venture-loan rate.")
+    }
+
+    /// Under-18 players can never pay money or go into debt, so a founding
+    /// attempt before adulthood is refused outright — no stake spent, no loan.
+    func testUnderageFoundingIsRefused() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 50_000)
+        player.configureStart(age: 16)
+        XCTAssertFalse(player.foundVenture(job, investedCapital: 20_000))
+        XCTAssertEqual(player.savings, 50_000, "A minor's savings must be untouched.")
+        XCTAssertEqual(player.outstandingLoan, 0, "A minor can never be put in debt.")
+    }
+
+    /// Restarting clears every debt: a fresh game begins owing nothing (a new
+    /// 7-year-old in debt would also break the under-18 money rule).
+    func testResetClearsDebts() {
+        let player = Player()
+        player.studentLoan = 12_000
+        player.outstandingLoan = 8_000
+        player.reset()
+        XCTAssertEqual(player.studentLoan, 0, "Student debt must not survive a restart.")
+        XCTAssertEqual(player.outstandingLoan, 0, "Venture debt must not survive a restart.")
+    }
+
     // MARK: - Life after launch
 
     /// Launch a venture, then keep playing: advance a full run of years. The

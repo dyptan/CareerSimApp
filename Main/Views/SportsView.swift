@@ -15,14 +15,6 @@ struct SportsView: View {
     /// Training a sport spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
 
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-    }
-
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     private var stageSports: [Sport] {
@@ -49,34 +41,27 @@ struct SportsView: View {
 
     @ViewBuilder
     private func row(for sport: Sport) -> some View {
-        let pictos: String = sport.abilities
-            .compactMap { ability -> String? in
-                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                guard let pic = skillPictogramByKeyPath[kp] else { return nil }
-                return ability.weight > 1 ? "\(ability.weight)x\(pic)" : pic
-            }
-            .joined(separator: " ")
-
+        // The skills a year of training builds are listed in the info hint —
+        // the row itself stays clean.
         let abilityHint: String = sport.abilities
             .map { ability -> String in
-                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                let pic = skillPictogramByKeyPath[kp] ?? ""
+                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
                 return "\(pic) \(label) (+\(ability.weight))"
             }
             .joined(separator: "\n")
 
         let years = player.sportYears[sport, default: 0]
-        let atLimit = selectedActivities.count >= GameConstants.maxHobbiesPerYear
-        let isSelected = selectedSports.contains(sport)
 
-        // The contest this sport currently feeds. Training it auto-enters the
-        // top tier the player qualifies for; odds climb with trained years.
+        // The contest this sport would feed *this* year. The year being
+        // committed counts as a trained year, so the tier and odds are computed
+        // with years + 1 — exactly what `advanceYear` rolls after banking it.
+        let enteredYears = years + 1
         let competition = CompetitionCatalog.bestCompetition(
-            forSport: sport, stage: currentStage, years: years
+            forSport: sport, stage: currentStage, years: enteredYears
         )
         let competitionOdds = competition.map {
-            Int(($0.winProbability(for: player.softSkills, years: years) * 100).rounded())
+            Int(($0.winProbability(for: player.softSkills, years: enteredYears) * 100).rounded())
         }
 
         let competitionLine: String = {
@@ -85,29 +70,13 @@ struct SportsView: View {
         }()
 
         HStack(spacing: 8) {
-            Toggle(
-                "\(sport.pictogram) \(sport.label)\n\(pictos)\(years > 0 ? "  ·  \(years) yr\(years == 1 ? "" : "s") trained" : "")\(competitionLine)",
-                isOn: Binding(
-                    get: { isSelected },
-                    set: { isOn in
-                        if isOn && !atLimit {
-                            player.selectSport(sport, into: &selectedActivities, sports: &selectedSports)
-                            onCommit()
-                        } else if !isOn {
-                            player.deselectSport(sport, from: &selectedActivities, sports: &selectedSports)
-                        }
-                    }
-                )
-            )
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .disabled(!isSelected && atLimit)
-            .opacity((!isSelected && atLimit) ? 0.5 : 1.0)
-            .help(
-                (!isSelected && atLimit)
-                    ? "You can train one activity per year — drop your current pick first."
-                    : ""
-            )
-            .platformToggleStyle()
+            Text("\(sport.pictogram) \(sport.label)\(years > 0 ? "  ·  \(years) yr\(years == 1 ? "" : "s") trained" : "")\(competitionLine)")
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            TakeButton {
+                player.selectSport(sport, into: &selectedActivities, sports: &selectedSports)
+                onCommit()
+            }
 
             InfoHint(
                 title: "\(sport.pictogram) \(sport.label)",

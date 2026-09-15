@@ -15,7 +15,6 @@ struct EducationView: View {
 
     @Binding var yearsLeftToGraduation: Int?
     @Binding var showTertiarySheet: Bool
-    @Binding var showCareersSheet: Bool
     @Binding var selectedTrainings: Set<Training>
     @Binding var selectedActivities: Set<String>
     /// Enrolling — in a degree or a course — spends the year: closes the sheet
@@ -23,7 +22,7 @@ struct EducationView: View {
     var onCommit: () -> Void = {}
 
     private var availableEducations: [Education] {
-        availableNextEducations(holds: player.degrees)
+        player.offeredDegrees
     }
 
     /// Fields of study with something to offer this year — a degree still to
@@ -47,19 +46,8 @@ struct EducationView: View {
     }
 
     var body: some View {
-        Group {
-            if #available(iOS 16, macOS 13, *) {
-                NavigationStack {
-                    content
-                }
-            } else {
-                NavigationView {
-                    content
-                }
-                #if os(iOS)
-                    .navigationViewStyle(.stack)
-                #endif
-            }
+        NavigationStack {
+            content
         }
         .frame(minHeight: 500)
     }
@@ -121,17 +109,6 @@ struct EducationView: View {
         }
         .gameSheetClose($showTertiarySheet, title: "Education")
     }
-
-    private func degrees(for profile: TertiaryProfile) -> [Education] {
-        availableEducations
-            .filter { $0.profile == profile }
-            .sorted { lhs, rhs in
-                let order: [Level.Stage: Int] = [
-                    .Vocational: 0, .Bachelor: 1, .Master: 2, .Doctorate: 3,
-                ]
-                return (order[lhs.level] ?? 99) < (order[rhs.level] ?? 99)
-            }
-    }
 }
 
 #Preview {
@@ -139,7 +116,6 @@ struct EducationView: View {
         player: Player(),
         yearsLeftToGraduation: .constant(nil),
         showTertiarySheet: .constant(true),
-        showCareersSheet: .constant(false),
         selectedTrainings: .constant([]),
         selectedActivities: .constant([])
     )

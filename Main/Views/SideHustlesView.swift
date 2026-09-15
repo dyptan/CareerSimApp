@@ -37,11 +37,6 @@ struct PrivateProjectsView: View {
 
     var body: some View {
         VStack {
-            Text("Spend a year building your name — a standout project banks fame in its field. Any project can be attempted; the odds are what you've earned.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(stageProjects) { hustle in
@@ -68,64 +63,40 @@ struct SideHustleRow: View {
     @Binding var selectedSideHustles: Set<String>
     var onCommit: () -> Void = {}
 
-    private var skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] {
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-    }
-
     var body: some View {
-        let isSelected = selectedSideHustles.contains(hustle.id)
         let odds = player.projectOdds(for: hustle)
         let oddsPct = Int((odds * 100).rounded())
 
         let talentHint: String = hustle.talents
             .map { kp -> String in
-                let label = SoftSkills.label(forKeyPath: kp as PartialKeyPath<SoftSkills>) ?? "Skill"
-                let pic = skillPictogramByKeyPath[kp as PartialKeyPath<SoftSkills>] ?? ""
+                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: kp) ?? ""
                 return "\(pic) \(label)"
             }
             .joined(separator: "\n")
 
         let growthHint: String = hustle.growth
             .map { boost -> String in
-                let kp = boost.keyPath as PartialKeyPath<SoftSkills>
-                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                let pic = skillPictogramByKeyPath[kp] ?? ""
+                let label = SoftSkills.label(forKeyPath: boost.keyPath) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: boost.keyPath) ?? ""
                 return "\(pic) \(label) +\(boost.weight)"
             }
             .joined(separator: "\n")
 
-        HStack(alignment: .top, spacing: 8) {
-            Toggle(
-                isOn: Binding(
-                    get: { isSelected },
-                    set: { isOn in
-                        guard isOn else {
-                            selectedSideHustles.remove(hustle.id)
-                            return
-                        }
-                        // Picking a project is committing the year to it — the
-                        // sheet closes and the year runs, so there is only ever
-                        // one pick to hold.
-                        selectedSideHustles = [hustle.id]
-                        onCommit()
-                    }
-                )
-            ) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(hustle.icon)  \(hustle.label)")
-                        .font(.headline)
-                    Text("🎲 \(oddsPct)% · costs 1 year")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(Color.forOdds(odds))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(spacing: 8) {
+            Text("\(hustle.icon)  \(hustle.label)")
+                .font(.headline)
+            Text("🎲 \(oddsPct)%")
+                .font(.subheadline.monospacedDigit())
+                .foregroundStyle(Color.forOdds(odds))
+            Spacer(minLength: 8)
+
+            // Picking a project is committing the year to it — the sheet
+            // closes and the year runs, so there is only ever one pick to hold.
+            TakeButton {
+                selectedSideHustles = [hustle.id]
+                onCommit()
             }
-            .platformToggleStyle()
-            .help("A year of your life, win or lose. You'll hear how it went when the year is up.")
 
             InfoHint(
                 title: "\(hustle.icon) \(hustle.label)",
@@ -139,7 +110,6 @@ struct SideHustleRow: View {
                              talentHint: String, growthHint: String) -> String {
         let intro = hustle.blurb + "\n\n"
         let oddsPct = Int((odds * 100).rounded())
-        let cost = "📅 Costs a year either way — you'll hear how it went when the year is up.\n\n"
         // The two things the player can move. Naming both, with where they stand
         // now, makes a 0% row read as "not yet" rather than "broken".
         let drivers: String = {
@@ -163,15 +133,9 @@ struct SideHustleRow: View {
                 : " Those years also count toward \(credited) roles."
             return "\n\n📅 A committed year — win or lose — banks a year of \(icon) \(cat.rawValue) work experience.\(creditLine)"
         }()
-        switch hustle.payoff {
-        case .money:
-            let upside = hustle.projectedPayout(for: player.softSkills)
-            let stats = "🎲 \(oddsPct)% success · 📈 up to \(upside.formatted(.number)) $\n\n"
-            return intro + cost + stats + drivers + "Monetizes:\n\n\(talentHint)\n\nA money project risks no cash — build these talents through activities and hobbies to raise your odds and payout. A flop simply earns nothing." + experienceNote
-        case .fame(let category, _):
-            let stats = "🎲 \(oddsPct)% success · 🌟 \(category.icon) \(category.rawValue) fame\n\n"
-            return intro + cost + stats + drivers + "Draws on:\n\n\(talentHint)\n\nA fame project spends the soft skills you've built for a shot at being noticed. A successful year banks \(category.icon) \(category.rawValue) fame (it only lifts your hiring odds for \(category.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
-        }
+        let category = hustle.fameCategory
+        let stats = "🎲 \(oddsPct)% success · 🌟 \(category.icon) \(category.rawValue) fame\n\n"
+        return intro + stats + drivers + "Draws on:\n\n\(talentHint)\n\nA project spends the soft skills you've built for a shot at being noticed. A successful year banks \(category.icon) \(category.rawValue) fame (it only lifts your hiring odds for \(category.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
     }
 }
 

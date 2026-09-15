@@ -164,7 +164,7 @@ extension Job {
     static let breakthroughBonus: Double = 0.40
 
     func educationMet(for player: Player) -> Bool {
-        let playerEQF = player.degrees.last?.eqf ?? 0
+        let playerEQF = player.highestEQF
         guard playerEQF >= requirements.education.minEQF else { return false }
         if let accepted = requirements.education.acceptedProfiles, !accepted.isEmpty {
             let playerProfiles = player.degrees.compactMap { $0.profile }
@@ -254,7 +254,7 @@ extension Job {
     /// degree held rather than the most recent one, so taking a vocational
     /// course after a degree doesn't read as a downgrade.
     func playerEducationLevel(for player: Player) -> Int {
-        player.degrees.map(\.eqf).max() ?? 0
+        player.highestEQF
     }
 
     /// How many EQF levels the player is short of what this role expects.
@@ -490,7 +490,12 @@ extension Job {
     /// education or training (below `GameConstants.promotionMinEQF`). Such jobs
     /// don't hand out in-place promotions (see `Player.promotionChance`); the
     /// player climbs out of them by applying to a higher role instead.
-    var isLowSkilled: Bool { requirements.education.minEQF < GameConstants.promotionMinEQF }
+    /// Founder ventures are exempt: they carry `minEQF: 0` because founders
+    /// aren't gated on degrees, not because the work is unskilled — a growing
+    /// business raises its owner's pay (the in-place merit-raise branch).
+    var isLowSkilled: Bool {
+        !isEntrepreneurial && requirements.education.minEQF < GameConstants.promotionMinEQF
+    }
 
     /// Probability that a founding attempt succeeds. Driven by *who the founder
     /// is*, not their bank balance: experience in the venture's own industry and

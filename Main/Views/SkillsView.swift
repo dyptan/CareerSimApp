@@ -14,10 +14,6 @@ struct SkillsView: View {
         Array(appUIState.selectedTrainings.union(player.hardSkills.trainings))
     }
 
-    private var nonZeroSoftSkills: [(keyPath: WritableKeyPath<SoftSkills, Int>, label: String, pictogram: String, description: String)] {
-        SoftSkills.skillNames.filter { player.softSkills[keyPath: $0.keyPath] > 0 }
-    }
-
     private var experienceEntries: [(role: String, years: Int)] {
         player.experienceByRole
             .filter { $0.value > 0 }
@@ -48,28 +44,32 @@ struct SkillsView: View {
 
     private var softSkillsSection: some View {
         DisclosureGroup(isExpanded: $softSkillsExpanded) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(
                     Array(SoftSkills.skillNames.enumerated()),
                     id: \.offset
-                ) { (_, skill) in
+                ) { (index, skill) in
                     HStack {
                         Text(skill.label)
                         InfoHint(title: "\(skill.pictogram) \(skill.label)", message: skill.description)
                         Spacer()
-                        let count = player.softSkills[keyPath: skill.keyPath]
-                        Text(count == 0 ? " " : count <= 5 ? String(repeating: skill.pictogram, count: count) : "\(count)x\(skill.pictogram)")
-                            .monospacedDigit()
+                        skillStars(level: player.softSkills[keyPath: skill.keyPath])
                     }
+                    .padding(.vertical, 3)
+                    .padding(.horizontal, 4)
+                    // Zebra striping, so the eye can follow a row from the
+                    // skill's name to its stars across the panel's width.
+                    .background(
+                        index.isMultiple(of: 2)
+                            ? Color.clear
+                            : Color.secondary.opacity(0.1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
                 }
             }
             .padding(.top, 4)
         } label: {
-            HStack {
-                Text("Personality").font(.headline)
-                Spacer()
-                summaryPictograms(nonZeroSoftSkills.map { $0.pictogram })
-            }
+            Text("Personality").font(.headline)
         }
     }
 
@@ -100,37 +100,13 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            HStack {
-                Text("Fame").font(.headline)
-                Spacer()
-                // Per-industry split, visible even when the section is collapsed.
-                if player.fameAwards.isEmpty {
-                    Text("🌟 0.0")
-                        .font(.subheadline.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text(fameCategorySummary)
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
-                }
-            }
+            Text("Fame").font(.headline)
         }
     }
 
     /// Icon + name for a fame group's bucket (`nil` = general renown).
     private func fameCategoryLabel(_ category: FameCategory?) -> String {
         category.map { "\($0.icon) \($0.rawValue)" } ?? "🌐 General"
-    }
-
-    /// Compact per-bucket fame chips for the collapsed section label, e.g.
-    /// "🎬 3.0  💻 1.0" — highest-scoring bucket first.
-    private var fameCategorySummary: String {
-        player.fameByCategory
-            .map { group in
-                let icon = group.category?.icon ?? "🌐"
-                return "\(icon) \(String(format: "%.1f", group.score))"
-            }
-            .joined(separator: "  ")
     }
 
     // MARK: - Skills
@@ -153,11 +129,7 @@ struct SkillsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 4)
         } label: {
-            HStack {
-                Text("Skills").font(.headline)
-                Spacer()
-                summaryPictograms(trainings.map { $0.pictogram })
-            }
+            Text("Skills").font(.headline)
         }
     }
 
@@ -183,7 +155,7 @@ struct SkillsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(player.degrees, id: \.degreeName) { degree in
+                    ForEach(player.degrees, id: \.id) { degree in
                         HStack {
                             Text(degree.pictogram)
                             Text(degree.degreeName)
@@ -194,11 +166,7 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            HStack {
-                Text("Education").font(.headline)
-                Spacer()
-                summaryPictograms(player.degrees.map { $0.pictogram })
-            }
+            Text("Education").font(.headline)
         }
     }
 
@@ -226,11 +194,7 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            HStack {
-                Text("Experience").font(.headline)
-                Spacer()
-                summaryPictograms(experienceEntries.map { roleIcon($0.role) })
-            }
+            Text("Experience").font(.headline)
         }
     }
 
@@ -242,20 +206,11 @@ struct SkillsView: View {
 
     // MARK: - Helpers
 
-    @ViewBuilder
-    private func summaryPictograms(_ pictograms: [String]) -> some View {
-        let visible = pictograms.prefix(6)
-        let overflow = pictograms.count - visible.count
-        HStack(spacing: 2) {
-            ForEach(Array(visible.enumerated()), id: \.offset) { _, p in
-                Text(p)
-            }
-            if overflow > 0 {
-                Text("+\(overflow)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
+    /// A soft-skill level as a row of stars — one per point, up to the 10 cap.
+    private func skillStars(level: Int) -> some View {
+        Text(String(repeating: "★", count: max(0, min(level, 10))))
+            .foregroundColor(.yellow)
+            .font(.caption)
     }
 }
 

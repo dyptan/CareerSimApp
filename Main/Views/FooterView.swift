@@ -2,9 +2,8 @@ import SwiftUI
 
 /// Wraps its subviews onto new rows when the proposed width runs out — used by
 /// `FooterView` so its button rows reflow on narrow windows / split views
-/// instead of clipping. iOS 16 / macOS 13 minimum (the deployment target's
-/// `if #available` guards in `FooterView` provide a fallback).
-@available(iOS 16, macOS 13, *)
+/// instead of clipping.
+///
 /// A wrapping row: items flow left to right and wrap onto further lines.
 ///
 /// Measurement and placement share one row-breaking pass, and the reported size
@@ -84,20 +83,13 @@ private struct FlowLayout: Layout {
     }
 }
 
-/// Wraps `content` in `FlowLayout` on modern OS versions, falling back to a
-/// plain `HStack` on iOS < 16 / macOS < 13. Keeps `FooterView`'s body free of
-/// availability scaffolding.
+/// Wraps `content` in `FlowLayout`. Keeps `FooterView`'s body free of layout
+/// scaffolding.
 private struct FooterButtonRow<Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        Group {
-            if #available(iOS 16, macOS 13, *) {
-                FlowLayout(spacing: 8, lineSpacing: 8) { content() }
-            } else {
-                HStack { content() }
-            }
-        }
+        FlowLayout(spacing: 8, lineSpacing: 8) { content() }
         // Styled once here rather than on each button, so the row stays uniform
         // as buttons are added. **Skip** sits outside this row and keeps its own
         // prominent style.
@@ -127,14 +119,6 @@ struct FooterView: View {
     }
     private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
-    }
-    /// Education holds the professional courses as well as the degrees, so it
-    /// opens for either: after high school, when a degree becomes a choice, or
-    /// once a stage-eligible course is on offer.
-    private var hasCourses: Bool {
-        !player.isSimplified
-            && (player.degrees.last?.eqf ?? 0) >= 1
-            && Training.allCases.contains { $0.stages.contains(currentStage) }
     }
 
     var body: some View {
@@ -191,7 +175,12 @@ struct FooterView: View {
                 Button("Boardroom") { appUIState.showExecutiveSheet = true }
             }
 
-            if player.age >= GameConstants.minimumTertiaryAge || hasCourses {
+            // Education stays hidden until the player has graduated: through
+            // all of school (K-12 wraps at 18) and again while a degree is in
+            // progress — you pick your next study only once the current one is
+            // done.
+            if player.currentEducation == nil,
+               player.age >= GameConstants.minimumTertiaryAge {
                 Button("Education") { appUIState.showTertiarySheet.toggle() }
             }
         }

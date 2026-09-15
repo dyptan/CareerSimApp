@@ -20,8 +20,7 @@ struct DegreesSubmenuView: View {
     }
 
     private var degrees: [Education] {
-        let availableEducations = availableNextEducations(holds: player.degrees)
-        return availableEducations
+        player.offeredDegrees
             .filter { $0.profile == profile }
             .sorted { lhs, rhs in
                 let order: [Level.Stage: Int] = [

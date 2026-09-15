@@ -15,14 +15,6 @@ struct EventsView: View {
     /// Attending an event spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
 
-    /// Deterministic, so it's built once rather than per render.
-    private static let skillPictogramByKeyPath: [PartialKeyPath<SoftSkills>: String] =
-        Dictionary(
-            uniqueKeysWithValues: SoftSkills.skillNames.map {
-                ($0.keyPath as PartialKeyPath<SoftSkills>, $0.pictogram)
-            }
-        )
-
     var body: some View {
         VStack {
             // No slot counter — see `HobbiesView`; an event that can't be taken
@@ -45,14 +37,8 @@ struct EventsView: View {
 
     @ViewBuilder
     private func row(for event: CareerEvent) -> some View {
-        let isSelected = selectedEvents.contains(event.id)
-        let atLimit = selectedEvents.count >= GameConstants.maxEventsPerYear
-
         // Taking the stage stays locked until the veteran gate is cleared.
         let locked = !event.canPresent(with: player.experience)
-        // No free slot left for a fresh selection.
-        let noSlot = !isSelected && atLimit
-        let isDisabled = locked || noSlot
 
         let roleLabel = event.presenterActionLabel
 
@@ -61,60 +47,47 @@ struct EventsView: View {
 
         let hintMessage: String = event.abilities
             .map { ability -> String in
-                let kp = ability.keyPath as PartialKeyPath<SoftSkills>
-                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                let pic = Self.skillPictogramByKeyPath[kp] ?? ""
+                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
                 return "\(pic) \(label) (+\(ability.weight))"
             }
             .joined(separator: "\n")
 
         HStack(alignment: .top, spacing: 8) {
-            Toggle(
-                isOn: Binding(
-                    get: { isSelected },
-                    set: { isOn in
-                        if isOn {
-                            guard !atLimit else { return }
-                            player.attendEvent(event, into: &selectedEvents)
-                            onCommit()
-                        } else {
-                            player.dropEvent(event, from: &selectedEvents)
-                        }
-                    }
-                )
-            ) {
-                VStack(alignment: .leading, spacing: 4) {
-                    // The role verb rides inline on the name row.
-                    HStack(spacing: 8) {
-                        Text("\(event.icon)  \(event.name)")
-                            .font(.headline)
-                        Spacer(minLength: 8)
-                        Text("🎤 \(roleLabel)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if locked {
-                        Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
-                            .font(.caption2)
-                            .foregroundStyle(.orange)
-                    } else {
-                        Text("🎤 Earns reputation in \(category.rawValue)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
+            VStack(alignment: .leading, spacing: 4) {
+                // The role verb rides inline on the name row.
+                HStack(spacing: 8) {
+                    Text("\(event.icon)  \(event.name)")
+                        .font(.headline)
+                    Spacer(minLength: 8)
+                    Text("🎤 \(roleLabel)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if locked {
+                    Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else {
+                    Text("🎤 Earns reputation in \(category.rawValue)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .platformToggleStyle()
-            .disabled(isDisabled)
-            .opacity(isDisabled ? 0.5 : 1.0)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .opacity(locked ? 0.5 : 1.0)
+
+            TakeButton {
+                player.attendEvent(event, into: &selectedEvents)
+                onCommit()
+            }
+            .disabled(locked)
+            .opacity(locked ? 0.5 : 1.0)
             .help(
                 locked
                     ? "Spend \(GameConstants.presenterExperienceYears) years in \(category.rawValue) to \(roleLabel.lowercased()) here."
-                    : (noSlot
-                        ? "You can take the stage at up to \(GameConstants.maxEventsPerYear) events this year."
-                        : "")
+                    : ""
             )
 
             InfoHint(

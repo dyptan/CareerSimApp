@@ -142,10 +142,6 @@ final class Player: ObservableObject {
     /// employers and promotions are frozen.
     @Published var economyInRecession: Bool = false
 
-    /// Last year's side-hustle takings (payouts banked in full; no stakes).
-    /// Surfaced in the header; positive when the ventures paid off.
-    @Published var lastSideHustleEarnings: Int = 0
-
     /// Size of last year's promotion raise as a whole-number percent (0 when the
     /// player wasn't promoted). Surfaced in the header alongside the confetti.
     @Published var lastPromotionRaisePct: Int = 0
@@ -167,51 +163,11 @@ final class Player: ObservableObject {
     /// The graduation pop-up's message, capturing the degree just earned.
     @Published var graduationMessage: String = ""
 
-    /// The graduation pop-up's text: congratulations, then what the qualification
-    /// actually opens — the courses and licences that needed this much schooling,
-    /// the roles whose education bar it clears, and the degree above it. Named
-    /// concretely rather than as "the next step", so the years just spent read as
-    /// a door opening rather than a number going up.
-    func graduationMessage(for degree: Education, previousEQF: Int) -> String {
-        let congratulations = "Congratulations! You completed your \(degree.degreeName)."
-        var unlocks: [String] = []
-
-        // Courses and licences that were out of reach at the old level. Narrowed
-        // to this degree's own field once it has one, since a business graduate
-        // being told they may now sit the nursing board exam is technically true
-        // — courses gate on schooling, not subject — and useless.
-        let opened = Training.allCases
-            .filter { $0.minEQF > previousEQF && $0.minEQF <= degree.eqf }
-            .filter { degree.profile == nil || $0.studyField == degree.profile }
-            .sorted { $0.friendlyName < $1.friendlyName }
-        if !opened.isEmpty {
-            let named = opened.prefix(4).map { "\($0.pictogram) \($0.friendlyName)" }
-            let rest = opened.count - named.count
-            let tail = rest > 0 ? ", and \(rest) more" : ""
-            unlocks.append("Courses and licences you can now take: \(named.joined(separator: ", "))\(tail).")
-        }
-
-        // Roles whose education bar this clears, counted by role family so a
-        // ladder's four rungs don't read as four separate openings.
-        let roles = Set(
-            JobCatalog.allJobs()
-                .filter { !$0.isEntrepreneurial }
-                .filter { $0.requirements.education.minEQF > previousEQF }
-                .filter { $0.requirements.education.minEQF <= degree.eqf }
-                .map(\.baseTitle)
-        )
-        if !roles.isEmpty {
-            unlocks.append("\(roles.count) role\(roles.count == 1 ? "" : "s") that ask for this level of schooling.")
-        }
-
-        // The rung above, when there is one.
-        if let next = availableNextEducations(holds: degrees + [degree]).map(\.eqf).max(),
-           next > degree.eqf {
-            unlocks.append("You can study further: \(Education.Requirements(minEQF: next).educationLabel()).")
-        }
-
-        guard !unlocks.isEmpty else { return congratulations }
-        return congratulations + "\n\nThis opens up:\n\n• " + unlocks.joined(separator: "\n\n• ")
+    /// The graduation pop-up's text: a short congratulations. What the degree
+    /// opens up is discoverable in the Education and Jobs sheets — the pop-up
+    /// just marks the moment.
+    func graduationMessage(for degree: Education) -> String {
+        "Congratulations! You completed your \(degree.degreeName)."
     }
 
     /// Whether a downturn cost the player their job in the year just advanced.
@@ -297,26 +253,18 @@ final class Player: ObservableObject {
 
     /// Raises the result pop-up for a resolved spare-time project. Every project
     /// costs the year whether or not it lands, so the year always reports back —
-    /// a flop is news too, and the message names the odds it was rolled against
-    /// so a long shot reads as bad luck rather than a broken game.
+    /// a flop names the odds it rolled against so a long shot reads as bad luck
+    /// rather than a broken game. Kept short; the details live in the sheets.
     func reportProjectOutcome(_ outcome: SideHustle.Outcome) {
         let hustle = outcome.hustle
         let chance = "\(Int((outcome.odds * 100).rounded()))%"
         if outcome.success {
             projectOutcomeTitle = "\(hustle.icon) It landed!"
-            var earned: [String] = []
-            if outcome.credit > 0 {
-                earned.append("It paid \(outcome.credit.formatted(.number)) $.")
-            }
-            if let grant = outcome.grantedFame {
-                earned.append("You earned the “\(grant.title)” title and \(grant.category.icon) \(grant.category.rawValue) fame.")
-            }
-            projectOutcomeMessage = "\(hustle.label) paid off — a \(chance) shot that came in. "
-                + earned.joined(separator: " ")
+            let earned = outcome.grantedFame.map { " You earned the “\($0.title)” title." } ?? ""
+            projectOutcomeMessage = "\(hustle.label) paid off!" + earned
         } else {
             projectOutcomeTitle = "\(hustle.icon) It didn't land"
-            projectOutcomeMessage = "\(hustle.label) went nowhere this year — it was a \(chance) shot. "
-                + "Build the skills it draws on and the years behind you, then try again."
+            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot."
         }
         showProjectOutcomeAlert = true
     }
@@ -380,6 +328,21 @@ final class Player: ObservableObject {
     var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan - studentLoan) / age : 0 }
 
     @Published var degrees: [Education]
+
+    /// The player's best formal qualification, in EQF levels: the highest
+    /// degree held, not the most recent one — taking a vocational course after
+    /// a Master's isn't a downgrade. Every education gate reads this.
+    var highestEQF: Int { degrees.map(\.eqf).max() ?? 0 }
+
+    /// The degrees the player could enrol in next (see
+    /// `availableNextEducations`). Empty before adulthood: tuition is money,
+    /// and an under-18 player is never shown a priced option — courses and
+    /// licences carry their own age gates and are unaffected.
+    var offeredDegrees: [Education] {
+        guard age >= GameConstants.minimumTertiaryAge else { return [] }
+        return availableNextEducations(holds: degrees)
+    }
+
     /// Years of work experience per industry. Key is the job's `JobCategory`,
     /// value is total years accumulated across all jobs in that industry.
     /// Used by standalone roles (entry-level jobs and top capstones that have
@@ -485,22 +448,23 @@ final class Player: ObservableObject {
         return startAge >= 18
     }
 
+    // MARK: - Soft-skill boosts
+
+    /// Applies a selection's soft-skill boosts, clamped at the 10-point cap —
+    /// the single home of that rule for hobbies, sports, events, and trainings.
+    /// Taking an activity commits the year on the spot (the sheet closes and
+    /// the year runs), so there is no toggle-off path to reverse.
+    private func applySkillBoosts(_ boosts: [WeightedAbility]) {
+        for boost in boosts {
+            softSkills[keyPath: boost.keyPath] = min(softSkills[keyPath: boost.keyPath] + boost.weight, 10)
+        }
+    }
+
     // MARK: - Hobby selection
 
     func selectHobby(_ hobby: Hobby, into selectedActivities: inout Set<String>) {
         selectedActivities.insert(hobby.label)
-        for ability in hobby.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + ability.weight, 10)
-        }
-    }
-
-    func deselectHobby(_ hobby: Hobby, from selectedActivities: inout Set<String>) {
-        guard selectedActivities.remove(hobby.label) != nil else { return }
-        for ability in hobby.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] -= ability.weight
-        }
+        applySkillBoosts(hobby.abilities)
     }
 
     // MARK: - Sport selection
@@ -514,49 +478,23 @@ final class Player: ObservableObject {
         guard !sports.contains(sport) else { return }
         sports.insert(sport)
         selectedActivities.insert(sport.label)
-        for ability in sport.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + ability.weight, 10)
-        }
-    }
-
-    /// Reverses `selectSport` if the player toggles a sport off before the
-    /// year ends. Symmetric to `deselectHobby`.
-    func deselectSport(_ sport: Sport, from selectedActivities: inout Set<String>, sports: inout Set<Sport>) {
-        guard sports.remove(sport) != nil else { return }
-        selectedActivities.remove(sport.label)
-        for ability in sport.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] -= ability.weight
-        }
+        applySkillBoosts(sport.abilities)
     }
 
     // MARK: - Professional events & network
 
     /// Takes the stage at a professional event, applying its soft-skill nudges
     /// and banking its network points in the event's industry. The fame award
-    /// presenting earns is deferred to `advanceYear` so a selection toggled off
-    /// before the year advances stays fully reversible (mirror of `dropEvent`).
+    /// presenting earns is deferred to `advanceYear` with the rest of the
+    /// year-end accounting.
     func attendEvent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
         guard !selectedEvents.contains(event.id) else { return }
         // Taking the stage needs the veteran gate in this event's field
         // (safety net; the view locks these rows too).
         guard event.canPresent(with: experience) else { return }
         selectedEvents.insert(event.id)
-        for ability in event.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + ability.weight, 10)
-        }
+        applySkillBoosts(event.abilities)
         networkByCategory[event.category, default: 0] += event.networkPoints
-    }
-
-    func dropEvent(_ event: CareerEvent, from selectedEvents: inout Set<String>) {
-        guard selectedEvents.remove(event.id) != nil else { return }
-        for ability in event.abilities {
-            let kp = ability.keyPath as WritableKeyPath<SoftSkills, Int>
-            softSkills[keyPath: kp] -= ability.weight
-        }
-        networkByCategory[event.category, default: 0] -= event.networkPoints
     }
 
     /// Years of work experience that count toward roles in `category`: the years
@@ -620,11 +558,6 @@ final class Player: ObservableObject {
 
     // MARK: - Training purchase / refund
 
-    /// Total years the player has spent working, summed across every industry —
-    /// the work-experience gate on senior trainings (see
-    /// `Training.minYearsExperience`).
-    var totalYearsWorked: Int { experience.values.reduce(0, +) }
-
     /// Enrols in this year's training: consumes the training slot and earns the
     /// credential (committed at year end). Once the hard requirements are met the
     /// course is assumed to be passed — students who put in the year pass the exam
@@ -637,21 +570,8 @@ final class Player: ObservableObject {
         guard !selectedTrainings.contains(training) else { return false }
         selectedActivities.insert("training:\(training.rawValue)")
         selectedTrainings.insert(training)
-        for boost in training.softSkillBoosts {
-            softSkills[keyPath: boost.keyPath] = min(softSkills[keyPath: boost.keyPath] + boost.weight, 10)
-        }
+        applySkillBoosts(training.softSkillBoosts)
         return true
-    }
-
-    /// Reverses `attemptTraining` if the player toggles a training off before the
-    /// year ends: frees the spare-time slot, un-selects the credential, and
-    /// rolls back the soft-skill nudges. Symmetric to `deselectHobby`.
-    func cancelTraining(_ training: Training, from selectedTrainings: inout Set<Training>, activities selectedActivities: inout Set<String>) {
-        guard selectedTrainings.remove(training) != nil else { return }
-        selectedActivities.remove("training:\(training.rawValue)")
-        for boost in training.softSkillBoosts {
-            softSkills[keyPath: boost.keyPath] -= boost.weight
-        }
     }
 
     // MARK: - Promotion
@@ -737,6 +657,10 @@ final class Player: ObservableObject {
     // MARK: - Year progression
 
     func advanceYear(appUIState: AppUIState) {
+        // The life stage the year was *lived* in, captured before the birthday:
+        // competitions entered this year resolve against it, so a 17-year-old's
+        // junior season doesn't get judged by adult-stage rules.
+        let competedStage = LifeStage.forAge(age)
         age += 1
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
@@ -776,8 +700,7 @@ final class Player: ObservableObject {
 
         appUIState.selectedActivities.removeAll()
         // Events applied their network/soft-skill effects when attended. Bank the
-        // fame award each presenter role earns (deferred to here so the
-        // within-year toggle stayed reversible), then clear this year's picks.
+        // fame award each presenter role earns, then clear this year's picks.
         for id in appUIState.selectedEvents {
             guard let event = EventCatalog.byId[id] else { continue }
             award(event.presenterFameTitle, icon: event.icon,
@@ -789,7 +712,11 @@ final class Player: ObservableObject {
         // Charge tuition for the year the player is enrolled in a tertiary
         // program. Simplified mode is money-free where school is concerned —
         // education costs are hidden, so nothing is deducted.
+        // The year just lived was at `age - 1`: an under-18 player never pays
+        // or takes on debt (they can't legitimately be enrolled in tertiary
+        // study anyway — this is the model-level guarantee of that rule).
         if !isSimplified,
+           age - 1 >= GameConstants.minimumTertiaryAge,
            let edu = currentEducation,
            let yearsLeft = appUIState.yearsLeftToGraduation,
            yearsLeft > 0,
@@ -807,11 +734,10 @@ final class Player: ObservableObject {
 
         appUIState.yearsLeftToGraduation? -= 1
         if appUIState.yearsLeftToGraduation == 0 {
-            let priorEQF = degrees.map(\.eqf).max() ?? 0
             if let currentEducation {
                 degrees.append(currentEducation)
                 recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
-                graduationMessage = graduationMessage(for: currentEducation, previousEQF: priorEQF)
+                graduationMessage = graduationMessage(for: currentEducation)
                 showGraduationAlert = true
             }
             appUIState.yearsLeftToGraduation = nil
@@ -916,10 +842,10 @@ final class Player: ObservableObject {
                     celebrateIfLucky(odds)
                     showPromotionAlert = true
                     if nextRung != nil {
-                        promotionMessage = "Your hard work paid off — you've been promoted from \(current.displayTitle) to \(promoted.displayTitle). Your pay rises to \(promoted.annualIncome.formatted(.number)) $ a year."
+                        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(promoted.annualIncome.formatted(.number)) $ a year."
                         recordStatus("⬆️", "Promoted to \(promoted.id)")
                     } else {
-                        promotionMessage = "Your hard work paid off — you've been promoted in your role as \(current.baseTitle). Your pay rises \(lastPromotionRaisePct)% to \(promoted.annualIncome.formatted(.number)) $ a year."
+                        promotionMessage = "You got a raise — +\(lastPromotionRaisePct)%, now \(promoted.annualIncome.formatted(.number)) $ a year."
                         recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
                     }
                 }
@@ -938,22 +864,19 @@ final class Player: ObservableObject {
                 if Double.random(in: 0...1) < failChance {
                     currentOccupation = nil
                     showVentureFailureAlert = true
-                    ventureFailureMessage = "Your venture, \(job.baseTitle), folded this year. The business — and its income — are gone, but you keep what you've saved. Any outstanding venture loan still has to be repaid. You can found a new venture whenever you're ready."
+                    ventureFailureMessage = "\(job.baseTitle) folded this year. You keep your savings, but any loan must still be repaid."
                     recordStatus("📉", "\(job.baseTitle) folded")
                 }
             }
         }
 
-        // Spare-time projects (business ventures + creative projects, one system).
-        // Nothing is staked but the year, and nothing is locked: any project can
-        // be attempted at any time, and the odds — talent fit plus the working
-        // life behind it, see SideHustle.successProbability — carry the whole
-        // decision. A successful year banks an industry-scoped fame award —
-        // Business fame for the commercial/entrepreneurial ventures, field fame
-        // for the creative projects — and grows the soft skills it drew on, the
-        // founder-cluster axes no hobby can build. A flop yields nothing but the
-        // lost year. All are repeatable year after year.
-        var sideHustleNet = 0
+        // Spare-time projects. Nothing is staked but the year, and nothing is
+        // locked: any project can be attempted at any time, and the odds —
+        // talent fit plus the working life behind it, see
+        // SideHustle.successProbability — carry the whole decision. A successful
+        // year banks an industry-scoped fame award and grows the soft skills it
+        // drew on, the founder-cluster axes no hobby can build. A flop yields
+        // nothing but the lost year. All are repeatable year after year.
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id] else { continue }
             // A year committed to an experience-building venture (the
@@ -974,11 +897,6 @@ final class Player: ObservableObject {
                                          totalExperienceYears: careerYears,
                                          fieldExperienceYears: fieldYears)
             if outcome.success {
-                savings += outcome.credit
-                sideHustleNet += outcome.credit
-                if outcome.credit > 0 {
-                    recordStatus(hustle.icon, "\(hustle.label) paid \(outcome.credit.formatted(.number)) $")
-                }
                 if let grant = outcome.grantedFame {
                     award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
                     for ability in hustle.growth {
@@ -994,7 +912,6 @@ final class Player: ObservableObject {
             }
             reportProjectOutcome(outcome)
         }
-        lastSideHustleEarnings = sideHustleNet
         appUIState.selectedSideHustles.removeAll()
 
         // Competitions: training a sport now automatically enters you into its
@@ -1003,11 +920,10 @@ final class Player: ObservableObject {
         // A win pays no money — it banks a lasting achievement (Entertainment
         // fame that helps land spotlight roles) and surfaces a celebration dialog.
         var competitionWins = 0
-        let currentStage = LifeStage.forAge(age)
         for sport in competedSports {
             let years = sportYears[sport, default: 0]
             guard let competition = CompetitionCatalog.bestCompetition(
-                forSport: sport, stage: currentStage, years: years
+                forSport: sport, stage: competedStage, years: years
             ) else { continue }
             let odds = competition.winProbability(for: softSkills, years: years)
             if Double.random(in: 0...1) < odds {
@@ -1016,7 +932,7 @@ final class Player: ObservableObject {
                 competitionWins += 1
                 celebrateIfLucky(odds)
                 recordStatus("🏆", "Won \(competition.achievement)")
-                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title — a lasting boost to your reputation."
+                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title!"
                 showCompetitionWinAlert = true
             }
         }
@@ -1119,6 +1035,10 @@ final class Player: ObservableObject {
     /// with capital a supporting factor). Returns true on success.
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
+        // Staking capital — and borrowing — is an adult play: an under-18
+        // player can never pay money or go into debt. The footer hides
+        // Ventures until then; this is the model-level guarantee.
+        guard age >= GameConstants.minimumEntrepreneurAge else { return false }
         // Savings fund the stake first; anything beyond them (up to the loan cap)
         // is borrowed against income and booked as debt.
         let stake = min(max(0, investedCapital), maxVentureStake)
@@ -1308,9 +1228,18 @@ final class Player: ObservableObject {
         avatar = fresh.avatar
         fameAwards = fresh.fameAwards
         lastCompetitionWins = fresh.lastCompetitionWins
+        showCompetitionWinAlert = fresh.showCompetitionWinAlert
+        competitionWinMessage = fresh.competitionWinMessage
+        showVentureFailureAlert = fresh.showVentureFailureAlert
+        ventureFailureMessage = fresh.ventureFailureMessage
+        showApplicationOutcomeAlert = fresh.showApplicationOutcomeAlert
+        applicationOutcomeTitle = fresh.applicationOutcomeTitle
+        applicationOutcomeMessage = fresh.applicationOutcomeMessage
+        showProjectOutcomeAlert = fresh.showProjectOutcomeAlert
+        projectOutcomeTitle = fresh.projectOutcomeTitle
+        projectOutcomeMessage = fresh.projectOutcomeMessage
         turmoilYearsRemaining = fresh.turmoilYearsRemaining
         economyInRecession = fresh.economyInRecession
-        lastSideHustleEarnings = fresh.lastSideHustleEarnings
         lastPromotionRaisePct = fresh.lastPromotionRaisePct
         showPromotionAlert = fresh.showPromotionAlert
         promotionMessage = fresh.promotionMessage
@@ -1329,6 +1258,7 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan
+        studentLoan = fresh.studentLoan
         lockedTrainings = fresh.lockedTrainings
         lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory

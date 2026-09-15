@@ -27,11 +27,24 @@ extension Color {
     }
 }
 
+/// The one-tap commit control on every activity row — Hobbies, Sports, Events,
+/// Trainings, Projects. Tapping it spends the year on that row: the sheet
+/// closes and the year runs immediately, so there is nothing to toggle back
+/// off. Shared so "spend this year on X" looks the same in every sheet.
+struct TakeButton: View {
+    var label: String = "Take"
+    let action: () -> Void
+
+    var body: some View {
+        Button(label, action: action)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+    }
+}
+
 extension View {
     /// Toggle style appropriate for the current platform: a checkbox on macOS, a
-    /// switch on iOS. Every activity picker uses it — Hobbies, Sports, Events,
-    /// Trainings, Projects — so "spend this year on X" looks the same in every
-    /// sheet.
+    /// switch on iOS. Used by the Jobs list's qualified-only filter.
     @ViewBuilder
     func platformToggleStyle() -> some View {
         #if os(macOS)

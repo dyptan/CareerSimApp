@@ -6,7 +6,6 @@ struct HeaderView: View {
     @ObservedObject var appUIState: AppUIState
 
     @State var didBumpAgeScale = false
-    @State private var showFinishConfirm = false
 
     var body: some View {
         HStack(alignment: .top) {
@@ -30,7 +29,7 @@ struct HeaderView: View {
 
                 if let currentOccupation = player.currentOccupation {
                     HStack(spacing: 6) {
-                        Text("Working: \(currentOccupation.displayTitle) \(currentOccupation.icon)")
+                        Text("\(currentOccupation.displayTitle) \(currentOccupation.icon)")
                         // Promotions are a realistic-mode mechanic only.
                         if !player.isSimplified {
                             InfoHint(
@@ -44,12 +43,26 @@ struct HeaderView: View {
                         .foregroundStyle(.secondary)
                 }
                 if let currentEducation = player.currentEducation {
-                    Text("Studying: \(currentEducation.degreeName)")
+                    Text("\(currentEducation.degreeName)")
                 }
 
-                Text("Savings: \(player.savings.formatted(.number)) $")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                // The running score, spelled out as the sum it is — net worth ÷
+                // age — so the player watches the arithmetic move, not just the
+                // result. The money lives only inside the formula; there is no
+                // separate savings counter.
+                HStack(spacing: 6) {
+                    if player.isSimplified {
+                        Text("Savings: \(player.savings.formatted(.number)) $")
+                    } else {
+                        Text("🏅 Score: \(scoreNetWorth.formatted(.number)) $ / \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
+                        InfoHint(
+                            title: "Your score",
+                            message: "Your score is your net worth — savings minus any venture or student loan — ÷ your age. It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Stop” to bank this score to the leaderboard."
+                        )
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
                 if player.outstandingLoan > 0 {
                     Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
@@ -63,19 +76,6 @@ struct HeaderView: View {
                         .foregroundStyle(.orange)
                 }
 
-                // Realistic mode is open-ended: show the running score (updated
-                // every year) that the player banks when they finish the game.
-                if !player.isSimplified {
-                    HStack(spacing: 6) {
-                        Text("🏅 Score: \(player.leaderboardScore.formatted(.number))")
-                            .font(.caption.bold())
-                            .foregroundStyle(.secondary)
-                        InfoHint(
-                            title: "Your score",
-                            message: "Your score is your net worth — savings minus any venture or student loan — ÷ your age (currently \(player.leaderboardScore)). It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Finish game” to bank this score to the leaderboard."
-                        )
-                    }
-                }
             }
 
             Spacer()
@@ -86,7 +86,9 @@ struct HeaderView: View {
             // every button there opens a choice, and this one is the choice to
             // make none.
             VStack(alignment: .trailing, spacing: 8) {
-                Button("Finish game") { showFinishConfirm = true }
+                // Opens the Game Over sheet directly — no confirmation pop-up;
+                // the sheet's own "Keep playing" button is the way back.
+                Button("Stop") { appUIState.showRetirementSheet = true }
                     .buttonStyle(.bordered)
                     .font(.headline)
 
@@ -95,14 +97,13 @@ struct HeaderView: View {
                     .font(.headline)
             }
         }
-        .alert("Finish game?", isPresented: $showFinishConfirm) {
-            Button("Finish & save record", role: .destructive) {
-                appUIState.showRetirementSheet = true
-            }
-            Button("Keep playing", role: .cancel) { }
-        } message: {
-            Text("End your career now and save your score of \(player.leaderboardScore) (savings ÷ age) to the leaderboard. You can start over afterward.")
-        }
+    }
+
+    /// The score's numerator: net worth (savings minus any venture or student
+    /// loan), floored at 0 — the same figure `Player.leaderboardScore` divides
+    /// by age, so the displayed formula always reproduces the displayed score.
+    private var scoreNetWorth: Int {
+        max(0, player.savings - player.outstandingLoan - player.studentLoan)
     }
 
     /// Plain-text breakdown of this year's promotion odds for the current job,
@@ -152,9 +153,6 @@ struct HeaderView: View {
             }
             if player.lostJobThisYear {
                 lines.append("💼 You were laid off last year — find a new job")
-            }
-            if player.lastSideHustleEarnings != 0 {
-                lines.append("🛠️ Side hustles \(player.lastSideHustleEarnings >= 0 ? "earned" : "cost") \(abs(player.lastSideHustleEarnings).formatted(.number)) $ last year")
             }
             if player.lastPromotionRaisePct > 0 {
                 lines.append("⬆️ Promoted last year — pay up \(player.lastPromotionRaisePct)%")
