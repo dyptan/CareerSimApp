@@ -37,9 +37,14 @@ struct JobDetail: View {
         let considered = SoftSkills.skillNames.filter { requiredSoft[keyPath: $0.keyPath] > 0 }
         guard !considered.isEmpty else { return "" }
         let list = considered
-            .map { "\($0.pictogram) \($0.label) (target \(requiredSoft[keyPath: $0.keyPath]))" }
+            .map { axis -> String in
+                let target = requiredSoft[keyPath: axis.keyPath]
+                let held = player.softSkills[keyPath: axis.keyPath]
+                return "\(axis.pictogram) \(axis.label): \(min(held, target))/\(target)"
+            }
             .joined(separator: "\n")
-        return "\n\nSoft skills that count toward the skill match (helpful, not required):\n\n\(list)"
+        return "\n\nThe skills this role asks for — each counts in proportion, and "
+            + "nothing else is scored:\n\n\(list)"
     }
 
     /// Plain-language breakdown of the hire-probability formula with the
@@ -60,9 +65,9 @@ struct JobDetail: View {
         }
         let hasBreakthrough = job.breakthroughFame != nil
 
-        let scoredCount = SoftSkills.allAxes.count
+        let asked = job.askedSoftSkills.count
         let matched = job.softSkillsHelpfulScore(for: player)
-        let skillScore = Double(matched) / Double(scoredCount)
+        let skillScore = job.softSkillFit(for: player)
         let skillContribution = skillScore * 0.7
         let prestige = job.relevantPrestigeBonus(for: player)
         let fit = job.requirementFit(for: player)
@@ -77,8 +82,10 @@ struct JobDetail: View {
         let showFame = fame > 0
         let fameLabel = job.category.fameCategory?.rawValue ?? "general"
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
+        let credential = player.trainingCareerBonus(for: job.category)
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let merit = 0.2 + skillContribution + prestige + opportunity + network + fame + breakthrough
+        let merit = 0.2 + skillContribution + prestige + opportunity + network + fame
+            + breakthrough + credential
         let climate = player.climate(for: job.industry)
         let raw = merit * fit.factor * salaryFit
         let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw * climate.hireFactor))
@@ -109,10 +116,10 @@ struct JobDetail: View {
 
         What you bring:
         • Base: 20%
-        • Skill match: \(matched)/\(scoredCount) → \(pct(skillContribution))
+        • Skill match: \(matched)/\(asked) skills met, \(pct(skillScore)) fit → \(pct(skillContribution))
         • Degree prestige (\(prestigeLabel)): \(signed(prestige))
         • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
-        • Difficulty bonus: \(signed(opportunity))
+        • Difficulty bonus: \(signed(opportunity))\(credential > 0 ? "\n        • Relevant credential: \(signed(credential))" : "")
         Subtotal: \(pct(merit))
 
         How well you meet the requirements (these multiply — a requirement you

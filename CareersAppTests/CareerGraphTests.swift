@@ -110,6 +110,7 @@ final class CatalogIntegrityTests: XCTestCase {
     func testFullTitleOverridesNameRealJobs() {
         let tables: [(String, [String])] = [
             ("credentialsByFullTitle", Array(JobCatalog.credentialsByFullTitle.keys)),
+            ("softSkillsByFullTitle", Array(JobCatalog.softSkillsByFullTitle.keys)),
             ("minYearsByTitle", Array(JobCatalog.minYearsByTitle.keys)),
         ]
         let known = fullTitles
@@ -117,6 +118,87 @@ final class CatalogIntegrityTests: XCTestCase {
             let orphans = Set(keys).subtracting(known).sorted()
             XCTAssertTrue(orphans.isEmpty,
                           "\(name) has keys matching no job title: \(orphans). The job was probably renamed.")
+        }
+    }
+
+    /// A `minYearsByTitle` row is only read when the rung itself sets none
+    /// (`minYears ?? minYearsByTitle[title]`). A row for a rung that states its
+    /// own figure is dead: it reads as the role's experience bar and is not,
+    /// so editing it changes nothing and nothing says so.
+    func testNoExperienceRowIsShadowedByItsRung() {
+        var stated: Set<String> = []
+        for ladder in JobCatalog.ladders {
+            for rung in ladder.rungs where rung.minYears != nil {
+                stated.insert(ladder.title(for: rung))
+            }
+        }
+        for spec in JobCatalog.standaloneRoles where spec.minYears != nil { stated.insert(spec.title) }
+        for spec in JobCatalog.ventures where spec.minYears != nil { stated.insert(spec.title) }
+        let dead = Set(JobCatalog.minYearsByTitle.keys).intersection(stated).sorted()
+        XCTAssertTrue(dead.isEmpty,
+                      "minYearsByTitle rows that the role's own minYears already overrides: \(dead). "
+                      + "Delete the row or the inline figure — two numbers, one of which does nothing.")
+    }
+
+    /// Every category states an entry profile of its own. There is no `default:`
+    /// arm any more, so this really checks the *content*: public services and
+    /// entrepreneurship used to land on a catch-all that asked for almost
+    /// nothing, which made a precinct commander one of the easiest hires around.
+    func testEveryCategoryAsksForSomething() {
+        for category in JobCategory.allCases {
+            let profile = JobCatalog.defaultSoftSkills(for: category)
+            let asked = SoftSkills.allAxes.filter { profile[keyPath: $0.keyPath] > 0 }
+            XCTAssertGreaterThanOrEqual(asked.count, 5,
+                                        "\(category.rawValue) asks for only \(asked.count) skills.")
+            XCTAssertTrue(asked.contains { profile[keyPath: $0.keyPath] >= 3 },
+                          "\(category.rawValue) names nothing as core to the work.")
+        }
+    }
+
+    /// Climbing a ladder has to *mean* something in the requirements. Forty of
+    /// the forty-two ladders used to repeat one profile on every rung, so a
+    /// Delivery Courier and an Airline Captain were written down as the same
+    /// person and only the pay changed.
+    func testSeniorRungsAskMoreThanTheRungBelow() {
+        for ladder in JobCatalog.ladders where ladder.rungs.count > 1 {
+            let rungs = JobCatalog.jobs(for: ladder)
+            for (lower, upper) in zip(rungs, rungs.dropFirst()) {
+                // A rung authored against its exact title is exempt: it is a
+                // different job from the one below, not a senior version of it.
+                guard JobCatalog.softSkillsByFullTitle[upper.id] == nil else { continue }
+                let below = lower.requirements.softSkills
+                let above = upper.requirements.softSkills
+                let total = { (p: SoftSkills) in
+                    SoftSkills.allAxes.reduce(0) { $0 + p[keyPath: $1.keyPath] }
+                }
+                XCTAssertGreaterThan(total(above), total(below),
+                                     "\(upper.id) asks no more of a candidate than \(lower.id).")
+                for axis in SoftSkills.allAxes {
+                    XCTAssertGreaterThanOrEqual(
+                        above[keyPath: axis.keyPath], below[keyPath: axis.keyPath],
+                        "\(upper.id) asks less \(axis.label) than \(lower.id) below it.")
+                }
+            }
+        }
+    }
+
+    /// No requirement may sit beyond what a player can reach (skills cap at 10).
+    func testNoRoleAsksForMoreSkillThanExists() {
+        for job in JobCatalog.allJobs() {
+            for axis in SoftSkills.allAxes {
+                XCTAssertLessThanOrEqual(
+                    job.requirements.softSkills[keyPath: axis.keyPath], 10,
+                    "\(job.id) asks for unreachable \(axis.label).")
+            }
+        }
+    }
+
+    /// Every rung above the entry one is credited against tenure in *its own*
+    /// ladder, whether or not its title carries a seniority word.
+    func testRungsAboveEntryCountOnlyTheirOwnLadder() {
+        for job in JobCatalog.allJobs() where job.rung > 0 {
+            XCTAssertTrue(job.isLadderVariant,
+                          "\(job.id) is rung \(job.rung) but is credited on whole-category years.")
         }
     }
 
@@ -243,6 +325,72 @@ final class CatalogIntegrityTests: XCTestCase {
                              "A degree should swing the odds substantially, not marginally.")
         XCTAssertGreaterThan(terms[3], terms[2],
                              "A degree in an accepted field should beat an unrelated one.")
+    }
+
+    // MARK: - The skill-fit term
+
+    /// Listing a skill a candidate already has must not make a role *harder* to
+    /// land. The scorer used to count how many of all eighteen axes the
+    /// candidate cleared, so every axis a role asked nothing of scored as a free
+    /// pass — and naming one more requirement took a free pass away. Profile
+    /// length was a difficulty knob nobody had set on purpose.
+    func testNamingASkillTheCandidateHasNeverCostsThem() {
+        let player = Self.candidate(eqf: .Bachelor, profile: nil)
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && $0.askedSoftSkills.count < SoftSkills.allAxes.count
+        }) else { return XCTFail("Every role already asks for every skill.") }
+
+        let before = job.softSkillFit(for: player)
+        guard let spare = SoftSkills.allAxes.first(where: {
+            job.requirements.softSkills[keyPath: $0.keyPath] == 0
+        }) else { return XCTFail("No unasked axis to add.") }
+
+        var wider = job
+        var widened = job.requirements.softSkills
+        widened[keyPath: spare.keyPath] = player.softSkills[keyPath: spare.keyPath]
+        wider = Self.job(job, asking: widened)
+
+        XCTAssertGreaterThanOrEqual(wider.softSkillFit(for: player), before,
+                                    "Adding a requirement this candidate already meets lowered their fit.")
+    }
+
+    /// The term grades. Three of a required four is worth three quarters, not
+    /// nothing — the all-or-nothing version made the last point on an axis worth
+    /// as much as the first three together.
+    func testPartialSkillCounts() {
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial
+                && SoftSkills.allAxes.contains { $0.keyPath == \SoftSkills.carefulnessAndAttentionToDetail }
+                && $0.requirements.softSkills.carefulnessAndAttentionToDetail >= 3
+                && $0.askedSoftSkills.count == 1
+        }) ?? JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && $0.requirements.softSkills.carefulnessAndAttentionToDetail >= 3
+        }) else { return XCTFail("No role leans on attention to detail.") }
+
+        let target = job.requirements.softSkills.carefulnessAndAttentionToDetail
+        let fits: [Double] = (0...target).map { level in
+            let player = Player()
+            player.pinNeutralEconomy()
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
+            player.softSkills.carefulnessAndAttentionToDetail = level
+            return job.softSkillFit(for: player)
+        }
+        XCTAssertEqual(fits, fits.sorted(), "Fit must rise with the skill, not jump at the end.")
+        XCTAssertGreaterThan(fits[target - 1], fits[0],
+                             "Being one short of the bar should beat having none of the skill.")
+    }
+
+    /// The same role, asking for a different profile — so a test can vary one
+    /// thing about the requirements and hold the rest still.
+    private static func job(_ job: Job, asking profile: SoftSkills) -> Job {
+        Job(id: job.id, category: job.category, income: job.income, summary: job.summary,
+            icon: job.icon,
+            requirements: .init(education: job.requirements.education,
+                                softSkills: profile,
+                                hardSkills: job.requirements.hardSkills,
+                                minYearsExperience: job.requirements.minYearsExperience),
+            targetCapital: job.targetCapital, baseTitle: job.baseTitle, rung: job.rung,
+            rungLabel: job.rungLabel, workSetting: job.workSetting, industry: job.industry)
     }
 
     /// The same factor has to reach promotions, not just hiring — being
@@ -1478,3 +1626,4 @@ extension Job {
         hireProbability(for: player, requestedSalary: Double(annualIncome))
     }
 }
+

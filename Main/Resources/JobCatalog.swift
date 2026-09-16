@@ -82,32 +82,15 @@ enum JobCatalog {
 
     // MARK: - Per-title soft skills
 
-    /// Soft skills for *one exact title*, where a hand-tuned profile must not be
-    /// inherited by the rest of its ladder — a registered nurse's profile is not
-    /// the senior and charge rungs'. Wins over `softSkillsByBaseTitle`, the same
-    /// way `credentialsByFullTitle` wins over `credentialsByBaseTitle`.
+    /// Soft skills for *one exact rung*, taken exactly as written — the
+    /// seniority progression is not applied on top (see `seniority`). Use this
+    /// only where a rung is a genuinely different job from the one below it
+    /// rather than a more senior version of it: a personal trainer sells and
+    /// coaches one client at a time, which is not what the group-class rung
+    /// beneath them does. Wins over `softSkillsByBaseTitle`, the same way
+    /// `credentialsByFullTitle` wins over `credentialsByBaseTitle`.
     static let softSkillsByFullTitle: [String: SoftSkills] = [
         "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
-        "Registered Nurse": .init(
-                  analyticalReasoningAndProblemSolving: 2, creativityAndInsightfulThinking: 0,
-                  communicationAndNetworking: 3, leadershipAndInfluence: 1,
-                  visionaryThinkingAndAmbition: 0, carefulnessAndAttentionToDetail: 4,
-                  tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 0,
-                  resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3,
-                  empathyAndInterpersonalCare: 3, outdoorAndWeatherResilience: 0,
-                  collaborationAndTeamwork: 3, timeManagementAndPlanning: 2,
-                  selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1
-              ),
-        "Light Truck Delivery Driver": .init(
-                  analyticalReasoningAndProblemSolving: 0, creativityAndInsightfulThinking: 0,
-                  communicationAndNetworking: 1, leadershipAndInfluence: 0,
-                  visionaryThinkingAndAmbition: 0, carefulnessAndAttentionToDetail: 2,
-                  tinkeringAndFingerPrecision: 0, spacialNavigationAndOrientation: 2,
-                  resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 1,
-                  outdoorAndWeatherResilience: 1, collaborationAndTeamwork: 1,
-                  timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 1,
-                  presentationAndStorytelling: 0
-              ),
     ]
 
     /// Refines roles whose broad category default is clearly wrong — a Sales
@@ -173,6 +156,143 @@ enum JobCatalog {
         "Level Designer":                 .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
         "Game Designer":                  .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, visionaryThinkingAndAmbition: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
         "Narrative Designer":             .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
+
+        // MARK: The biggest employers — the roles most people actually hold
+        "Personal Care Aide": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Customer Service Representative": .init(communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1),
+        "Stocker/Order Filler": .init(carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 1),
+        "Cook": .init(carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3),
+        "Operations Manager": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 1, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, presentationAndStorytelling: 1),
+        "Sales Representative": .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Store Manager": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3),
+        "Maintenance & Repair Worker": .init(analyticalReasoningAndProblemSolving: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 2, selfDisciplineAndPerseverance: 1),
+        "Bookkeeping Clerk": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 1, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2),
+        "Teaching Assistant": .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 1, presentationAndStorytelling: 2),
+        "Groundskeeper": .init(carefulnessAndAttentionToDetail: 1, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 4, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
+        "Childcare Worker": .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1, presentationAndStorytelling: 1),
+        "Bartender": .init(communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+        "Heavy Equipment Operator": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 1, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 1),
+        "Pharmacy Technician": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 2, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Real Estate Agent": .init(communicationAndNetworking: 3, persuasionAndNegotiation: 3, riskTakingAndInitiative: 1, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Insurance Agent": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 1, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+        "Bank Teller": .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1),
+        "Cashier": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 1),
+
+        // MARK: Health — the clinical bar rises steeply with what you may do alone
+        "Registered Nurse": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
+        "Medical Assistant": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Dental Assistant": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
+        "Paramedic": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 4, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 1),
+        "Physiotherapist": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+        "Physician": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+        "Surgeon": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 5, tinkeringAndFingerPrecision: 5, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 5, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 3, selfDisciplineAndPerseverance: 4),
+        "Anesthesiologist": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 5, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 5, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 3, selfDisciplineAndPerseverance: 3),
+        "Dentist": .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 5, spacialNavigationAndOrientation: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Pharmacist": .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 5, tinkeringAndFingerPrecision: 1, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Veterinarian": .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Chief Medical Officer": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 4, persuasionAndNegotiation: 3, leadershipAndInfluence: 5, visionaryThinkingAndAmbition: 4, carefulnessAndAttentionToDetail: 4, stressResistanceAndEmotionalRegulation: 4, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 4, timeManagementAndPlanning: 4, presentationAndStorytelling: 3),
+
+        // MARK: Technology
+        "IT Support Specialist": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Software Tester/QA": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Cybersecurity Analyst": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 3),
+        "Cloud Architect": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, visionaryThinkingAndAmbition: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+        "Data Analyst": .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Data Scientist": .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Systems Administrator": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Chief Technology Officer": .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, communicationAndNetworking: 4, persuasionAndNegotiation: 3, leadershipAndInfluence: 5, visionaryThinkingAndAmbition: 5, riskTakingAndInitiative: 2, carefulnessAndAttentionToDetail: 3, collaborationAndTeamwork: 4, timeManagementAndPlanning: 4, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 3),
+
+        // MARK: Engineering — each discipline leans on a different faculty
+        "Architect": .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, presentationAndStorytelling: 2),
+        "Civil Engineer": .init(analyticalReasoningAndProblemSolving: 3, carefulnessAndAttentionToDetail: 4, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Mechanical Engineer": .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Electrical Engineer": .init(analyticalReasoningAndProblemSolving: 4, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Chemical Engineer": .init(analyticalReasoningAndProblemSolving: 3, carefulnessAndAttentionToDetail: 4, spacialNavigationAndOrientation: 1, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Aerospace Engineer": .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 4, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+
+        // MARK: Science
+        "Lab Technician": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Research Scientist": .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 4, presentationAndStorytelling: 2),
+
+        // MARK: Business — the money, the advice, and the people who sell both
+        "Investment Banker": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 3, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
+        "Management Consultant": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 3, persuasionAndNegotiation: 2, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, presentationAndStorytelling: 3),
+        "Translator/Interpreter": .init(analyticalReasoningAndProblemSolving: 1, communicationAndNetworking: 4, carefulnessAndAttentionToDetail: 4, stressResistanceAndEmotionalRegulation: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 1),
+        "Marketing Director": .init(analyticalReasoningAndProblemSolving: 2, creativityAndInsightfulThinking: 3, communicationAndNetworking: 4, persuasionAndNegotiation: 3, leadershipAndInfluence: 4, visionaryThinkingAndAmbition: 3, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3, presentationAndStorytelling: 4),
+        "Sales Director": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 4, persuasionAndNegotiation: 5, leadershipAndInfluence: 4, visionaryThinkingAndAmbition: 2, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3, presentationAndStorytelling: 3),
+        "Chief Executive Officer": .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 2, communicationAndNetworking: 4, persuasionAndNegotiation: 4, leadershipAndInfluence: 6, visionaryThinkingAndAmbition: 5, riskTakingAndInitiative: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 4, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 4),
+
+        // MARK: Law
+        "Paralegal": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 4, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2),
+        "Managing Partner": .init(analyticalReasoningAndProblemSolving: 4, communicationAndNetworking: 4, persuasionAndNegotiation: 5, leadershipAndInfluence: 4, visionaryThinkingAndAmbition: 3, carefulnessAndAttentionToDetail: 3, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 4),
+
+        // MARK: Design and show business — a brief, a deadline, and an audience
+        "UX/UI Designer": .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Animator": .init(creativityAndInsightfulThinking: 4, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+        "Graphic Artist": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
+        "Interior Designer": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
+        "Actor": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 4),
+        "Musician": .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 2, selfDisciplineAndPerseverance: 4, presentationAndStorytelling: 3),
+        "Journalist": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 4, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 3, presentationAndStorytelling: 3),
+        "Photographer": .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, outdoorAndWeatherResilience: 2, timeManagementAndPlanning: 2),
+        "Content Writer": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 2),
+        "Video Editor": .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
+        "Social Media Manager": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 2, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
+        "TV Presenter": .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, timeManagementAndPlanning: 1, presentationAndStorytelling: 4),
+        "Art Director": .init(creativityAndInsightfulThinking: 5, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 3, carefulnessAndAttentionToDetail: 3, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3, presentationAndStorytelling: 3),
+
+        // MARK: Hospitality — the kitchen and the rooms behind the dining room
+        "Chef": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 1, leadershipAndInfluence: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 4, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3),
+        "Baker": .init(creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2),
+        "Food Preparation Worker": .init(carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Fast Food Worker": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2),
+        "Dishwasher": .init(resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
+        "Housekeeper": .init(carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 1),
+        "Janitor/Cleaner": .init(carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+
+        // MARK: Trades, site work, and the line
+        "Electrician": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 2, outdoorAndWeatherResilience: 1, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+        "Plumber": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+        "Carpenter": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+        "HVAC Technician": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 2, outdoorAndWeatherResilience: 2, timeManagementAndPlanning: 2),
+        "Roofer": .init(carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 4, outdoorAndWeatherResilience: 4, collaborationAndTeamwork: 2),
+        "Construction Laborer": .init(carefulnessAndAttentionToDetail: 1, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 4, outdoorAndWeatherResilience: 3, collaborationAndTeamwork: 2),
+        "Painter (Construction)": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 2, timeManagementAndPlanning: 1),
+        "Welder": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, selfDisciplineAndPerseverance: 2),
+        "Machinist": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 4, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 3, selfDisciplineAndPerseverance: 2),
+        "Machine Operator": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+        "Factory Worker": .init(carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 1),
+        "Assembler": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 1),
+        "Quality Control Inspector": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 5, tinkeringAndFingerPrecision: 1, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+
+        // MARK: Moving people and goods
+        "Airline Pilot": .init(analyticalReasoningAndProblemSolving: 3, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 4, spacialNavigationAndOrientation: 4, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 4, collaborationAndTeamwork: 3, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3),
+        "Aircraft Maintenance Technician": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 5, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Dispatcher": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 3, stressResistanceAndEmotionalRegulation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 4),
+        "Logistics Coordinator": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 4, selfDisciplineAndPerseverance: 2),
+        "Truck Driver": .init(carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, outdoorAndWeatherResilience: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
+        "Bus Driver": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 1, timeManagementAndPlanning: 2),
+        "Taxi Driver": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 1),
+        "Light Truck Delivery Driver": .init(carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 1, timeManagementAndPlanning: 3),
+        "Delivery Courier": .init(carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 2, timeManagementAndPlanning: 2),
+        "Mover": .init(tinkeringAndFingerPrecision: 1, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 4, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 2),
+        "Warehouse Worker": .init(carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 1, resilienceAndEndurance: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1),
+        "Forklift Operator": .init(carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 1),
+        "Mechanic": .init(analyticalReasoningAndProblemSolving: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 4, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 2, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+
+        // MARK: Public services
+        "Police Officer": .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 4, empathyAndInterpersonalCare: 2, outdoorAndWeatherResilience: 2, collaborationAndTeamwork: 3, selfDisciplineAndPerseverance: 2),
+        "Firefighter": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 2, resilienceAndEndurance: 4, stressResistanceAndEmotionalRegulation: 4, empathyAndInterpersonalCare: 2, outdoorAndWeatherResilience: 3, collaborationAndTeamwork: 4, selfDisciplineAndPerseverance: 2),
+        "Municipal Worker": .init(carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, resilienceAndEndurance: 3, outdoorAndWeatherResilience: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
+        "Security Guard": .init(communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, outdoorAndWeatherResilience: 1, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 1),
+
+        // MARK: Land work
+        "Farmhand": .init(tinkeringAndFingerPrecision: 1, resilienceAndEndurance: 4, outdoorAndWeatherResilience: 4, collaborationAndTeamwork: 1, selfDisciplineAndPerseverance: 2),
+        "Farmer": .init(analyticalReasoningAndProblemSolving: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 1, resilienceAndEndurance: 4, outdoorAndWeatherResilience: 4, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 3),
+
+        // MARK: Education
+        "Teacher": .init(creativityAndInsightfulThinking: 2, communicationAndNetworking: 3, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 2, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 3, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
+        "Tutor": .init(communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, stressResistanceAndEmotionalRegulation: 2, empathyAndInterpersonalCare: 3, timeManagementAndPlanning: 2, presentationAndStorytelling: 3),
     ]
 
     // MARK: - Credentials
@@ -223,10 +343,15 @@ enum JobCatalog {
         // Every rung flies on a commercial licence; the captain's rung adds the
         // ATP on top (see `credentialsByFullTitle`, which wins over this).
         "Airline Pilot": HardSkills(trainings: [.commercialPilot]),
+        // Only a certificated mechanic may sign an aircraft back into service.
+        "Aircraft Maintenance Technician": HardSkills(trainings: [.airframePowerplant]),
         // Trades — licensed by law in most jurisdictions
         "Electrician": HardSkills(trainings: [.electrician]),
         "Plumber": HardSkills(trainings: [.plumber]),
         "Architect": HardSkills(trainings: [.architect]),
+        // Refrigerant handling is federally certified, and there is no
+        // air-conditioning work without touching refrigerant.
+        "HVAC Technician": HardSkills(trainings: [.epaRefrigerant]),
         // Health — licenses + entry-level certs. The nursing ladder climbs
         // by credential: aide (CNA) → practical nurse (LPN) → registered
         // nurse (RN) → nurse practitioner (RN + NP).
@@ -240,6 +365,13 @@ enum JobCatalog {
         "Pharmacist": HardSkills(trainings: [.pharmacistLicense]),
         "Veterinarian": HardSkills(trainings: [.veterinaryLicense]),
         "Paramedic": HardSkills(trainings: [.emt]),
+        // Dispensing under supervision is a registered role of its own — the
+        // way into a pharmacy without the pharmacist's doctorate.
+        "Pharmacy Technician": HardSkills(trainings: [.pharmacyTechnician]),
+        // Both are doctoral, licensed professions: the degree qualifies you, the
+        // licence is what lets you treat anyone.
+        "Psychologist": HardSkills(trainings: [.psychologyLicense]),
+        "Physiotherapist": HardSkills(trainings: [.physicalTherapyLicense]),
         "Dental Assistant": HardSkills(trainings: [.dentalAssistant]),
         "Nursing Aide": HardSkills(trainings: [.cna]),
         // Law / public services. Keys are base titles, so one entry covers every
@@ -248,6 +380,9 @@ enum JobCatalog {
         "Judge": HardSkills(trainings: [.bar]),
         "Managing Partner": HardSkills(trainings: [.bar]),
         "Firefighter": HardSkills(trainings: [.emt]),
+        // Nobody is sworn in off the street — every officer goes through recruit
+        // school first, and every rung above patrol is a promotion from it.
+        "Police Officer": HardSkills(trainings: [.policeAcademy]),
         "Security Guard": HardSkills(trainings: [.securityGuard]),
         // Service / hospitality
         "Hairdresser/Barber": HardSkills(trainings: [.cosmetology]),
@@ -266,19 +401,17 @@ enum JobCatalog {
     /// considering an applicant. Senior, management, and regulated roles set this
     /// above zero; entry-level jobs are absent and default to 0.
     static let minYearsByTitle: [String: Int] = [
-        "Hotel Manager": 3,
+        "Hotel Manager": 5,
         "Sales Manager": 3,
         "Project Manager": 3,
-        "Event Planner": 3,
-        "Human Resources Specialist": 3,
+        "Event Planner": 2,
+        "Human Resources Specialist": 1,
         "Business Analyst": 2,
         "Financial Analyst": 2,
         "Marketing Specialist": 2,
         // Security is a second-career field — hired out of IT/networking, not
         // straight from school.
         "Cybersecurity Analyst": 2,
-        // Anchors are promoted after years of on-air reporting.
-        "News Anchor": 3,
         "Judge": 10,
         // A newly barred lawyer is hired as an associate straight away; the
         // JD + Bar are the real barrier, not prior experience. (Senior Lawyer
@@ -303,8 +436,6 @@ enum JobCatalog {
         "Investment Banker": 2,
         "Data Scientist": 2,
         "Cloud Architect": 5,
-        "Supply Chain Manager": 4,
-        "Warehouse Manager": 3,
         "Office Manager": 3,
     ]
 
@@ -468,6 +599,57 @@ enum JobCatalog {
         industriesByBaseTitle[baseTitle] ?? defaultIndustries(for: category)
     }
 
+    // MARK: - Seniority
+
+    /// How a rung's demands differ from the entry rung's.
+    ///
+    /// A ladder used to ask exactly the same of every rung: a Delivery Courier
+    /// and an Airline Captain, an IT Support Specialist and a Chief Technology
+    /// Officer, a Bank Teller and a Chief Executive Officer were each written
+    /// down as the same person. Forty of the catalogue's forty-two ladders were
+    /// flat, so the only thing that changed on the way up was the pay.
+    ///
+    /// The authored profile is **the entry rung's** — the bar for joining the
+    /// ladder at all. Each rung above it adds:
+    ///
+    /// * **+1 to the craft.** Every axis the entry rung already leans on
+    ///   (3 or more) deepens a level per rung, so a principal engineer's
+    ///   analysis bar sits where a junior's cannot reach.
+    /// * **+1 leadership and +1 planning, from the second rung up.** Above
+    ///   entry level the job starts including other people's work.
+    /// * **+1 communication and +1 vision at the top rung only.** The last seat
+    ///   on a ladder sets direction and speaks for the function.
+    ///
+    /// Position, not the label, drives this: `rung` is the ladder (see
+    /// `LadderSpec`), and labels are inconsistent across tracks — a flight deck
+    /// climbs First Officer → Pilot → Captain with no seniority prefix at all.
+    ///
+    /// Standalone senior roles (a CEO, a chief medical officer, a managing
+    /// partner) are rung 0 of nothing, so they carry their elite profile
+    /// explicitly in `softSkillsByBaseTitle` instead.
+    static func seniority(_ base: SoftSkills, rung: Int, isTopRung: Bool) -> SoftSkills {
+        guard rung > 0 else { return base }
+        var profile = base
+        for axis in SoftSkills.allAxes {
+            let held = base[keyPath: axis.keyPath]
+            // The rules take the *largest* lift that applies rather than adding
+            // up, so an axis that is both the craft and the management load —
+            // a chef's planning, a logistician's — is not raised twice for the
+            // same promotion.
+            var lift = 0
+            if held >= 3 { lift = rung }
+            if axis.keyPath == \.leadershipAndInfluence || axis.keyPath == \.timeManagementAndPlanning {
+                lift = max(lift, rung)
+            }
+            if isTopRung,
+               axis.keyPath == \.communicationAndNetworking || axis.keyPath == \.visionaryThinkingAndAmbition {
+                lift = max(lift, 1)
+            }
+            profile[keyPath: axis.keyPath] = min(10, held + lift)
+        }
+        return profile
+    }
+
     static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
         switch category {
         case .administration, .business, .design, .engineering, .law,
@@ -483,184 +665,269 @@ enum JobCatalog {
 
     // MARK: - Category defaults
 
+    /// The skills a role in `category` asks for **at the entry rung**, when no
+    /// per-title profile overrides it. Rungs above entry climb from here (see
+    /// `seniority`).
+    ///
+    /// Read these as the bar for doing the job at all, not as a portrait of the
+    /// field's stars. The scale runs 0–10, the same one the player's skills use:
+    ///
+    /// * **1–2** — helpful; the job goes better with it.
+    /// * **3–4** — core; you cannot do this work without it.
+    /// * **5+** — reached by climbing, not by being hired off the street.
+    ///
+    /// Every category is spelled out and there is no `default:` branch, so
+    /// adding a category fails the build rather than silently inheriting a
+    /// near-empty profile. That is exactly what used to happen to public
+    /// services and entrepreneurship: both fell through to a catch-all that
+    /// asked almost nothing, which made a $130k precinct commander with twelve
+    /// years in one of the easiest hires in the game.
     static func defaultSoftSkills(for category: JobCategory) -> SoftSkills {
         switch category {
 
-        case .technology, .engineering:
+        // Building software: reasoning and rigour, done in a team.
+        case .technology:
             return .init(
                 analyticalReasoningAndProblemSolving: 3,
                 creativityAndInsightfulThinking: 1,
                 communicationAndNetworking: 1,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 1,
                 carefulnessAndAttentionToDetail: 3,
                 tinkeringAndFingerPrecision: 1,
-                spacialNavigationAndOrientation: 0,
-                resilienceAndEndurance: 1,
-                stressResistanceAndEmotionalRegulation: 2,
-                outdoorAndWeatherResilience: 0,
+                stressResistanceAndEmotionalRegulation: 1,
+                collaborationAndTeamwork: 2,
+                timeManagementAndPlanning: 2,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Engineering adds the physical world: how parts fit and what breaks.
+        case .engineering:
+            return .init(
+                analyticalReasoningAndProblemSolving: 3,
+                creativityAndInsightfulThinking: 1,
+                carefulnessAndAttentionToDetail: 3,
+                tinkeringAndFingerPrecision: 2,
+                spacialNavigationAndOrientation: 2,
+                collaborationAndTeamwork: 2,
+                timeManagementAndPlanning: 2,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // The bench: long, exacting work whose results have to be written up.
+        case .science:
+            return .init(
+                analyticalReasoningAndProblemSolving: 3,
+                creativityAndInsightfulThinking: 2,
+                carefulnessAndAttentionToDetail: 3,
                 collaborationAndTeamwork: 2,
                 timeManagementAndPlanning: 2,
                 selfDisciplineAndPerseverance: 3,
                 presentationAndStorytelling: 1
             )
 
-
-        case .health, .education:
+        // Clinical work: accuracy and composure on your feet, with patients.
+        case .health:
             return .init(
                 analyticalReasoningAndProblemSolving: 2,
-                creativityAndInsightfulThinking: 0,
-                communicationAndNetworking: 3,
-                leadershipAndInfluence: 1,
-                visionaryThinkingAndAmbition: 0,
+                communicationAndNetworking: 2,
                 carefulnessAndAttentionToDetail: 3,
-                tinkeringAndFingerPrecision: 0,
-                spacialNavigationAndOrientation: 0,
                 resilienceAndEndurance: 3,
                 stressResistanceAndEmotionalRegulation: 3,
                 empathyAndInterpersonalCare: 3,
-                outdoorAndWeatherResilience: 0,
                 collaborationAndTeamwork: 3,
-                timeManagementAndPlanning: 2,
-                selfDisciplineAndPerseverance: 2,
-                presentationAndStorytelling: 2
+                timeManagementAndPlanning: 2
             )
 
-        case .service, .hospitality, .retail:
+        // Teaching is explaining and holding a room — a different job from
+        // nursing, which it used to share a profile with.
+        case .education:
             return .init(
-                analyticalReasoningAndProblemSolving: 0,
-                creativityAndInsightfulThinking: 1,
                 communicationAndNetworking: 3,
-                persuasionAndNegotiation: 1,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 0,
                 carefulnessAndAttentionToDetail: 1,
-                tinkeringAndFingerPrecision: 0,
-                spacialNavigationAndOrientation: 0,
                 resilienceAndEndurance: 2,
-                stressResistanceAndEmotionalRegulation: 2,
-                empathyAndInterpersonalCare: 2,
-                outdoorAndWeatherResilience: 0,
-                collaborationAndTeamwork: 2,
-                timeManagementAndPlanning: 1,
-                selfDisciplineAndPerseverance: 1,
-                presentationAndStorytelling: 2
-            )
-
-        case .construction, .manufacturing:
-            return .init(
-                analyticalReasoningAndProblemSolving: 1,
-                creativityAndInsightfulThinking: 0,
-                communicationAndNetworking: 0,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 0,
-                carefulnessAndAttentionToDetail: 2,
-                tinkeringAndFingerPrecision: 3,
-                spacialNavigationAndOrientation: 2,
-                resilienceAndEndurance: 3,
-                stressResistanceAndEmotionalRegulation: 1,
-                outdoorAndWeatherResilience: 1,
-                collaborationAndTeamwork: 1,
-                timeManagementAndPlanning: 1,
-                selfDisciplineAndPerseverance: 1,
-                presentationAndStorytelling: 0
-            )
-
-        case .design, .showBusiness:
-            return .init(
-                analyticalReasoningAndProblemSolving: 1,
-                creativityAndInsightfulThinking: 4,
-                communicationAndNetworking: 2,
-                persuasionAndNegotiation: 1,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 2,
-                carefulnessAndAttentionToDetail: 2,
-                tinkeringAndFingerPrecision: 1,
-                spacialNavigationAndOrientation: 1,
-                resilienceAndEndurance: 1,
-                stressResistanceAndEmotionalRegulation: 1,
-                outdoorAndWeatherResilience: 0,
+                stressResistanceAndEmotionalRegulation: 3,
+                empathyAndInterpersonalCare: 3,
                 collaborationAndTeamwork: 2,
                 timeManagementAndPlanning: 2,
                 selfDisciplineAndPerseverance: 2,
                 presentationAndStorytelling: 3
             )
 
-        case .business, .administration, .law, .science:
+        // The shop floor: the sale is the job.
+        case .retail:
             return .init(
-                analyticalReasoningAndProblemSolving: 3,
+                communicationAndNetworking: 3,
+                persuasionAndNegotiation: 2,
+                carefulnessAndAttentionToDetail: 1,
+                resilienceAndEndurance: 2,
+                stressResistanceAndEmotionalRegulation: 2,
+                empathyAndInterpersonalCare: 2,
+                collaborationAndTeamwork: 2,
+                timeManagementAndPlanning: 1
+            )
+
+        // Service under pressure: a full room, at speed, without losing the plot.
+        case .hospitality:
+            return .init(
+                communicationAndNetworking: 2,
+                carefulnessAndAttentionToDetail: 2,
+                resilienceAndEndurance: 3,
+                stressResistanceAndEmotionalRegulation: 3,
+                empathyAndInterpersonalCare: 2,
+                collaborationAndTeamwork: 3,
+                timeManagementAndPlanning: 2
+            )
+
+        // Personal services: one client at a time, and they come back or don't.
+        case .service:
+            return .init(
                 creativityAndInsightfulThinking: 1,
                 communicationAndNetworking: 3,
-                persuasionAndNegotiation: 1,
-                leadershipAndInfluence: 2,
-                visionaryThinkingAndAmbition: 1,
                 carefulnessAndAttentionToDetail: 2,
-                tinkeringAndFingerPrecision: 0,
-                spacialNavigationAndOrientation: 0,
-                resilienceAndEndurance: 1,
-                stressResistanceAndEmotionalRegulation: 2,
-                outdoorAndWeatherResilience: 0,
+                tinkeringAndFingerPrecision: 1,
+                resilienceAndEndurance: 2,
+                empathyAndInterpersonalCare: 3,
+                timeManagementAndPlanning: 1
+            )
+
+        // Site work: hands, stamina, and the weather.
+        case .construction:
+            return .init(
+                carefulnessAndAttentionToDetail: 2,
+                tinkeringAndFingerPrecision: 3,
+                spacialNavigationAndOrientation: 2,
+                resilienceAndEndurance: 3,
+                outdoorAndWeatherResilience: 3,
+                collaborationAndTeamwork: 2,
+                selfDisciplineAndPerseverance: 1
+            )
+
+        // The line: the same thing again, correctly, all shift.
+        case .manufacturing:
+            return .init(
+                analyticalReasoningAndProblemSolving: 1,
+                carefulnessAndAttentionToDetail: 3,
+                tinkeringAndFingerPrecision: 3,
+                spacialNavigationAndOrientation: 2,
+                resilienceAndEndurance: 3,
+                collaborationAndTeamwork: 1,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Design: an idea, made to fit a brief and a deadline.
+        case .design:
+            return .init(
+                creativityAndInsightfulThinking: 3,
+                communicationAndNetworking: 2,
+                carefulnessAndAttentionToDetail: 2,
+                spacialNavigationAndOrientation: 1,
                 collaborationAndTeamwork: 2,
                 timeManagementAndPlanning: 2,
                 selfDisciplineAndPerseverance: 2,
                 presentationAndStorytelling: 2
             )
 
-        case .transportation:
+        // Performing and publishing: an audience, and the nerve to face it.
+        case .showBusiness:
             return .init(
-                analyticalReasoningAndProblemSolving: 1,
-                creativityAndInsightfulThinking: 0,
-                communicationAndNetworking: 1,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 0,
-                carefulnessAndAttentionToDetail: 2,
-                tinkeringAndFingerPrecision: 0,
-                spacialNavigationAndOrientation: 3,
+                creativityAndInsightfulThinking: 3,
+                communicationAndNetworking: 2,
                 resilienceAndEndurance: 2,
-                stressResistanceAndEmotionalRegulation: 1,
-                outdoorAndWeatherResilience: 1,
-                collaborationAndTeamwork: 1,
-                timeManagementAndPlanning: 2,
-                selfDisciplineAndPerseverance: 1,
-                presentationAndStorytelling: 0
-            )
-
-        case .agriculture:
-            return .init(
-                analyticalReasoningAndProblemSolving: 0,
-                creativityAndInsightfulThinking: 0,
-                communicationAndNetworking: 0,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 1,
-                carefulnessAndAttentionToDetail: 1,
-                tinkeringAndFingerPrecision: 1,
-                spacialNavigationAndOrientation: 1,
-                resilienceAndEndurance: 4,
-                stressResistanceAndEmotionalRegulation: 1,
-                outdoorAndWeatherResilience: 2,
-                collaborationAndTeamwork: 1,
+                stressResistanceAndEmotionalRegulation: 2,
                 timeManagementAndPlanning: 1,
                 selfDisciplineAndPerseverance: 2,
-                presentationAndStorytelling: 0
+                presentationAndStorytelling: 3
             )
 
-        default:
+        // Commercial work: reading the numbers and winning the room.
+        case .business:
             return .init(
-                analyticalReasoningAndProblemSolving: 0,
-                creativityAndInsightfulThinking: 0,
-                communicationAndNetworking: 1,
-                leadershipAndInfluence: 0,
-                visionaryThinkingAndAmbition: 0,
-                carefulnessAndAttentionToDetail: 1,
-                tinkeringAndFingerPrecision: 0,
-                spacialNavigationAndOrientation: 0,
-                resilienceAndEndurance: 1,
+                analyticalReasoningAndProblemSolving: 2,
+                communicationAndNetworking: 3,
+                persuasionAndNegotiation: 2,
+                carefulnessAndAttentionToDetail: 2,
                 stressResistanceAndEmotionalRegulation: 1,
-                outdoorAndWeatherResilience: 0,
+                collaborationAndTeamwork: 2,
+                timeManagementAndPlanning: 2,
+                presentationAndStorytelling: 2
+            )
+
+        // Back office: nothing dropped, everything filed, on the day it is due.
+        case .administration:
+            return .init(
+                communicationAndNetworking: 2,
+                carefulnessAndAttentionToDetail: 3,
+                stressResistanceAndEmotionalRegulation: 1,
+                collaborationAndTeamwork: 2,
+                timeManagementAndPlanning: 3,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Law: argument built on detail, delivered under pressure.
+        case .law:
+            return .init(
+                analyticalReasoningAndProblemSolving: 3,
+                communicationAndNetworking: 2,
+                persuasionAndNegotiation: 2,
+                carefulnessAndAttentionToDetail: 3,
+                stressResistanceAndEmotionalRegulation: 2,
+                timeManagementAndPlanning: 2,
+                selfDisciplineAndPerseverance: 2,
+                presentationAndStorytelling: 2
+            )
+
+        // Policing, firefighting, and public works: the calm, physical trades
+        // of the state. This used to fall through to the catch-all.
+        case .publicServices:
+            return .init(
+                communicationAndNetworking: 2,
+                carefulnessAndAttentionToDetail: 2,
+                resilienceAndEndurance: 3,
+                stressResistanceAndEmotionalRegulation: 3,
+                empathyAndInterpersonalCare: 2,
+                outdoorAndWeatherResilience: 2,
+                collaborationAndTeamwork: 3,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Moving people and goods: the road, the clock, and staying alert.
+        case .transportation:
+            return .init(
+                carefulnessAndAttentionToDetail: 3,
+                spacialNavigationAndOrientation: 3,
+                resilienceAndEndurance: 2,
+                stressResistanceAndEmotionalRegulation: 2,
+                outdoorAndWeatherResilience: 1,
+                timeManagementAndPlanning: 2,
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Land work: outdoors, all season, fixing what breaks.
+        case .agriculture:
+            return .init(
+                carefulnessAndAttentionToDetail: 1,
+                tinkeringAndFingerPrecision: 2,
+                spacialNavigationAndOrientation: 1,
+                resilienceAndEndurance: 3,
+                outdoorAndWeatherResilience: 3,
                 collaborationAndTeamwork: 1,
                 timeManagementAndPlanning: 1,
-                selfDisciplineAndPerseverance: 1,
-                presentationAndStorytelling: 0
+                selfDisciplineAndPerseverance: 2
+            )
+
+        // Founding: nerve, a story, and the discipline to keep going. Also
+        // previously a catch-all case, which asked a founder for nothing.
+        case .entrepreneurship:
+            return .init(
+                analyticalReasoningAndProblemSolving: 2,
+                creativityAndInsightfulThinking: 2,
+                communicationAndNetworking: 3,
+                persuasionAndNegotiation: 3,
+                leadershipAndInfluence: 2,
+                visionaryThinkingAndAmbition: 3,
+                riskTakingAndInitiative: 3,
+                stressResistanceAndEmotionalRegulation: 2,
+                timeManagementAndPlanning: 2,
+                selfDisciplineAndPerseverance: 3
             )
         }
     }
@@ -698,14 +965,14 @@ enum JobCatalog {
     static func job(title: String, category: JobCategory, income: Int, icon: String,
                     summary: String, minEQF: Int, minYears: Int?, targetCapital: Int?,
                     baseTitle: String, rung: Int, rungLabel: String,
-                    industry: Industry) -> Job {
+                    isTopRung: Bool, industry: Industry) -> Job {
         let hard = credentials(forTitle: title, baseTitle: baseTitle)
         // A role can't sensibly demand a license or certification the player
         // couldn't have earned at its listed education level. Raise the floor to
         // the toughest education prerequisite of any credential the role
         // mandates, so the stated requirement reflects what the player must
-        // genuinely already hold (e.g. a Paralegal needs the vocational-level
-        // Paralegal Certificate, not just high school).
+        // genuinely already hold (e.g. a Physiotherapist listed at bachelor's
+        // level still reads as doctorate, because the licence it mandates is).
         let credentialEQF = hard.trainings.map(\.minEQF).max() ?? 0
         let effectiveEQF = max(minEQF, credentialEQF)
         // Degree fields only matter once a university degree is required; trades
@@ -715,9 +982,12 @@ enum JobCatalog {
             : nil
         let requirements = Job.Requirements(
             education: .init(minEQF: effectiveEQF, acceptedProfiles: profiles),
+            // A profile written against the *exact* title is taken as authored —
+            // it was written for that rung. Everything else is the ladder's
+            // entry bar and climbs with the seat (see `seniority`).
             softSkills: softSkillsByFullTitle[title]
-                ?? softSkillsByBaseTitle[baseTitle]
-                ?? defaultSoftSkills(for: category),
+                ?? seniority(softSkillsByBaseTitle[baseTitle] ?? defaultSoftSkills(for: category),
+                             rung: rung, isTopRung: isTopRung),
             hardSkills: hard,
             minYearsExperience: minYears ?? minYearsByTitle[title] ?? 0
         )
@@ -735,7 +1005,7 @@ enum JobCatalog {
         job(title: spec.title, category: spec.category, income: spec.income, icon: spec.icon,
             summary: spec.summary, minEQF: spec.minEQF, minYears: spec.minYears,
             targetCapital: spec.targetCapital,
-            baseTitle: spec.title, rung: 0, rungLabel: "",
+            baseTitle: spec.title, rung: 0, rungLabel: "", isTopRung: true,
             industry: industries(forBaseTitle: spec.title, category: spec.category).randomElement()!)
     }
 
@@ -751,6 +1021,7 @@ enum JobCatalog {
                 icon: rung.icon ?? ladder.icon, summary: rung.summary, minEQF: rung.minEQF,
                 minYears: rung.minYears, targetCapital: nil,
                 baseTitle: ladder.name, rung: index, rungLabel: rung.label,
+                isTopRung: index == ladder.rungs.count - 1,
                 industry: sector)
         }
     }

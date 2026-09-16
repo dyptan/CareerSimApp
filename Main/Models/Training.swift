@@ -28,6 +28,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     case emt = "EMT"
     case cpa = "CPA"
     case boardCertified = "Board Certification"
+    case pharmacyTechnician = "Pharmacy Technician"
 
     // MARK: Statutory licences
     case drivers = "Driver's License"
@@ -51,6 +52,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     case masterElectrician = "Master Electrician License"
     case masterPlumber = "Master Plumber License"
     case airlineTransportPilot = "ATP"
+    case airframePowerplant = "A&P Certificate"
+    case policeAcademy = "Police Academy"
+    case psychologyLicense = "Psychologist License"
+    case physicalTherapyLicense = "Physical Therapy License"
+    case epaRefrigerant = "EPA 608"
 
     // MARK: Skill-building programs (creative & digital fields)
     // Non-statutory, non-gating credentials for fields that legally require none
@@ -78,6 +84,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .cna: return "Nursing Assistant Course (CNA)"
         case .dentalAssistant: return "Dental Assisting Course (Dental Assistant)"
+        case .pharmacyTechnician: return "Pharmacy Technician Course (CPhT)"
         case .flightAttendantCert: return "Cabin Crew Training (Flight Attendant Certificate)"
         case .teachingCertificate: return "Teacher Training (Teaching Certificate)"
         case .cosmetology: return "Cosmetology School (Cosmetology License)"
@@ -102,6 +109,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "Architecture Licensure (Architect License)"
         case .pesticideApplicator: return "Applicator Course (Pesticide License)"
         case .securityGuard: return "Guard Training (Security Guard License)"
+        case .policeAcademy: return "Police Academy (Sworn Officer)"
+        case .airframePowerplant: return "Aviation Maintenance School (A&P Certificate)"
+        case .psychologyLicense: return "Supervised Practice (Psychologist License)"
+        case .physicalTherapyLicense: return "Board Exam (Physical Therapy License)"
+        case .epaRefrigerant: return "Refrigerant Handling Exam (EPA 608)"
         case .masterElectrician: return "Master Electrician Program (Master Electrician License)"
         case .masterPlumber: return "Master Plumber Program (Master Plumber License)"
         case .airlineTransportPilot: return "Airline Pilot Training (ATP Certificate)"
@@ -117,6 +129,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .cna: return "Certified Nursing Assistant. The first step into nursing — basic patient care under a nurse’s supervision."
         case .dentalAssistant: return "Trained to help dentists during procedures, take X-rays, and prepare patients."
+        case .pharmacyTechnician: return "Certified to prepare and dispense prescriptions under a pharmacist\u{2019}s supervision \u{2014} the way into a pharmacy without the doctorate."
         case .flightAttendantCert: return "FAA-issued certificate proving you can keep passengers safe on commercial flights."
         case .teachingCertificate: return "State license to teach in a public school. Earned after a teacher-training program and supervised classroom hours."
         case .cosmetology: return "State license to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam."
@@ -141,6 +154,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "State license required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB)."
         case .pesticideApplicator: return "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs."
         case .securityGuard: return "State license required to work as an unarmed security guard. Covers law, ethics, and basic emergency response."
+        case .policeAcademy: return "Months of recruit training in law, firearms, driving, and defensive tactics. No one is sworn in as an officer without it."
+        case .airframePowerplant: return "FAA Airframe & Powerplant certificate. Only a certificated mechanic may sign an aircraft back into service."
+        case .psychologyLicense: return "State license to practise psychology, earned after the doctorate and supervised clinical hours. The title itself is protected."
+        case .physicalTherapyLicense: return "State license to practise physical therapy, sat after the doctoral program. Required to treat patients unsupervised."
+        case .epaRefrigerant: return "EPA Section 608 certification. Legally required to buy or handle the refrigerants every air-conditioning job runs on."
         case .masterElectrician: return "The senior electrician license. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician."
         case .masterPlumber: return "The senior plumbing license. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber."
         case .airlineTransportPilot: return "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner."
@@ -155,6 +173,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         switch self {
         case .cna: return "🏥"
         case .dentalAssistant: return "🦷"
+        case .pharmacyTechnician: return "💊"
         case .flightAttendantCert: return "🧳"
         case .teachingCertificate: return "📚"
         case .cosmetology: return "💇"
@@ -179,6 +198,11 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .architect: return "📐"
         case .pesticideApplicator: return "🌱"
         case .securityGuard: return "🛡️"
+        case .policeAcademy: return "👮"
+        case .airframePowerplant: return "🛩️"
+        case .psychologyLicense: return "🧠"
+        case .physicalTherapyLicense: return "🤸"
+        case .epaRefrigerant: return "❄️"
         case .masterElectrician: return "⚡️"
         case .masterPlumber: return "🔧"
         case .airlineTransportPilot: return "✈️"
@@ -324,6 +348,25 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .securityGuard:
             return [.init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
+        case .pharmacyTechnician:
+            return [.init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
+                    .init(keyPath: \.communicationAndNetworking, weight: 1)]
+        case .policeAcademy:
+            return [.init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
+                    .init(keyPath: \.resilienceAndEndurance, weight: 1),
+                    .init(keyPath: \.collaborationAndTeamwork, weight: 1)]
+        case .airframePowerplant:
+            return [.init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
+                    .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
+        case .psychologyLicense:
+            return [.init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
+                    .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)]
+        case .physicalTherapyLicense:
+            return [.init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
+                    .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
+        case .epaRefrigerant:
+            return [.init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
+                    .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
         case .masterElectrician:
             return [.init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -409,6 +452,9 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         .dentalLicense: .health,
         .pharmacistLicense: .health,
         .veterinaryLicense: .health,
+        .pharmacyTechnician: .health,
+        .psychologyLicense: .health,
+        .physicalTherapyLicense: .health,
 
         .teachingCertificate: .education,
         .cpa: .business,
@@ -514,6 +560,9 @@ extension Training {
         .emt:                  .init(),
         .cpa:                  .init(minEQF: 5),
         .boardCertified:       .init(minEQF: 7, minYearsExperience: 3, field: .health),
+        // A pharmacy technician is trained and registered, not degreed — it is
+        // the way into a dispensary without the pharmacist's doctorate.
+        .pharmacyTechnician:   .init(),
 
         // MARK: Statutory licences
         // The driving and flying entry licences are the only ones a teen may take.
@@ -535,6 +584,10 @@ extension Training {
         .dentalLicense:        .init(isStatutory: true, minEQF: 7),
         .pharmacistLicense:    .init(isStatutory: true, minEQF: 7),
         .veterinaryLicense:    .init(isStatutory: true, minEQF: 7),
+        // Practising psychology and physical therapy are both doctoral, licensed
+        // professions — the qualification alone does not let you treat anyone.
+        .psychologyLicense:    .init(isStatutory: true, minEQF: 7),
+        .physicalTherapyLicense: .init(isStatutory: true, minEQF: 7),
         .bar:                  .init(isStatutory: true, minEQF: 7),
         // Trades: journeyman licences gate on apprenticeship years, master
         // licences on the journeyman licence plus more years.
@@ -549,9 +602,18 @@ extension Training {
                                      field: .engineering),
         .architect:            .init(isStatutory: true, minEQF: 5, minYearsExperience: 2,
                                      field: .construction),
-        // The FAA Academy takes applicants with a degree *or* several years of
-        // responsible work behind them. There is no "or" in a Rules row, so this
-        // takes the floor both routes share — you finished school.
+        // Aviation maintenance school, then the FAA exams. Nobody else may sign
+        // an aircraft back into service.
+        .airframePowerplant:   .init(isStatutory: true),
+        // Recruit school: departments train from scratch, so it asks for no
+        // schooling and no prior work. Left at the default adult age rather than
+        // the 21 some forces set, because `TrainingRow.available` hides a
+        // credential below its `minAge` outright — a higher bar would leave the
+        // only route into policing invisible for three years with the job itself
+        // still listing it.
+        .policeAcademy:        .init(isStatutory: true),
+        // Handling refrigerant is federally certified; the exam is open to all.
+        .epaRefrigerant:       .init(isStatutory: true, minEQF: 0),
         // A short course and an exam, open to anyone old enough.
         .pesticideApplicator:  .init(isStatutory: true, minEQF: 0),
         // Guard training itself asks only for a school-leaving certificate.
