@@ -145,18 +145,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Cyclical, discretionary-spending sectors that are hit hardest in a bear
-    /// market: travel, dining, entertainment, and consumer retail are the first
-    /// budgets households and advertisers cut. Used to freeze hiring in these
-    /// industries during an economic downturn (see `Player.applyEconomicTurmoil`).
-    var isCyclical: Bool {
-        switch self {
-        case .hospitality, .retail, .showBusiness, .entrepreneurship:
-            return true
-        default:
-            return false
-        }
-    }
 
     /// Safety-critical / regulated fields with a low tolerance for risk, where a
     /// role's certifications are a HARD hiring requirement at *every* employer
@@ -278,6 +266,230 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Move people and goods by road and air: drive, fly, operate, keep vehicles running safely, and plan the routes and warehouses behind it."
         case .administration:
             return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
+        }
+    }
+}
+
+
+
+/// The sector of the economy an employer trades in — *what the business sells*,
+/// as distinct from `JobCategory`, which is what the worker actually does.
+///
+/// The two are genuinely different axes and one cannot stand in for the other: a
+/// mechanical engineer, a lawyer and a designer are all `.engineering`, `.law`
+/// and `.design` respectively whichever sector employs them, and a single sector
+/// employs all three. Modelling the economy on `JobCategory` meant a downturn in
+/// "Design" — which is not a market anyone trades in — instead of a downturn in
+/// advertising or in carmaking.
+///
+/// Every posting states its sector (see `Job.industry`), and this is the unit the
+/// cycle runs on: `Player.industryTrend` is keyed by `Industry`, not by category.
+enum Industry: String, CaseIterable, Identifiable, Codable {
+    case software = "Software & Internet"
+    case hardware = "Computing Hardware"
+    case telecom = "Telecoms"
+    case automotive = "Automotive"
+    case aerospaceDefense = "Aerospace & Defence"
+    case energy = "Energy & Utilities"
+    case finance = "Banking & Finance"
+    case healthcare = "Healthcare"
+    case pharmaBiotech = "Pharma & Biotech"
+    case education = "Education"
+    case government = "Government & Public Sector"
+    case retailTrade = "Retail & Consumer"
+    case hospitalityTourism = "Hospitality & Tourism"
+    case mediaEntertainment = "Media & Entertainment"
+    case construction = "Construction & Property"
+    case agriFood = "Agriculture & Food"
+    case logistics = "Transport & Logistics"
+    case manufacturing = "Industrial Manufacturing"
+    case professionalServices = "Professional Services"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .software:             return "💾"
+        case .hardware:             return "🖥️"
+        case .telecom:              return "📡"
+        case .automotive:           return "🚗"
+        case .aerospaceDefense:     return "✈️"
+        case .energy:               return "⚡"
+        case .finance:              return "🏦"
+        case .healthcare:           return "🏥"
+        case .pharmaBiotech:        return "💊"
+        case .education:            return "🏫"
+        case .government:           return "🏛️"
+        case .retailTrade:          return "🛒"
+        case .hospitalityTourism:   return "🏨"
+        case .mediaEntertainment:   return "🎬"
+        case .construction:         return "🏗️"
+        case .agriFood:             return "🌾"
+        case .logistics:            return "🚚"
+        case .manufacturing:        return "🏭"
+        case .professionalServices: return "📁"
+        }
+    }
+
+    /// Cyclical, discretionary-spending sectors hit hardest in a bear market.
+    var isCyclical: Bool { beta > 1.0 }
+
+    /// The fame bucket a reputation made in this sector belongs to. Mirrors
+    /// `JobCategory.fameCategory` on the sector axis, so a project can ride the
+    /// markets it would make its name in (see `Player.climate(forFame:)`).
+    var fameCategory: FameCategory? {
+        switch self {
+        case .software, .hardware, .telecom:
+            return .technology
+        case .finance, .retailTrade, .professionalServices:
+            return .business
+        case .healthcare, .pharmaBiotech, .education:
+            return .science
+        case .mediaEntertainment:
+            return .entertainment
+        default:
+            return nil
+        }
+    }
+
+    /// How much of the national cycle this sector transmits — its beta. 1.0 moves
+    /// with the economy; above 1 amplifies it, below 1 damps it.
+    ///
+    /// Above 1, the discretionary trades: when households and advertisers cut a
+    /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
+    /// children go to school and the bins get collected in every economy, so
+    /// public payrolls barely notice a recession. This is what makes one downturn
+    /// land unevenly instead of flattening the whole economy at once.
+    var beta: Double {
+        switch self {
+        case .hospitalityTourism, .mediaEntertainment, .retailTrade:
+            return 1.6   // first budget households and advertisers cut
+        case .construction, .automotive, .manufacturing, .logistics:
+            return 1.3   // capital spending stops early in a downturn
+        case .software, .hardware:
+            return 1.1
+        case .healthcare, .education, .government:
+            return 0.3   // defensive: funded through the cycle
+        case .pharmaBiotech, .energy, .agriFood, .telecom:
+            return 0.6   // people still take their medicine and heat their homes
+        default:
+            return 1.0
+        }
+    }
+
+    /// How much this sector moves on its *own* account, independent of the
+    /// national cycle — a platform shift, a drug approval, an oil shock, a hit
+    /// franchise. Beta says how a sector rides the economy; this says how much of
+    /// its fortune has nothing to do with the economy at all.
+    ///
+    /// The two are genuinely separate: government has a low beta *and* low
+    /// idiosyncratic swing (dull in every weather), whereas pharma also has a low
+    /// beta but a high one — it ignores the cycle and lives on its own pipeline.
+    var volatility: Double {
+        switch self {
+        case .software, .pharmaBiotech, .mediaEntertainment:
+            return 1.6   // platform shifts, pipelines and hits, cycle or no cycle
+        case .hardware, .energy, .aerospaceDefense:
+            return 1.3   // capex cycles and commodity prices of their own
+        case .government, .education:
+            return 0.3   // budgets move slowly and for their own reasons
+        case .healthcare, .agriFood, .retailTrade, .logistics:
+            return 0.7
+        default:
+            return 1.0
+        }
+    }
+}
+
+/// How an industry is doing this year — the player-facing face of
+/// `Player.industryTrend`. Every industry sits in one of these bands, and the
+/// band is what the odds actually read: a boom is a genuinely easier year to be
+/// hired and promoted in, a slump a genuinely harder one.
+///
+/// The bands are deliberately coarse. The underlying trend is a continuous
+/// random walk, but a player can act on "Technology is booming" in a way they
+/// cannot act on "Technology is at +0.62".
+enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
+    case boom = "Booming"
+    case growth = "Growing"
+    case steady = "Steady"
+    case slowdown = "Slowing"
+    case slump = "Slump"
+
+    var id: String { rawValue }
+
+    /// Bucket a continuous trend (-1...1) into its band.
+    init(trend: Double) {
+        switch trend {
+        case 0.55...:            self = .boom
+        case 0.20..<0.55:        self = .growth
+        case (-0.20)..<0.20:     self = .steady
+        case (-0.55)..<(-0.20):  self = .slowdown
+        default:                 self = .slump
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .boom:     return "🚀"
+        case .growth:   return "📈"
+        case .steady:   return "➖"
+        case .slowdown: return "📉"
+        case .slump:    return "🧊"
+        }
+    }
+
+    /// Multiplier on hire odds for a role in this industry. A slump does not
+    /// close a field — someone is always hired somewhere — it just makes the
+    /// same application a markedly worse bet.
+    var hireFactor: Double {
+        switch self {
+        case .boom:     return 1.30
+        case .growth:   return 1.12
+        case .steady:   return 1.00
+        case .slowdown: return 0.80
+        case .slump:    return 0.55
+        }
+    }
+
+    /// Additive term on the annual promotion odds. Employers hand out titles
+    /// when the order book is full and freeze them when it isn't; a slump
+    /// freezes raises outright (see `Player.promotionOdds`).
+    var promotionDelta: Double {
+        switch self {
+        case .boom:     return  0.06
+        case .growth:   return  0.03
+        case .steady:   return  0.00
+        case .slowdown: return -0.04
+        case .slump:    return -0.10
+        }
+    }
+
+    /// Multiplier on a spare-time project's success odds in this field. A
+    /// project needs an audience with money and attention to spare, so the cycle
+    /// reaches it too — more gently than a payroll, which is why the spread here
+    /// is narrower than `hireFactor`'s.
+    var projectFactor: Double {
+        switch self {
+        case .boom:     return 1.20
+        case .growth:   return 1.08
+        case .steady:   return 1.00
+        case .slowdown: return 0.88
+        case .slump:    return 0.70
+        }
+    }
+
+    /// Whether employers in this industry have stopped promoting altogether.
+    var freezesRaises: Bool { self == .slump }
+
+    /// One line for the Macroeconomics panel.
+    var blurb: String {
+        switch self {
+        case .boom:     return "Hiring hard and paying up — the best year to apply or ask."
+        case .growth:   return "Expanding. Openings are easier to come by than usual."
+        case .steady:   return "Neither growing nor shrinking. The odds are the plain ones."
+        case .slowdown: return "Tightening. Fewer openings, slower raises."
+        case .slump:    return "Contracting — postings pulled and raises frozen."
         }
     }
 }

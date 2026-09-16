@@ -29,11 +29,17 @@ struct Job: Identifiable, Codable, Hashable {
     /// Where the work actually happens (see `WorkSetting`). Stated in the
     /// catalogue, so the jobs list can filter on it.
     let workSetting: WorkSetting
+    /// The sector the employer trades in — what the business sells, as opposed
+    /// to `category`, which is what the worker does. This is the axis the
+    /// economy runs on (see `Industry` and `Player.industryTrend`): a designer at
+    /// a carmaker rides the automotive cycle, one at an agency rides advertising.
+    let industry: Industry
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
          requirements: Requirements, targetCapital: Int? = nil,
          baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "",
-         workSetting: WorkSetting = .office) {
+         workSetting: WorkSetting = .office,
+         industry: Industry = .professionalServices) {
         self.id = id
         self.category = category
         self.income = income
@@ -45,6 +51,7 @@ struct Job: Identifiable, Codable, Hashable {
         self.rung = rung
         self.rungLabel = rungLabel
         self.workSetting = workSetting
+        self.industry = industry
         let variance = category.salaryVariance
         let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
         self.annualIncome = Int(Double(income) * factor)
@@ -174,8 +181,47 @@ extension Job {
         return true
     }
 
+    /// The axes this role actually asks something of — the ones its profile
+    /// scores above zero. Everything else is irrelevant to the job and is
+    /// neither rewarded nor penalised.
+    var askedSoftSkills: [WritableKeyPath<SoftSkills, Int>] {
+        Self.scoredSoftSkills.filter { requirements.softSkills[keyPath: $0] > 0 }
+    }
+
+    /// 0...1 fit of the player's soft skills against what this role asks for.
+    ///
+    /// Two properties matter, and the old scorer had neither.
+    ///
+    /// **It reads only the axes the role names.** It used to count how many of
+    /// all eighteen axes the player cleared, which meant an axis a role asks
+    /// nothing of scored as a pass — so a role listing five requirements handed
+    /// out thirteen free points and a role listing fourteen handed out four.
+    /// Listing a nice-to-have made a job measurably *harder to get*, which is
+    /// backwards, and left profile length acting as a difficulty knob nobody
+    /// had set deliberately: a Junior Graphic Artist was a harder hire than a
+    /// Senior Accountant purely because its category's default profile was
+    /// longer.
+    ///
+    /// **It grades.** Each axis pays out in proportion, so three of a required
+    /// four is worth three quarters rather than nothing. The all-or-nothing
+    /// version made the last point on an axis worth as much as the first three
+    /// together, and disagreed with `founderSkillFit`, which has always graded
+    /// its own profile term this way.
+    ///
+    /// A role that asks for nothing is a perfect fit for anyone.
+    func softSkillFit(for player: Player) -> Double {
+        let asked = askedSoftSkills
+        guard !asked.isEmpty else { return 1.0 }
+        let required = requirements.softSkills
+        return asked.reduce(0.0) { acc, kp in
+            acc + min(Double(player.softSkills[keyPath: kp]) / Double(required[keyPath: kp]), 1.0)
+        } / Double(asked.count)
+    }
+
+    /// How many of the axes this role asks for the player fully clears. Display
+    /// only — `softSkillFit` is what the odds are built from.
     func softSkillsHelpfulScore(for player: Player) -> Int {
-        Self.scoredSoftSkills.reduce(0) { score, kp in
+        askedSoftSkills.reduce(0) { score, kp in
             score + (player.softSkills[keyPath: kp] >= requirements.softSkills[keyPath: kp] ? 1 : 0)
         }
     }
@@ -409,7 +455,7 @@ extension Job {
         // multiplies down to its floor, and the absence of a credential or
         // experience simply earns nothing.
         let credential = player.trainingCareerBonus(for: category)
-        let skillScore = Double(softSkillsHelpfulScore(for: player)) / Double(Self.scoredSoftSkills.count)
+        let skillScore = softSkillFit(for: player)
         let prestige = relevantPrestigeBonus(for: player)
         // A professional network in this field — built by attending its summits
         // and conferences — tilts the odds in the applicant's favour.
@@ -427,11 +473,15 @@ extension Job {
         let merit = 0.2 + skillScore * 0.7 + prestige + player.difficulty.opportunityBonus
             + network + fame + breakthrough + credential
         let raw = merit * fit.factor * salaryAlignmentFactor(requestedSalary: requestedSalary)
+        // What this industry is doing this year. A booming field hires people it
+        // would pass over in a slump, and the same application is a materially
+        // different bet depending on when it lands (see `IndustryClimate`).
+        let climate = player.climate(for: industry).hireFactor
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
         // to the top. Founders make their own seat, so they're exempt.
         let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
-        return max(0.05, min(0.95, raw * scarcity))
+        return max(0.05, min(0.95, raw * climate * scarcity))
     }
 
     // MARK: - Entrepreneurial path
@@ -482,7 +532,6 @@ extension Job {
     /// candidate argues their way onto a different step of it. Keyed by
     /// `baseTitle`, so one entry covers every rung of a ladder.
     static let publicPayScaleTitles: Set<String> = [
-        "Air Traffic Controller",
         "Judge",
     ]
 
@@ -500,12 +549,18 @@ extension Job {
     /// Probability that a founding attempt succeeds. Driven by *who the founder
     /// is*, not their bank balance: experience in the venture's own industry and
     /// how well their soft skills fit what the business demands are the two big
-    /// levers, with the size of the stake a supporting factor. The industry
-    /// experience baseline (`minYearsExperience`) is still a hard gate — you
-    /// can't credibly launch a restaurant having never worked in hospitality.
+    /// levers, with the size of the stake a supporting factor.
+    ///
+    /// **Capital is the only hard requirement.** Anyone with a stake may try
+    /// anything — nobody is barred from opening a restaurant for never having
+    /// worked in hospitality, they are simply very likely to fail at it. The
+    /// industry-experience baseline that used to gate this outright is now just
+    /// the largest probabilistic term (`founderExperienceFit`), so an unprepared
+    /// founder sits near the 0.03 floor rather than being refused.
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
-        guard experienceMet(for: player) else { return 0.0 }
+        // The one hard requirement. Everything else below only moves the odds.
+        guard investedCapital > 0 else { return 0.0 }
         // Weighted so that even a maxed-out founder lands around the
         // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
         // while weaker preparation falls away steeply below it.
@@ -516,7 +571,11 @@ extension Job {
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
-        return max(0.03, min(GameConstants.founderMaxSuccess, 0.05 + experience + skill + capital + credential))
+        // Founding into a contracting market is the harder version of the same
+        // bet — customers and backers are scarcer in a slump.
+        let climate = player.climate(for: industry).hireFactor
+        let raw = (0.05 + experience + skill + capital + credential) * climate
+        return max(0.03, min(GameConstants.founderMaxSuccess, raw))
     }
 
     /// 0...1 measure of how seasoned the player is in this venture's industry.
@@ -535,12 +594,10 @@ extension Job {
     /// regardless of field. The field-specific profile is weighted a little more.
     func founderSkillFit(for player: Player) -> Double {
         let p = player.softSkills
-        let req = requirements.softSkills
 
-        let profileAxes = Job.scoredSoftSkills.filter { req[keyPath: $0] > 0 }
-        let profileFit: Double = profileAxes.isEmpty ? 0.5 : profileAxes.reduce(0.0) { acc, kp in
-            acc + min(Double(p[keyPath: kp]) / Double(req[keyPath: kp]), 1.0)
-        } / Double(profileAxes.count)
+        // The same graded profile term the hiring path uses — a venture asks
+        // for the skills its business demands the way an employer does.
+        let profileFit = softSkillFit(for: player)
 
         let gritKeys: [WritableKeyPath<SoftSkills, Int>] = [
             \.riskTakingAndInitiative, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
@@ -588,9 +645,16 @@ extension Job {
 // MARK: - Seniority helpers
 
 extension Job {
-    /// Whether this job is a rung of a multi-step ladder rather than a
-    /// standalone role — i.e. it carries a seniority label.
-    var isLadderVariant: Bool { !rungLabel.isEmpty }
+    /// Whether this job sits *above* the entry rung of its ladder.
+    ///
+    /// Position, not the label. It used to ask whether the title carried a
+    /// seniority word, which quietly exempted every rung that tops its ladder
+    /// under a name of its own: an Airline Captain, a Supply Chain Manager and
+    /// an Editor-in-Chief all read as standalone roles, so their experience bar
+    /// was satisfied by *any* years in the category — eight years of moving
+    /// furniture qualified you to command a flight deck. A rung is a rung
+    /// whether or not anyone wrote "Senior" on it.
+    var isLadderVariant: Bool { rung > 0 }
 
     /// Player-facing label for this seniority level. "Standard" for the rung
     /// that carries the bare role name.

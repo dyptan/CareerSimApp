@@ -138,9 +138,85 @@ final class Player: ObservableObject {
     @Published var turmoilYearsRemaining: Int = 0
 
     /// Whether the economy is in a downturn this year (a fresh or ongoing
-    /// recession). Drives the header recession note; while true, hiring at risky
-    /// employers and promotions are frozen.
+    /// recession). Drives the header recession note and drags every industry's
+    /// trend down — how hard depends on the industry (see `advanceIndustryTrends`).
     @Published var economyInRecession: Bool = false
+
+    /// The national business cycle, in -1...1 — the one number every sector's
+    /// fortunes are derived from. A persistent random walk, dragged down while a
+    /// declared recession runs (see `advanceIndustryTrends`).
+    @Published var macroTrend: Double = 0
+
+    /// What is happening to each sector *on its own account*, with the national
+    /// cycle taken out — a platform shift, a drug approval, an oil shock. Added
+    /// to the sector's share of `macroTrend` to give its published trend.
+    @Published var industryIdiosyncratic: [Industry: Double] = [:]
+
+    /// The overall economy's climate, for the Economy panel's headline.
+    var macroClimate: IndustryClimate { IndustryClimate(trend: macroTrend) }
+
+    /// Each sector's fortunes this year, as a continuous trend in -1...1.
+    /// Bucketed into an `IndustryClimate` for everything that reads it — hiring,
+    /// promotions, projects and the Economy panel.
+    ///
+    /// Keyed by `Industry`, the sector an employer trades in, **not** by
+    /// `JobCategory`. A category is a discipline, not a market: "Design" is not
+    /// something anyone's revenue depends on, whereas advertising and carmaking
+    /// are, and they can move in opposite directions while employing the same
+    /// designers. Each posting states its sector (see `Job.industry`).
+    @Published var industryTrend: [Industry: Double] = [:]
+
+    /// This year's climate for a sector.
+    func climate(for industry: Industry) -> IndustryClimate {
+        IndustryClimate(trend: industryTrend[industry] ?? 0)
+    }
+
+    /// This year's climate for a fame bucket — the mean across the sectors that
+    /// bank into it, so a project rides the market it would make its name in.
+    func climate(forFame fame: FameCategory) -> IndustryClimate {
+        let sectors = Industry.allCases.filter { $0.fameCategory == fame }
+        guard !sectors.isEmpty else { return .steady }
+        let total = sectors.reduce(0.0) { $0 + (industryTrend[$1] ?? 0) }
+        return IndustryClimate(trend: total / Double(sectors.count))
+    }
+
+    /// Sectors ordered best-to-worst for the Economy panel.
+    var industriesByClimate: [(industry: Industry, climate: IndustryClimate)] {
+        Industry.allCases
+            .map { (industry: $0, climate: climate(for: $0)) }
+            .sorted {
+                let a = industryTrend[$0.industry] ?? 0, b = industryTrend[$1.industry] ?? 0
+                return a == b ? $0.industry.rawValue < $1.industry.rawValue : a > b
+            }
+    }
+
+    /// Rolls the economy forward one year.
+    ///
+    /// One national cycle moves first: most of last year carries over, a shock
+    /// moves it, and a declared recession drags it down (otherwise it reverts
+    /// gently toward neutral, so no boom lasts forever). Then each sector's own
+    /// deviation moves on the same pattern, scaled by its `volatility`.
+    ///
+    /// A sector's published trend is its share of the national cycle — its
+    /// `beta` — plus that deviation. That is the whole model: one economy,
+    /// transmitted unevenly, plus whatever is happening to each sector alone.
+    func advanceIndustryTrends(recession: Bool) {
+        let macroShock = Double.random(in: -GameConstants.macroTrendShock...GameConstants.macroTrendShock)
+        let macroCycle = recession
+            ? -GameConstants.recessionDrag
+            : -macroTrend * GameConstants.industryMeanReversion
+        macroTrend = min(1.0, max(-1.0,
+            macroTrend * GameConstants.macroTrendPersistence + macroShock + macroCycle))
+
+        for sector in Industry.allCases {
+            let previous = industryIdiosyncratic[sector] ?? 0
+            let shock = Double.random(in: -GameConstants.industryTrendShock...GameConstants.industryTrendShock)
+                * sector.volatility
+            let deviation = previous * GameConstants.industryTrendPersistence + shock
+            industryIdiosyncratic[sector] = min(1.0, max(-1.0, deviation))
+            industryTrend[sector] = min(1.0, max(-1.0, macroTrend * sector.beta + deviation))
+        }
+    }
 
     /// Size of last year's promotion raise as a whole-number percent (0 when the
     /// player wasn't promoted). Surfaced in the header alongside the confetti.
@@ -245,10 +321,17 @@ final class Player: ObservableObject {
     func projectOdds(for hustle: SideHustle) -> Double {
         hustle.successProbability(
             for: softSkills,
-            fameScore: fameScore,
+            famePoints: famePoints(for: hustle.fameCategory),
             totalExperienceYears: totalExperienceYears,
-            fieldExperienceYears: hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
+            fieldExperienceYears: hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0,
+            climate: projectClimate(for: hustle)
         )
+    }
+
+    /// The climate a project rides: its own industry when it has one, otherwise
+    /// the average across the fame bucket it would make its name in.
+    func projectClimate(for hustle: SideHustle) -> IndustryClimate {
+        climate(forFame: hustle.fameCategory)
     }
 
     /// Raises the result pop-up for a resolved spare-time project. Every project
@@ -264,7 +347,7 @@ final class Player: ObservableObject {
             projectOutcomeMessage = "\(hustle.label) paid off!" + earned
         } else {
             projectOutcomeTitle = "\(hustle.icon) It didn't land"
-            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot."
+            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway."
         }
         showProjectOutcomeAlert = true
     }
@@ -278,14 +361,21 @@ final class Player: ObservableObject {
     }
 
     /// Whether the player has met the current setting's win condition. Only the
-    /// Simplified mode has a fixed finish line — reaching a top leadership
-    /// ("C-suite") role. The realistic settings are open-ended: there is no
-    /// target to hit, just a running `leaderboardScore` the player banks whenever
-    /// they choose to finish the game (see `RetirementView`).
+    /// Simplified mode has a fixed *target* — reaching a top leadership
+    /// ("C-suite") role. The realistic settings set no target, just a running
+    /// `leaderboardScore` the player banks by finishing early or at
+    /// `GameConstants.retirementAge`, whichever comes first (see
+    /// `hasRetired` and `RetirementView`).
     var goalMet: Bool {
         guard isSimplified else { return false }
         return currentOccupation?.isTopLeadership ?? false
     }
+
+    /// Whether the run has reached its horizon. At `GameConstants.retirementAge`
+    /// the career is over and the score is final — `advanceYear` stops advancing
+    /// and the Game Over sheet becomes the only way out. See that constant for
+    /// why a finite number of years is what makes the score meaningful.
+    var hasRetired: Bool { age >= GameConstants.retirementAge }
 
     @Published var age: Int
 
@@ -320,12 +410,16 @@ final class Player: ObservableObject {
     /// only the shortfall becomes debt.
     func borrowedPortion(ofStake stake: Int) -> Int { max(0, stake - savings) }
 
+    /// What the player is actually worth: banked savings less any outstanding
+    /// venture loan and student debt. Can go negative while debt is being repaid.
+    var netWorth: Int { savings - outstandingLoan - studentLoan }
+
     /// The player's running score, recalculated from current state (so it's
     /// always up to date each year): "wealth velocity" — net worth (savings minus
     /// any outstanding loan) per year of life. Reaching wealth younger scores
     /// higher. Floored at 0. This is what a realistic-mode run is playing for;
     /// finishing the game banks it to the Game Center leaderboard.
-    var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan - studentLoan) / age : 0 }
+    var leaderboardScore: Int { age > 0 ? max(0, netWorth) / age : 0 }
 
     @Published var degrees: [Education]
 
@@ -358,7 +452,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
-    @Published var lockedHobbies: Set<String>
     /// Professional network built by attending industry `CareerEvent`s, keyed by
     /// the event's industry. Improves hiring odds on that field's postings and
     /// the chance of promotion while working in it (see `networkBonus`).
@@ -400,8 +493,7 @@ final class Player: ObservableObject {
         experience: [JobCategory: Int] = [:],
         currentOccupation: Job? = nil,
         savings: Int = 0,
-        lockedTrainings: Set<Training> = [],
-        lockedHobbies: Set<String> = []
+        lockedTrainings: Set<Training> = []
     ) {
         self.age = age
         self.softSkills = softSkills
@@ -412,8 +504,16 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedTrainings = lockedTrainings
-        self.lockedHobbies = lockedHobbies
         self.availableJobs = JobCatalog.allJobs().shuffled()
+        // Seed a calm, mildly uneven starting economy rather than a flat one, so
+        // the first year the player looks already has industries worth choosing
+        // between.
+        macroTrend = Double.random(in: -0.15...0.15)
+        for sector in Industry.allCases {
+            let deviation = Double.random(in: -0.2...0.2) * sector.volatility
+            industryIdiosyncratic[sector] = deviation
+            industryTrend[sector] = min(1.0, max(-1.0, macroTrend * sector.beta + deviation))
+        }
     }
 
     /// Rebuilds and reshuffles `availableJobs`. Call when the game year advances
@@ -607,6 +707,9 @@ final class Player: ObservableObject {
         let fame: Double
         let tenure: Double
         let tenureYears: Int
+        /// The industry's climate this year, whose `promotionDelta` is folded
+        /// into `total` (and which zeroes it outright in a slump).
+        let climate: IndustryClimate
         /// Formal education measured against what the role expects — negative
         /// while under-credentialled (see `Job.educationPromotionTerm`).
         let education: Double
@@ -621,7 +724,8 @@ final class Player: ObservableObject {
         // player advances by applying upward instead.
         guard !job.isLowSkilled else {
             return PromotionOdds(promotes: false, readinessBase: 0, network: 0,
-                                 fame: 0, tenure: 0, tenureYears: 0, education: 0, total: 0)
+                                 fame: 0, tenure: 0, tenureYears: 0,
+                                 climate: climate(for: job.industry), education: 0, total: 0)
         }
         let base = GameConstants.promotionBaseChance
         // Base chance scaled by promotion readiness (40%–100% of the base, so
@@ -637,10 +741,17 @@ final class Player: ObservableObject {
         // the qualification is possible outside the regulated professions, but
         // it holds back the climb until you go and earn it.
         let education = job.educationPromotionTerm(for: self)
-        let total = max(0, min(1.0, core + network + fame + tenureBoost + education))
+        // What the industry is doing. A contracting field freezes raises outright
+        // — which is what the blanket recession freeze used to do to every field
+        // at once, now scoped to the industries actually in trouble.
+        let climate = self.climate(for: job.industry)
+        let frozen = climate.freezesRaises
+        let total = frozen
+            ? 0
+            : max(0, min(1.0, core + network + fame + tenureBoost + education + climate.promotionDelta))
         return PromotionOdds(promotes: true, readinessBase: core, network: network,
                              fame: fame, tenure: tenureBoost, tenureYears: years,
-                             education: education, total: total)
+                             climate: climate, education: education, total: total)
     }
 
     /// Annual promotion probability for a job: a flat base chance
@@ -657,6 +768,13 @@ final class Player: ObservableObject {
     // MARK: - Year progression
 
     func advanceYear(appUIState: AppUIState) {
+        // Past the horizon there are no more years to live: the score is final,
+        // so nothing may change it. Belt and braces — the UI also stops offering
+        // the controls that would get here.
+        guard !hasRetired else {
+            appUIState.showRetirementSheet = true
+            return
+        }
         // The life stage the year was *lived* in, captured before the birthday:
         // competitions entered this year resolve against it, so a 17-year-old's
         // junior season doesn't get judged by adult-stage rules.
@@ -689,14 +807,6 @@ final class Player: ObservableObject {
         // This year's picks are now permanent (hard skills + locked); clear the
         // pending set so next year starts fresh, mirroring sports/hobbies/events.
         appUIState.selectedTrainings.removeAll()
-
-        // Bank this year's hobbies into the player's practised-hobby history,
-        // locking a hobby from being retaken (HobbiesView). `selectedActivities`
-        // also carries sport and training: entries, so intersect with the hobby
-        // catalogue to keep only real hobby labels.
-        lockedHobbies.formUnion(
-            appUIState.selectedActivities.intersection(Set(hobbies.map(\.label)))
-        )
 
         appUIState.selectedActivities.removeAll()
         // Events applied their network/soft-skill effects when attended. Bank the
@@ -769,6 +879,15 @@ final class Player: ObservableObject {
             }
         }
         economyInRecession = recessionThisYear
+
+        // Roll the industry cycle. Simplified mode has no economy at all, so its
+        // industries stay neutral and every climate term reads 1.0 / 0.0.
+        if !isSimplified {
+            advanceIndustryTrends(recession: recessionThisYear)
+            // Postings dry up in a contracting field — the industry-scoped
+            // version of the blanket cyclical-sector freeze this replaces.
+            availableJobs = availableJobs.filter { !climate(for: $0.industry).freezesRaises }
+        }
 
         // Investment growth (realistic mode only): the accumulated balance
         // compounds each year at a market-like return, whether or not the player
@@ -873,10 +992,14 @@ final class Player: ObservableObject {
         // Spare-time projects. Nothing is staked but the year, and nothing is
         // locked: any project can be attempted at any time, and the odds —
         // talent fit plus the working life behind it, see
-        // SideHustle.successProbability — carry the whole decision. A successful
-        // year banks an industry-scoped fame award and grows the soft skills it
-        // drew on, the founder-cluster axes no hobby can build. A flop yields
-        // nothing but the lost year. All are repeatable year after year.
+        // SideHustle.successProbability — carry the whole decision.
+        //
+        // The year's two payoffs come apart. Soft-skill growth is unconditional:
+        // a year spent writing, building or performing sharpens the same axes
+        // whether or not anyone notices, and those founder-cluster axes are ones
+        // no hobby can build. Recognition is what the roll is for — only a hit
+        // banks an industry-scoped fame award. So a flop still moves the player
+        // forward, just quietly. All are repeatable year after year.
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id] else { continue }
             // A year committed to an experience-building venture (the
@@ -893,22 +1016,30 @@ final class Player: ObservableObject {
                 experience[cat, default: 0] += 1
                 recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
             }
-            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore,
+            // Reputation compounds inside its own bucket: a name made shipping
+            // software opens the next software project, and does nothing for a
+            // record. The bucket-scoped figure is the one hiring already uses,
+            // so a fame point means the same thing everywhere it's read.
+            let outcome = hustle.resolve(for: softSkills,
+                                         famePoints: famePoints(for: hustle.fameCategory),
                                          totalExperienceYears: careerYears,
-                                         fieldExperienceYears: fieldYears)
+                                         fieldExperienceYears: fieldYears,
+                                         climate: projectClimate(for: hustle))
+            // The practice lands either way — applied before the roll is read,
+            // so nothing about the outcome can gate it.
+            for ability in hustle.growth {
+                softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
+            }
             if outcome.success {
                 if let grant = outcome.grantedFame {
                     award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
-                    for ability in hustle.growth {
-                        softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
-                    }
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
                 // A landed project is worth the confetti whatever the odds were —
                 // it cost a year of the player's life to find out.
                 celebrate()
             } else {
-                recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
+                recordStatus(hustle.icon, "\(hustle.label) didn't land — but the practice counts")
             }
             reportProjectOutcome(outcome)
         }
@@ -964,6 +1095,14 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Paid off your student loan")
             }
         }
+
+        // The year just lived may have been the last one. Raise the Game Over
+        // sheet after everything else has settled, so the final score already
+        // includes this year's pay, growth and loan servicing.
+        if hasRetired {
+            recordStatus("🎂", "Reached \(GameConstants.retirementAge) — career over")
+            appUIState.showRetirementSheet = true
+        }
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -971,11 +1110,9 @@ final class Player: ObservableObject {
     /// The downturn is surfaced to the player only through the header recession
     /// note (see `economyInRecession`), not a pop-up.
     private func applyEconomicTurmoil() {
-        // Hiring freezes for this year's list in cyclical, discretionary-spending
-        // sectors (travel, dining, entertainment, retail) — first to pull postings
-        // in a bear market.
-        availableJobs = availableJobs.filter { !$0.category.isCyclical }
-
+        // Postings are pulled by industry rather than by a blanket cyclical-sector
+        // rule now — see the climate filter in `advanceYear`, which runs after the
+        // trends are rolled and so knows which fields are actually contracting.
         guard currentOccupation != nil else { return }
         // Founders own their business — they aren't laid off. A downturn still
         // squeezes them elsewhere (frozen hiring/raises, and thinner odds of
@@ -1040,8 +1177,11 @@ final class Player: ObservableObject {
         // Ventures until then; this is the model-level guarantee.
         guard age >= GameConstants.minimumEntrepreneurAge else { return false }
         // Savings fund the stake first; anything beyond them (up to the loan cap)
-        // is borrowed against income and booked as debt.
+        // is borrowed against income and booked as debt. A stake of nothing is
+        // the one thing that closes a venture outright — capital is the only
+        // hard requirement, so it has to actually be required.
         let stake = min(max(0, investedCapital), maxVentureStake)
+        guard stake > 0 else { return false }
         let borrowed = borrowedPortion(ofStake: stake)
         let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
         savings -= (stake - borrowed)          // spend savings first
@@ -1260,7 +1400,9 @@ final class Player: ObservableObject {
         outstandingLoan = fresh.outstandingLoan
         studentLoan = fresh.studentLoan
         lockedTrainings = fresh.lockedTrainings
-        lockedHobbies = fresh.lockedHobbies
+        macroTrend = fresh.macroTrend
+        industryIdiosyncratic = fresh.industryIdiosyncratic
+        industryTrend = fresh.industryTrend
         networkByCategory = fresh.networkByCategory
         sportYears = fresh.sportYears
         executiveActionsThisYear = []

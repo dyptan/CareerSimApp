@@ -161,6 +161,8 @@ private struct RoleGroupRow: View {
     let variants: [Job]
 
     private var icon: String { variants.first?.icon ?? "" }
+    /// Every rung of a ladder shares an employer sector, so the first is the row's.
+    private var industry: Industry? { variants.first?.industry }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -170,8 +172,19 @@ private struct RoleGroupRow: View {
                 .background(Color(.systemGray))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            Text(baseTitle)
-                .font(.headline)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(baseTitle)
+                    .font(.headline)
+                // The sector the employer trades in. Deliberately *not* its
+                // climate: that already shows up where it matters, inside the
+                // posting's hire probability, and repeating it on every row
+                // turned the list into a wall of weather rather than of jobs.
+                if let industry {
+                    Text("\(industry.icon) \(industry.rawValue)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             Spacer()
         }
         .padding()
@@ -260,15 +273,15 @@ private struct VentureRow: View {
         min(job.targetCapital ?? 0, player.maxVentureStake)
     }
 
-    /// One-line facts strip: the industry the venture draws experience from, the
-    /// years of that experience it expects, and the capital stake.
+    /// One-line facts strip for the hint: the industry the venture draws
+    /// experience from, the years of it expected, and the capital it wants.
     private var ventureFacts: String {
-        var parts = ["🏭 \(job.category.rawValue)"]
+        var parts = ["\(job.industry.icon) \(job.industry.rawValue)", "🏭 \(job.category.rawValue)"]
         let years = job.requirements.minYearsExperience
         if years > 0 {
-            parts.append("🧭 \(years)+ yr exp")
+            parts.append("🧭 \(years) yr exp expected")
         }
-        parts.append("💰 Stake \((job.targetCapital ?? 0).formatted(.number)) $")
+        parts.append("💰 Target \((job.targetCapital ?? 0).formatted(.number)) $")
         return parts.joined(separator: "  ·  ")
     }
 
@@ -276,8 +289,9 @@ private struct VentureRow: View {
         let stake = Self.stake(for: job, player: player)
         let borrowed = player.borrowedPortion(ofStake: stake)
         let odds = job.founderSuccessProbability(for: player, investedCapital: stake)
-        let experienceMet = job.experienceMet(for: player)
-        let locked = !experienceMet || player.maxVentureStake <= 0
+        // Capital is the only hard requirement: with a stake you may attempt any
+        // venture, however unprepared — the odds carry the whole decision.
+        let locked = player.maxVentureStake <= 0
 
         HStack(alignment: .top, spacing: 12) {
             Text(job.icon)
@@ -286,34 +300,28 @@ private struct VentureRow: View {
                 .background(Color(.systemGray))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
+            // The row carries only what the choice turns on — odds and stake,
+            // or the reason Launch is disabled. The pitch, the industry facts
+            // and the loan's terms all live in the hint, one tap away, so a
+            // list of ventures stays scannable.
             VStack(alignment: .leading, spacing: 2) {
                 Text(job.baseTitle)
                     .font(.headline)
-                Text(job.summary)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(ventureFacts)
-                    .font(.caption2.monospacedDigit())
-                    .foregroundStyle(.secondary)
 
-                if !experienceMet {
-                    Text("🔒 \(job.requirements.minYearsExperience)+ yrs in \(job.category.rawValue) first")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                } else if player.maxVentureStake <= 0 {
+                if locked {
                     Text("🔒 Nothing to stake yet — earn and save first")
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 } else {
-                    Text("🎲 \(Int((odds * 100).rounded()))% · you'd stake \(stake.formatted(.number)) $")
+                    Text("🎲 \(Int((odds * 100).rounded()))% · stake \(stake.formatted(.number)) $")
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(Color.forOdds(odds))
+                    // Borrowing is the part a player can regret, so it stays on
+                    // the row — as a flag, with the terms in the hint.
                     if borrowed > 0 {
-                        Text("🏦 Borrows \(borrowed.formatted(.number)) $ against your income — repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, even if the venture flops.")
-                            .font(.caption2)
+                        Text("🏦 \(borrowed.formatted(.number)) $ of it borrowed")
+                            .font(.caption2.monospacedDigit())
                             .foregroundStyle(.orange)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -333,23 +341,29 @@ private struct VentureRow: View {
         .padding(.vertical, 4)
     }
 
+    /// Everything the row used to spell out — the pitch, the industry facts, the
+    /// loan's terms — plus what the odds turn on and what each outcome costs.
+    /// Kept to short lines: this is a reference the player opens, not prose.
     private func infoMessage(stake: Int, borrowed: Int, odds: Double) -> String {
-        guard job.experienceMet(for: player) else {
-            return "You need \(job.requirements.minYearsExperience)+ years of experience in \(job.category.rawValue) before you can take on this venture. Start with a smaller one first."
+        let header = [job.summary, ventureFacts]
+
+        guard player.maxVentureStake > 0 else {
+            return (header + [
+                "🔒 You need something to stake. Earn and save first — capital is the only thing that can stop you launching."
+            ]).joined(separator: "\n\n")
         }
+
         let target = (job.targetCapital ?? 0).formatted(.number)
-        let funding = borrowed > 0
-            ? "Launching stakes \(stake.formatted(.number)) $: your savings first, plus \(borrowed.formatted(.number)) $ borrowed against your income (repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest, win or lose)."
-            : "Launching stakes \(stake.formatted(.number)) $ of your savings."
-        return """
-        \(job.summary)
+        var funding = "Stake: \(stake.formatted(.number)) $, savings first."
+        if borrowed > 0 {
+            funding += " \(borrowed.formatted(.number)) $ of that is borrowed against your income, repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest win or lose."
+        }
 
-        \(funding)
-
-        Your odds (\(Int((odds * 100).rounded()))%) come mostly from how much capital you put in versus the \(target) $ this venture really needs, plus your founder skills (Risk-Taker 🎲, Visionary 🔭, Persuader 💬) and your years in \(job.category.rawValue).
-
-        Succeed and the venture becomes your occupation, earning its income until you sell out or it folds. Fail and you lose the stake — but any loan still has to be repaid.
-        """
+        return (header + [
+            funding,
+            "Odds: \(Int((odds * 100).rounded()))% — mostly your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) against the \(job.requirements.minYearsExperience) expected, plus 🎲 Risk-Taker, 🔭 Visionary, 💬 Persuader and your stake against the \(target) $ this really needs. Nothing here blocks you — thin preparation just makes it a long shot.",
+            "Win: it becomes your occupation, earning its income until you sell or it folds.\nLose: the stake is gone — the loan isn't.",
+        ]).joined(separator: "\n\n")
     }
 }
 

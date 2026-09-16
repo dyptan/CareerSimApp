@@ -93,6 +93,7 @@ final class CatalogIntegrityTests: XCTestCase {
             ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
             ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
             ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
+            ("industriesByBaseTitle", Array(JobCatalog.industriesByBaseTitle.keys)),
             ("Job.publicPayScaleTitles", Array(Job.publicPayScaleTitles)),
         ]
         let known = baseTitles
@@ -109,6 +110,7 @@ final class CatalogIntegrityTests: XCTestCase {
     func testFullTitleOverridesNameRealJobs() {
         let tables: [(String, [String])] = [
             ("credentialsByFullTitle", Array(JobCatalog.credentialsByFullTitle.keys)),
+            ("softSkillsByFullTitle", Array(JobCatalog.softSkillsByFullTitle.keys)),
             ("minYearsByTitle", Array(JobCatalog.minYearsByTitle.keys)),
         ]
         let known = fullTitles
@@ -116,6 +118,87 @@ final class CatalogIntegrityTests: XCTestCase {
             let orphans = Set(keys).subtracting(known).sorted()
             XCTAssertTrue(orphans.isEmpty,
                           "\(name) has keys matching no job title: \(orphans). The job was probably renamed.")
+        }
+    }
+
+    /// A `minYearsByTitle` row is only read when the rung itself sets none
+    /// (`minYears ?? minYearsByTitle[title]`). A row for a rung that states its
+    /// own figure is dead: it reads as the role's experience bar and is not,
+    /// so editing it changes nothing and nothing says so.
+    func testNoExperienceRowIsShadowedByItsRung() {
+        var stated: Set<String> = []
+        for ladder in JobCatalog.ladders {
+            for rung in ladder.rungs where rung.minYears != nil {
+                stated.insert(ladder.title(for: rung))
+            }
+        }
+        for spec in JobCatalog.standaloneRoles where spec.minYears != nil { stated.insert(spec.title) }
+        for spec in JobCatalog.ventures where spec.minYears != nil { stated.insert(spec.title) }
+        let dead = Set(JobCatalog.minYearsByTitle.keys).intersection(stated).sorted()
+        XCTAssertTrue(dead.isEmpty,
+                      "minYearsByTitle rows that the role's own minYears already overrides: \(dead). "
+                      + "Delete the row or the inline figure — two numbers, one of which does nothing.")
+    }
+
+    /// Every category states an entry profile of its own. There is no `default:`
+    /// arm any more, so this really checks the *content*: public services and
+    /// entrepreneurship used to land on a catch-all that asked for almost
+    /// nothing, which made a precinct commander one of the easiest hires around.
+    func testEveryCategoryAsksForSomething() {
+        for category in JobCategory.allCases {
+            let profile = JobCatalog.defaultSoftSkills(for: category)
+            let asked = SoftSkills.allAxes.filter { profile[keyPath: $0.keyPath] > 0 }
+            XCTAssertGreaterThanOrEqual(asked.count, 5,
+                                        "\(category.rawValue) asks for only \(asked.count) skills.")
+            XCTAssertTrue(asked.contains { profile[keyPath: $0.keyPath] >= 3 },
+                          "\(category.rawValue) names nothing as core to the work.")
+        }
+    }
+
+    /// Climbing a ladder has to *mean* something in the requirements. Forty of
+    /// the forty-two ladders used to repeat one profile on every rung, so a
+    /// Delivery Courier and an Airline Captain were written down as the same
+    /// person and only the pay changed.
+    func testSeniorRungsAskMoreThanTheRungBelow() {
+        for ladder in JobCatalog.ladders where ladder.rungs.count > 1 {
+            let rungs = JobCatalog.jobs(for: ladder)
+            for (lower, upper) in zip(rungs, rungs.dropFirst()) {
+                // A rung authored against its exact title is exempt: it is a
+                // different job from the one below, not a senior version of it.
+                guard JobCatalog.softSkillsByFullTitle[upper.id] == nil else { continue }
+                let below = lower.requirements.softSkills
+                let above = upper.requirements.softSkills
+                let total = { (p: SoftSkills) in
+                    SoftSkills.allAxes.reduce(0) { $0 + p[keyPath: $1.keyPath] }
+                }
+                XCTAssertGreaterThan(total(above), total(below),
+                                     "\(upper.id) asks no more of a candidate than \(lower.id).")
+                for axis in SoftSkills.allAxes {
+                    XCTAssertGreaterThanOrEqual(
+                        above[keyPath: axis.keyPath], below[keyPath: axis.keyPath],
+                        "\(upper.id) asks less \(axis.label) than \(lower.id) below it.")
+                }
+            }
+        }
+    }
+
+    /// No requirement may sit beyond what a player can reach (skills cap at 10).
+    func testNoRoleAsksForMoreSkillThanExists() {
+        for job in JobCatalog.allJobs() {
+            for axis in SoftSkills.allAxes {
+                XCTAssertLessThanOrEqual(
+                    job.requirements.softSkills[keyPath: axis.keyPath], 10,
+                    "\(job.id) asks for unreachable \(axis.label).")
+            }
+        }
+    }
+
+    /// Every rung above the entry one is credited against tenure in *its own*
+    /// ladder, whether or not its title carries a seniority word.
+    func testRungsAboveEntryCountOnlyTheirOwnLadder() {
+        for job in JobCatalog.allJobs() where job.rung > 0 {
+            XCTAssertTrue(job.isLadderVariant,
+                          "\(job.id) is rung \(job.rung) but is credited on whole-category years.")
         }
     }
 
@@ -244,6 +327,72 @@ final class CatalogIntegrityTests: XCTestCase {
                              "A degree in an accepted field should beat an unrelated one.")
     }
 
+    // MARK: - The skill-fit term
+
+    /// Listing a skill a candidate already has must not make a role *harder* to
+    /// land. The scorer used to count how many of all eighteen axes the
+    /// candidate cleared, so every axis a role asked nothing of scored as a free
+    /// pass — and naming one more requirement took a free pass away. Profile
+    /// length was a difficulty knob nobody had set on purpose.
+    func testNamingASkillTheCandidateHasNeverCostsThem() {
+        let player = Self.candidate(eqf: .Bachelor, profile: nil)
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && $0.askedSoftSkills.count < SoftSkills.allAxes.count
+        }) else { return XCTFail("Every role already asks for every skill.") }
+
+        let before = job.softSkillFit(for: player)
+        guard let spare = SoftSkills.allAxes.first(where: {
+            job.requirements.softSkills[keyPath: $0.keyPath] == 0
+        }) else { return XCTFail("No unasked axis to add.") }
+
+        var wider = job
+        var widened = job.requirements.softSkills
+        widened[keyPath: spare.keyPath] = player.softSkills[keyPath: spare.keyPath]
+        wider = Self.job(job, asking: widened)
+
+        XCTAssertGreaterThanOrEqual(wider.softSkillFit(for: player), before,
+                                    "Adding a requirement this candidate already meets lowered their fit.")
+    }
+
+    /// The term grades. Three of a required four is worth three quarters, not
+    /// nothing — the all-or-nothing version made the last point on an axis worth
+    /// as much as the first three together.
+    func testPartialSkillCounts() {
+        guard let job = JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial
+                && SoftSkills.allAxes.contains { $0.keyPath == \SoftSkills.carefulnessAndAttentionToDetail }
+                && $0.requirements.softSkills.carefulnessAndAttentionToDetail >= 3
+                && $0.askedSoftSkills.count == 1
+        }) ?? JobCatalog.allJobs().first(where: {
+            !$0.isEntrepreneurial && $0.requirements.softSkills.carefulnessAndAttentionToDetail >= 3
+        }) else { return XCTFail("No role leans on attention to detail.") }
+
+        let target = job.requirements.softSkills.carefulnessAndAttentionToDetail
+        let fits: [Double] = (0...target).map { level in
+            let player = Player()
+            player.pinNeutralEconomy()
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
+            player.softSkills.carefulnessAndAttentionToDetail = level
+            return job.softSkillFit(for: player)
+        }
+        XCTAssertEqual(fits, fits.sorted(), "Fit must rise with the skill, not jump at the end.")
+        XCTAssertGreaterThan(fits[target - 1], fits[0],
+                             "Being one short of the bar should beat having none of the skill.")
+    }
+
+    /// The same role, asking for a different profile — so a test can vary one
+    /// thing about the requirements and hold the rest still.
+    private static func job(_ job: Job, asking profile: SoftSkills) -> Job {
+        Job(id: job.id, category: job.category, income: job.income, summary: job.summary,
+            icon: job.icon,
+            requirements: .init(education: job.requirements.education,
+                                softSkills: profile,
+                                hardSkills: job.requirements.hardSkills,
+                                minYearsExperience: job.requirements.minYearsExperience),
+            targetCapital: job.targetCapital, baseTitle: job.baseTitle, rung: job.rung,
+            rungLabel: job.rungLabel, workSetting: job.workSetting, industry: job.industry)
+    }
+
     /// The same factor has to reach promotions, not just hiring — being
     /// under-credentialled for the role you hold should cap how far you climb.
     func testDegreeMovesPromotionOdds() {
@@ -268,6 +417,10 @@ final class CatalogIntegrityTests: XCTestCase {
     /// A candidate identical but for their education, for the tests above.
     private static func candidate(eqf: Level.Stage?, profile: TertiaryProfile?) -> Player {
         let player = Player()
+        // Two candidates are compared against each other, and each `Player` seeds
+        // its own business cycle — which moves hire and promotion odds. Pin it,
+        // so the only difference between them is the degree under test.
+        player.pinNeutralEconomy()
         player.age = 40
         for keyPath in SoftSkills.skillNames.map(\.keyPath) { player.softSkills[keyPath: keyPath] = 5 }
         for category in JobCategory.allCases { player.experience[category] = 20 }
@@ -453,7 +606,7 @@ final class CareerGraphTests: XCTestCase {
         for skill in SoftSkills.skillNames { maxed[keyPath: skill.keyPath] = 10 }
         for project in SideHustleCatalog.all {
             let best = project.successProbability(
-                for: maxed, fameScore: 1_000,
+                for: maxed, famePoints: 1_000,
                 totalExperienceYears: 100, fieldExperienceYears: 100
             )
             XCTAssertLessThanOrEqual(best, project.successCeiling + 0.0001,
@@ -461,6 +614,78 @@ final class CareerGraphTests: XCTestCase {
             XCTAssertGreaterThan(best, 0,
                                  "'\(project.id)' should be winnable once fully built up.")
         }
+    }
+
+    /// A committed project year pays its soft-skill growth whether or not the
+    /// project lands; only the fame award turns on the roll. Driven with a
+    /// guaranteed flop — a player with no skills and no career rolls 0% (see
+    /// `testProjectOddsSpanZeroToCeiling`) — so the growth observed here cannot
+    /// have come from a success.
+    func testFlopStillGrowsSkillsButBanksNoFame() {
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+        XCTAssertFalse(project.growth.isEmpty,
+                       "This test is only meaningful for a project that grants growth.")
+
+        // `Player()` randomises starting skills 0...1, which is enough to roll a
+        // few percent — so the flop has to be forced with genuinely empty ones.
+        let player = Player(softSkills: SoftSkills())
+        player.pinNeutralEconomy()
+        let appUIState = AppUIState()
+        XCTAssertEqual(player.projectOdds(for: project), 0, accuracy: 0.0001,
+                       "A green player should be a guaranteed flop — the premise of this test.")
+
+        let before = project.growth.map { player.softSkills[keyPath: $0.keyPath] }
+        appUIState.selectedSideHustles = [project.id]
+        player.advanceYear(appUIState: appUIState)
+
+        for (ability, was) in zip(project.growth, before) {
+            XCTAssertEqual(player.softSkills[keyPath: ability.keyPath], was + ability.weight,
+                           "A flopped project should still bank its \(ability.weight)-point gain.")
+        }
+        XCTAssertTrue(player.fameAwards.isEmpty,
+                      "A flopped project must bank no fame.")
+    }
+
+    /// Reputation feeds the next attempt, but only inside its own bucket: fame
+    /// banked in the project's own `FameCategory` lifts its odds, and fame from
+    /// an unrelated field does nothing — the same rule hiring uses.
+    func testProjectOddsRiseWithSameBucketFameOnly() {
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+        let bucket = project.fameCategory
+        guard let otherBucket = FameCategory.allCases.first(where: { $0 != bucket }) else {
+            XCTFail("Expected more than one fame bucket."); return
+        }
+
+        // Some talent, so the baseline isn't pinned at the 0 floor where a lift
+        // would be invisible.
+        var soft = SoftSkills()
+        for ability in project.talents { soft[keyPath: ability] = 5 }
+
+        // Each `Player` seeds its own random economy, and a project's odds are
+        // scaled by its field's climate — so three players with three different
+        // economies cannot be compared. Pin them all to a neutral one.
+        func neutralPlayer() -> Player {
+            let p = Player(softSkills: soft)
+            p.pinNeutralEconomy()
+            return p
+        }
+
+        let cold = neutralPlayer()
+        let baseline = cold.projectOdds(for: project)
+
+        let sameField = neutralPlayer()
+        sameField.award("Same-field renown", icon: "🌟", category: bucket, weight: 5)
+        XCTAssertGreaterThan(sameField.projectOdds(for: project), baseline,
+                             "Fame in the project's own field should lift its odds.")
+
+        let otherField = neutralPlayer()
+        otherField.award("Unrelated renown", icon: "🌟", category: otherBucket, weight: 5)
+        XCTAssertEqual(otherField.projectOdds(for: project), baseline, accuracy: 0.0001,
+                       "Fame from an unrelated field should not lift this project's odds.")
     }
 
     // MARK: - Projects vs. Events taxonomy
@@ -549,6 +774,9 @@ final class CareerGraphTests: XCTestCase {
         let player = Player()
         player.difficulty = .middleClass
         player.configureStart(age: 18)
+        // Same reason as the hire-odds case: a slump can clamp both ends to the
+        // 3% founder floor and hide the credential's lift.
+        player.pinNeutralEconomy()
         player.experience[.technology] = 4   // clears the launch experience gate
         let stake = saas.targetCapital ?? 0
 
@@ -566,14 +794,16 @@ final class CareerGraphTests: XCTestCase {
         let player = Player()
         player.difficulty = .middleClass
         player.configureStart(age: 40)
+        // The climate is a common factor either side of the credential, but a bad
+        // enough year floors both at 5% and the difference vanishes. Pin it.
+        player.pinNeutralEconomy()
         player.experience[.technology] = 12   // seasoned enough to clear tech gates
 
         var sawStrictIncrease = false
         for job in techJobs where job.allRequirementsMet(for: player) && !player.isSimplified {
-            let salary = Double(job.annualIncome)
-            let before = job.hireProbability(for: player, requestedSalary: salary)
+            let before = job.hireOddsAtPostedRate(for: player)
             player.hardSkills.trainings.insert(.codingBootcamp)
-            let after = job.hireProbability(for: player, requestedSalary: salary)
+            let after = job.hireOddsAtPostedRate(for: player)
             player.hardSkills.trainings.remove(.codingBootcamp)
             XCTAssertGreaterThanOrEqual(after, before, "A credential must never hurt hire odds.")
             if after > before { sawStrictIncrease = true }
@@ -798,6 +1028,362 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
     }
 
+    // MARK: - Consolidated ladders
+
+    /// The flight deck is one career with three named rungs, not three jobs.
+    /// Worth pinning: it is the only ladder whose rungs carry their own titles
+    /// rather than seniority labels, so its per-rung overrides key on the full
+    /// title while its credentials key on the base — an easy thing to break.
+    func testAirlinePilotIsOneLadderWithItsOwnRungTitles() {
+        let rungs = JobCatalog.allJobs()
+            .filter { $0.baseTitle == "Airline Pilot" }
+            .sorted { $0.rung < $1.rung }
+        XCTAssertEqual(rungs.map(\.id), ["First Officer", "Pilot", "Airline Captain"],
+                       "The ladder should read as the three real flight-deck ranks.")
+
+        // Experience gates come from `minYearsByTitle`, which keys on full title.
+        XCTAssertEqual(rungs.map(\.requirements.minYearsExperience), [1, 3, 8],
+                       "Each rank should expect more hours than the one below it.")
+
+        // Pay and sector rise and hold respectively.
+        XCTAssertEqual(rungs.map(\.income).sorted(), rungs.map(\.income),
+                       "Pay should climb with rank.")
+        XCTAssertEqual(Set(rungs.map(\.industry)), [.aerospaceDefense],
+                       "Every rung flies for the same kind of employer.")
+
+        // Credentials: the commercial licence throughout, ATP for the captain
+        // only — `credentialsByFullTitle` layered over `credentialsByBaseTitle`.
+        for rung in rungs {
+            XCTAssertTrue(rung.requirements.hardSkills.trainings.contains(.commercialPilot),
+                          "\(rung.id) should need a commercial licence.")
+        }
+        let captain = try? XCTUnwrap(rungs.last)
+        XCTAssertEqual(captain?.requirements.hardSkills.trainings.contains(.airlineTransportPilot), true,
+                       "Only the captain's seat should demand the ATP.")
+        XCTAssertEqual(rungs.first?.requirements.hardSkills.trainings.contains(.airlineTransportPilot), false,
+                       "A first officer should not need the captain's licence.")
+    }
+
+    /// The consolidated roles are gone, and nothing still points at them.
+    func testConsolidatedRolesAreFullyRemoved() {
+        let titles = Set(JobCatalog.allJobs().map(\.id))
+        let baseTitles = Set(JobCatalog.allJobs().map(\.baseTitle))
+        for gone in ["3D Modeler", "Game Animator", "Art Director (Games)",
+                     "Dancer", "Painter (Artist)",
+                     "Gameplay Programmer", "Technical Artist", "Game Producer",
+                     "Fleet Manager", "Air Traffic Controller"] {
+            XCTAssertFalse(titles.contains(gone), "'\(gone)' should have been folded away.")
+            XCTAssertFalse(baseTitles.contains(gone), "'\(gone)' should not survive as a base title.")
+        }
+        // The roles that absorbed them are still there.
+        for kept in ["3D Artist", "Animator", "Art Director"] {
+            XCTAssertTrue(baseTitles.contains(kept), "'\(kept)' should still exist.")
+        }
+        // Modelling became the 3D Artist ladder's entry rung.
+        let artist = JobCatalog.allJobs().filter { $0.baseTitle == "3D Artist" }
+        XCTAssertEqual(artist.count, 3, "3D Artist should now run junior → base → senior.")
+
+        // The three show-business pairs that were one occupation apiece are now
+        // one ladder each, with the senior half kept as its own rung title.
+        let pairs: [(base: String, senior: String)] = [
+            ("Fitness Instructor", "Personal Trainer"),
+            ("TV Presenter", "News Anchor"),
+            ("Journalist", "Editor-in-Chief"),
+            ("Logistics Coordinator", "Supply Chain Manager"),
+        ]
+        for pair in pairs {
+            let rungs = JobCatalog.allJobs()
+                .filter { $0.baseTitle == pair.base }
+                .sorted { $0.rung < $1.rung }
+            XCTAssertGreaterThan(rungs.count, 1, "'\(pair.base)' should be a ladder now.")
+            XCTAssertEqual(rungs.last?.id, pair.senior,
+                           "'\(pair.senior)' should top the '\(pair.base)' ladder.")
+            XCTAssertEqual(rungs.map(\.income).sorted(), rungs.map(\.income),
+                           "'\(pair.base)' pay should climb with rank.")
+        }
+    }
+
+    // MARK: - The industry cycle
+
+    /// A boom and a slump are genuinely different years to apply in, and the
+    /// climate reaches hiring, promotions and projects alike.
+    func testClimateMovesHiringPromotionAndProjectOdds() throws {
+        let jobs = JobCatalog.allJobs()
+        guard let job = jobs.first(where: {
+            $0.category == .technology && !$0.isEntrepreneurial && !$0.isLowSkilled
+                && $0.requirements.minYearsExperience == 0
+        }) else {
+            XCTFail("Expected an entry-level technology role."); return
+        }
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+
+        func player(trend: Double) -> Player {
+            let p = Player()
+            p.difficulty = .middleClass
+            p.configureStart(age: 22)
+            p.pinEconomy(to: trend)
+            for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = 6 }
+            p.currentOccupation = job
+            p.experienceByRole[job.baseTitle] = 3
+            return p
+        }
+
+        let booming = player(trend: 0.8)
+        let slumping = player(trend: -0.8)
+        XCTAssertEqual(booming.climate(for: job.industry), .boom)
+        XCTAssertEqual(slumping.climate(for: job.industry), .slump)
+
+        XCTAssertGreaterThan(
+            job.hireOddsAtPostedRate(for: booming),
+            job.hireOddsAtPostedRate(for: slumping),
+            "A booming industry should hire more readily than a slumping one.")
+
+        XCTAssertGreaterThan(booming.promotionChance(for: job), slumping.promotionChance(for: job),
+                             "Raises follow the industry's fortunes.")
+        XCTAssertEqual(slumping.promotionChance(for: job), 0,
+                       "A contracting industry freezes raises outright.")
+
+        XCTAssertGreaterThan(booming.projectOdds(for: project), slumping.projectOdds(for: project),
+                             "A project needs an audience — the cycle reaches it too.")
+    }
+
+    /// The point of the whole mechanic: a downturn must land unevenly. A
+    /// discretionary field should be dragged down harder than a defensive one
+    /// funded through the cycle.
+    func testRecessionHitsDiscretionarySectorsHarderThanDefensiveOnes() {
+        XCTAssertGreaterThan(Industry.hospitalityTourism.beta, 1.0,
+                             "Hospitality amplifies the cycle.")
+        XCTAssertLessThan(Industry.healthcare.beta, 1.0,
+                          "Healthcare damps the cycle.")
+
+        // Average many recession years so the per-sector shock averages out and
+        // only the systematic drag is left.
+        var discretionary = 0.0, defensive = 0.0
+        let runs = 400
+        for _ in 0..<runs {
+            let p = Player()
+            p.pinNeutralEconomy()
+            p.advanceIndustryTrends(recession: true)
+            discretionary += p.industryTrend[.hospitalityTourism] ?? 0
+            defensive += p.industryTrend[.healthcare] ?? 0
+        }
+        discretionary /= Double(runs); defensive /= Double(runs)
+
+        XCTAssertLessThan(discretionary, defensive,
+                          "A recession should hurt hospitality more than healthcare.")
+        XCTAssertLessThan(discretionary, 0, "A recession should drag a discretionary sector down.")
+    }
+
+    /// Trends persist: an industry that is booming this year is still a good bet
+    /// next year, which is what makes training toward a field a decision rather
+    /// than a coin flip.
+    func testTheCyclePersistsAcrossYears() {
+        var stayedWarm = 0
+        let runs = 200
+        for _ in 0..<runs {
+            let p = Player()
+            p.pinNeutralEconomy()
+            p.macroTrend = 0.9
+            p.advanceIndustryTrends(recession: false)
+            if p.macroTrend > 0 { stayedWarm += 1 }
+        }
+        XCTAssertGreaterThan(stayedWarm, runs * 3 / 4,
+                             "A hot industry should usually still be warm the next year.")
+    }
+
+    /// Sector trends are *derived*: a sector's published trend is the national
+    /// cycle scaled by its beta, plus whatever is happening to it alone. That is
+    /// what makes one economy land unevenly rather than nineteen unrelated ones.
+    func testSectorTrendsAreDerivedFromTheMacroCycle() {
+        let p = Player()
+        p.pinNeutralEconomy()
+        p.advanceIndustryTrends(recession: false)
+
+        for sector in Industry.allCases {
+            let expected = p.macroTrend * sector.beta + (p.industryIdiosyncratic[sector] ?? 0)
+            XCTAssertEqual(p.industryTrend[sector] ?? 0,
+                           min(1.0, max(-1.0, expected)), accuracy: 0.0001,
+                           "\(sector.rawValue)'s trend must be beta × the cycle plus its own deviation.")
+        }
+    }
+
+    /// Beta and volatility are separate axes: a sector can ignore the cycle and
+    /// still be a wild ride on its own account. Pharma is the case in point —
+    /// low beta, high volatility — and it must be able to boom through a slump.
+    func testALowBetaSectorCanBoomThroughADownturn() {
+        XCTAssertLessThan(Industry.pharmaBiotech.beta, 1.0, "Pharma damps the cycle.")
+        XCTAssertGreaterThan(Industry.pharmaBiotech.volatility, 1.0, "Pharma swings on its own.")
+
+        var boomedInASlump = 0
+        let runs = 600
+        for _ in 0..<runs {
+            let p = Player()
+            p.pinNeutralEconomy()
+            p.macroTrend = -0.7   // a poor national year
+            p.industryIdiosyncratic[.pharmaBiotech] = 0.9   // its own pipeline is delivering
+            p.industryTrend[.pharmaBiotech] =
+                p.macroTrend * Industry.pharmaBiotech.beta + 0.9
+            if p.climate(for: .pharmaBiotech) != .slump { boomedInASlump += 1 }
+        }
+        XCTAssertEqual(boomedInASlump, runs,
+                       "A low-beta, high-volatility sector must be able to do well in a bad year.")
+    }
+
+    /// Simplified mode has no economy, so nothing there ever reads anything but
+    /// neutral — no climate term may leak into a child's game.
+    func testSimplifiedModeHasNoIndustryCycle() {
+        let player = Player()
+        player.difficulty = .simplified
+        player.pinNeutralEconomy()
+        let appUIState = AppUIState()
+        for _ in 0..<20 { player.advanceYear(appUIState: appUIState) }
+        for sector in Industry.allCases {
+            XCTAssertEqual(player.climate(for: sector), .steady,
+                           "Simplified mode must not run an industry cycle (\(sector.rawValue)).")
+        }
+    }
+
+    /// The point of splitting sector from discipline: one `JobCategory` must be
+    /// able to span several markets, or the economy is keyed on something nobody
+    /// actually trades in.
+    func testOneCategorySpansSeveralIndustries() {
+        // Asserted against what the catalogue *declares*, not one random draw:
+        // `allJobs()` samples a sector per posting, so a single reading could
+        // coincidentally collapse a category onto one market.
+        var declared: [JobCategory: Set<Industry>] = [:]
+        for category in JobCategory.allCases {
+            declared[category, default: []].formUnion(JobCatalog.defaultIndustries(for: category))
+        }
+        for job in JobCatalog.allJobs() {
+            declared[job.category, default: []].formUnion(
+                JobCatalog.industries(forBaseTitle: job.baseTitle, category: job.category))
+        }
+        let spanning = declared.filter { $0.value.count > 1 }
+        XCTAssertGreaterThanOrEqual(spanning.count, 8,
+            "Most disciplines should fan out across markets; got \(spanning.count).")
+
+        guard let engineering = declared[.engineering] else {
+            XCTFail("No engineering roles."); return
+        }
+        XCTAssertGreaterThan(engineering.count, 3,
+            "Engineering alone should span several sectors, got \(engineering.map(\.rawValue).sorted()).")
+    }
+
+    /// A posting's employer is redrawn each year, so the market genuinely moves
+    /// rather than the catalogue being a fixed list wearing sector labels.
+    func testPostingsRedrawTheirSectorEachYear() {
+        // A role whose declared markets are plural — otherwise there is nothing
+        // to redraw and the test would assert a tautology.
+        let title = "Mechanical Engineer"
+        let options = JobCatalog.industries(forBaseTitle: title, category: .engineering)
+        XCTAssertGreaterThan(options.count, 1, "Premise: this role can sit in several markets.")
+
+        var seen: Set<Industry> = []
+        for _ in 0..<200 {
+            if let job = JobCatalog.allJobs().first(where: { $0.baseTitle == title }) {
+                seen.insert(job.industry)
+            }
+        }
+        XCTAssertGreaterThan(seen.count, 1,
+            "Re-reading the market should post this role in different sectors over time.")
+        XCTAssertTrue(seen.isSubset(of: Set(options)),
+            "A posting must only ever be drawn from the role's declared markets.")
+    }
+
+    /// Every rung of a ladder shares one employer, so a promotion never moves the
+    /// player between markets.
+    func testLadderRungsShareOneSector() {
+        for _ in 0..<20 {
+            let jobs = JobCatalog.allJobs()
+            var byBase: [String: Set<Industry>] = [:]
+            for job in jobs { byBase[job.baseTitle, default: []].insert(job.industry) }
+            let split = byBase.filter { $0.value.count > 1 }
+            XCTAssertTrue(split.isEmpty,
+                "A ladder's rungs must share a sector; split: \(split.keys.sorted()).")
+        }
+    }
+
+    /// A posting's hire odds follow its *employer's* sector, not its discipline.
+    /// Two roles in the same category sitting in different sectors must diverge
+    /// when those sectors do — the bug this axis exists to fix.
+    func testHireOddsFollowTheEmployersSectorNotTheDiscipline() {
+        // Built here rather than taken from the catalogue so the two differ in
+        // exactly one thing — the employer's market — with no degree or licence
+        // gate to muddy the comparison.
+        func role(_ sector: Industry) -> Job {
+            Job(id: "Engineer @ \(sector.rawValue)", category: .engineering, income: 60_000,
+                summary: "", icon: "🔧",
+                requirements: .init(education: .init(minEQF: 0, acceptedProfiles: nil),
+                                    softSkills: SoftSkills(), hardSkills: HardSkills(),
+                                    minYearsExperience: 0),
+                industry: sector)
+        }
+        let a = role(.construction)
+        let b = role(.aerospaceDefense)
+        XCTAssertEqual(a.category, b.category, "Premise: same discipline.")
+        XCTAssertNotEqual(a.industry, b.industry, "Premise: different markets.")
+
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 30)
+        for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 7 }
+        player.pinNeutralEconomy()
+        player.industryTrend[a.industry] = 0.9      // a's market is booming
+        player.industryTrend[b.industry] = -0.9     // b's market is in a slump
+
+        XCTAssertGreaterThan(
+            a.hireOddsAtPostedRate(for: player),
+            b.hireOddsAtPostedRate(for: player),
+            "Same discipline, opposite markets — the booming employer should hire more readily.")
+    }
+
+    // MARK: - Run horizon
+
+    /// The run ends at `GameConstants.retirementAge`, and the score is final
+    /// there. This is what bounds the score at all: savings compound every year
+    /// whether or not the player works, so net worth grows geometrically while
+    /// age grows linearly — past age ~1/investmentReturn the ratio rises on its
+    /// own and idling would raise the score forever.
+    func testRunEndsAtRetirementAndScoreStopsMoving() {
+        let player = Player()
+        let appUIState = AppUIState()
+        player.difficulty = .middleClass
+        player.age = GameConstants.retirementAge - 1
+        player.savings = 1_000_000
+        XCTAssertFalse(player.hasRetired, "Premise: one year still to live.")
+
+        player.advanceYear(appUIState: appUIState)
+        XCTAssertTrue(player.hasRetired, "Reaching the retirement age ends the run.")
+        XCTAssertTrue(appUIState.showRetirementSheet,
+                      "The final year should raise the Game Over sheet by itself.")
+
+        // Past the horizon nothing may move: not the age, not the score.
+        let finalAge = player.age
+        let finalScore = player.leaderboardScore
+        for _ in 0..<25 { player.advanceYear(appUIState: appUIState) }
+        XCTAssertEqual(player.age, finalAge, "No years pass after retirement.")
+        XCTAssertEqual(player.leaderboardScore, finalScore,
+                       "The score is final — idling past the horizon cannot raise it.")
+    }
+
+    /// The exploit this horizon closes, stated as arithmetic: with compounding
+    /// alone the score climbs every year once the player is past ~17, so without
+    /// a horizon the best strategy is to stop playing and let the clock run.
+    func testIdlingWouldOtherwiseRaiseTheScoreForever() {
+        let r = GameConstants.investmentReturn
+        let breakEven = 1.0 / r
+        XCTAssertLessThan(breakEven, Double(GameConstants.retirementAge),
+                          "The horizon has to sit above the age where idling starts paying.")
+        var netWorth = 500_000.0
+        var age = Double(GameConstants.retirementAge)
+        let scoreAtHorizon = netWorth / age
+        netWorth *= (1 + r); age += 1
+        XCTAssertGreaterThan(netWorth / age, scoreAtHorizon,
+                             "Compounding outruns ageing — which is exactly why the run has to stop.")
+    }
+
     // MARK: - Breakthrough-gated star careers
 
     /// The three star tracks (pro athlete, movie star, pop star) exist in the
@@ -824,17 +1410,17 @@ final class CareerGraphTests: XCTestCase {
 
             let player = Player()
             player.difficulty = .middleClass
+            player.pinNeutralEconomy()              // the gate is the subject, not the cycle
             player.configureStart(age: 40)          // clears the entry rungs' light gates
             XCTAssertTrue(job.allRequirementsMet(for: player),
                           "A 40-year-old should meet the entry rung's requirements for '\(job.id)'.")
 
-            let salary = Double(job.annualIncome)
-            let gated = job.hireProbability(for: player, requestedSalary: salary)
+            let gated = job.hireOddsAtPostedRate(for: player)
             XCTAssertEqual(gated, 0.05, accuracy: 0.0001,
                            "Without the breakthrough, '\(job.id)' odds sit at the 5% floor.")
 
             player.award(gate.award, icon: "🏅", category: .entertainment, weight: 2.0)
-            let opened = job.hireProbability(for: player, requestedSalary: salary)
+            let opened = job.hireOddsAtPostedRate(for: player)
             XCTAssertGreaterThan(opened, gated,
                                  "Holding the '\(gate.award)' award should open '\(job.id)' up.")
         }
@@ -1008,3 +1594,36 @@ final class CareerGraphTests: XCTestCase {
                        "A net-negative balance from the loan floors the score at 0.")
     }
 }
+
+/// Test-only economy pinning. Every `Player` seeds a random business cycle, and
+/// most assertions here are about something else entirely — preparation, fame,
+/// credentials — so they need the weather held still to mean anything.
+extension Player {
+    /// Flat, neutral economy: every sector reads `.steady`.
+    func pinNeutralEconomy() { pinEconomy(to: 0) }
+
+    /// Every sector pinned to one trend, with no sector-specific deviation.
+    func pinEconomy(to trend: Double) {
+        macroTrend = trend
+        for sector in Industry.allCases {
+            industryIdiosyncratic[sector] = 0
+            industryTrend[sector] = trend
+        }
+    }
+}
+
+extension Job {
+    /// Hire odds for asking exactly what this posting pays.
+    ///
+    /// The deterministic comparison point, and the one tests should use.
+    /// `Job.init` jitters `annualIncome` by the category's salary variance, so
+    /// asking for the *catalogue* `income` instead is often asking above the
+    /// posting — and `salaryAlignmentFactor` punishes that steeply enough to
+    /// floor the odds at 5%, run to run, hiding whatever the test meant to
+    /// measure. Asking the posted rate exactly gives a ratio of 1.0 and a factor
+    /// of 1.0 every time.
+    func hireOddsAtPostedRate(for player: Player) -> Double {
+        hireProbability(for: player, requestedSalary: Double(annualIncome))
+    }
+}
+
