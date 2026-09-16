@@ -87,6 +87,7 @@ enum JobCatalog {
     /// the senior and charge rungs'. Wins over `softSkillsByBaseTitle`, the same
     /// way `credentialsByFullTitle` wins over `credentialsByBaseTitle`.
     static let softSkillsByFullTitle: [String: SoftSkills] = [
+        "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
         "Registered Nurse": .init(
                   analyticalReasoningAndProblemSolving: 2, creativityAndInsightfulThinking: 0,
                   communicationAndNetworking: 3, leadershipAndInfluence: 1,
@@ -165,7 +166,6 @@ enum JobCatalog {
         "Fashion Designer":               .init(creativityAndInsightfulThinking: 4, persuasionAndNegotiation: 1, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, presentationAndStorytelling: 2),
 
         // Fitness (personal-brand coaching roles kept; competitive sport ladders removed)
-        "Personal Trainer":               .init(communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 1, carefulnessAndAttentionToDetail: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 3, collaborationAndTeamwork: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3, presentationAndStorytelling: 2),
         "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
 
         // Games — the art, design and engineering that ship them
@@ -373,11 +373,9 @@ enum JobCatalog {
         "Video Editor": .office,
         "Social Media Manager": .office,
         "Art Director": .office,
-        "Editor-in-Chief": .office,
         // …and the ones that are out chasing the story or the shot.
         "Journalist": .field,
         "Photographer": .field,
-        "Painter (Artist)": .field,
         // Transportation: the tower is a control room, not a cab.
         "Air Traffic Controller": .office,
     ]
@@ -472,7 +470,6 @@ enum JobCatalog {
 
         // Leisure trades sitting under other headings.
         "Fitness Instructor": [.hospitalityTourism],
-        "Personal Trainer": [.hospitalityTourism],
         "Janitor/Cleaner": [.professionalServices],
 
         // Ventures keep the market they are a business in.
@@ -887,23 +884,16 @@ enum JobCatalog {
         .init(title: "Fashion Designer", category: .design, income: 55_000, icon: "👗", summary: "Designs clothing collections and sells to buyers.", minEQF: 4),
         // Media / Writing / Broadcast
         .init(title: "Content Writer", category: .showBusiness, income: 44_000, icon: "✍️", summary: "Creates written content for various channels.", minEQF: 4),
-        .init(title: "Journalist", category: .showBusiness, income: 48_000, icon: "📰", summary: "Reports news and stories for media outlets.", minEQF: 5),
         .init(title: "Photographer", category: .showBusiness, income: 40_000, icon: "📷", summary: "Takes photos for commercial and personal use.", minEQF: 3),
-        .init(title: "TV Presenter", category: .showBusiness, income: 70_000, icon: "📺", summary: "Presents television programs and live segments.", minEQF: 5),
-        .init(title: "News Anchor", category: .showBusiness, income: 95_000, icon: "🎙️", summary: "Anchors television news broadcasts.", minEQF: 5),
         .init(title: "Video Editor", category: .showBusiness, income: 55_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 4),
         .init(title: "Social Media Manager", category: .showBusiness, income: 58_000, icon: "📱", summary: "Runs brand presence and campaigns across social platforms.", minEQF: 5),
         // Sports / Fitness
-        .init(title: "Personal Trainer", category: .showBusiness, income: 40_000, icon: "🏋️", summary: "Coaches clients one-on-one toward their fitness goals.", minEQF: 3),
-        .init(title: "Fitness Instructor", category: .showBusiness, income: 34_000, icon: "🤸", summary: "Leads group exercise and gym classes.", minEQF: 2),
         // Agriculture
         .init(title: "Farmhand", category: .agriculture, income: 28_000, icon: "🧑‍🌾", summary: "Plants, harvests, and tends crops and livestock.", minEQF: 1),
         .init(title: "Farmer", category: .agriculture, income: 32_000, icon: "🚜", summary: "Operates agricultural production and livestock.", minEQF: 2),
         // Arts / Creative
-        .init(title: "Painter (Artist)", category: .showBusiness, income: 32_000, icon: "🎨", summary: "Creates original artwork for sale or exhibition.", minEQF: 1),
         .init(title: "Musician", category: .showBusiness, income: 34_000, icon: "🎵", summary: "Performs or composes music professionally.", minEQF: 1),
         .init(title: "Actor", category: .showBusiness, income: 38_000, icon: "🎭", summary: "Performs in theater, film, or television.", minEQF: 1),
-        .init(title: "Dancer", category: .showBusiness, income: 35_000, icon: "💃", summary: "Performs choreographed routines on stage and screen.", minEQF: 1),
         .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Animates characters and motion for film, advertising, and games.", minEQF: 4),
         .init(title: "Interior Designer", category: .design, income: 60_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
         // Games — split across design and technology by what the role does
@@ -918,7 +908,6 @@ enum JobCatalog {
         .init(title: "Managing Partner", category: .law, income: 220_000, icon: "⚖️", summary: "Equity partner driving client relationships and firm strategy — the top of the law track.", minEQF: 7, minYears: 8),
         .init(title: "Nurse Practitioner", category: .health, income: 125_000, icon: "🥼", summary: "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy.", minEQF: 6, minYears: 2),
         .init(title: "Art Director", category: .showBusiness, income: 110_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, publications, or a game.", minEQF: 5, minYears: 8),
-        .init(title: "Editor-in-Chief", category: .showBusiness, income: 135_000, icon: "🗞️", summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10),
         .init(title: "Chief Medical Officer", category: .health, income: 300_000, icon: "🏥", summary: "Sets clinical strategy and quality across a health system.", minEQF: 7, minYears: 12),
         .init(title: "Chief Technology Officer", category: .technology, income: 320_000, icon: "🧠", summary: "Owns technology strategy for the whole organization.", minEQF: 6, minYears: 12),
         .init(title: "Chief Executive Officer", category: .business, income: 400_000, icon: "👔", summary: "Leads the entire company and answers to the board.", minEQF: 6, minYears: 15),
@@ -1060,6 +1049,27 @@ enum JobCatalog {
             .init(label: "Junior", income: 62_000, summary: "Assists in design and analysis of mechanical components.", minEQF: 5, minYears: 0),
             .init(label: "", income: 84_000, summary: "Designs mechanical systems and machinery.", minEQF: 5),
             .init(label: "Senior", income: 120_000, summary: "Owns mechanical design projects end-to-end.", minEQF: 5, minYears: 6),
+        ]),
+        // Show business, trimmed to the roles real employment supports. Three
+        // pairs here were one occupation apiece, split across two rows:
+        // BLS counts gym instructors and personal trainers together (~340k, much
+        // the largest role in this category), an anchor is the senior presenter,
+        // and an editor-in-chief is where a newsroom career ends up. Dancer
+        // (~17k) and fine-art Painter (~11k) were cut outright — the long tail
+        // of the category, and the roles a player was least likely to be able to
+        // make a living at anyway.
+        .init(name: "Fitness Instructor", category: .showBusiness, icon: "🤸", rungs: [
+            .init(label: "", income: 34_000, summary: "Leads group exercise and gym classes.", minEQF: 2),
+            .init(label: "", income: 40_000, summary: "Coaches clients one-on-one toward their goals.", minEQF: 3, minYears: 2, icon: "🏋️", title: "Personal Trainer"),
+        ]),
+        .init(name: "TV Presenter", category: .showBusiness, icon: "📺", rungs: [
+            .init(label: "", income: 70_000, summary: "Presents television programs and live segments.", minEQF: 5),
+            .init(label: "", income: 95_000, summary: "Anchors television news broadcasts.", minEQF: 5, minYears: 3, icon: "🎙️", title: "News Anchor"),
+        ]),
+        .init(name: "Journalist", category: .showBusiness, icon: "📰", rungs: [
+            .init(label: "", income: 48_000, summary: "Reports news and stories for media outlets.", minEQF: 5),
+            .init(label: "Senior", income: 78_000, summary: "Runs a beat and breaks the stories others follow.", minEQF: 5, minYears: 5),
+            .init(label: "", income: 135_000, summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10, icon: "🗞️", title: "Editor-in-Chief"),
         ]),
         .init(name: "Movie Star", category: .showBusiness, icon: "🌟", rungs: [
             // Acting — the movie-star track, opened by a "Breakout Role" project.

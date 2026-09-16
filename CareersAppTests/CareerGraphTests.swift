@@ -920,7 +920,8 @@ final class CareerGraphTests: XCTestCase {
     func testConsolidatedRolesAreFullyRemoved() {
         let titles = Set(JobCatalog.allJobs().map(\.id))
         let baseTitles = Set(JobCatalog.allJobs().map(\.baseTitle))
-        for gone in ["3D Modeler", "Game Animator", "Art Director (Games)"] {
+        for gone in ["3D Modeler", "Game Animator", "Art Director (Games)",
+                     "Dancer", "Painter (Artist)"] {
             XCTAssertFalse(titles.contains(gone), "'\(gone)' should have been folded away.")
             XCTAssertFalse(baseTitles.contains(gone), "'\(gone)' should not survive as a base title.")
         }
@@ -931,6 +932,24 @@ final class CareerGraphTests: XCTestCase {
         // Modelling became the 3D Artist ladder's entry rung.
         let artist = JobCatalog.allJobs().filter { $0.baseTitle == "3D Artist" }
         XCTAssertEqual(artist.count, 3, "3D Artist should now run junior → base → senior.")
+
+        // The three show-business pairs that were one occupation apiece are now
+        // one ladder each, with the senior half kept as its own rung title.
+        let pairs: [(base: String, senior: String)] = [
+            ("Fitness Instructor", "Personal Trainer"),
+            ("TV Presenter", "News Anchor"),
+            ("Journalist", "Editor-in-Chief"),
+        ]
+        for pair in pairs {
+            let rungs = JobCatalog.allJobs()
+                .filter { $0.baseTitle == pair.base }
+                .sorted { $0.rung < $1.rung }
+            XCTAssertGreaterThan(rungs.count, 1, "'\(pair.base)' should be a ladder now.")
+            XCTAssertEqual(rungs.last?.id, pair.senior,
+                           "'\(pair.senior)' should top the '\(pair.base)' ladder.")
+            XCTAssertEqual(rungs.map(\.income).sorted(), rungs.map(\.income),
+                           "'\(pair.base)' pay should climb with rank.")
+        }
     }
 
     // MARK: - The industry cycle
