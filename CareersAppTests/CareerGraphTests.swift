@@ -269,6 +269,10 @@ final class CatalogIntegrityTests: XCTestCase {
     /// A candidate identical but for their education, for the tests above.
     private static func candidate(eqf: Level.Stage?, profile: TertiaryProfile?) -> Player {
         let player = Player()
+        // Two candidates are compared against each other, and each `Player` seeds
+        // its own business cycle — which moves hire and promotion odds. Pin it,
+        // so the only difference between them is the degree under test.
+        player.pinNeutralEconomy()
         player.age = 40
         for keyPath in SoftSkills.skillNames.map(\.keyPath) { player.softSkills[keyPath: keyPath] = 5 }
         for category in JobCategory.allCases { player.experience[category] = 20 }
@@ -479,6 +483,7 @@ final class CareerGraphTests: XCTestCase {
         // `Player()` randomises starting skills 0...1, which is enough to roll a
         // few percent — so the flop has to be forced with genuinely empty ones.
         let player = Player(softSkills: SoftSkills())
+        player.pinNeutralEconomy()
         let appUIState = AppUIState()
         XCTAssertEqual(player.projectOdds(for: project), 0, accuracy: 0.0001,
                        "A green player should be a guaranteed flop — the premise of this test.")
@@ -621,6 +626,9 @@ final class CareerGraphTests: XCTestCase {
         let player = Player()
         player.difficulty = .middleClass
         player.configureStart(age: 18)
+        // Same reason as the hire-odds case: a slump can clamp both ends to the
+        // 3% founder floor and hide the credential's lift.
+        player.pinNeutralEconomy()
         player.experience[.technology] = 4   // clears the launch experience gate
         let stake = saas.targetCapital ?? 0
 
@@ -638,6 +646,9 @@ final class CareerGraphTests: XCTestCase {
         let player = Player()
         player.difficulty = .middleClass
         player.configureStart(age: 40)
+        // The climate is a common factor either side of the credential, but a bad
+        // enough year floors both at 5% and the difference vanishes. Pin it.
+        player.pinNeutralEconomy()
         player.experience[.technology] = 12   // seasoned enough to clear tech gates
 
         var sawStrictIncrease = false
@@ -876,10 +887,15 @@ final class CareerGraphTests: XCTestCase {
     /// climate reaches hiring, promotions and projects alike.
     func testClimateMovesHiringPromotionAndProjectOdds() throws {
         let jobs = JobCatalog.allJobs()
+        // `atBaseSalary()` pins the posted pay. `Job.init` jitters `annualIncome`
+        // by the category's salary variance, so asking for the *catalogue* figure
+        // can be asking well above the posting — a penalty big enough to drive
+        // both ends to the 5% floor, where the climate term being measured
+        // becomes invisible.
         guard let job = jobs.first(where: {
             $0.category == .technology && !$0.isEntrepreneurial && !$0.isLowSkilled
                 && $0.requirements.minYearsExperience == 0
-        }) else {
+        })?.atBaseSalary() else {
             XCTFail("Expected an entry-level technology role."); return
         }
         guard let project = SideHustleCatalog.byId["projectApp"] else {
@@ -903,8 +919,8 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(slumping.climate(for: job.industry), .slump)
 
         XCTAssertGreaterThan(
-            job.hireProbability(for: booming, requestedSalary: Double(job.income)),
-            job.hireProbability(for: slumping, requestedSalary: Double(job.income)),
+            job.hireProbability(for: booming, requestedSalary: Double(job.annualIncome)),
+            job.hireProbability(for: slumping, requestedSalary: Double(job.annualIncome)),
             "A booming industry should hire more readily than a slumping one.")
 
         XCTAssertGreaterThan(booming.promotionChance(for: job), slumping.promotionChance(for: job),
@@ -1180,6 +1196,7 @@ final class CareerGraphTests: XCTestCase {
 
             let player = Player()
             player.difficulty = .middleClass
+            player.pinNeutralEconomy()              // the gate is the subject, not the cycle
             player.configureStart(age: 40)          // clears the entry rungs' light gates
             XCTAssertTrue(job.allRequirementsMet(for: player),
                           "A 40-year-old should meet the entry rung's requirements for '\(job.id)'.")
