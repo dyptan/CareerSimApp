@@ -79,7 +79,7 @@ struct JobDetail: View {
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
         let merit = 0.2 + skillContribution + prestige + opportunity + network + fame + breakthrough
-        let climate = player.climate(for: job.category)
+        let climate = player.climate(for: job.industry)
         let raw = merit * fit.factor * salaryFit
         let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw * climate.hireFactor))
 
@@ -123,7 +123,7 @@ struct JobDetail: View {
         • Salary fit: \(pct(salaryFit))
 
         Then the industry's year:
-        • \(climate.icon) \(job.category.rawValue) is \(climate.rawValue.lowercased()): ×\(String(format: "%.2f", climate.hireFactor))
+        • \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): ×\(String(format: "%.2f", climate.hireFactor))
 
         \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) × \(String(format: "%.2f", climate.hireFactor)) = \(pct(raw * climate.hireFactor))
         Final (clamped 5–95%): \(pct(final))

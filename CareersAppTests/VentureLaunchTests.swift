@@ -39,7 +39,7 @@ final class VentureLaunchTests: XCTestCase {
         player.experience[.retail] = retailYears
         // Pin the economy to neutral: these tests are about preparation, and a
         // seeded industry climate would otherwise move every founder's odds.
-        for category in JobCategory.allCases { player.industryTrend[category] = 0 }
+        for sector in Industry.allCases { player.industryTrend[sector] = 0 }
         for kp in [
             \SoftSkills.creativityAndInsightfulThinking, \SoftSkills.communicationAndNetworking,
             \SoftSkills.persuasionAndNegotiation, \SoftSkills.visionaryThinkingAndAmbition,

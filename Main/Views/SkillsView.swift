@@ -304,13 +304,13 @@ struct SkillsView: View {
                         .padding(.bottom, 2)
                 }
 
-                ForEach(player.industriesByClimate, id: \.category) { row in
+                ForEach(player.industriesByClimate, id: \.industry) { row in
                     HStack {
-                        Text(row.climate.icon)
-                        Text(row.category.rawValue)
+                        Text(row.industry.icon)
+                        Text(row.industry.rawValue)
                         InfoHint(
-                            title: "\(row.climate.icon) \(row.category.rawValue) — \(row.climate.rawValue)",
-                            message: industrySummary(row.category, row.climate)
+                            title: "\(row.industry.icon) \(row.industry.rawValue) — \(row.climate.rawValue)",
+                            message: industrySummary(row.industry, row.climate)
                         )
                         Spacer()
                         Text(row.climate.rawValue)
@@ -318,7 +318,7 @@ struct SkillsView: View {
                     }
                     // The player's own field is the row that actually decides
                     // their year, so it reads as the heading it is.
-                    .fontWeight(row.category == player.currentOccupation?.category ? .bold : .regular)
+                    .fontWeight(row.industry == player.currentOccupation?.industry ? .bold : .regular)
                 }
             }
             .padding(.top, 4)
@@ -328,8 +328,8 @@ struct SkillsView: View {
                 Spacer()
                 // The player's own industry stays visible while collapsed — the
                 // one climate that is affecting them right now.
-                if let category = player.currentOccupation?.category {
-                    let climate = player.climate(for: category)
+                if let sector = player.currentOccupation?.industry {
+                    let climate = player.climate(for: sector)
                     Text("\(climate.icon) \(climate.rawValue)")
                         .font(.subheadline)
                         .foregroundStyle(climateTint(climate))
@@ -349,7 +349,7 @@ struct SkillsView: View {
 
     /// What this climate is doing to the player's odds in this industry, in the
     /// terms the other hints use — multipliers on hiring, points on promotion.
-    private func industrySummary(_ category: JobCategory, _ climate: IndustryClimate) -> String {
+    private func industrySummary(_ industry: Industry, _ climate: IndustryClimate) -> String {
         func signed(_ v: Double) -> String {
             let p = Int((v * 100).rounded())
             return p >= 0 ? "+\(p)%" : "\(p)%"
@@ -363,9 +363,9 @@ struct SkillsView: View {
                      : "⬆️ Promotion odds here: \(signed(climate.promotionDelta))")
         lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
 
-        if category.cyclicality > 1.0 {
+        if industry.cyclicality > 1.0 {
             lines.append("\nThis is a discretionary field — it swings harder than most, both ways.")
-        } else if category.cyclicality < 1.0 {
+        } else if industry.cyclicality < 1.0 {
             lines.append("\nThis is a defensive field — it rides out downturns better than most.")
         }
         return lines.joined(separator: "\n")

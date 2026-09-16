@@ -93,7 +93,8 @@ struct JobsView: View {
                             } label: {
                                 RoleGroupRow(
                                     baseTitle: group.baseTitle,
-                                    variants: group.variants
+                                    variants: group.variants,
+                                    player: player
                                 )
                             }
                         }
@@ -159,8 +160,11 @@ private struct RoleGroup: Identifiable {
 private struct RoleGroupRow: View {
     let baseTitle: String
     let variants: [Job]
+    @ObservedObject var player: Player
 
     private var icon: String { variants.first?.icon ?? "" }
+    /// Every rung of a ladder shares an employer sector, so the first is the row's.
+    private var industry: Industry? { variants.first?.industry }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -170,8 +174,21 @@ private struct RoleGroupRow: View {
                 .background(Color(.systemGray))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            Text(baseTitle)
-                .font(.headline)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(baseTitle)
+                    .font(.headline)
+                // The sector the employer trades in, and what that sector is
+                // doing this year — the posting's own weather, since it is what
+                // multiplies the hire odds inside.
+                if let industry {
+                    let climate = player.climate(for: industry)
+                    Text(player.isSimplified
+                         ? "\(industry.icon) \(industry.rawValue)"
+                         : "\(industry.icon) \(industry.rawValue) · \(climate.icon) \(climate.rawValue)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             Spacer()
         }
         .padding()
@@ -263,7 +280,7 @@ private struct VentureRow: View {
     /// One-line facts strip for the hint: the industry the venture draws
     /// experience from, the years of it expected, and the capital it wants.
     private var ventureFacts: String {
-        var parts = ["🏭 \(job.category.rawValue)"]
+        var parts = ["\(job.industry.icon) \(job.industry.rawValue)", "🏭 \(job.category.rawValue)"]
         let years = job.requirements.minYearsExperience
         if years > 0 {
             parts.append("🧭 \(years) yr exp expected")

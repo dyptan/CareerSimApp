@@ -145,34 +145,6 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Cyclical, discretionary-spending sectors that are hit hardest in a bear
-    /// market: travel, dining, entertainment, and consumer retail are the first
-    /// budgets households and advertisers cut.
-    var isCyclical: Bool { cyclicality > 1.0 }
-
-    /// How hard the national cycle hits this industry, and how far its own
-    /// fortunes swing year to year. 1.0 is an ordinary sector.
-    ///
-    /// Above 1, the discretionary trades: when households and advertisers cut a
-    /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
-    /// children go to school and the bins get collected in every economy, so
-    /// public payrolls barely notice a recession. This is the single knob that
-    /// makes a downturn land unevenly instead of flattening every industry at
-    /// once (see `IndustryClimate` and `Player.advanceIndustryTrends`).
-    var cyclicality: Double {
-        switch self {
-        case .hospitality, .retail, .showBusiness, .entrepreneurship:
-            return 1.6   // first to be cut, first to come back
-        case .construction, .manufacturing, .transportation:
-            return 1.3   // capital spending stops early in a downturn
-        case .health, .education, .publicServices:
-            return 0.4   // defensive: funded through the cycle
-        case .law, .administration:
-            return 0.8
-        default:
-            return 1.0
-        }
-    }
 
     /// Safety-critical / regulated fields with a low tolerance for risk, where a
     /// role's certifications are a HARD hiring requirement at *every* employer
@@ -298,6 +270,114 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     }
 }
 
+
+
+/// The sector of the economy an employer trades in — *what the business sells*,
+/// as distinct from `JobCategory`, which is what the worker actually does.
+///
+/// The two are genuinely different axes and one cannot stand in for the other: a
+/// mechanical engineer, a lawyer and a designer are all `.engineering`, `.law`
+/// and `.design` respectively whichever sector employs them, and a single sector
+/// employs all three. Modelling the economy on `JobCategory` meant a downturn in
+/// "Design" — which is not a market anyone trades in — instead of a downturn in
+/// advertising or in carmaking.
+///
+/// Every posting states its sector (see `Job.industry`), and this is the unit the
+/// cycle runs on: `Player.industryTrend` is keyed by `Industry`, not by category.
+enum Industry: String, CaseIterable, Identifiable, Codable {
+    case software = "Software & Internet"
+    case hardware = "Computing Hardware"
+    case telecom = "Telecoms"
+    case automotive = "Automotive"
+    case aerospaceDefense = "Aerospace & Defence"
+    case energy = "Energy & Utilities"
+    case finance = "Banking & Finance"
+    case healthcare = "Healthcare"
+    case pharmaBiotech = "Pharma & Biotech"
+    case education = "Education"
+    case government = "Government & Public Sector"
+    case retailTrade = "Retail & Consumer"
+    case hospitalityTourism = "Hospitality & Tourism"
+    case mediaEntertainment = "Media & Entertainment"
+    case construction = "Construction & Property"
+    case agriFood = "Agriculture & Food"
+    case logistics = "Transport & Logistics"
+    case manufacturing = "Industrial Manufacturing"
+    case professionalServices = "Professional Services"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .software:             return "💾"
+        case .hardware:             return "🖥️"
+        case .telecom:              return "📡"
+        case .automotive:           return "🚗"
+        case .aerospaceDefense:     return "✈️"
+        case .energy:               return "⚡"
+        case .finance:              return "🏦"
+        case .healthcare:           return "🏥"
+        case .pharmaBiotech:        return "💊"
+        case .education:            return "🏫"
+        case .government:           return "🏛️"
+        case .retailTrade:          return "🛒"
+        case .hospitalityTourism:   return "🏨"
+        case .mediaEntertainment:   return "🎬"
+        case .construction:         return "🏗️"
+        case .agriFood:             return "🌾"
+        case .logistics:            return "🚚"
+        case .manufacturing:        return "🏭"
+        case .professionalServices: return "📁"
+        }
+    }
+
+    /// Cyclical, discretionary-spending sectors hit hardest in a bear market.
+    var isCyclical: Bool { cyclicality > 1.0 }
+
+    /// The fame bucket a reputation made in this sector belongs to. Mirrors
+    /// `JobCategory.fameCategory` on the sector axis, so a project can ride the
+    /// markets it would make its name in (see `Player.climate(forFame:)`).
+    var fameCategory: FameCategory? {
+        switch self {
+        case .software, .hardware, .telecom:
+            return .technology
+        case .finance, .retailTrade, .professionalServices:
+            return .business
+        case .healthcare, .pharmaBiotech, .education:
+            return .science
+        case .mediaEntertainment:
+            return .entertainment
+        default:
+            return nil
+        }
+    }
+
+    /// How hard the national cycle hits this sector, and how far its own fortunes
+    /// swing year to year. 1.0 is an ordinary sector.
+    ///
+    /// Above 1, the discretionary trades: when households and advertisers cut a
+    /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
+    /// children go to school and the bins get collected in every economy, so
+    /// public payrolls barely notice a recession. This is the single knob that
+    /// makes a downturn land unevenly instead of flattening the whole economy at
+    /// once (see `IndustryClimate` and `Player.advanceIndustryTrends`).
+    var cyclicality: Double {
+        switch self {
+        case .hospitalityTourism, .mediaEntertainment, .retailTrade:
+            return 1.6   // first budget households and advertisers cut
+        case .construction, .automotive, .manufacturing, .logistics:
+            return 1.3   // capital spending stops early in a downturn
+        case .software, .hardware:
+            return 1.2   // boom-and-bust, but not discretionary the same way
+        case .healthcare, .education, .government:
+            return 0.4   // defensive: funded through the cycle
+        case .pharmaBiotech, .energy, .agriFood, .telecom:
+            return 0.6   // people still take their medicine and heat their homes
+        default:
+            return 1.0
+        }
+    }
+}
 
 /// How an industry is doing this year — the player-facing face of
 /// `Player.industryTrend`. Every industry sits in one of these bands, and the

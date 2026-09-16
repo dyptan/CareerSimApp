@@ -29,11 +29,17 @@ struct Job: Identifiable, Codable, Hashable {
     /// Where the work actually happens (see `WorkSetting`). Stated in the
     /// catalogue, so the jobs list can filter on it.
     let workSetting: WorkSetting
+    /// The sector the employer trades in — what the business sells, as opposed
+    /// to `category`, which is what the worker does. This is the axis the
+    /// economy runs on (see `Industry` and `Player.industryTrend`): a designer at
+    /// a carmaker rides the automotive cycle, one at an agency rides advertising.
+    let industry: Industry
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
          requirements: Requirements, targetCapital: Int? = nil,
          baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "",
-         workSetting: WorkSetting = .office) {
+         workSetting: WorkSetting = .office,
+         industry: Industry = .professionalServices) {
         self.id = id
         self.category = category
         self.income = income
@@ -45,6 +51,7 @@ struct Job: Identifiable, Codable, Hashable {
         self.rung = rung
         self.rungLabel = rungLabel
         self.workSetting = workSetting
+        self.industry = industry
         let variance = category.salaryVariance
         let factor = Double.random(in: (1.0 - variance)...(1.0 + variance))
         self.annualIncome = Int(Double(income) * factor)
@@ -430,7 +437,7 @@ extension Job {
         // What this industry is doing this year. A booming field hires people it
         // would pass over in a slump, and the same application is a materially
         // different bet depending on when it lands (see `IndustryClimate`).
-        let climate = player.climate(for: category).hireFactor
+        let climate = player.climate(for: industry).hireFactor
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
         // to the top. Founders make their own seat, so they're exempt.
@@ -528,7 +535,7 @@ extension Job {
         let credential = player.trainingCareerBonus(for: category) // up to +15%
         // Founding into a contracting market is the harder version of the same
         // bet — customers and backers are scarcer in a slump.
-        let climate = player.climate(for: category).hireFactor
+        let climate = player.climate(for: industry).hireFactor
         let raw = (0.05 + experience + skill + capital + credential) * climate
         return max(0.03, min(GameConstants.founderMaxSuccess, raw))
     }

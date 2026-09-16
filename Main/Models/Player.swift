@@ -142,42 +142,38 @@ final class Player: ObservableObject {
     /// trend down — how hard depends on the industry (see `advanceIndustryTrends`).
     @Published var economyInRecession: Bool = false
 
-    /// Each industry's fortunes this year, as a continuous trend in -1...1.
+    /// Each sector's fortunes this year, as a continuous trend in -1...1.
     /// Bucketed into an `IndustryClimate` for everything that reads it — hiring,
-    /// promotions, projects and the Macroeconomics panel.
+    /// promotions, projects and the Economy panel.
     ///
-    /// A single national recession flag was never enough to describe an economy:
-    /// it froze every field at once, so there was no such thing as a good year to
-    /// be in health while construction was cutting. Industries now move
-    /// separately, with the national cycle as a shared pull rather than a switch.
-    @Published var industryTrend: [JobCategory: Double] = [:]
+    /// Keyed by `Industry`, the sector an employer trades in, **not** by
+    /// `JobCategory`. A category is a discipline, not a market: "Design" is not
+    /// something anyone's revenue depends on, whereas advertising and carmaking
+    /// are, and they can move in opposite directions while employing the same
+    /// designers. Each posting states its sector (see `Job.industry`).
+    @Published var industryTrend: [Industry: Double] = [:]
 
-    /// This year's climate for an industry.
-    func climate(for category: JobCategory) -> IndustryClimate {
-        IndustryClimate(trend: industryTrend[category] ?? 0)
+    /// This year's climate for a sector.
+    func climate(for industry: Industry) -> IndustryClimate {
+        IndustryClimate(trend: industryTrend[industry] ?? 0)
     }
 
-    /// This year's climate for a fame bucket — the mean of the industries that
-    /// bank into it, so a project rides the field it would make its name in.
-    /// Buckets with no industry behind them read as neutral.
+    /// This year's climate for a fame bucket — the mean across the sectors that
+    /// bank into it, so a project rides the market it would make its name in.
     func climate(forFame fame: FameCategory) -> IndustryClimate {
-        let trends = JobCategory.allCases
-            .filter { $0.fameCategory == fame }
-            .map { industryTrend[$0] ?? 0 }
-        guard !trends.isEmpty else { return .steady }
-        return IndustryClimate(trend: trends.reduce(0, +) / Double(trends.count))
+        let sectors = Industry.allCases.filter { $0.fameCategory == fame }
+        guard !sectors.isEmpty else { return .steady }
+        let total = sectors.reduce(0.0) { $0 + (industryTrend[$1] ?? 0) }
+        return IndustryClimate(trend: total / Double(sectors.count))
     }
 
-    /// Industries ordered best-to-worst for the Macroeconomics panel. Only the
-    /// industries that actually post jobs: `.entrepreneurship` is an experience
-    /// bucket, not a labour market (see `JobCategory`).
-    var industriesByClimate: [(category: JobCategory, climate: IndustryClimate)] {
-        JobCategory.allCases
-            .filter { $0 != .entrepreneurship }
-            .map { (category: $0, climate: climate(for: $0)) }
+    /// Sectors ordered best-to-worst for the Economy panel.
+    var industriesByClimate: [(industry: Industry, climate: IndustryClimate)] {
+        Industry.allCases
+            .map { (industry: $0, climate: climate(for: $0)) }
             .sorted {
-                let a = industryTrend[$0.category] ?? 0, b = industryTrend[$1.category] ?? 0
-                return a == b ? $0.category.rawValue < $1.category.rawValue : a > b
+                let a = industryTrend[$0.industry] ?? 0, b = industryTrend[$1.industry] ?? 0
+                return a == b ? $0.industry.rawValue < $1.industry.rawValue : a > b
             }
     }
 
@@ -190,15 +186,15 @@ final class Player: ObservableObject {
     /// both the shock and the recession drag, which is the whole reason a
     /// downturn guts hospitality and barely touches public health.
     func advanceIndustryTrends(recession: Bool) {
-        for category in JobCategory.allCases {
-            let previous = industryTrend[category] ?? 0
-            let swing = category.cyclicality
+        for sector in Industry.allCases {
+            let previous = industryTrend[sector] ?? 0
+            let swing = sector.cyclicality
             let shock = Double.random(in: -GameConstants.industryTrendShock...GameConstants.industryTrendShock) * swing
             let cycle = recession
                 ? -GameConstants.recessionDrag * swing
                 : -previous * GameConstants.industryMeanReversion
             let next = previous * GameConstants.industryTrendPersistence + shock + cycle
-            industryTrend[category] = min(1.0, max(-1.0, next))
+            industryTrend[sector] = min(1.0, max(-1.0, next))
         }
     }
 
@@ -315,8 +311,7 @@ final class Player: ObservableObject {
     /// The climate a project rides: its own industry when it has one, otherwise
     /// the average across the fame bucket it would make its name in.
     func projectClimate(for hustle: SideHustle) -> IndustryClimate {
-        if let category = hustle.experienceCategory { return climate(for: category) }
-        return climate(forFame: hustle.fameCategory)
+        climate(forFame: hustle.fameCategory)
     }
 
     /// Raises the result pop-up for a resolved spare-time project. Every project
@@ -493,8 +488,8 @@ final class Player: ObservableObject {
         // Seed a calm, mildly uneven starting economy rather than a flat one, so
         // the first year the player looks already has industries worth choosing
         // between.
-        for category in JobCategory.allCases {
-            industryTrend[category] = Double.random(in: -0.2...0.2) * category.cyclicality
+        for sector in Industry.allCases {
+            industryTrend[sector] = Double.random(in: -0.2...0.2) * sector.cyclicality
         }
     }
 
@@ -707,7 +702,7 @@ final class Player: ObservableObject {
         guard !job.isLowSkilled else {
             return PromotionOdds(promotes: false, readinessBase: 0, network: 0,
                                  fame: 0, tenure: 0, tenureYears: 0,
-                                 climate: climate(for: job.category), education: 0, total: 0)
+                                 climate: climate(for: job.industry), education: 0, total: 0)
         }
         let base = GameConstants.promotionBaseChance
         // Base chance scaled by promotion readiness (40%–100% of the base, so
@@ -726,7 +721,7 @@ final class Player: ObservableObject {
         // What the industry is doing. A contracting field freezes raises outright
         // — which is what the blanket recession freeze used to do to every field
         // at once, now scoped to the industries actually in trouble.
-        let climate = self.climate(for: job.category)
+        let climate = self.climate(for: job.industry)
         let frozen = climate.freezesRaises
         let total = frozen
             ? 0
@@ -868,7 +863,7 @@ final class Player: ObservableObject {
             advanceIndustryTrends(recession: recessionThisYear)
             // Postings dry up in a contracting field — the industry-scoped
             // version of the blanket cyclical-sector freeze this replaces.
-            availableJobs = availableJobs.filter { !climate(for: $0.category).freezesRaises }
+            availableJobs = availableJobs.filter { !climate(for: $0.industry).freezesRaises }
         }
 
         // Investment growth (realistic mode only): the accumulated balance

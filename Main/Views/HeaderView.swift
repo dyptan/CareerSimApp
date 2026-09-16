@@ -115,11 +115,11 @@ struct HeaderView: View {
         • Fame (\(job.category.rawValue)): \(signed(odds.fame))
         • Tenure (\(odds.tenureYears) yr in role): \(signed(odds.tenure))
         • Education vs. what the role expects: \(signed(odds.education))
-        • \(odds.climate.icon) \(job.category.rawValue) is \(odds.climate.rawValue.lowercased()): \(signed(odds.climate.promotionDelta))
+        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): \(signed(odds.climate.promotionDelta))
         Total: \(pct(odds.total))
 
         \(odds.climate.freezesRaises
-          ? "Raises are frozen while \(job.category.rawValue) is contracting — see Economy."
+          ? "Raises are frozen while \(job.industry.rawValue) is contracting — see Economy."
           : "Your industry's climate moves these odds every year — see Economy.")
         """
     }
