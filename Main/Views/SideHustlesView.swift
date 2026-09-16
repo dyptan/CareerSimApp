@@ -123,16 +123,16 @@ struct SideHustleRow: View {
             let field = player.industryExperience(for: cat)
             oddsLine += " (your \(field) yr in \(JobCategory.icon(for: cat)) \(cat.rawValue) count double)"
         }
-        oddsLine += ", and your existing reputation."
+        oddsLine += ", and the \(fame) fame you've already banked — reputation compounds inside its own field."
 
-        // A losing year still buys experience, so the downside is a spent year
-        // rather than a wasted one — worth stating on the same line as the loss.
-        var lossLine = "Lose: nothing."
+        // Only the fame is at stake — the skill gains and the banked experience
+        // land either way, so the loss line says what is actually lost.
+        var lossLine = "Lose: only the fame."
         if let cat = hustle.experienceCategory {
             let credited = cat.creditedExperienceCategories
                 .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
                 .joined(separator: ", ")
-            lossLine += " 📅 Either way the year banks \(JobCategory.icon(for: cat)) \(cat.rawValue) experience"
+            lossLine += " 📅 The year still banks \(JobCategory.icon(for: cat)) \(cat.rawValue) experience"
             lossLine += credited.isEmpty ? "." : ", which also counts toward \(credited) roles."
         }
 
@@ -141,7 +141,8 @@ struct SideHustleRow: View {
             "🎲 \(oddsPct)% success · 🌟 \(fame) fame",
             oddsLine,
             "Draws on:\n\(talentHint)",
-            "Win: \(fame) fame — it only lifts hiring odds for \(category.rawValue) roles — plus:\n\(growthHint)",
+            "Builds, win or lose:\n\(growthHint)",
+            "Win: \(fame) fame — it only lifts hiring odds for \(category.rawValue) roles.",
             lossLine,
         ].joined(separator: "\n\n")
     }

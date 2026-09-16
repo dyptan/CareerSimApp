@@ -453,7 +453,7 @@ final class CareerGraphTests: XCTestCase {
         for skill in SoftSkills.skillNames { maxed[keyPath: skill.keyPath] = 10 }
         for project in SideHustleCatalog.all {
             let best = project.successProbability(
-                for: maxed, fameScore: 1_000,
+                for: maxed, famePoints: 1_000,
                 totalExperienceYears: 100, fieldExperienceYears: 100
             )
             XCTAssertLessThanOrEqual(best, project.successCeiling + 0.0001,
@@ -461,6 +461,68 @@ final class CareerGraphTests: XCTestCase {
             XCTAssertGreaterThan(best, 0,
                                  "'\(project.id)' should be winnable once fully built up.")
         }
+    }
+
+    /// A committed project year pays its soft-skill growth whether or not the
+    /// project lands; only the fame award turns on the roll. Driven with a
+    /// guaranteed flop — a player with no skills and no career rolls 0% (see
+    /// `testProjectOddsSpanZeroToCeiling`) — so the growth observed here cannot
+    /// have come from a success.
+    func testFlopStillGrowsSkillsButBanksNoFame() {
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+        XCTAssertFalse(project.growth.isEmpty,
+                       "This test is only meaningful for a project that grants growth.")
+
+        // `Player()` randomises starting skills 0...1, which is enough to roll a
+        // few percent — so the flop has to be forced with genuinely empty ones.
+        let player = Player(softSkills: SoftSkills())
+        let appUIState = AppUIState()
+        XCTAssertEqual(player.projectOdds(for: project), 0, accuracy: 0.0001,
+                       "A green player should be a guaranteed flop — the premise of this test.")
+
+        let before = project.growth.map { player.softSkills[keyPath: $0.keyPath] }
+        appUIState.selectedSideHustles = [project.id]
+        player.advanceYear(appUIState: appUIState)
+
+        for (ability, was) in zip(project.growth, before) {
+            XCTAssertEqual(player.softSkills[keyPath: ability.keyPath], was + ability.weight,
+                           "A flopped project should still bank its \(ability.weight)-point gain.")
+        }
+        XCTAssertTrue(player.fameAwards.isEmpty,
+                      "A flopped project must bank no fame.")
+    }
+
+    /// Reputation feeds the next attempt, but only inside its own bucket: fame
+    /// banked in the project's own `FameCategory` lifts its odds, and fame from
+    /// an unrelated field does nothing — the same rule hiring uses.
+    func testProjectOddsRiseWithSameBucketFameOnly() {
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+        let bucket = project.fameCategory
+        guard let otherBucket = FameCategory.allCases.first(where: { $0 != bucket }) else {
+            XCTFail("Expected more than one fame bucket."); return
+        }
+
+        // Some talent, so the baseline isn't pinned at the 0 floor where a lift
+        // would be invisible.
+        var soft = SoftSkills()
+        for ability in project.talents { soft[keyPath: ability] = 5 }
+
+        let cold = Player(softSkills: soft)
+        let baseline = cold.projectOdds(for: project)
+
+        let sameField = Player(softSkills: soft)
+        sameField.award("Same-field renown", icon: "🌟", category: bucket, weight: 5)
+        XCTAssertGreaterThan(sameField.projectOdds(for: project), baseline,
+                             "Fame in the project's own field should lift its odds.")
+
+        let otherField = Player(softSkills: soft)
+        otherField.award("Unrelated renown", icon: "🌟", category: otherBucket, weight: 5)
+        XCTAssertEqual(otherField.projectOdds(for: project), baseline, accuracy: 0.0001,
+                       "Fame from an unrelated field should not lift this project's odds.")
     }
 
     // MARK: - Projects vs. Events taxonomy

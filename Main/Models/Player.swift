@@ -245,7 +245,7 @@ final class Player: ObservableObject {
     func projectOdds(for hustle: SideHustle) -> Double {
         hustle.successProbability(
             for: softSkills,
-            fameScore: fameScore,
+            famePoints: famePoints(for: hustle.fameCategory),
             totalExperienceYears: totalExperienceYears,
             fieldExperienceYears: hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0
         )
@@ -264,7 +264,7 @@ final class Player: ObservableObject {
             projectOutcomeMessage = "\(hustle.label) paid off!" + earned
         } else {
             projectOutcomeTitle = "\(hustle.icon) It didn't land"
-            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot."
+            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway."
         }
         showProjectOutcomeAlert = true
     }
@@ -877,10 +877,14 @@ final class Player: ObservableObject {
         // Spare-time projects. Nothing is staked but the year, and nothing is
         // locked: any project can be attempted at any time, and the odds —
         // talent fit plus the working life behind it, see
-        // SideHustle.successProbability — carry the whole decision. A successful
-        // year banks an industry-scoped fame award and grows the soft skills it
-        // drew on, the founder-cluster axes no hobby can build. A flop yields
-        // nothing but the lost year. All are repeatable year after year.
+        // SideHustle.successProbability — carry the whole decision.
+        //
+        // The year's two payoffs come apart. Soft-skill growth is unconditional:
+        // a year spent writing, building or performing sharpens the same axes
+        // whether or not anyone notices, and those founder-cluster axes are ones
+        // no hobby can build. Recognition is what the roll is for — only a hit
+        // banks an industry-scoped fame award. So a flop still moves the player
+        // forward, just quietly. All are repeatable year after year.
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id] else { continue }
             // A year committed to an experience-building venture (the
@@ -897,22 +901,29 @@ final class Player: ObservableObject {
                 experience[cat, default: 0] += 1
                 recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
             }
-            let outcome = hustle.resolve(for: softSkills, fameScore: fameScore,
+            // Reputation compounds inside its own bucket: a name made shipping
+            // software opens the next software project, and does nothing for a
+            // record. The bucket-scoped figure is the one hiring already uses,
+            // so a fame point means the same thing everywhere it's read.
+            let outcome = hustle.resolve(for: softSkills,
+                                         famePoints: famePoints(for: hustle.fameCategory),
                                          totalExperienceYears: careerYears,
                                          fieldExperienceYears: fieldYears)
+            // The practice lands either way — applied before the roll is read,
+            // so nothing about the outcome can gate it.
+            for ability in hustle.growth {
+                softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
+            }
             if outcome.success {
                 if let grant = outcome.grantedFame {
                     award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
-                    for ability in hustle.growth {
-                        softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
-                    }
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
                 }
                 // A landed project is worth the confetti whatever the odds were —
                 // it cost a year of the player's life to find out.
                 celebrate()
             } else {
-                recordStatus(hustle.icon, "\(hustle.label) didn't pan out this year")
+                recordStatus(hustle.icon, "\(hustle.label) didn't land — but the practice counts")
             }
             reportProjectOutcome(outcome)
         }
