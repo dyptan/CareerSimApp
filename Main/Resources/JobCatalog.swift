@@ -341,6 +341,16 @@ enum JobCatalog {
     static let workSettingByBaseTitle: [String: WorkSetting] = [
         // Engineering: most of it is desk work, but civil engineering is site work.
         "Civil Engineer": .field,
+        // Shop floor and back of house are hands-on, whatever their category
+        // default says about the industry around them.
+        "Stocker/Order Filler": .field,
+        "Cook": .field,
+        "Groundskeeper": .field,
+        // Selling and branch banking are face-to-face, not desk work.
+        "Sales Representative": .peopleFacing,
+        "Real Estate Agent": .peopleFacing,
+        "Bank Teller": .peopleFacing,
+        "Store Manager": .peopleFacing,
         // Health: the chief medical officer runs the hospital from an office.
         "Chief Medical Officer": .office,
         // Hospitality: back of house is hands-on, not customer-facing.
@@ -768,6 +778,35 @@ enum JobCatalog {
     // MARK: - Rows: standalone roles
     // EQF: 1=Primary, 2=Middle, 3=High School, 4=Vocational, 5=Bachelor, 6=Master, 7=Doctorate
     static let standaloneRoles: [JobSpec] = [
+        // MARK: The biggest employers
+        //
+        // These are the roles most people actually hold. The catalogue skewed
+        // hard toward glamour work — show business and games were 20% of it and
+        // are under 2% of real employment — while care work, shop floors, school
+        // support, kitchens and back offices, which between them employ tens of
+        // millions, were barely represented. US employment figures in the
+        // comments are approximate (BLS OES, ~2023), kept here so a future edit
+        // can tell a common job from a rare one.
+        .init(title: "Personal Care Aide", category: .service, income: 30_000, icon: "🤲", summary: "Helps elderly and disabled clients with daily living at home.", minEQF: 2),                     // ~3.7M — the single largest occupation
+        .init(title: "Customer Service Representative", category: .administration, income: 38_000, icon: "🎧", summary: "Answers customer questions and resolves complaints.", minEQF: 3),                 // ~2.9M
+        .init(title: "Stocker/Order Filler", category: .retail, income: 32_000, icon: "📦", summary: "Keeps shelves filled and picks orders in stores and warehouses.", minEQF: 2),                        // ~2.9M
+        .init(title: "Office Clerk", category: .administration, income: 37_000, icon: "🗂️", summary: "Handles filing, data entry, and general office tasks.", minEQF: 3),                                  // ~2.6M
+        .init(title: "Cook", category: .hospitality, income: 33_000, icon: "🍲", summary: "Cooks to order on the line in restaurants and canteens.", minEQF: 2),                                            // ~2.4M
+        .init(title: "Operations Manager", category: .business, income: 78_000, icon: "🗃️", summary: "Runs the day-to-day of a site, branch, or department.", minEQF: 4, minYears: 3),                    // ~3.5M
+        .init(title: "Sales Representative", category: .business, income: 62_000, icon: "🤝", summary: "Sells products and services to businesses.", minEQF: 3),                                           // ~1.5M
+        .init(title: "Store Manager", category: .retail, income: 48_000, icon: "🏪", summary: "Runs a shop floor — staffing, stock, and takings.", minEQF: 3, minYears: 2),                                 // ~1.2M
+        .init(title: "Maintenance & Repair Worker", category: .construction, income: 45_000, icon: "🔧", summary: "Keeps buildings and equipment working — the general fixer.", minEQF: 3),                 // ~1.5M
+        .init(title: "Bookkeeping Clerk", category: .administration, income: 45_000, icon: "🧮", summary: "Keeps the ledgers, invoices, and payments straight.", minEQF: 3),                               // ~1.5M
+        .init(title: "Teaching Assistant", category: .education, income: 32_000, icon: "✏️", summary: "Supports a classroom teacher and works with pupils in small groups.", minEQF: 3),                    // ~1.3M
+        .init(title: "Groundskeeper", category: .agriculture, income: 35_000, icon: "🌳", summary: "Maintains lawns, parks, and grounds.", minEQF: 2),                                                      // ~1.1M
+        .init(title: "Childcare Worker", category: .education, income: 30_000, icon: "🧸", summary: "Cares for young children in nurseries and homes.", minEQF: 3),                                        // ~1.0M
+        .init(title: "Bartender", category: .hospitality, income: 31_000, icon: "🍸", summary: "Mixes and serves drinks at a bar.", minEQF: 2),                                                             // ~0.7M
+        .init(title: "Heavy Equipment Operator", category: .construction, income: 52_000, icon: "🚜", summary: "Runs excavators, loaders, and bulldozers on site.", minEQF: 3),                             // ~0.5M
+        .init(title: "Pharmacy Technician", category: .health, income: 40_000, icon: "⚗️", summary: "Prepares prescriptions under a pharmacist's supervision.", minEQF: 3),                                 // ~0.46M
+        .init(title: "Real Estate Agent", category: .business, income: 54_000, icon: "🏡", summary: "Lists, shows, and sells property on commission.", minEQF: 3),                                          // ~0.45M
+        .init(title: "Insurance Agent", category: .business, income: 57_000, icon: "📋", summary: "Sells and services insurance policies.", minEQF: 3),                                                     // ~0.44M
+        .init(title: "Bank Teller", category: .business, income: 37_000, icon: "🏧", summary: "Handles deposits, withdrawals, and everyday branch banking.", minEQF: 3),                                    // ~0.36M
+
         .init(title: "Light Truck Delivery Driver", category: .transportation, income: 42_000, icon: "🚐", summary: "Delivers goods locally using vans or small trucks.", minEQF: 3),
         // Retail
         .init(title: "Retail Salesperson", category: .retail, income: 30_000, icon: "🛍️", summary: "Sells products directly to customers.", minEQF: 3),
