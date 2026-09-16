@@ -921,7 +921,9 @@ final class CareerGraphTests: XCTestCase {
         let titles = Set(JobCatalog.allJobs().map(\.id))
         let baseTitles = Set(JobCatalog.allJobs().map(\.baseTitle))
         for gone in ["3D Modeler", "Game Animator", "Art Director (Games)",
-                     "Dancer", "Painter (Artist)"] {
+                     "Dancer", "Painter (Artist)",
+                     "Gameplay Programmer", "Technical Artist", "Game Producer",
+                     "Fleet Manager"] {
             XCTAssertFalse(titles.contains(gone), "'\(gone)' should have been folded away.")
             XCTAssertFalse(baseTitles.contains(gone), "'\(gone)' should not survive as a base title.")
         }
@@ -939,6 +941,7 @@ final class CareerGraphTests: XCTestCase {
             ("Fitness Instructor", "Personal Trainer"),
             ("TV Presenter", "News Anchor"),
             ("Journalist", "Editor-in-Chief"),
+            ("Logistics Coordinator", "Supply Chain Manager"),
         ]
         for pair in pairs {
             let rungs = JobCatalog.allJobs()

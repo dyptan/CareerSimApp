@@ -173,9 +173,6 @@ enum JobCatalog {
         "Level Designer":                 .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
         "Game Designer":                  .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, visionaryThinkingAndAmbition: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
         "Narrative Designer":             .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
-        "Gameplay Programmer":            .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
-        "Technical Artist":               .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
-        "Game Producer":                  .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
     ]
 
     // MARK: - Credentials
@@ -308,7 +305,6 @@ enum JobCatalog {
         "Data Scientist": 2,
         "Cloud Architect": 5,
         "Supply Chain Manager": 4,
-        "Fleet Manager": 4,
         "Warehouse Manager": 3,
         "Office Manager": 3,
     ]
@@ -324,10 +320,7 @@ enum JobCatalog {
         // Game roles hire from technology, design and arts alike, so they keep
         // that spread rather than inheriting whichever category now holds them.
         "Game Designer": [.technology, .design, .arts],
-        "Gameplay Programmer": [.technology, .design, .arts],
         "Narrative Designer": [.technology, .design, .arts],
-        "Technical Artist": [.technology, .design, .arts],
-        "Game Producer": [.technology, .design, .arts],
     ]
 
     // MARK: - Work setting
@@ -359,11 +352,8 @@ enum JobCatalog {
         "Event Planner": .office,
         // Moving goods: the warehouse floor is hands-on, the planning desks
         // behind it are not — transportation defaults to field.
-        "Warehouse Manager": .field,
         "Dispatcher": .office,
         "Logistics Coordinator": .office,
-        "Fleet Manager": .office,
-        "Supply Chain Manager": .office,
         // Public services: case work is people work.
         "Social Worker": .peopleFacing,
         // Science: bench work is hands-on; writing up the research isn't.
@@ -436,9 +426,6 @@ enum JobCatalog {
         "Graphic Artist": [.mediaEntertainment, .professionalServices],
 
         // Games are an entertainment business that happens to employ programmers.
-        "Game Producer": [.mediaEntertainment],
-        "Gameplay Programmer": [.mediaEntertainment],
-        "Technical Artist": [.mediaEntertainment],
         "Indie Game Studio": [.mediaEntertainment],
         "Level Designer": [.mediaEntertainment],
         "Narrative Designer": [.mediaEntertainment],
@@ -871,10 +858,6 @@ enum JobCatalog {
         .init(title: "Air Traffic Controller", category: .transportation, income: 130_000, icon: "🗼", summary: "Directs aircraft safely through airspace and runways.", minEQF: 4),
         // Moving goods: the planning and management behind the vehicles
         .init(title: "Dispatcher", category: .transportation, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
-        .init(title: "Logistics Coordinator", category: .transportation, income: 52_000, icon: "🗒️", summary: "Schedules shipments and coordinates carriers.", minEQF: 4),
-        .init(title: "Warehouse Manager", category: .transportation, income: 66_000, icon: "🏬", summary: "Runs a warehouse's staff, inventory, and throughput.", minEQF: 4),
-        .init(title: "Fleet Manager", category: .transportation, income: 74_000, icon: "🚛", summary: "Manages a fleet of vehicles, maintenance, and routing.", minEQF: 5),
-        .init(title: "Supply Chain Manager", category: .transportation, income: 98_000, icon: "🔗", summary: "Optimizes sourcing, inventory, and distribution end-to-end.", minEQF: 5),
         .init(title: "Judge", category: .law, income: 155_000, icon: "👨‍⚖️", summary: "Presides over court proceedings and rulings.", minEQF: 7),
         .init(title: "Security Guard", category: .publicServices, income: 32_000, icon: "🛡️", summary: "Protects property and ensures public safety.", minEQF: 3),
         // Engineering
@@ -899,8 +882,6 @@ enum JobCatalog {
         // Games — split across design and technology by what the role does
         .init(title: "Level Designer", category: .design, income: 68_000, icon: "🗺️", summary: "Builds and balances the game's levels and pacing.", minEQF: 4),
         .init(title: "Narrative Designer", category: .design, income: 72_000, icon: "✍️", summary: "Writes the story, characters, and branching dialogue.", minEQF: 5),
-        .init(title: "Technical Artist", category: .technology, income: 92_000, icon: "🛠️", summary: "Bridges art and code — shaders, tools, and pipelines.", minEQF: 5),
-        .init(title: "Game Producer", category: .technology, income: 105_000, icon: "📋", summary: "Coordinates team, schedule, and scope to ship the game.", minEQF: 5),
 
         // Capstone roles: senior seats that top out a track under their own
         // name rather than as a rung of a ladder.
@@ -924,6 +905,16 @@ enum JobCatalog {
         // Captain were separate roles with rising experience gates — a ladder
         // written out longhand, which also meant seniority in the seat didn't
         // count toward the seat above it. Each rung keeps its own real title.
+        // One logistics-management career, not four jobs. Warehouse, fleet and
+        // supply-chain managers are a single BLS occupation (~160k), and the
+        // coordinator role is its entry grade — so they are the rungs of it.
+        // Fleet Manager is absorbed rather than kept as a rung: it was the same
+        // seniority as the warehouse job, just with vehicles instead of racking.
+        .init(name: "Logistics Coordinator", category: .transportation, icon: "🗒️", rungs: [
+            .init(label: "", income: 52_000, summary: "Schedules shipments and keeps freight moving to plan.", minEQF: 4),
+            .init(label: "", income: 70_000, summary: "Runs a distribution site — racking, shifts, and throughput.", minEQF: 4, minYears: 3, icon: "🏬", title: "Warehouse Manager"),
+            .init(label: "", income: 98_000, summary: "Owns the end-to-end supply chain and its suppliers.", minEQF: 5, minYears: 6, icon: "🔗", title: "Supply Chain Manager"),
+        ]),
         .init(name: "Airline Pilot", category: .transportation, icon: "✈️", rungs: [
             .init(label: "", income: 95_000, summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5, icon: "🧑‍✈️", title: "First Officer"),
             .init(label: "", income: 155_000, summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5, icon: "✈️", title: "Pilot"),
@@ -1004,11 +995,6 @@ enum JobCatalog {
             .init(label: "", income: 78_000, summary: "Designs mechanics, systems, and the player experience.", minEQF: 5),
             .init(label: "Senior", income: 115_000, summary: "Owns major game systems and mentors designers.", minEQF: 5, minYears: 5),
             .init(label: "Lead", income: 150_000, summary: "Sets the design vision for the entire title.", minEQF: 5, minYears: 9),
-        ]),
-        .init(name: "Gameplay Programmer", category: .technology, icon: "💻", rungs: [
-            .init(label: "", income: 98_000, summary: "Codes game systems, mechanics, and engine features.", minEQF: 5),
-            .init(label: "Senior", income: 150_000, summary: "Owns complex gameplay systems and mentors engineers.", minEQF: 5, minYears: 5),
-            .init(label: "Lead", income: 190_000, summary: "Leads the gameplay engineering team and its architecture.", minEQF: 5, minYears: 9),
         ]),
         .init(name: "Graphic Artist", category: .design, icon: "🎨", rungs: [
             .init(label: "Junior", income: 36_000, summary: "Produces assets to spec under art-director review.", minEQF: 3, minYears: 0),
