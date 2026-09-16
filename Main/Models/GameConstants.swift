@@ -181,9 +181,25 @@ enum GameConstants {
     /// across all jobs. See `Player.advanceYear`.
     static let promotionRaise: ClosedRange<Double> = 0.06...0.18
 
-    /// Calm-economy annual probability that a job is lost involuntarily. Used as
-    /// the base layoff risk during a downturn (scaled by `Difficulty.layoffSeverity`).
-    /// Flat across all jobs. See
-    /// `Player.applyEconomicTurmoil`.
+    /// Base annual probability that a job is lost involuntarily, scaled by
+    /// `Difficulty.layoffSeverity`. Read only from `Player.applyEconomicTurmoil`,
+    /// which runs solely during a downturn — a calm year carries no layoff risk.
+    /// Flat across all jobs.
     static let baseLayoffRisk: Double = 0.08
+
+    /// Age at which a run ends and its score is final.
+    ///
+    /// This exists to bound the score. `Player.leaderboardScore` is net worth ÷
+    /// age, and savings compound at `investmentReturn` every year whether or not
+    /// the player works — so net worth grows geometrically while age grows
+    /// linearly. Past age 1/`investmentReturn` ≈ 17 that ratio rises every year
+    /// on its own: idling raised the score forever, and the best strategy was to
+    /// stop playing and hold **Skip**. A horizon caps the years available to
+    /// every run equally, so the score is decided by what a career achieved
+    /// inside a lifetime rather than by how long someone kept tapping.
+    ///
+    /// Note that capping passive growth instead would not have worked: any
+    /// positive return, employed or not, reproduces the same unbounded ratio.
+    /// Only a finite number of years closes it.
+    static let retirementAge: Int = 65
 }

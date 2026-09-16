@@ -278,14 +278,21 @@ final class Player: ObservableObject {
     }
 
     /// Whether the player has met the current setting's win condition. Only the
-    /// Simplified mode has a fixed finish line — reaching a top leadership
-    /// ("C-suite") role. The realistic settings are open-ended: there is no
-    /// target to hit, just a running `leaderboardScore` the player banks whenever
-    /// they choose to finish the game (see `RetirementView`).
+    /// Simplified mode has a fixed *target* — reaching a top leadership
+    /// ("C-suite") role. The realistic settings set no target, just a running
+    /// `leaderboardScore` the player banks by finishing early or at
+    /// `GameConstants.retirementAge`, whichever comes first (see
+    /// `hasRetired` and `RetirementView`).
     var goalMet: Bool {
         guard isSimplified else { return false }
         return currentOccupation?.isTopLeadership ?? false
     }
+
+    /// Whether the run has reached its horizon. At `GameConstants.retirementAge`
+    /// the career is over and the score is final — `advanceYear` stops advancing
+    /// and the Game Over sheet becomes the only way out. See that constant for
+    /// why a finite number of years is what makes the score meaningful.
+    var hasRetired: Bool { age >= GameConstants.retirementAge }
 
     @Published var age: Int
 
@@ -362,7 +369,6 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
-    @Published var lockedHobbies: Set<String>
     /// Professional network built by attending industry `CareerEvent`s, keyed by
     /// the event's industry. Improves hiring odds on that field's postings and
     /// the chance of promotion while working in it (see `networkBonus`).
@@ -404,8 +410,7 @@ final class Player: ObservableObject {
         experience: [JobCategory: Int] = [:],
         currentOccupation: Job? = nil,
         savings: Int = 0,
-        lockedTrainings: Set<Training> = [],
-        lockedHobbies: Set<String> = []
+        lockedTrainings: Set<Training> = []
     ) {
         self.age = age
         self.softSkills = softSkills
@@ -416,7 +421,6 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedTrainings = lockedTrainings
-        self.lockedHobbies = lockedHobbies
         self.availableJobs = JobCatalog.allJobs().shuffled()
     }
 
@@ -661,6 +665,13 @@ final class Player: ObservableObject {
     // MARK: - Year progression
 
     func advanceYear(appUIState: AppUIState) {
+        // Past the horizon there are no more years to live: the score is final,
+        // so nothing may change it. Belt and braces — the UI also stops offering
+        // the controls that would get here.
+        guard !hasRetired else {
+            appUIState.showRetirementSheet = true
+            return
+        }
         // The life stage the year was *lived* in, captured before the birthday:
         // competitions entered this year resolve against it, so a 17-year-old's
         // junior season doesn't get judged by adult-stage rules.
@@ -693,14 +704,6 @@ final class Player: ObservableObject {
         // This year's picks are now permanent (hard skills + locked); clear the
         // pending set so next year starts fresh, mirroring sports/hobbies/events.
         appUIState.selectedTrainings.removeAll()
-
-        // Bank this year's hobbies into the player's practised-hobby history,
-        // locking a hobby from being retaken (HobbiesView). `selectedActivities`
-        // also carries sport and training: entries, so intersect with the hobby
-        // catalogue to keep only real hobby labels.
-        lockedHobbies.formUnion(
-            appUIState.selectedActivities.intersection(Set(hobbies.map(\.label)))
-        )
 
         appUIState.selectedActivities.removeAll()
         // Events applied their network/soft-skill effects when attended. Bank the
@@ -979,6 +982,14 @@ final class Player: ObservableObject {
                 recordStatus("🎓", "Paid off your student loan")
             }
         }
+
+        // The year just lived may have been the last one. Raise the Game Over
+        // sheet after everything else has settled, so the final score already
+        // includes this year's pay, growth and loan servicing.
+        if hasRetired {
+            recordStatus("🎂", "Reached \(GameConstants.retirementAge) — career over")
+            appUIState.showRetirementSheet = true
+        }
     }
 
     /// Resolves an economic downturn for the year: pulls risky offers from the
@@ -1055,8 +1066,11 @@ final class Player: ObservableObject {
         // Ventures until then; this is the model-level guarantee.
         guard age >= GameConstants.minimumEntrepreneurAge else { return false }
         // Savings fund the stake first; anything beyond them (up to the loan cap)
-        // is borrowed against income and booked as debt.
+        // is borrowed against income and booked as debt. A stake of nothing is
+        // the one thing that closes a venture outright — capital is the only
+        // hard requirement, so it has to actually be required.
         let stake = min(max(0, investedCapital), maxVentureStake)
+        guard stake > 0 else { return false }
         let borrowed = borrowedPortion(ofStake: stake)
         let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
         savings -= (stake - borrowed)          // spend savings first
@@ -1275,7 +1289,6 @@ final class Player: ObservableObject {
         outstandingLoan = fresh.outstandingLoan
         studentLoan = fresh.studentLoan
         lockedTrainings = fresh.lockedTrainings
-        lockedHobbies = fresh.lockedHobbies
         networkByCategory = fresh.networkByCategory
         sportYears = fresh.sportYears
         executiveActionsThisYear = []

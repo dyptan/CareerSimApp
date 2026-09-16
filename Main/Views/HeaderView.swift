@@ -84,9 +84,12 @@ struct HeaderView: View {
                     .buttonStyle(.bordered)
                     .font(.headline)
 
+                // No years left to spend once the horizon is reached — the
+                // score is final, so the control that would change it goes away.
                 Button("Skip") { player.advanceYear(appUIState: appUIState) }
                     .buttonStyle(.borderedProminent)
                     .font(.headline)
+                    .disabled(player.hasRetired)
             }
         }
     }

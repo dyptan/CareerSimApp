@@ -266,7 +266,7 @@ private struct VentureRow: View {
         var parts = ["🏭 \(job.category.rawValue)"]
         let years = job.requirements.minYearsExperience
         if years > 0 {
-            parts.append("🧭 \(years)+ yr exp")
+            parts.append("🧭 \(years) yr exp expected")
         }
         parts.append("💰 Target \((job.targetCapital ?? 0).formatted(.number)) $")
         return parts.joined(separator: "  ·  ")
@@ -276,8 +276,9 @@ private struct VentureRow: View {
         let stake = Self.stake(for: job, player: player)
         let borrowed = player.borrowedPortion(ofStake: stake)
         let odds = job.founderSuccessProbability(for: player, investedCapital: stake)
-        let experienceMet = job.experienceMet(for: player)
-        let locked = !experienceMet || player.maxVentureStake <= 0
+        // Capital is the only hard requirement: with a stake you may attempt any
+        // venture, however unprepared — the odds carry the whole decision.
+        let locked = player.maxVentureStake <= 0
 
         HStack(alignment: .top, spacing: 12) {
             Text(job.icon)
@@ -294,11 +295,7 @@ private struct VentureRow: View {
                 Text(job.baseTitle)
                     .font(.headline)
 
-                if !experienceMet {
-                    Text("🔒 \(job.requirements.minYearsExperience)+ yrs in \(job.category.rawValue) first")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                } else if player.maxVentureStake <= 0 {
+                if locked {
                     Text("🔒 Nothing to stake yet — earn and save first")
                         .font(.caption2)
                         .foregroundStyle(.orange)
@@ -337,9 +334,9 @@ private struct VentureRow: View {
     private func infoMessage(stake: Int, borrowed: Int, odds: Double) -> String {
         let header = [job.summary, ventureFacts]
 
-        guard job.experienceMet(for: player) else {
+        guard player.maxVentureStake > 0 else {
             return (header + [
-                "🔒 Needs \(job.requirements.minYearsExperience)+ yr in \(job.category.rawValue). Try a smaller venture first."
+                "🔒 You need something to stake. Earn and save first — capital is the only thing that can stop you launching."
             ]).joined(separator: "\n\n")
         }
 
@@ -351,7 +348,7 @@ private struct VentureRow: View {
 
         return (header + [
             funding,
-            "Odds: \(Int((odds * 100).rounded()))% — mostly your stake against the \(target) $ this really needs, plus 🎲 Risk-Taker, 🔭 Visionary, 💬 Persuader and your years in \(job.category.rawValue).",
+            "Odds: \(Int((odds * 100).rounded()))% — mostly your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) against the \(job.requirements.minYearsExperience) expected, plus 🎲 Risk-Taker, 🔭 Visionary, 💬 Persuader and your stake against the \(target) $ this really needs. Nothing here blocks you — thin preparation just makes it a long shot.",
             "Win: it becomes your occupation, earning its income until you sell or it folds.\nLose: the stake is gone — the loan isn't.",
         ]).joined(separator: "\n\n")
     }

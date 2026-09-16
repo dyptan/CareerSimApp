@@ -860,6 +860,51 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
     }
 
+    // MARK: - Run horizon
+
+    /// The run ends at `GameConstants.retirementAge`, and the score is final
+    /// there. This is what bounds the score at all: savings compound every year
+    /// whether or not the player works, so net worth grows geometrically while
+    /// age grows linearly — past age ~1/investmentReturn the ratio rises on its
+    /// own and idling would raise the score forever.
+    func testRunEndsAtRetirementAndScoreStopsMoving() {
+        let player = Player()
+        let appUIState = AppUIState()
+        player.difficulty = .middleClass
+        player.age = GameConstants.retirementAge - 1
+        player.savings = 1_000_000
+        XCTAssertFalse(player.hasRetired, "Premise: one year still to live.")
+
+        player.advanceYear(appUIState: appUIState)
+        XCTAssertTrue(player.hasRetired, "Reaching the retirement age ends the run.")
+        XCTAssertTrue(appUIState.showRetirementSheet,
+                      "The final year should raise the Game Over sheet by itself.")
+
+        // Past the horizon nothing may move: not the age, not the score.
+        let finalAge = player.age
+        let finalScore = player.leaderboardScore
+        for _ in 0..<25 { player.advanceYear(appUIState: appUIState) }
+        XCTAssertEqual(player.age, finalAge, "No years pass after retirement.")
+        XCTAssertEqual(player.leaderboardScore, finalScore,
+                       "The score is final — idling past the horizon cannot raise it.")
+    }
+
+    /// The exploit this horizon closes, stated as arithmetic: with compounding
+    /// alone the score climbs every year once the player is past ~17, so without
+    /// a horizon the best strategy is to stop playing and let the clock run.
+    func testIdlingWouldOtherwiseRaiseTheScoreForever() {
+        let r = GameConstants.investmentReturn
+        let breakEven = 1.0 / r
+        XCTAssertLessThan(breakEven, Double(GameConstants.retirementAge),
+                          "The horizon has to sit above the age where idling starts paying.")
+        var netWorth = 500_000.0
+        var age = Double(GameConstants.retirementAge)
+        let scoreAtHorizon = netWorth / age
+        netWorth *= (1 + r); age += 1
+        XCTAssertGreaterThan(netWorth / age, scoreAtHorizon,
+                             "Compounding outruns ageing — which is exactly why the run has to stop.")
+    }
+
     // MARK: - Breakthrough-gated star careers
 
     /// The three star tracks (pro athlete, movie star, pop star) exist in the

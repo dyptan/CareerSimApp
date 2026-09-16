@@ -10,7 +10,9 @@ struct RetirementView: View {
                 .font(.largeTitle.bold())
                 .padding(.top)
 
-            Text("You wrapped up your career at age \(player.age).")
+            Text(player.hasRetired
+                 ? "You reached \(GameConstants.retirementAge) — your career is over and this score is final."
+                 : "You wrapped up your career at age \(player.age).")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -58,14 +60,18 @@ struct RetirementView: View {
 
             // The sheet also opens from the header's finish-game control, so an
             // accidental visit needs a way back that isn't wiping the run —
-            // especially on macOS, where a sheet can't be swiped away.
-            Button {
-                appUIState.showRetirementSheet = false
-            } label: {
-                Text("Keep playing")
-                    .frame(maxWidth: .infinity)
+            // especially on macOS, where a sheet can't be swiped away. Once the
+            // horizon is reached there is no run left to go back to, so the way
+            // back is withheld rather than shown leading nowhere.
+            if !player.hasRetired {
+                Button {
+                    appUIState.showRetirementSheet = false
+                } label: {
+                    Text("Keep playing")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.bordered)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .center)

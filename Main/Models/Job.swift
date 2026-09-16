@@ -500,12 +500,18 @@ extension Job {
     /// Probability that a founding attempt succeeds. Driven by *who the founder
     /// is*, not their bank balance: experience in the venture's own industry and
     /// how well their soft skills fit what the business demands are the two big
-    /// levers, with the size of the stake a supporting factor. The industry
-    /// experience baseline (`minYearsExperience`) is still a hard gate — you
-    /// can't credibly launch a restaurant having never worked in hospitality.
+    /// levers, with the size of the stake a supporting factor.
+    ///
+    /// **Capital is the only hard requirement.** Anyone with a stake may try
+    /// anything — nobody is barred from opening a restaurant for never having
+    /// worked in hospitality, they are simply very likely to fail at it. The
+    /// industry-experience baseline that used to gate this outright is now just
+    /// the largest probabilistic term (`founderExperienceFit`), so an unprepared
+    /// founder sits near the 0.03 floor rather than being refused.
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
-        guard experienceMet(for: player) else { return 0.0 }
+        // The one hard requirement. Everything else below only moves the odds.
+        guard investedCapital > 0 else { return 0.0 }
         // Weighted so that even a maxed-out founder lands around the
         // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
         // while weaker preparation falls away steeply below it.
