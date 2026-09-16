@@ -493,7 +493,6 @@ extension Job {
     /// candidate argues their way onto a different step of it. Keyed by
     /// `baseTitle`, so one entry covers every rung of a ladder.
     static let publicPayScaleTitles: Set<String> = [
-        "Air Traffic Controller",
         "Judge",
     ]
 

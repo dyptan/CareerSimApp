@@ -923,7 +923,7 @@ final class CareerGraphTests: XCTestCase {
         for gone in ["3D Modeler", "Game Animator", "Art Director (Games)",
                      "Dancer", "Painter (Artist)",
                      "Gameplay Programmer", "Technical Artist", "Game Producer",
-                     "Fleet Manager"] {
+                     "Fleet Manager", "Air Traffic Controller"] {
             XCTAssertFalse(titles.contains(gone), "'\(gone)' should have been folded away.")
             XCTAssertFalse(baseTitles.contains(gone), "'\(gone)' should not survive as a base title.")
         }

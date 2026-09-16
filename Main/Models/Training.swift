@@ -41,7 +41,6 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     case dentalLicense = "Dental License"
     case pharmacistLicense = "Pharmacist License"
     case veterinaryLicense = "Veterinary License"
-    case atcCertification = "ATC Certification"
     case electrician = "Electrician License"
     case plumber = "Plumber License"
     case bar = "Bar Admission"
@@ -96,7 +95,6 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .dentalLicense: return "Dental Board Exam (Dental License)"
         case .pharmacistLicense: return "Pharmacy Board Exam (Pharmacist License)"
         case .veterinaryLicense: return "Veterinary Board Exam (Veterinary License)"
-        case .atcCertification: return "FAA Academy (Air Traffic Control Certification)"
         case .electrician: return "Journeyman Electrician Exam (Electrician License)"
         case .plumber: return "Journeyman Plumber Exam (Plumber License)"
         case .bar: return "Law Bar Exam (Bar Admission)"
@@ -136,7 +134,6 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .dentalLicense: return "State license to practice dentistry. Earned after dental school (DDS/DMD) and the national and state board exams."
         case .pharmacistLicense: return "State license to practice as a pharmacist. Earned after a Doctor of Pharmacy (PharmD) and the national board exam (NAPLEX)."
         case .veterinaryLicense: return "State license to practice veterinary medicine. Earned after a Doctor of Veterinary Medicine (DVM) and the national board exam (NAVLE)."
-        case .atcCertification: return "FAA certification to safely direct air traffic. Earned at the FAA Academy — required to work as an air traffic controller."
         case .electrician: return "Government license to wire buildings safely. Earned after an apprenticeship and an exam."
         case .plumber: return "Government license to install and repair pipes, drains, and water systems. Earned after an apprenticeship and a journeyman exam."
         case .bar: return "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practice as a lawyer in court."
@@ -175,7 +172,6 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
         case .dentalLicense: return "🦷"
         case .pharmacistLicense: return "💊"
         case .veterinaryLicense: return "🐾"
-        case .atcCertification: return "🗼"
         case .electrician: return "⚡️"
         case .plumber: return "🔧"
         case .bar: return "⚖️"
@@ -303,10 +299,6 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                     .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1)]
-        case .atcCertification:
-            return [.init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
-                    .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-                    .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
         case .electrician:
             return [.init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -560,7 +552,6 @@ extension Training {
         // The FAA Academy takes applicants with a degree *or* several years of
         // responsible work behind them. There is no "or" in a Rules row, so this
         // takes the floor both routes share — you finished school.
-        .atcCertification:     .init(isStatutory: true),
         // A short course and an exam, open to anyone old enough.
         .pesticideApplicator:  .init(isStatutory: true, minEQF: 0),
         // Guard training itself asks only for a school-leaving certificate.

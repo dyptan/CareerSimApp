@@ -223,7 +223,6 @@ enum JobCatalog {
         // Every rung flies on a commercial licence; the captain's rung adds the
         // ATP on top (see `credentialsByFullTitle`, which wins over this).
         "Airline Pilot": HardSkills(trainings: [.commercialPilot]),
-        "Air Traffic Controller": HardSkills(trainings: [.atcCertification]),
         // Trades — licensed by law in most jurisdictions
         "Electrician": HardSkills(trainings: [.electrician]),
         "Plumber": HardSkills(trainings: [.plumber]),
@@ -367,7 +366,6 @@ enum JobCatalog {
         "Journalist": .field,
         "Photographer": .field,
         // Transportation: the tower is a control room, not a cab.
-        "Air Traffic Controller": .office,
     ]
 
     /// Where a role in `category` is done, absent an entry above.
@@ -443,7 +441,6 @@ enum JobCatalog {
 
         // The state, whatever the nominal discipline.
         "Judge": [.government],
-        "Air Traffic Controller": [.government],
         "Security Guard": [.professionalServices, .government],
 
         // Moving people and goods.
@@ -855,7 +852,6 @@ enum JobCatalog {
         .init(title: "Forklift Operator", category: .transportation, income: 36_000, icon: "🏗️", summary: "Operates forklifts to move goods.", minEQF: 2),
         .init(title: "Mechanic", category: .transportation, income: 52_000, icon: "🔧", summary: "Repairs vehicles and machinery.", minEQF: 4),
         .init(title: "Aircraft Maintenance Technician", category: .transportation, income: 68_000, icon: "🛩️", summary: "Inspects, services, and repairs aircraft.", minEQF: 4),
-        .init(title: "Air Traffic Controller", category: .transportation, income: 130_000, icon: "🗼", summary: "Directs aircraft safely through airspace and runways.", minEQF: 4),
         // Moving goods: the planning and management behind the vehicles
         .init(title: "Dispatcher", category: .transportation, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
         .init(title: "Judge", category: .law, income: 155_000, icon: "👨‍⚖️", summary: "Presides over court proceedings and rulings.", minEQF: 7),
