@@ -880,6 +880,59 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
     }
 
+    // MARK: - Consolidated ladders
+
+    /// The flight deck is one career with three named rungs, not three jobs.
+    /// Worth pinning: it is the only ladder whose rungs carry their own titles
+    /// rather than seniority labels, so its per-rung overrides key on the full
+    /// title while its credentials key on the base — an easy thing to break.
+    func testAirlinePilotIsOneLadderWithItsOwnRungTitles() {
+        let rungs = JobCatalog.allJobs()
+            .filter { $0.baseTitle == "Airline Pilot" }
+            .sorted { $0.rung < $1.rung }
+        XCTAssertEqual(rungs.map(\.id), ["First Officer", "Pilot", "Airline Captain"],
+                       "The ladder should read as the three real flight-deck ranks.")
+
+        // Experience gates come from `minYearsByTitle`, which keys on full title.
+        XCTAssertEqual(rungs.map(\.requirements.minYearsExperience), [1, 3, 8],
+                       "Each rank should expect more hours than the one below it.")
+
+        // Pay and sector rise and hold respectively.
+        XCTAssertEqual(rungs.map(\.income).sorted(), rungs.map(\.income),
+                       "Pay should climb with rank.")
+        XCTAssertEqual(Set(rungs.map(\.industry)), [.aerospaceDefense],
+                       "Every rung flies for the same kind of employer.")
+
+        // Credentials: the commercial licence throughout, ATP for the captain
+        // only — `credentialsByFullTitle` layered over `credentialsByBaseTitle`.
+        for rung in rungs {
+            XCTAssertTrue(rung.requirements.hardSkills.trainings.contains(.commercialPilot),
+                          "\(rung.id) should need a commercial licence.")
+        }
+        let captain = try? XCTUnwrap(rungs.last)
+        XCTAssertEqual(captain?.requirements.hardSkills.trainings.contains(.airlineTransportPilot), true,
+                       "Only the captain's seat should demand the ATP.")
+        XCTAssertEqual(rungs.first?.requirements.hardSkills.trainings.contains(.airlineTransportPilot), false,
+                       "A first officer should not need the captain's licence.")
+    }
+
+    /// The consolidated roles are gone, and nothing still points at them.
+    func testConsolidatedRolesAreFullyRemoved() {
+        let titles = Set(JobCatalog.allJobs().map(\.id))
+        let baseTitles = Set(JobCatalog.allJobs().map(\.baseTitle))
+        for gone in ["3D Modeler", "Game Animator", "Art Director (Games)"] {
+            XCTAssertFalse(titles.contains(gone), "'\(gone)' should have been folded away.")
+            XCTAssertFalse(baseTitles.contains(gone), "'\(gone)' should not survive as a base title.")
+        }
+        // The roles that absorbed them are still there.
+        for kept in ["3D Artist", "Animator", "Art Director"] {
+            XCTAssertTrue(baseTitles.contains(kept), "'\(kept)' should still exist.")
+        }
+        // Modelling became the 3D Artist ladder's entry rung.
+        let artist = JobCatalog.allJobs().filter { $0.baseTitle == "3D Artist" }
+        XCTAssertEqual(artist.count, 3, "3D Artist should now run junior → base → senior.")
+    }
+
     // MARK: - The industry cycle
 
     /// A boom and a slump are genuinely different years to apply in, and the

@@ -169,16 +169,13 @@ enum JobCatalog {
         "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 3),
 
         // Games — the art, design and engineering that ship them
-        "3D Modeler":                     .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 3, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
         "3D Artist":                      .init(creativityAndInsightfulThinking: 4, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, spacialNavigationAndOrientation: 3, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 1),
-        "Game Animator":                  .init(creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
         "Level Designer":                 .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, collaborationAndTeamwork: 2, timeManagementAndPlanning: 1),
         "Game Designer":                  .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, visionaryThinkingAndAmbition: 2, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, presentationAndStorytelling: 2),
         "Narrative Designer":             .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, carefulnessAndAttentionToDetail: 2, selfDisciplineAndPerseverance: 2, presentationAndStorytelling: 4),
         "Gameplay Programmer":            .init(analyticalReasoningAndProblemSolving: 4, creativityAndInsightfulThinking: 2, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 1, collaborationAndTeamwork: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
         "Technical Artist":               .init(analyticalReasoningAndProblemSolving: 3, creativityAndInsightfulThinking: 3, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 2, spacialNavigationAndOrientation: 2, collaborationAndTeamwork: 2, selfDisciplineAndPerseverance: 2),
         "Game Producer":                  .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 3, persuasionAndNegotiation: 2, leadershipAndInfluence: 3, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 3, timeManagementAndPlanning: 4),
-        "Art Director (Games)":           .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, leadershipAndInfluence: 3, visionaryThinkingAndAmbition: 2, carefulnessAndAttentionToDetail: 2, collaborationAndTeamwork: 2, presentationAndStorytelling: 2),
     ]
 
     // MARK: - Credentials
@@ -226,9 +223,9 @@ enum JobCatalog {
         "Taxi Driver": HardSkills(trainings: [.drivers]),
         "Truck Driver": HardSkills(trainings: [.cdl]),
         "Bus Driver": HardSkills(trainings: [.cdl]),
-        "Pilot": HardSkills(trainings: [.commercialPilot]),
-        "First Officer": HardSkills(trainings: [.commercialPilot]),
-        "Airline Captain": HardSkills(trainings: [.commercialPilot]),
+        // Every rung flies on a commercial licence; the captain's rung adds the
+        // ATP on top (see `credentialsByFullTitle`, which wins over this).
+        "Airline Pilot": HardSkills(trainings: [.commercialPilot]),
         "Air Traffic Controller": HardSkills(trainings: [.atcCertification]),
         // Trades — licensed by law in most jurisdictions
         "Electrician": HardSkills(trainings: [.electrician]),
@@ -331,7 +328,6 @@ enum JobCatalog {
         "Narrative Designer": [.technology, .design, .arts],
         "Technical Artist": [.technology, .design, .arts],
         "Game Producer": [.technology, .design, .arts],
-        "Art Director (Games)": [.technology, .design, .arts],
     ]
 
     // MARK: - Work setting
@@ -411,7 +407,10 @@ enum JobCatalog {
         case .construction:     return [.construction]
         case .manufacturing:    return [.manufacturing, .automotive, .aerospaceDefense, .agriFood]
         case .agriculture:      return [.agriFood]
-        case .transportation:   return [.logistics, .retailTrade, .aerospaceDefense]
+        // Ground logistics only. Aviation roles name aerospace explicitly below;
+        // leaving it in the default posted dispatchers and bus drivers to defence
+        // contractors, which is not a thing.
+        case .transportation:   return [.logistics]
         case .entrepreneurship: return [.professionalServices]
         }
     }
@@ -443,10 +442,8 @@ enum JobCatalog {
         "Gameplay Programmer": [.mediaEntertainment],
         "Technical Artist": [.mediaEntertainment],
         "Indie Game Studio": [.mediaEntertainment],
-        "Art Director (Games)": [.mediaEntertainment],
         "Level Designer": [.mediaEntertainment],
         "Narrative Designer": [.mediaEntertainment],
-        "Game Animator": [.mediaEntertainment],
 
         // Business: only the money roles are in finance; the rest sell advice.
         "Financial Analyst": [.finance],
@@ -466,10 +463,12 @@ enum JobCatalog {
 
         // Moving people and goods.
         "Aircraft Maintenance Technician": [.aerospaceDefense],
-        "Airline Captain": [.aerospaceDefense],
-        "First Officer": [.aerospaceDefense],
-        "Pilot": [.aerospaceDefense],
+        "Airline Pilot": [.aerospaceDefense],
         "Mechanic": [.automotive, .logistics],
+        // The last mile is run by retailers as much as by carriers.
+        "Delivery Courier": [.logistics, .retailTrade],
+        "Light Truck Delivery Driver": [.logistics, .retailTrade],
+        "Truck Driver": [.logistics, .agriFood, .manufacturing],
 
         // Leisure trades sitting under other headings.
         "Fitness Instructor": [.hospitalityTourism],
@@ -873,9 +872,6 @@ enum JobCatalog {
         .init(title: "Mechanic", category: .transportation, income: 52_000, icon: "🔧", summary: "Repairs vehicles and machinery.", minEQF: 4),
         .init(title: "Aircraft Maintenance Technician", category: .transportation, income: 68_000, icon: "🛩️", summary: "Inspects, services, and repairs aircraft.", minEQF: 4),
         .init(title: "Air Traffic Controller", category: .transportation, income: 130_000, icon: "🗼", summary: "Directs aircraft safely through airspace and runways.", minEQF: 4),
-        .init(title: "First Officer", category: .transportation, income: 95_000, icon: "🧑‍✈️", summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5),
-        .init(title: "Pilot", category: .transportation, income: 155_000, icon: "✈️", summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5),
-        .init(title: "Airline Captain", category: .transportation, income: 205_000, icon: "👨‍✈️", summary: "Commands the flight deck of commercial airliners.", minEQF: 5),
         // Moving goods: the planning and management behind the vehicles
         .init(title: "Dispatcher", category: .transportation, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
         .init(title: "Logistics Coordinator", category: .transportation, income: 52_000, icon: "🗒️", summary: "Schedules shipments and coordinates carriers.", minEQF: 4),
@@ -908,11 +904,9 @@ enum JobCatalog {
         .init(title: "Musician", category: .showBusiness, income: 34_000, icon: "🎵", summary: "Performs or composes music professionally.", minEQF: 1),
         .init(title: "Actor", category: .showBusiness, income: 38_000, icon: "🎭", summary: "Performs in theater, film, or television.", minEQF: 1),
         .init(title: "Dancer", category: .showBusiness, income: 35_000, icon: "💃", summary: "Performs choreographed routines on stage and screen.", minEQF: 1),
-        .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Creates 2D/3D animation for studios and clients.", minEQF: 4),
+        .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Animates characters and motion for film, advertising, and games.", minEQF: 4),
         .init(title: "Interior Designer", category: .design, income: 60_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
         // Games — split across design and technology by what the role does
-        .init(title: "3D Modeler", category: .design, income: 58_000, icon: "🧊", summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 4),
-        .init(title: "Game Animator", category: .design, income: 62_000, icon: "🎞️", summary: "Brings characters and creatures to life in motion.", minEQF: 4),
         .init(title: "Level Designer", category: .design, income: 68_000, icon: "🗺️", summary: "Builds and balances the game's levels and pacing.", minEQF: 4),
         .init(title: "Narrative Designer", category: .design, income: 72_000, icon: "✍️", summary: "Writes the story, characters, and branching dialogue.", minEQF: 5),
         .init(title: "Technical Artist", category: .technology, income: 92_000, icon: "🛠️", summary: "Bridges art and code — shaders, tools, and pipelines.", minEQF: 5),
@@ -923,9 +917,8 @@ enum JobCatalog {
         .init(title: "Marketing Director", category: .business, income: 145_000, icon: "📣", summary: "Leads the marketing function and brand strategy.", minEQF: 5, minYears: 8),
         .init(title: "Managing Partner", category: .law, income: 220_000, icon: "⚖️", summary: "Equity partner driving client relationships and firm strategy — the top of the law track.", minEQF: 7, minYears: 8),
         .init(title: "Nurse Practitioner", category: .health, income: 125_000, icon: "🥼", summary: "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy.", minEQF: 6, minYears: 2),
-        .init(title: "Art Director", category: .showBusiness, income: 100_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, or publications.", minEQF: 5, minYears: 8),
+        .init(title: "Art Director", category: .showBusiness, income: 110_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, publications, or a game.", minEQF: 5, minYears: 8),
         .init(title: "Editor-in-Chief", category: .showBusiness, income: 135_000, icon: "🗞️", summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10),
-        .init(title: "Art Director (Games)", category: .design, income: 145_000, icon: "🖌️", summary: "Directs the art team and defines the game's whole look.", minEQF: 5, minYears: 8),
         .init(title: "Chief Medical Officer", category: .health, income: 300_000, icon: "🏥", summary: "Sets clinical strategy and quality across a health system.", minEQF: 7, minYears: 12),
         .init(title: "Chief Technology Officer", category: .technology, income: 320_000, icon: "🧠", summary: "Owns technology strategy for the whole organization.", minEQF: 6, minYears: 12),
         .init(title: "Chief Executive Officer", category: .business, income: 400_000, icon: "👔", summary: "Leads the entire company and answers to the board.", minEQF: 6, minYears: 15),
@@ -938,9 +931,22 @@ enum JobCatalog {
     // rungs can never tie for "next". Credentials and soft skills are inherited
     // from the ladder's name via the per-base-title tables.
     static let ladders: [LadderSpec] = [
+        // One flight-deck career, not three jobs. First Officer, Pilot and Airline
+        // Captain were separate roles with rising experience gates — a ladder
+        // written out longhand, which also meant seniority in the seat didn't
+        // count toward the seat above it. Each rung keeps its own real title.
+        .init(name: "Airline Pilot", category: .transportation, icon: "✈️", rungs: [
+            .init(label: "", income: 95_000, summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5, icon: "🧑‍✈️", title: "First Officer"),
+            .init(label: "", income: 155_000, summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5, icon: "✈️", title: "Pilot"),
+            .init(label: "", income: 205_000, summary: "Commands the flight deck of commercial airliners.", minEQF: 5, icon: "👨‍✈️", title: "Airline Captain"),
+        ]),
+        // Modelling is the entry rung of this craft rather than a separate job:
+        // "3D Modeler" carried a nearly identical skill profile and sat below the
+        // base rung on pay, so it is that ladder's first step.
         .init(name: "3D Artist", category: .design, icon: "🎨", rungs: [
-            .init(label: "", income: 64_000, summary: "Creates textured, lit 3D art for games.", minEQF: 4),
+            .init(label: "Junior", income: 58_000, summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 4, icon: "🧊"),
             // Games — art, design and engineering ladders inside a studio
+            .init(label: "", income: 64_000, summary: "Creates textured, lit 3D art for games and film.", minEQF: 4, minYears: 2),
             .init(label: "Senior", income: 95_000, summary: "Owns key art and sets the visual bar for the team.", minEQF: 4, minYears: 5),
         ]),
         .init(name: "Accountant", category: .administration, icon: "📒", rungs: [
