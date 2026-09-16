@@ -653,10 +653,9 @@ final class CareerGraphTests: XCTestCase {
 
         var sawStrictIncrease = false
         for job in techJobs where job.allRequirementsMet(for: player) && !player.isSimplified {
-            let salary = Double(job.annualIncome)
-            let before = job.hireProbability(for: player, requestedSalary: salary)
+            let before = job.hireOddsAtPostedRate(for: player)
             player.hardSkills.trainings.insert(.codingBootcamp)
-            let after = job.hireProbability(for: player, requestedSalary: salary)
+            let after = job.hireOddsAtPostedRate(for: player)
             player.hardSkills.trainings.remove(.codingBootcamp)
             XCTAssertGreaterThanOrEqual(after, before, "A credential must never hurt hire odds.")
             if after > before { sawStrictIncrease = true }
@@ -887,15 +886,10 @@ final class CareerGraphTests: XCTestCase {
     /// climate reaches hiring, promotions and projects alike.
     func testClimateMovesHiringPromotionAndProjectOdds() throws {
         let jobs = JobCatalog.allJobs()
-        // `atBaseSalary()` pins the posted pay. `Job.init` jitters `annualIncome`
-        // by the category's salary variance, so asking for the *catalogue* figure
-        // can be asking well above the posting — a penalty big enough to drive
-        // both ends to the 5% floor, where the climate term being measured
-        // becomes invisible.
         guard let job = jobs.first(where: {
             $0.category == .technology && !$0.isEntrepreneurial && !$0.isLowSkilled
                 && $0.requirements.minYearsExperience == 0
-        })?.atBaseSalary() else {
+        }) else {
             XCTFail("Expected an entry-level technology role."); return
         }
         guard let project = SideHustleCatalog.byId["projectApp"] else {
@@ -919,8 +913,8 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(slumping.climate(for: job.industry), .slump)
 
         XCTAssertGreaterThan(
-            job.hireProbability(for: booming, requestedSalary: Double(job.annualIncome)),
-            job.hireProbability(for: slumping, requestedSalary: Double(job.annualIncome)),
+            job.hireOddsAtPostedRate(for: booming),
+            job.hireOddsAtPostedRate(for: slumping),
             "A booming industry should hire more readily than a slumping one.")
 
         XCTAssertGreaterThan(booming.promotionChance(for: job), slumping.promotionChance(for: job),
@@ -1103,11 +1097,8 @@ final class CareerGraphTests: XCTestCase {
                                     minYearsExperience: 0),
                 industry: sector)
         }
-        // `atBaseSalary()` pins the posted pay: `Job.init` jitters `annualIncome`
-        // by the category's salary variance, and asking above a jittered posting
-        // is penalised hard enough to swamp the climate term being measured.
-        let a = role(.construction).atBaseSalary()
-        let b = role(.aerospaceDefense).atBaseSalary()
+        let a = role(.construction)
+        let b = role(.aerospaceDefense)
         XCTAssertEqual(a.category, b.category, "Premise: same discipline.")
         XCTAssertNotEqual(a.industry, b.industry, "Premise: different markets.")
 
@@ -1120,8 +1111,8 @@ final class CareerGraphTests: XCTestCase {
         player.industryTrend[b.industry] = -0.9     // b's market is in a slump
 
         XCTAssertGreaterThan(
-            a.hireProbability(for: player, requestedSalary: Double(a.annualIncome)),
-            b.hireProbability(for: player, requestedSalary: Double(b.annualIncome)),
+            a.hireOddsAtPostedRate(for: player),
+            b.hireOddsAtPostedRate(for: player),
             "Same discipline, opposite markets — the booming employer should hire more readily.")
     }
 
@@ -1201,13 +1192,12 @@ final class CareerGraphTests: XCTestCase {
             XCTAssertTrue(job.allRequirementsMet(for: player),
                           "A 40-year-old should meet the entry rung's requirements for '\(job.id)'.")
 
-            let salary = Double(job.annualIncome)
-            let gated = job.hireProbability(for: player, requestedSalary: salary)
+            let gated = job.hireOddsAtPostedRate(for: player)
             XCTAssertEqual(gated, 0.05, accuracy: 0.0001,
                            "Without the breakthrough, '\(job.id)' odds sit at the 5% floor.")
 
             player.award(gate.award, icon: "🏅", category: .entertainment, weight: 2.0)
-            let opened = job.hireProbability(for: player, requestedSalary: salary)
+            let opened = job.hireOddsAtPostedRate(for: player)
             XCTAssertGreaterThan(opened, gated,
                                  "Holding the '\(gate.award)' award should open '\(job.id)' up.")
         }
@@ -1396,5 +1386,20 @@ extension Player {
             industryIdiosyncratic[sector] = 0
             industryTrend[sector] = trend
         }
+    }
+}
+
+extension Job {
+    /// Hire odds for asking exactly what this posting pays.
+    ///
+    /// The deterministic comparison point, and the one tests should use.
+    /// `Job.init` jitters `annualIncome` by the category's salary variance, so
+    /// asking for the *catalogue* `income` instead is often asking above the
+    /// posting — and `salaryAlignmentFactor` punishes that steeply enough to
+    /// floor the odds at 5%, run to run, hiding whatever the test meant to
+    /// measure. Asking the posted rate exactly gives a ratio of 1.0 and a factor
+    /// of 1.0 every time.
+    func hireOddsAtPostedRate(for player: Player) -> Double {
+        hireProbability(for: player, requestedSalary: Double(annualIncome))
     }
 }
