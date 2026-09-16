@@ -860,6 +860,110 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.leaderboardScore, 0, "Score is floored at 0.")
     }
 
+    // MARK: - The industry cycle
+
+    /// A boom and a slump are genuinely different years to apply in, and the
+    /// climate reaches hiring, promotions and projects alike.
+    func testClimateMovesHiringPromotionAndProjectOdds() throws {
+        let jobs = JobCatalog.allJobs()
+        guard let job = jobs.first(where: {
+            $0.category == .technology && !$0.isEntrepreneurial && !$0.isLowSkilled
+                && $0.requirements.minYearsExperience == 0
+        }) else {
+            XCTFail("Expected an entry-level technology role."); return
+        }
+        guard let project = SideHustleCatalog.byId["projectApp"] else {
+            XCTFail("Missing project 'projectApp'."); return
+        }
+
+        func player(trend: Double) -> Player {
+            let p = Player()
+            p.difficulty = .middleClass
+            p.configureStart(age: 22)
+            for category in JobCategory.allCases { p.industryTrend[category] = trend }
+            for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = 6 }
+            p.currentOccupation = job
+            p.experienceByRole[job.baseTitle] = 3
+            return p
+        }
+
+        let booming = player(trend: 0.8)
+        let slumping = player(trend: -0.8)
+        XCTAssertEqual(booming.climate(for: .technology), .boom)
+        XCTAssertEqual(slumping.climate(for: .technology), .slump)
+
+        XCTAssertGreaterThan(
+            job.hireProbability(for: booming, requestedSalary: Double(job.income)),
+            job.hireProbability(for: slumping, requestedSalary: Double(job.income)),
+            "A booming industry should hire more readily than a slumping one.")
+
+        XCTAssertGreaterThan(booming.promotionChance(for: job), slumping.promotionChance(for: job),
+                             "Raises follow the industry's fortunes.")
+        XCTAssertEqual(slumping.promotionChance(for: job), 0,
+                       "A contracting industry freezes raises outright.")
+
+        XCTAssertGreaterThan(booming.projectOdds(for: project), slumping.projectOdds(for: project),
+                             "A project needs an audience — the cycle reaches it too.")
+    }
+
+    /// The point of the whole mechanic: a downturn must land unevenly. A
+    /// discretionary field should be dragged down harder than a defensive one
+    /// funded through the cycle.
+    func testRecessionHitsDiscretionaryFieldsHarderThanDefensiveOnes() {
+        XCTAssertGreaterThan(JobCategory.hospitality.cyclicality, 1.0,
+                             "Hospitality is a discretionary field.")
+        XCTAssertLessThan(JobCategory.health.cyclicality, 1.0,
+                          "Health is a defensive field.")
+
+        // Average many recession years so the per-industry shock averages out and
+        // only the systematic drag is left.
+        var discretionary = 0.0, defensive = 0.0
+        let runs = 400
+        for _ in 0..<runs {
+            let p = Player()
+            for category in JobCategory.allCases { p.industryTrend[category] = 0 }
+            p.advanceIndustryTrends(recession: true)
+            discretionary += p.industryTrend[.hospitality] ?? 0
+            defensive += p.industryTrend[.health] ?? 0
+        }
+        discretionary /= Double(runs); defensive /= Double(runs)
+
+        XCTAssertLessThan(discretionary, defensive,
+                          "A recession should hurt hospitality more than health.")
+        XCTAssertLessThan(discretionary, 0, "A recession should drag a discretionary field down.")
+    }
+
+    /// Trends persist: an industry that is booming this year is still a good bet
+    /// next year, which is what makes training toward a field a decision rather
+    /// than a coin flip.
+    func testIndustryTrendsPersistAcrossYears() {
+        var stayedWarm = 0
+        let runs = 200
+        for _ in 0..<runs {
+            let p = Player()
+            for category in JobCategory.allCases { p.industryTrend[category] = 0 }
+            p.industryTrend[.technology] = 0.9
+            p.advanceIndustryTrends(recession: false)
+            if (p.industryTrend[.technology] ?? 0) > 0 { stayedWarm += 1 }
+        }
+        XCTAssertGreaterThan(stayedWarm, runs * 3 / 4,
+                             "A hot industry should usually still be warm the next year.")
+    }
+
+    /// Simplified mode has no economy, so nothing there ever reads anything but
+    /// neutral — no climate term may leak into a child's game.
+    func testSimplifiedModeHasNoIndustryCycle() {
+        let player = Player()
+        player.difficulty = .simplified
+        for category in JobCategory.allCases { player.industryTrend[category] = 0 }
+        let appUIState = AppUIState()
+        for _ in 0..<20 { player.advanceYear(appUIState: appUIState) }
+        for category in JobCategory.allCases {
+            XCTAssertEqual(player.climate(for: category), .steady,
+                           "Simplified mode must not run an industry cycle (\(category.rawValue)).")
+        }
+    }
+
     // MARK: - Run horizon
 
     /// The run ends at `GameConstants.retirementAge`, and the score is final

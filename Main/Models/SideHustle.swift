@@ -105,24 +105,32 @@ struct SideHustle: Identifiable, Hashable {
     /// `famePoints` is the player's reputation *in this project's own bucket*
     /// (`Player.famePoints(for:)`), not their overall renown — a tech portfolio
     /// does nothing for the next album, the same rule hiring uses.
+    /// `climate` is what the project's field is doing this year — a shipped thing
+    /// still needs an audience with money and attention to spare. It scales the
+    /// whole result, and more gently than it scales a payroll (see
+    /// `IndustryClimate.projectFactor`).
     func successProbability(for soft: SoftSkills, famePoints: Double = 0,
                             totalExperienceYears: Int = 0,
-                            fieldExperienceYears: Int = 0) -> Double {
+                            fieldExperienceYears: Int = 0,
+                            climate: IndustryClimate = .steady) -> Double {
         let fit = SideHustle.talentWeight * talentFit(for: soft)
             + SideHustle.experienceWeight * experienceFit(totalYears: totalExperienceYears,
                                                           fieldYears: fieldExperienceYears)
         let fameLift = min(famePoints * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
-        return min(successCeiling, max(0, fit * successCeiling + fameLift))
+        let raw = (fit * successCeiling + fameLift) * climate.projectFactor
+        return min(successCeiling, max(0, raw))
     }
 
     /// Rolls a single year of this venture: a `FameGrant` on success, nothing on
     /// a flop. No money is staked, so there is nothing to salvage. The experience
     /// and fame arguments are the odds inputs described on `successProbability`.
     func resolve(for soft: SoftSkills, famePoints: Double = 0,
-                 totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0) -> Outcome {
+                 totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0,
+                 climate: IndustryClimate = .steady) -> Outcome {
         let odds = successProbability(for: soft, famePoints: famePoints,
                                       totalExperienceYears: totalExperienceYears,
-                                      fieldExperienceYears: fieldExperienceYears)
+                                      fieldExperienceYears: fieldExperienceYears,
+                                      climate: climate)
         guard Double.random(in: 0...1) < odds else {
             return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil)
         }

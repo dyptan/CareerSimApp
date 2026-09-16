@@ -8,6 +8,7 @@ struct SkillsView: View {
     @State private var softSkillsExpanded: Bool = false
     @State private var fameExpanded: Bool = false
     @State private var credentialsExpanded: Bool = false
+    @State private var economyExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
 
     private var trainings: [Training] {
@@ -33,6 +34,12 @@ struct SkillsView: View {
                 credentialsSection
                 Divider()
                 experienceSection
+                // The economy is a realistic-mode mechanic; Simplified has none,
+                // so the section would be a list of "Steady" with nothing behind it.
+                if !player.isSimplified {
+                    Divider()
+                    economySection
+                }
             }
         }
     }
@@ -276,6 +283,92 @@ struct SkillsView: View {
                 content()
             }
         }
+    }
+
+    // MARK: - Macroeconomics
+
+    /// What each industry is doing this year. Every row here is load-bearing:
+    /// the climate multiplies hire odds, moves promotion odds (and freezes them
+    /// outright in a slump), and scales the odds a spare-time project in that
+    /// field lands. It is the one place a player can see *when* to apply, not
+    /// just where.
+    private var economySection: some View {
+        DisclosureGroup(isExpanded: $economyExpanded) {
+            VStack(alignment: .leading, spacing: 4) {
+                if player.economyInRecession {
+                    Text(player.turmoilYearsRemaining > 0
+                         ? "📉 National downturn — roughly \(player.turmoilYearsRemaining) more yr to run."
+                         : "📉 National downturn this year.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .padding(.bottom, 2)
+                }
+
+                ForEach(player.industriesByClimate, id: \.category) { row in
+                    HStack {
+                        Text(row.climate.icon)
+                        Text(row.category.rawValue)
+                        InfoHint(
+                            title: "\(row.climate.icon) \(row.category.rawValue) — \(row.climate.rawValue)",
+                            message: industrySummary(row.category, row.climate)
+                        )
+                        Spacer()
+                        Text(row.climate.rawValue)
+                            .foregroundStyle(climateTint(row.climate))
+                    }
+                    // The player's own field is the row that actually decides
+                    // their year, so it reads as the heading it is.
+                    .fontWeight(row.category == player.currentOccupation?.category ? .bold : .regular)
+                }
+            }
+            .padding(.top, 4)
+        } label: {
+            HStack {
+                Text("Economy").font(.headline)
+                Spacer()
+                // The player's own industry stays visible while collapsed — the
+                // one climate that is affecting them right now.
+                if let category = player.currentOccupation?.category {
+                    let climate = player.climate(for: category)
+                    Text("\(climate.icon) \(climate.rawValue)")
+                        .font(.subheadline)
+                        .foregroundStyle(climateTint(climate))
+                }
+            }
+        }
+    }
+
+    private func climateTint(_ climate: IndustryClimate) -> Color {
+        switch climate {
+        case .boom, .growth: return .green
+        case .steady:        return .secondary
+        case .slowdown:      return .orange
+        case .slump:         return .red
+        }
+    }
+
+    /// What this climate is doing to the player's odds in this industry, in the
+    /// terms the other hints use — multipliers on hiring, points on promotion.
+    private func industrySummary(_ category: JobCategory, _ climate: IndustryClimate) -> String {
+        func signed(_ v: Double) -> String {
+            let p = Int((v * 100).rounded())
+            return p >= 0 ? "+\(p)%" : "\(p)%"
+        }
+        func times(_ v: Double) -> String { "×\(String(format: "%.2f", v))" }
+
+        var lines = [climate.blurb, ""]
+        lines.append("🎯 Hire odds here: \(times(climate.hireFactor))")
+        lines.append(climate.freezesRaises
+                     ? "⬆️ Raises: frozen while the field is contracting"
+                     : "⬆️ Promotion odds here: \(signed(climate.promotionDelta))")
+        lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
+
+        if category.cyclicality > 1.0 {
+            lines.append("\nThis is a discretionary field — it swings harder than most, both ways.")
+        } else if category.cyclicality < 1.0 {
+            lines.append("\nThis is a defensive field — it rides out downturns better than most.")
+        }
+        return lines.joined(separator: "\n")
     }
 
     // MARK: - Experience

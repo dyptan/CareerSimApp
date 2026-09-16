@@ -427,11 +427,15 @@ extension Job {
         let merit = 0.2 + skillScore * 0.7 + prestige + player.difficulty.opportunityBonus
             + network + fame + breakthrough + credential
         let raw = merit * fit.factor * salaryAlignmentFactor(requestedSalary: requestedSalary)
+        // What this industry is doing this year. A booming field hires people it
+        // would pass over in a slump, and the same application is a materially
+        // different bet depending on when it lands (see `IndustryClimate`).
+        let climate = player.climate(for: category).hireFactor
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
         // to the top. Founders make their own seat, so they're exempt.
         let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
-        return max(0.05, min(0.95, raw * scarcity))
+        return max(0.05, min(0.95, raw * climate * scarcity))
     }
 
     // MARK: - Entrepreneurial path
@@ -522,7 +526,11 @@ extension Job {
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
-        return max(0.03, min(GameConstants.founderMaxSuccess, 0.05 + experience + skill + capital + credential))
+        // Founding into a contracting market is the harder version of the same
+        // bet — customers and backers are scarcer in a slump.
+        let climate = player.climate(for: category).hireFactor
+        let raw = (0.05 + experience + skill + capital + credential) * climate
+        return max(0.03, min(GameConstants.founderMaxSuccess, raw))
     }
 
     /// 0...1 measure of how seasoned the player is in this venture's industry.

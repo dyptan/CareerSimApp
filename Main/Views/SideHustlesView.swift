@@ -125,6 +125,11 @@ struct SideHustleRow: View {
         }
         oddsLine += ", and the \(fame) fame you've already banked — reputation compounds inside its own field."
 
+        let climate = player.projectClimate(for: hustle)
+        let climateLine = climate == .steady
+            ? nil
+            : "\(climate.icon) The field is \(climate.rawValue.lowercased()) this year: ×\(String(format: "%.2f", climate.projectFactor)) on these odds."
+
         // Only the fame is at stake — the skill gains and the banked experience
         // land either way, so the loss line says what is actually lost.
         var lossLine = "Lose: only the fame."
@@ -140,11 +145,12 @@ struct SideHustleRow: View {
             hustle.blurb,
             "🎲 \(oddsPct)% success · 🌟 \(fame) fame",
             oddsLine,
+            climateLine,
             "Draws on:\n\(talentHint)",
             "Builds, win or lose:\n\(growthHint)",
             "Win: \(fame) fame — it only lifts hiring odds for \(category.rawValue) roles.",
             lossLine,
-        ].joined(separator: "\n\n")
+        ].compactMap { $0 }.joined(separator: "\n\n")
     }
 }
 

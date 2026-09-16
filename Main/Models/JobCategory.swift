@@ -147,14 +147,30 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
 
     /// Cyclical, discretionary-spending sectors that are hit hardest in a bear
     /// market: travel, dining, entertainment, and consumer retail are the first
-    /// budgets households and advertisers cut. Used to freeze hiring in these
-    /// industries during an economic downturn (see `Player.applyEconomicTurmoil`).
-    var isCyclical: Bool {
+    /// budgets households and advertisers cut.
+    var isCyclical: Bool { cyclicality > 1.0 }
+
+    /// How hard the national cycle hits this industry, and how far its own
+    /// fortunes swing year to year. 1.0 is an ordinary sector.
+    ///
+    /// Above 1, the discretionary trades: when households and advertisers cut a
+    /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
+    /// children go to school and the bins get collected in every economy, so
+    /// public payrolls barely notice a recession. This is the single knob that
+    /// makes a downturn land unevenly instead of flattening every industry at
+    /// once (see `IndustryClimate` and `Player.advanceIndustryTrends`).
+    var cyclicality: Double {
         switch self {
         case .hospitality, .retail, .showBusiness, .entrepreneurship:
-            return true
+            return 1.6   // first to be cut, first to come back
+        case .construction, .manufacturing, .transportation:
+            return 1.3   // capital spending stops early in a downturn
+        case .health, .education, .publicServices:
+            return 0.4   // defensive: funded through the cycle
+        case .law, .administration:
+            return 0.8
         default:
-            return false
+            return 1.0
         }
     }
 
@@ -278,6 +294,100 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
             return "Move people and goods by road and air: drive, fly, operate, keep vehicles running safely, and plan the routes and warehouses behind it."
         case .administration:
             return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
+        }
+    }
+}
+
+
+/// How an industry is doing this year — the player-facing face of
+/// `Player.industryTrend`. Every industry sits in one of these bands, and the
+/// band is what the odds actually read: a boom is a genuinely easier year to be
+/// hired and promoted in, a slump a genuinely harder one.
+///
+/// The bands are deliberately coarse. The underlying trend is a continuous
+/// random walk, but a player can act on "Technology is booming" in a way they
+/// cannot act on "Technology is at +0.62".
+enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
+    case boom = "Booming"
+    case growth = "Growing"
+    case steady = "Steady"
+    case slowdown = "Slowing"
+    case slump = "Slump"
+
+    var id: String { rawValue }
+
+    /// Bucket a continuous trend (-1...1) into its band.
+    init(trend: Double) {
+        switch trend {
+        case 0.55...:            self = .boom
+        case 0.20..<0.55:        self = .growth
+        case (-0.20)..<0.20:     self = .steady
+        case (-0.55)..<(-0.20):  self = .slowdown
+        default:                 self = .slump
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .boom:     return "🚀"
+        case .growth:   return "📈"
+        case .steady:   return "➖"
+        case .slowdown: return "📉"
+        case .slump:    return "🧊"
+        }
+    }
+
+    /// Multiplier on hire odds for a role in this industry. A slump does not
+    /// close a field — someone is always hired somewhere — it just makes the
+    /// same application a markedly worse bet.
+    var hireFactor: Double {
+        switch self {
+        case .boom:     return 1.30
+        case .growth:   return 1.12
+        case .steady:   return 1.00
+        case .slowdown: return 0.80
+        case .slump:    return 0.55
+        }
+    }
+
+    /// Additive term on the annual promotion odds. Employers hand out titles
+    /// when the order book is full and freeze them when it isn't; a slump
+    /// freezes raises outright (see `Player.promotionOdds`).
+    var promotionDelta: Double {
+        switch self {
+        case .boom:     return  0.06
+        case .growth:   return  0.03
+        case .steady:   return  0.00
+        case .slowdown: return -0.04
+        case .slump:    return -0.10
+        }
+    }
+
+    /// Multiplier on a spare-time project's success odds in this field. A
+    /// project needs an audience with money and attention to spare, so the cycle
+    /// reaches it too — more gently than a payroll, which is why the spread here
+    /// is narrower than `hireFactor`'s.
+    var projectFactor: Double {
+        switch self {
+        case .boom:     return 1.20
+        case .growth:   return 1.08
+        case .steady:   return 1.00
+        case .slowdown: return 0.88
+        case .slump:    return 0.70
+        }
+    }
+
+    /// Whether employers in this industry have stopped promoting altogether.
+    var freezesRaises: Bool { self == .slump }
+
+    /// One line for the Macroeconomics panel.
+    var blurb: String {
+        switch self {
+        case .boom:     return "Hiring hard and paying up — the best year to apply or ask."
+        case .growth:   return "Expanding. Openings are easier to come by than usual."
+        case .steady:   return "Neither growing nor shrinking. The odds are the plain ones."
+        case .slowdown: return "Tightening. Fewer openings, slower raises."
+        case .slump:    return "Contracting — postings pulled and raises frozen."
         }
     }
 }

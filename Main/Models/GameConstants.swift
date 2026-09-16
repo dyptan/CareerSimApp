@@ -104,6 +104,33 @@ enum GameConstants {
     /// harsh downturn never makes a fold a certainty.
     static let ventureMaxFailureRisk: Double = 0.25
 
+    // MARK: - The industry cycle
+    //
+    // Every industry carries its own trend in -1...1, redrawn each year and
+    // bucketed into an `IndustryClimate`. The three constants below are the
+    // whole dynamic: how much of last year carries over, how far a year's own
+    // luck can move it, and how hard a national downturn drags on it. An
+    // industry's `cyclicality` scales the last two, which is what makes a
+    // recession land on hospitality and leave public health alone.
+
+    /// Share of last year's trend that carries into this one. High enough that a
+    /// boom or a slump lasts several years — an industry the player trained for
+    /// should still be warm when they graduate — and low enough that nothing is
+    /// permanent.
+    static let industryTrendPersistence: Double = 0.72
+
+    /// Half-width of the random shock an industry's own fortunes add each year,
+    /// before its `cyclicality` scales it.
+    static let industryTrendShock: Double = 0.35
+
+    /// How hard a national downturn drags every industry's trend down each year
+    /// it runs, before `cyclicality` scales it. Defensive sectors barely feel it.
+    static let recessionDrag: Double = 0.45
+
+    /// Gentle pull back toward neutral in a calm economy, so a sector that has
+    /// run hot for years cools on its own rather than staying booming forever.
+    static let industryMeanReversion: Double = 0.08
+
     /// C-suite scarcity: there are only a handful of executive seats, so landing
     /// one is competitive even for a qualified insider. Applied as a multiplier to
     /// the odds of being *hired into* or *promoted into* an executive (non-founder)
