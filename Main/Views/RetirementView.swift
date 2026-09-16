@@ -19,9 +19,31 @@ struct RetirementView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("🏅 Score: \(player.leaderboardScore.formatted(.number)) (savings ÷ age)")
+            if player.outstandingLoan > 0 {
+                Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+            }
+
+            if player.studentLoan > 0 {
+                Text("🎓 Student loan owed: \(player.studentLoan.formatted(.number)) $")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+            }
+
+            // The header no longer carries a running score, so this is the only
+            // place the formula is spelled out — hence the full arithmetic
+            // rather than a bare number. Debt counts against it, which is why
+            // the caption says net worth and not savings.
+            Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
                 .font(.subheadline.bold())
                 .foregroundStyle(.secondary)
+
+            Text("Your score is your net worth — savings minus any loans still owed — divided by your age. Building wealth younger scores higher.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Button {
                 player.reset()

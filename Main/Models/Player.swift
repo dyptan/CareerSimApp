@@ -320,12 +320,16 @@ final class Player: ObservableObject {
     /// only the shortfall becomes debt.
     func borrowedPortion(ofStake stake: Int) -> Int { max(0, stake - savings) }
 
+    /// What the player is actually worth: banked savings less any outstanding
+    /// venture loan and student debt. Can go negative while debt is being repaid.
+    var netWorth: Int { savings - outstandingLoan - studentLoan }
+
     /// The player's running score, recalculated from current state (so it's
     /// always up to date each year): "wealth velocity" — net worth (savings minus
     /// any outstanding loan) per year of life. Reaching wealth younger scores
     /// higher. Floored at 0. This is what a realistic-mode run is playing for;
     /// finishing the game banks it to the Game Center leaderboard.
-    var leaderboardScore: Int { age > 0 ? max(0, savings - outstandingLoan - studentLoan) / age : 0 }
+    var leaderboardScore: Int { age > 0 ? max(0, netWorth) / age : 0 }
 
     @Published var degrees: [Education]
 

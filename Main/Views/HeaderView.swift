@@ -46,23 +46,15 @@ struct HeaderView: View {
                     Text("\(currentEducation.degreeName)")
                 }
 
-                // The running score, spelled out as the sum it is — net worth ÷
-                // age — so the player watches the arithmetic move, not just the
-                // result. The money lives only inside the formula; there is no
-                // separate savings counter.
-                HStack(spacing: 6) {
-                    if player.isSimplified {
-                        Text("Savings: \(player.savings.formatted(.number)) $")
-                    } else {
-                        Text("🏅 Score: \(scoreNetWorth.formatted(.number)) $ / \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
-                        InfoHint(
-                            title: "Your score",
-                            message: "Your score is your net worth — savings minus any venture or student loan — ÷ your age. It updates every year — building wealth younger scores higher. There's no finish line: play as long as you like, then tap “Stop” to bank this score to the leaderboard."
-                        )
-                    }
+                // The running score, at body weight so it reads as the run's
+                // headline number rather than chrome. Simplified mode has a
+                // fixed goal instead of a score, so it keeps the plain savings
+                // figure; the Game Over sheet spells the formula out.
+                if player.isSimplified {
+                    Text("Savings: \(player.savings.formatted(.number)) $")
+                } else {
+                    Text("🏅 Score: \(player.leaderboardScore.formatted(.number))")
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
 
                 if player.outstandingLoan > 0 {
                     Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
@@ -97,13 +89,6 @@ struct HeaderView: View {
                     .font(.headline)
             }
         }
-    }
-
-    /// The score's numerator: net worth (savings minus any venture or student
-    /// loan), floored at 0 — the same figure `Player.leaderboardScore` divides
-    /// by age, so the displayed formula always reproduces the displayed score.
-    private var scoreNetWorth: Int {
-        max(0, player.savings - player.outstandingLoan - player.studentLoan)
     }
 
     /// Plain-text breakdown of this year's promotion odds for the current job,
