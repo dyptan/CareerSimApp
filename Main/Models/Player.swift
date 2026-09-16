@@ -142,6 +142,19 @@ final class Player: ObservableObject {
     /// trend down — how hard depends on the industry (see `advanceIndustryTrends`).
     @Published var economyInRecession: Bool = false
 
+    /// The national business cycle, in -1...1 — the one number every sector's
+    /// fortunes are derived from. A persistent random walk, dragged down while a
+    /// declared recession runs (see `advanceIndustryTrends`).
+    @Published var macroTrend: Double = 0
+
+    /// What is happening to each sector *on its own account*, with the national
+    /// cycle taken out — a platform shift, a drug approval, an oil shock. Added
+    /// to the sector's share of `macroTrend` to give its published trend.
+    @Published var industryIdiosyncratic: [Industry: Double] = [:]
+
+    /// The overall economy's climate, for the Economy panel's headline.
+    var macroClimate: IndustryClimate { IndustryClimate(trend: macroTrend) }
+
     /// Each sector's fortunes this year, as a continuous trend in -1...1.
     /// Bucketed into an `IndustryClimate` for everything that reads it — hiring,
     /// promotions, projects and the Economy panel.
@@ -177,24 +190,31 @@ final class Player: ObservableObject {
             }
     }
 
-    /// Rolls every industry's trend forward one year.
+    /// Rolls the economy forward one year.
     ///
-    /// Three terms: most of last year carries over (so a boom is something a
-    /// player can train toward rather than a coin flip), the industry's own luck
-    /// shocks it, and the national cycle pulls on it — down in a recession,
-    /// gently back toward neutral otherwise. An industry's `cyclicality` scales
-    /// both the shock and the recession drag, which is the whole reason a
-    /// downturn guts hospitality and barely touches public health.
+    /// One national cycle moves first: most of last year carries over, a shock
+    /// moves it, and a declared recession drags it down (otherwise it reverts
+    /// gently toward neutral, so no boom lasts forever). Then each sector's own
+    /// deviation moves on the same pattern, scaled by its `volatility`.
+    ///
+    /// A sector's published trend is its share of the national cycle — its
+    /// `beta` — plus that deviation. That is the whole model: one economy,
+    /// transmitted unevenly, plus whatever is happening to each sector alone.
     func advanceIndustryTrends(recession: Bool) {
+        let macroShock = Double.random(in: -GameConstants.macroTrendShock...GameConstants.macroTrendShock)
+        let macroCycle = recession
+            ? -GameConstants.recessionDrag
+            : -macroTrend * GameConstants.industryMeanReversion
+        macroTrend = min(1.0, max(-1.0,
+            macroTrend * GameConstants.macroTrendPersistence + macroShock + macroCycle))
+
         for sector in Industry.allCases {
-            let previous = industryTrend[sector] ?? 0
-            let swing = sector.cyclicality
-            let shock = Double.random(in: -GameConstants.industryTrendShock...GameConstants.industryTrendShock) * swing
-            let cycle = recession
-                ? -GameConstants.recessionDrag * swing
-                : -previous * GameConstants.industryMeanReversion
-            let next = previous * GameConstants.industryTrendPersistence + shock + cycle
-            industryTrend[sector] = min(1.0, max(-1.0, next))
+            let previous = industryIdiosyncratic[sector] ?? 0
+            let shock = Double.random(in: -GameConstants.industryTrendShock...GameConstants.industryTrendShock)
+                * sector.volatility
+            let deviation = previous * GameConstants.industryTrendPersistence + shock
+            industryIdiosyncratic[sector] = min(1.0, max(-1.0, deviation))
+            industryTrend[sector] = min(1.0, max(-1.0, macroTrend * sector.beta + deviation))
         }
     }
 
@@ -488,8 +508,11 @@ final class Player: ObservableObject {
         // Seed a calm, mildly uneven starting economy rather than a flat one, so
         // the first year the player looks already has industries worth choosing
         // between.
+        macroTrend = Double.random(in: -0.15...0.15)
         for sector in Industry.allCases {
-            industryTrend[sector] = Double.random(in: -0.2...0.2) * sector.cyclicality
+            let deviation = Double.random(in: -0.2...0.2) * sector.volatility
+            industryIdiosyncratic[sector] = deviation
+            industryTrend[sector] = min(1.0, max(-1.0, macroTrend * sector.beta + deviation))
         }
     }
 
@@ -1377,6 +1400,8 @@ final class Player: ObservableObject {
         outstandingLoan = fresh.outstandingLoan
         studentLoan = fresh.studentLoan
         lockedTrainings = fresh.lockedTrainings
+        macroTrend = fresh.macroTrend
+        industryIdiosyncratic = fresh.industryIdiosyncratic
         industryTrend = fresh.industryTrend
         networkByCategory = fresh.networkByCategory
         sportYears = fresh.sportYears

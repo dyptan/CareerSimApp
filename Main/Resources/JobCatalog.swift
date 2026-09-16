@@ -377,96 +377,106 @@ enum JobCatalog {
     ]
 
     /// Where a role in `category` is done, absent an entry above.
-    /// The sector most roles in a discipline are employed by — the fallback when
-    /// `industryByBaseTitle` says nothing. Several of these are genuinely
-    /// arbitrary (an engineer could be employed by almost anyone), which is
-    /// exactly why the override table below carries the real assignments and
-    /// this only catches the remainder.
-    static func defaultIndustry(for category: JobCategory) -> Industry {
+    /// The markets that plausibly employ a discipline, when
+    /// `industriesByBaseTitle` says nothing more specific. A posting draws one of
+    /// these each time the market is redrawn (see `allJobs`), which is what makes
+    /// "the same category belongs to many industries" true of the listings
+    /// themselves rather than only of the catalogue as a whole.
+    static func defaultIndustries(for category: JobCategory) -> [Industry] {
         switch category {
-        case .technology:       return .software
-        case .engineering:      return .manufacturing
-        case .science:          return .pharmaBiotech
-        case .health:           return .healthcare
-        case .education:        return .education
-        case .publicServices:   return .government
-        case .law:              return .professionalServices
-        case .business:         return .finance
-        case .administration:   return .professionalServices
-        case .design:           return .mediaEntertainment
-        case .showBusiness:     return .mediaEntertainment
-        case .retail:           return .retailTrade
-        case .hospitality:      return .hospitalityTourism
-        case .service:          return .retailTrade
-        case .construction:     return .construction
-        case .manufacturing:    return .manufacturing
-        case .agriculture:      return .agriFood
-        case .transportation:   return .logistics
-        case .entrepreneurship: return .professionalServices
+        case .technology:       return [.software, .hardware, .telecom, .finance]
+        case .engineering:      return [.manufacturing, .energy, .construction, .automotive]
+        case .science:          return [.pharmaBiotech, .healthcare, .education, .energy]
+        case .health:           return [.healthcare, .pharmaBiotech]
+        case .education:        return [.education, .government]
+        case .publicServices:   return [.government]
+        case .law:              return [.professionalServices, .government, .finance]
+        case .business:         return [.finance, .professionalServices, .retailTrade, .manufacturing]
+        case .administration:   return [.professionalServices, .finance, .healthcare, .government]
+        case .design:           return [.mediaEntertainment, .software, .retailTrade]
+        case .showBusiness:     return [.mediaEntertainment]
+        case .retail:           return [.retailTrade]
+        case .hospitality:      return [.hospitalityTourism]
+        case .service:          return [.retailTrade, .hospitalityTourism]
+        case .construction:     return [.construction]
+        case .manufacturing:    return [.manufacturing, .automotive, .aerospaceDefense, .agriFood]
+        case .agriculture:      return [.agriFood]
+        case .transportation:   return [.logistics, .retailTrade, .aerospaceDefense]
+        case .entrepreneurship: return [.professionalServices]
         }
     }
 
-    /// Roles whose employer's sector isn't the one their discipline suggests.
-    /// Keyed by base title, so every rung of a ladder shares it.
+    /// Roles whose employers are a narrower — or different — set of markets than
+    /// their discipline's default. Keyed by base title, so every rung of a ladder
+    /// shares it.
     ///
-    /// This table is the point of having an `Industry` axis at all: it is where
-    /// one category fans out across several markets. Engineering alone lands in
-    /// automotive, aerospace, energy, construction and semiconductors; design
-    /// splits between carmakers, games and agencies; law and finance sit in
-    /// professional services rather than in whatever their client sells.
-    static let industryByBaseTitle: [String: Industry] = [
-        // Engineering fans out across the sectors that actually build things —
-        // the clearest case for having this axis at all.
-        "Aerospace Engineer": .aerospaceDefense,
-        "Architect": .construction,
-        "Civil Engineer": .construction,
-        "Chemical Engineer": .energy,
-        "Electrical Engineer": .energy,
-        "Mechanical Engineer": .automotive,
+    /// A single entry means the role only ever sits in that market; several means
+    /// a posting is drawn from among them each year. This table is the point of
+    /// having an `Industry` axis: it is where one discipline fans out.
+    static let industriesByBaseTitle: [String: [Industry]] = [
+        // Engineering fans out across the sectors that actually build things.
+        "Aerospace Engineer": [.aerospaceDefense],
+        "Architect": [.construction],
+        "Civil Engineer": [.construction, .government],
+        "Chemical Engineer": [.energy, .pharmaBiotech, .manufacturing],
+        "Electrical Engineer": [.energy, .manufacturing, .hardware],
+        "Mechanical Engineer": [.automotive, .aerospaceDefense, .manufacturing],
 
         // Design follows the thing being designed, not the drawing of it.
-        "Fashion Designer": .retailTrade,
-        "Interior Designer": .construction,
-        "UX/UI Designer": .software,
+        "Fashion Designer": [.retailTrade],
+        "Interior Designer": [.construction, .hospitalityTourism],
+        "UX/UI Designer": [.software, .finance, .retailTrade],
+        "Graphic Artist": [.mediaEntertainment, .professionalServices],
 
         // Games are an entertainment business that happens to employ programmers.
-        "Game Producer": .mediaEntertainment,
-        "Gameplay Programmer": .mediaEntertainment,
-        "Technical Artist": .mediaEntertainment,
-        "Indie Game Studio": .mediaEntertainment,
+        "Game Producer": [.mediaEntertainment],
+        "Gameplay Programmer": [.mediaEntertainment],
+        "Technical Artist": [.mediaEntertainment],
+        "Indie Game Studio": [.mediaEntertainment],
+        "Art Director (Games)": [.mediaEntertainment],
+        "Level Designer": [.mediaEntertainment],
+        "Narrative Designer": [.mediaEntertainment],
+        "Game Animator": [.mediaEntertainment],
 
         // Business: only the money roles are in finance; the rest sell advice.
-        "Business Analyst": .professionalServices,
-        "Chief Executive Officer": .professionalServices,
-        "Management Consultant": .professionalServices,
-        "Marketing Director": .professionalServices,
-        "Marketing Specialist": .professionalServices,
-        "Project Manager": .professionalServices,
-        "Sales Director": .professionalServices,
-        "Sales Manager": .professionalServices,
-        "Translator/Interpreter": .professionalServices,
+        "Financial Analyst": [.finance],
+        "Investment Banker": [.finance],
+        "Management Consultant": [.professionalServices],
+        "Marketing Director": [.professionalServices, .retailTrade, .mediaEntertainment],
+        "Marketing Specialist": [.professionalServices, .retailTrade, .mediaEntertainment],
 
         // Health: dispensing is pharma, and a gym is leisure, not medicine.
-        "Pharmacist": .pharmaBiotech,
-        "Boutique Fitness Studio": .hospitalityTourism,
+        "Pharmacist": [.pharmaBiotech, .healthcare],
+        "Boutique Fitness Studio": [.hospitalityTourism],
 
-        // A judge is the state, not a firm.
-        "Judge": .government,
+        // The state, whatever the nominal discipline.
+        "Judge": [.government],
+        "Air Traffic Controller": [.government],
+        "Security Guard": [.professionalServices, .government],
 
-        // Public services: guarding is contracted out, the rest is the state.
-        "Security Guard": .professionalServices,
+        // Moving people and goods.
+        "Aircraft Maintenance Technician": [.aerospaceDefense],
+        "Airline Captain": [.aerospaceDefense],
+        "First Officer": [.aerospaceDefense],
+        "Pilot": [.aerospaceDefense],
+        "Mechanic": [.automotive, .logistics],
 
-        // Moving people and goods: aviation maintenance is aerospace, the
-        // control tower is the state, and a mechanic works on cars.
-        "Aircraft Maintenance Technician": .aerospaceDefense,
-        "Air Traffic Controller": .government,
-        "Mechanic": .automotive,
+        // Leisure trades sitting under other headings.
+        "Fitness Instructor": [.hospitalityTourism],
+        "Personal Trainer": [.hospitalityTourism],
+        "Janitor/Cleaner": [.professionalServices],
 
-        // Leisure trades that sit under other headings.
-        "Fitness Instructor": .hospitalityTourism,
-        "Personal Trainer": .hospitalityTourism,
-        "Janitor/Cleaner": .professionalServices,
+        // Ventures keep the market they are a business in.
+        "SaaS App Startup": [.software],
+        "Specialty Coffee Roastery": [.retailTrade],
+        "Farm-to-Table Restaurant": [.hospitalityTourism],
+        "Property Development Firm": [.construction],
     ]
+
+    /// The markets a role can be posted by, narrowest declaration first.
+    static func industries(forBaseTitle baseTitle: String, category: JobCategory) -> [Industry] {
+        industriesByBaseTitle[baseTitle] ?? defaultIndustries(for: category)
+    }
 
     static func defaultWorkSetting(for category: JobCategory) -> WorkSetting {
         switch category {
@@ -697,7 +707,8 @@ enum JobCatalog {
     /// overrides. The single place a row becomes a `Job`.
     static func job(title: String, category: JobCategory, income: Int, icon: String,
                     summary: String, minEQF: Int, minYears: Int?, targetCapital: Int?,
-                    baseTitle: String, rung: Int, rungLabel: String) -> Job {
+                    baseTitle: String, rung: Int, rungLabel: String,
+                    industry: Industry) -> Job {
         let hard = credentials(forTitle: title, baseTitle: baseTitle)
         // A role can't sensibly demand a license or certification the player
         // couldn't have earned at its listed education level. Raise the floor to
@@ -726,8 +737,7 @@ enum JobCatalog {
                    baseTitle: baseTitle, rung: rung, rungLabel: rungLabel,
                    workSetting: workSettingByBaseTitle[baseTitle]
                        ?? defaultWorkSetting(for: category),
-                   industry: industryByBaseTitle[baseTitle]
-                       ?? defaultIndustry(for: category))
+                   industry: industry)
     }
 
     /// A role with no ladder: its own base title, sitting at rung 0.
@@ -735,16 +745,23 @@ enum JobCatalog {
         job(title: spec.title, category: spec.category, income: spec.income, icon: spec.icon,
             summary: spec.summary, minEQF: spec.minEQF, minYears: spec.minYears,
             targetCapital: spec.targetCapital,
-            baseTitle: spec.title, rung: 0, rungLabel: "")
+            baseTitle: spec.title, rung: 0, rungLabel: "",
+            industry: industries(forBaseTitle: spec.title, category: spec.category).randomElement()!)
     }
 
     /// Every rung of a ladder, in declared order — the index is `Job.rung`.
+    ///
+    /// The sector is drawn **once per ladder**, not per rung: a ladder is one
+    /// employer's, and a promotion moves the player to `rung + 1` off this same
+    /// list — so per-rung draws would teleport them between markets on a raise.
     static func jobs(for ladder: LadderSpec) -> [Job] {
-        ladder.rungs.enumerated().map { index, rung in
+        let sector = industries(forBaseTitle: ladder.name, category: ladder.category).randomElement()!
+        return ladder.rungs.enumerated().map { index, rung in
             job(title: ladder.title(for: rung), category: ladder.category, income: rung.income,
                 icon: rung.icon ?? ladder.icon, summary: rung.summary, minEQF: rung.minEQF,
                 minYears: rung.minYears, targetCapital: nil,
-                baseTitle: ladder.name, rung: index, rungLabel: rung.label)
+                baseTitle: ladder.name, rung: index, rungLabel: rung.label,
+                industry: sector)
         }
     }
 
@@ -1152,6 +1169,10 @@ enum JobCatalog {
 
     /// Builds the full job database. Salaries are the present-day published
     /// figures; a small random variance is applied when each `Job` is constructed.
+    /// The whole market. **Not deterministic**: each posting draws its employer's
+    /// sector from the markets that role can sit in, so re-reading the catalogue
+    /// is a fresh year's listings rather than the same ones again. `Player`
+    /// re-reads it every year (see `regenerateAvailableJobs`).
     static func allJobs() -> [Job] {
         standaloneRoles.map(job(from:))
             + ladders.flatMap(jobs(for:))

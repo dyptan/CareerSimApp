@@ -332,7 +332,7 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
     }
 
     /// Cyclical, discretionary-spending sectors hit hardest in a bear market.
-    var isCyclical: Bool { cyclicality > 1.0 }
+    var isCyclical: Bool { beta > 1.0 }
 
     /// The fame bucket a reputation made in this sector belongs to. Mirrors
     /// `JobCategory.fameCategory` on the sector axis, so a project can ride the
@@ -352,27 +352,49 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// How hard the national cycle hits this sector, and how far its own fortunes
-    /// swing year to year. 1.0 is an ordinary sector.
+    /// How much of the national cycle this sector transmits — its beta. 1.0 moves
+    /// with the economy; above 1 amplifies it, below 1 damps it.
     ///
     /// Above 1, the discretionary trades: when households and advertisers cut a
     /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
     /// children go to school and the bins get collected in every economy, so
-    /// public payrolls barely notice a recession. This is the single knob that
-    /// makes a downturn land unevenly instead of flattening the whole economy at
-    /// once (see `IndustryClimate` and `Player.advanceIndustryTrends`).
-    var cyclicality: Double {
+    /// public payrolls barely notice a recession. This is what makes one downturn
+    /// land unevenly instead of flattening the whole economy at once.
+    var beta: Double {
         switch self {
         case .hospitalityTourism, .mediaEntertainment, .retailTrade:
             return 1.6   // first budget households and advertisers cut
         case .construction, .automotive, .manufacturing, .logistics:
             return 1.3   // capital spending stops early in a downturn
         case .software, .hardware:
-            return 1.2   // boom-and-bust, but not discretionary the same way
+            return 1.1
         case .healthcare, .education, .government:
-            return 0.4   // defensive: funded through the cycle
+            return 0.3   // defensive: funded through the cycle
         case .pharmaBiotech, .energy, .agriFood, .telecom:
             return 0.6   // people still take their medicine and heat their homes
+        default:
+            return 1.0
+        }
+    }
+
+    /// How much this sector moves on its *own* account, independent of the
+    /// national cycle — a platform shift, a drug approval, an oil shock, a hit
+    /// franchise. Beta says how a sector rides the economy; this says how much of
+    /// its fortune has nothing to do with the economy at all.
+    ///
+    /// The two are genuinely separate: government has a low beta *and* low
+    /// idiosyncratic swing (dull in every weather), whereas pharma also has a low
+    /// beta but a high one — it ignores the cycle and lives on its own pipeline.
+    var volatility: Double {
+        switch self {
+        case .software, .pharmaBiotech, .mediaEntertainment:
+            return 1.6   // platform shifts, pipelines and hits, cycle or no cycle
+        case .hardware, .energy, .aerospaceDefense:
+            return 1.3   // capex cycles and commodity prices of their own
+        case .government, .education:
+            return 0.3   // budgets move slowly and for their own reasons
+        case .healthcare, .agriFood, .retailTrade, .logistics:
+            return 0.7
         default:
             return 1.0
         }

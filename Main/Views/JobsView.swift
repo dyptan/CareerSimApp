@@ -93,8 +93,7 @@ struct JobsView: View {
                             } label: {
                                 RoleGroupRow(
                                     baseTitle: group.baseTitle,
-                                    variants: group.variants,
-                                    player: player
+                                    variants: group.variants
                                 )
                             }
                         }
@@ -160,7 +159,6 @@ private struct RoleGroup: Identifiable {
 private struct RoleGroupRow: View {
     let baseTitle: String
     let variants: [Job]
-    @ObservedObject var player: Player
 
     private var icon: String { variants.first?.icon ?? "" }
     /// Every rung of a ladder shares an employer sector, so the first is the row's.
@@ -177,14 +175,12 @@ private struct RoleGroupRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(baseTitle)
                     .font(.headline)
-                // The sector the employer trades in, and what that sector is
-                // doing this year — the posting's own weather, since it is what
-                // multiplies the hire odds inside.
+                // The sector the employer trades in. Deliberately *not* its
+                // climate: that already shows up where it matters, inside the
+                // posting's hire probability, and repeating it on every row
+                // turned the list into a wall of weather rather than of jobs.
                 if let industry {
-                    let climate = player.climate(for: industry)
-                    Text(player.isSimplified
-                         ? "\(industry.icon) \(industry.rawValue)"
-                         : "\(industry.icon) \(industry.rawValue) · \(climate.icon) \(climate.rawValue)")
+                    Text("\(industry.icon) \(industry.rawValue)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

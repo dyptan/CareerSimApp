@@ -295,14 +295,27 @@ struct SkillsView: View {
     private var economySection: some View {
         DisclosureGroup(isExpanded: $economyExpanded) {
             VStack(alignment: .leading, spacing: 4) {
+                // The national cycle first: every sector below is this number
+                // times the sector's beta, plus whatever is happening to it alone.
+                HStack {
+                    Text(player.macroClimate.icon)
+                    Text("The economy")
+                    InfoHint(title: "The economy", message: macroSummary)
+                    Spacer()
+                    Text(player.macroClimate.rawValue)
+                        .foregroundStyle(climateTint(player.macroClimate))
+                }
+                .fontWeight(.semibold)
+
                 if player.economyInRecession {
                     Text(player.turmoilYearsRemaining > 0
-                         ? "📉 National downturn — roughly \(player.turmoilYearsRemaining) more yr to run."
-                         : "📉 National downturn this year.")
+                         ? "📉 Declared downturn — roughly \(player.turmoilYearsRemaining) more yr to run."
+                         : "📉 Declared downturn this year.")
                         .font(.caption)
                         .foregroundStyle(.orange)
-                        .padding(.bottom, 2)
                 }
+
+                Divider().padding(.vertical, 2)
 
                 ForEach(player.industriesByClimate, id: \.industry) { row in
                     HStack {
@@ -338,6 +351,20 @@ struct SkillsView: View {
         }
     }
 
+    /// How the national cycle reaches each sector — the model in two sentences,
+    /// since every row below is derived from it.
+    private var macroSummary: String {
+        """
+        \(player.macroClimate.blurb)
+
+        Every sector below is this cycle scaled by how much it transmits — a \
+        hotel chain amplifies it, a school district barely feels it — plus \
+        whatever is happening to that sector on its own account.
+
+        So a sector can be slumping in a good year, or booming through a bad one.
+        """
+    }
+
     private func climateTint(_ climate: IndustryClimate) -> Color {
         switch climate {
         case .boom, .growth: return .green
@@ -363,10 +390,18 @@ struct SkillsView: View {
                      : "⬆️ Promotion odds here: \(signed(climate.promotionDelta))")
         lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
 
-        if industry.cyclicality > 1.0 {
-            lines.append("\nThis is a discretionary field — it swings harder than most, both ways.")
-        } else if industry.cyclicality < 1.0 {
-            lines.append("\nThis is a defensive field — it rides out downturns better than most.")
+        lines.append("")
+        if industry.beta > 1.0 {
+            lines.append("📊 Amplifies the economy (×\(String(format: "%.1f", industry.beta))) — a discretionary field, so it swings harder than the cycle both ways.")
+        } else if industry.beta < 1.0 {
+            lines.append("📊 Damps the economy (×\(String(format: "%.1f", industry.beta))) — a defensive field that rides out downturns better than most.")
+        } else {
+            lines.append("📊 Moves with the economy (×1.0).")
+        }
+        if industry.volatility > 1.0 {
+            lines.append("🎲 Also swings on its own account, cycle or no cycle.")
+        } else if industry.volatility < 1.0 {
+            lines.append("🎲 Little movement of its own — it mostly just follows the cycle.")
         }
         return lines.joined(separator: "\n")
     }

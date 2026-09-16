@@ -104,32 +104,43 @@ enum GameConstants {
     /// harsh downturn never makes a fold a certainty.
     static let ventureMaxFailureRisk: Double = 0.25
 
-    // MARK: - The industry cycle
+    // MARK: - The business cycle
     //
-    // Every industry carries its own trend in -1...1, redrawn each year and
-    // bucketed into an `IndustryClimate`. The three constants below are the
-    // whole dynamic: how much of last year carries over, how far a year's own
-    // luck can move it, and how hard a national downturn drags on it. An
-    // industry's `cyclicality` scales the last two, which is what makes a
-    // recession land on hospitality and leave public health alone.
+    // The economy is one number — `Player.macroTrend`, the national cycle — plus
+    // one number per sector for whatever is happening to that sector alone.
+    // A sector's published trend is
+    //
+    //     trend = macroTrend × Industry.beta + idiosyncratic
+    //
+    // which is why a downturn can be brutal for hospitality (beta 1.6) and barely
+    // visible in government (beta 0.3), and why pharma can boom through a
+    // recession on its own pipeline (low beta, high volatility). Both halves are
+    // persistent random walks, so trends last several years rather than
+    // re-rolling from scratch.
 
-    /// Share of last year's trend that carries into this one. High enough that a
-    /// boom or a slump lasts several years — an industry the player trained for
-    /// should still be warm when they graduate — and low enough that nothing is
-    /// permanent.
-    static let industryTrendPersistence: Double = 0.72
+    /// Share of last year's national cycle that carries into this one.
+    static let macroTrendPersistence: Double = 0.80
 
-    /// Half-width of the random shock an industry's own fortunes add each year,
-    /// before its `cyclicality` scales it.
-    static let industryTrendShock: Double = 0.35
+    /// Half-width of the national cycle's own yearly shock.
+    static let macroTrendShock: Double = 0.22
 
-    /// How hard a national downturn drags every industry's trend down each year
-    /// it runs, before `cyclicality` scales it. Defensive sectors barely feel it.
-    static let recessionDrag: Double = 0.45
+    /// Share of last year's *sector-specific* deviation that carries over. Lower
+    /// than the macro figure: a company-level run of luck fades faster than an
+    /// economy-wide cycle.
+    static let industryTrendPersistence: Double = 0.65
 
-    /// Gentle pull back toward neutral in a calm economy, so a sector that has
-    /// run hot for years cools on its own rather than staying booming forever.
-    static let industryMeanReversion: Double = 0.08
+    /// Half-width of a sector's own yearly shock, before its `volatility`
+    /// scales it. This is the part of a sector's fortune that owes nothing to
+    /// the economy.
+    static let industryTrendShock: Double = 0.30
+
+    /// How hard a declared downturn drags the *national* cycle each year it runs.
+    /// Sectors feel it through their beta, not directly.
+    static let recessionDrag: Double = 0.55
+
+    /// Gentle pull back toward neutral in a calm economy, so a cycle that has run
+    /// hot for years cools on its own rather than staying booming forever.
+    static let industryMeanReversion: Double = 0.10
 
     /// C-suite scarcity: there are only a handful of executive seats, so landing
     /// one is competitive even for a qualified insider. Applied as a multiplier to

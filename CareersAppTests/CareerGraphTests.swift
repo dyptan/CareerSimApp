@@ -93,7 +93,7 @@ final class CatalogIntegrityTests: XCTestCase {
             ("credentialsByBaseTitle", Array(JobCatalog.credentialsByBaseTitle.keys)),
             ("acceptedProfilesByBaseTitle", Array(JobCatalog.acceptedProfilesByBaseTitle.keys)),
             ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
-            ("industryByBaseTitle", Array(JobCatalog.industryByBaseTitle.keys)),
+            ("industriesByBaseTitle", Array(JobCatalog.industriesByBaseTitle.keys)),
             ("Job.publicPayScaleTitles", Array(Job.publicPayScaleTitles)),
         ]
         let known = baseTitles
@@ -512,15 +512,24 @@ final class CareerGraphTests: XCTestCase {
         var soft = SoftSkills()
         for ability in project.talents { soft[keyPath: ability] = 5 }
 
-        let cold = Player(softSkills: soft)
+        // Each `Player` seeds its own random economy, and a project's odds are
+        // scaled by its field's climate — so three players with three different
+        // economies cannot be compared. Pin them all to a neutral one.
+        func neutralPlayer() -> Player {
+            let p = Player(softSkills: soft)
+            p.pinNeutralEconomy()
+            return p
+        }
+
+        let cold = neutralPlayer()
         let baseline = cold.projectOdds(for: project)
 
-        let sameField = Player(softSkills: soft)
+        let sameField = neutralPlayer()
         sameField.award("Same-field renown", icon: "🌟", category: bucket, weight: 5)
         XCTAssertGreaterThan(sameField.projectOdds(for: project), baseline,
                              "Fame in the project's own field should lift its odds.")
 
-        let otherField = Player(softSkills: soft)
+        let otherField = neutralPlayer()
         otherField.award("Unrelated renown", icon: "🌟", category: otherBucket, weight: 5)
         XCTAssertEqual(otherField.projectOdds(for: project), baseline, accuracy: 0.0001,
                        "Fame from an unrelated field should not lift this project's odds.")
@@ -881,7 +890,7 @@ final class CareerGraphTests: XCTestCase {
             let p = Player()
             p.difficulty = .middleClass
             p.configureStart(age: 22)
-            for sector in Industry.allCases { p.industryTrend[sector] = trend }
+            p.pinEconomy(to: trend)
             for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = 6 }
             p.currentOccupation = job
             p.experienceByRole[job.baseTitle] = 3
@@ -911,10 +920,10 @@ final class CareerGraphTests: XCTestCase {
     /// discretionary field should be dragged down harder than a defensive one
     /// funded through the cycle.
     func testRecessionHitsDiscretionarySectorsHarderThanDefensiveOnes() {
-        XCTAssertGreaterThan(Industry.hospitalityTourism.cyclicality, 1.0,
-                             "Hospitality is a discretionary sector.")
-        XCTAssertLessThan(Industry.healthcare.cyclicality, 1.0,
-                          "Healthcare is a defensive sector.")
+        XCTAssertGreaterThan(Industry.hospitalityTourism.beta, 1.0,
+                             "Hospitality amplifies the cycle.")
+        XCTAssertLessThan(Industry.healthcare.beta, 1.0,
+                          "Healthcare damps the cycle.")
 
         // Average many recession years so the per-sector shock averages out and
         // only the systematic drag is left.
@@ -922,7 +931,7 @@ final class CareerGraphTests: XCTestCase {
         let runs = 400
         for _ in 0..<runs {
             let p = Player()
-            for sector in Industry.allCases { p.industryTrend[sector] = 0 }
+            p.pinNeutralEconomy()
             p.advanceIndustryTrends(recession: true)
             discretionary += p.industryTrend[.hospitalityTourism] ?? 0
             defensive += p.industryTrend[.healthcare] ?? 0
@@ -937,18 +946,56 @@ final class CareerGraphTests: XCTestCase {
     /// Trends persist: an industry that is booming this year is still a good bet
     /// next year, which is what makes training toward a field a decision rather
     /// than a coin flip.
-    func testIndustryTrendsPersistAcrossYears() {
+    func testTheCyclePersistsAcrossYears() {
         var stayedWarm = 0
         let runs = 200
         for _ in 0..<runs {
             let p = Player()
-            for sector in Industry.allCases { p.industryTrend[sector] = 0 }
-            p.industryTrend[.software] = 0.9
+            p.pinNeutralEconomy()
+            p.macroTrend = 0.9
             p.advanceIndustryTrends(recession: false)
-            if (p.industryTrend[.software] ?? 0) > 0 { stayedWarm += 1 }
+            if p.macroTrend > 0 { stayedWarm += 1 }
         }
         XCTAssertGreaterThan(stayedWarm, runs * 3 / 4,
                              "A hot industry should usually still be warm the next year.")
+    }
+
+    /// Sector trends are *derived*: a sector's published trend is the national
+    /// cycle scaled by its beta, plus whatever is happening to it alone. That is
+    /// what makes one economy land unevenly rather than nineteen unrelated ones.
+    func testSectorTrendsAreDerivedFromTheMacroCycle() {
+        let p = Player()
+        p.pinNeutralEconomy()
+        p.advanceIndustryTrends(recession: false)
+
+        for sector in Industry.allCases {
+            let expected = p.macroTrend * sector.beta + (p.industryIdiosyncratic[sector] ?? 0)
+            XCTAssertEqual(p.industryTrend[sector] ?? 0,
+                           min(1.0, max(-1.0, expected)), accuracy: 0.0001,
+                           "\(sector.rawValue)'s trend must be beta × the cycle plus its own deviation.")
+        }
+    }
+
+    /// Beta and volatility are separate axes: a sector can ignore the cycle and
+    /// still be a wild ride on its own account. Pharma is the case in point —
+    /// low beta, high volatility — and it must be able to boom through a slump.
+    func testALowBetaSectorCanBoomThroughADownturn() {
+        XCTAssertLessThan(Industry.pharmaBiotech.beta, 1.0, "Pharma damps the cycle.")
+        XCTAssertGreaterThan(Industry.pharmaBiotech.volatility, 1.0, "Pharma swings on its own.")
+
+        var boomedInASlump = 0
+        let runs = 600
+        for _ in 0..<runs {
+            let p = Player()
+            p.pinNeutralEconomy()
+            p.macroTrend = -0.7   // a poor national year
+            p.industryIdiosyncratic[.pharmaBiotech] = 0.9   // its own pipeline is delivering
+            p.industryTrend[.pharmaBiotech] =
+                p.macroTrend * Industry.pharmaBiotech.beta + 0.9
+            if p.climate(for: .pharmaBiotech) != .slump { boomedInASlump += 1 }
+        }
+        XCTAssertEqual(boomedInASlump, runs,
+                       "A low-beta, high-volatility sector must be able to do well in a bad year.")
     }
 
     /// Simplified mode has no economy, so nothing there ever reads anything but
@@ -956,7 +1003,7 @@ final class CareerGraphTests: XCTestCase {
     func testSimplifiedModeHasNoIndustryCycle() {
         let player = Player()
         player.difficulty = .simplified
-        for sector in Industry.allCases { player.industryTrend[sector] = 0 }
+        player.pinNeutralEconomy()
         let appUIState = AppUIState()
         for _ in 0..<20 { player.advanceYear(appUIState: appUIState) }
         for sector in Industry.allCases {
@@ -969,20 +1016,60 @@ final class CareerGraphTests: XCTestCase {
     /// able to span several markets, or the economy is keyed on something nobody
     /// actually trades in.
     func testOneCategorySpansSeveralIndustries() {
-        let jobs = JobCatalog.allJobs()
-        var sectorsByCategory: [JobCategory: Set<Industry>] = [:]
-        for job in jobs {
-            sectorsByCategory[job.category, default: []].insert(job.industry)
+        // Asserted against what the catalogue *declares*, not one random draw:
+        // `allJobs()` samples a sector per posting, so a single reading could
+        // coincidentally collapse a category onto one market.
+        var declared: [JobCategory: Set<Industry>] = [:]
+        for category in JobCategory.allCases {
+            declared[category, default: []].formUnion(JobCatalog.defaultIndustries(for: category))
         }
-        let spanning = sectorsByCategory.filter { $0.value.count > 1 }
-        XCTAssertGreaterThanOrEqual(spanning.count, 4,
-            "Several disciplines should fan out across markets; got \(spanning.count).")
+        for job in JobCatalog.allJobs() {
+            declared[job.category, default: []].formUnion(
+                JobCatalog.industries(forBaseTitle: job.baseTitle, category: job.category))
+        }
+        let spanning = declared.filter { $0.value.count > 1 }
+        XCTAssertGreaterThanOrEqual(spanning.count, 8,
+            "Most disciplines should fan out across markets; got \(spanning.count).")
 
-        guard let engineering = sectorsByCategory[.engineering] else {
+        guard let engineering = declared[.engineering] else {
             XCTFail("No engineering roles."); return
         }
-        XCTAssertGreaterThan(engineering.count, 2,
-            "Engineering alone should span several sectors, got \(engineering.sorted { $0.rawValue < $1.rawValue }).")
+        XCTAssertGreaterThan(engineering.count, 3,
+            "Engineering alone should span several sectors, got \(engineering.map(\.rawValue).sorted()).")
+    }
+
+    /// A posting's employer is redrawn each year, so the market genuinely moves
+    /// rather than the catalogue being a fixed list wearing sector labels.
+    func testPostingsRedrawTheirSectorEachYear() {
+        // A role whose declared markets are plural — otherwise there is nothing
+        // to redraw and the test would assert a tautology.
+        let title = "Mechanical Engineer"
+        let options = JobCatalog.industries(forBaseTitle: title, category: .engineering)
+        XCTAssertGreaterThan(options.count, 1, "Premise: this role can sit in several markets.")
+
+        var seen: Set<Industry> = []
+        for _ in 0..<200 {
+            if let job = JobCatalog.allJobs().first(where: { $0.baseTitle == title }) {
+                seen.insert(job.industry)
+            }
+        }
+        XCTAssertGreaterThan(seen.count, 1,
+            "Re-reading the market should post this role in different sectors over time.")
+        XCTAssertTrue(seen.isSubset(of: Set(options)),
+            "A posting must only ever be drawn from the role's declared markets.")
+    }
+
+    /// Every rung of a ladder shares one employer, so a promotion never moves the
+    /// player between markets.
+    func testLadderRungsShareOneSector() {
+        for _ in 0..<20 {
+            let jobs = JobCatalog.allJobs()
+            var byBase: [String: Set<Industry>] = [:]
+            for job in jobs { byBase[job.baseTitle, default: []].insert(job.industry) }
+            let split = byBase.filter { $0.value.count > 1 }
+            XCTAssertTrue(split.isEmpty,
+                "A ladder's rungs must share a sector; split: \(split.keys.sorted()).")
+        }
     }
 
     /// A posting's hire odds follow its *employer's* sector, not its discipline.
@@ -1000,8 +1087,11 @@ final class CareerGraphTests: XCTestCase {
                                     minYearsExperience: 0),
                 industry: sector)
         }
-        let a = role(.construction)   // a's market
-        let b = role(.aerospaceDefense)
+        // `atBaseSalary()` pins the posted pay: `Job.init` jitters `annualIncome`
+        // by the category's salary variance, and asking above a jittered posting
+        // is penalised hard enough to swamp the climate term being measured.
+        let a = role(.construction).atBaseSalary()
+        let b = role(.aerospaceDefense).atBaseSalary()
         XCTAssertEqual(a.category, b.category, "Premise: same discipline.")
         XCTAssertNotEqual(a.industry, b.industry, "Premise: different markets.")
 
@@ -1009,13 +1099,13 @@ final class CareerGraphTests: XCTestCase {
         player.difficulty = .middleClass
         player.configureStart(age: 30)
         for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 7 }
-        for sector in Industry.allCases { player.industryTrend[sector] = 0 }
+        player.pinNeutralEconomy()
         player.industryTrend[a.industry] = 0.9      // a's market is booming
         player.industryTrend[b.industry] = -0.9     // b's market is in a slump
 
         XCTAssertGreaterThan(
-            a.hireProbability(for: player, requestedSalary: Double(a.income)),
-            b.hireProbability(for: player, requestedSalary: Double(b.income)),
+            a.hireProbability(for: player, requestedSalary: Double(a.annualIncome)),
+            b.hireProbability(for: player, requestedSalary: Double(b.annualIncome)),
             "Same discipline, opposite markets — the booming employer should hire more readily.")
     }
 
@@ -1272,5 +1362,22 @@ final class CareerGraphTests: XCTestCase {
                              "Unaffordable tuition should be borrowed as a student loan.")
         XCTAssertEqual(player.leaderboardScore, 0,
                        "A net-negative balance from the loan floors the score at 0.")
+    }
+}
+
+/// Test-only economy pinning. Every `Player` seeds a random business cycle, and
+/// most assertions here are about something else entirely — preparation, fame,
+/// credentials — so they need the weather held still to mean anything.
+extension Player {
+    /// Flat, neutral economy: every sector reads `.steady`.
+    func pinNeutralEconomy() { pinEconomy(to: 0) }
+
+    /// Every sector pinned to one trend, with no sector-specific deviation.
+    func pinEconomy(to trend: Double) {
+        macroTrend = trend
+        for sector in Industry.allCases {
+            industryIdiosyncratic[sector] = 0
+            industryTrend[sector] = trend
+        }
     }
 }
