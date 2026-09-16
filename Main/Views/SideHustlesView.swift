@@ -106,36 +106,44 @@ struct SideHustleRow: View {
         .padding(5)
     }
 
+    /// The project hint, kept to what the player can act on: the blurb, the
+    /// odds and what moves them, what a win pays, what the year costs either
+    /// way. The mechanic used to be spelled out in full prose, which made every
+    /// row a wall of text to read past.
     private func infoMessage(for hustle: SideHustle, odds: Double,
                              talentHint: String, growthHint: String) -> String {
-        let intro = hustle.blurb + "\n\n"
         let oddsPct = Int((odds * 100).rounded())
-        // The two things the player can move. Naming both, with where they stand
-        // now, makes a 0% row read as "not yet" rather than "broken".
-        let drivers: String = {
-            let career = player.totalExperienceYears
-            let field = hustle.experienceCategory.map { player.industryExperience(for: $0) } ?? 0
-            var line = "The odds rise with the skills below and with your \(career) yr of work experience."
-            if let cat = hustle.experienceCategory {
-                let icon = JobCategory.icon(for: cat)
-                line += " Your \(field) yr in \(icon) \(cat.rawValue) count double here."
-            }
-            return line + "\n\n"
-        }()
-        let experienceNote: String = {
-            guard let cat = hustle.experienceCategory else { return "" }
-            let icon = JobCategory.icon(for: cat)
+        let category = hustle.fameCategory
+        let fame = "\(category.icon) \(category.rawValue)"
+
+        // Naming the drivers with where the player stands now makes a 0% row
+        // read as "not yet" rather than "broken".
+        var oddsLine = "Odds rise with the skills below, your \(player.totalExperienceYears) yr of work experience"
+        if let cat = hustle.experienceCategory {
+            let field = player.industryExperience(for: cat)
+            oddsLine += " (your \(field) yr in \(JobCategory.icon(for: cat)) \(cat.rawValue) count double)"
+        }
+        oddsLine += ", and your existing reputation."
+
+        // A losing year still buys experience, so the downside is a spent year
+        // rather than a wasted one — worth stating on the same line as the loss.
+        var lossLine = "Lose: nothing."
+        if let cat = hustle.experienceCategory {
             let credited = cat.creditedExperienceCategories
                 .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
                 .joined(separator: ", ")
-            let creditLine = credited.isEmpty
-                ? ""
-                : " Those years also count toward \(credited) roles."
-            return "\n\n📅 A committed year — win or lose — banks a year of \(icon) \(cat.rawValue) work experience.\(creditLine)"
-        }()
-        let category = hustle.fameCategory
-        let stats = "🎲 \(oddsPct)% success · 🌟 \(category.icon) \(category.rawValue) fame\n\n"
-        return intro + stats + drivers + "Draws on:\n\n\(talentHint)\n\nA project spends the soft skills you've built for a shot at being noticed. A successful year banks \(category.icon) \(category.rawValue) fame (it only lifts your hiring odds for \(category.rawValue) roles) and grows you the way a hobby can't:\n\n\(growthHint)\n\nThe odds also climb with your existing reputation. A dud year yields nothing." + experienceNote
+            lossLine += " 📅 Either way the year banks \(JobCategory.icon(for: cat)) \(cat.rawValue) experience"
+            lossLine += credited.isEmpty ? "." : ", which also counts toward \(credited) roles."
+        }
+
+        return [
+            hustle.blurb,
+            "🎲 \(oddsPct)% success · 🌟 \(fame) fame",
+            oddsLine,
+            "Draws on:\n\(talentHint)",
+            "Win: \(fame) fame — it only lifts hiring odds for \(category.rawValue) roles — plus:\n\(growthHint)",
+            lossLine,
+        ].joined(separator: "\n\n")
     }
 }
 
