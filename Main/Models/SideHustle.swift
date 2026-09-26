@@ -40,11 +40,12 @@ struct SideHustle: Identifiable, Hashable {
     /// Years in this field count double toward the odds (see `experienceFit`).
     /// `nil` for ventures that build no formal work experience (most fame plays).
     var experienceCategory: JobCategory? = nil
-    /// The most this venture's success odds can ever reach in a single year,
-    /// however talented and famous the player is. Ordinary ventures leave this at
-    /// the default 0.9. A rare **big-break** play (a breakout role, a hit single)
-    /// sets it low — a lottery you keep entering — so becoming a star is a
-    /// years-long chase, not a formality once your skills are high.
+    /// The most this project's success odds can ever reach in a single year,
+    /// however talented and famous the player is — set per project from how
+    /// often such work really pays off: booking gigs ~90%, crowdfunding and
+    /// articles ~60%, a book, an album or a new channel 20–25%, a true big
+    /// break ~5% (a lottery you keep entering for years). Fame raises the odds
+    /// within the cap, so building an audience matters most where it's lowest.
     var successCeiling: Double = 0.9
     /// What a landed year pays at zero fame, before the fame multiple (see
     /// `pay(famePoints:)`). Zero for unpaid work — open source, a preprint.
@@ -212,6 +213,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Course Creator",
+            successCeiling: 0.5,
             basePay: 4000
         ),
         // --- Creative personal-brand ventures ---
@@ -226,6 +228,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Viral Creator",
+            successCeiling: 0.2,
             basePay: 3000
         ),
         SideHustle(
@@ -240,6 +243,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Published Author",
+            successCeiling: 0.25,
             basePay: 2000
         ),
         SideHustle(
@@ -254,6 +258,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Rising Performer",
+            successCeiling: 0.6,
             basePay: 6000
         ),
         SideHustle(
@@ -268,6 +273,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Recording Artist",
+            successCeiling: 0.2,
             basePay: 4000
         ),
         // --- Working gigs: how most actors and musicians actually earn — one
@@ -284,6 +290,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)],
             fameTitle: "Working Actor",
+            successCeiling: 0.9,
             basePay: 12000
         ),
         SideHustle(
@@ -297,6 +304,7 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Gigging Musician",
+            successCeiling: 0.9,
             basePay: 10000
         ),
         // --- Star work: open only to a name the big break has made. Paid per
@@ -350,7 +358,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.resilienceAndEndurance, weight: 1)],
             fameTitle: "Breakout Role",
-            successCeiling: 0.30,
+            successCeiling: 0.05,
             basePay: 20000
         ),
         SideHustle(
@@ -365,7 +373,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Hit Record",
-            successCeiling: 0.30,
+            successCeiling: 0.05,
             basePay: 15000
         ),
         // --- Self-initiated creative works (unlocked to everyone, stage-gated) ---
@@ -381,6 +389,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2)],
             fameTitle: "Demo Developer",
+            successCeiling: 0.3,
             basePay: 2000
         ),
         SideHustle(
@@ -395,7 +404,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Open-Source Contributor"
+            fameTitle: "Open-Source Contributor",
+            successCeiling: 0.6
         ),
         SideHustle(
             id: "projectArticle",
@@ -409,6 +419,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
             fameTitle: "Bylined Writer",
+            successCeiling: 0.6,
             basePay: 1000
         ),
         SideHustle(
@@ -423,6 +434,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2)],
             fameTitle: "Game Modder",
+            successCeiling: 0.3,
             basePay: 1000
         ),
         // --- More spare-time fame plays: personal-brand builders, not businesses.
@@ -440,6 +452,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Podcast Host",
+            successCeiling: 0.25,
             basePay: 2000
         ),
         SideHustle(
@@ -455,6 +468,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
             fameTitle: "Indie Filmmaker",
+            successCeiling: 0.3,
             basePay: 1000
         ),
         SideHustle(
@@ -469,6 +483,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Tech Educator",
+            successCeiling: 0.2,
             basePay: 3000
         ),
         SideHustle(
@@ -483,7 +498,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
-            fameTitle: "Published Researcher"
+            fameTitle: "Published Researcher",
+            successCeiling: 0.6
         ),
         // --- Entrepreneurship venture: the self-initiated path to the founder
         // skillset that hobbies can't teach — leadership, vision, persuasion, and
@@ -508,6 +524,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Crowdfunded Creator",
             experienceCategory: .entrepreneurship,
+            successCeiling: 0.6,
             basePay: 5000
         ),
     ]
