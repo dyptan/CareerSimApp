@@ -2,7 +2,7 @@ import SwiftUI
 
 /// One professional credential in the **Education** sheet — a course under its
 /// field of study, or a licence in the list of its own. It shares the single spare-time
-/// slot with Hobbies and Sports: picking a course this year displaces any other
+/// slot with Activities: picking a course this year displaces any other
 /// activity. Once the hard gates are met the credential is earned outright (no
 /// exam roll), and completing the course nudges the soft skills it builds. Age,
 /// education, prerequisite trainings, and — for senior credentials — work

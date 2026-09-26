@@ -2,17 +2,19 @@ import SwiftUI
 
 /// A small "i" icon that opens a short popover description on tap.
 /// Used to demystify abbreviations and game-specific terms (cert names, soft skills, education levels)
-/// for younger or first-time players.
+/// for younger or first-time players. `symbol` swaps the icon for popovers that
+/// carry something other than an explanation (e.g. an activity's contest).
 struct InfoHint: View {
     let title: String
     let message: String
+    var symbol: String = "info.circle"
     @State private var showing = false
 
     var body: some View {
         Button {
             showing = true
         } label: {
-            Image(systemName: "info.circle")
+            Image(systemName: symbol)
                 .foregroundStyle(.secondary)
                 .imageScale(.medium)
         }

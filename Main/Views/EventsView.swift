@@ -1,98 +1,101 @@
 import SwiftUI
 
-/// Lets the player take the stage at professional events this year — summits,
-/// conferences, expos, festivals, and pitch competitions. Each event is tied to
-/// an industry: presenting there builds that field's **professional network**
-/// (improving hiring odds on its postings and the chance of promotion within
-/// it) and banks a fame award in the industry when the year advances.
-/// Presenting unlocks once the player is a veteran of the field (see
-/// `CareerEvent.canPresent`); its effects (soft skills, network) apply the
-/// moment a row is toggled on and reverse if toggled off before the year
-/// advances, while presenter fame is banked when the year advances.
+/// Professional events this year — summits, conferences, expos, festivals and
+/// pitch competitions. Each is tied to an industry. **Attend** to bank its
+/// network there (open to anyone working in or studying toward the field, or
+/// to anyone for an open call), or **apply to take the stage** — acceptance
+/// odds from experience, communication and fame (see `Player.presentOdds`);
+/// accepted, it banks more network plus a fame award, and a rejection still
+/// counts as attending. Either way the year is spent.
 struct EventsView: View {
     @ObservedObject var player: Player
     @Binding var selectedEvents: Set<String>
-    /// Attending an event spends the year: closes the sheet and runs it.
+    /// Taking part spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
 
-    var body: some View {
-        VStack {
-            // No slot counter — see `HobbiesView`; an event that can't be taken
-            // this year dims in place.
-            Text("Take the stage to grow your reputation — unlocks once you're a veteran of the field")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
+    /// The sheet's title ⓘ.
+    static let hint = """
+    Events grow your network and fame in their field — both raise your hiring and promotion odds there. Taking part spends the year.
 
-            ScrollView {
-                VStack(spacing: 10) {
-                    ForEach(EventCatalog.all) { event in
-                        row(for: event)
-                    }
+    🎟️ Attend: open to anyone working in or studying toward the field.
+    🎤 Take the stage: apply — your odds rise with years in the field, communication and fame there. Accepted, you bank more network and a fame award; turned down, you attended.
+    📣 Open calls (castings, festivals, pitch and talk competitions) are open to anyone.
+    """
+
+    /// Events the player can join first, then the rest, each group by name.
+    private var events: [CareerEvent] {
+        EventCatalog.all.sorted {
+            let a = player.canJoinEvent($0), b = player.canJoinEvent($1)
+            return a == b ? $0.name < $1.name : a
+        }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(events) { event in
+                    row(for: event)
                 }
-                .padding(.horizontal)
             }
+            .padding(.horizontal)
         }
     }
 
     @ViewBuilder
     private func row(for event: CareerEvent) -> some View {
-        // Taking the stage stays locked until the veteran gate is cleared.
-        let locked = !event.canPresent(with: player.experience)
-
-        let roleLabel = event.presenterActionLabel
-
+        let locked = !player.canJoinEvent(event)
+        let odds = player.presentOdds(event)
         let category = event.category
-        let networkLabel = "\(JobCategory.icon(for: category)) \(category.rawValue) network +\(event.networkPoints)"
+        let field = "\(JobCategory.icon(for: category)) \(category.rawValue)"
 
-        let hintMessage: String = event.abilities
+        let skills: String = event.abilities
             .map { ability -> String in
                 let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
                 let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
-                return "\(pic) \(label) (+\(ability.weight))"
+                return "\(pic) \(label) +\(ability.weight)"
             }
-            .joined(separator: "\n")
+            .joined(separator: ", ")
 
-        HStack(alignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 4) {
-                // The role verb rides inline on the name row.
-                HStack(spacing: 8) {
-                    Text("\(event.icon)  \(event.name)")
-                        .font(.headline)
-                    Spacer(minLength: 8)
-                    Text("🎤 \(roleLabel)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
+        HStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(event.icon)  \(event.name)")
+                    .font(.headline)
                 if locked {
-                    Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
+                    Text("🔒 Work or study in \(category.rawValue) to take part")
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 } else {
-                    Text("🎤 Earns reputation in \(category.rawValue)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    Text("🎤 \(Int((odds * 100).rounded()))% to \(event.presenterActionLabel.lowercased())\(event.isOpenCall ? " · 📣 open call" : "")")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(Color.forOdds(odds))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(locked ? 0.5 : 1.0)
 
-            TakeButton {
-                player.attendEvent(event, into: &selectedEvents)
-                onCommit()
+            VStack(spacing: 6) {
+                TakeButton(label: event.presenterActionLabel) {
+                    player.applyToPresent(event, into: &selectedEvents)
+                    onCommit()
+                }
+                TakeButton(label: "Attend") {
+                    player.attendEvent(event)
+                    onCommit()
+                }
             }
             .disabled(locked)
             .opacity(locked ? 0.5 : 1.0)
-            .help(
-                locked
-                    ? "Spend \(GameConstants.presenterExperienceYears) years in \(category.rawValue) to \(roleLabel.lowercased()) here."
-                    : ""
-            )
 
             InfoHint(
-                title: "🎤 \(event.name) — \(roleLabel)",
-                message: "\(event.blurb)\n\n🤝 \(networkLabel)\n\nBuilds soft skills:\n\n\(hintMessage)\n\nTaking the stage builds your network in \(category.rawValue) and banks a fame award there — raising your hiring odds and your chance of promotion."
+                title: "\(event.icon) \(event.name)",
+                message: """
+                \(event.blurb)
+
+                🎟️ Attend: \(field) network +\(event.networkWeight).
+                🎤 \(event.presenterActionLabel): \(Int((odds * 100).rounded()))% to be accepted — network +\(event.networkPoints) and the “\(event.presenterFameTitle)” fame award. Turned down, you attended.
+
+                Builds: \(skills).
+                """
             )
         }
         .padding(5)

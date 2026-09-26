@@ -27,7 +27,7 @@ extension Color {
     }
 }
 
-/// The one-tap commit control on every activity row — Hobbies, Sports, Events,
+/// The one-tap commit control on every activity row — Activities, Events,
 /// Trainings, Projects. Tapping it spends the year on that row: the sheet
 /// closes and the year runs immediately, so there is nothing to toggle back
 /// off. Shared so "spend this year on X" looks the same in every sheet.

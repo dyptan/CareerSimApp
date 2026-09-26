@@ -7,7 +7,8 @@ import SwiftUI
 ///
 /// The feed is driven by `Player.statusEvents`, which is appended to from
 /// `Player.advanceYear` and the few mutating helpers (hiring, founding,
-/// graduation) that don't pass through it.
+/// graduation) that don't pass through it. `RootView` only shows the bar once
+/// there's at least one event.
 struct StatusBarView: View {
     @ObservedObject var player: Player
 
@@ -38,10 +39,6 @@ struct StatusBarView: View {
                         .truncationMode(.tail)
                 }
                 .font(.caption.bold())
-            } else {
-                Text("No milestones yet — keep playing.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
         }
     }

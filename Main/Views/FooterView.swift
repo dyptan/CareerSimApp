@@ -111,11 +111,8 @@ struct FooterView: View {
     /// Per-button visibility: each predicate mirrors the catalogue filter the
     /// corresponding view applies, so we only render buttons that would lead to
     /// a non-empty sheet.
-    private var hasHobbies: Bool {
-        hobbies.contains { $0.stages.contains(currentStage) }
-    }
-    private var hasSports: Bool {
-        Sport.allCases.contains { $0.stages.contains(currentStage) }
+    private var hasActivities: Bool {
+        !ActivitiesView.availableTabs(for: player).isEmpty
     }
     private var hasSideHustles: Bool {
         SideHustleCatalog.all.contains { $0.stages.contains(currentStage) }
@@ -124,10 +121,10 @@ struct FooterView: View {
     var body: some View {
         // Everything the year can be spent on, and nothing else: letting a year
         // pass without spending it is **Skip**, up in the header. Events are a
-        // realistic-mode feature, so they hide in simplified mode; hobbies stay,
+        // realistic-mode feature, so they hide in simplified mode; activities stay,
         // since they build the soft skills that shape school admission odds.
         // Competitions have no button at all — they fire automatically each year
-        // from the sport trained in Sports.
+        // from the sport trained in Activities.
         activityButtons
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -138,15 +135,12 @@ struct FooterView: View {
     @ViewBuilder
     private var activityButtons: some View {
         FooterButtonRow {
-            if hasHobbies {
-                Button("Hobbies") { appUIState.showHobbiesSheet = true }
+            if hasActivities {
+                Button("Activities") { appUIState.showActivitiesSheet = true }
             }
 
-            if hasSports {
-                Button("Sports") { appUIState.showSportsSheet = true }
-            }
-
-            if !player.isSimplified, !player.experience.isEmpty {
+            // Adults only; open calls mean there's always something to enter.
+            if EventCatalog.all.contains(where: player.canJoinEvent) {
                 Button("Events") { appUIState.showEventsSheet = true }
             }
 

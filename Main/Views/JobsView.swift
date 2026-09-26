@@ -179,7 +179,11 @@ private struct RoleGroupRow: View {
                 // climate: that already shows up where it matters, inside the
                 // posting's hire probability, and repeating it on every row
                 // turned the list into a wall of weather rather than of jobs.
-                if let industry {
+                if let first = variants.first, first.offersIndustryChoice {
+                    Text("🏢 Any of \(first.possibleIndustries.count) industries — your choice")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if let industry {
                     Text("\(industry.icon) \(industry.rawValue)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -196,9 +200,9 @@ private struct RoleGroupRow: View {
 /// roastery, an indie game studio, a SaaS startup…), staked with the player's own
 /// capital. Ventures are one-off founder bets — no auto-climbing ladder — run one
 /// at a time (a launched venture becomes the player's occupation until they sell
-/// out or go bankrupt). Launch success turns on the player's experience in that
-/// industry and their soft-skill fit, not mainly capital (see
-/// `Job.founderSuccessProbability` and `Player.foundVenture`).
+/// out or it folds). A business always opens; how well it survives turns on the
+/// player's experience in that industry and their soft-skill fit, not mainly
+/// capital (see `Player.foundVenture` and `Player.ventureFoldRisk`).
 ///
 /// There is no invest submenu: tapping **Launch** on a row founds the venture on
 /// the spot, staking its target capital as far as savings-plus-loan reach — the
@@ -240,21 +244,15 @@ struct EntrepreneurshipView: View {
     }
 
     /// Founds the venture with its one-tap stake and reports back through the
-    /// same pop-up an application uses — launching spends the year either way.
+    /// same pop-up an application uses. Launching spends the year.
     private func launch(_ venture: Job) {
         let capital = VentureRow.stake(for: venture, player: player)
-        let odds = venture.founderSuccessProbability(for: player, investedCapital: capital)
-        if player.foundVenture(venture, investedCapital: capital) {
-            player.reportApplicationOutcome(
-                title: "🎉 Venture launched!",
-                message: "You put \(capital.formatted(.number)) $ in and the venture is running — it's your occupation now."
-            )
-        } else {
-            player.reportApplicationOutcome(
-                title: "❌ The venture flopped",
-                message: "The launch had \(Int((odds * 100).rounded()))% odds and didn't pan out. You lost your stake."
-            )
-        }
+        guard player.foundVenture(venture, investedCapital: capital) else { return }
+        let firstYear = Int((Player.ventureRamp(year: 1) * 100).rounded())
+        player.reportApplicationOutcome(
+            title: "🎉 Venture launched!",
+            message: "You put \(capital.formatted(.number)) $ in and the doors are open. Year one pays about \(firstYear)% of the full income while you find customers."
+        )
         onCommit()
     }
 }
@@ -288,9 +286,10 @@ private struct VentureRow: View {
     var body: some View {
         let stake = Self.stake(for: job, player: player)
         let borrowed = player.borrowedPortion(ofStake: stake)
-        let odds = job.founderSuccessProbability(for: player, investedCapital: stake)
-        // Capital is the only hard requirement: with a stake you may attempt any
-        // venture, however unprepared — the odds carry the whole decision.
+        // The business always opens; preparation sets how well it survives.
+        let survival = player.firstYearSurvival(for: job, stake: stake)
+        // Capital is the only hard requirement: with a stake you may launch any
+        // venture, however unprepared.
         let locked = player.maxVentureStake <= 0
 
         HStack(alignment: .top, spacing: 12) {
@@ -313,9 +312,9 @@ private struct VentureRow: View {
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 } else {
-                    Text("🎲 \(Int((odds * 100).rounded()))% · stake \(stake.formatted(.number)) $")
+                    Text("🛡️ \(Int((survival * 100).rounded()))% survive year 1 · stake \(stake.formatted(.number)) $")
                         .font(.caption2.monospacedDigit())
-                        .foregroundStyle(Color.forOdds(odds))
+                        .foregroundStyle(Color.forOdds(survival))
                     // Borrowing is the part a player can regret, so it stays on
                     // the row — as a flag, with the terms in the hint.
                     if borrowed > 0 {
@@ -335,16 +334,15 @@ private struct VentureRow: View {
 
             InfoHint(
                 title: "\(job.icon) \(job.baseTitle)",
-                message: infoMessage(stake: stake, borrowed: borrowed, odds: odds)
+                message: infoMessage(stake: stake, borrowed: borrowed, survival: survival)
             )
         }
         .padding(.vertical, 4)
     }
 
-    /// Everything the row used to spell out — the pitch, the industry facts, the
-    /// loan's terms — plus what the odds turn on and what each outcome costs.
-    /// Kept to short lines: this is a reference the player opens, not prose.
-    private func infoMessage(stake: Int, borrowed: Int, odds: Double) -> String {
+    /// The pitch, the industry facts, the loan's terms, and how a business's
+    /// life plays out. Kept to short lines: a reference the player opens.
+    private func infoMessage(stake: Int, borrowed: Int, survival: Double) -> String {
         let header = [job.summary, ventureFacts]
 
         guard player.maxVentureStake > 0 else {
@@ -354,16 +352,24 @@ private struct VentureRow: View {
         }
 
         let target = (job.targetCapital ?? 0).formatted(.number)
-        var funding = "Stake: \(stake.formatted(.number)) $, savings first."
+        var funding = "💰 Stake: \(stake.formatted(.number)) $ of the \(target) $ this needs, savings first."
         if borrowed > 0 {
-            funding += " \(borrowed.formatted(.number)) $ of that is borrowed against your income, repaid with \(Int(GameConstants.ventureLoanAnnualInterest * 100))% interest win or lose."
+            funding += " \(borrowed.formatted(.number)) $ is borrowed against your income at \(Int(GameConstants.ventureLoanAnnualInterest * 100))% — owed whatever happens to the business."
         }
+        let full = job.annualIncome.formatted(.number)
+        let ramp = GameConstants.ventureIncomeRamp.map { "\(Int(($0 * 100).rounded()))%" }.joined(separator: ", then ")
 
-        return (header + [
+        var lines = header + [
             funding,
-            "Odds: \(Int((odds * 100).rounded()))% — mostly your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) against the \(job.requirements.minYearsExperience) expected, plus 🎲 Risk-Taker, 🔭 Visionary, 💬 Persuader and your stake against the \(target) $ this really needs. Nothing here blocks you — thin preparation just makes it a long shot.",
-            "Win: it becomes your occupation, earning its income until you sell or it folds.\nLose: the stake is gone — the loan isn't.",
-        ]).joined(separator: "\n\n")
+            "🚀 It always opens. \(Int((survival * 100).rounded()))% chance it survives year 1 — set by your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) (\(job.requirements.minYearsExperience) expected), the skills it runs on, 🔭 Visionary, 💬 Persuader, and your stake. The risk falls each year it lasts; a recession raises it.",
+            "💵 Pays \(ramp) of its \(full) $ income in the first two years, then the full amount — swinging with the market.",
+            "📉 If it folds, you recover \(Int(GameConstants.ventureFoldRecovery * 100))% of the stake.",
+            "🌟 Every year in business, round closed and exit builds 💼 business fame — which makes your next venture more likely to last.",
+        ]
+        if job.isScalableVenture {
+            lines.append("🦄 Can scale: raise investment rounds in the Boardroom, and — rarely — break out for a fortune.")
+        }
+        return lines.joined(separator: "\n\n")
     }
 }
 

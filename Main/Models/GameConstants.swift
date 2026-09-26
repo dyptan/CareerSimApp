@@ -5,9 +5,9 @@ enum GameConstants {
     // sport, a course, an event, a project — spends the year on the spot, so
     // the "one slot" rule is enforced by the flow itself.
 
-    /// Years of same-industry work experience required to take the stage at one
-    /// of its events. You speak once you're an established name in the field.
-    /// See `CareerEvent.canPresent(with:)`.
+    /// Years in an event's field at which experience counts in full toward
+    /// being accepted to take its stage — a veteran is nearly always accepted,
+    /// a newcomer is a long shot. See `Player.presentOdds`.
     static let presenterExperienceYears: Int = 5
 
     /// Extra professional-network points taking the stage banks over the event's
@@ -38,6 +38,25 @@ enum GameConstants {
     /// through primary/middle/high school automatically (see `RootView`), so the
     /// Education menu stays hidden. Matches the age high school wraps up.
     static let minimumTertiaryAge: Int = 18
+
+    // MARK: - School grades
+
+    /// A high-school year's grade (US 4.0 scale) with no academic skill and no
+    /// studying — the bottom of the band. See `Player.yearGrade(studied:)`.
+    static let gradeFloor: Double = 2.0
+    /// What fully developed academic skills (analysis, care, discipline,
+    /// planning) add on top of `gradeFloor` without any extra study.
+    static let gradeSkillSpan: Double = 1.4
+    /// What spending the year on a Study activity adds. Skills alone top out at
+    /// 3.4 (a B+); only studying reaches a straight-A 4.0.
+    static let studyGradeBonus: Double = 0.6
+    /// Academic-skill level a high-schooler needs to score an axis in full.
+    static let gradeSkillReference: Int = 6
+
+    /// Fame points (the summed `fameWeight` of every trophy and accolade) at
+    /// which an application's accolades count in full — roughly a national
+    /// title plus a handful of local wins. See `Player.accoladeFit`.
+    static let accoladeReference: Double = 3.0
 
     /// Minimum age at which the entrepreneurial surface (founder ventures) opens
     /// up. Staking capital on a business is an adult play, so — like the
@@ -70,6 +89,25 @@ enum GameConstants {
     /// weight, and feed the hiring fame bonus (`Player.fameHireBonus`).
     static let accomplishmentFameMultiplier: Double = 2.0
 
+    // MARK: - Fame pays
+    //
+    // In show business and the creator economy, fame is the income: an audience
+    // is what brand deals, streams, royalties and fees are priced on. Pay is
+    // steeply uneven — most projects earn little, a famous name earns a fortune.
+
+    /// A landed project pays its base × (1 + fame in its field)^this — so each
+    /// extra point of fame is worth more than the last.
+    static let projectPayFameExponent: Double = 1.5
+    /// Ceiling on that multiple of the base pay.
+    static let projectPayMaxMultiple: Double = 200
+
+    /// Entertainment fame at which brands start paying for endorsements, and
+    /// what they pay: this base × fame^exponent a year.
+    static let endorsementFameThreshold: Double = 3
+    static let endorsementBase: Double = 1_500
+    static let endorsementFameExponent: Double = 1.6
+    static let endorsementMax: Int = 5_000_000
+
     /// How much a founder can borrow to top up a venture stake once their savings
     /// are spent, as a multiple of their current annual income — a bank lends
     /// against what you earn. Zero income means no borrowing headroom.
@@ -86,23 +124,79 @@ enum GameConstants {
     /// early degree is a lasting cost. See `Player.advanceYear`.
     static let studentLoanAnnualInterest: Double = 0.05
 
-    /// The most likely a founding attempt can ever be, however experienced,
-    /// skilled, funded, and credentialed the founder. Founding a business is a
-    /// genuine gamble — even the best-prepared founder is closer to a coin-flip
-    /// than a sure thing — so the launch odds top out here rather than near
-    /// certainty. See `Job.founderSuccessProbability`.
+    /// Years over which a loan is repaid in fixed annual instalments — the
+    /// standard term for both a small-business (SBA 7(a)) loan and a US
+    /// student loan. See `Player.annualLoanPayment`.
+    static let loanTermYears: Int = 10
+
+    /// The most of a year's gross income that goes to loan instalments —
+    /// roughly the debt-to-income ceiling lenders allow. Instalments come out of
+    /// income before anything is saved; savings cover any shortfall.
+    static let maxDebtServiceShare: Double = 0.4
+
+    /// The top of the founder-preparation score (`Job.founderSuccessProbability`),
+    /// which no amount of experience, skill, capital or credentials exceeds.
+    /// Preparation no longer decides whether a business opens — it always does —
+    /// but how well it survives (see `Player.ventureFoldRisk`).
     static let founderMaxSuccess: Double = 0.55
 
-    /// Base annual chance that a running venture fails outright in a calm economy.
-    /// Unlike a salaried worker (who faces layoffs only in a downturn), a founder
-    /// carries this risk *every* year — a business can always fold. A recession
-    /// multiplies it by `Difficulty.layoffSeverity`, capped at
-    /// `ventureMaxFailureRisk`. See `Player.advanceYear`.
-    static let ventureAnnualFailureRisk: Double = 0.07
+    /// Chance an average-prepared business folds in its 1st, 2nd, 3rd and 4th-
+    /// and-later year in a calm economy. Modelled on US business survival data:
+    /// about a fifth close in year one and about half by year five, the risk
+    /// falling as a business establishes itself. Preparation scales it between
+    /// 0.5× and 1.5×, and a recession by `Difficulty.layoffSeverity`.
+    static let ventureFoldRiskByYear: [Double] = [0.22, 0.14, 0.10, 0.06]
 
-    /// Ceiling on the amplified annual venture-failure probability, so even a
-    /// harsh downturn never makes a fold a certainty.
-    static let ventureMaxFailureRisk: Double = 0.25
+    /// Ceiling on the amplified annual fold risk, so even a harsh downturn
+    /// never makes a fold a certainty.
+    static let ventureMaxFailureRisk: Double = 0.45
+
+    /// Share of the original stake a founder recovers when a business folds —
+    /// equipment, stock and lease sold off.
+    static let ventureFoldRecovery: Double = 0.25
+
+    /// Share of a venture's full income it pays in its 1st and 2nd year, while
+    /// it finds its customers; full income from year three.
+    static let ventureIncomeRamp: [Double] = [0.4, 0.7]
+
+    /// Year-to-year swing on a founder's income (± this share), on top of the
+    /// industry climate.
+    static let ventureIncomeSwing: Double = 0.15
+
+    /// Annual chance an average-prepared scalable venture (software, games)
+    /// breaks out once past its second year: the rare jackpot of the startup
+    /// power law. Preparation and a booming market raise it.
+    static let ventureBreakoutChance: Double = 0.04
+
+    /// A breakout's effect on the venture's income, and on what the founder's
+    /// stake is worth.
+    static let ventureBreakoutIncomeMultiple: Double = 3.0
+    static let ventureBreakoutValueMultiple: Double = 4.0
+
+    /// A closed investment round: the company's value after dilution (the
+    /// founder gives up a slice for the money), and the growth in the income
+    /// the funded business can pay.
+    static let investmentRoundValueGrowth: Double = 1.2
+
+    // Founder reputation: founding builds a business (💼) name that makes the
+    // next venture easier — serial founders outperform first-timers, and even
+    // a failed founder does no worse than one who never tried.
+    /// Business fame banked for each year a venture survives.
+    static let founderYearFame: Double = 0.3
+    /// Business fame banked for selling a venture — a successful exit.
+    static let founderExitFame: Double = 2.0
+    /// Business fame banked when a venture folds — the lessons.
+    static let founderFoldFame: Double = 0.1
+    /// Preparation per point of business fame, and its cap (see
+    /// `Job.founderSuccessProbability`).
+    static let founderReputationPerPoint: Double = 0.04
+    static let founderReputationCap: Double = 0.10
+    /// How much each point of business fame eases the executive-seat hurdle
+    /// (`executiveSeatChance`), and the most it can add: boards hire people who
+    /// have already run a company — failed founders included.
+    static let executiveTrackRecordPerPoint: Double = 0.10
+    static let executiveTrackRecordCap: Double = 0.30
+    static let investmentRoundIncomeGrowth: Double = 1.2
 
     // MARK: - The business cycle
     //
@@ -165,11 +259,16 @@ enum GameConstants {
     /// takes the band it is offered. See `Job.salaryIsNegotiable`.
     static let negotiableSalaryMinEQF: Int = 4
 
-    /// Base annual probability that an employer promotes the player, before the
-    /// player's promotion-readiness soft skills, tenure, and network scale it.
-    /// Flat across all jobs. See
-    /// `Player.promotionChance`.
-    static let promotionBaseChance: Double = 0.15
+    /// The annual promotion chance a flawless record earns on merit alone — top
+    /// performance in the role, fully ready for the next one, and seasoned —
+    /// before network, fame, education and the industry's climate move it.
+    /// See `Player.promotionOdds`.
+    static let promotionMeritChance: Double = 0.25
+    /// The share of `promotionMeritChance` even a thin record keeps: nobody's
+    /// odds are zero on merit, somebody always gets lucky.
+    static let promotionMeritFloor: Double = 0.2
+    /// Years in the role at which seniority counts in full.
+    static let promotionSeniorityYears: Int = 5
 
     // MARK: - Education's pull on the odds
     //

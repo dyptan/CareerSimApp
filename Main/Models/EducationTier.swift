@@ -55,6 +55,29 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         }
     }
 
+    /// How much of the admission fit high-school grades make up, against soft
+    /// skills, for a first degree (see `Education.gradeWeight`). An open-door
+    /// community college barely looks at a transcript; an elite school reads it
+    /// first.
+    var gradeWeight: Double {
+        switch self {
+        case .community: return 0.1
+        case .state:     return 0.35
+        case .elite:     return 0.5
+        }
+    }
+
+    /// How much of the admission fit trophies and accolades make up (see
+    /// `Education.accoladeWeight`). An open-door college doesn't ask; a
+    /// selective school wants to know what you've won.
+    var accoladeWeight: Double {
+        switch self {
+        case .community: return 0
+        case .state:     return 0.1
+        case .elite:     return 0.2
+        }
+    }
+
     /// The share of thin applicants this school still takes — the bottom of its
     /// admission band (see `Education.admissionProbability`). A community college
     /// runs open admission, which is what a community college *is*, so it takes

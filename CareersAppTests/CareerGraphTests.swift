@@ -962,27 +962,33 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Investment round outcome
 
-    /// A closed investment round banks cash and additional business (💼) fame —
-    /// the reputation that compounds into the next round's odds. Maxing the
-    /// driving skills and fame pins the odds at the cap, so a bounded retry lands
-    /// the success branch.
-    func testInvestmentRoundSuccessBanksCashAndFame() {
-        guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }),
+    /// A closed investment round grows the company — a bigger income it can pay
+    /// and more business (💼) fame, the reputation that compounds into the next
+    /// round's odds — but pays the founder no cash. Maxing the driving skills
+    /// and fame pins the odds at the cap, so a bounded retry lands the success
+    /// branch.
+    func testInvestmentRoundSuccessGrowsTheCompanyAndFame() {
+        guard let saas = JobCatalog.allJobs().first(where: { $0.isScalableVenture }),
               let decision = ExecutiveDecisionCatalog.byId["investmentRound"] else { return }
         for _ in 0..<40 {
             let player = Player()
-            player.currentOccupation = founder
+            player.configureStart(age: 25)
+            player.savings = saas.targetCapital ?? 0
+            player.foundVenture(saas, investedCapital: saas.targetCapital ?? 0)
             player.softSkills.visionaryThinkingAndAmbition = 10
             player.softSkills.persuasionAndNegotiation = 10
             player.softSkills.leadershipAndInfluence = 10
             player.softSkills.communicationAndNetworking = 10
             player.award("Serial Founder", icon: "💼", category: .business, weight: 10)
             let before = player.savings
+            let incomeBefore = player.ventureMatureIncome
             let fameBefore = player.famePoints(for: .business)
             let outcome = player.resolveExecutiveDecision(decision)
             if outcome.success {
-                XCTAssertGreaterThan(outcome.cash, 0, "A closed round realises cash.")
-                XCTAssertEqual(player.savings, before + outcome.cash)
+                XCTAssertEqual(outcome.cash, 0, "A round's money goes into the company.")
+                XCTAssertEqual(player.savings, before)
+                XCTAssertGreaterThan(player.ventureMatureIncome, incomeBefore,
+                                     "The funded business can pay more.")
                 XCTAssertGreaterThan(player.famePoints(for: .business), fameBefore,
                                      "Closing a round banks additional business fame.")
                 return
@@ -1386,16 +1392,14 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Breakthrough-gated star careers
 
-    /// The three star tracks (pro athlete, movie star, pop star) exist in the
-    /// catalogue and are effectively closed without their signature achievement:
+    /// The pro-athlete star track exists in the catalogue and is effectively
+    /// closed without its signature achievement:
     /// a fully-qualified applicant who lacks the award sits at the 5% floor, and
     /// holding it lifts the odds well above the floor.
     func testStarCareersAreBreakthroughGated() {
         let jobs = JobCatalog.allJobs()
         let gates: [(base: String, award: String)] = [
             ("Player", "Junior Champion"),
-            ("Movie Star", "Breakout Role"),
-            ("Pop Star", "Hit Record"),
         ]
         for gate in gates {
             // Use the easiest-to-qualify rung of the ladder (lowest seniority).
@@ -1429,12 +1433,15 @@ final class CareerGraphTests: XCTestCase {
     // MARK: - Early-choice balance (Phase 3)
 
     /// An elite school turns away even a flawless applicant a good share of the
-    /// time — a maxed candidate tops out around 65%, not the old 82%.
+    /// time — a maxed candidate (skills, straight A's, a shelf of titles) tops
+    /// out around 65%, not the old 82%.
     func testEliteAdmissionTurnsAwayEvenTopApplicants() {
         let player = Player()
         player.difficulty = .middleClass
         player.configureStart(age: 18)            // high-school record clears the EQF gate
         for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+        player.highSchoolGrades = [4.0]
+        player.award("Math Olympiad Medalist", icon: "➗", category: .science, weight: GameConstants.accoladeReference)
 
         let elite = Education(.Bachelor, profile: .business, tier: .elite)
         let odds = elite.admissionProbability(player: player)
@@ -1559,7 +1566,7 @@ final class CareerGraphTests: XCTestCase {
         player.difficulty = .middleClass
         player.configureStart(age: 18)
         player.softSkills.communicationAndNetworking = 2
-        player.softSkills.presentationAndStorytelling = 9   // well past the target
+        player.softSkills.timeManagementAndPlanning = 9   // well past the target
 
         let school = Education(.Bachelor, profile: .business, tier: .state)
         let overlap = school.softSkillOverlap(player: player)
@@ -1627,3 +1634,349 @@ extension Job {
     }
 }
 
+
+/// The Activities sheet only lists disciplines that level up and compete.
+final class ActivityCatalogTests: XCTestCase {
+
+    /// Every discipline has a contest at every life stage it's offered in —
+    /// children included — once the player has put the years in. A discipline
+    /// without one would be a pastime, which the sheet no longer carries.
+    func testEveryActivityCompetesAtEveryStageItIsOffered() {
+        for sport in Sport.allCases {
+            for stage in sport.stages {
+                XCTAssertNotNil(
+                    CompetitionCatalog.bestCompetition(forSport: sport, stage: stage, years: 10),
+                    "\(sport.label) is offered to \(stage) but has no contest there"
+                )
+            }
+        }
+    }
+
+    /// A child's first year already has something to enter.
+    func testChildrenHaveAFirstRungContest() {
+        for sport in Sport.allCases where sport.stages.contains(.child) {
+            XCTAssertNotNil(
+                CompetitionCatalog.bestCompetition(forSport: sport, stage: .child, years: 1),
+                "\(sport.label) has no contest for a first-year child"
+            )
+        }
+    }
+
+    /// Named levels climb with the years practised.
+    func testLevelsClimbWithYears() {
+        XCTAssertNil(ActivityLevel(years: 0))
+        XCTAssertEqual(ActivityLevel(years: 1), .beginner)
+        XCTAssertEqual(ActivityLevel(years: 3), .intermediate)
+        XCTAssertEqual(ActivityLevel(years: 5), .advanced)
+        XCTAssertEqual(ActivityLevel(years: 9), .expert)
+    }
+
+    /// Every soft skill a childhood pastime used to build is still reachable
+    /// in childhood through the disciplines that remain — cutting the pastimes
+    /// must not strand a skill until adulthood.
+    func testChildhoodStillReachesTheFormerHobbySkills() {
+        let reachable = Set(
+            Sport.allCases
+                .filter { $0.stages.contains(.child) }
+                .flatMap { $0.abilities.map { $0.keyPath } }
+        )
+        let needed: [WritableKeyPath<SoftSkills, Int>] = [
+            \.creativityAndInsightfulThinking, \.analyticalReasoningAndProblemSolving,
+            \.communicationAndNetworking,
+            \.empathyAndInterpersonalCare, \.spacialNavigationAndOrientation,
+            \.timeManagementAndPlanning, \.carefulnessAndAttentionToDetail,
+            \.tinkeringAndFingerPrecision,
+            // The promotion skills a ladder adds above entry level — the
+            // student council is what lets a young player build them.
+            \.leadershipAndInfluence, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
+        ]
+        for keyPath in needed {
+            XCTAssertTrue(reachable.contains(keyPath),
+                          "\(SoftSkills.label(forKeyPath: keyPath) ?? "skill") has no childhood source")
+        }
+    }
+}
+
+/// High-school grades: how they're earned and what they're worth at admission.
+final class SchoolGradeTests: XCTestCase {
+
+    /// Skills alone cap out at a B+; a straight A takes a year of study too.
+    func testStudyingLiftsTheYearsGrade() {
+        let player = Player()
+        for kp in Player.academicAxes { player.softSkills[keyPath: kp] = 10 }
+        XCTAssertEqual(player.yearGrade(studied: false), 3.4, accuracy: 0.001)
+        XCTAssertEqual(player.yearGrade(studied: true), 4.0, accuracy: 0.001)
+
+        for kp in Player.academicAxes { player.softSkills[keyPath: kp] = 0 }
+        XCTAssertGreaterThan(player.yearGrade(studied: true), player.yearGrade(studied: false))
+    }
+
+    /// A high-school year spent on a Study activity is recorded with the study
+    /// bonus; a year spent elsewhere is not.
+    func testAdvancingAHighSchoolYearRecordsItsGrade() {
+        let player = Player()
+        let ui = AppUIState()
+        player.configureStart(age: 14)
+
+        player.selectSport(.math, into: &ui.selectedActivities, sports: &ui.selectedSports)
+        let studied = player.yearGrade(studied: true)
+        player.advanceYear(appUIState: ui)
+        XCTAssertEqual(player.highSchoolGrades.count, 1)
+        XCTAssertEqual(player.highSchoolGrades[0], studied, accuracy: 0.001)
+
+        let unstudied = player.yearGrade(studied: false)
+        player.advanceYear(appUIState: ui)                 // a year with nothing taken
+        XCTAssertEqual(player.highSchoolGrades.count, 2)
+        XCTAssertEqual(player.highSchoolGrades[1], unstudied, accuracy: 0.001)
+    }
+
+    /// Middle-school years don't go on the transcript universities read.
+    func testOnlyHighSchoolYearsAreGraded() {
+        let player = Player()
+        let ui = AppUIState()
+        player.configureStart(age: 11)
+        player.advanceYear(appUIState: ui)
+        XCTAssertTrue(player.highSchoolGrades.isEmpty)
+    }
+
+    /// Grades are what an elite school reads first and a community college
+    /// barely reads at all: the same jump in GPA moves elite odds far more.
+    func testGradesWeighMostAtEliteSchools() {
+        func odds(_ tier: EducationTier, gpa: Double) -> Double {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 5 }
+            player.highSchoolGrades = [gpa]
+            return Education(.Bachelor, profile: .business, tier: tier).admissionProbability(player: player)
+        }
+        let eliteGain = odds(.elite, gpa: 4.0) - odds(.elite, gpa: 2.0)
+        let communityGain = odds(.community, gpa: 4.0) - odds(.community, gpa: 2.0)
+        XCTAssertGreaterThan(eliteGain, 0.2, "A straight-A record should transform an elite application.")
+        XCTAssertGreaterThan(eliteGain, communityGain * 3,
+                             "Grades should matter far more at an elite school than an open-door college.")
+    }
+
+    /// Trophies count at a selective school and not at an open-door college.
+    func testAccoladesCountAtSelectiveSchools() {
+        func odds(_ tier: EducationTier, withTitles: Bool) -> Double {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 5 }
+            if withTitles {
+                player.award("National Chess Champion", icon: "♚", category: .science, weight: 1.5)
+                player.award("Regional Science Fair Winner", icon: "🔬", category: .science, weight: 1.5)
+            }
+            return Education(.Bachelor, profile: .business, tier: tier).admissionProbability(player: player)
+        }
+        XCTAssertGreaterThan(odds(.elite, withTitles: true) - odds(.elite, withTitles: false), 0.1,
+                             "A shelf of titles should move an elite application.")
+        XCTAssertEqual(odds(.community, withTitles: true), odds(.community, withTitles: false), accuracy: 0.0001,
+                       "An open-door college doesn't ask what you've won.")
+    }
+
+    /// The admission weights at every tier and level add up to the whole fit.
+    func testAdmissionWeightsSumToOne() {
+        for level in [Level.Stage.Vocational, .Bachelor, .Master, .Doctorate] {
+            for tier in EducationTier.allCases {
+                let school = Education(level, profile: .business, tier: tier)
+                XCTAssertEqual(school.softSkillWeight + school.gradeWeight + school.accoladeWeight, 1, accuracy: 0.0001)
+                XCTAssertGreaterThan(school.softSkillWeight, 0)
+            }
+        }
+    }
+
+    /// Graduate programmes read the degree you hold, not your high-school grades.
+    func testGraduateAdmissionIgnoresSchoolGrades() {
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 18)
+        player.degrees.append(Education(.Bachelor, profile: .business, tier: .state))
+        let master = Education(.Master, profile: .business, tier: .elite)
+
+        player.highSchoolGrades = [4.0]
+        let straightA = master.admissionProbability(player: player)
+        player.highSchoolGrades = [2.0]
+        let cAverage = master.admissionProbability(player: player)
+        XCTAssertEqual(straightA, cAverage, accuracy: 0.0001)
+    }
+}
+
+
+/// Promotions weigh performance, readiness for the next rung and seniority the
+/// way the job's industry does.
+final class PromotionModelTests: XCTestCase {
+
+    private func worker(in job: Job, skills: Int, years: Int) -> Player {
+        let p = Player()
+        p.difficulty = .middleClass
+        p.configureStart(age: 25)
+        p.pinEconomy(to: 0)
+        for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = skills }
+        p.currentOccupation = job
+        p.experienceByRole[job.baseTitle] = years
+        return p
+    }
+
+    func testIndustryCulturesSumToOne() {
+        for industry in Industry.allCases {
+            let c = industry.promotionCulture
+            XCTAssertEqual(c.performance + c.readiness + c.seniority, 1, accuracy: 0.0001, industry.rawValue)
+        }
+    }
+
+    /// Readiness is measured against the rung above, not a fixed skill list.
+    func testReadinessIsMeasuredAgainstTheNextRung() throws {
+        let all = JobCatalog.allJobs()
+        let job = try XCTUnwrap(all.first { candidate in
+            candidate.rung == 0 && !candidate.isLowSkilled && !candidate.isEntrepreneurial
+                && all.contains { $0.baseTitle == candidate.baseTitle && $0.rung == 1 }
+        })
+        let p = worker(in: job, skills: 3, years: 1)
+        let odds = p.promotionOdds(for: job)
+        let next = try XCTUnwrap(odds.nextRole, "A rung-0 job with a ladder above has a next role.")
+        XCTAssertEqual(next.rung, 1)
+        XCTAssertEqual(odds.readiness, next.softSkillFit(for: p), accuracy: 0.0001)
+
+        let ready = worker(in: job, skills: 10, years: 1).promotionOdds(for: job)
+        XCTAssertGreaterThan(ready.total, odds.total, "Being ready for the role above should raise the odds.")
+    }
+
+    /// A civil servant's years count for far more than a software engineer's.
+    func testSeniorityWeighsMoreInThePublicSectorThanInSoftware() throws {
+        let jobs = JobCatalog.allJobs().filter { !$0.isLowSkilled && !$0.isEntrepreneurial }
+        let publicJob = try XCTUnwrap(jobs.first { $0.industry == .government })
+        let softwareJob = try XCTUnwrap(jobs.first { $0.industry == .software })
+
+        func seniorityGain(_ job: Job) -> Double {
+            worker(in: job, skills: 5, years: 5).promotionOdds(for: job).merit
+                - worker(in: job, skills: 5, years: 0).promotionOdds(for: job).merit
+        }
+        XCTAssertGreaterThan(seniorityGain(publicJob), seniorityGain(softwareJob) * 2)
+    }
+}
+
+/// In show business and the creator economy, fame is the income.
+final class FamePaysTests: XCTestCase {
+
+    /// A star project is closed until the big break's title is held.
+    func testStarProjectsNeedTheirBigBreak() throws {
+        let film = try XCTUnwrap(SideHustleCatalog.byId["starFilm"])
+        let player = Player()
+        XCTAssertFalse(player.canTakeProject(film))
+        XCTAssertEqual(player.projectOdds(for: film), 0)
+        player.award("Breakout Role", icon: "🎬", category: .entertainment, weight: 3)
+        XCTAssertTrue(player.canTakeProject(film))
+    }
+
+    /// Project pay starts small and rises steeply with fame in its field.
+    func testProjectPayRisesSteeplyWithFame() throws {
+        let podcast = try XCTUnwrap(SideHustleCatalog.byId["projectPodcast"])
+        XCTAssertEqual(podcast.pay(famePoints: 0), podcast.basePay)
+        let known = podcast.pay(famePoints: 5)
+        let famous = podcast.pay(famePoints: 10)
+        XCTAssertGreaterThan(known, podcast.basePay * 5)
+        XCTAssertGreaterThan(famous - known, known - podcast.basePay,
+                             "Each extra point of fame should be worth more than the last.")
+        let unpaid = try XCTUnwrap(SideHustleCatalog.byId["projectLibrary"])
+        XCTAssertEqual(unpaid.pay(famePoints: 20), 0, "Open source is unpaid, however famous.")
+    }
+
+    /// Brands pay a famous entertainment name — nothing below the threshold.
+    func testEndorsementsStartAtTheFameThreshold() {
+        let player = Player()
+        XCTAssertEqual(player.endorsementIncome, 0)
+        player.award("Viral Creator", icon: "📱", category: .entertainment, weight: 2)
+        XCTAssertEqual(player.endorsementIncome, 0, "Two points is below the threshold.")
+        player.award("Hit Record", icon: "🎤", category: .entertainment, weight: 6)
+        XCTAssertGreaterThan(player.endorsementIncome, 0)
+    }
+
+    /// Screen and music stars are paid per project now, not a salary ladder.
+    func testNoSalariedStarOrPerformerJobs() {
+        let titles = Set(JobCatalog.allBaseTitles)
+        for gone in ["Movie Star", "Pop Star", "Actor", "Musician"] {
+            XCTAssertFalse(titles.contains(gone), "\(gone) should be a project, not a job.")
+        }
+        XCTAssertTrue(titles.contains("Player"), "Team athletes keep their contracts.")
+    }
+}
+
+/// Events work like real conferences: attend if you're in the field, apply to
+/// take the stage with odds rather than a years-in-the-field wall.
+final class EventAccessTests: XCTestCase {
+
+    private func adult(age: Int = 22) -> Player {
+        let p = Player()
+        p.difficulty = .middleClass
+        p.configureStart(age: age)
+        return p
+    }
+
+    /// Every field people work in has an event to network at.
+    func testEveryWorkingFieldHasAnEvent() {
+        let covered = Set(EventCatalog.all.map(\.category))
+        for category in JobCategory.allCases where category != .entrepreneurship {
+            XCTAssertTrue(covered.contains(category), "\(category.rawValue) has no event.")
+        }
+    }
+
+    /// Open calls are open to any adult; industry events to those in the field
+    /// — including students of it — and nothing is open before 18.
+    func testWhoCanTakePart() throws {
+        let casting = try XCTUnwrap(EventCatalog.byId["tv-casting"])
+        let congress = try XCTUnwrap(EventCatalog.byId["medical-congress"])
+
+        let outsider = adult()
+        XCTAssertTrue(outsider.canJoinEvent(casting), "Anyone can answer an open call.")
+        XCTAssertFalse(outsider.canJoinEvent(congress), "A medical congress is for people in health.")
+
+        let student = adult()
+        student.currentEducation = Education(.Bachelor, profile: .health, tier: .state)
+        XCTAssertTrue(student.canJoinEvent(congress), "A health student is in the field.")
+
+        let minor = adult(age: 17)
+        XCTAssertFalse(minor.canJoinEvent(casting), "Events are for adults.")
+    }
+
+    /// Taking the stage is an application, not a wall: a newcomer has a real
+    /// but small chance, and years in the field raise it.
+    func testPresentingIsOddsNotAGate() throws {
+        let summit = try XCTUnwrap(EventCatalog.byId["tech-summit"])
+        let rookie = adult()
+        rookie.experience[.technology] = 1
+        let veteran = adult()
+        veteran.experience[.technology] = 8
+        XCTAssertGreaterThan(rookie.presentOdds(summit), 0.04)
+        XCTAssertGreaterThan(veteran.presentOdds(summit), rookie.presentOdds(summit))
+    }
+}
+
+/// Administration roles let the player pick the employer's industry.
+final class IndustryChoiceTests: XCTestCase {
+
+    func testAdministrationRolesOfferAChoiceOfIndustry() throws {
+        let clerk = try XCTUnwrap(JobCatalog.allJobs().first { $0.baseTitle == "Office Clerk" })
+        XCTAssertTrue(clerk.offersIndustryChoice)
+        XCTAssertGreaterThan(clerk.possibleIndustries.count, 1)
+        let nurse = try XCTUnwrap(JobCatalog.allJobs().first { $0.category == .health && !$0.isEntrepreneurial })
+        XCTAssertFalse(nurse.offersIndustryChoice, "Only administration roles offer the choice.")
+    }
+
+    /// The chosen industry is the one applied to — its climate moves the odds.
+    func testChosenIndustrySetsTheOdds() throws {
+        let clerk = try XCTUnwrap(JobCatalog.allJobs().first { $0.baseTitle == "Office Clerk" })
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 25)
+        player.pinNeutralEconomy()
+        let industries = clerk.possibleIndustries
+        player.industryTrend[industries[0]] = 0.8     // booming
+        player.industryTrend[industries[1]] = -0.8    // slumping
+        let salary = Double(clerk.annualIncome)
+        XCTAssertGreaterThan(clerk.inIndustry(industries[0]).hireProbability(for: player, requestedSalary: salary),
+                             clerk.inIndustry(industries[1]).hireProbability(for: player, requestedSalary: salary))
+        XCTAssertEqual(clerk.inIndustry(industries[1]).industry, industries[1])
+    }
+}

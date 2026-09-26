@@ -37,7 +37,10 @@ struct RootView: View {
         VStack(alignment: .leading, spacing: 8) {
             HeaderView(player: player, appUIState: appUIState)
 
-            StatusBarView(player: player)
+            // Hidden until the first milestone, like every stat section.
+            if !player.statusEvents.isEmpty {
+                StatusBarView(player: player)
+            }
 
             Divider()
 
@@ -114,11 +117,11 @@ struct RootView: View {
             .frame(minWidth: 520, minHeight: 480)
             #endif
         }
-        .sheet(isPresented: $appUIState.showHobbiesSheet) {
-            GameSheet(title: "Hobbies", isPresented: $appUIState.showHobbiesSheet) {
-                HobbiesView(player: player,
-                            selectedActivities: $appUIState.selectedActivities,
-                            onCommit: { spendYear(closing: \.showHobbiesSheet) })
+        .sheet(isPresented: $appUIState.showActivitiesSheet) {
+            GameSheet(title: "Activities", hint: ActivitiesView.hint, isPresented: $appUIState.showActivitiesSheet) {
+                ActivitiesView(player: player,
+                               appUIState: appUIState,
+                               onCommit: { spendYear(closing: \.showActivitiesSheet) })
             }
         }
         .sheet(isPresented: $appUIState.showSideHustlesSheet) {
@@ -131,20 +134,10 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $appUIState.showEventsSheet) {
-            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet) {
+            GameSheet(title: "Events", hint: EventsView.hint, isPresented: $appUIState.showEventsSheet) {
                 EventsView(player: player,
                            selectedEvents: $appUIState.selectedEvents,
                            onCommit: { spendYear(closing: \.showEventsSheet) })
-            }
-        }
-        .sheet(isPresented: $appUIState.showSportsSheet) {
-            GameSheet(title: "Sports", isPresented: $appUIState.showSportsSheet) {
-                SportsView(
-                    player: player,
-                    selectedActivities: $appUIState.selectedActivities,
-                    selectedSports: $appUIState.selectedSports,
-                    onCommit: { spendYear(closing: \.showSportsSheet) }
-                )
             }
         }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
@@ -183,7 +176,7 @@ struct RootView: View {
         }
         .padding()
         // A layoff is a major setback, so it interrupts with a pop-up. The
-        // header note (player.lostJobThisYear) lingers for the year afterward.
+        // status log keeps a "Laid off" line afterward.
         .alert("Laid Off", isPresented: $player.showLayoffAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -197,14 +190,14 @@ struct RootView: View {
             Text(player.ventureFailureMessage)
         }
         // Congratulates the player on a promotion — a milestone worth a pop-up.
-        // The header note (player.lastPromotionRaisePct) lingers for the year.
+        // The status log keeps a "Promoted" line afterward.
         .alert("Congratulations! 🎉", isPresented: $player.showPromotionAlert) {
             Button("Thanks!", role: .cancel) { }
         } message: {
             Text(player.promotionMessage)
         }
         // Celebrates winning the sport's automatic yearly competition. The
-        // header note (player.lastCompetitionWins) lingers for the year, and
+        // status log keeps a "Won" line afterward, and
         // confetti fires via celebrationTrigger.
         .alert("Champion! 🏆", isPresented: $player.showCompetitionWinAlert) {
             Button("🎉", role: .cancel) { }
@@ -432,11 +425,14 @@ struct ModeSelectionView: View {
 /// directly to their root content — so the chrome ends up identical either way.
 struct GameSheet<Content: View>: View {
     let title: String
+    /// Optional ⓘ beside the title — where a sheet explains itself, instead of
+    /// a caption taking space above its content.
+    var hint: String? = nil
     @Binding var isPresented: Bool
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        NavigationStack { content().gameSheetClose($isPresented, title: title) }
+        NavigationStack { content().gameSheetClose($isPresented, title: title, hint: hint) }
         #if os(macOS)
         .frame(minWidth: 520, minHeight: 480)
         #endif
@@ -472,12 +468,22 @@ extension View {
     /// bottom button bar holding **Close**. Used by `GameSheet` for plain content
     /// and directly by the dialogs that own their navigation stack, so every
     /// sheet is dismissed the same way, from the same place.
-    func gameSheetClose(_ isPresented: Binding<Bool>, title: String) -> some View {
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: String, hint: String? = nil) -> some View {
         self
             .navigationTitle(title)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                if let hint {
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 6) {
+                            Text(title).font(.headline)
+                            InfoHint(title: title, message: hint)
+                        }
+                    }
+                }
+            }
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 GameSheetButtonBar(isPresented: isPresented)
             }
@@ -505,9 +511,9 @@ struct CoachView: View {
     private var tips: [Tip] {
         [
             Tip(icon: "🎂", title: "One turn = one year",
-                body: "Your character grows a year older each turn. Choosing something — a hobby, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you fancy this year? Tap the blue Skip button at the top."),
+                body: "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you fancy this year? Tap the blue Skip button at the top."),
             Tip(icon: "🎒", title: "Build your life from the buttons",
-                body: "The buttons along the bottom — Education, Hobbies, Sports, Jobs and more — are what a year can be spent on. Every choice shapes who you become."),
+                body: "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become."),
             Tip(icon: "📈", title: "Watch yourself grow",
                 body: "The middle of the screen tracks the skills, titles, and money you pile up over the years."),
             Tip(icon: difficulty.goalIcon, title: "Your goal",

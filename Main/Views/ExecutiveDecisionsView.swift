@@ -32,7 +32,10 @@ struct ExecutiveDecisionsView: View {
             header
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(ExecutiveDecisionCatalog.all) { decision in
+                    // Investment rounds are for scalable ventures only.
+                    ForEach(ExecutiveDecisionCatalog.all.filter {
+                        $0.kind != .investmentRound || player.canRaiseInvestmentRound
+                    }) { decision in
                         card(for: decision)
                     }
                 }
@@ -49,10 +52,15 @@ struct ExecutiveDecisionsView: View {
             Text("Leading as \(roleName)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text("Optional strategic plays — each can be made once a year · savings: \(player.savings.formatted(.number)) $")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+            HStack(spacing: 6) {
+                Text("💰 Savings: \(player.savings.formatted(.number)) $")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                InfoHint(
+                    title: "🏛️ Boardroom",
+                    message: "Optional strategic plays for the company you lead. Each can be made once a year, and making one spends the year."
+                )
+            }
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -65,10 +73,6 @@ struct ExecutiveDecisionsView: View {
                 Text(decision.icon).font(.title2)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(decision.label).font(.headline)
-                    Text(decision.blurb)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 InfoHint(title: "\(decision.icon) \(decision.label)", message: infoMessage(for: decision))
@@ -156,8 +160,7 @@ struct ExecutiveDecisionsView: View {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
             let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
-            let upside = player.investmentRoundProjectedRaise()
-            return "🎲 ~\(odds)% success (💼 fame +\(famePts)%) · 📈 up to \(upside.formatted(.number)) $"
+            return "🎲 ~\(odds)% success (💼 fame +\(famePts)%) · 📈 stake ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)), pay +\(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))%"
         case .sellShares:
             let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
             return "🎲 ~\(odds)% a buyer bites · 💰 \(currentAsk.formatted(.number)) $"
@@ -168,7 +171,7 @@ struct ExecutiveDecisionsView: View {
         switch outcome.decision.kind {
         case .investmentRound:
             return outcome.success
-                ? "🎉 Round closed — raised \(outcome.cash.formatted(.number)) $ and banked “\(outcome.fameTitle ?? "")” fame."
+                ? "🎉 Round closed — the company is worth more, it can pay you more, and you banked “\(outcome.fameTitle ?? "")” fame."
                 : "🚫 Investors passed this time. Build your reputation and try again next year."
         case .sellShares:
             return outcome.success
@@ -178,23 +181,25 @@ struct ExecutiveDecisionsView: View {
     }
 
     private func infoMessage(for decision: ExecutiveDecision) -> String {
-        let talents = decision.talents
-            .compactMap { SoftSkills.label(forKeyPath: $0 as PartialKeyPath<SoftSkills>) }
-            .joined(separator: ", ")
+        // The play's own pitch leads its hint; the card keeps only the numbers.
+        decision.blurb + "\n\n" + infoDetails(for: decision)
+    }
+
+    private func infoDetails(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
             let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
             return """
-            A gamble. ~\(odds)% to close this year, driven by your \(talents) and network — but above all by your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
+            A gamble. ~\(odds)% to close this year, driven by your pitch — 💬 Persuasion most of all, then vision, communication and leadership (worth +\(Int((player.investmentRoundSkillFit() * 40).rounded()))% of up to +40% right now) — your network, and above all your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
 
-            Success realises a raise worth up to \(player.investmentRoundProjectedRaise().formatted(.number)) $ as equity liquidity, banks more business fame, and sharpens your vision and persuasion. Failure costs only the year's effort.
+            The money goes into the company, not your pocket: your stake is worth ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)) even after the investors' share, the business can pay you \(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))% more, and you bank business fame. Cash it in by selling your stake. Failure costs only the year's effort.
             """
         case .sellShares:
             let bounds = player.shareAskingBounds()
             let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
             return """
-            Put your equity on the market at a price you name. Its fair value right now is \(bounds.fair.formatted(.number)) $ — pay and tenure in the seat, lifted by your venture's traction (revenue and market share).
+            Put your equity on the market at a price you name. Its fair value right now is \(bounds.fair.formatted(.number)) $ — \(player.currentOccupation?.isEntrepreneurial == true ? "the business's full income times its age (up to 2.5×, as small businesses sell), lifted by any investment rounds and a breakout" : "your pay times your tenure in the seat").
 
             The higher you ask, the fewer buyers: at \(currentAsk.formatted(.number)) $ there's roughly a \(odds)% chance one bites this year\(player.economyInRecession ? ", and a recession is thinning the pool right now" : "").
 

@@ -268,8 +268,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
             return [.init(keyPath: \.communicationAndNetworking, weight: 1),
                     .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)]
         case .teachingCertificate:
-            return [.init(keyPath: \.communicationAndNetworking, weight: 1),
-                    .init(keyPath: \.presentationAndStorytelling, weight: 1)]
+            return [.init(keyPath: \.communicationAndNetworking, weight: 2)]
         case .cosmetology:
             return [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                     .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1)]
@@ -332,8 +331,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
         case .bar:
             return [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
-                    .init(keyPath: \.communicationAndNetworking, weight: 1),
-                    .init(keyPath: \.presentationAndStorytelling, weight: 1)]
+                    .init(keyPath: \.communicationAndNetworking, weight: 2)]
         case .professionalEngineer:
             return [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                     .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
@@ -344,7 +342,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]
         case .pesticideApplicator:
             return [.init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
-                    .init(keyPath: \.outdoorAndWeatherResilience, weight: 1)]
+                    .init(keyPath: \.resilienceAndEndurance, weight: 1)]
         case .securityGuard:
             return [.init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
                     .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)]

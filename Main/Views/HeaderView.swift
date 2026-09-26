@@ -27,25 +27,6 @@ struct HeaderView: View {
                     InfoHint(title: "Game mode", message: gameModeSummary)
                 }
 
-                if let currentOccupation = player.currentOccupation {
-                    HStack(spacing: 6) {
-                        Text("\(currentOccupation.displayTitle) \(currentOccupation.icon)")
-                        // Promotions are a realistic-mode mechanic only.
-                        if !player.isSimplified {
-                            InfoHint(
-                                title: "Promotion odds this year",
-                                message: promotionOddsSummary(for: currentOccupation)
-                            )
-                        }
-                    }
-                    Text("\(currentOccupation.annualIncome.formatted(.number)) $ / year")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                if let currentEducation = player.currentEducation {
-                    Text("\(currentEducation.degreeName)")
-                }
-
                 // The running score, at body weight so it reads as the run's
                 // headline number rather than chrome. Simplified mode has a
                 // fixed goal instead of a score, so it keeps the plain savings
@@ -55,19 +36,6 @@ struct HeaderView: View {
                 } else {
                     Text("🏅 Score: \(player.leaderboardScore.formatted(.number))")
                 }
-
-                if player.outstandingLoan > 0 {
-                    Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-
-                if player.studentLoan > 0 {
-                    Text("🎓 Student loan owed: \(player.studentLoan.formatted(.number)) $")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-
             }
 
             Spacer()
@@ -94,40 +62,10 @@ struct HeaderView: View {
         }
     }
 
-    /// Plain-text breakdown of this year's promotion odds for the current job,
-    /// mirroring the hire-probability InfoHint. Explains each term (readiness,
-    /// network, fame, tenure) so the fame contribution is visible.
-    private func promotionOddsSummary(for job: Job) -> String {
-        let odds = player.promotionOdds(for: job)
-        guard odds.promotes else {
-            return "This role doesn't offer in-place promotions — unskilled work rarely comes with a raise-and-title bump. Climb by applying to a higher role instead."
-        }
-        func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
-        func signed(_ v: Double) -> String {
-            let s = Int((v * 100).rounded())
-            return s >= 0 ? "+\(s)%" : "\(s)%"
-        }
-        return """
-        Each year in a skilled role you get a shot at a raise and title bump. This year's odds:
-
-        • Base × soft-skill readiness: \(pct(odds.readinessBase))
-        • Network (\(job.category.rawValue)): \(signed(odds.network))
-        • Fame (\(job.category.rawValue)): \(signed(odds.fame))
-        • Tenure (\(odds.tenureYears) yr in role): \(signed(odds.tenure))
-        • Education vs. what the role expects: \(signed(odds.education))
-        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): \(signed(odds.climate.promotionDelta))
-        Total: \(pct(odds.total))
-
-        \(odds.climate.freezesRaises
-          ? "Raises are frozen while \(job.industry.rawValue) is contracting — see Economy."
-          : "Your industry's climate moves these odds every year — see Economy.")
-        """
-    }
-
-    /// Plain-text summary of the current run's mode, savings, goal, and any
-    /// active flags (recession, layoff, last year's side-hustle / promotion /
-    /// competition results). Fed into the `InfoHint` next to the age so the
-    /// header itself can stay focused on age + current activity.
+    /// Plain-text summary of the current run's rules: mode, savings rate, goal.
+    /// Fed into the `InfoHint` next to the age. Year-by-year news (layoffs,
+    /// promotions, wins) is the status log's job, and the recession is shown in
+    /// the Economy section, so neither is repeated here.
     private var gameModeSummary: String {
         var lines: [String] = []
         lines.append("\(player.difficulty.icon) \(player.difficulty.title)")
@@ -135,23 +73,6 @@ struct HeaderView: View {
             lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of gross income each year")
         }
         lines.append("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)")
-
-        if !player.isSimplified {
-            if player.economyInRecession {
-                lines.append(player.turmoilYearsRemaining > 0
-                             ? "📉 Recession ongoing (~\(player.turmoilYearsRemaining) yr left) — hiring & raises frozen"
-                             : "📉 Recession this year — hiring & raises frozen")
-            }
-            if player.lostJobThisYear {
-                lines.append("💼 You were laid off last year — find a new job")
-            }
-            if player.lastPromotionRaisePct > 0 {
-                lines.append("⬆️ Promoted last year — pay up \(player.lastPromotionRaisePct)%")
-            }
-            if player.lastCompetitionWins > 0 {
-                lines.append("🏆 Won \(player.lastCompetitionWins) competition\(player.lastCompetitionWins == 1 ? "" : "s") last year")
-            }
-        }
         return lines.joined(separator: "\n")
     }
 }

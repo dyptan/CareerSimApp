@@ -154,6 +154,25 @@ struct Education: Codable, Hashable, Identifiable {
     /// How well the player's soft skills line up with what this school looks for,
     /// as 0...1 — the average of the per-axis overlap. A school that weighs no
     /// soft skills scores a flat 1.0.
+    /// The share of the admission fit high-school grades make up here: the
+    /// tier's weight for a first degree (vocational or bachelor's, applied to
+    /// straight from school), nothing for a graduate programme.
+    var gradeWeight: Double {
+        switch level {
+        case .Vocational, .Bachelor: return tier.gradeWeight
+        default:                     return 0
+        }
+    }
+
+    /// The share of the admission fit trophies and accolades make up here —
+    /// the tier's weight, at every level: a graduate school likes a prize-winner
+    /// as much as an undergraduate one does.
+    var accoladeWeight: Double { tier.accoladeWeight }
+
+    /// What's left of the admission fit for soft skills once grades and
+    /// accolades have taken their share.
+    var softSkillWeight: Double { 1 - gradeWeight - accoladeWeight }
+
     func softSkillFit(player: Player) -> Double {
         let overlap = softSkillOverlap(player: player)
         guard !overlap.isEmpty else { return 1.0 }
@@ -177,11 +196,20 @@ struct Education: Codable, Hashable, Identifiable {
     /// a coin flip and an elite one a reach. Applying costs the year either way
     /// (see `InstitutionTiersView`), so the floor has to be somewhere a player
     /// can afford to gamble from.
+    ///
+    /// The fit blends three things at the tier's weights: soft skills; for a
+    /// first degree, high-school grades (`gradeWeight` — graduate programmes
+    /// read the degree you hold instead); and trophies and accolades
+    /// (`accoladeWeight`). An elite school reads the transcript and the prize
+    /// list first; an open-door college barely reads either.
     func admissionProbability(player: Player) -> Double {
         guard meetsRequirements(player: player) else { return 0 }
 
+        let fit = softSkillWeight * softSkillFit(player: player)
+            + gradeWeight * player.academicFit
+            + accoladeWeight * player.accoladeFit
         let raw = tier.admissionFloor
-            + tier.admissionFitSpan * softSkillFit(player: player)
+            + tier.admissionFitSpan * fit
             + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
     }
@@ -329,60 +357,60 @@ struct Education: Codable, Hashable, Identifiable {
             r.soft.analyticalReasoningAndProblemSolving = 2
             r.soft.selfDisciplineAndPerseverance = 2
             r.soft.timeManagementAndPlanning = 1
-            r.soft.presentationAndStorytelling = 1
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 1)
 
         case .arts:
             r.soft.creativityAndInsightfulThinking = 3
-            r.soft.presentationAndStorytelling = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.carefulnessAndAttentionToDetail = 1
-            r.soft.communicationAndNetworking = 1
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 1)
 
         case .design:
             r.soft.creativityAndInsightfulThinking = 3
             r.soft.carefulnessAndAttentionToDetail = 2
-            r.soft.presentationAndStorytelling = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.spacialNavigationAndOrientation = 1
 
         case .business:
-            r.soft.communicationAndNetworking = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.analyticalReasoningAndProblemSolving = 1
             r.soft.timeManagementAndPlanning = 2
-            r.soft.presentationAndStorytelling = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.collaborationAndTeamwork = 1
 
         case .education:
-            r.soft.communicationAndNetworking = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.empathyAndInterpersonalCare = 2
             r.soft.stressResistanceAndEmotionalRegulation = 2
-            r.soft.presentationAndStorytelling = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.timeManagementAndPlanning = 1
 
         case .health:
-            r.soft.communicationAndNetworking = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.empathyAndInterpersonalCare = 2
             r.soft.carefulnessAndAttentionToDetail = 2
-            r.soft.resilienceAndEndurance = 2
+            r.soft.resilienceAndEndurance = max(r.soft.resilienceAndEndurance, 2)
             r.soft.stressResistanceAndEmotionalRegulation = 2
 
         case .sports:
-            r.soft.resilienceAndEndurance = 2
+            r.soft.resilienceAndEndurance = max(r.soft.resilienceAndEndurance, 2)
             r.soft.collaborationAndTeamwork = 2
             r.soft.selfDisciplineAndPerseverance = 2
 
         case .agriculture:
-            r.soft.resilienceAndEndurance = 2
-            r.soft.outdoorAndWeatherResilience = 1
+            r.soft.resilienceAndEndurance = max(r.soft.resilienceAndEndurance, 2)
+            r.soft.resilienceAndEndurance = max(r.soft.resilienceAndEndurance, 1)
             r.soft.timeManagementAndPlanning = 1
 
         case .law:
             r.soft.analyticalReasoningAndProblemSolving = 2
-            r.soft.communicationAndNetworking = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.carefulnessAndAttentionToDetail = 2
-            r.soft.presentationAndStorytelling = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.timeManagementAndPlanning = 1
 
         case .service:
-            r.soft.communicationAndNetworking = 2
+            r.soft.communicationAndNetworking = max(r.soft.communicationAndNetworking, 2)
             r.soft.empathyAndInterpersonalCare = 1
             r.soft.stressResistanceAndEmotionalRegulation = 2
             r.soft.collaborationAndTeamwork = 2
@@ -445,12 +473,12 @@ struct Education: Codable, Hashable, Identifiable {
         case .arts, .design:
             if level == .Master || level == .Doctorate {
                 x.soft.creativityAndInsightfulThinking = min(max(x.soft.creativityAndInsightfulThinking, x.soft.creativityAndInsightfulThinking > 0 ? (level == .Doctorate ? 5 : 4) : 0), 5)
-                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.communicationAndNetworking = min(max(x.soft.communicationAndNetworking, x.soft.communicationAndNetworking > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .education:
             if level == .Bachelor || level == .Master || level == .Doctorate {
                 x.soft.stressResistanceAndEmotionalRegulation = min(max(x.soft.stressResistanceAndEmotionalRegulation, x.soft.stressResistanceAndEmotionalRegulation > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
-                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.communicationAndNetworking = min(max(x.soft.communicationAndNetworking, x.soft.communicationAndNetworking > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         case .health:
             if level == .Bachelor || level == .Master || level == .Doctorate {
@@ -461,7 +489,7 @@ struct Education: Codable, Hashable, Identifiable {
             }
         case .business, .law:
             if level == .Master || level == .Doctorate {
-                x.soft.presentationAndStorytelling = min(max(x.soft.presentationAndStorytelling, x.soft.presentationAndStorytelling > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
+                x.soft.communicationAndNetworking = min(max(x.soft.communicationAndNetworking, x.soft.communicationAndNetworking > 0 ? (level == .Doctorate ? 4 : 3) : 0), 5)
             }
         default:
             break

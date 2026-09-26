@@ -10,7 +10,7 @@ struct Job: Identifiable, Codable, Hashable {
     let requirements: Requirements
     var annualIncome: Int      // actual pay locked in when the job was taken
     /// For entrepreneurial roles: the capital a founder ideally puts up to launch
-    /// this venture. Drives success odds (see `founderSuccessProbability`).
+    /// this venture. Feeds the founder's preparation (see `founderSuccessProbability`).
     /// `nil` for ordinary employee jobs.
     let targetCapital: Int?
     /// The role this job is a rung of, irrespective of seniority — the career
@@ -33,7 +33,7 @@ struct Job: Identifiable, Codable, Hashable {
     /// to `category`, which is what the worker does. This is the axis the
     /// economy runs on (see `Industry` and `Player.industryTrend`): a designer at
     /// a carmaker rides the automotive cycle, one at an agency rides advertising.
-    let industry: Industry
+    var industry: Industry
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
          requirements: Requirements, targetCapital: Int? = nil,
@@ -151,12 +151,10 @@ extension Job {
     /// makes it the dominant hiring factor. The Professional Player track is
     /// gated on the "Junior Champion" title from the teen `Junior Championship`.
     static let breakthroughFameByRole: [String: String] = [
-        // Sports: the pro-athlete track opens on a junior-competition win.
+        // Sports: the pro-athlete track opens on a junior-competition win. (The
+        // screen and music big breaks open star *projects* instead — see
+        // `SideHustle.requiresAward`.)
         "Player": "Junior Champion",
-        // Show business: the A-list acting and music tracks each open on a rare
-        // "big break" project (see the breakout ventures in `SideHustle`).
-        "Movie Star": "Breakout Role",
-        "Pop Star": "Hit Record",
     ]
 
     /// The breakthrough fame award this role requires, or nil for ordinary
@@ -465,7 +463,8 @@ extension Job {
         // field: a strong portfolio nearly rivals the soft-skill fit term, but
         // helps only its own field (see fameHireBonus). Top leadership roles
         // weight reputation even more heavily.
-        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership)
+        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership,
+                                        executive: isExecutive && !isEntrepreneurial)
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
@@ -479,8 +478,9 @@ extension Job {
         let climate = player.climate(for: industry).hireFactor
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
-        // to the top. Founders make their own seat, so they're exempt.
-        let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
+        // to the top, unless they've run a company before. Founders make their
+        // own seat, so they're exempt.
+        let scarcity = (isExecutive && !isEntrepreneurial) ? player.executiveSeatChance : 1.0
         return max(0.05, min(0.95, raw * climate * scarcity))
     }
 
@@ -490,6 +490,34 @@ extension Job {
     /// credentials. Identified by carrying a `targetCapital` (rather than by
     /// category) so founder roles can live under the Business category.
     var isEntrepreneurial: Bool { targetCapital != nil }
+
+    /// A venture that can scale — software and games sell the same product to
+    /// any number of customers — so it can raise investment and, rarely, break
+    /// out. A restaurant or a studio grows one location at a time.
+    /// The industries this role can be posted in (see
+    /// `JobCatalog.industries(forBaseTitle:category:)`).
+    var possibleIndustries: [Industry] {
+        JobCatalog.industries(forBaseTitle: baseTitle, category: category)
+    }
+
+    /// Whether the player chooses the employer's industry when applying.
+    /// Administration roles exist in every kind of organisation — a hospital, a
+    /// bank, a city hall — so the player picks which to apply to rather than
+    /// taking the one sector a year's posting happens to name.
+    var offersIndustryChoice: Bool {
+        category == .administration && possibleIndustries.count > 1
+    }
+
+    /// This posting at an employer in `industry`.
+    func inIndustry(_ industry: Industry) -> Job {
+        var copy = self
+        copy.industry = industry
+        return copy
+    }
+
+    var isScalableVenture: Bool {
+        isEntrepreneurial && JobCatalog.scalableVentureTitles.contains(baseTitle)
+    }
 
     /// True for a senior seat where equity/strategy plays make sense — the roles
     /// that unlock the Boardroom (`ExecutiveDecision`). Covers every founder
@@ -546,14 +574,17 @@ extension Job {
         !isEntrepreneurial && requirements.education.minEQF < GameConstants.promotionMinEQF
     }
 
-    /// Probability that a founding attempt succeeds. Driven by *who the founder
-    /// is*, not their bank balance: experience in the venture's own industry and
+    /// The founder's **preparation score** (0.03...`founderMaxSuccess`). A
+    /// business always opens; this sets how well it survives — the yearly fold
+    /// risk and the breakout chance (see `Player.founderPreparation` and
+    /// `Player.ventureFoldRisk`). Driven by *who the founder is*, not their bank
+    /// balance: experience in the venture's own industry and
     /// how well their soft skills fit what the business demands are the two big
     /// levers, with the size of the stake a supporting factor.
     ///
     /// **Capital is the only hard requirement.** Anyone with a stake may try
     /// anything — nobody is barred from opening a restaurant for never having
-    /// worked in hospitality, they are simply very likely to fail at it. The
+    /// worked in hospitality, it is simply far more likely to fold. The
     /// industry-experience baseline that used to gate this outright is now just
     /// the largest probabilistic term (`founderExperienceFit`), so an unprepared
     /// founder sits near the 0.03 floor rather than being refused.
@@ -564,17 +595,24 @@ extension Job {
         // Weighted so that even a maxed-out founder lands around the
         // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
         // while weaker preparation falls away steeply below it.
-        let experience = founderExperienceFit(for: player) * 0.26   // up to +26%
-        let skill = founderSkillFit(for: player) * 0.20             // up to +20%
+        // Experience in the industry still leads — it's the strongest predictor
+        // of a founder's success in real life — but the skills a business runs
+        // on pull nearly level with it.
+        let experience = founderExperienceFit(for: player) * 0.22   // up to +22%
+        let skill = founderSkillFit(for: player) * 0.26             // up to +26%
         let capitalRatio = Double(investedCapital) / Double(target)
         let capital = min(capitalRatio, 1.0) * 0.09                 // up to +9%
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
+        // A business name: years running ventures, rounds closed and exits
+        // made. Serial founders start their next venture better placed.
+        let reputation = min(GameConstants.founderReputationCap,
+                             player.famePoints(for: .business) * GameConstants.founderReputationPerPoint)
         // Founding into a contracting market is the harder version of the same
         // bet — customers and backers are scarcer in a slump.
         let climate = player.climate(for: industry).hireFactor
-        let raw = (0.05 + experience + skill + capital + credential) * climate
+        let raw = (0.05 + experience + skill + capital + credential + reputation) * climate
         return max(0.03, min(GameConstants.founderMaxSuccess, raw))
     }
 
@@ -590,8 +628,8 @@ extension Job {
     /// 0...1 fit of the player's soft skills for founding *this* venture. Blends
     /// how well they match the business's own skill profile (its
     /// `requirements.softSkills`) with raw entrepreneurial grit — the
-    /// Risk-Taker / Visionary / Persuader traits every founder leans on
-    /// regardless of field. The field-specific profile is weighted a little more.
+    /// Visionary (ambition and initiative) and Persuader traits every founder
+    /// leans on regardless of field. The field-specific profile is weighted a little more.
     func founderSkillFit(for player: Player) -> Double {
         let p = player.softSkills
 
@@ -600,7 +638,7 @@ extension Job {
         let profileFit = softSkillFit(for: player)
 
         let gritKeys: [WritableKeyPath<SoftSkills, Int>] = [
-            \.riskTakingAndInitiative, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
+            \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
         ]
         let grit = gritKeys.reduce(0.0) { acc, kp in
             acc + min(Double(p[keyPath: kp]) / 6.0, 1.0)
@@ -724,11 +762,9 @@ var jobExample = Job(
             spacialNavigationAndOrientation: 1,
             resilienceAndEndurance: 1,
             stressResistanceAndEmotionalRegulation: 0,
-            outdoorAndWeatherResilience: 0,
             collaborationAndTeamwork: 0,
             timeManagementAndPlanning: 0,
-            selfDisciplineAndPerseverance: 0,
-            presentationAndStorytelling: 0
+            selfDisciplineAndPerseverance: 0
         ),
         hardSkills: .init(trainings: [])
     ),

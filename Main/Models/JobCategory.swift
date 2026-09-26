@@ -178,7 +178,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
 
     /// Years that count toward this field: its own plus the industries it
     /// credits (see `creditedExperienceCategories`). The single definition —
-    /// `Player.industryExperience` and `CareerEvent.canPresent` both read it, so
+    /// `Player.industryExperience` and `Player.presentOdds` both read it, so
     /// a founder's years count the same way when applying for a Business role
     /// and when taking the stage at a Business event.
     func creditedYears(in experience: [JobCategory: Int]) -> Int {
@@ -360,6 +360,58 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
     /// children go to school and the bins get collected in every economy, so
     /// public payrolls barely notice a recession. This is what makes one downturn
     /// land unevenly instead of flattening the whole economy at once.
+    /// What this industry promotes on, as weights that sum to 1:
+    ///
+    /// * **performance** — how well you do the job you hold (your skill fit for it);
+    /// * **readiness** — how ready you are for the next level up (your skill fit
+    ///   for the next rung, where leadership and planning start to count);
+    /// * **seniority** — time in the role.
+    ///
+    /// Modelled on how each sector actually decides. The public sector,
+    /// utilities and the unionised trades run on time-in-grade and seniority
+    /// lists; software and finance use levelling committees that promote people
+    /// already working at the next level; consulting and law are up-or-out on
+    /// readiness; entertainment and retail reward results. See
+    /// `Player.promotionOdds`.
+    var promotionCulture: (performance: Double, readiness: Double, seniority: Double) {
+        switch self {
+        case .government:           return (0.25, 0.20, 0.55)
+        case .education:            return (0.25, 0.20, 0.55)
+        case .logistics:            return (0.30, 0.15, 0.55)
+        case .energy:               return (0.30, 0.20, 0.50)
+        case .manufacturing:        return (0.30, 0.20, 0.50)
+        case .automotive:           return (0.30, 0.20, 0.50)
+        case .construction:         return (0.35, 0.20, 0.45)
+        case .healthcare:           return (0.35, 0.25, 0.40)
+        case .aerospaceDefense:     return (0.30, 0.30, 0.40)
+        case .agriFood:             return (0.40, 0.20, 0.40)
+        case .telecom:              return (0.35, 0.30, 0.35)
+        case .pharmaBiotech:        return (0.40, 0.35, 0.25)
+        case .hardware:             return (0.40, 0.35, 0.25)
+        case .retailTrade:          return (0.45, 0.30, 0.25)
+        case .hospitalityTourism:   return (0.45, 0.30, 0.25)
+        case .software:             return (0.45, 0.40, 0.15)
+        case .finance:              return (0.40, 0.45, 0.15)
+        case .professionalServices: return (0.35, 0.50, 0.15)
+        case .mediaEntertainment:   return (0.55, 0.30, 0.15)
+        }
+    }
+
+    /// One line on how this industry promotes, for the promotion-odds hint.
+    var promotionCultureBlurb: String {
+        let c = promotionCulture
+        if c.seniority >= 0.45 {
+            return "\(rawValue) promotes largely on seniority — time in the role counts most."
+        }
+        if c.readiness >= 0.45 {
+            return "\(rawValue) promotes people already working at the next level — readiness for the role above counts most."
+        }
+        if c.performance >= 0.45 {
+            return "\(rawValue) promotes on results — how well you do the job you have counts most."
+        }
+        return "\(rawValue) weighs results, readiness and time served fairly evenly."
+    }
+
     var beta: Double {
         switch self {
         case .hospitalityTourism, .mediaEntertainment, .retailTrade:
@@ -442,6 +494,18 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
     /// Multiplier on hire odds for a role in this industry. A slump does not
     /// close a field — someone is always hired somewhere — it just makes the
     /// same application a markedly worse bet.
+    /// Multiplier on a founder's income this year: customers spend freely in a
+    /// boom and pull back hard in a slump.
+    var revenueFactor: Double {
+        switch self {
+        case .boom:     return 1.25
+        case .growth:   return 1.10
+        case .steady:   return 1.00
+        case .slowdown: return 0.85
+        case .slump:    return 0.65
+        }
+    }
+
     var hireFactor: Double {
         switch self {
         case .boom:     return 1.30
