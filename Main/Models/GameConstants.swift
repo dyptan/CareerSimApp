@@ -105,23 +105,50 @@ enum GameConstants {
     /// early degree is a lasting cost. See `Player.advanceYear`.
     static let studentLoanAnnualInterest: Double = 0.05
 
-    /// The most likely a founding attempt can ever be, however experienced,
-    /// skilled, funded, and credentialed the founder. Founding a business is a
-    /// genuine gamble — even the best-prepared founder is closer to a coin-flip
-    /// than a sure thing — so the launch odds top out here rather than near
-    /// certainty. See `Job.founderSuccessProbability`.
+    /// The top of the founder-preparation score (`Job.founderSuccessProbability`),
+    /// which no amount of experience, skill, capital or credentials exceeds.
+    /// Preparation no longer decides whether a business opens — it always does —
+    /// but how well it survives (see `Player.ventureFoldRisk`).
     static let founderMaxSuccess: Double = 0.55
 
-    /// Base annual chance that a running venture fails outright in a calm economy.
-    /// Unlike a salaried worker (who faces layoffs only in a downturn), a founder
-    /// carries this risk *every* year — a business can always fold. A recession
-    /// multiplies it by `Difficulty.layoffSeverity`, capped at
-    /// `ventureMaxFailureRisk`. See `Player.advanceYear`.
-    static let ventureAnnualFailureRisk: Double = 0.07
+    /// Chance an average-prepared business folds in its 1st, 2nd, 3rd and 4th-
+    /// and-later year in a calm economy. Modelled on US business survival data:
+    /// about a fifth close in year one and about half by year five, the risk
+    /// falling as a business establishes itself. Preparation scales it between
+    /// 0.5× and 1.5×, and a recession by `Difficulty.layoffSeverity`.
+    static let ventureFoldRiskByYear: [Double] = [0.22, 0.14, 0.10, 0.06]
 
-    /// Ceiling on the amplified annual venture-failure probability, so even a
-    /// harsh downturn never makes a fold a certainty.
-    static let ventureMaxFailureRisk: Double = 0.25
+    /// Ceiling on the amplified annual fold risk, so even a harsh downturn
+    /// never makes a fold a certainty.
+    static let ventureMaxFailureRisk: Double = 0.45
+
+    /// Share of the original stake a founder recovers when a business folds —
+    /// equipment, stock and lease sold off.
+    static let ventureFoldRecovery: Double = 0.25
+
+    /// Share of a venture's full income it pays in its 1st and 2nd year, while
+    /// it finds its customers; full income from year three.
+    static let ventureIncomeRamp: [Double] = [0.4, 0.7]
+
+    /// Year-to-year swing on a founder's income (± this share), on top of the
+    /// industry climate.
+    static let ventureIncomeSwing: Double = 0.15
+
+    /// Annual chance an average-prepared scalable venture (software, games)
+    /// breaks out once past its second year: the rare jackpot of the startup
+    /// power law. Preparation and a booming market raise it.
+    static let ventureBreakoutChance: Double = 0.04
+
+    /// A breakout's effect on the venture's income, and on what the founder's
+    /// stake is worth.
+    static let ventureBreakoutIncomeMultiple: Double = 3.0
+    static let ventureBreakoutValueMultiple: Double = 4.0
+
+    /// A closed investment round: the company's value after dilution (the
+    /// founder gives up a slice for the money), and the growth in the income
+    /// the funded business can pay.
+    static let investmentRoundValueGrowth: Double = 1.2
+    static let investmentRoundIncomeGrowth: Double = 1.2
 
     // MARK: - The business cycle
     //

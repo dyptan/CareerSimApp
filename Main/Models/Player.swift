@@ -457,6 +457,65 @@ final class Player: ObservableObject {
     /// for the leaderboard. Zero when the player owes nothing.
     @Published var outstandingLoan: Int = 0
 
+    // MARK: Venture state (the business the player founded, if any)
+
+    /// Age at which the running venture was founded; `nil` when not a founder.
+    @Published var ventureFoundedAge: Int?
+    /// 0...1 how well prepared the founder was at launch — sets the yearly
+    /// fold risk and the breakout chance (see `ventureFoldRisk`).
+    @Published var venturePreparation: Double = 0
+    /// What was staked at launch; a fold recovers a share of it.
+    @Published var ventureStake: Int = 0
+    /// The income the business pays once established — year one and two pay a
+    /// share of it, and each year swings around it (see `advanceYear`).
+    @Published var ventureMatureIncome: Int = 0
+    /// Investment rounds closed — each lifts what the founder's stake is worth.
+    @Published var ventureRoundsRaised: Int = 0
+    /// Whether a scalable venture has broken out — the rare jackpot.
+    @Published var ventureBrokeOut: Bool = false
+
+    /// Years the current venture has been running (1 in its first year-end).
+    var ventureYears: Int { ventureFoundedAge.map { age - $0 } ?? 0 }
+
+    /// 0...1 founder preparation for `job` at `stake`: the preparation score
+    /// (`Job.founderSuccessProbability`) rescaled to its own range.
+    func founderPreparation(for job: Job, stake: Int) -> Double {
+        let score = job.founderSuccessProbability(for: self, investedCapital: stake)
+        let floor = 0.03
+        return max(0, min(1, (score - floor) / (GameConstants.founderMaxSuccess - floor)))
+    }
+
+    /// The chance a business folds in its `year`-th year (1-based) in a calm
+    /// economy: the survival curve, scaled from 1.5× (unprepared) to 0.5×
+    /// (fully prepared).
+    static func ventureFoldRisk(year: Int, preparation: Double) -> Double {
+        let curve = GameConstants.ventureFoldRiskByYear
+        let base = curve[min(max(year, 1), curve.count) - 1]
+        return base * (1.5 - preparation)
+    }
+
+    /// The chance a business launched now survives its first year — what the
+    /// Ventures sheet shows before the player commits.
+    func firstYearSurvival(for job: Job, stake: Int) -> Double {
+        1 - Player.ventureFoldRisk(year: 1, preparation: founderPreparation(for: job, stake: stake))
+    }
+
+    /// A venture's income in its `year`-th year as a share of its full income.
+    static func ventureRamp(year: Int) -> Double {
+        let ramp = GameConstants.ventureIncomeRamp
+        return year >= 1 && year <= ramp.count ? ramp[year - 1] : 1.0
+    }
+
+    /// Clears the venture state when the player stops being a founder.
+    private func clearVenture() {
+        ventureFoundedAge = nil
+        venturePreparation = 0
+        ventureStake = 0
+        ventureMatureIncome = 0
+        ventureRoundsRaised = 0
+        ventureBrokeOut = false
+    }
+
     /// Outstanding student-loan balance from tuition the player couldn't cover in
     /// cash (see the tuition charge in `advanceYear`). Accrues interest each year
     /// at `GameConstants.studentLoanAnnualInterest` and is repaid from savings once
@@ -520,7 +579,15 @@ final class Player: ObservableObject {
     @Published var experienceByRole: [String: Int] = [:]
     @Published var softSkills: SoftSkills
     @Published var hardSkills: HardSkills
-    @Published var currentOccupation: Job?
+    @Published var currentOccupation: Job? {
+        // Leaving a venture any way at all — selling out, a fold, taking a
+        // job, enrolling full-time — ends the founder's bookkeeping with it.
+        didSet {
+            if currentOccupation?.isEntrepreneurial != true, ventureFoundedAge != nil {
+                clearVenture()
+            }
+        }
+    }
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
@@ -798,7 +865,9 @@ final class Player: ObservableObject {
         // Unskilled jobs don't promote in place — in real life a raise-and-title
         // bump rarely lands in work needing no post-secondary training; the
         // player advances by applying upward instead.
-        guard !job.isLowSkilled else {
+        // Founders aren't promoted: their pay moves with the business — its age,
+        // its market and its luck (see `advanceVenture`).
+        guard !job.isLowSkilled, !job.isEntrepreneurial else {
             return PromotionOdds(promotes: false, performance: 0, readiness: 0, seniority: 0,
                                  tenureYears: years, nextRole: nil, culture: culture, merit: 0,
                                  network: 0, fame: 0, climate: climate, education: 0, total: 0)
@@ -1056,22 +1125,10 @@ final class Player: ObservableObject {
                 }
             }
 
-            // Ongoing venture risk (realistic mode): a founder isn't laid off like
-            // a salaried worker — but their business can fail outright in any year,
-            // and a downturn makes that far likelier. A fold clears the occupation
-            // (and its income); the player keeps what they've banked, and any
-            // venture loan outlives the business (serviced below).
+            // A founder's year (realistic mode): the business may fold, may —
+            // rarely — break out, and otherwise earns next year's income.
             if !isSimplified, job.isEntrepreneurial {
-                let failChance = min(
-                    GameConstants.ventureMaxFailureRisk,
-                    GameConstants.ventureAnnualFailureRisk * (recessionThisYear ? difficulty.layoffSeverity : 1.0)
-                )
-                if Double.random(in: 0...1) < failChance {
-                    currentOccupation = nil
-                    showVentureFailureAlert = true
-                    ventureFailureMessage = "\(job.baseTitle) folded this year. You keep your savings, but any loan must still be repaid."
-                    recordStatus("📉", "\(job.baseTitle) folded")
-                }
+                advanceVenture(job, recession: recessionThisYear)
             }
         }
 
@@ -1249,44 +1306,94 @@ final class Player: ObservableObject {
         return hired
     }
 
-    /// Attempts to launch an entrepreneurial venture by investing `investedCapital`
-    /// of the player's own savings — topped up, once savings run out, by a loan of
-    /// up to `maxVentureLoan` (2× annual income). The stake is committed up front;
-    /// success makes the venture the player's occupation (earning its income),
-    /// while failure loses the entire stake. Any borrowed portion becomes an
-    /// `outstandingLoan` that must be repaid regardless of the outcome. Odds come
-    /// from `Job.founderSuccessProbability` (industry experience + soft-skill fit,
-    /// with capital a supporting factor). Returns true on success.
+    /// Launches a venture with `investedCapital` staked. Savings fund the stake
+    /// first; any shortfall (up to `maxVentureLoan`) is borrowed and booked as
+    /// an `outstandingLoan` that must be repaid whatever happens to the business.
+    ///
+    /// The business always opens — nearly every real one does. What preparation
+    /// (industry experience, skill fit, capital, credentials, the market; see
+    /// `Job.founderSuccessProbability`) decides is how well it *survives*: the
+    /// yearly fold risk and, for a scalable venture, the breakout chance (see
+    /// `advanceVenture`). Year one pays a fraction of the full income while the
+    /// business finds its customers. Returns false only when refused outright
+    /// (a minor, or nothing to stake).
     @discardableResult
     func foundVenture(_ job: Job, investedCapital: Int) -> Bool {
         // Staking capital — and borrowing — is an adult play: an under-18
         // player can never pay money or go into debt. The footer hides
         // Ventures until then; this is the model-level guarantee.
         guard age >= GameConstants.minimumEntrepreneurAge else { return false }
-        // Savings fund the stake first; anything beyond them (up to the loan cap)
-        // is borrowed against income and booked as debt. A stake of nothing is
-        // the one thing that closes a venture outright — capital is the only
-        // hard requirement, so it has to actually be required.
+        // A stake of nothing is the one thing that closes a venture outright —
+        // capital is the only hard requirement.
         let stake = min(max(0, investedCapital), maxVentureStake)
         guard stake > 0 else { return false }
         let borrowed = borrowedPortion(ofStake: stake)
-        let probability = job.founderSuccessProbability(for: self, investedCapital: stake)
+        let preparation = founderPreparation(for: job, stake: stake)
         savings -= (stake - borrowed)          // spend savings first
         if borrowed > 0 {
             outstandingLoan += borrowed        // the rest is a loan
             recordStatus("🏦", "Borrowed \(borrowed.formatted(.number)) $ to fund your venture")
         }
-        let success = Double.random(in: 0...1) < probability
-        if success {
-            let previous = currentOccupation
-            currentOccupation = job             // the venture is now the player's job
-            if let previous, previous.id != job.id {
-                recordStatus("🚪", "Left \(previous.baseTitle) to go all-in on your venture")
-            }
-            recordStatus("🚀", "Founded \(job.baseTitle) — you're now CEO")
+
+        let previous = currentOccupation
+        clearVenture()
+        ventureFoundedAge = age
+        venturePreparation = preparation
+        ventureStake = stake
+        ventureMatureIncome = job.annualIncome
+        var venture = job
+        venture.annualIncome = Int((Double(job.annualIncome) * Player.ventureRamp(year: 1)).rounded())
+        currentOccupation = venture             // the venture is now the player's job
+        if let previous, previous.id != job.id {
+            recordStatus("🚪", "Left \(previous.baseTitle) to go all-in on your venture")
         }
-        // On failure the committed stake is lost in full.
-        return success
+        recordStatus("🚀", "Founded \(job.baseTitle) — you're now CEO")
+        return true
+    }
+
+    /// One year-end for a running venture: the fold roll on the survival curve
+    /// (with a share of the stake recovered if it folds), then — for a scalable
+    /// venture — the breakout roll, then next year's income: the ramp while the
+    /// business is young, times the industry's climate, times a random swing.
+    private func advanceVenture(_ job: Job, recession: Bool) {
+        let year = max(1, ventureYears)
+        let foldRisk = min(
+            GameConstants.ventureMaxFailureRisk,
+            Player.ventureFoldRisk(year: year, preparation: venturePreparation)
+                * (recession ? difficulty.layoffSeverity : 1.0)
+        )
+        if Double.random(in: 0...1) < foldRisk {
+            let recovered = Int((Double(ventureStake) * GameConstants.ventureFoldRecovery).rounded())
+            savings += recovered
+            currentOccupation = nil
+            clearVenture()
+            showVentureFailureAlert = true
+            ventureFailureMessage = "\(job.baseTitle) folded this year. Selling off what was left recovered \(recovered.formatted(.number)) $ of your stake — but any loan must still be repaid."
+            recordStatus("📉", "\(job.baseTitle) folded — recovered \(recovered.formatted(.number)) $")
+            return
+        }
+
+        let climate = self.climate(for: job.industry)
+        if job.isScalableVenture, !ventureBrokeOut, year >= 2 {
+            let boom = climate == .boom ? 1.5 : 1.0
+            let chance = GameConstants.ventureBreakoutChance * (0.5 + venturePreparation) * boom
+            if Double.random(in: 0...1) < chance {
+                ventureBrokeOut = true
+                ventureMatureIncome = Int((Double(ventureMatureIncome) * GameConstants.ventureBreakoutIncomeMultiple).rounded())
+                award("Breakout Startup", icon: "🦄", category: job.industry.fameCategory ?? .business, weight: 2.0)
+                recordStatus("🦄", "\(job.baseTitle) broke out — revenue tripled and your stake is worth a fortune")
+                reportApplicationOutcome(
+                    title: "🦄 Breakout!",
+                    message: "\(job.baseTitle) took off: revenue tripled, and your stake is now worth many times more. Sell it in the Boardroom, or keep riding it."
+                )
+            }
+        }
+
+        let swing = Double.random(in: (1 - GameConstants.ventureIncomeSwing)...(1 + GameConstants.ventureIncomeSwing))
+        let factor = Player.ventureRamp(year: year + 1) * climate.revenueFactor * swing
+        var venture = job
+        venture.annualIncome = max(0, Int((Double(ventureMatureIncome) * factor).rounded()))
+        currentOccupation = venture
     }
 
     // MARK: - Executive decisions (Boardroom)
@@ -1356,23 +1463,35 @@ final class Player: ObservableObject {
         }
     }
 
-    /// Headline capital a *successful* investment round realises for the player
-    /// as equity liquidity — a multiple of their current pay. The actual payout
-    /// is this value jittered in `resolveExecutiveDecision`.
-    func investmentRoundProjectedRaise() -> Int {
-        guard let job = currentOccupation else { return 0 }
-        return job.annualIncome * 3
-    }
 
     /// Fair-market value of the player's equity stake — the anchor the Boardroom's
     /// asking-price slider is built around and the yardstick a buyer measures an
     /// offer against. Vested value grows with pay and tenure in the seat (~0.75×
     /// pay on day one up to a 2.5× cap).
+    ///
+    /// A founder's stake is priced off the business's full income rather than
+    /// this year's swinging pay — small businesses sell for 2–3× owner earnings
+    /// — and each investment round and a breakout multiply it.
     func shareStakeValue() -> Int {
         guard let job = currentOccupation else { return 0 }
-        let years = experienceByRole[job.baseTitle, default: 0]
-        let multiple = min(0.75 + Double(years) * 0.15, 2.5)
-        return Int((Double(job.annualIncome) * multiple).rounded())
+        let years = job.isEntrepreneurial && ventureFoundedAge != nil
+            ? ventureYears
+            : experienceByRole[job.baseTitle, default: 0]
+        var multiple = min(0.75 + Double(years) * 0.15, 2.5)
+        var income = Double(job.annualIncome)
+        if job.isEntrepreneurial, ventureMatureIncome > 0 {
+            income = Double(ventureMatureIncome)
+            multiple *= pow(GameConstants.investmentRoundValueGrowth, Double(ventureRoundsRaised))
+            if ventureBrokeOut { multiple *= GameConstants.ventureBreakoutValueMultiple }
+        }
+        return Int((income * multiple).rounded())
+    }
+
+    /// Whether the player can take the company to investors: only a founder of
+    /// a scalable venture — well under 1% of real businesses ever raise venture
+    /// capital, and a restaurant isn't one of them.
+    var canRaiseInvestmentRound: Bool {
+        currentOccupation?.isScalableVenture == true
     }
 
     /// Bounds for the asking-price slider: a buyer will entertain anything from a
@@ -1426,7 +1545,7 @@ final class Player: ObservableObject {
             // means. A hired executive just cashes out vested equity, keeps their
             // seat, and can sell again in a later year.
             if job.isEntrepreneurial {
-                currentOccupation = nil
+                currentOccupation = nil            // clears the venture state too
                 recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ — exited the venture")
             } else {
                 recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $")
@@ -1439,9 +1558,14 @@ final class Player: ObservableObject {
                 recordStatus("🚫", "Investment round for \(job.baseTitle) fell through")
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
             }
-            let base = Double(investmentRoundProjectedRaise())
-            let cash = Int((base * Double.random(in: 0.8...1.4)).rounded())
-            savings += cash
+            // The money goes into the company, not the founder's pocket: the
+            // funded business grows (a bigger income it can pay) and the stake
+            // is worth more even after the dilution the investors took.
+            ventureRoundsRaised += 1
+            ventureMatureIncome = Int((Double(ventureMatureIncome) * GameConstants.investmentRoundIncomeGrowth).rounded())
+            var grown = job
+            grown.annualIncome = Int((Double(job.annualIncome) * GameConstants.investmentRoundIncomeGrowth).rounded())
+            currentOccupation = grown
             let title = "Raised a Round"
             // Closing a round is a business milestone: it banks business (💼)
             // fame, which in turn lifts the odds on the next round — a founder's
@@ -1453,8 +1577,8 @@ final class Player: ObservableObject {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
             }
             celebrateIfLucky(odds)
-            recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — raised \(cash.formatted(.number)) $")
-            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: cash, fameTitle: title)
+            recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — the company is worth more and can pay you more")
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: 0, fameTitle: title)
         }
     }
 
@@ -1494,6 +1618,12 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan
+        ventureFoundedAge = fresh.ventureFoundedAge
+        venturePreparation = fresh.venturePreparation
+        ventureStake = fresh.ventureStake
+        ventureMatureIncome = fresh.ventureMatureIncome
+        ventureRoundsRaised = fresh.ventureRoundsRaised
+        ventureBrokeOut = fresh.ventureBrokeOut
         studentLoan = fresh.studentLoan
         lockedTrainings = fresh.lockedTrainings
         macroTrend = fresh.macroTrend

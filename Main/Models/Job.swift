@@ -10,7 +10,7 @@ struct Job: Identifiable, Codable, Hashable {
     let requirements: Requirements
     var annualIncome: Int      // actual pay locked in when the job was taken
     /// For entrepreneurial roles: the capital a founder ideally puts up to launch
-    /// this venture. Drives success odds (see `founderSuccessProbability`).
+    /// this venture. Feeds the founder's preparation (see `founderSuccessProbability`).
     /// `nil` for ordinary employee jobs.
     let targetCapital: Int?
     /// The role this job is a rung of, irrespective of seniority — the career
@@ -491,6 +491,13 @@ extension Job {
     /// category) so founder roles can live under the Business category.
     var isEntrepreneurial: Bool { targetCapital != nil }
 
+    /// A venture that can scale — software and games sell the same product to
+    /// any number of customers — so it can raise investment and, rarely, break
+    /// out. A restaurant or a studio grows one location at a time.
+    var isScalableVenture: Bool {
+        isEntrepreneurial && JobCatalog.scalableVentureTitles.contains(baseTitle)
+    }
+
     /// True for a senior seat where equity/strategy plays make sense — the roles
     /// that unlock the Boardroom (`ExecutiveDecision`). Covers every founder
     /// venture plus the top leadership rung of a business-style track (C-suite,
@@ -546,14 +553,17 @@ extension Job {
         !isEntrepreneurial && requirements.education.minEQF < GameConstants.promotionMinEQF
     }
 
-    /// Probability that a founding attempt succeeds. Driven by *who the founder
-    /// is*, not their bank balance: experience in the venture's own industry and
+    /// The founder's **preparation score** (0.03...`founderMaxSuccess`). A
+    /// business always opens; this sets how well it survives — the yearly fold
+    /// risk and the breakout chance (see `Player.founderPreparation` and
+    /// `Player.ventureFoldRisk`). Driven by *who the founder is*, not their bank
+    /// balance: experience in the venture's own industry and
     /// how well their soft skills fit what the business demands are the two big
     /// levers, with the size of the stake a supporting factor.
     ///
     /// **Capital is the only hard requirement.** Anyone with a stake may try
     /// anything — nobody is barred from opening a restaurant for never having
-    /// worked in hospitality, they are simply very likely to fail at it. The
+    /// worked in hospitality, it is simply far more likely to fold. The
     /// industry-experience baseline that used to gate this outright is now just
     /// the largest probabilistic term (`founderExperienceFit`), so an unprepared
     /// founder sits near the 0.03 floor rather than being refused.

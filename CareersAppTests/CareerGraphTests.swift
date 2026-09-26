@@ -962,27 +962,33 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Investment round outcome
 
-    /// A closed investment round banks cash and additional business (💼) fame —
-    /// the reputation that compounds into the next round's odds. Maxing the
-    /// driving skills and fame pins the odds at the cap, so a bounded retry lands
-    /// the success branch.
-    func testInvestmentRoundSuccessBanksCashAndFame() {
-        guard let founder = JobCatalog.allJobs().first(where: { $0.isEntrepreneurial }),
+    /// A closed investment round grows the company — a bigger income it can pay
+    /// and more business (💼) fame, the reputation that compounds into the next
+    /// round's odds — but pays the founder no cash. Maxing the driving skills
+    /// and fame pins the odds at the cap, so a bounded retry lands the success
+    /// branch.
+    func testInvestmentRoundSuccessGrowsTheCompanyAndFame() {
+        guard let saas = JobCatalog.allJobs().first(where: { $0.isScalableVenture }),
               let decision = ExecutiveDecisionCatalog.byId["investmentRound"] else { return }
         for _ in 0..<40 {
             let player = Player()
-            player.currentOccupation = founder
+            player.configureStart(age: 25)
+            player.savings = saas.targetCapital ?? 0
+            player.foundVenture(saas, investedCapital: saas.targetCapital ?? 0)
             player.softSkills.visionaryThinkingAndAmbition = 10
             player.softSkills.persuasionAndNegotiation = 10
             player.softSkills.leadershipAndInfluence = 10
             player.softSkills.communicationAndNetworking = 10
             player.award("Serial Founder", icon: "💼", category: .business, weight: 10)
             let before = player.savings
+            let incomeBefore = player.ventureMatureIncome
             let fameBefore = player.famePoints(for: .business)
             let outcome = player.resolveExecutiveDecision(decision)
             if outcome.success {
-                XCTAssertGreaterThan(outcome.cash, 0, "A closed round realises cash.")
-                XCTAssertEqual(player.savings, before + outcome.cash)
+                XCTAssertEqual(outcome.cash, 0, "A round's money goes into the company.")
+                XCTAssertEqual(player.savings, before)
+                XCTAssertGreaterThan(player.ventureMatureIncome, incomeBefore,
+                                     "The funded business can pay more.")
                 XCTAssertGreaterThan(player.famePoints(for: .business), fameBefore,
                                      "Closing a round banks additional business fame.")
                 return

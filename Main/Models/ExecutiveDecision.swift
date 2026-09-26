@@ -63,7 +63,7 @@ enum ExecutiveDecisionCatalog {
             kind: .investmentRound,
             label: "Announce an Investment Round",
             icon: "🚀",
-            blurb: "Take the company to investors and raise a growth round. Land it and your equity is worth a fortune — and the business press takes notice. Fall short and you've spent the quarter chasing term sheets for nothing.",
+            blurb: "Take your startup to investors and raise a growth round. Land it and the company grows — and so does what your stake is worth. Fall short and you've spent the year chasing term sheets.",
             talents: [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
                       \.leadershipAndInfluence, \.communicationAndNetworking]
         ),

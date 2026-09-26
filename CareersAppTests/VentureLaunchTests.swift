@@ -7,9 +7,9 @@ import XCTest
 /// (see `Player.foundVenture` and `Player.advanceYear`).
 ///
 /// Ventures are concrete, industry-specific one-off plays (no auto-climbing
-/// ladder): launch success turns on the founder's experience in that industry
-/// and their soft-skill fit, with capital a supporting factor
-/// (`Job.founderSuccessProbability`). These tests also drive the code path
+/// ladder). A business always opens; how well it survives turns on the
+/// founder's preparation — experience in that industry and soft-skill fit, with
+/// capital a supporting factor (`Job.founderSuccessProbability`). These tests also drive the code path
 /// behind the old crash report ("the app crashes when I launch a venture"):
 /// they found a venture and advance many years, asserting state stays
 /// well-formed the whole way. A crash in that path surfaces here as a failure.
@@ -148,20 +148,81 @@ final class VentureLaunchTests: XCTestCase {
         XCTAssertTrue(launched, "A funded Coffee Roastery should launch within many attempts.")
     }
 
-    /// A failed founding loses the entire stake and never makes the player a
-    /// founder. Experience no longer gates a launch, so a flop can no longer be
-    /// forced by zeroing the odds — attempt a long shot until one flops instead.
-    func testFailedFoundingLosesFullStakeAndStartsNoVenture() throws {
+    /// A business always opens: the stake is committed, the player becomes its
+    /// founder, and year one pays only the first step of the income ramp.
+    func testFoundingAlwaysOpensAndRampsIncome() throws {
         let job = try coffeeRoasteryJob()
-        for _ in 0..<200 {
-            let player = realisticFounder(savings: 10_000, retailYears: 0)
-            guard !player.foundVenture(job, investedCapital: 4_000) else { continue }
-            XCTAssertNil(player.currentOccupation, "A flop must not make the player a founder.")
-            XCTAssertEqual(player.savings, 10_000 - 4_000,
-                           "A failed founding loses the entire committed stake.")
-            return
+        let player = realisticFounder(savings: 10_000, retailYears: 0)
+        XCTAssertTrue(player.foundVenture(job, investedCapital: 4_000),
+                      "Even an unprepared founder opens the doors.")
+        XCTAssertEqual(player.savings, 6_000, "The stake is committed from savings.")
+        XCTAssertEqual(player.currentOccupation?.baseTitle, job.baseTitle)
+        XCTAssertEqual(player.ventureMatureIncome, job.annualIncome)
+        XCTAssertEqual(player.currentOccupation?.annualIncome,
+                       Int((Double(job.annualIncome) * GameConstants.ventureIncomeRamp[0]).rounded()),
+                       "Year one pays a fraction of the full income.")
+    }
+
+    /// The fold risk falls as a business establishes itself and with better
+    /// preparation, and an average business lasts five years about half the
+    /// time — the shape of real US business survival.
+    func testSurvivalCurveMatchesRealBusinesses() {
+        XCTAssertGreaterThan(Player.ventureFoldRisk(year: 1, preparation: 0.5),
+                             Player.ventureFoldRisk(year: 4, preparation: 0.5))
+        XCTAssertGreaterThan(Player.ventureFoldRisk(year: 1, preparation: 0),
+                             Player.ventureFoldRisk(year: 1, preparation: 1))
+        let fiveYear = (1...5).reduce(1.0) { $0 * (1 - Player.ventureFoldRisk(year: $1, preparation: 0.5)) }
+        XCTAssertGreaterThan(fiveYear, 0.4)
+        XCTAssertLessThan(fiveYear, 0.65)
+    }
+
+    /// Founders' pay moves with the business, not a promotion ladder.
+    func testFoundersAreNotPromoted() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 60_000)
+        player.foundVenture(job, investedCapital: 60_000)
+        let venture = try XCTUnwrap(player.currentOccupation)
+        XCTAssertFalse(player.promotionOdds(for: venture).promotes)
+        XCTAssertEqual(player.promotionChance(for: venture), 0)
+    }
+
+    /// Only a scalable venture can raise a round, and a closed round grows the
+    /// company rather than paying the founder cash.
+    func testInvestmentRoundsAreForScalableVenturesAndPayNoCash() throws {
+        let roastery = try coffeeRoasteryJob()
+        let small = realisticFounder(savings: 60_000)
+        small.foundVenture(roastery, investedCapital: 60_000)
+        XCTAssertFalse(small.canRaiseInvestmentRound, "A roastery doesn't raise venture capital.")
+
+        let saas = try XCTUnwrap(JobCatalog.allJobs().first { $0.baseTitle == "SaaS App Startup" })
+        let decision = try XCTUnwrap(ExecutiveDecisionCatalog.byId["investmentRound"])
+        for _ in 0..<60 {
+            let founder = realisticFounder(savings: 80_000)
+            founder.foundVenture(saas, investedCapital: 80_000)
+            XCTAssertTrue(founder.canRaiseInvestmentRound)
+            let savings = founder.savings
+            let valueBefore = founder.shareStakeValue()
+            let outcome = founder.resolveExecutiveDecision(decision)
+            XCTAssertEqual(founder.savings, savings, "A round's money goes into the company.")
+            XCTAssertEqual(outcome.cash, 0)
+            if outcome.success {
+                XCTAssertGreaterThan(founder.shareStakeValue(), valueBefore,
+                                     "A closed round makes the stake worth more.")
+                return
+            }
         }
-        XCTFail("An underfunded, inexperienced founding should flop at least once in 200 tries.")
+        XCTFail("A round should close at least once in 60 tries.")
+    }
+
+    /// Leaving the venture — here, taking a job — ends the founder's bookkeeping.
+    func testLeavingAVentureClearsItsState() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 60_000)
+        player.foundVenture(job, investedCapital: 60_000)
+        XCTAssertNotNil(player.ventureFoundedAge)
+        player.currentOccupation = try dayJob(income: 40_000)
+        XCTAssertNil(player.ventureFoundedAge)
+        XCTAssertEqual(player.ventureStake, 0)
     }
 
     // MARK: - Venture loans
@@ -191,25 +252,18 @@ final class VentureLaunchTests: XCTestCase {
         XCTAssertEqual(player.outstandingLoan, 100_000, "The shortfall becomes debt.")
     }
 
-    /// The debt — and its interest — outlives the venture that borrowed it: a
-    /// flopped launch still owes, and with nothing coming in the balance
-    /// compounds at the venture-loan rate.
-    func testLoanOutlivesAFailedLaunchAndAccruesInterest() throws {
+    /// The debt — and its interest — outlives the venture that borrowed it:
+    /// once the business is gone, with nothing coming in, the balance compounds
+    /// at the venture-loan rate.
+    func testLoanOutlivesTheVentureAndAccruesInterest() throws {
         let job = try coffeeRoasteryJob()
-        // Experience no longer gates a launch, so retry until one actually flops.
-        var player = realisticFounder(savings: 10_000, retailYears: 0)
+        let player = realisticFounder(savings: 10_000, retailYears: 0)
         player.currentOccupation = try dayJob(income: 50_000)
-        var flopped = player.foundVenture(job, investedCapital: 110_000) == false
-        for _ in 0..<200 where !flopped {
-            player = realisticFounder(savings: 10_000, retailYears: 0)
-            player.currentOccupation = try dayJob(income: 50_000)
-            flopped = player.foundVenture(job, investedCapital: 110_000) == false
-        }
-        XCTAssertTrue(flopped, "A long-shot founding should flop within 200 tries.")
-        XCTAssertEqual(player.outstandingLoan, 100_000, "A flop doesn't erase the debt.")
+        player.foundVenture(job, investedCapital: 110_000)
+        XCTAssertEqual(player.outstandingLoan, 100_000)
 
-        // Strip income and savings so the servicing is deterministic: with no
-        // repayment funds, a year adds exactly one year's interest.
+        // The business is gone (sold, folded — it doesn't matter) and so is the
+        // money: a year adds exactly one year's interest.
         player.currentOccupation = nil
         player.savings = 0
         player.advanceYear(appUIState: AppUIState())

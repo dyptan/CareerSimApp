@@ -494,6 +494,18 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
     /// Multiplier on hire odds for a role in this industry. A slump does not
     /// close a field — someone is always hired somewhere — it just makes the
     /// same application a markedly worse bet.
+    /// Multiplier on a founder's income this year: customers spend freely in a
+    /// boom and pull back hard in a slump.
+    var revenueFactor: Double {
+        switch self {
+        case .boom:     return 1.25
+        case .growth:   return 1.10
+        case .steady:   return 1.00
+        case .slowdown: return 0.85
+        case .slump:    return 0.65
+        }
+    }
+
     var hireFactor: Double {
         switch self {
         case .boom:     return 1.30

@@ -1447,13 +1447,20 @@ enum JobCatalog {
     // raw capital). Founders aren't gated on degrees (`minEQF: 0`); the gate is
     // the years of industry experience the idea demands.
     static let ventures: [JobSpec] = [
-        .init(title: "Specialty Coffee Roastery", category: .retail, income: 46_000, icon: "☕", summary: "Source, roast, and sell your own beans through a café and online.", minYears: 1, targetCapital: 30_000),
-        .init(title: "Boutique Fitness Studio", category: .health, income: 52_000, icon: "🏋️", summary: "Run your own small-group training studio and build a member community.", minYears: 2, targetCapital: 35_000),
-        .init(title: "Farm-to-Table Restaurant", category: .hospitality, income: 60_000, icon: "🍽️", summary: "Open a seasonal restaurant sourcing straight from local growers.", minYears: 3, targetCapital: 80_000),
-        .init(title: "Indie Game Studio", category: .technology, income: 85_000, icon: "🎮", summary: "Bootstrap a small studio and ship an original game to players.", minYears: 3, targetCapital: 55_000),
-        .init(title: "Property Development Firm", category: .construction, income: 110_000, icon: "🏗️", summary: "Buy, build, and sell property — financing projects and managing crews.", minYears: 4, targetCapital: 120_000),
-        .init(title: "SaaS App Startup", category: .technology, income: 120_000, icon: "💻", summary: "Build a subscription software product and grow it toward a real raise.", minYears: 3, targetCapital: 60_000),
+        // Startup costs follow typical US figures: a small roastery with a café
+        // counter, a boutique studio fit-out, a full-service restaurant, a
+        // bootstrapped studio or software product, and the equity a first
+        // development project needs on top of its construction loan.
+        .init(title: "Specialty Coffee Roastery", category: .retail, income: 46_000, icon: "☕", summary: "Source, roast, and sell your own beans through a café and online.", minYears: 1, targetCapital: 60_000),
+        .init(title: "Boutique Fitness Studio", category: .health, income: 52_000, icon: "🏋️", summary: "Run your own small-group training studio and build a member community.", minYears: 2, targetCapital: 90_000),
+        .init(title: "Farm-to-Table Restaurant", category: .hospitality, income: 60_000, icon: "🍽️", summary: "Open a seasonal restaurant sourcing straight from local growers.", minYears: 3, targetCapital: 250_000),
+        .init(title: "Indie Game Studio", category: .technology, income: 85_000, icon: "🎮", summary: "Bootstrap a small studio and ship an original game to players.", minYears: 3, targetCapital: 70_000),
+        .init(title: "Property Development Firm", category: .construction, income: 110_000, icon: "🏗️", summary: "Buy, build, and sell property — financing projects and managing crews.", minYears: 4, targetCapital: 250_000),
+        .init(title: "SaaS App Startup", category: .technology, income: 120_000, icon: "💻", summary: "Build a subscription software product and grow it toward a real raise.", minYears: 3, targetCapital: 80_000),
     ]
+
+    /// Ventures that can scale — see `Job.isScalableVenture`.
+    static let scalableVentureTitles: Set<String> = ["SaaS App Startup", "Indie Game Studio"]
 
     /// Every job title in the game, ladder rungs included.
     static let allTitles: [String] =
