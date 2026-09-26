@@ -127,7 +127,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "Recital Star",
             fameWeight: 0.25,
-            skills: [\.selfDisciplineAndPerseverance, \.presentationAndStorytelling],
+            skills: [\.selfDisciplineAndPerseverance, \.communicationAndNetworking],
             sports: [.music],
             stages: [.child],
             minSportYears: 1
@@ -179,7 +179,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "Showcase Star",
             fameWeight: 0.25,
-            skills: [\.presentationAndStorytelling, \.selfDisciplineAndPerseverance],
+            skills: [\.communicationAndNetworking, \.selfDisciplineAndPerseverance],
             sports: [.dance],
             stages: [.child],
             minSportYears: 1
@@ -218,7 +218,7 @@ enum CompetitionCatalog {
             discipline: .mind,
             achievement: "Debate Cup Winner",
             fameWeight: 0.25,
-            skills: [\.communicationAndNetworking, \.presentationAndStorytelling],
+            skills: [\.communicationAndNetworking],
             sports: [.debate],
             stages: [.child],
             minSportYears: 1
@@ -341,7 +341,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "Young Musician of the Year",
             fameWeight: 1.0,
-            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.stressResistanceAndEmotionalRegulation],
+            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.communicationAndNetworking, \.stressResistanceAndEmotionalRegulation],
             sports: [.music],
             stages: [.teen],
             minSportYears: 1
@@ -354,7 +354,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "National Music Laureate",
             fameWeight: 1.5,
-            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.stressResistanceAndEmotionalRegulation],
+            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.communicationAndNetworking, \.stressResistanceAndEmotionalRegulation],
             sports: [.music],
             stages: [.youngAdult, .adult],
             minSportYears: 3
@@ -367,7 +367,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "International Music Laureate",
             fameWeight: 2.5,
-            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.presentationAndStorytelling, \.stressResistanceAndEmotionalRegulation, \.visionaryThinkingAndAmbition],
+            skills: [\.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking, \.communicationAndNetworking, \.stressResistanceAndEmotionalRegulation, \.visionaryThinkingAndAmbition],
             sports: [.music],
             stages: [.youngAdult, .adult],
             minSportYears: 8
@@ -432,7 +432,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "National Photography Award Winner",
             fameWeight: 1.5,
-            skills: [\.carefulnessAndAttentionToDetail, \.creativityAndInsightfulThinking, \.timeManagementAndPlanning, \.presentationAndStorytelling],
+            skills: [\.carefulnessAndAttentionToDetail, \.creativityAndInsightfulThinking, \.timeManagementAndPlanning, \.communicationAndNetworking],
             sports: [.photography],
             stages: [.youngAdult, .adult],
             minSportYears: 3
@@ -471,7 +471,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "Youth Dance Champion",
             fameWeight: 0.75,
-            skills: [\.presentationAndStorytelling, \.resilienceAndEndurance, \.creativityAndInsightfulThinking, \.selfDisciplineAndPerseverance],
+            skills: [\.communicationAndNetworking, \.resilienceAndEndurance, \.creativityAndInsightfulThinking, \.selfDisciplineAndPerseverance],
             sports: [.dance],
             stages: [.teen],
             minSportYears: 1
@@ -484,7 +484,7 @@ enum CompetitionCatalog {
             discipline: .creative,
             achievement: "National Dance Champion",
             fameWeight: 1.5,
-            skills: [\.presentationAndStorytelling, \.resilienceAndEndurance, \.creativityAndInsightfulThinking, \.selfDisciplineAndPerseverance],
+            skills: [\.communicationAndNetworking, \.resilienceAndEndurance, \.creativityAndInsightfulThinking, \.selfDisciplineAndPerseverance],
             sports: [.dance],
             stages: [.youngAdult, .adult],
             minSportYears: 3
@@ -576,7 +576,7 @@ enum CompetitionCatalog {
             discipline: .mind,
             achievement: "Youth Debate Champion",
             fameWeight: 1.0,
-            skills: [\.communicationAndNetworking, \.persuasionAndNegotiation, \.presentationAndStorytelling, \.stressResistanceAndEmotionalRegulation],
+            skills: [\.communicationAndNetworking, \.persuasionAndNegotiation, \.stressResistanceAndEmotionalRegulation],
             sports: [.debate],
             stages: [.teen],
             minSportYears: 1
@@ -589,7 +589,7 @@ enum CompetitionCatalog {
             discipline: .mind,
             achievement: "National Debate Champion",
             fameWeight: 1.5,
-            skills: [\.communicationAndNetworking, \.persuasionAndNegotiation, \.presentationAndStorytelling, \.stressResistanceAndEmotionalRegulation],
+            skills: [\.communicationAndNetworking, \.persuasionAndNegotiation, \.stressResistanceAndEmotionalRegulation],
             sports: [.debate],
             stages: [.youngAdult, .adult],
             minSportYears: 3
@@ -726,7 +726,7 @@ enum CompetitionCatalog {
             discipline: .academic,
             achievement: "Spelling Bee Champion",
             fameWeight: 0.25,
-            skills: [\.carefulnessAndAttentionToDetail, \.presentationAndStorytelling],
+            skills: [\.carefulnessAndAttentionToDetail, \.communicationAndNetworking],
             sports: [.literature],
             stages: [.child],
             minSportYears: 1
@@ -739,7 +739,7 @@ enum CompetitionCatalog {
             discipline: .academic,
             achievement: "Young Writer of the Year",
             fameWeight: 0.75,
-            skills: [\.presentationAndStorytelling, \.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail],
+            skills: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail],
             sports: [.literature],
             stages: [.teen],
             minSportYears: 1
@@ -752,7 +752,7 @@ enum CompetitionCatalog {
             discipline: .academic,
             achievement: "National Essay Prize Winner",
             fameWeight: 1.5,
-            skills: [\.presentationAndStorytelling, \.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail],
+            skills: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.carefulnessAndAttentionToDetail],
             sports: [.literature],
             stages: [.teen],
             minSportYears: 3

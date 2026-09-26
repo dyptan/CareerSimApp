@@ -73,7 +73,7 @@ enum ExecutiveDecisionCatalog {
             label: "Sell Your Stake",
             icon: "💸",
             blurb: "Put your equity on the market at a price you set. Ask near its fair value and a buyer bites readily; hold out for a premium and you may find no takers this year. A recession thins the buyers further.",
-            talents: [\.persuasionAndNegotiation, \.riskTakingAndInitiative]
+            talents: [\.persuasionAndNegotiation, \.visionaryThinkingAndAmbition]
         ),
     ]
 

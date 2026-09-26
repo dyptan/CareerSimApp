@@ -42,37 +42,31 @@ struct SoftSkills: Codable, Hashable {
     var persuasionAndNegotiation: Int = 0
     var leadershipAndInfluence: Int = 0
     var visionaryThinkingAndAmbition: Int = 0
-    var riskTakingAndInitiative: Int = 0
     var carefulnessAndAttentionToDetail: Int = 0
     var tinkeringAndFingerPrecision: Int = 0
     var spacialNavigationAndOrientation: Int = 0
     var resilienceAndEndurance: Int = 0
     var stressResistanceAndEmotionalRegulation: Int = 0
     var empathyAndInterpersonalCare: Int = 0
-    var outdoorAndWeatherResilience: Int = 0
     var collaborationAndTeamwork: Int = 0
     var timeManagementAndPlanning: Int = 0
     var selfDisciplineAndPerseverance: Int = 0
-    var presentationAndStorytelling: Int = 0
     static let allAxes: [SoftSkillAxis] = [
         .init(keyPath: \.analyticalReasoningAndProblemSolving, label: "Inventor", pictogram: "💡", description: "Spotting patterns, breaking puzzles into small pieces, and figuring out clever solutions. Useful in math, science, programming, and engineering."),
         .init(keyPath: \.creativityAndInsightfulThinking, label: "Creator", pictogram: "🎨", description: "Coming up with new ideas and seeing things in fresh ways. Helpful for design, art, music, marketing, and invention."),
-        .init(keyPath: \.communicationAndNetworking, label: "Influencer", pictogram: "📢", description: "Talking, writing, listening, and meeting people. Most jobs need this — especially teaching, business, and journalism."),
+        .init(keyPath: \.communicationAndNetworking, label: "Influencer", pictogram: "📢", description: "Talking, writing, listening, presenting, and meeting people — getting ideas across so others get them. Most jobs need this, especially teaching, sales, business, and journalism."),
         .init(keyPath: \.persuasionAndNegotiation, label: "Persuader", pictogram: "💬", description: "Convincing people, negotiating deals, and closing a sale. Vital for sales, marketing, recruiting, founders, and lawyers."),
         .init(keyPath: \.leadershipAndInfluence, label: "Leader", pictogram: "👑", description: "Helping a group decide and act together. Used by managers, coaches, founders, and team captains."),
-        .init(keyPath: \.visionaryThinkingAndAmbition, label: "Visionary", pictogram: "🔭", description: "Imagining big future goals and pulling people toward them. Useful for entrepreneurs, founders, and senior strategists."),
-        .init(keyPath: \.riskTakingAndInitiative, label: "Risk-Taker", pictogram: "🎲", description: "Comfort with uncertainty — betting on yourself, acting before you have a playbook, and bouncing back from failure. The defining trait of founders and entrepreneurs."),
+        .init(keyPath: \.visionaryThinkingAndAmbition, label: "Visionary", pictogram: "🔭", description: "Ambition and initiative: imagining big goals, betting on yourself, and acting before there's a playbook — then pulling people toward it. The founder's trait, and a senior strategist's."),
         .init(keyPath: \.carefulnessAndAttentionToDetail, label: "Detective", pictogram: "🔍", description: "Catching small mistakes and double-checking everything. Important for accountants, surgeons, editors, and lab work."),
         .init(keyPath: \.tinkeringAndFingerPrecision, label: "Fixer", pictogram: "🛠️", description: "Working steadily with your hands on small parts. Used by mechanics, surgeons, watchmakers, and artists."),
         .init(keyPath: \.spacialNavigationAndOrientation, label: "Navigator", pictogram: "🧭", description: "Picturing how shapes, spaces, and machines fit together. Useful for engineering, architecture, surgery, and aviation."),
-        .init(keyPath: \.resilienceAndEndurance, label: "Athlete", pictogram: "🏃", description: "Keeping going through tiredness or stress. Important for nurses, soldiers, athletes, and farmers."),
+        .init(keyPath: \.resilienceAndEndurance, label: "Athlete", pictogram: "🏃", description: "Physical stamina — long shifts on your feet, heavy work, and all weathers, indoors or out. Important for nurses, soldiers, athletes, builders, and farmers."),
         .init(keyPath: \.stressResistanceAndEmotionalRegulation, label: "Zen", pictogram: "☯️", description: "Staying calm under pressure. Helpful in healthcare, teaching, customer service, and emergency work."),
         .init(keyPath: \.empathyAndInterpersonalCare, label: "Empath", pictogram: "🫶", description: "Sensing how others feel and responding with care. Key for nursing, counseling, teaching, customer service, and hospitality."),
-        .init(keyPath: \.outdoorAndWeatherResilience, label: "Explorer", pictogram: "🏕️", description: "Working outdoors through heat, cold, and rough weather. Useful for farming, construction, fishing, and field work."),
         .init(keyPath: \.collaborationAndTeamwork, label: "Teamplayer", pictogram: "🤝", description: "Sharing work and getting along with others. Almost every job needs this."),
         .init(keyPath: \.timeManagementAndPlanning, label: "Planner", pictogram: "📅", description: "Finishing things on time and organising your days. Useful everywhere; vital for project managers and freelancers."),
         .init(keyPath: \.selfDisciplineAndPerseverance, label: "Champion", pictogram: "🏆", description: "Sticking with hard work even when it’s boring. Needed for studying, training, and any long career."),
-        .init(keyPath: \.presentationAndStorytelling, label: "Storyteller", pictogram: "📖", description: "Explaining ideas so others get them. Useful for teaching, sales, journalism, and leadership."),
     ]
 
     /// Back-compat tuple view of `allAxes` used by views that iterate skills.

@@ -559,11 +559,9 @@ final class Player: ObservableObject {
             resilienceAndEndurance: Int.random(in: 0...1),
             stressResistanceAndEmotionalRegulation: Int.random(in: 0...1),
             empathyAndInterpersonalCare: Int.random(in: 0...1),
-            outdoorAndWeatherResilience: Int.random(in: 0...1),
             collaborationAndTeamwork: Int.random(in: 0...1),
             timeManagementAndPlanning: Int.random(in: 0...1),
-            selfDisciplineAndPerseverance: Int.random(in: 0...1),
-            presentationAndStorytelling: Int.random(in: 0...1)
+            selfDisciplineAndPerseverance: Int.random(in: 0...1)
         ),
         hardSkills: HardSkills = HardSkills(),
         degrees: [Education] = [],

@@ -361,7 +361,7 @@ private struct VentureRow: View {
 
         return (header + [
             funding,
-            "Odds: \(Int((odds * 100).rounded()))% — mostly your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) against the \(job.requirements.minYearsExperience) expected, plus 🎲 Risk-Taker, 🔭 Visionary, 💬 Persuader and your stake against the \(target) $ this really needs. Nothing here blocks you — thin preparation just makes it a long shot.",
+            "Odds: \(Int((odds * 100).rounded()))% — mostly your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) against the \(job.requirements.minYearsExperience) expected, plus the skills the business runs on, 🔭 Visionary, 💬 Persuader, and your stake against the \(target) $ this really needs. Nothing here blocks you — thin preparation just makes it a long shot.",
             "Win: it becomes your occupation, earning its income until you sell or it folds.\nLose: the stake is gone — the loan isn't.",
         ]).joined(separator: "\n\n")
     }

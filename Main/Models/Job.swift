@@ -593,8 +593,8 @@ extension Job {
     /// 0...1 fit of the player's soft skills for founding *this* venture. Blends
     /// how well they match the business's own skill profile (its
     /// `requirements.softSkills`) with raw entrepreneurial grit — the
-    /// Risk-Taker / Visionary / Persuader traits every founder leans on
-    /// regardless of field. The field-specific profile is weighted a little more.
+    /// Visionary (ambition and initiative) and Persuader traits every founder
+    /// leans on regardless of field. The field-specific profile is weighted a little more.
     func founderSkillFit(for player: Player) -> Double {
         let p = player.softSkills
 
@@ -603,7 +603,7 @@ extension Job {
         let profileFit = softSkillFit(for: player)
 
         let gritKeys: [WritableKeyPath<SoftSkills, Int>] = [
-            \.riskTakingAndInitiative, \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
+            \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
         ]
         let grit = gritKeys.reduce(0.0) { acc, kp in
             acc + min(Double(p[keyPath: kp]) / 6.0, 1.0)
@@ -727,11 +727,9 @@ var jobExample = Job(
             spacialNavigationAndOrientation: 1,
             resilienceAndEndurance: 1,
             stressResistanceAndEmotionalRegulation: 0,
-            outdoorAndWeatherResilience: 0,
             collaborationAndTeamwork: 0,
             timeManagementAndPlanning: 0,
-            selfDisciplineAndPerseverance: 0,
-            presentationAndStorytelling: 0
+            selfDisciplineAndPerseverance: 0
         ),
         hardSkills: .init(trainings: [])
     ),

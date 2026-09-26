@@ -41,11 +41,7 @@ final class VentureLaunchTests: XCTestCase {
         // seeded business cycle would otherwise move every founder's odds.
         player.pinNeutralEconomy()
         for kp in [
-            \SoftSkills.creativityAndInsightfulThinking, \SoftSkills.communicationAndNetworking,
-            \SoftSkills.persuasionAndNegotiation, \SoftSkills.visionaryThinkingAndAmbition,
-            \SoftSkills.riskTakingAndInitiative, \SoftSkills.carefulnessAndAttentionToDetail,
-            \SoftSkills.tinkeringAndFingerPrecision, \SoftSkills.timeManagementAndPlanning,
-            \SoftSkills.selfDisciplineAndPerseverance,
+            \SoftSkills.creativityAndInsightfulThinking, \SoftSkills.communicationAndNetworking, \SoftSkills.persuasionAndNegotiation, \SoftSkills.visionaryThinkingAndAmbition, \SoftSkills.carefulnessAndAttentionToDetail, \SoftSkills.tinkeringAndFingerPrecision, \SoftSkills.timeManagementAndPlanning, \SoftSkills.selfDisciplineAndPerseverance,
         ] {
             player.softSkills[keyPath: kp] = 8
         }

@@ -158,8 +158,7 @@ enum EventCatalog {
             blurb: "Editors, producers, and creators — where bylines and gigs trade hands.",
             category: .showBusiness,
             abilities: [
-                .init(keyPath: \.presentationAndStorytelling, weight: 2),
-                .init(keyPath: \.communicationAndNetworking, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 3)
             ],
             networkWeight: 2
         ),
@@ -182,8 +181,7 @@ enum EventCatalog {
             category: .design,
             abilities: [
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-                .init(keyPath: \.presentationAndStorytelling, weight: 1),
-                .init(keyPath: \.communicationAndNetworking, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 2)
             ],
             networkWeight: 1
         ),
@@ -227,8 +225,7 @@ enum EventCatalog {
             blurb: "Attend to meet the field — or take the podium and land your idea in front of the room.",
             category: .business,
             abilities: [
-                .init(keyPath: \.communicationAndNetworking, weight: 1),
-                .init(keyPath: \.presentationAndStorytelling, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 2)
             ],
             networkWeight: 1,
             presenterActionLabel: "Speak",

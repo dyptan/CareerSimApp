@@ -1562,7 +1562,7 @@ final class CareerGraphTests: XCTestCase {
         player.difficulty = .middleClass
         player.configureStart(age: 18)
         player.softSkills.communicationAndNetworking = 2
-        player.softSkills.presentationAndStorytelling = 9   // well past the target
+        player.softSkills.timeManagementAndPlanning = 9   // well past the target
 
         let school = Education(.Bachelor, profile: .business, tier: .state)
         let overlap = school.softSkillOverlap(player: player)
@@ -1678,7 +1678,7 @@ final class ActivityCatalogTests: XCTestCase {
         )
         let needed: [WritableKeyPath<SoftSkills, Int>] = [
             \.creativityAndInsightfulThinking, \.analyticalReasoningAndProblemSolving,
-            \.communicationAndNetworking, \.presentationAndStorytelling,
+            \.communicationAndNetworking,
             \.empathyAndInterpersonalCare, \.spacialNavigationAndOrientation,
             \.timeManagementAndPlanning, \.carefulnessAndAttentionToDetail,
             \.tinkeringAndFingerPrecision,

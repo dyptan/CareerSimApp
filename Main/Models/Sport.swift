@@ -239,8 +239,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
             ]
         case .cycling:
             return [
-                .init(keyPath: \.resilienceAndEndurance, weight: 2),
-                .init(keyPath: \.outdoorAndWeatherResilience, weight: 1)
+                .init(keyPath: \.resilienceAndEndurance, weight: 3)
             ]
         case .soccer:
             return [
@@ -272,9 +271,8 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         case .skateboarding:
             return [
                 .init(keyPath: \.spacialNavigationAndOrientation, weight: 2),
-                .init(keyPath: \.resilienceAndEndurance, weight: 1),
-                .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1),
-                .init(keyPath: \.outdoorAndWeatherResilience, weight: 1)
+                .init(keyPath: \.resilienceAndEndurance, weight: 2),
+                .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
             ]
         case .esports:
             return [
@@ -286,7 +284,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
                 .init(keyPath: \.selfDisciplineAndPerseverance, weight: 2),
                 .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-                .init(keyPath: \.presentationAndStorytelling, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 1)
             ]
         case .drawing:
             return [
@@ -300,7 +298,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
                 .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 2),
                 .init(keyPath: \.timeManagementAndPlanning, weight: 1),
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
-                .init(keyPath: \.presentationAndStorytelling, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 1)
             ]
         case .cooking:
             return [
@@ -311,7 +309,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
             ]
         case .dance:
             return [
-                .init(keyPath: \.presentationAndStorytelling, weight: 2),
+                .init(keyPath: \.communicationAndNetworking, weight: 2),
                 .init(keyPath: \.resilienceAndEndurance, weight: 1),
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                 .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
@@ -330,9 +328,8 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
             ]
         case .debate:
             return [
-                .init(keyPath: \.communicationAndNetworking, weight: 2),
-                .init(keyPath: \.persuasionAndNegotiation, weight: 1),
-                .init(keyPath: \.presentationAndStorytelling, weight: 1)
+                .init(keyPath: \.communicationAndNetworking, weight: 3),
+                .init(keyPath: \.persuasionAndNegotiation, weight: 1)
             ]
         case .studentCouncil:
             return [
@@ -356,7 +353,7 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
             ]
         case .literature:
             return [
-                .init(keyPath: \.presentationAndStorytelling, weight: 2),
+                .init(keyPath: \.communicationAndNetworking, weight: 2),
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                 .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1)
             ]
