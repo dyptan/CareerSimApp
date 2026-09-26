@@ -1392,16 +1392,14 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Breakthrough-gated star careers
 
-    /// The three star tracks (pro athlete, movie star, pop star) exist in the
-    /// catalogue and are effectively closed without their signature achievement:
+    /// The pro-athlete star track exists in the catalogue and is effectively
+    /// closed without its signature achievement:
     /// a fully-qualified applicant who lacks the award sits at the 5% floor, and
     /// holding it lifts the odds well above the floor.
     func testStarCareersAreBreakthroughGated() {
         let jobs = JobCatalog.allJobs()
         let gates: [(base: String, award: String)] = [
             ("Player", "Junior Champion"),
-            ("Movie Star", "Breakout Role"),
-            ("Pop Star", "Hit Record"),
         ]
         for gate in gates {
             // Use the easiest-to-qualify rung of the ladder (lowest seniority).
@@ -1856,5 +1854,51 @@ final class PromotionModelTests: XCTestCase {
                 - worker(in: job, skills: 5, years: 0).promotionOdds(for: job).merit
         }
         XCTAssertGreaterThan(seniorityGain(publicJob), seniorityGain(softwareJob) * 2)
+    }
+}
+
+/// In show business and the creator economy, fame is the income.
+final class FamePaysTests: XCTestCase {
+
+    /// A star project is closed until the big break's title is held.
+    func testStarProjectsNeedTheirBigBreak() throws {
+        let film = try XCTUnwrap(SideHustleCatalog.byId["starFilm"])
+        let player = Player()
+        XCTAssertFalse(player.canTakeProject(film))
+        XCTAssertEqual(player.projectOdds(for: film), 0)
+        player.award("Breakout Role", icon: "🎬", category: .entertainment, weight: 3)
+        XCTAssertTrue(player.canTakeProject(film))
+    }
+
+    /// Project pay starts small and rises steeply with fame in its field.
+    func testProjectPayRisesSteeplyWithFame() throws {
+        let podcast = try XCTUnwrap(SideHustleCatalog.byId["projectPodcast"])
+        XCTAssertEqual(podcast.pay(famePoints: 0), podcast.basePay)
+        let known = podcast.pay(famePoints: 5)
+        let famous = podcast.pay(famePoints: 10)
+        XCTAssertGreaterThan(known, podcast.basePay * 5)
+        XCTAssertGreaterThan(famous - known, known - podcast.basePay,
+                             "Each extra point of fame should be worth more than the last.")
+        let unpaid = try XCTUnwrap(SideHustleCatalog.byId["projectLibrary"])
+        XCTAssertEqual(unpaid.pay(famePoints: 20), 0, "Open source is unpaid, however famous.")
+    }
+
+    /// Brands pay a famous entertainment name — nothing below the threshold.
+    func testEndorsementsStartAtTheFameThreshold() {
+        let player = Player()
+        XCTAssertEqual(player.endorsementIncome, 0)
+        player.award("Viral Creator", icon: "📱", category: .entertainment, weight: 2)
+        XCTAssertEqual(player.endorsementIncome, 0, "Two points is below the threshold.")
+        player.award("Hit Record", icon: "🎤", category: .entertainment, weight: 6)
+        XCTAssertGreaterThan(player.endorsementIncome, 0)
+    }
+
+    /// Screen and music stars are paid per project now, not a salary ladder.
+    func testNoSalariedStarOrPerformerJobs() {
+        let titles = Set(JobCatalog.allBaseTitles)
+        for gone in ["Movie Star", "Pop Star", "Actor", "Musician"] {
+            XCTAssertFalse(titles.contains(gone), "\(gone) should be a project, not a job.")
+        }
+        XCTAssertTrue(titles.contains("Player"), "Team athletes keep their contracts.")
     }
 }

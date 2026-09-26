@@ -107,8 +107,6 @@ enum JobCatalog {
         // a signature achievement (see `Job.breakthroughFameByRole`) is the
         // real key — but a strong profile still shapes the odds once you're in.
         "Player":                         .init(communicationAndNetworking: 1, leadershipAndInfluence: 1, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 2, collaborationAndTeamwork: 4, selfDisciplineAndPerseverance: 3),
-        "Movie Star":                     .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 4, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, selfDisciplineAndPerseverance: 2),
-        "Pop Star":                       .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 4, visionaryThinkingAndAmbition: 2, resilienceAndEndurance: 2, selfDisciplineAndPerseverance: 2),
         // Ventures (concrete industry founder plays; no degree gate). Each
         // profile is what *that* business demands — launch odds score the
         // player against it plus raw founder grit (see `Job.founderSkillFit`).
@@ -231,8 +229,6 @@ enum JobCatalog {
         "Animator": .init(creativityAndInsightfulThinking: 4, carefulnessAndAttentionToDetail: 3, tinkeringAndFingerPrecision: 3, spacialNavigationAndOrientation: 2, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 3),
         "Graphic Artist": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
         "Interior Designer": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 3, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, timeManagementAndPlanning: 2),
-        "Actor": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 4, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 3, selfDisciplineAndPerseverance: 3),
-        "Musician": .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 3, tinkeringAndFingerPrecision: 3, resilienceAndEndurance: 2, selfDisciplineAndPerseverance: 4),
         "Journalist": .init(analyticalReasoningAndProblemSolving: 2, communicationAndNetworking: 4, persuasionAndNegotiation: 1, carefulnessAndAttentionToDetail: 3, resilienceAndEndurance: 2, stressResistanceAndEmotionalRegulation: 2, timeManagementAndPlanning: 3),
         "Photographer": .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 2, spacialNavigationAndOrientation: 3, resilienceAndEndurance: 2, timeManagementAndPlanning: 2),
         "Content Writer": .init(creativityAndInsightfulThinking: 3, communicationAndNetworking: 2, carefulnessAndAttentionToDetail: 3, timeManagementAndPlanning: 2, selfDisciplineAndPerseverance: 2),
@@ -1132,8 +1128,6 @@ enum JobCatalog {
         .init(title: "Farmhand", category: .agriculture, income: 28_000, icon: "🧑‍🌾", summary: "Plants, harvests, and tends crops and livestock.", minEQF: 1),
         .init(title: "Farmer", category: .agriculture, income: 32_000, icon: "🚜", summary: "Operates agricultural production and livestock.", minEQF: 2),
         // Arts / Creative
-        .init(title: "Musician", category: .showBusiness, income: 34_000, icon: "🎵", summary: "Performs or composes music professionally.", minEQF: 1),
-        .init(title: "Actor", category: .showBusiness, income: 38_000, icon: "🎭", summary: "Performs in theater, film, or television.", minEQF: 1),
         .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Animates characters and motion for film, advertising, and games.", minEQF: 4),
         .init(title: "Interior Designer", category: .design, income: 60_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
         // Games — split across design and technology by what the role does
@@ -1314,12 +1308,6 @@ enum JobCatalog {
             .init(label: "Senior", income: 78_000, summary: "Runs a beat and breaks the stories others follow.", minEQF: 5, minYears: 5),
             .init(label: "", income: 135_000, summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10, icon: "🗞️", title: "Editor-in-Chief"),
         ]),
-        .init(name: "Movie Star", category: .showBusiness, icon: "🌟", rungs: [
-            // Acting — the movie-star track, opened by a "Breakout Role" project.
-            .init(label: "Rising", income: 90_000, summary: "A working screen actor landing real roles off a breakout part.", minEQF: 0, minYears: 0, icon: "🎬"),
-            .init(label: "", income: 260_000, summary: "A bankable lead whose name sells tickets.", minEQF: 0, minYears: 3),
-            .init(label: "A-List", income: 800_000, summary: "A global marquee name commanding top billing and huge paydays.", minEQF: 0, minYears: 7, icon: "🏆"),
-        ]),
         .init(name: "Municipal Worker", category: .publicServices, icon: "🧹", rungs: [
             .init(label: "", income: 40_000, summary: "Keeps the city running — sanitation, parks, roads, and facilities.", minEQF: 2),
             // Public Services — Municipal Services track (base "Municipal Worker")
@@ -1339,10 +1327,12 @@ enum JobCatalog {
             .init(label: "Senior", income: 280_000, summary: "Attending physician supervising residents and complex cases.", minEQF: 7, minYears: 5),
         ]),
         .init(name: "Player", category: .showBusiness, icon: "🥅", rungs: [
-            // Breakthrough-gated star tracks — the rare, lottery-upside careers.
-            // Each entry rung is easy to *qualify* for (no degree, no tenure) but
+            // The breakthrough-gated star track — a rare, lottery-upside career.
+            // The entry rung is easy to *qualify* for (no degree, no tenure) but
             // effectively closed without its signature achievement: hire odds sit
             // at the 5% floor until you hold it (see `Job.breakthroughFameByRole`).
+            // Screen and music stars are paid per project instead (see the star
+            // projects in `SideHustleCatalog`); team athletes hold real contracts.
             // Athletics — the pro-player track, opened by a junior-competition win
             // ("Junior Champion", from the teen Junior Championship).
             .init(label: "Amateur", income: 30_000, summary: "Signed to a club's development squad after a standout junior career.", minEQF: 1, minYears: 0),
@@ -1363,12 +1353,6 @@ enum JobCatalog {
             // Public Services — Law Enforcement track (base "Police Officer")
             .init(label: "Senior", income: 95_000, summary: "Veteran officer leading patrols and mentoring recruits.", minEQF: 3, minYears: 5),
             .init(label: "Lead", income: 130_000, summary: "Commands a precinct and sets policing strategy.", minEQF: 4, minYears: 12, icon: "🚓"),
-        ]),
-        .init(name: "Pop Star", category: .showBusiness, icon: "🌟", rungs: [
-            // Music — the pop-star track, opened by a "Hit Record" project.
-            .init(label: "Rising", income: 85_000, summary: "A charting artist touring off a breakout hit.", minEQF: 0, minYears: 0, icon: "🎤"),
-            .init(label: "", income: 240_000, summary: "A headline act with hit records and sold-out shows.", minEQF: 0, minYears: 3),
-            .init(label: "A-List", income: 700_000, summary: "A global superstar with stadium tours and chart dominance.", minEQF: 0, minYears: 7, icon: "🏆"),
         ]),
         .init(name: "Project Manager", category: .business, icon: "📋", rungs: [
             .init(label: "", income: 98_000, summary: "Plans and oversees projects to completion.", minEQF: 5),

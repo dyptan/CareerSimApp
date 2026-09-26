@@ -89,6 +89,25 @@ enum GameConstants {
     /// weight, and feed the hiring fame bonus (`Player.fameHireBonus`).
     static let accomplishmentFameMultiplier: Double = 2.0
 
+    // MARK: - Fame pays
+    //
+    // In show business and the creator economy, fame is the income: an audience
+    // is what brand deals, streams, royalties and fees are priced on. Pay is
+    // steeply uneven — most projects earn little, a famous name earns a fortune.
+
+    /// A landed project pays its base × (1 + fame in its field)^this — so each
+    /// extra point of fame is worth more than the last.
+    static let projectPayFameExponent: Double = 1.5
+    /// Ceiling on that multiple of the base pay.
+    static let projectPayMaxMultiple: Double = 200
+
+    /// Entertainment fame at which brands start paying for endorsements, and
+    /// what they pay: this base × fame^exponent a year.
+    static let endorsementFameThreshold: Double = 3
+    static let endorsementBase: Double = 1_500
+    static let endorsementFameExponent: Double = 1.6
+    static let endorsementMax: Int = 5_000_000
+
     /// How much a founder can borrow to top up a venture stake once their savings
     /// are spent, as a multiple of their current annual income — a bank lends
     /// against what you earn. Zero income means no borrowing headroom.

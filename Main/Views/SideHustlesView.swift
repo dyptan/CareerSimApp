@@ -83,12 +83,31 @@ struct SideHustleRow: View {
             }
             .joined(separator: "\n")
 
+        let locked = !player.canTakeProject(hustle)
+        let pay = player.projectPay(for: hustle)
+
         HStack(spacing: 8) {
-            Text("\(hustle.icon)  \(hustle.label)")
-                .font(.headline)
-            Text("🎲 \(oddsPct)%")
-                .font(.subheadline.monospacedDigit())
-                .foregroundStyle(Color.forOdds(odds))
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 8) {
+                    Text("\(hustle.icon)  \(hustle.label)")
+                        .font(.headline)
+                    if !locked {
+                        Text("🎲 \(oddsPct)%")
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(Color.forOdds(odds))
+                    }
+                }
+                if let award = hustle.requiresAward, locked {
+                    Text("🔒 Needs the “\(award)” title")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                } else if pay > 0 {
+                    Text("💵 \(pay.formatted(.number)) $ if it lands")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .opacity(locked ? 0.5 : 1.0)
             Spacer(minLength: 8)
 
             // Picking a project is committing the year to it — the sheet
@@ -97,6 +116,8 @@ struct SideHustleRow: View {
                 selectedSideHustles = [hustle.id]
                 onCommit()
             }
+            .disabled(locked)
+            .opacity(locked ? 0.5 : 1.0)
 
             InfoHint(
                 title: "\(hustle.icon) \(hustle.label)",
@@ -110,6 +131,16 @@ struct SideHustleRow: View {
     /// odds and what moves them, what a win pays, what the year costs either
     /// way. The mechanic used to be spelled out in full prose, which made every
     /// row a wall of text to read past.
+    /// What a landed year pays, and why: the base scaled by fame in the field.
+    private func payLine(for hustle: SideHustle) -> String? {
+        if let award = hustle.requiresAward, !player.canTakeProject(hustle) {
+            return "🔒 Opens once you hold the “\(award)” title — chase it under Projects."
+        }
+        guard hustle.basePay > 0 else { return "💵 Unpaid — this one is for the name it makes you." }
+        let fame = String(format: "%.1f", player.famePoints(for: hustle.fameCategory))
+        return "💵 Pays \(player.projectPay(for: hustle).formatted(.number)) $ if it lands — \(hustle.basePay.formatted(.number)) $ at no fame, rising steeply with your \(hustle.fameCategory.icon) \(hustle.fameCategory.rawValue) fame (\(fame) now)."
+    }
+
     private func infoMessage(for hustle: SideHustle, odds: Double,
                              talentHint: String, growthHint: String) -> String {
         let oddsPct = Int((odds * 100).rounded())
@@ -148,7 +179,8 @@ struct SideHustleRow: View {
             climateLine,
             "Draws on:\n\(talentHint)",
             "Builds, win or lose:\n\(growthHint)",
-            "Win: \(fame) fame — it only lifts hiring odds for \(category.rawValue) roles.",
+            payLine(for: hustle),
+            "Win: \(fame) fame — it lifts this project's pay and odds next time, and hiring odds for \(category.rawValue) roles.",
             lossLine,
         ].compactMap { $0 }.joined(separator: "\n\n")
     }

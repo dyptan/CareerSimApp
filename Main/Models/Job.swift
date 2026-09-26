@@ -151,12 +151,10 @@ extension Job {
     /// makes it the dominant hiring factor. The Professional Player track is
     /// gated on the "Junior Champion" title from the teen `Junior Championship`.
     static let breakthroughFameByRole: [String: String] = [
-        // Sports: the pro-athlete track opens on a junior-competition win.
+        // Sports: the pro-athlete track opens on a junior-competition win. (The
+        // screen and music big breaks open star *projects* instead — see
+        // `SideHustle.requiresAward`.)
         "Player": "Junior Champion",
-        // Show business: the A-list acting and music tracks each open on a rare
-        // "big break" project (see the breakout ventures in `SideHustle`).
-        "Movie Star": "Breakout Role",
-        "Pop Star": "Hit Record",
     ]
 
     /// The breakthrough fame award this role requires, or nil for ordinary

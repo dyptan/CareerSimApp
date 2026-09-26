@@ -406,7 +406,8 @@ final class Player: ObservableObject {
     /// the inputs are assembled, so the number the Projects sheet shows is the
     /// one the year actually rolls against.
     func projectOdds(for hustle: SideHustle) -> Double {
-        hustle.successProbability(
+        guard canTakeProject(hustle) else { return 0 }
+        return hustle.successProbability(
             for: softSkills,
             famePoints: famePoints(for: hustle.fameCategory),
             totalExperienceYears: totalExperienceYears,
@@ -414,6 +415,34 @@ final class Player: ObservableObject {
             climate: projectClimate(for: hustle)
         )
     }
+
+    /// Whether the player holds the award a project requires (the star
+    /// projects open only to a name the big break has made).
+    func canTakeProject(_ hustle: SideHustle) -> Bool {
+        guard let award = hustle.requiresAward else { return true }
+        return fameAwards.contains { $0.title == award }
+    }
+
+    /// What a landed project would pay this year, on the player's current fame
+    /// in its field.
+    func projectPay(for hustle: SideHustle) -> Int {
+        hustle.pay(famePoints: famePoints(for: hustle.fameCategory))
+    }
+
+    /// Yearly endorsement income: brands pay a famous entertainment name —
+    /// athletes, stars and creators alike — to carry their products. Nothing
+    /// below `GameConstants.endorsementFameThreshold`, then steeply rising.
+    var endorsementIncome: Int {
+        let fame = famePoints(for: .entertainment)
+        guard fame >= GameConstants.endorsementFameThreshold else { return 0 }
+        let pay = GameConstants.endorsementBase * pow(fame, GameConstants.endorsementFameExponent)
+        return min(GameConstants.endorsementMax, Int(pay.rounded()))
+    }
+
+    /// Gross pay last year from landed projects, and from endorsements — shown
+    /// in Finances next to the salary.
+    @Published var lastYearProjectPay: Int = 0
+    @Published var lastYearEndorsements: Int = 0
 
     /// The climate a project rides: its own industry when it has one, otherwise
     /// the average across the fame bucket it would make its name in.
@@ -431,7 +460,8 @@ final class Player: ObservableObject {
         if outcome.success {
             projectOutcomeTitle = "\(hustle.icon) It landed!"
             let earned = outcome.grantedFame.map { " You earned the “\($0.title)” title." } ?? ""
-            projectOutcomeMessage = "\(hustle.label) paid off!" + earned
+            let paid = outcome.pay > 0 ? " It paid \(outcome.pay.formatted(.number)) $." : ""
+            projectOutcomeMessage = "\(hustle.label) paid off!" + paid + earned
         } else {
             projectOutcomeTitle = "\(hustle.icon) It didn't land"
             projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway."
@@ -1214,8 +1244,9 @@ final class Player: ObservableObject {
         // no hobby can build. Recognition is what the roll is for — only a hit
         // banks an industry-scoped fame award. So a flop still moves the player
         // forward, just quietly. All are repeatable year after year.
+        lastYearProjectPay = 0
         for id in appUIState.selectedSideHustles {
-            guard let hustle = SideHustleCatalog.byId[id] else { continue }
+            guard let hustle = SideHustleCatalog.byId[id], canTakeProject(hustle) else { continue }
             // A year committed to an experience-building venture (the
             // entrepreneurship plays) counts as real work experience in its
             // field — banked whether or not the venture pays off, because the
@@ -1245,6 +1276,14 @@ final class Player: ObservableObject {
                 softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
             }
             if outcome.success {
+                // Fame pays: the project's earnings, banked like any income.
+                if outcome.pay > 0 {
+                    lastYearProjectPay += outcome.pay
+                    savings += isSimplified
+                        ? outcome.pay
+                        : Int((Double(outcome.pay) * difficulty.savingsRate).rounded())
+                    recordStatus("💵", "\(hustle.label) paid \(outcome.pay.formatted(.number)) $")
+                }
                 if let grant = outcome.grantedFame {
                     award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
@@ -1258,6 +1297,15 @@ final class Player: ObservableObject {
             reportProjectOutcome(outcome)
         }
         appUIState.selectedSideHustles.removeAll()
+
+        // Endorsements: a famous entertainment name is paid to carry brands,
+        // year in, year out — on top of whatever else the year earned.
+        lastYearEndorsements = endorsementIncome
+        if lastYearEndorsements > 0 {
+            savings += isSimplified
+                ? lastYearEndorsements
+                : Int((Double(lastYearEndorsements) * difficulty.savingsRate).rounded())
+        }
 
         // Competitions: practising a discipline automatically enters you into
         // its top eligible contest — no menu, no entry fee. Win odds start low
@@ -1687,6 +1735,8 @@ final class Player: ObservableObject {
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan
         ventureLoanPayment = fresh.ventureLoanPayment
+        lastYearProjectPay = fresh.lastYearProjectPay
+        lastYearEndorsements = fresh.lastYearEndorsements
         studentLoanPayment = fresh.studentLoanPayment
         ventureFoundedAge = fresh.ventureFoundedAge
         venturePreparation = fresh.venturePreparation

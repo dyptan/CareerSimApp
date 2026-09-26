@@ -42,6 +42,8 @@ struct SkillsView: View {
                 || player.outstandingLoan > 0
                 || player.studentLoan > 0
                 || showsTuition
+                || player.lastYearProjectPay > 0
+                || player.endorsementIncome > 0
         case .skills:
             return SoftSkills.skillNames.contains { player.softSkills[keyPath: $0.keyPath] > 0 }
         case .fame:
@@ -258,8 +260,22 @@ struct SkillsView: View {
                             hint: "You keep \(pct(player.difficulty.savingsRate)) of gross pay — the rest goes to tax and living costs. Lower-income households have to spend a bigger share just to get by."
                         )
                     }
-                } else {
-                    labelledRow("🧾", "Gross income", "Not working", hint: "No job, no pay. Open Careers to start applying.")
+                } else if player.lastYearProjectPay == 0 && player.endorsementIncome == 0 {
+                    labelledRow("🧾", "Gross income", "Not working", hint: "No job, no pay. Open Jobs to start applying — or earn from Projects.")
+                }
+
+                // Fame pays too: project earnings and brand deals, on top of any salary.
+                if player.lastYearProjectPay > 0 {
+                    moneyRow(
+                        "🎬", "Project pay (last year)", player.lastYearProjectPay,
+                        hint: "What your landed project paid last year, before tax and living costs. Project pay rises steeply with your fame in its field."
+                    )
+                }
+                if player.endorsementIncome > 0 {
+                    moneyRow(
+                        "🤝", "Endorsements", player.endorsementIncome, suffix: " / yr",
+                        hint: "Brands pay a famous entertainment name to carry their products — athletes, stars and creators alike. It rises steeply with your 🎬 Entertainment fame, and is paid every year on top of anything else you earn."
+                    )
                 }
 
                 if showsTuition, let edu = player.currentEducation {

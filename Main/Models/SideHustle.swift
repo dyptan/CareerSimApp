@@ -46,6 +46,23 @@ struct SideHustle: Identifiable, Hashable {
     /// sets it low — a lottery you keep entering — so becoming a star is a
     /// years-long chase, not a formality once your skills are high.
     var successCeiling: Double = 0.9
+    /// What a landed year pays at zero fame, before the fame multiple (see
+    /// `pay(famePoints:)`). Zero for unpaid work — open source, a preprint.
+    var basePay: Int = 0
+    /// A fame award the player must hold to take this project on — the big-
+    /// break titles that open the star projects. `nil` for open projects.
+    var requiresAward: String? = nil
+
+    /// What a landed year pays: the base, multiplied by the player's fame in
+    /// this project's field — the audience brand deals, streams, royalties and
+    /// fees are priced on. Steeply uneven: small for an unknown, a fortune for
+    /// a famous name.
+    func pay(famePoints: Double) -> Int {
+        guard basePay > 0 else { return 0 }
+        let multiple = min(GameConstants.projectPayMaxMultiple,
+                           pow(1 + max(0, famePoints), GameConstants.projectPayFameExponent))
+        return Int((Double(basePay) * multiple).rounded())
+    }
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -132,14 +149,17 @@ struct SideHustle: Identifiable, Hashable {
                                       fieldExperienceYears: fieldExperienceYears,
                                       climate: climate)
         guard Double.random(in: 0...1) < odds else {
-            return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil)
+            return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil, pay: 0)
         }
         // A shipped project is a strong fame driver, like presenting at an
         // event — the banked reputation is scaled up from the raw catalogue
         // weight (see GameConstants.accomplishmentFameMultiplier).
         let banked = fameWeight * GameConstants.accomplishmentFameMultiplier
         let grant = FameGrant(title: fameTitle ?? label, category: fameCategory, weight: banked)
-        return Outcome(hustle: self, success: true, odds: odds, grantedFame: grant)
+        // Paid on the fame the player brought into the year, not the fame this
+        // year's hit adds.
+        return Outcome(hustle: self, success: true, odds: odds, grantedFame: grant,
+                       pay: pay(famePoints: famePoints))
     }
 
     /// The fame award banked by a successful year.
@@ -158,6 +178,8 @@ struct SideHustle: Identifiable, Hashable {
         let odds: Double
         /// The fame award banked this year, on a success.
         let grantedFame: FameGrant?
+        /// What the year paid (gross), on a success.
+        let pay: Int
     }
 }
 
@@ -189,7 +211,8 @@ enum SideHustleCatalog {
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Course Creator"
+            fameTitle: "Course Creator",
+            basePay: 4000
         ),
         // --- Creative personal-brand ventures ---
         SideHustle(
@@ -202,7 +225,8 @@ enum SideHustleCatalog {
             stages: [.youngAdult, .adult],
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Viral Creator"
+            fameTitle: "Viral Creator",
+            basePay: 3000
         ),
         SideHustle(
             id: "selfPublishBook",
@@ -215,7 +239,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Published Author"
+            fameTitle: "Published Author",
+            basePay: 2000
         ),
         SideHustle(
             id: "freelancePerformer",
@@ -228,7 +253,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Rising Performer"
+            fameTitle: "Rising Performer",
+            basePay: 6000
         ),
         SideHustle(
             id: "releaseAlbum",
@@ -241,12 +267,73 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Recording Artist"
+            fameTitle: "Recording Artist",
+            basePay: 4000
+        ),
+        // --- Working gigs: how most actors and musicians actually earn — one
+        // production, one booking at a time, never a salary. Small pay that
+        // grows with an entertainment name, and the road to the big break.
+        SideHustle(
+            id: "actingGigs",
+            label: "Take Acting Gigs",
+            icon: "🎭",
+            blurb: "Audition, book what you can — a commercial, a guest spot, a stage run. Most working actors earn this way, one job at a time.",
+            talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
+            fameCategory: .entertainment, fameWeight: 0.5,
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
+                     .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)],
+            fameTitle: "Working Actor",
+            basePay: 12000
+        ),
+        SideHustle(
+            id: "musicGigs",
+            label: "Play Music Gigs",
+            icon: "🎸",
+            blurb: "Weddings, bars, session work and your own shows. The living most musicians make — and every crowd is a chance to be noticed.",
+            talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.selfDisciplineAndPerseverance],
+            fameCategory: .entertainment, fameWeight: 0.5,
+            stages: [.teen, .youngAdult, .adult],
+            growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
+                     .init(keyPath: \.communicationAndNetworking, weight: 1)],
+            fameTitle: "Gigging Musician",
+            basePay: 10000
+        ),
+        // --- Star work: open only to a name the big break has made. Paid per
+        // film or tour, priced on how famous you are.
+        SideHustle(
+            id: "starFilm",
+            label: "Star in a Film",
+            icon: "🌟",
+            blurb: "Lead a feature. Your fee is set by your name — a rising star earns well, an A-lister earns millions a film.",
+            talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
+            fameCategory: .entertainment, fameWeight: 2.0,
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
+                     .init(keyPath: \.resilienceAndEndurance, weight: 1)],
+            fameTitle: "Film Star",
+            successCeiling: 0.85,
+            basePay: 60000,
+            requiresAward: "Breakout Role"
+        ),
+        SideHustle(
+            id: "headlineTour",
+            label: "Headline a Tour",
+            icon: "🎤",
+            blurb: "Take your hits on the road. Ticket sales follow your name — clubs for a new act, stadiums for a superstar.",
+            talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.resilienceAndEndurance],
+            fameCategory: .entertainment, fameWeight: 2.0,
+            stages: [.youngAdult, .adult],
+            growth: [.init(keyPath: \.communicationAndNetworking, weight: 1),
+                     .init(keyPath: \.resilienceAndEndurance, weight: 1)],
+            fameTitle: "Headliner",
+            successCeiling: 0.85,
+            basePay: 50000,
+            requiresAward: "Hit Record"
         ),
         // --- The big break: rare, career-defining show-business lotteries. Each
-        // banks a signature title that is *the* gateway into the A-list career
-        // ladder (see `Job.breakthroughFameByRole` — "Breakout Role" opens the
-        // Movie Star track, "Hit Record" the Pop Star track). The odds ceiling is
+        // banks a signature title that opens the star projects above ("Breakout
+        // Role" opens Star in a Film, "Hit Record" opens Headline a Tour). The odds ceiling is
         // deliberately low: even a gifted, well-known performer only breaks
         // through after chasing it for years — that's the lottery upside show
         // business is meant to have. Talent and a working career set the odds,
@@ -263,7 +350,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.resilienceAndEndurance, weight: 1)],
             fameTitle: "Breakout Role",
-            successCeiling: 0.30
+            successCeiling: 0.30,
+            basePay: 20000
         ),
         SideHustle(
             id: "bigBreakMusic",
@@ -277,7 +365,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Hit Record",
-            successCeiling: 0.30
+            successCeiling: 0.30,
+            basePay: 15000
         ),
         // --- Self-initiated creative works (unlocked to everyone, stage-gated) ---
         SideHustle(
@@ -291,7 +380,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2)],
-            fameTitle: "Demo Developer"
+            fameTitle: "Demo Developer",
+            basePay: 2000
         ),
         SideHustle(
             id: "projectLibrary",
@@ -318,7 +408,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.persuasionAndNegotiation, weight: 1)],
-            fameTitle: "Bylined Writer"
+            fameTitle: "Bylined Writer",
+            basePay: 1000
         ),
         SideHustle(
             id: "projectGame3d",
@@ -331,7 +422,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.spacialNavigationAndOrientation, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 2)],
-            fameTitle: "Game Modder"
+            fameTitle: "Game Modder",
+            basePay: 1000
         ),
         // --- More spare-time fame plays: personal-brand builders, not businesses.
         // Each is a pure reputation gamble (no capital, no experience) that banks
@@ -347,7 +439,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Podcast Host"
+            fameTitle: "Podcast Host",
+            basePay: 2000
         ),
         SideHustle(
             id: "projectShortFilm",
@@ -361,7 +454,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1),
                      .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)],
-            fameTitle: "Indie Filmmaker"
+            fameTitle: "Indie Filmmaker",
+            basePay: 1000
         ),
         SideHustle(
             id: "projectTechChannel",
@@ -374,7 +468,8 @@ enum SideHustleCatalog {
             growth: [.init(keyPath: \.communicationAndNetworking, weight: 2),
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
-            fameTitle: "Tech Educator"
+            fameTitle: "Tech Educator",
+            basePay: 3000
         ),
         SideHustle(
             id: "projectPreprint",
@@ -412,7 +507,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.leadershipAndInfluence, weight: 1),
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Crowdfunded Creator",
-            experienceCategory: .entrepreneurship
+            experienceCategory: .entrepreneurship,
+            basePay: 5000
         ),
     ]
 

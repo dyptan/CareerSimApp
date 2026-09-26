@@ -434,8 +434,6 @@ struct JobDetail: View {
     private func breakthroughHowTo(_ key: String) -> String {
         switch key {
         case "Junior Champion": return "Win a Junior Championship as a teen — train a sport for years to raise your odds."
-        case "Breakout Role":   return "Chase a Breakout Role under Projects — it takes years and high performing skills."
-        case "Hit Record":      return "Chase a Hit Single under Projects — it takes years and high performing skills."
         default:                return "Earn the “\(key)” title first."
         }
     }
