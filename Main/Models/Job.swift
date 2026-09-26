@@ -33,7 +33,7 @@ struct Job: Identifiable, Codable, Hashable {
     /// to `category`, which is what the worker does. This is the axis the
     /// economy runs on (see `Industry` and `Player.industryTrend`): a designer at
     /// a carmaker rides the automotive cycle, one at an agency rides advertising.
-    let industry: Industry
+    var industry: Industry
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
          requirements: Requirements, targetCapital: Int? = nil,
@@ -494,6 +494,27 @@ extension Job {
     /// A venture that can scale — software and games sell the same product to
     /// any number of customers — so it can raise investment and, rarely, break
     /// out. A restaurant or a studio grows one location at a time.
+    /// The industries this role can be posted in (see
+    /// `JobCatalog.industries(forBaseTitle:category:)`).
+    var possibleIndustries: [Industry] {
+        JobCatalog.industries(forBaseTitle: baseTitle, category: category)
+    }
+
+    /// Whether the player chooses the employer's industry when applying.
+    /// Administration roles exist in every kind of organisation — a hospital, a
+    /// bank, a city hall — so the player picks which to apply to rather than
+    /// taking the one sector a year's posting happens to name.
+    var offersIndustryChoice: Bool {
+        category == .administration && possibleIndustries.count > 1
+    }
+
+    /// This posting at an employer in `industry`.
+    func inIndustry(_ industry: Industry) -> Job {
+        var copy = self
+        copy.industry = industry
+        return copy
+    }
+
     var isScalableVenture: Bool {
         isEntrepreneurial && JobCatalog.scalableVentureTitles.contains(baseTitle)
     }

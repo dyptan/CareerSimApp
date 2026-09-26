@@ -179,7 +179,11 @@ private struct RoleGroupRow: View {
                 // climate: that already shows up where it matters, inside the
                 // posting's hire probability, and repeating it on every row
                 // turned the list into a wall of weather rather than of jobs.
-                if let industry {
+                if let first = variants.first, first.offersIndustryChoice {
+                    Text("🏢 Any of \(first.possibleIndustries.count) industries — your choice")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if let industry {
                     Text("\(industry.icon) \(industry.rawValue)")
                         .font(.caption)
                         .foregroundStyle(.secondary)

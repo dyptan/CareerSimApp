@@ -1952,3 +1952,31 @@ final class EventAccessTests: XCTestCase {
         XCTAssertGreaterThan(veteran.presentOdds(summit), rookie.presentOdds(summit))
     }
 }
+
+/// Administration roles let the player pick the employer's industry.
+final class IndustryChoiceTests: XCTestCase {
+
+    func testAdministrationRolesOfferAChoiceOfIndustry() throws {
+        let clerk = try XCTUnwrap(JobCatalog.allJobs().first { $0.baseTitle == "Office Clerk" })
+        XCTAssertTrue(clerk.offersIndustryChoice)
+        XCTAssertGreaterThan(clerk.possibleIndustries.count, 1)
+        let nurse = try XCTUnwrap(JobCatalog.allJobs().first { $0.category == .health && !$0.isEntrepreneurial })
+        XCTAssertFalse(nurse.offersIndustryChoice, "Only administration roles offer the choice.")
+    }
+
+    /// The chosen industry is the one applied to — its climate moves the odds.
+    func testChosenIndustrySetsTheOdds() throws {
+        let clerk = try XCTUnwrap(JobCatalog.allJobs().first { $0.baseTitle == "Office Clerk" })
+        let player = Player()
+        player.difficulty = .middleClass
+        player.configureStart(age: 25)
+        player.pinNeutralEconomy()
+        let industries = clerk.possibleIndustries
+        player.industryTrend[industries[0]] = 0.8     // booming
+        player.industryTrend[industries[1]] = -0.8    // slumping
+        let salary = Double(clerk.annualIncome)
+        XCTAssertGreaterThan(clerk.inIndustry(industries[0]).hireProbability(for: player, requestedSalary: salary),
+                             clerk.inIndustry(industries[1]).hireProbability(for: player, requestedSalary: salary))
+        XCTAssertEqual(clerk.inIndustry(industries[1]).industry, industries[1])
+    }
+}

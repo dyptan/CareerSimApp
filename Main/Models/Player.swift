@@ -1246,6 +1246,9 @@ final class Player: ObservableObject {
                     let raise = Double.random(in: GameConstants.promotionRaise)
                     let raised = Int((Double(current.annualIncome) * (1 + raise)).rounded())
                     var promoted = nextRung ?? current
+                    // A promotion is at the same employer: the sector stays put,
+                    // whatever industry this year's posting of the rung names.
+                    promoted.industry = current.industry
                     promoted.annualIncome = max(promoted.annualIncome, raised)
                     currentOccupation = promoted
                     lastPromotionRaisePct = current.annualIncome > 0

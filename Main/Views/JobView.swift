@@ -1,11 +1,35 @@
 import SwiftUI
 
 struct JobDetail: View {
-    var job: Job
+    /// The posting as listed. `job` is what the player is applying to: the same
+    /// posting, at the employer industry they picked (see `industryChoice`).
+    private let posting: Job
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
     /// Applying spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
+
+    init(job: Job, player: Player, showCareersSheet: Binding<Bool>, onCommit: @escaping () -> Void = {}) {
+        self.posting = job
+        self.player = player
+        self._showCareersSheet = showCareersSheet
+        self.onCommit = onCommit
+    }
+
+    /// The employer industry chosen for a role that offers the choice.
+    @State private var industryChoice: Industry?
+
+    private var job: Job {
+        industryChoice.map { posting.inIndustry($0) } ?? posting
+    }
+
+    /// The industries the player can apply to this role in: every one where
+    /// their hire odds at the posted rate are above zero.
+    private var industryOptions: [Industry] {
+        posting.possibleIndustries.filter {
+            posting.inIndustry($0).hireProbability(for: player, requestedSalary: Double(posting.annualIncome)) > 0
+        }
+    }
 
     @State private var requestedSalary: Double = 0
     /// The outcome of the attempt just made. Kept only long enough to build the
@@ -167,6 +191,10 @@ struct JobDetail: View {
             .font(.subheadline)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
+
+            if posting.offersIndustryChoice, industryOptions.count > 1 {
+                industryPicker
+            }
             
             Divider()
             Text("Requirements")
@@ -379,6 +407,36 @@ struct JobDetail: View {
 
     /// The odds readout, shared by both pay sections so it reads the same either
     /// way.
+    /// Which kind of organisation to apply to, each with this year's hire odds
+    /// there — the industry's climate is what moves them.
+    private var industryPicker: some View {
+        HStack(spacing: 6) {
+            Text("🏢 Employer")
+                .font(.subheadline)
+            InfoHint(
+                title: "🏢 Employer's industry",
+                message: "\(posting.id) roles exist in every kind of organisation. Pick which to apply to — each industry's climate this year moves your hire odds there, and decides how your pay and promotions fare while you work in it."
+            )
+            Spacer()
+            Picker("Employer", selection: Binding(
+                get: { industryChoice ?? posting.industry },
+                set: { industryChoice = $0 }
+            )) {
+                ForEach(industryOptions) { industry in
+                    // The same salary and rounding as the hire-probability row,
+                    // so the menu and the page agree.
+                    let salary = requestedSalary > 0 ? requestedSalary : Double(posting.income)
+                    let odds = posting.inIndustry(industry).hireProbability(for: player, requestedSalary: salary)
+                    Text("\(industry.icon) \(industry.rawValue) · \(Int(odds * 100))%")
+                        .tag(industry)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+        }
+        .padding(.horizontal)
+    }
+
     private var hireProbabilityRow: some View {
         HStack(spacing: 6) {
             Text("Hire probability:")
