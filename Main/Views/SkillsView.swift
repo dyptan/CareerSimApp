@@ -368,7 +368,13 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Skills").font(.headline)
+            HStack(spacing: 6) {
+                Text("Skills").font(.headline)
+                InfoHint(
+                    title: "Skills",
+                    message: "Skills are what you bring besides degrees and experience. They count toward:\n\n💼 Getting hired — each job lists the skills it asks for\n⬆️ Promotions — your fit for your role and for the next one up\n🎓 Admissions — each degree field looks for its own\n📝 School grades, 🏅 contests, and 🚀 ventures\n\nBuild them through Activities, and later events, courses and projects. Tap a skill's ⓘ to see where it matters most."
+                )
+            }
         }
     }
 

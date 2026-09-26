@@ -74,12 +74,9 @@ struct EducationView: View {
                                         .font(.headline)
                                     InfoHint(
                                         title: profile.rawValue.capitalized,
-                                        message: "\(profile.degreeMeaning)\n\nLikely jobs: \(profile.helpfulJobs)."
+                                        message: "\(profile.description)\n\n\(profile.degreeMeaning)\n\nLikely jobs: \(profile.helpfulJobs)."
                                     )
                                 }
-                                Text(profile.description)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 6)

@@ -49,10 +49,15 @@ struct ExecutiveDecisionsView: View {
             Text("Leading as \(roleName)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text("Optional strategic plays — each can be made once a year · savings: \(player.savings.formatted(.number)) $")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+            HStack(spacing: 6) {
+                Text("💰 Savings: \(player.savings.formatted(.number)) $")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                InfoHint(
+                    title: "🏛️ Boardroom",
+                    message: "Optional strategic plays for the company you lead. Each can be made once a year, and making one spends the year."
+                )
+            }
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -65,10 +70,6 @@ struct ExecutiveDecisionsView: View {
                 Text(decision.icon).font(.title2)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(decision.label).font(.headline)
-                    Text(decision.blurb)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 InfoHint(title: "\(decision.icon) \(decision.label)", message: infoMessage(for: decision))
@@ -178,6 +179,11 @@ struct ExecutiveDecisionsView: View {
     }
 
     private func infoMessage(for decision: ExecutiveDecision) -> String {
+        // The play's own pitch leads its hint; the card keeps only the numbers.
+        decision.blurb + "\n\n" + infoDetails(for: decision)
+    }
+
+    private func infoDetails(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())

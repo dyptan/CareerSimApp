@@ -15,15 +15,13 @@ struct EventsView: View {
     /// Attending an event spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
 
+    /// The sheet's title ⓘ.
+    static let hint = "Take the stage at an industry event to grow your network and fame in that field — both raise your hiring and promotion odds there. Opens once you have \(GameConstants.presenterExperienceYears) years in the field. Taking the stage spends the year."
+
     var body: some View {
         VStack {
             // No slot counter — see `ActivityListView`; an event that can't be taken
-            // this year dims in place.
-            Text("Take the stage to grow your reputation — unlocks once you're a veteran of the field")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-
+            // this year dims in place. The explanation lives in the title ⓘ.
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(EventCatalog.all) { event in
@@ -69,10 +67,6 @@ struct EventsView: View {
                     Text("🔒 \(roleLabel) with \(GameConstants.presenterExperienceYears) yrs in \(category.rawValue)")
                         .font(.caption2)
                         .foregroundStyle(.orange)
-                } else {
-                    Text("🎤 Earns reputation in \(category.rawValue)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

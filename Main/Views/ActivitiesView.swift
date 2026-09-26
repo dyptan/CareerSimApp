@@ -19,6 +19,17 @@ struct ActivitiesView: View {
 
     private var tabs: [ActivityKind] { Self.availableTabs(for: player) }
 
+    /// The sheet's title ⓘ: how levels, contests and the Study tab work.
+    static let hint = """
+    Taking an activity spends the year.
+
+    🏅 Each year you practise, you level up (Beginner → Expert) and automatically enter its top contest. Wins earn trophies and fame — and selective universities count trophies.
+
+    📝 Study also lifts that year's school grade, which universities weigh at admission.
+
+    🏆 On a row means you practised it last year — tap it for this year's contest and odds.
+    """
+
     /// The remembered tab (it lives in `AppUIState`, so it survives the sheet
     /// closing every year), falling back to the first one open at this age.
     private var shownTab: ActivityKind {
@@ -35,29 +46,6 @@ struct ActivitiesView: View {
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .padding(.horizontal)
-            }
-
-            // The competition hook, stated once for the whole sheet rather than
-            // only inside each row's hint.
-            HStack(spacing: 6) {
-                Text("🏅 Every year you practise, you level up and enter its top contest.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                InfoHint(
-                    title: "🏅 Levels & contests",
-                    message: "Each year spent on an activity moves you up a level — Beginner, Intermediate, Advanced, Expert — and automatically enters you in the best contest you qualify for. There's no entry step. More years and stronger skills raise your odds and unlock bigger contests. Wins earn trophies and fame in that field — and selective universities count trophies at admission.\n\nPractise an activity and, the next year, a 🏆 button on its row shows the contest you'd enter and your odds."
-                )
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal)
-
-            // What makes the Study tab different from the other two.
-            if shownTab == .study {
-                Text("📝 A year of study also lifts your school grade — and universities, the elite ones most of all, read your grades.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
             }
 
             ActivityListView(

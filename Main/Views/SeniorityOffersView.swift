@@ -12,8 +12,6 @@ struct SeniorityOffersView: View {
 
     private var baseTitle: String { variants.first?.baseTitle ?? "" }
 
-    private var headerText: String { "Choose a seniority level." }
-
     private var navTitle: String { baseTitle }
 
     /// The given variant priced at its base salary (deterministic, comparable).
@@ -24,13 +22,6 @@ struct SeniorityOffersView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text(headerText)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-
                 ForEach(Array(variants.enumerated()), id: \.offset) { _, variant in
                     let adjusted = offer(for: variant)
                     NavigationLink {
@@ -46,7 +37,7 @@ struct SeniorityOffersView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.bottom, 8)
+            .padding(.vertical, 8)
         }
         .navigationTitle(navTitle)
     }

@@ -118,7 +118,7 @@ struct RootView: View {
             #endif
         }
         .sheet(isPresented: $appUIState.showActivitiesSheet) {
-            GameSheet(title: "Activities", isPresented: $appUIState.showActivitiesSheet) {
+            GameSheet(title: "Activities", hint: ActivitiesView.hint, isPresented: $appUIState.showActivitiesSheet) {
                 ActivitiesView(player: player,
                                appUIState: appUIState,
                                onCommit: { spendYear(closing: \.showActivitiesSheet) })
@@ -134,7 +134,7 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $appUIState.showEventsSheet) {
-            GameSheet(title: "Events", isPresented: $appUIState.showEventsSheet) {
+            GameSheet(title: "Events", hint: EventsView.hint, isPresented: $appUIState.showEventsSheet) {
                 EventsView(player: player,
                            selectedEvents: $appUIState.selectedEvents,
                            onCommit: { spendYear(closing: \.showEventsSheet) })
@@ -425,11 +425,14 @@ struct ModeSelectionView: View {
 /// directly to their root content — so the chrome ends up identical either way.
 struct GameSheet<Content: View>: View {
     let title: String
+    /// Optional ⓘ beside the title — where a sheet explains itself, instead of
+    /// a caption taking space above its content.
+    var hint: String? = nil
     @Binding var isPresented: Bool
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        NavigationStack { content().gameSheetClose($isPresented, title: title) }
+        NavigationStack { content().gameSheetClose($isPresented, title: title, hint: hint) }
         #if os(macOS)
         .frame(minWidth: 520, minHeight: 480)
         #endif
@@ -465,12 +468,22 @@ extension View {
     /// bottom button bar holding **Close**. Used by `GameSheet` for plain content
     /// and directly by the dialogs that own their navigation stack, so every
     /// sheet is dismissed the same way, from the same place.
-    func gameSheetClose(_ isPresented: Binding<Bool>, title: String) -> some View {
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: String, hint: String? = nil) -> some View {
         self
             .navigationTitle(title)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .toolbar {
+                if let hint {
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 6) {
+                            Text(title).font(.headline)
+                            InfoHint(title: title, message: hint)
+                        }
+                    }
+                }
+            }
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 GameSheetButtonBar(isPresented: isPresented)
             }

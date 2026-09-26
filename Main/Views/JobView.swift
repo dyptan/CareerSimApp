@@ -145,14 +145,12 @@ struct JobDetail: View {
                 .font(.system(size: 96))
                 .padding(.top, 16)
 
-            Text(job.id)
-                .font(.largeTitle.bold())
-                .padding()
-
-            Text(job.summary)
-                .font(.body)
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity ,alignment: .leading)
+            HStack(spacing: 8) {
+                Text(job.id)
+                    .font(.largeTitle.bold())
+                InfoHint(title: "\(job.icon) \(job.id)", message: job.summary)
+            }
+            .padding()
 
             HStack(spacing: 12) {
                 Text("Market median")
@@ -176,10 +174,18 @@ struct JobDetail: View {
 
 
 
-            Text(job.educationIsMandatory ? "Education:" : "Education (preferred):")
-                .font(.headline)
-                .frame(maxWidth: .infinity ,alignment: .leading)
-                .padding()
+            HStack(spacing: 6) {
+                Text(job.educationIsMandatory ? "Education:" : "Education (preferred):")
+                    .font(.headline)
+                if !job.educationIsMandatory && job.requirements.education.minEQF > 0 {
+                    InfoHint(
+                        title: "🎓 Preferred education",
+                        message: "Not required — but it counts on every application and every promotion. A degree in an accepted field counts most, an unrelated one a little, and falling short of this level costs you."
+                    )
+                }
+                Spacer()
+            }
+            .padding()
 
             let eduPlayerLevel = job.playerEducationLevel(for: player)
             let eduRequired = job.requirements.education.minEQF
@@ -190,14 +196,6 @@ struct JobDetail: View {
             )
             .foregroundStyle(eduPlayerLevel >= eduRequired ? .primary : .secondary)
             .padding(.horizontal)
-
-            if !job.educationIsMandatory && eduRequired > 0 {
-                Text("Not required for this role — but employers weigh it heavily. A degree in an accepted field is worth the most, an unrelated one counts for a little, and falling short of the expected level costs you on every application and every promotion.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-            }
 
             if let acceptedProfiles = job.requirements.education.acceptedProfiles, !acceptedProfiles.isEmpty {
                 let playerProfiles = Set(player.degrees.compactMap { $0.profile })
@@ -215,10 +213,15 @@ struct JobDetail: View {
             // employer's tier-scaled preference shapes the hire probability.
             let baseYears = job.requirements.minYearsExperience
             if baseYears > 0 {
-                Text("Experience:")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
+                HStack(spacing: 6) {
+                    Text("Experience:")
+                        .font(.headline)
+                    if !isSimplified {
+                        InfoHint(title: "📅 Experience", message: experienceHint(baseYears: baseYears))
+                    }
+                    Spacer()
+                }
+                .padding()
 
                 let playerYears = job.relevantYears(for: player)
                 let expLabel = job.isLadderVariant
@@ -232,29 +235,6 @@ struct JobDetail: View {
                 .foregroundStyle(playerYears >= baseYears ? .primary : .secondary)
                 .padding(.horizontal)
 
-                if !isSimplified {
-                    Text("\(baseYears) yr required to qualify — every extra year raises your hire chance.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-
-                    // Standalone roles credit related industries too — notably,
-                    // entrepreneurship experience counts toward Business roles.
-                    let credited = !job.isLadderVariant
-                        ? job.category.creditedExperienceCategories
-                        : []
-                    if !credited.isEmpty {
-                        let names = credited
-                            .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
-                            .joined(separator: ", ")
-                        Text("Your \(names) experience counts toward this too.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                    }
-                }
             }
 
             if !isSimplified && !requiredHard.trainings.isEmpty {
@@ -349,23 +329,36 @@ struct JobDetail: View {
     /// Pay for a role you take at the advertised rate. Still shows the hire
     /// odds in the realistic modes — what you can't argue about, you can still
     /// weigh.
+    /// The experience ⓘ: the qualifying bar, that more years help, and which
+    /// other fields' experience is credited here.
+    private func experienceHint(baseYears: Int) -> String {
+        var text = "\(baseYears) yr required to qualify — every extra year raises your hire chance."
+        // Standalone roles credit related industries too — notably,
+        // entrepreneurship experience counts toward Business roles.
+        let credited = job.isLadderVariant ? [] : job.category.creditedExperienceCategories
+        if !credited.isEmpty {
+            let names = credited
+                .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
+                .joined(separator: ", ")
+            text += "\n\nYour \(names) experience counts toward this too."
+        }
+        return text
+    }
+
     private var postedSalarySection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Salary:")
                     .font(.title2.bold())
+                if !isSimplified {
+                    InfoHint(title: "💵 Salary", message: "This role pays the going rate — there's no offer to argue over.")
+                }
                 Spacer()
                 Text("\(job.income.formatted(.number)) $/yr")
                     .font(.headline)
             }
             .padding(.horizontal)
 
-            Text(isSimplified
-                 ? "The rate for this role."
-                 : "This role pays the going rate — there's no offer to argue over.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal)
 
             HStack(spacing: 6) {
                 Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
