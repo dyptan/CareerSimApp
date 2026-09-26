@@ -54,8 +54,12 @@ struct SkillsView: View {
             return !experienceEntries.isEmpty
         case .economy:
             // A realistic-mode mechanic; Simplified has no economy, so the
-            // section would be a list of "Steady" with nothing behind it.
+            // section would be a list of "Steady" with nothing behind it. It
+            // also waits for the high-school diploma: before then the job market
+            // is not yet the player's concern (a teen's part-time job still
+            // shows its industry's climate in Occupation).
             return !player.isSimplified
+                && player.degrees.contains { $0.level == .HighSchool }
         }
     }
 
