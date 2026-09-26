@@ -465,7 +465,8 @@ extension Job {
         // field: a strong portfolio nearly rivals the soft-skill fit term, but
         // helps only its own field (see fameHireBonus). Top leadership roles
         // weight reputation even more heavily.
-        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership)
+        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership,
+                                        executive: isExecutive && !isEntrepreneurial)
         // The breakthrough fame award (held — we returned at the floor above if
         // not) is the dominant hiring factor for gated careers.
         let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
@@ -479,8 +480,9 @@ extension Job {
         let climate = player.climate(for: industry).hireFactor
         // C-suite scarcity: executive seats are few, so even a strong candidate
         // faces long odds of landing one — most qualified applicants never make it
-        // to the top. Founders make their own seat, so they're exempt.
-        let scarcity = (isExecutive && !isEntrepreneurial) ? GameConstants.executiveSeatChance : 1.0
+        // to the top, unless they've run a company before. Founders make their
+        // own seat, so they're exempt.
+        let scarcity = (isExecutive && !isEntrepreneurial) ? player.executiveSeatChance : 1.0
         return max(0.05, min(0.95, raw * climate * scarcity))
     }
 
@@ -584,10 +586,14 @@ extension Job {
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
         let credential = player.trainingCareerBonus(for: category) // up to +15%
+        // A business name: years running ventures, rounds closed and exits
+        // made. Serial founders start their next venture better placed.
+        let reputation = min(GameConstants.founderReputationCap,
+                             player.famePoints(for: .business) * GameConstants.founderReputationPerPoint)
         // Founding into a contracting market is the harder version of the same
         // bet — customers and backers are scarcer in a slump.
         let climate = player.climate(for: industry).hireFactor
-        let raw = (0.05 + experience + skill + capital + credential) * climate
+        let raw = (0.05 + experience + skill + capital + credential + reputation) * climate
         return max(0.03, min(GameConstants.founderMaxSuccess, raw))
     }
 

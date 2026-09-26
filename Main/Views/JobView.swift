@@ -78,9 +78,11 @@ struct JobDetail: View {
         let opportunity = player.difficulty.opportunityBonus
         let network = player.networkBonus(for: job.category)
         let topPosition = job.isTopLeadership
-        let fame = player.fameHireBonus(for: job.category, topPosition: topPosition)
+        let executiveSeat = job.isExecutive && !job.isEntrepreneurial
+        let fame = player.fameHireBonus(for: job.category, topPosition: topPosition, executive: executiveSeat)
         let showFame = fame > 0
-        let fameLabel = job.category.fameCategory?.rawValue ?? "general"
+        let fameLabel = (job.category.fameCategory?.rawValue ?? "general") + (executiveSeat ? " or business" : "")
+        let scarcity = executiveSeat ? player.executiveSeatChance : 1.0
         let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
         let credential = player.trainingCareerBonus(for: job.category)
         let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
@@ -88,7 +90,7 @@ struct JobDetail: View {
             + breakthrough + credential
         let climate = player.climate(for: job.industry)
         let raw = merit * fit.factor * salaryFit
-        let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw * climate.hireFactor))
+        let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw * climate.hireFactor * scarcity))
 
         func pct(_ v: Double) -> String {
             "\(Int((v * 100).rounded()))%"
@@ -130,9 +132,9 @@ struct JobDetail: View {
         • Salary fit: \(pct(salaryFit))
 
         Then the industry's year:
-        • \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): ×\(String(format: "%.2f", climate.hireFactor))
+        • \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): ×\(String(format: "%.2f", climate.hireFactor))\(executiveSeat ? "\n        • C-suite seats are scarce: ×\(String(format: "%.2f", scarcity)) — a business track record (years running ventures, rounds, exits) eases it" : "")
 
-        \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) × \(String(format: "%.2f", climate.hireFactor)) = \(pct(raw * climate.hireFactor))
+        \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) × \(String(format: "%.2f", climate.hireFactor))\(executiveSeat ? " × \(String(format: "%.2f", scarcity))" : "") = \(pct(raw * climate.hireFactor * scarcity))
         Final (clamped 5–95%): \(pct(final))
         \(softSkillsClause)
         """

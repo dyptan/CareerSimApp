@@ -272,6 +272,49 @@ final class VentureLaunchTests: XCTestCase {
                        "An unserviced loan compounds at the venture-loan rate.")
     }
 
+    /// Founding builds a business name: business fame raises the preparation —
+    /// and so the survival — of the next venture.
+    func testFounderReputationHelpsTheNextVenture() throws {
+        let job = try coffeeRoasteryJob()
+        let player = realisticFounder(savings: 60_000, retailYears: 2)
+        let firstTimer = player.firstYearSurvival(for: job, stake: 60_000)
+        player.award("Successful Exit", icon: "💸", category: .business, weight: GameConstants.founderExitFame)
+        XCTAssertGreaterThan(player.firstYearSurvival(for: job, stake: 60_000), firstTimer,
+                             "A founder with an exit behind them should be better placed.")
+    }
+
+    /// A founder's track record counts at the top of other companies too — a
+    /// failed founder included: business fame eases the C-suite hurdle.
+    func testFounderTrackRecordHelpsLandAnExecutiveSeat() throws {
+        let ceo = try XCTUnwrap(JobCatalog.allJobs().first { $0.isExecutive && !$0.isEntrepreneurial })
+        let player = realisticFounder(savings: 0)
+        let before = ceo.hireProbability(for: player, requestedSalary: Double(ceo.annualIncome))
+        let seatBefore = player.executiveSeatChance
+        player.award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
+        player.award("Founder of Specialty Coffee Roastery", icon: "☕", category: .business, weight: 1.5)
+        XCTAssertGreaterThan(player.executiveSeatChance, seatBefore)
+        XCTAssertGreaterThanOrEqual(ceo.hireProbability(for: player, requestedSalary: Double(ceo.annualIncome)), before)
+    }
+
+    /// A loan is a fixed bill paid out of income: a salaried borrower clears a
+    /// venture loan within its term, even on a thin saving rate — debt no
+    /// longer outgrows a healthy income.
+    func testLoanIsRepaidFromIncomeWithinItsTerm() throws {
+        let player = Player()
+        player.difficulty = .comfortable              // no downturns, so no layoffs
+        player.configureStart(age: 30)
+        player.pinNeutralEconomy()
+        player.savings = 0
+        player.currentOccupation = try dayJob(income: 60_000)
+        player.outstandingLoan = 60_000
+        player.ventureLoanPayment = Player.annualLoanPayment(
+            balance: 60_000, rate: GameConstants.ventureLoanAnnualInterest)
+        let ui = AppUIState()
+        for _ in 0..<GameConstants.loanTermYears { player.advanceYear(appUIState: ui) }
+        XCTAssertEqual(player.outstandingLoan, 0, "The loan should be repaid within its term.")
+        XCTAssertGreaterThan(player.savings, 0, "The borrower still saves alongside the instalments.")
+    }
+
     /// Under-18 players can never pay money or go into debt, so a founding
     /// attempt before adulthood is refused outright — no stake spent, no loan.
     func testUnderageFoundingIsRefused() throws {

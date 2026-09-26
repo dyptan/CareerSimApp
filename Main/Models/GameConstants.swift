@@ -105,6 +105,16 @@ enum GameConstants {
     /// early degree is a lasting cost. See `Player.advanceYear`.
     static let studentLoanAnnualInterest: Double = 0.05
 
+    /// Years over which a loan is repaid in fixed annual instalments — the
+    /// standard term for both a small-business (SBA 7(a)) loan and a US
+    /// student loan. See `Player.annualLoanPayment`.
+    static let loanTermYears: Int = 10
+
+    /// The most of a year's gross income that goes to loan instalments —
+    /// roughly the debt-to-income ceiling lenders allow. Instalments come out of
+    /// income before anything is saved; savings cover any shortfall.
+    static let maxDebtServiceShare: Double = 0.4
+
     /// The top of the founder-preparation score (`Job.founderSuccessProbability`),
     /// which no amount of experience, skill, capital or credentials exceeds.
     /// Preparation no longer decides whether a business opens — it always does —
@@ -148,6 +158,25 @@ enum GameConstants {
     /// founder gives up a slice for the money), and the growth in the income
     /// the funded business can pay.
     static let investmentRoundValueGrowth: Double = 1.2
+
+    // Founder reputation: founding builds a business (💼) name that makes the
+    // next venture easier — serial founders outperform first-timers, and even
+    // a failed founder does no worse than one who never tried.
+    /// Business fame banked for each year a venture survives.
+    static let founderYearFame: Double = 0.3
+    /// Business fame banked for selling a venture — a successful exit.
+    static let founderExitFame: Double = 2.0
+    /// Business fame banked when a venture folds — the lessons.
+    static let founderFoldFame: Double = 0.1
+    /// Preparation per point of business fame, and its cap (see
+    /// `Job.founderSuccessProbability`).
+    static let founderReputationPerPoint: Double = 0.04
+    static let founderReputationCap: Double = 0.10
+    /// How much each point of business fame eases the executive-seat hurdle
+    /// (`executiveSeatChance`), and the most it can add: boards hire people who
+    /// have already run a company — failed founders included.
+    static let executiveTrackRecordPerPoint: Double = 0.10
+    static let executiveTrackRecordCap: Double = 0.30
     static let investmentRoundIncomeGrowth: Double = 1.2
 
     // MARK: - The business cycle

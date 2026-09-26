@@ -126,10 +126,25 @@ final class Player: ObservableObject {
     /// reputation even more heavily — a public profile is often what separates the
     /// shortlist for a leadership seat — so they earn a steeper per-point rate and
     /// a higher cap (+0.50). See `Job.isTopLeadership` / `Job.hireProbability`.
-    func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false) -> Double {
+    ///
+    /// For an **executive seat** a business (💼) name counts too — whichever is
+    /// higher — since running a company is the credential a board hires for,
+    /// whatever the industry.
+    func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false, executive: Bool = false) -> Double {
         let rate = topPosition ? 0.12 : 0.07
         let cap = topPosition ? 0.50 : 0.35
-        return min(cap, famePoints(for: jobCategory.fameCategory) * rate)
+        var points = famePoints(for: jobCategory.fameCategory)
+        if executive { points = max(points, famePoints(for: .business)) }
+        return min(cap, points * rate)
+    }
+
+    /// The chance of clearing the C-suite scarcity hurdle: the base
+    /// `GameConstants.executiveSeatChance`, eased by a business track record —
+    /// years running ventures, rounds, exits — up to +30 points.
+    var executiveSeatChance: Double {
+        let trackRecord = min(GameConstants.executiveTrackRecordCap,
+                              famePoints(for: .business) * GameConstants.executiveTrackRecordPerPoint)
+        return min(1, GameConstants.executiveSeatChance + trackRecord)
     }
 
     /// Years a prolonged recession still has to run. While positive, each
@@ -523,6 +538,49 @@ final class Player: ObservableObject {
     /// that follows you. Counts against net worth for the leaderboard. Zero when
     /// the player owes nothing (paid cash, or has cleared it).
     @Published var studentLoan: Int = 0
+
+    /// The fixed annual instalments on each loan, set when money is borrowed
+    /// (see `annualLoanPayment`). Zero when the loan is clear.
+    @Published var ventureLoanPayment: Int = 0
+    @Published var studentLoanPayment: Int = 0
+
+    /// The fixed annual instalment that repays `balance` over
+    /// `GameConstants.loanTermYears` at `rate` — the standard amortising loan.
+    static func annualLoanPayment(balance: Int, rate: Double) -> Int {
+        guard balance > 0 else { return 0 }
+        let n = Double(GameConstants.loanTermYears)
+        let payment = Double(balance) * rate / (1 - pow(1 + rate, -n))
+        return Int(payment.rounded())
+    }
+
+    /// This year's instalments due on both loans (interest included), capped
+    /// at what each balance will be once this year's interest is added.
+    private var loanInstalmentsDue: Int {
+        func due(_ balance: Int, _ payment: Int, _ rate: Double) -> Int {
+            guard balance > 0 else { return 0 }
+            let owed = Int((Double(balance) * (1 + rate)).rounded())
+            let instalment = payment > 0 ? payment : Player.annualLoanPayment(balance: balance, rate: rate)
+            return min(instalment, owed)
+        }
+        return due(outstandingLoan, ventureLoanPayment, GameConstants.ventureLoanAnnualInterest)
+            + due(studentLoan, studentLoanPayment, GameConstants.studentLoanAnnualInterest)
+    }
+
+    /// One year of a loan: interest accrues, then the instalment is paid —
+    /// from income set aside for it first, then from savings. Whatever can't be
+    /// paid stays owed and keeps accruing. Returns true when the loan clears.
+    private func serviceLoan(_ balance: inout Int, payment: inout Int, rate: Double, income: inout Int) -> Bool {
+        guard balance > 0 else { return false }
+        balance = Int((Double(balance) * (1 + rate)).rounded())
+        let instalment = min(balance, payment > 0 ? payment : Player.annualLoanPayment(balance: balance, rate: rate))
+        let fromIncome = min(instalment, income)
+        income -= fromIncome
+        let fromSavings = min(instalment - fromIncome, max(0, savings))
+        savings -= fromSavings
+        balance -= fromIncome + fromSavings
+        if balance == 0 { payment = 0; return true }
+        return false
+    }
 
     /// How much the player can borrow right now to top up a venture stake — a
     /// multiple of current annual income (`GameConstants.ventureLoanIncomeMultiple`).
@@ -993,7 +1051,11 @@ final class Player: ObservableObject {
             let fromSavings = min(max(0, savings), tuition)
             savings -= fromSavings
             let borrowed = tuition - fromSavings
-            if borrowed > 0 { studentLoan += borrowed }
+            if borrowed > 0 {
+                studentLoan += borrowed
+                studentLoanPayment = Player.annualLoanPayment(
+                    balance: studentLoan, rate: GameConstants.studentLoanAnnualInterest)
+            }
         }
 
         appUIState.yearsLeftToGraduation? -= 1
@@ -1054,10 +1116,19 @@ final class Player: ObservableObject {
         // the occupation, since an unemployed year earns nothing. Realistic mode
         // saves only the personal-saving-rate share of income (the rest is taxes
         // and living costs); simplified mode banks the whole paycheck.
+        // Loan instalments are a fixed bill, not a saving: they come out of pay
+        // first (up to the debt-service ceiling), and only what's left is
+        // subject to the saving rate. The set-aside is spent in the servicing
+        // below.
+        var incomeForLoans = 0
         if let job = currentOccupation {
+            incomeForLoans = isSimplified ? 0 : min(
+                loanInstalmentsDue,
+                Int((Double(job.annualIncome) * GameConstants.maxDebtServiceShare).rounded())
+            )
             let saved = isSimplified
                 ? job.annualIncome
-                : Int((Double(job.annualIncome) * difficulty.savingsRate).rounded())
+                : Int((Double(job.annualIncome - incomeForLoans) * difficulty.savingsRate).rounded())
             savings += saved
             experience[job.category, default: 0] += 1
             experienceByRole[job.baseTitle, default: 0] += 1
@@ -1098,7 +1169,7 @@ final class Player: ObservableObject {
                     // Miss it and you keep climbing, banking an in-place raise this
                     // year instead of the title (founders make their own seat, exempt).
                     if let candidate = nextRung, candidate.isExecutive, !candidate.isEntrepreneurial,
-                       Double.random(in: 0...1) >= GameConstants.executiveSeatChance {
+                       Double.random(in: 0...1) >= executiveSeatChance {
                         nextRung = nil
                     }
 
@@ -1213,32 +1284,20 @@ final class Player: ObservableObject {
         }
         lastCompetitionWins = competitionWins
 
-        // Service any venture loan: interest accrues first, then it's repaid from
-        // this year's savings as far as they stretch. A flopped venture still owes
-        // — the debt (and its interest) outlives the venture that borrowed it.
-        if outstandingLoan > 0 {
-            outstandingLoan = Int((Double(outstandingLoan) * (1 + GameConstants.ventureLoanAnnualInterest)).rounded())
-            let repayment = min(max(0, savings), outstandingLoan)
-            savings -= repayment
-            outstandingLoan -= repayment
-            if outstandingLoan == 0 && repayment > 0 {
-                recordStatus("🏦", "Paid off your venture loan")
-            }
+        // Service the loans: interest accrues, then the year's instalment is
+        // paid from the income set aside for it, then from savings. A folded
+        // venture still owes — the debt outlives the business — and whatever
+        // can't be paid stays owed and keeps accruing.
+        if serviceLoan(&outstandingLoan, payment: &ventureLoanPayment,
+                       rate: GameConstants.ventureLoanAnnualInterest, income: &incomeForLoans) {
+            recordStatus("🏦", "Paid off your venture loan")
         }
-
-        // Service any student loan: interest accrues (at a gentler rate than a
-        // venture loan), then it's repaid from whatever savings are left after the
-        // venture loan. It lingers through lean years and clears once earnings
-        // catch up — an expensive early degree stays with you until then.
-        if studentLoan > 0 {
-            studentLoan = Int((Double(studentLoan) * (1 + GameConstants.studentLoanAnnualInterest)).rounded())
-            let repayment = min(max(0, savings), studentLoan)
-            savings -= repayment
-            studentLoan -= repayment
-            if studentLoan == 0 && repayment > 0 {
-                recordStatus("🎓", "Paid off your student loan")
-            }
+        if serviceLoan(&studentLoan, payment: &studentLoanPayment,
+                       rate: GameConstants.studentLoanAnnualInterest, income: &incomeForLoans) {
+            recordStatus("🎓", "Paid off your student loan")
         }
+        // Any set-aside the instalments didn't need is ordinary pay again.
+        savings += Int((Double(incomeForLoans) * difficulty.savingsRate).rounded())
 
         // The year just lived may have been the last one. Raise the Game Over
         // sheet after everything else has settled, so the final score already
@@ -1332,6 +1391,8 @@ final class Player: ObservableObject {
         savings -= (stake - borrowed)          // spend savings first
         if borrowed > 0 {
             outstandingLoan += borrowed        // the rest is a loan
+            ventureLoanPayment = Player.annualLoanPayment(
+                balance: outstandingLoan, rate: GameConstants.ventureLoanAnnualInterest)
             recordStatus("🏦", "Borrowed \(borrowed.formatted(.number)) $ to fund your venture")
         }
 
@@ -1370,8 +1431,13 @@ final class Player: ObservableObject {
             showVentureFailureAlert = true
             ventureFailureMessage = "\(job.baseTitle) folded this year. Selling off what was left recovered \(recovered.formatted(.number)) $ of your stake — but any loan must still be repaid."
             recordStatus("📉", "\(job.baseTitle) folded — recovered \(recovered.formatted(.number)) $")
+            // A fold costs no reputation — the lessons count for something.
+            award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
             return
         }
+
+        // Another year in business builds the founder's name.
+        award("Founder of \(job.baseTitle)", icon: job.icon, category: .business, weight: GameConstants.founderYearFame)
 
         let climate = self.climate(for: job.industry)
         if job.isScalableVenture, !ventureBrokeOut, year >= 2 {
@@ -1546,6 +1612,8 @@ final class Player: ObservableObject {
             // seat, and can sell again in a later year.
             if job.isEntrepreneurial {
                 currentOccupation = nil            // clears the venture state too
+                // A successful exit is the strongest founder credential there is.
+                award("Successful Exit", icon: decision.icon, category: .business, weight: GameConstants.founderExitFame)
                 recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ — exited the venture")
             } else {
                 recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $")
@@ -1618,6 +1686,8 @@ final class Player: ObservableObject {
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan
+        ventureLoanPayment = fresh.ventureLoanPayment
+        studentLoanPayment = fresh.studentLoanPayment
         ventureFoundedAge = fresh.ventureFoundedAge
         venturePreparation = fresh.venturePreparation
         ventureStake = fresh.ventureStake

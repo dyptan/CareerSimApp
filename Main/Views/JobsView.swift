@@ -360,6 +360,7 @@ private struct VentureRow: View {
             "🚀 It always opens. \(Int((survival * 100).rounded()))% chance it survives year 1 — set by your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) (\(job.requirements.minYearsExperience) expected), the skills it runs on, 🔭 Visionary, 💬 Persuader, and your stake. The risk falls each year it lasts; a recession raises it.",
             "💵 Pays \(ramp) of its \(full) $ income in the first two years, then the full amount — swinging with the market.",
             "📉 If it folds, you recover \(Int(GameConstants.ventureFoldRecovery * 100))% of the stake.",
+            "🌟 Every year in business, round closed and exit builds 💼 business fame — which makes your next venture more likely to last.",
         ]
         if job.isScalableVenture {
             lines.append("🦄 Can scale: raise investment rounds in the Boardroom, and — rarely — break out for a fortune.")
