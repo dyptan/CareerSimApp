@@ -25,8 +25,9 @@ struct SideHustle: Identifiable, Hashable {
     let fameWeight: Double
     /// Life stages in which the venture is offered (mirrors `Activity.stages`).
     let stages: Set<LifeStage>
-    /// Soft-skill gains applied on a *successful* year (each capped at 10 in
-    /// `advanceYear`) — the craft axes drawn on plus a founder-cluster bump.
+    /// Soft-skill gains applied for *any* committed year, hit or flop (each
+    /// capped at 10 in `advanceYear`) — the craft axes drawn on plus a
+    /// founder-cluster bump. Only the fame award turns on the roll.
     var growth: [WeightedAbility] = []
     /// Title of the fame award banked on a successful year. Defaults to `label`
     /// when nil.
@@ -101,24 +102,35 @@ struct SideHustle: Identifiable, Hashable {
     /// Projects additionally snowball with reputation — every banked award
     /// lifts the odds by `fameLiftPerPoint` per weighted fame point, capped at
     /// `maxFameLift` — so a name already made opens the next door.
-    func successProbability(for soft: SoftSkills, fameScore: Double = 0,
+    /// `famePoints` is the player's reputation *in this project's own bucket*
+    /// (`Player.famePoints(for:)`), not their overall renown — a tech portfolio
+    /// does nothing for the next album, the same rule hiring uses.
+    /// `climate` is what the project's field is doing this year — a shipped thing
+    /// still needs an audience with money and attention to spare. It scales the
+    /// whole result, and more gently than it scales a payroll (see
+    /// `IndustryClimate.projectFactor`).
+    func successProbability(for soft: SoftSkills, famePoints: Double = 0,
                             totalExperienceYears: Int = 0,
-                            fieldExperienceYears: Int = 0) -> Double {
+                            fieldExperienceYears: Int = 0,
+                            climate: IndustryClimate = .steady) -> Double {
         let fit = SideHustle.talentWeight * talentFit(for: soft)
             + SideHustle.experienceWeight * experienceFit(totalYears: totalExperienceYears,
                                                           fieldYears: fieldExperienceYears)
-        let fameLift = min(fameScore * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
-        return min(successCeiling, max(0, fit * successCeiling + fameLift))
+        let fameLift = min(famePoints * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
+        let raw = (fit * successCeiling + fameLift) * climate.projectFactor
+        return min(successCeiling, max(0, raw))
     }
 
     /// Rolls a single year of this venture: a `FameGrant` on success, nothing on
     /// a flop. No money is staked, so there is nothing to salvage. The experience
     /// and fame arguments are the odds inputs described on `successProbability`.
-    func resolve(for soft: SoftSkills, fameScore: Double = 0,
-                 totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0) -> Outcome {
-        let odds = successProbability(for: soft, fameScore: fameScore,
+    func resolve(for soft: SoftSkills, famePoints: Double = 0,
+                 totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0,
+                 climate: IndustryClimate = .steady) -> Outcome {
+        let odds = successProbability(for: soft, famePoints: famePoints,
                                       totalExperienceYears: totalExperienceYears,
-                                      fieldExperienceYears: fieldExperienceYears)
+                                      fieldExperienceYears: fieldExperienceYears,
+                                      climate: climate)
         guard Double.random(in: 0...1) < odds else {
             return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil)
         }

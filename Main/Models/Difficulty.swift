@@ -77,12 +77,13 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     }
 
     /// Short name of this setting's goal, shown in the picker and header. The
-    /// realistic settings are open-ended — there's no finish line, just a running
-    /// score to grow and bank whenever you decide to finish.
+    /// realistic settings set no target to hit — just a score to grow across a
+    /// career that runs until `GameConstants.retirementAge` (or until the player
+    /// finishes early).
     var goalHeadline: String {
         switch self {
         case .simplified:                return "Make it to the top"
-        case .comfortable, .middleClass: return "Score as high as you can"
+        case .comfortable, .middleClass: return "Best score by \(GameConstants.retirementAge)"
         }
     }
 

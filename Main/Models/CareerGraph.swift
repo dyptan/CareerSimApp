@@ -60,8 +60,11 @@ enum CareerGraph {
 
         // Experience grades rather than gates now (see `Job.experienceFactor`):
         // partial years scale the odds down, but only *no* relevant years closes
-        // the role outright. Report it as a blocker only when it is one.
-        if job.requirements.minYearsExperience > 0, job.relevantYears(for: player) == 0 {
+        // the role outright. Report it as a blocker only when it is one. Ventures
+        // are exempt: capital is their sole hard requirement, and experience is
+        // purely a probability term (see `Job.founderSuccessProbability`).
+        if !job.isEntrepreneurial,
+           job.requirements.minYearsExperience > 0, job.relevantYears(for: player) == 0 {
             gaps.append("Any experience in \(job.category.rawValue) (role expects \(job.requirements.minYearsExperience) yr)")
         }
         return gaps

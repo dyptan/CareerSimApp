@@ -155,7 +155,8 @@ struct RootView: View {
         }
         // The only fixed goal left is Simplified's top-leadership finish line,
         // which turns on when the occupation changes; realistic modes are
-        // open-ended and score-based (see `Player.goalMet`).
+        // score-based, ending at `GameConstants.retirementAge` (see
+        // `Player.goalMet` / `Player.hasRetired`).
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
         .onChange(of: player.age) { newValue in
             switch newValue {

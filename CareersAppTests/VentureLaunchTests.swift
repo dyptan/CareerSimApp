@@ -37,6 +37,9 @@ final class VentureLaunchTests: XCTestCase {
         player.regenerateAvailableJobs()
         player.savings = savings
         player.experience[.retail] = retailYears
+        // Pin the economy to neutral: these tests are about preparation, and a
+        // seeded business cycle would otherwise move every founder's odds.
+        player.pinNeutralEconomy()
         for kp in [
             \SoftSkills.creativityAndInsightfulThinking, \SoftSkills.communicationAndNetworking,
             \SoftSkills.persuasionAndNegotiation, \SoftSkills.visionaryThinkingAndAmbition,
@@ -62,13 +65,34 @@ final class VentureLaunchTests: XCTestCase {
                                  "Founding is a gamble — odds top out at the founder ceiling, not near certainty.")
     }
 
-    /// Experience is a hard gate: with no industry experience the odds are zero,
-    /// no matter how much capital or skill the player brings.
-    func testNoIndustryExperienceGatesTheLaunch() throws {
+    /// Capital is the only hard requirement. With no industry experience at all a
+    /// launch is still *allowed* — it is simply much less likely to work than the
+    /// same attempt by a seasoned founder.
+    func testNoIndustryExperienceIsALongShotNotABlocker() throws {
         let job = try coffeeRoasteryJob()
-        let player = realisticFounder(savings: 200_000, retailYears: 0)
-        let p = job.founderSuccessProbability(for: player, investedCapital: 200_000)
-        XCTAssertEqual(p, 0.0, "Below the experience baseline, a launch can't get off the ground.")
+        let green = realisticFounder(savings: 200_000, retailYears: 0)
+        let seasoned = realisticFounder(savings: 200_000, retailYears: 10)
+        let stake = job.targetCapital ?? 0
+
+        let greenOdds = job.founderSuccessProbability(for: green, investedCapital: stake)
+        XCTAssertGreaterThan(greenOdds, 0,
+                             "Experience must not gate a launch — capital is the only hard requirement.")
+        XCTAssertLessThan(greenOdds,
+                          job.founderSuccessProbability(for: seasoned, investedCapital: stake),
+                          "Turning up with no experience should cost real odds.")
+        XCTAssertTrue(job.allRequirementsMet(for: green) || job.isEntrepreneurial,
+                      "A venture is never closed by a requirement gate.")
+    }
+
+    /// With nothing to stake there is no launch — the one thing that does block.
+    func testNoCapitalIsTheOnlyHardBlocker() throws {
+        let job = try coffeeRoasteryJob()
+        let broke = realisticFounder(savings: 0, retailYears: 10)
+        broke.currentOccupation = nil   // no income, so no borrowing headroom either
+        XCTAssertEqual(broke.maxVentureStake, 0,
+                       "This test needs a founder with nothing to stake.")
+        XCTAssertFalse(broke.foundVenture(job, investedCapital: 0),
+                       "A venture with no capital behind it cannot be founded.")
     }
 
     /// Experience meaningfully moves the odds: a seasoned founder beats a
@@ -129,14 +153,19 @@ final class VentureLaunchTests: XCTestCase {
     }
 
     /// A failed founding loses the entire stake and never makes the player a
-    /// founder. Driving the odds to zero (no experience) guarantees the flop.
+    /// founder. Experience no longer gates a launch, so a flop can no longer be
+    /// forced by zeroing the odds — attempt a long shot until one flops instead.
     func testFailedFoundingLosesFullStakeAndStartsNoVenture() throws {
         let job = try coffeeRoasteryJob()
-        let player = realisticFounder(savings: 10_000, retailYears: 0)  // gated → certain failure
-        XCTAssertFalse(player.foundVenture(job, investedCapital: 4_000))
-        XCTAssertNil(player.currentOccupation, "A flop must not make the player a founder.")
-        XCTAssertEqual(player.savings, 10_000 - 4_000,
-                       "A failed founding loses the entire committed stake.")
+        for _ in 0..<200 {
+            let player = realisticFounder(savings: 10_000, retailYears: 0)
+            guard !player.foundVenture(job, investedCapital: 4_000) else { continue }
+            XCTAssertNil(player.currentOccupation, "A flop must not make the player a founder.")
+            XCTAssertEqual(player.savings, 10_000 - 4_000,
+                           "A failed founding loses the entire committed stake.")
+            return
+        }
+        XCTFail("An underfunded, inexperienced founding should flop at least once in 200 tries.")
     }
 
     // MARK: - Venture loans
@@ -171,10 +200,16 @@ final class VentureLaunchTests: XCTestCase {
     /// compounds at the venture-loan rate.
     func testLoanOutlivesAFailedLaunchAndAccruesInterest() throws {
         let job = try coffeeRoasteryJob()
-        let player = realisticFounder(savings: 10_000, retailYears: 0)  // gated → certain flop
+        // Experience no longer gates a launch, so retry until one actually flops.
+        var player = realisticFounder(savings: 10_000, retailYears: 0)
         player.currentOccupation = try dayJob(income: 50_000)
-
-        XCTAssertFalse(player.foundVenture(job, investedCapital: 110_000))
+        var flopped = player.foundVenture(job, investedCapital: 110_000) == false
+        for _ in 0..<200 where !flopped {
+            player = realisticFounder(savings: 10_000, retailYears: 0)
+            player.currentOccupation = try dayJob(income: 50_000)
+            flopped = player.foundVenture(job, investedCapital: 110_000) == false
+        }
+        XCTAssertTrue(flopped, "A long-shot founding should flop within 200 tries.")
         XCTAssertEqual(player.outstandingLoan, 100_000, "A flop doesn't erase the debt.")
 
         // Strip income and savings so the servicing is deterministic: with no

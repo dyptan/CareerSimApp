@@ -4,10 +4,11 @@ struct SkillsView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
+    @State private var financesExpanded: Bool = false
     @State private var softSkillsExpanded: Bool = false
     @State private var fameExpanded: Bool = false
-    @State private var hardSkillsExpanded: Bool = false
-    @State private var educationExpanded: Bool = false
+    @State private var credentialsExpanded: Bool = false
+    @State private var economyExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
 
     private var trainings: [Training] {
@@ -24,23 +25,133 @@ struct SkillsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
+                financesSection
+                Divider()
                 softSkillsSection
                 Divider()
                 fameSection
                 Divider()
-                // Hard skills (trainings: certs/licenses) don't apply in simplified mode.
-                if !player.isSimplified {
-                    hardSkillsSection
-                    Divider()
-                }
-                educationSection
+                credentialsSection
                 Divider()
                 experienceSection
+                // The economy is a realistic-mode mechanic; Simplified has none,
+                // so the section would be a list of "Steady" with nothing behind it.
+                if !player.isSimplified {
+                    Divider()
+                    economySection
+                }
             }
         }
     }
 
-    // MARK: - Personality
+    // MARK: - Finances
+
+    /// The money pillar, gathered in one place instead of scattered across the
+    /// header: what's in the bank, what comes in each year and how much of it is
+    /// actually banked, what's going out (tuition, loan interest), and the net
+    /// worth the leaderboard score is built on.
+    private var financesSection: some View {
+        DisclosureGroup(isExpanded: $financesExpanded) {
+            VStack(alignment: .leading, spacing: 4) {
+                moneyRow(
+                    "💰", "Savings", player.savings,
+                    hint: player.isSimplified
+                        ? "Everything you've earned so far. In Simplified mode you bank your whole paycheck."
+                        : "Everything you've banked so far. It compounds at \(pct(GameConstants.investmentReturn)) a year while it's in the black."
+                )
+
+                if let job = player.currentOccupation {
+                    moneyRow(
+                        "🧾", "Gross income", job.annualIncome, suffix: " / yr",
+                        hint: "What \(job.displayTitle) pays before tax and living costs."
+                    )
+                    if !player.isSimplified {
+                        moneyRow(
+                            "🏦", "Banked from pay", bankedFromPay(job), suffix: " / yr",
+                            hint: "You keep \(pct(player.difficulty.savingsRate)) of gross pay — the rest goes to tax and living costs. Lower-income households have to spend a bigger share just to get by."
+                        )
+                    }
+                } else {
+                    labelledRow("🧾", "Gross income", "Not working", hint: "No job, no pay. Open Careers to start applying.")
+                }
+
+                if !player.isSimplified,
+                   let edu = player.currentEducation,
+                   edu.profile != nil,
+                   (appUIState.yearsLeftToGraduation ?? 0) > 0 {
+                    moneyRow(
+                        "🎓", "Tuition", -edu.annualTuition, suffix: " / yr",
+                        hint: "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year while you're enrolled."
+                    )
+                }
+
+                if player.outstandingLoan > 0 {
+                    moneyRow(
+                        "📉", "Venture loan owed", -player.outstandingLoan,
+                        hint: "Borrowed to fund a venture. It accrues \(pct(GameConstants.ventureLoanAnnualInterest)) interest a year and is repaid automatically from savings until it's cleared."
+                    )
+                }
+
+                if player.studentLoan > 0 {
+                    moneyRow(
+                        "🎓", "Student loan owed", -player.studentLoan,
+                        hint: "Borrowed to pay tuition. It accrues \(pct(GameConstants.studentLoanAnnualInterest)) interest a year and is repaid from savings once you're earning."
+                    )
+                }
+
+                Divider()
+                moneyRow(
+                    "🏅", "Net worth", player.netWorth,
+                    hint: "Savings minus any outstanding venture or student loan. Divided by your age, this is your leaderboard score."
+                )
+            }
+            .padding(.top, 4)
+        } label: {
+            HStack {
+                Text("Finances").font(.headline)
+                Spacer()
+                // Net worth stays visible while collapsed — the number that matters.
+                Text("\(player.netWorth.formatted(.number)) $")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(player.netWorth < 0 ? .red : .secondary)
+            }
+        }
+    }
+
+    /// The share of this job's gross pay that actually reaches savings.
+    private func bankedFromPay(_ job: Job) -> Int {
+        Int((Double(job.annualIncome) * player.difficulty.savingsRate).rounded())
+    }
+
+    private func pct(_ value: Double) -> String {
+        "\(Int((value * 100).rounded()))%"
+    }
+
+    /// One money line: icon, label, info hint, and a right-aligned signed amount.
+    @ViewBuilder
+    private func moneyRow(_ icon: String, _ label: String, _ amount: Int, suffix: String = "", hint: String) -> some View {
+        labelledRow(
+            icon, label,
+            "\(amount.formatted(.number)) $\(suffix)",
+            tint: amount < 0 ? .red : nil,
+            hint: hint
+        )
+    }
+
+    @ViewBuilder
+    private func labelledRow(_ icon: String, _ label: String, _ value: String, tint: Color? = nil, hint: String) -> some View {
+        HStack {
+            Text(icon)
+            Text(label)
+            InfoHint(title: "\(icon) \(label)", message: hint)
+            Spacer()
+            Text(value)
+                .monospacedDigit()
+                .foregroundStyle(tint ?? .secondary)
+        }
+    }
+
+    // MARK: - Skills
 
     private var softSkillsSection: some View {
         DisclosureGroup(isExpanded: $softSkillsExpanded) {
@@ -69,7 +180,7 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Personality").font(.headline)
+            Text("Skills").font(.headline)
         }
     }
 
@@ -109,19 +220,38 @@ struct SkillsView: View {
         category.map { "\($0.icon) \($0.rawValue)" } ?? "🌐 General"
     }
 
-    // MARK: - Skills
+    // MARK: - Credentials
 
-    private var hardSkillsSection: some View {
-        DisclosureGroup(isExpanded: $hardSkillsExpanded) {
+    /// Everything the player formally *holds*: degrees, plus the trainings
+    /// (certificates and licences) that used to sit in their own "Skills"
+    /// section. They're the same kind of thing — a qualification you've earned
+    /// and keep — so they share one list, grouped by kind.
+    private var credentialsSection: some View {
+        DisclosureGroup(isExpanded: $credentialsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
-                if trainings.isEmpty {
-                    Text("No skills yet.")
+                if !hasAnyCredential {
+                    Text("No credentials yet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    hardSkillRow(title: "Trainings") {
-                        ForEach(trainings) { training in
-                            Text("\(training.friendlyName) \(training.pictogram)")
+                    if !player.degrees.isEmpty {
+                        credentialGroup(title: "Degrees") {
+                            ForEach(player.degrees, id: \.id) { degree in
+                                HStack {
+                                    Text(degree.pictogram)
+                                    Text(degree.degreeName)
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                    // Trainings don't apply in simplified mode, which is why the
+                    // group is conditional rather than just empty there.
+                    if showsTrainings {
+                        credentialGroup(title: "Certificates & licences") {
+                            ForEach(trainings) { training in
+                                Text("\(training.friendlyName) \(training.pictogram)")
+                            }
                         }
                     }
                 }
@@ -129,12 +259,22 @@ struct SkillsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 4)
         } label: {
-            Text("Skills").font(.headline)
+            Text("Credentials").font(.headline)
         }
     }
 
+    /// Trainings are a realistic-mode mechanic, so simplified runs never show
+    /// the group even if the set somehow isn't empty.
+    private var showsTrainings: Bool {
+        !player.isSimplified && !trainings.isEmpty
+    }
+
+    private var hasAnyCredential: Bool {
+        !player.degrees.isEmpty || showsTrainings
+    }
+
     @ViewBuilder
-    private func hardSkillRow<C: View>(title: String, @ViewBuilder content: () -> C) -> some View {
+    private func credentialGroup<C: View>(title: String, @ViewBuilder content: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.subheadline)
@@ -145,29 +285,125 @@ struct SkillsView: View {
         }
     }
 
-    // MARK: - Education
+    // MARK: - Macroeconomics
 
-    private var educationSection: some View {
-        DisclosureGroup(isExpanded: $educationExpanded) {
+    /// What each industry is doing this year. Every row here is load-bearing:
+    /// the climate multiplies hire odds, moves promotion odds (and freezes them
+    /// outright in a slump), and scales the odds a spare-time project in that
+    /// field lands. It is the one place a player can see *when* to apply, not
+    /// just where.
+    private var economySection: some View {
+        DisclosureGroup(isExpanded: $economyExpanded) {
             VStack(alignment: .leading, spacing: 4) {
-                if player.degrees.isEmpty {
-                    Text("No degrees yet.")
+                // The national cycle first: every sector below is this number
+                // times the sector's beta, plus whatever is happening to it alone.
+                HStack {
+                    Text(player.macroClimate.icon)
+                    Text("The economy")
+                    InfoHint(title: "The economy", message: macroSummary)
+                    Spacer()
+                    Text(player.macroClimate.rawValue)
+                        .foregroundStyle(climateTint(player.macroClimate))
+                }
+                .fontWeight(.semibold)
+
+                if player.economyInRecession {
+                    Text(player.turmoilYearsRemaining > 0
+                         ? "📉 Declared downturn — roughly \(player.turmoilYearsRemaining) more yr to run."
+                         : "📉 Declared downturn this year.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(player.degrees, id: \.id) { degree in
-                        HStack {
-                            Text(degree.pictogram)
-                            Text(degree.degreeName)
-                            Spacer()
-                        }
+                        .foregroundStyle(.orange)
+                }
+
+                Divider().padding(.vertical, 2)
+
+                ForEach(player.industriesByClimate, id: \.industry) { row in
+                    HStack {
+                        Text(row.industry.icon)
+                        Text(row.industry.rawValue)
+                        InfoHint(
+                            title: "\(row.industry.icon) \(row.industry.rawValue) — \(row.climate.rawValue)",
+                            message: industrySummary(row.industry, row.climate)
+                        )
+                        Spacer()
+                        Text(row.climate.rawValue)
+                            .foregroundStyle(climateTint(row.climate))
                     }
+                    // The player's own field is the row that actually decides
+                    // their year, so it reads as the heading it is.
+                    .fontWeight(row.industry == player.currentOccupation?.industry ? .bold : .regular)
                 }
             }
             .padding(.top, 4)
         } label: {
-            Text("Education").font(.headline)
+            HStack {
+                Text("Economy").font(.headline)
+                Spacer()
+                // The player's own industry stays visible while collapsed — the
+                // one climate that is affecting them right now.
+                if let sector = player.currentOccupation?.industry {
+                    let climate = player.climate(for: sector)
+                    Text("\(climate.icon) \(climate.rawValue)")
+                        .font(.subheadline)
+                        .foregroundStyle(climateTint(climate))
+                }
+            }
         }
+    }
+
+    /// How the national cycle reaches each sector — the model in two sentences,
+    /// since every row below is derived from it.
+    private var macroSummary: String {
+        """
+        \(player.macroClimate.blurb)
+
+        Every sector below is this cycle scaled by how much it transmits — a \
+        hotel chain amplifies it, a school district barely feels it — plus \
+        whatever is happening to that sector on its own account.
+
+        So a sector can be slumping in a good year, or booming through a bad one.
+        """
+    }
+
+    private func climateTint(_ climate: IndustryClimate) -> Color {
+        switch climate {
+        case .boom, .growth: return .green
+        case .steady:        return .secondary
+        case .slowdown:      return .orange
+        case .slump:         return .red
+        }
+    }
+
+    /// What this climate is doing to the player's odds in this industry, in the
+    /// terms the other hints use — multipliers on hiring, points on promotion.
+    private func industrySummary(_ industry: Industry, _ climate: IndustryClimate) -> String {
+        func signed(_ v: Double) -> String {
+            let p = Int((v * 100).rounded())
+            return p >= 0 ? "+\(p)%" : "\(p)%"
+        }
+        func times(_ v: Double) -> String { "×\(String(format: "%.2f", v))" }
+
+        var lines = [climate.blurb, ""]
+        lines.append("🎯 Hire odds here: \(times(climate.hireFactor))")
+        lines.append(climate.freezesRaises
+                     ? "⬆️ Raises: frozen while the field is contracting"
+                     : "⬆️ Promotion odds here: \(signed(climate.promotionDelta))")
+        lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
+
+        lines.append("")
+        if industry.beta > 1.0 {
+            lines.append("📊 Amplifies the economy (×\(String(format: "%.1f", industry.beta))) — a discretionary field, so it swings harder than the cycle both ways.")
+        } else if industry.beta < 1.0 {
+            lines.append("📊 Damps the economy (×\(String(format: "%.1f", industry.beta))) — a defensive field that rides out downturns better than most.")
+        } else {
+            lines.append("📊 Moves with the economy (×1.0).")
+        }
+        if industry.volatility > 1.0 {
+            lines.append("🎲 Also swings on its own account, cycle or no cycle.")
+        } else if industry.volatility < 1.0 {
+            lines.append("🎲 Little movement of its own — it mostly just follows the cycle.")
+        }
+        return lines.joined(separator: "\n")
     }
 
     // MARK: - Experience

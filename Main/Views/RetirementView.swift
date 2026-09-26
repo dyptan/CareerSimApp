@@ -10,7 +10,9 @@ struct RetirementView: View {
                 .font(.largeTitle.bold())
                 .padding(.top)
 
-            Text("You wrapped up your career at age \(player.age).")
+            Text(player.hasRetired
+                 ? "You reached \(GameConstants.retirementAge) — your career is over and this score is final."
+                 : "You wrapped up your career at age \(player.age).")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -19,9 +21,31 @@ struct RetirementView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("🏅 Score: \(player.leaderboardScore.formatted(.number)) (savings ÷ age)")
+            if player.outstandingLoan > 0 {
+                Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+            }
+
+            if player.studentLoan > 0 {
+                Text("🎓 Student loan owed: \(player.studentLoan.formatted(.number)) $")
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+            }
+
+            // The header no longer carries a running score, so this is the only
+            // place the formula is spelled out — hence the full arithmetic
+            // rather than a bare number. Debt counts against it, which is why
+            // the caption says net worth and not savings.
+            Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
                 .font(.subheadline.bold())
                 .foregroundStyle(.secondary)
+
+            Text("Your score is your net worth — savings minus any loans still owed — divided by your age. Building wealth younger scores higher.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Button {
                 player.reset()
@@ -36,14 +60,18 @@ struct RetirementView: View {
 
             // The sheet also opens from the header's finish-game control, so an
             // accidental visit needs a way back that isn't wiping the run —
-            // especially on macOS, where a sheet can't be swiped away.
-            Button {
-                appUIState.showRetirementSheet = false
-            } label: {
-                Text("Keep playing")
-                    .frame(maxWidth: .infinity)
+            // especially on macOS, where a sheet can't be swiped away. Once the
+            // horizon is reached there is no run left to go back to, so the way
+            // back is withheld rather than shown leading nowhere.
+            if !player.hasRetired {
+                Button {
+                    appUIState.showRetirementSheet = false
+                } label: {
+                    Text("Keep playing")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.bordered)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .center)

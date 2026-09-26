@@ -104,6 +104,44 @@ enum GameConstants {
     /// harsh downturn never makes a fold a certainty.
     static let ventureMaxFailureRisk: Double = 0.25
 
+    // MARK: - The business cycle
+    //
+    // The economy is one number — `Player.macroTrend`, the national cycle — plus
+    // one number per sector for whatever is happening to that sector alone.
+    // A sector's published trend is
+    //
+    //     trend = macroTrend × Industry.beta + idiosyncratic
+    //
+    // which is why a downturn can be brutal for hospitality (beta 1.6) and barely
+    // visible in government (beta 0.3), and why pharma can boom through a
+    // recession on its own pipeline (low beta, high volatility). Both halves are
+    // persistent random walks, so trends last several years rather than
+    // re-rolling from scratch.
+
+    /// Share of last year's national cycle that carries into this one.
+    static let macroTrendPersistence: Double = 0.80
+
+    /// Half-width of the national cycle's own yearly shock.
+    static let macroTrendShock: Double = 0.22
+
+    /// Share of last year's *sector-specific* deviation that carries over. Lower
+    /// than the macro figure: a company-level run of luck fades faster than an
+    /// economy-wide cycle.
+    static let industryTrendPersistence: Double = 0.65
+
+    /// Half-width of a sector's own yearly shock, before its `volatility`
+    /// scales it. This is the part of a sector's fortune that owes nothing to
+    /// the economy.
+    static let industryTrendShock: Double = 0.30
+
+    /// How hard a declared downturn drags the *national* cycle each year it runs.
+    /// Sectors feel it through their beta, not directly.
+    static let recessionDrag: Double = 0.55
+
+    /// Gentle pull back toward neutral in a calm economy, so a cycle that has run
+    /// hot for years cools on its own rather than staying booming forever.
+    static let industryMeanReversion: Double = 0.10
+
     /// C-suite scarcity: there are only a handful of executive seats, so landing
     /// one is competitive even for a qualified insider. Applied as a multiplier to
     /// the odds of being *hired into* or *promoted into* an executive (non-founder)
@@ -181,9 +219,25 @@ enum GameConstants {
     /// across all jobs. See `Player.advanceYear`.
     static let promotionRaise: ClosedRange<Double> = 0.06...0.18
 
-    /// Calm-economy annual probability that a job is lost involuntarily. Used as
-    /// the base layoff risk during a downturn (scaled by `Difficulty.layoffSeverity`).
-    /// Flat across all jobs. See
-    /// `Player.applyEconomicTurmoil`.
+    /// Base annual probability that a job is lost involuntarily, scaled by
+    /// `Difficulty.layoffSeverity`. Read only from `Player.applyEconomicTurmoil`,
+    /// which runs solely during a downturn — a calm year carries no layoff risk.
+    /// Flat across all jobs.
     static let baseLayoffRisk: Double = 0.08
+
+    /// Age at which a run ends and its score is final.
+    ///
+    /// This exists to bound the score. `Player.leaderboardScore` is net worth ÷
+    /// age, and savings compound at `investmentReturn` every year whether or not
+    /// the player works — so net worth grows geometrically while age grows
+    /// linearly. Past age 1/`investmentReturn` ≈ 17 that ratio rises every year
+    /// on its own: idling raised the score forever, and the best strategy was to
+    /// stop playing and hold **Skip**. A horizon caps the years available to
+    /// every run equally, so the score is decided by what a career achieved
+    /// inside a lifetime rather than by how long someone kept tapping.
+    ///
+    /// Note that capping passive growth instead would not have worked: any
+    /// positive return, employed or not, reproduces the same unbounded ratio.
+    /// Only a finite number of years closes it.
+    static let retirementAge: Int = 65
 }
