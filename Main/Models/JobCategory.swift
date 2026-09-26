@@ -178,7 +178,7 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
 
     /// Years that count toward this field: its own plus the industries it
     /// credits (see `creditedExperienceCategories`). The single definition —
-    /// `Player.industryExperience` and `CareerEvent.canPresent` both read it, so
+    /// `Player.industryExperience` and `Player.presentOdds` both read it, so
     /// a founder's years count the same way when applying for a Business role
     /// and when taking the stage at a Business event.
     func creditedYears(in experience: [JobCategory: Int]) -> Int {

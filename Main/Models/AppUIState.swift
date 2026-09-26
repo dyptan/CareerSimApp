@@ -37,9 +37,9 @@ final class AppUIState: ObservableObject {
     /// system) the player is attempting this year (see `SideHustleCatalog`).
     /// Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
-    /// Ids of the professional events the player is taking the stage at this
-    /// year (see `EventCatalog`). Network/soft-skill effects apply on selection;
-    /// presenter fame is banked — and picks cleared — by `Player.advanceYear`.
+    /// Ids of the professional events the player applied to take the stage at
+    /// this year (see `EventCatalog`). Attendance effects apply on selection;
+    /// the application is decided — and any fame banked — by `Player.advanceYear`.
     @Published var selectedEvents: Set<String> = []
     /// Sports the player is committing this year's spare-time slot to.
     /// Banked into `Player.sportYears` and cleared by `Player.advanceYear`.

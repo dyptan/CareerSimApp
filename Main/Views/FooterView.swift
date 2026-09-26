@@ -139,7 +139,8 @@ struct FooterView: View {
                 Button("Activities") { appUIState.showActivitiesSheet = true }
             }
 
-            if !player.isSimplified, !player.experience.isEmpty {
+            // Adults only; open calls mean there's always something to enter.
+            if EventCatalog.all.contains(where: player.canJoinEvent) {
                 Button("Events") { appUIState.showEventsSheet = true }
             }
 

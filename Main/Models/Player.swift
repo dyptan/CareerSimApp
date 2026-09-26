@@ -806,18 +806,49 @@ final class Player: ObservableObject {
 
     // MARK: - Professional events & network
 
-    /// Takes the stage at a professional event, applying its soft-skill nudges
-    /// and banking its network points in the event's industry. The fame award
-    /// presenting earns is deferred to `advanceYear` with the rest of the
-    /// year-end accounting.
-    func attendEvent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
-        guard !selectedEvents.contains(event.id) else { return }
-        // Taking the stage needs the veteran gate in this event's field
-        // (safety net; the view locks these rows too).
-        guard event.canPresent(with: experience) else { return }
-        selectedEvents.insert(event.id)
+    /// Whether the player works in, has worked in, or is studying toward
+    /// `category` — enough to get into its industry events.
+    func isInField(_ category: JobCategory, studyProfiles: [TertiaryProfile]) -> Bool {
+        if industryExperience(for: category) > 0 { return true }
+        if currentOccupation?.category == category { return true }
+        if let profile = currentEducation?.profile, studyProfiles.contains(profile) { return true }
+        return false
+    }
+
+    /// Whether the player may take part in `event` at all: an adult in a
+    /// realistic mode, in the event's field — or anyone, for an open call.
+    func canJoinEvent(_ event: CareerEvent) -> Bool {
+        guard !isSimplified, age >= GameConstants.minimumTertiaryAge else { return false }
+        return event.isOpenCall || isInField(event.category, studyProfiles: event.studyProfiles)
+    }
+
+    /// The chance an application to take `event`'s stage is accepted: years in
+    /// its field (full marks at `GameConstants.presenterExperienceYears`), how
+    /// well the player communicates, and the fame they already have there. A
+    /// newcomer is a long shot, a known veteran nearly always gets the slot.
+    func presentOdds(_ event: CareerEvent) -> Double {
+        let years = Double(industryExperience(for: event.category))
+        let seniority = min(years / Double(GameConstants.presenterExperienceYears), 1) * 0.50
+        let voice = min(Double(softSkills.communicationAndNetworking) / 8, 1) * 0.25
+        let fame = min(famePoints(for: event.category.fameCategory) * 0.05, 0.15)
+        return min(0.95, 0.05 + seniority + voice + fame)
+    }
+
+    /// Attends `event`: its soft-skill nudges and its network in the field.
+    /// Spends the year.
+    func attendEvent(_ event: CareerEvent) {
+        guard canJoinEvent(event) else { return }
         applySkillBoosts(event.abilities)
-        networkByCategory[event.category, default: 0] += event.networkPoints
+        networkByCategory[event.category, default: 0] += event.networkWeight
+    }
+
+    /// Applies to take `event`'s stage: the player attends either way (its
+    /// nudges and network land now), and the application is decided with the
+    /// rest of the year-end accounting in `advanceYear`. Spends the year.
+    func applyToPresent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
+        guard canJoinEvent(event), !selectedEvents.contains(event.id) else { return }
+        attendEvent(event)
+        selectedEvents.insert(event.id)
     }
 
     /// Years of work experience that count toward roles in `category`: the years
@@ -1051,13 +1082,19 @@ final class Player: ObservableObject {
         appUIState.selectedTrainings.removeAll()
 
         appUIState.selectedActivities.removeAll()
-        // Events applied their network/soft-skill effects when attended. Bank the
-        // fame award each presenter role earns, then clear this year's picks.
+        // Events applied their attendance effects when taken. Decide each
+        // application to take the stage: accepted, it banks the presenter's
+        // extra network and a fame award; turned down, the player attended.
         for id in appUIState.selectedEvents {
             guard let event = EventCatalog.byId[id] else { continue }
-            award(event.presenterFameTitle, icon: event.icon,
-                  category: event.category.fameCategory, weight: event.presenterFameWeight)
-            recordStatus("🎤", "Presented at \(event.name)")
+            if Double.random(in: 0...1) < presentOdds(event) {
+                networkByCategory[event.category, default: 0] += GameConstants.presenterNetworkBonus
+                award(event.presenterFameTitle, icon: event.icon,
+                      category: event.category.fameCategory, weight: event.presenterFameWeight)
+                recordStatus("🎤", "\(event.presenterPastLabel) at \(event.name)")
+            } else {
+                recordStatus("🎟️", "\(event.name) turned down your application — you attended instead")
+            }
         }
         appUIState.selectedEvents.removeAll()
 

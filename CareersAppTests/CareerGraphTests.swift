@@ -1902,3 +1902,53 @@ final class FamePaysTests: XCTestCase {
         XCTAssertTrue(titles.contains("Player"), "Team athletes keep their contracts.")
     }
 }
+
+/// Events work like real conferences: attend if you're in the field, apply to
+/// take the stage with odds rather than a years-in-the-field wall.
+final class EventAccessTests: XCTestCase {
+
+    private func adult(age: Int = 22) -> Player {
+        let p = Player()
+        p.difficulty = .middleClass
+        p.configureStart(age: age)
+        return p
+    }
+
+    /// Every field people work in has an event to network at.
+    func testEveryWorkingFieldHasAnEvent() {
+        let covered = Set(EventCatalog.all.map(\.category))
+        for category in JobCategory.allCases where category != .entrepreneurship {
+            XCTAssertTrue(covered.contains(category), "\(category.rawValue) has no event.")
+        }
+    }
+
+    /// Open calls are open to any adult; industry events to those in the field
+    /// — including students of it — and nothing is open before 18.
+    func testWhoCanTakePart() throws {
+        let casting = try XCTUnwrap(EventCatalog.byId["tv-casting"])
+        let congress = try XCTUnwrap(EventCatalog.byId["medical-congress"])
+
+        let outsider = adult()
+        XCTAssertTrue(outsider.canJoinEvent(casting), "Anyone can answer an open call.")
+        XCTAssertFalse(outsider.canJoinEvent(congress), "A medical congress is for people in health.")
+
+        let student = adult()
+        student.currentEducation = Education(.Bachelor, profile: .health, tier: .state)
+        XCTAssertTrue(student.canJoinEvent(congress), "A health student is in the field.")
+
+        let minor = adult(age: 17)
+        XCTAssertFalse(minor.canJoinEvent(casting), "Events are for adults.")
+    }
+
+    /// Taking the stage is an application, not a wall: a newcomer has a real
+    /// but small chance, and years in the field raise it.
+    func testPresentingIsOddsNotAGate() throws {
+        let summit = try XCTUnwrap(EventCatalog.byId["tech-summit"])
+        let rookie = adult()
+        rookie.experience[.technology] = 1
+        let veteran = adult()
+        veteran.experience[.technology] = 8
+        XCTAssertGreaterThan(rookie.presentOdds(summit), 0.04)
+        XCTAssertGreaterThan(veteran.presentOdds(summit), rookie.presentOdds(summit))
+    }
+}

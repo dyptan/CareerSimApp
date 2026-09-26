@@ -5,9 +5,9 @@ enum GameConstants {
     // sport, a course, an event, a project — spends the year on the spot, so
     // the "one slot" rule is enforced by the flow itself.
 
-    /// Years of same-industry work experience required to take the stage at one
-    /// of its events. You speak once you're an established name in the field.
-    /// See `CareerEvent.canPresent(with:)`.
+    /// Years in an event's field at which experience counts in full toward
+    /// being accepted to take its stage — a veteran is nearly always accepted,
+    /// a newcomer is a long shot. See `Player.presentOdds`.
     static let presenterExperienceYears: Int = 5
 
     /// Extra professional-network points taking the stage banks over the event's
