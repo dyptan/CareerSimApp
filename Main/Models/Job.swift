@@ -564,8 +564,11 @@ extension Job {
         // Weighted so that even a maxed-out founder lands around the
         // `founderMaxSuccess` ceiling — founding is a gamble, not a formality —
         // while weaker preparation falls away steeply below it.
-        let experience = founderExperienceFit(for: player) * 0.26   // up to +26%
-        let skill = founderSkillFit(for: player) * 0.20             // up to +20%
+        // Experience in the industry still leads — it's the strongest predictor
+        // of a founder's success in real life — but the skills a business runs
+        // on pull nearly level with it.
+        let experience = founderExperienceFit(for: player) * 0.22   // up to +22%
+        let skill = founderSkillFit(for: player) * 0.26             // up to +26%
         let capitalRatio = Double(investedCapital) / Double(target)
         let capital = min(capitalRatio, 1.0) * 0.09                 // up to +9%
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS

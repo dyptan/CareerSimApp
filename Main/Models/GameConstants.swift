@@ -39,6 +39,25 @@ enum GameConstants {
     /// Education menu stays hidden. Matches the age high school wraps up.
     static let minimumTertiaryAge: Int = 18
 
+    // MARK: - School grades
+
+    /// A high-school year's grade (US 4.0 scale) with no academic skill and no
+    /// studying — the bottom of the band. See `Player.yearGrade(studied:)`.
+    static let gradeFloor: Double = 2.0
+    /// What fully developed academic skills (analysis, care, discipline,
+    /// planning) add on top of `gradeFloor` without any extra study.
+    static let gradeSkillSpan: Double = 1.4
+    /// What spending the year on a Study activity adds. Skills alone top out at
+    /// 3.4 (a B+); only studying reaches a straight-A 4.0.
+    static let studyGradeBonus: Double = 0.6
+    /// Academic-skill level a high-schooler needs to score an axis in full.
+    static let gradeSkillReference: Int = 6
+
+    /// Fame points (the summed `fameWeight` of every trophy and accolade) at
+    /// which an application's accolades count in full — roughly a national
+    /// title plus a handful of local wins. See `Player.accoladeFit`.
+    static let accoladeReference: Double = 3.0
+
     /// Minimum age at which the entrepreneurial surface (founder ventures) opens
     /// up. Staking capital on a business is an adult play, so — like the
     /// Boardroom, which gates on holding an executive seat — Ventures stays
@@ -165,11 +184,16 @@ enum GameConstants {
     /// takes the band it is offered. See `Job.salaryIsNegotiable`.
     static let negotiableSalaryMinEQF: Int = 4
 
-    /// Base annual probability that an employer promotes the player, before the
-    /// player's promotion-readiness soft skills, tenure, and network scale it.
-    /// Flat across all jobs. See
-    /// `Player.promotionChance`.
-    static let promotionBaseChance: Double = 0.15
+    /// The annual promotion chance a flawless record earns on merit alone — top
+    /// performance in the role, fully ready for the next one, and seasoned —
+    /// before network, fame, education and the industry's climate move it.
+    /// See `Player.promotionOdds`.
+    static let promotionMeritChance: Double = 0.25
+    /// The share of `promotionMeritChance` even a thin record keeps: nobody's
+    /// odds are zero on merit, somebody always gets lucky.
+    static let promotionMeritFloor: Double = 0.2
+    /// Years in the role at which seniority counts in full.
+    static let promotionSeniorityYears: Int = 5
 
     // MARK: - Education's pull on the odds
     //

@@ -17,7 +17,7 @@ struct EventsView: View {
 
     var body: some View {
         VStack {
-            // No slot counter — see `HobbiesView`; an event that can't be taken
+            // No slot counter — see `ActivityListView`; an event that can't be taken
             // this year dims in place.
             Text("Take the stage to grow your reputation — unlocks once you're a veteran of the field")
                 .font(.caption)

@@ -154,6 +154,25 @@ struct Education: Codable, Hashable, Identifiable {
     /// How well the player's soft skills line up with what this school looks for,
     /// as 0...1 — the average of the per-axis overlap. A school that weighs no
     /// soft skills scores a flat 1.0.
+    /// The share of the admission fit high-school grades make up here: the
+    /// tier's weight for a first degree (vocational or bachelor's, applied to
+    /// straight from school), nothing for a graduate programme.
+    var gradeWeight: Double {
+        switch level {
+        case .Vocational, .Bachelor: return tier.gradeWeight
+        default:                     return 0
+        }
+    }
+
+    /// The share of the admission fit trophies and accolades make up here —
+    /// the tier's weight, at every level: a graduate school likes a prize-winner
+    /// as much as an undergraduate one does.
+    var accoladeWeight: Double { tier.accoladeWeight }
+
+    /// What's left of the admission fit for soft skills once grades and
+    /// accolades have taken their share.
+    var softSkillWeight: Double { 1 - gradeWeight - accoladeWeight }
+
     func softSkillFit(player: Player) -> Double {
         let overlap = softSkillOverlap(player: player)
         guard !overlap.isEmpty else { return 1.0 }
@@ -177,11 +196,20 @@ struct Education: Codable, Hashable, Identifiable {
     /// a coin flip and an elite one a reach. Applying costs the year either way
     /// (see `InstitutionTiersView`), so the floor has to be somewhere a player
     /// can afford to gamble from.
+    ///
+    /// The fit blends three things at the tier's weights: soft skills; for a
+    /// first degree, high-school grades (`gradeWeight` — graduate programmes
+    /// read the degree you hold instead); and trophies and accolades
+    /// (`accoladeWeight`). An elite school reads the transcript and the prize
+    /// list first; an open-door college barely reads either.
     func admissionProbability(player: Player) -> Double {
         guard meetsRequirements(player: player) else { return 0 }
 
+        let fit = softSkillWeight * softSkillFit(player: player)
+            + gradeWeight * player.academicFit
+            + accoladeWeight * player.accoladeFit
         let raw = tier.admissionFloor
-            + tier.admissionFitSpan * softSkillFit(player: player)
+            + tier.admissionFitSpan * fit
             + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
     }

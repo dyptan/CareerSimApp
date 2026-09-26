@@ -178,15 +178,12 @@ struct ExecutiveDecisionsView: View {
     }
 
     private func infoMessage(for decision: ExecutiveDecision) -> String {
-        let talents = decision.talents
-            .compactMap { SoftSkills.label(forKeyPath: $0 as PartialKeyPath<SoftSkills>) }
-            .joined(separator: ", ")
         switch decision.kind {
         case .investmentRound:
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
             let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
             return """
-            A gamble. ~\(odds)% to close this year, driven by your \(talents) and network — but above all by your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
+            A gamble. ~\(odds)% to close this year, driven by your pitch — 💬 Persuasion most of all, then vision, communication and leadership (worth +\(Int((player.investmentRoundSkillFit() * 40).rounded()))% of up to +40% right now) — your network, and above all your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
 
             Success realises a raise worth up to \(player.investmentRoundProjectedRaise().formatted(.number)) $ as equity liquidity, banks more business fame, and sharpens your vision and persuasion. Failure costs only the year's effort.
             """

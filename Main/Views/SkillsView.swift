@@ -4,9 +4,11 @@ struct SkillsView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
+    @State private var occupationExpanded: Bool = false
     @State private var financesExpanded: Bool = false
     @State private var softSkillsExpanded: Bool = false
     @State private var fameExpanded: Bool = false
+    @State private var trophiesExpanded: Bool = false
     @State private var credentialsExpanded: Bool = false
     @State private var economyExpanded: Bool = false
     @State private var experienceExpanded: Bool = false
@@ -22,26 +24,207 @@ struct SkillsView: View {
             .sorted { $0.years > $1.years }
     }
 
+    /// The stat panels, in display order.
+    private enum Section: CaseIterable {
+        case occupation, finances, skills, fame, trophies, credentials, experience, economy
+    }
+
+    /// A section appears only once it has something to show — an empty panel
+    /// is chrome the player has to read past, and a section turning up (the
+    /// first trophy, the first credential) doubles as news.
+    private func hasContent(_ section: Section) -> Bool {
+        switch section {
+        case .occupation:
+            return player.currentOccupation != nil || player.currentEducation != nil
+        case .finances:
+            return player.savings != 0
+                || player.currentOccupation != nil
+                || player.outstandingLoan > 0
+                || player.studentLoan > 0
+                || showsTuition
+        case .skills:
+            return SoftSkills.skillNames.contains { player.softSkills[keyPath: $0.keyPath] > 0 }
+        case .fame:
+            return !player.fameAwards.isEmpty
+        case .trophies:
+            return !trophies.isEmpty
+        case .credentials:
+            return hasAnyCredential
+        case .experience:
+            return !experienceEntries.isEmpty
+        case .economy:
+            // A realistic-mode mechanic; Simplified has no economy, so the
+            // section would be a list of "Steady" with nothing behind it.
+            return !player.isSimplified
+        }
+    }
+
+    private var visibleSections: [Section] {
+        Section.allCases.filter(hasContent)
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                financesSection
-                Divider()
-                softSkillsSection
-                Divider()
-                fameSection
-                Divider()
-                credentialsSection
-                Divider()
-                experienceSection
-                // The economy is a realistic-mode mechanic; Simplified has none,
-                // so the section would be a list of "Steady" with nothing behind it.
-                if !player.isSimplified {
-                    Divider()
-                    economySection
+                ForEach(Array(visibleSections.enumerated()), id: \.element) { index, section in
+                    if index > 0 { Divider() }
+                    view(for: section)
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func view(for section: Section) -> some View {
+        switch section {
+        case .occupation:  occupationSection
+        case .finances:    financesSection
+        case .skills:      softSkillsSection
+        case .fame:        fameSection
+        case .trophies:    trophiesSection
+        case .credentials: credentialsSection
+        case .experience:  experienceSection
+        case .economy:     economySection
+        }
+    }
+
+    // MARK: - Occupation
+
+    /// What the player is doing with their years right now — the job held and
+    /// the course enrolled on — with the facts that decide how that goes: the
+    /// employer's industry and its climate, tenure, and the odds of a promotion.
+    /// Pay and tuition stay in Finances, so money has one home.
+    private var occupationSection: some View {
+        DisclosureGroup(isExpanded: $occupationExpanded) {
+            VStack(alignment: .leading, spacing: 4) {
+                if let job = player.currentOccupation {
+                    currentJobRows(job)
+                }
+
+                if let studying = player.currentEducation {
+                    if player.currentOccupation != nil {
+                        Divider().padding(.vertical, 2)
+                    }
+                    HStack {
+                        Text(studying.pictogram)
+                        Text(studying.degreeName)
+                        Spacer()
+                        if let yearsLeft = appUIState.yearsLeftToGraduation, yearsLeft > 0 {
+                            Text("\(yearsLeft) yr\(yearsLeft == 1 ? "" : "s") left")
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .fontWeight(.semibold)
+
+                    // The transcript universities will read — shown once the
+                    // first high-school year is on record.
+                    if studying.level == .HighSchool, !player.highSchoolGrades.isEmpty {
+                        labelledRow(
+                            "📝", "Grade average", gpaLabel,
+                            hint: "Your high-school GPA so far, averaged over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). Academic skills set each year's grade; a year spent on a Study activity lifts it. Universities weigh it at admission — up to half the decision at an elite school."
+                        )
+                    }
+                }
+            }
+            .padding(.top, 4)
+        } label: {
+            HStack {
+                Text("Occupation").font(.headline)
+                Spacer()
+                // What you are, visible while collapsed: the job if you have
+                // one, otherwise what you're studying.
+                Text(occupationHeadline)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+        }
+    }
+
+    /// "3.4 (B+)" — the high-school GPA with its letter.
+    private var gpaLabel: String {
+        let gpa = player.highSchoolGPA
+        return "\(Player.formatGPA(gpa)) (\(Player.letterGrade(gpa)))"
+    }
+
+    private var occupationHeadline: String {
+        if let job = player.currentOccupation {
+            return "\(job.icon) \(job.displayTitle)"
+        }
+        return "\(player.currentEducation?.pictogram ?? "") Student"
+    }
+
+    @ViewBuilder
+    private func currentJobRows(_ job: Job) -> some View {
+        HStack {
+            Text(job.icon)
+            Text(job.displayTitle)
+            Spacer()
+        }
+        .fontWeight(.semibold)
+
+        // The economy is a realistic-mode mechanic, so Simplified has no
+        // climate to show — and the sector alone decides nothing there.
+        if !player.isSimplified {
+            let climate = player.climate(for: job.industry)
+            HStack {
+                Text(job.industry.icon)
+                Text(job.industry.rawValue)
+                InfoHint(
+                    title: "\(job.industry.icon) \(job.industry.rawValue) — \(climate.rawValue)",
+                    message: industrySummary(job.industry, climate)
+                )
+                Spacer()
+                Text("\(climate.icon) \(climate.rawValue)")
+                    .foregroundStyle(climateTint(climate))
+            }
+        }
+
+        let tenure = player.experienceByRole[job.baseTitle, default: 0]
+        labelledRow(
+            "🧭", "In this role", "\(tenure) yr\(tenure == 1 ? "" : "s")",
+            hint: "Years spent as \(job.baseTitle). Seniority counts toward promotion — how much depends on the industry — and toward roles that ask for experience in this line of work."
+        )
+
+        // Promotions are a realistic-mode mechanic only.
+        if !player.isSimplified {
+            let odds = player.promotionOdds(for: job)
+            labelledRow(
+                "⬆️", "Promotion odds",
+                odds.promotes ? pct(odds.total) : "—",
+                hint: promotionOddsSummary(for: job)
+            )
+            // The role above, and how ready the player is for it — the row that
+            // says which skill to build next.
+            if odds.promotes, let next = odds.nextRole {
+                labelledRow(
+                    "🎯", "Ready for \(next.displayTitle)", pct(odds.readiness),
+                    hint: readinessHint(for: next)
+                )
+            }
+        }
+    }
+
+    /// What the next rung asks for that the player doesn't have yet.
+    private func readinessHint(for next: Job) -> String {
+        let required = next.requirements.softSkills
+        let gaps = next.askedSoftSkills
+            .filter { player.softSkills[keyPath: $0] < required[keyPath: $0] }
+            .map { kp -> String in
+                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: kp) ?? ""
+                return "\(pic) \(label): you have \(player.softSkills[keyPath: kp]), it asks for \(required[keyPath: kp])"
+            }
+        guard !gaps.isEmpty else {
+            return "You already have every skill \(next.displayTitle) asks for — readiness counts in full toward your promotion."
+        }
+        return """
+        How well your skills match what \(next.displayTitle) asks for. Employers promote people who can already do the job above, so closing these gaps raises your promotion odds:
+
+        \(gaps.joined(separator: "\n"))
+        """
     }
 
     // MARK: - Finances
@@ -75,10 +258,7 @@ struct SkillsView: View {
                     labelledRow("🧾", "Gross income", "Not working", hint: "No job, no pay. Open Careers to start applying.")
                 }
 
-                if !player.isSimplified,
-                   let edu = player.currentEducation,
-                   edu.profile != nil,
-                   (appUIState.yearsLeftToGraduation ?? 0) > 0 {
+                if showsTuition, let edu = player.currentEducation {
                     moneyRow(
                         "🎓", "Tuition", -edu.annualTuition, suffix: " / yr",
                         hint: "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year while you're enrolled."
@@ -116,6 +296,14 @@ struct SkillsView: View {
                     .foregroundStyle(player.netWorth < 0 ? .red : .secondary)
             }
         }
+    }
+
+    /// Whether a tuition bill is running this year: a paid course (one with an
+    /// institution profile) still in progress. Realistic mode only.
+    private var showsTuition: Bool {
+        !player.isSimplified
+            && player.currentEducation?.profile != nil
+            && (appUIState.yearsLeftToGraduation ?? 0) > 0
     }
 
     /// The share of this job's gross pay that actually reaches savings.
@@ -193,19 +381,13 @@ struct SkillsView: View {
     private var fameSection: some View {
         DisclosureGroup(isExpanded: $fameExpanded) {
             VStack(alignment: .leading, spacing: 4) {
-                if player.fameAwards.isEmpty {
-                    Text("No fame yet — win a competition or ship a standout project.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(player.fameByCategory, id: \.category) { group in
-                        HStack {
-                            Text(fameCategoryLabel(group.category))
-                            Spacer()
-                            Text("🌟 \(String(format: "%.1f", group.score))")
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                        }
+                ForEach(player.fameByCategory, id: \.category) { group in
+                    HStack {
+                        Text(fameCategoryLabel(group.category))
+                        Spacer()
+                        Text("🌟 \(String(format: "%.1f", group.score))")
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -220,6 +402,43 @@ struct SkillsView: View {
         category.map { "\($0.icon) \($0.rawValue)" } ?? "🌐 General"
     }
 
+    // MARK: - Trophies
+
+    /// The fame-shelf entries that came from winning a competition.
+    private var trophies: [FameAward] {
+        player.fameAwards.filter { CompetitionCatalog.achievementTitles.contains($0.title) }
+    }
+
+    /// Every competition title won, repeat wins shown as a count. The same
+    /// trophies also bank fame in their field, which the Fame section totals.
+    private var trophiesSection: some View {
+        DisclosureGroup(isExpanded: $trophiesExpanded) {
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(trophies) { trophy in
+                    HStack {
+                        Text(trophy.icon)
+                        Text(trophy.title)
+                        Spacer()
+                        if trophy.count > 1 {
+                            Text("×\(trophy.count)")
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .padding(.top, 4)
+        } label: {
+            HStack {
+                Text("Trophies").font(.headline)
+                Spacer()
+                Text("🏆 \(trophies.reduce(0) { $0 + $1.count })")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     // MARK: - Credentials
 
     /// Everything the player formally *holds*: degrees, plus the trainings
@@ -229,29 +448,29 @@ struct SkillsView: View {
     private var credentialsSection: some View {
         DisclosureGroup(isExpanded: $credentialsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
-                if !hasAnyCredential {
-                    Text("No credentials yet.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    if !player.degrees.isEmpty {
-                        credentialGroup(title: "Degrees") {
-                            ForEach(player.degrees, id: \.id) { degree in
-                                HStack {
-                                    Text(degree.pictogram)
-                                    Text(degree.degreeName)
-                                    Spacer()
+                if !player.degrees.isEmpty {
+                    credentialGroup(title: "Degrees") {
+                        ForEach(player.degrees, id: \.id) { degree in
+                            HStack {
+                                Text(degree.pictogram)
+                                Text(degree.degreeName)
+                                Spacer()
+                                // The diploma carries the GPA universities read.
+                                if degree.level == .HighSchool {
+                                    Text("GPA \(gpaLabel)")
+                                        .monospacedDigit()
+                                        .foregroundStyle(.secondary)
                                 }
                             }
                         }
                     }
-                    // Trainings don't apply in simplified mode, which is why the
-                    // group is conditional rather than just empty there.
-                    if showsTrainings {
-                        credentialGroup(title: "Certificates & licences") {
-                            ForEach(trainings) { training in
-                                Text("\(training.friendlyName) \(training.pictogram)")
-                            }
+                }
+                // Trainings don't apply in simplified mode, which is why the
+                // group is conditional rather than just empty there.
+                if showsTrainings {
+                    credentialGroup(title: "Certificates & licences") {
+                        ForEach(trainings) { training in
+                            Text("\(training.friendlyName) \(training.pictogram)")
                         }
                     }
                 }
@@ -272,6 +491,7 @@ struct SkillsView: View {
     private var hasAnyCredential: Bool {
         !player.degrees.isEmpty || showsTrainings
     }
+
 
     @ViewBuilder
     private func credentialGroup<C: View>(title: String, @ViewBuilder content: () -> C) -> some View {
@@ -411,20 +631,14 @@ struct SkillsView: View {
     private var experienceSection: some View {
         DisclosureGroup(isExpanded: $experienceExpanded) {
             VStack(alignment: .leading, spacing: 4) {
-                if experienceEntries.isEmpty {
-                    Text("No experience yet.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(experienceEntries, id: \.role) { entry in
-                        HStack {
-                            Text(roleIcon(entry.role))
-                            Text(entry.role)
-                            Spacer()
-                            Text("\(entry.years) yr\(entry.years == 1 ? "" : "s")")
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                        }
+                ForEach(experienceEntries, id: \.role) { entry in
+                    HStack {
+                        Text(roleIcon(entry.role))
+                        Text(entry.role)
+                        Spacer()
+                        Text("\(entry.years) yr\(entry.years == 1 ? "" : "s")")
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -432,6 +646,43 @@ struct SkillsView: View {
         } label: {
             Text("Experience").font(.headline)
         }
+    }
+
+    /// Plain-text breakdown of this year's promotion odds for the current job,
+    /// mirroring the hire-probability InfoHint: the industry-weighted merit terms
+    /// first, then the modifiers.
+    private func promotionOddsSummary(for job: Job) -> String {
+        let odds = player.promotionOdds(for: job)
+        guard odds.promotes else {
+            return "This role doesn't offer in-place promotions — unskilled work rarely comes with a raise-and-title bump. Climb by applying to a higher role instead."
+        }
+        func signed(_ v: Double) -> String {
+            let s = Int((v * 100).rounded())
+            return s >= 0 ? "+\(s)%" : "\(s)%"
+        }
+        let c = odds.culture
+        let readinessLine = odds.nextRole.map {
+            "Readiness for \($0.displayTitle): \(pct(odds.readiness)) — weighs \(pct(c.readiness))"
+        } ?? "Readiness: top of the ladder, judged on the job you do — weighs \(pct(c.readiness))"
+        return """
+        Each year in a skilled role you get a shot at a raise and title bump. \(job.industry.promotionCultureBlurb)
+
+        Merit — \(pct(odds.merit)):
+        • Performance in the role: \(pct(odds.performance)) — weighs \(pct(c.performance))
+        • \(readinessLine)
+        • Seniority (\(odds.tenureYears) of \(GameConstants.promotionSeniorityYears) yr): \(pct(odds.seniority)) — weighs \(pct(c.seniority))
+
+        Then:
+        • Network (\(job.category.rawValue)): \(signed(odds.network))
+        • Fame (\(job.category.rawValue)): \(signed(odds.fame))
+        • Education vs. what the role expects: \(signed(odds.education))
+        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): \(signed(odds.climate.promotionDelta))
+        Total: \(pct(odds.total))
+
+        \(odds.climate.freezesRaises
+          ? "Raises are frozen while \(job.industry.rawValue) is contracting — see Economy."
+          : "Your industry's climate moves these odds every year — see Economy.")
+        """
     }
 
     /// The pictogram for an experience role — its own industry icon, falling back

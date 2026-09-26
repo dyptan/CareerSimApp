@@ -219,12 +219,12 @@ final class Player: ObservableObject {
     }
 
     /// Size of last year's promotion raise as a whole-number percent (0 when the
-    /// player wasn't promoted). Surfaced in the header alongside the confetti.
+    /// player wasn't promoted). Quoted in the pop-up and the status log.
     @Published var lastPromotionRaisePct: Int = 0
 
     /// One-shot trigger for the promotion congratulations pop-up, set the moment a
-    /// raise is earned; the alert clears it when dismissed (the header note,
-    /// driven by `lastPromotionRaisePct`, lingers for the rest of the year).
+    /// raise is earned; the alert clears it when dismissed (the status log
+    /// keeps the milestone afterward).
     @Published var showPromotionAlert: Bool = false
 
     /// The promotion pop-up's message, capturing the raise and the new pay.
@@ -243,16 +243,88 @@ final class Player: ObservableObject {
     /// opens up is discoverable in the Education and Jobs sheets — the pop-up
     /// just marks the moment.
     func graduationMessage(for degree: Education) -> String {
-        "Congratulations! You completed your \(degree.degreeName)."
+        if degree.level == .HighSchool {
+            let gpa = highSchoolGPA
+            return "Congratulations! You graduated from High School with a \(Player.formatGPA(gpa)) GPA (\(Player.letterGrade(gpa)))."
+        }
+        return "Congratulations! You completed your \(degree.degreeName)."
+    }
+
+    // MARK: - School grades
+
+    /// The grade earned in each high-school year completed, on the US 4.0
+    /// scale. Recorded by `advanceYear`; averaged into `highSchoolGPA`, which
+    /// universities weigh at admission (see `Education.admissionProbability`).
+    @Published var highSchoolGrades: [Double] = []
+
+    /// The skills schoolwork runs on: working problems out, getting details
+    /// right, sticking at it, and planning the load.
+    static let academicAxes: [WritableKeyPath<SoftSkills, Int>] = [
+        \.analyticalReasoningAndProblemSolving,
+        \.carefulnessAndAttentionToDetail,
+        \.selfDisciplineAndPerseverance,
+        \.timeManagementAndPlanning,
+    ]
+
+    /// This year's grade: the academic skills set the band, and a year spent on
+    /// a Study activity lifts it. Skills alone top out at a B+; a straight A
+    /// takes both.
+    func yearGrade(studied: Bool) -> Double {
+        let reference = Double(GameConstants.gradeSkillReference)
+        let fit = Player.academicAxes.reduce(0.0) { acc, kp in
+            acc + min(Double(softSkills[keyPath: kp]) / reference, 1.0)
+        } / Double(Player.academicAxes.count)
+        let grade = GameConstants.gradeFloor
+            + GameConstants.gradeSkillSpan * fit
+            + (studied ? GameConstants.studyGradeBonus : 0)
+        return min(4.0, grade)
+    }
+
+    /// The high-school grade point average. A player who started the game past
+    /// high school has no recorded years, so their record is read off the
+    /// skills they arrived with — the grade those skills earn without extra study.
+    var highSchoolGPA: Double {
+        guard !highSchoolGrades.isEmpty else { return yearGrade(studied: false) }
+        return highSchoolGrades.reduce(0, +) / Double(highSchoolGrades.count)
+    }
+
+    /// The GPA as 0...1 for admission: a C average (2.0) counts for nothing, a
+    /// straight-A 4.0 for everything.
+    var academicFit: Double {
+        max(0, min(1, (highSchoolGPA - GameConstants.gradeFloor) / (4.0 - GameConstants.gradeFloor)))
+    }
+
+    /// Trophies and accolades as 0...1 for admission: the fame shelf's total
+    /// weight against `GameConstants.accoladeReference`, so an olympiad medal
+    /// counts for more than a sports-day ribbon.
+    var accoladeFit: Double {
+        min(1, fameScore / GameConstants.accoladeReference)
+    }
+
+    static func formatGPA(_ gpa: Double) -> String {
+        String(format: "%.1f", gpa)
+    }
+
+    /// The familiar letter for a GPA, for players who think in grades.
+    static func letterGrade(_ gpa: Double) -> String {
+        switch gpa {
+        case 3.85...:     return "A"
+        case 3.5..<3.85:  return "A-"
+        case 3.15..<3.5:  return "B+"
+        case 2.85..<3.15: return "B"
+        case 2.5..<2.85:  return "B-"
+        case 2.15..<2.5:  return "C+"
+        case 1.85..<2.15: return "C"
+        default:          return "D"
+        }
     }
 
     /// Whether a downturn cost the player their job in the year just advanced.
-    /// Drives the header layoff notice so a sudden firing doesn't go unnoticed.
     @Published var lostJobThisYear: Bool = false
 
     /// One-shot trigger for the layoff pop-up. Set the moment a downturn fires
-    /// the player; the alert clears it when dismissed (the header note, driven
-    /// by `lostJobThisYear`, lingers for the rest of the year as a reminder).
+    /// the player; the alert clears it when dismissed (the status log keeps a
+    /// "Laid off" line as the reminder).
     @Published var showLayoffAlert: Bool = false
 
     /// One-shot trigger for the venture-failure pop-up. Set the year a running
@@ -462,6 +534,11 @@ final class Player: ObservableObject {
     /// competition sport gate (a sport must have ≥1 year for its tagged
     /// competitions to appear) and the `sportFit` bonus inside `winProbability`.
     @Published var sportYears: [Sport: Int] = [:]
+
+    /// The disciplines practised in the year just advanced. The Activities rows
+    /// only reveal their contest details (the 🏆 button) for these — a player
+    /// who kept at something last year gets to see what it's building toward.
+    @Published var lastYearSports: Set<Sport> = []
     /// Executive decisions (see `ExecutiveDecision`) taken this year, by id.
     /// Cleared by `advanceYear`.
     @Published var executiveActionsThisYear: Set<String> = []
@@ -551,7 +628,7 @@ final class Player: ObservableObject {
     // MARK: - Soft-skill boosts
 
     /// Applies a selection's soft-skill boosts, clamped at the 10-point cap —
-    /// the single home of that rule for hobbies, sports, events, and trainings.
+    /// the single home of that rule for activities, events, and trainings.
     /// Taking an activity commits the year on the spot (the sheet closes and
     /// the year runs), so there is no toggle-off path to reverse.
     private func applySkillBoosts(_ boosts: [WeightedAbility]) {
@@ -560,17 +637,10 @@ final class Player: ObservableObject {
         }
     }
 
-    // MARK: - Hobby selection
+    // MARK: - Activity selection
 
-    func selectHobby(_ hobby: Hobby, into selectedActivities: inout Set<String>) {
-        selectedActivities.insert(hobby.label)
-        applySkillBoosts(hobby.abilities)
-    }
-
-    // MARK: - Sport selection
-
-    /// Commits the year's spare-time slot to training in `sport`. Mirrors
-    /// `selectHobby`: bumps the sport's soft skills now and registers it in
+    /// Commits the year's spare-time slot to practising `sport` (any Activities
+    /// discipline): bumps its soft skills now and registers it in
     /// `selectedActivities` (slot accounting) plus `selectedSports`
     /// (type-safe selection). Year-end (`advanceYear`) banks the year into
     /// `sportYears` for the unlocked-competition gate and the win-odds bonus.
@@ -676,37 +746,28 @@ final class Player: ObservableObject {
 
     // MARK: - Promotion
 
-    /// Soft-skill axes an employer weighs when deciding to promote you.
-    private static let promotionSkills: [WritableKeyPath<SoftSkills, Int>] = [
-        \.leadershipAndInfluence,
-        \.communicationAndNetworking,
-        \.visionaryThinkingAndAmbition,
-        \.persuasionAndNegotiation,
-        \.selfDisciplineAndPerseverance,
-        \.collaborationAndTeamwork,
-    ]
-    /// Skill level at which a promotion axis is a perfect fit (caps its share).
-    private static let promotionSkillReference = 6
-
-    /// 0...1 promotion readiness from the player's career-advancement soft skills.
-    private var promotionReadiness: Double {
-        let total = Player.promotionSkills.reduce(0.0) { acc, kp in
-            acc + min(Double(softSkills[keyPath: kp]) / Double(Player.promotionSkillReference), 1.0)
-        }
-        return total / Double(Player.promotionSkills.count)
-    }
-
     /// The per-term breakdown behind `promotionChance`, so the UI can explain the
     /// odds the same way the hire-probability InfoHint does. `promotes` is false
     /// for unskilled roles that never promote in place (all other terms zero).
     struct PromotionOdds {
         let promotes: Bool
-        /// Readiness-scaled base chance (soft skills).
-        let readinessBase: Double
+        /// 0...1: skill fit for the role held — how well you do the job.
+        let performance: Double
+        /// 0...1: skill fit for the next rung — how ready you are for the job
+        /// above. Equal to `performance` at the top of a ladder, where a raise is
+        /// judged on the job you already do.
+        let readiness: Double
+        /// 0...1: time in the role against `GameConstants.promotionSeniorityYears`.
+        let seniority: Double
+        let tenureYears: Int
+        /// The rung above, when the ladder has one.
+        let nextRole: Job?
+        /// The industry's weights for the three merit terms.
+        let culture: (performance: Double, readiness: Double, seniority: Double)
+        /// The merit terms, weighted by the industry and scaled into a chance.
+        let merit: Double
         let network: Double
         let fame: Double
-        let tenure: Double
-        let tenureYears: Int
         /// The industry's climate this year, whose `promotionDelta` is folded
         /// into `total` (and which zeroes it outright in a slump).
         let climate: IndustryClimate
@@ -716,25 +777,44 @@ final class Player: ObservableObject {
         let total: Double
     }
 
+    /// The next rung of `job`'s ladder in this year's postings, if it has one.
+    /// Requirements aren't checked — this is the role the player is measured
+    /// against, not a guarantee they can step into it.
+    func nextRung(after job: Job) -> Job? {
+        availableJobs.first { $0.baseTitle == job.baseTitle && $0.rung == job.rung + 1 }
+    }
+
     /// Full breakdown of the annual promotion odds for `job`. Single source of
-    /// truth for both `promotionChance` and the header InfoHint.
+    /// truth for both `promotionChance` and the Occupation section's hint.
+    ///
+    /// Merit is three things, weighted the way the job's industry weighs them
+    /// (`Industry.promotionCulture`): **performance** in the role held (skill fit
+    /// for it), **readiness** for the next rung (skill fit for the role above —
+    /// where the leadership and planning a ladder adds begin to count), and
+    /// **seniority**. A civil servant climbs mostly on years served; a
+    /// consultant mostly on already working at the next level.
     func promotionOdds(for job: Job) -> PromotionOdds {
+        let culture = job.industry.promotionCulture
+        let climate = self.climate(for: job.industry)
+        let years = experienceByRole[job.baseTitle, default: 0]
         // Unskilled jobs don't promote in place — in real life a raise-and-title
         // bump rarely lands in work needing no post-secondary training; the
         // player advances by applying upward instead.
         guard !job.isLowSkilled else {
-            return PromotionOdds(promotes: false, readinessBase: 0, network: 0,
-                                 fame: 0, tenure: 0, tenureYears: 0,
-                                 climate: climate(for: job.industry), education: 0, total: 0)
+            return PromotionOdds(promotes: false, performance: 0, readiness: 0, seniority: 0,
+                                 tenureYears: years, nextRole: nil, culture: culture, merit: 0,
+                                 network: 0, fame: 0, climate: climate, education: 0, total: 0)
         }
-        let base = GameConstants.promotionBaseChance
-        // Base chance scaled by promotion readiness (40%–100% of the base, so
-        // soft skills move the odds).
-        let core = base * (0.4 + 0.6 * promotionReadiness)
-        // Tenure in the current role makes a promotion more likely — seasoned
-        // employees are next in line — with diminishing returns (capped +0.10).
-        let years = experienceByRole[job.baseTitle, default: 0]
-        let tenureBoost = min(0.10, Double(years) * 0.02)
+        let next = nextRung(after: job)
+        let performance = job.softSkillFit(for: self)
+        let readiness = next?.softSkillFit(for: self) ?? performance
+        let seniority = min(1.0, Double(years) / Double(GameConstants.promotionSeniorityYears))
+        let weighted = culture.performance * performance
+            + culture.readiness * readiness
+            + culture.seniority * seniority
+        let floor = GameConstants.promotionMeritFloor
+        let merit = GameConstants.promotionMeritChance * (floor + (1 - floor) * weighted)
+
         let network = networkPromotionBonus(for: job.category)
         let fame = famePromotionBonus(for: job.category)
         // Formal education against what the role expects. Being hired without
@@ -744,23 +824,18 @@ final class Player: ObservableObject {
         // What the industry is doing. A contracting field freezes raises outright
         // — which is what the blanket recession freeze used to do to every field
         // at once, now scoped to the industries actually in trouble.
-        let climate = self.climate(for: job.industry)
-        let frozen = climate.freezesRaises
-        let total = frozen
+        let total = climate.freezesRaises
             ? 0
-            : max(0, min(1.0, core + network + fame + tenureBoost + education + climate.promotionDelta))
-        return PromotionOdds(promotes: true, readinessBase: core, network: network,
-                             fame: fame, tenure: tenureBoost, tenureYears: years,
+            : max(0, min(1.0, merit + network + fame + education + climate.promotionDelta))
+        return PromotionOdds(promotes: true, performance: performance, readiness: readiness,
+                             seniority: seniority, tenureYears: years, nextRole: next,
+                             culture: culture, merit: merit, network: network, fame: fame,
                              climate: climate, education: education, total: total)
     }
 
-    /// Annual promotion probability for a job: a flat base chance
-    /// (`GameConstants.promotionBaseChance`) scaled by promotion readiness
-    /// (40%–100% of the base, so soft skills move the odds), plus a
-    /// professional-network bonus for the job's industry — attending that
-    /// field's summits and conferences makes a raise more likely — a significant
-    /// fame bonus for reputation built in the field, and a tenure bonus for years
-    /// already spent in the role.
+    /// Annual promotion probability for a job — see `promotionOdds` for the
+    /// terms: industry-weighted merit (performance, readiness for the next rung,
+    /// seniority), plus network, fame, education and the industry's climate.
     func promotionChance(for job: Job) -> Double {
         promotionOdds(for: job).total
     }
@@ -779,6 +854,9 @@ final class Player: ObservableObject {
         // competitions entered this year resolve against it, so a 17-year-old's
         // junior season doesn't get judged by adult-stage rules.
         let competedStage = LifeStage.forAge(age)
+        // Read before the birthday: the age-18 transition in `RootView` ends
+        // high school, and the year just lived still needs its grade.
+        let wasInHighSchool = currentEducation?.level == .HighSchool
         age += 1
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
@@ -801,11 +879,20 @@ final class Player: ObservableObject {
         for sport in competedSports {
             sportYears[sport, default: 0] += 1
         }
+        lastYearSports = competedSports
+
+        // The school year's grade — high school only, since that's the record
+        // universities read. A Study activity this year lifts it.
+        if wasInHighSchool {
+            let grade = yearGrade(studied: competedSports.contains { $0.kind == .study })
+            highSchoolGrades.append(grade)
+            recordStatus("📝", "Finished the school year with a \(Player.letterGrade(grade)) (\(Player.formatGPA(grade)))")
+        }
         appUIState.selectedSports.removeAll()
 
         lockedTrainings.formUnion(appUIState.selectedTrainings)
         // This year's picks are now permanent (hard skills + locked); clear the
-        // pending set so next year starts fresh, mirroring sports/hobbies/events.
+        // pending set so next year starts fresh, mirroring activities/events.
         appUIState.selectedTrainings.removeAll()
 
         appUIState.selectedActivities.removeAll()
@@ -915,7 +1002,8 @@ final class Player: ObservableObject {
             }
 
             // Promotion (realistic mode): a yearly shot at a raise, its odds set
-            // by the player's promotion-readiness soft skills, tenure, and network.
+            // by industry-weighted merit (performance, readiness, seniority) plus
+            // network, fame and education — see `promotionOdds`.
             // A win bumps pay and fires the celebration confetti. Frozen during a
             // downturn — no raises while the economy is in a recession.
             if !isSimplified, !recessionThisYear, let current = currentOccupation {
@@ -1045,11 +1133,12 @@ final class Player: ObservableObject {
         }
         appUIState.selectedSideHustles.removeAll()
 
-        // Competitions: training a sport now automatically enters you into its
-        // top eligible contest — no menu, no entry fee. Win odds start low and
-        // climb with the trained years (and the soft skills training builds).
-        // A win pays no money — it banks a lasting achievement (Entertainment
-        // fame that helps land spotlight roles) and surfaces a celebration dialog.
+        // Competitions: practising a discipline automatically enters you into
+        // its top eligible contest — no menu, no entry fee. Win odds start low
+        // and climb with the trained years (and the soft skills training builds).
+        // A win pays no money — it banks a lasting achievement (fame in the
+        // discipline's own bucket: an athlete's in Entertainment, a coder's in
+        // Technology) and surfaces a celebration dialog.
         var competitionWins = 0
         for sport in competedSports {
             let years = sportYears[sport, default: 0]
@@ -1059,7 +1148,7 @@ final class Player: ObservableObject {
             let odds = competition.winProbability(for: softSkills, years: years)
             if Double.random(in: 0...1) < odds {
                 award(competition.achievement, icon: competition.icon,
-                      category: .entertainment, weight: competition.fameWeight)
+                      category: sport.fameCategory, weight: competition.fameWeight)
                 competitionWins += 1
                 celebrateIfLucky(odds)
                 recordStatus("🏆", "Won \(competition.achievement)")
@@ -1220,10 +1309,14 @@ final class Player: ObservableObject {
         executiveActionsThisYear.contains(decision.id)
     }
 
-    /// Founder-cluster soft skills weighed when investors size up a round.
-    private static let investmentRoundSkills: [WritableKeyPath<SoftSkills, Int>] = [
-        \.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
-        \.leadershipAndInfluence, \.communicationAndNetworking,
+    /// Founder-cluster soft skills weighed when investors size up a round, with
+    /// their share of the fit. A raise is won in the pitch, so persuasion leads;
+    /// vision is what's being sold, and communication and leadership back it up.
+    static let investmentRoundSkills: [(keyPath: WritableKeyPath<SoftSkills, Int>, weight: Double)] = [
+        (\.persuasionAndNegotiation, 0.40),
+        (\.visionaryThinkingAndAmbition, 0.25),
+        (\.communicationAndNetworking, 0.20),
+        (\.leadershipAndInfluence, 0.15),
     ]
     /// Skill level at which an investment-round axis is a perfect fit.
     private static let investmentRoundSkillReference = 8
@@ -1252,12 +1345,17 @@ final class Player: ObservableObject {
     /// quarter wasted chasing term sheets.
     func investmentRoundOdds() -> Double {
         guard let job = currentOccupation else { return 0 }
-        let fit = Player.investmentRoundSkills.reduce(0.0) { acc, kp in
-            acc + min(Double(softSkills[keyPath: kp]) / Double(Player.investmentRoundSkillReference), 1.0)
-        } / Double(Player.investmentRoundSkills.count)
+        let fit = investmentRoundSkillFit()
         let network = networkBonus(for: job.category)   // up to +0.12
         let fame = investmentRoundFameBonus()           // up to +0.55 (business fame)
-        return max(0.05, min(0.95, 0.12 + fit * 0.35 + network + fame))
+        return max(0.05, min(0.95, 0.12 + fit * 0.40 + network + fame))
+    }
+
+    /// 0...1 weighted fit of the pitch skills (see `investmentRoundSkills`).
+    func investmentRoundSkillFit() -> Double {
+        Player.investmentRoundSkills.reduce(0.0) { acc, entry in
+            acc + entry.weight * min(Double(softSkills[keyPath: entry.keyPath]) / Double(Player.investmentRoundSkillReference), 1.0)
+        }
     }
 
     /// Headline capital a *successful* investment round realises for the player
@@ -1405,6 +1503,8 @@ final class Player: ObservableObject {
         industryTrend = fresh.industryTrend
         networkByCategory = fresh.networkByCategory
         sportYears = fresh.sportYears
+        lastYearSports = fresh.lastYearSports
+        highSchoolGrades = fresh.highSchoolGrades
         executiveActionsThisYear = []
         availableJobs = fresh.availableJobs
     }

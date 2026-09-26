@@ -1,12 +1,12 @@
 import Foundation
 
 /// A professional event — a summit, conference, expo, festival, or pitch
-/// competition. Distinct from a `Hobby`: events are a realistic-mode feature
+/// competition. Distinct from an Activities discipline (`Sport`): events are a realistic-mode feature
 /// that build an industry **professional network** improving both the hiring
 /// odds on that field's job postings and the chance of promotion while working
 /// in it (see `Player.networkBonus` and `Player.promotionChance`). They also
-/// nudge the networking-flavoured soft skills, applied immediately the way a
-/// hobby is. The player takes part as a **presenter** — taking the stage
+/// nudge the networking-flavoured soft skills, applied immediately the way an
+/// activity's are. The player takes part as a **presenter** — taking the stage
 /// (industry events only, and only once you're a veteran of the field) banks
 /// the field's network plus a fame award in that industry.
 struct CareerEvent: Identifiable {
@@ -17,7 +17,7 @@ struct CareerEvent: Identifiable {
     /// Industry this event serves: presenting here builds that field's network
     /// and banks a fame award in it.
     let category: JobCategory
-    /// Soft-skill nudges, applied immediately on attendance (like a hobby).
+    /// Soft-skill nudges, applied immediately on attendance (like an activity).
     let abilities: [WeightedAbility]
     /// Base professional-network points this event is worth (1–3). Accumulates
     /// in `Player.networkByCategory` and feeds hiring + promotion; taking the
