@@ -1904,17 +1904,24 @@ final class FamePaysTests: XCTestCase {
         XCTAssertTrue(player.canTakeProject(film))
     }
 
-    /// Project pay starts small and rises steeply with fame in its field.
-    func testProjectPayRisesSteeplyWithFame() throws {
-        let podcast = try XCTUnwrap(SideHustleCatalog.byId["projectPodcast"])
-        XCTAssertEqual(podcast.pay(famePoints: 0), podcast.basePay)
-        let known = podcast.pay(famePoints: 5)
-        let famous = podcast.pay(famePoints: 10)
-        XCTAssertGreaterThan(known, podcast.basePay * 5)
-        XCTAssertGreaterThan(famous - known, known - podcast.basePay,
-                             "Each extra point of fame should be worth more than the last.")
-        let unpaid = try XCTUnwrap(SideHustleCatalog.byId["projectLibrary"])
-        XCTAssertEqual(unpaid.pay(famePoints: 20), 0, "Open source is unpaid, however famous.")
+    /// Projects build fame and skills only: a landed project banks its fame
+    /// title and no money.
+    func testProjectsPayNoMoney() throws {
+        let gigs = try XCTUnwrap(SideHustleCatalog.byId["actingGigs"])
+        for _ in 0..<50 {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            player.age = 30
+            player.savings = 0
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+            let ui = AppUIState()
+            ui.selectedSideHustles = [gigs.id]
+            player.advanceYear(appUIState: ui)
+            XCTAssertEqual(player.savings, 0, "A project year adds no money.")
+            if player.fameAwards.contains(where: { $0.title == (gigs.fameTitle ?? gigs.label) }) { return }
+        }
+        XCTFail("A near-certain project should land at least once in 50 tries.")
     }
 
     /// Brands pay a famous entertainment name — nothing below the threshold.
@@ -1937,8 +1944,8 @@ final class FamePaysTests: XCTestCase {
     }
 }
 
-/// Events work like real conferences: attend if you're in the field, apply to
-/// take the stage with odds rather than a years-in-the-field wall.
+/// Events work like real calls for speakers: take part if you're in the field,
+/// by applying to take the stage — odds rather than a years-in-the-field wall.
 final class EventAccessTests: XCTestCase {
 
     private func adult(age: Int = 22) -> Player {
@@ -1984,6 +1991,26 @@ final class EventAccessTests: XCTestCase {
         veteran.experience[.technology] = 8
         XCTAssertGreaterThan(rookie.presentOdds(summit), 0.04)
         XCTAssertGreaterThan(veteran.presentOdds(summit), rookie.presentOdds(summit))
+    }
+
+    /// Applying to the stage is the only way in: the player goes either way, so
+    /// the base network and the skill nudges land at once, and the application
+    /// waits for the year's end. Applying twice doesn't count twice.
+    func testApplyingBanksTheBaseAndQueuesTheApplication() throws {
+        let summit = try XCTUnwrap(EventCatalog.byId["tech-summit"])
+        let player = adult()
+        player.experience[.technology] = 1
+        let voice = player.softSkills.communicationAndNetworking
+        var applications: Set<String> = []
+
+        player.applyToPresent(summit, into: &applications)
+        XCTAssertEqual(player.networkPoints(for: .technology), summit.networkWeight)
+        XCTAssertGreaterThan(player.softSkills.communicationAndNetworking, voice)
+        XCTAssertEqual(applications, [summit.id])
+
+        player.applyToPresent(summit, into: &applications)
+        XCTAssertEqual(player.networkPoints(for: .technology), summit.networkWeight,
+                       "A second application to the same event banks nothing more.")
     }
 }
 

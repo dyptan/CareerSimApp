@@ -80,7 +80,7 @@ struct ActivityListView: View {
                 if player.lastYearSports.contains(sport), let competition, let competitionOdds {
                     InfoHint(
                         title: "\(competition.icon) \(competition.name)",
-                        message: "\(competition.blurb)\n\n🎲 Your odds this year: ~\(competitionOdds)%\n🏆 Win: the “\(competition.achievement)” title and \(sport.fameCategory.rawValue) fame.\n\nPractise again this year and you're entered automatically.",
+                        message: "\(competition.blurb)\n\n🎲 Your chance to win this year: about \(competitionOdds)%\n🏆 If you win: the “\(competition.achievement)” title and \(sport.fameCategory.rawValue) fame.\n\nPractise it again this year and you're entered automatically.",
                         symbol: "trophy"
                     )
                 }
@@ -94,7 +94,7 @@ struct ActivityListView: View {
 
             InfoHint(
                 title: "\(sport.pictogram) \(sport.label)",
-                message: "\(sport.description)\n\nEach year of practice builds:\n\n\(abilityHint)\n\nWhile you practise it you automatically enter its top contest each year — no entry fee. Your odds start low and climb with every year (and the skills it builds), unlocking bigger contests along the way. Wins bank \(sport.fameCategory.rawValue) fame.\(sport.kind == .study ? "\n\n📝 In high school, a year of study also lifts that year's grade — the GPA universities weigh at admission." : "")"
+                message: "\(sport.description)\n\nEvery year you practise, you grow:\n\n\(abilityHint)\n\nWhile you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in \(sport.fameCategory.rawValue).\(sport.kind == .study ? "\n\n📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply." : "")"
             )
         }
         .padding(5)

@@ -8,12 +8,12 @@ import Foundation
 /// nudge the networking-flavoured soft skills, applied immediately the way an
 /// activity's are.
 ///
-/// Two ways to take part, as at a real conference: **attend** — open to anyone
-/// working in or studying toward the field (and to anyone at all for an open
-/// call) — which banks the event's network; or **apply to take the stage**,
-/// an application with acceptance odds (see `Player.presentOdds`) that, if
-/// accepted, banks more network plus a fame award in that industry. A rejected
-/// application still counts as attending.
+/// One way to take part: **apply to take the stage** — speak, present,
+/// perform or pitch — an application with acceptance odds (see
+/// `Player.presentOdds`), open to anyone working in or studying toward the
+/// field, and to anyone at all for an open call. The player goes either way,
+/// which banks the event's base network; accepted, they bank more network plus
+/// a fame award in that industry.
 struct CareerEvent: Identifiable {
     let id: String
     let name: String
@@ -22,15 +22,16 @@ struct CareerEvent: Identifiable {
     /// Industry this event serves: presenting here builds that field's network
     /// and banks a fame award in it.
     let category: JobCategory
-    /// Soft-skill nudges, applied immediately on attendance (like an activity).
+    /// Soft-skill nudges, applied immediately on applying (like an activity).
     let abilities: [WeightedAbility]
-    /// Base professional-network points this event is worth (1–3). Accumulates
-    /// in `Player.networkByCategory` and feeds hiring + promotion; taking the
+    /// Base professional-network points this event is worth (1–3), banked by
+    /// going at all — a turned-down applicant still goes. Accumulates in
+    /// `Player.networkByCategory` and feeds hiring + promotion; taking the
     /// stage banks more than this (see `networkPoints`).
     let networkWeight: Int
-    /// Verb for the "take the stage" role on this event's row — "Present" for a
-    /// conference, but "Perform" at a festival, "Compete" at a pitch, and so on.
-    /// Purely cosmetic; the mechanic is identical.
+    /// Verb on this event's one button — "Present" for a conference, but
+    /// "Perform" at a festival, "Compete" at a pitch, and so on. Purely
+    /// cosmetic; the mechanic is identical.
     let presenterActionLabel: String
     /// Bespoke title for the fame award a presenter banks (e.g. "Festival
     /// Performer", "Pitch Winner"). `nil` falls back to "<name> — Speaker".
@@ -57,8 +58,8 @@ struct CareerEvent: Identifiable {
         self.isOpenCall = isOpenCall
     }
 
-    /// Professional-network points taking the stage here banks — more than
-    /// attending, since a presenter draws the room (see
+    /// Professional-network points taking the stage here banks in all — the
+    /// base for going plus more, since a presenter draws the room (see
     /// `GameConstants.presenterNetworkBonus`).
     var networkPoints: Int { networkWeight + GameConstants.presenterNetworkBonus }
 
@@ -114,7 +115,7 @@ enum EventCatalog {
             id: "tech-summit",
             name: "Tech Summit",
             icon: "💻",
-            blurb: "Keynotes and hallway-track contacts across the tech industry.",
+            blurb: "The tech world's big yearly meetup — talks on new apps, gadgets and ideas.",
             category: .technology,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
@@ -125,7 +126,7 @@ enum EventCatalog {
             id: "investor-pitch-night",
             name: "Startup & Investor Pitch Night",
             icon: "🚀",
-            blurb: "Pitch founders and angels — the room where business deals start.",
+            blurb: "Where people with business ideas meet the investors who fund them.",
             category: .business,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
@@ -136,7 +137,7 @@ enum EventCatalog {
             id: "finance-forum",
             name: "Finance & Markets Forum",
             icon: "💰",
-            blurb: "Analysts, bankers, and traders comparing notes on the markets.",
+            blurb: "Bankers and investors talk about money and where the markets are heading.",
             category: .business,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -148,7 +149,7 @@ enum EventCatalog {
             id: "medical-congress",
             name: "Medical Congress",
             icon: "🩺",
-            blurb: "Clinical updates and the people who run hospitals and clinics.",
+            blurb: "Doctors and nurses share the latest in medicine.",
             category: .health,
             abilities: [
                 .init(keyPath: \.carefulnessAndAttentionToDetail, weight: 1),
@@ -160,7 +161,7 @@ enum EventCatalog {
             id: "science-symposium",
             name: "Science Symposium",
             icon: "🔬",
-            blurb: "Present findings and meet researchers shaping the field.",
+            blurb: "Scientists share their newest discoveries.",
             category: .science,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -172,7 +173,7 @@ enum EventCatalog {
             id: "engineering-expo",
             name: "Engineering Expo",
             icon: "🛠️",
-            blurb: "Trade-floor demos and the firms hiring for the next big build.",
+            blurb: "Engineers show off new machines and plans for big builds.",
             category: .engineering,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -184,7 +185,7 @@ enum EventCatalog {
             id: "media-creators-conference",
             name: "Media & Creators Conference",
             icon: "🎬",
-            blurb: "Editors, producers, and creators — where bylines and gigs trade hands.",
+            blurb: "Writers, filmmakers and online creators meet and share their work.",
             category: .showBusiness,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 3)
@@ -195,7 +196,7 @@ enum EventCatalog {
             id: "legal-bar-convention",
             name: "Legal Bar Convention",
             icon: "⚖️",
-            blurb: "Partners and counsel networking over precedent and practice.",
+            blurb: "Lawyers and judges talk about the law and big cases.",
             category: .law,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
@@ -206,7 +207,7 @@ enum EventCatalog {
             id: "design-week",
             name: "Design Week",
             icon: "🎨",
-            blurb: "Studios and clients mingling around the season's best work.",
+            blurb: "Designers show off the year's best work.",
             category: .design,
             abilities: [
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -220,7 +221,7 @@ enum EventCatalog {
             id: "education-conference",
             name: "Teaching & Learning Conference",
             icon: "🍎",
-            blurb: "Teachers and school leaders swapping what works in the classroom.",
+            blurb: "Teachers share what works best in the classroom.",
             category: .education,
             abilities: [
                 .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
@@ -232,7 +233,7 @@ enum EventCatalog {
             id: "hospitality-expo",
             name: "Hospitality & Food Expo",
             icon: "🍽️",
-            blurb: "Chefs, hoteliers and suppliers — tastings, trends and who's hiring.",
+            blurb: "Chefs and hotel people show off new dishes and ideas.",
             category: .hospitality,
             abilities: [
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
@@ -245,7 +246,7 @@ enum EventCatalog {
             id: "retail-expo",
             name: "Retail & Consumer Expo",
             icon: "🛍️",
-            blurb: "Brands, buyers and store managers on what shoppers want next.",
+            blurb: "Shops and brands show what people will want to buy next.",
             category: .retail,
             abilities: [
                 .init(keyPath: \.persuasionAndNegotiation, weight: 1),
@@ -257,7 +258,7 @@ enum EventCatalog {
             id: "wellness-expo",
             name: "Beauty & Wellness Expo",
             icon: "💇",
-            blurb: "Stylists, therapists and trainers showing their craft to the trade.",
+            blurb: "Hairdressers, therapists and trainers show off their skills.",
             category: .service,
             abilities: [
                 .init(keyPath: \.empathyAndInterpersonalCare, weight: 1),
@@ -270,7 +271,7 @@ enum EventCatalog {
             id: "trades-expo",
             name: "Construction & Trades Expo",
             icon: "🏗️",
-            blurb: "Contractors, trades and suppliers — new tools, big projects, the crews behind them.",
+            blurb: "Builders and tradespeople show off new tools and big projects.",
             category: .construction,
             abilities: [
                 .init(keyPath: \.tinkeringAndFingerPrecision, weight: 1),
@@ -283,7 +284,7 @@ enum EventCatalog {
             id: "manufacturing-show",
             name: "Manufacturing & Robotics Show",
             icon: "🏭",
-            blurb: "Factory floors of the future and the people who run them.",
+            blurb: "Factories show off their newest robots and machines.",
             category: .manufacturing,
             abilities: [
                 .init(keyPath: \.analyticalReasoningAndProblemSolving, weight: 1),
@@ -295,7 +296,7 @@ enum EventCatalog {
             id: "logistics-summit",
             name: "Logistics & Transport Summit",
             icon: "🚚",
-            blurb: "Fleets, freight and supply chains — the people who keep things moving.",
+            blurb: "The people who move things around by truck, train, ship and plane.",
             category: .transportation,
             abilities: [
                 .init(keyPath: \.timeManagementAndPlanning, weight: 1),
@@ -307,7 +308,7 @@ enum EventCatalog {
             id: "farm-show",
             name: "Farm Show",
             icon: "🚜",
-            blurb: "Growers, breeders and machinery dealers — the year's big agricultural gathering.",
+            blurb: "Farmers show off their animals, crops and new machines.",
             category: .agriculture,
             abilities: [
                 .init(keyPath: \.resilienceAndEndurance, weight: 1),
@@ -319,7 +320,7 @@ enum EventCatalog {
             id: "public-service-forum",
             name: "Public Service Forum",
             icon: "🏛️",
-            blurb: "City, state and emergency services leaders on running things for everyone.",
+            blurb: "People who run towns, cities and emergency services share ideas.",
             category: .publicServices,
             abilities: [
                 .init(keyPath: \.collaborationAndTeamwork, weight: 1),
@@ -331,7 +332,7 @@ enum EventCatalog {
             id: "operations-summit",
             name: "Office & Operations Summit",
             icon: "🗂️",
-            blurb: "The people who keep organisations running — admins, office managers, operations leads.",
+            blurb: "Office managers and assistants share how to keep a workplace running.",
             category: .administration,
             abilities: [
                 .init(keyPath: \.timeManagementAndPlanning, weight: 1),
@@ -347,7 +348,7 @@ enum EventCatalog {
             id: "music-festival",
             name: "Music Festival",
             icon: "🎪",
-            blurb: "Work the crowd and the backstage scene — or take the stage and play your set.",
+            blurb: "Play your music on the festival stage in front of a big crowd.",
             category: .showBusiness,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1),
@@ -362,7 +363,7 @@ enum EventCatalog {
             id: "tv-casting",
             name: "TV Show Casting",
             icon: "📺",
-            blurb: "Network the production — or land a spot on screen and get seen.",
+            blurb: "Get a spot on a TV show and let everyone see you.",
             category: .showBusiness,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1),
@@ -377,7 +378,7 @@ enum EventCatalog {
             id: "conference-talk",
             name: "Conference Talk",
             icon: "🖥️",
-            blurb: "Attend to meet the field — or take the podium and land your idea in front of the room.",
+            blurb: "Give a talk and share your big idea with a room full of people.",
             category: .business,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 2)
@@ -391,7 +392,7 @@ enum EventCatalog {
             id: "pitch-competition",
             name: "Pitch Competition",
             icon: "🎤",
-            blurb: "Work the room of founders and investors — or take the stage to pitch your idea and win it.",
+            blurb: "Pitch your business idea on stage and try to win.",
             category: .business,
             abilities: [
                 .init(keyPath: \.communicationAndNetworking, weight: 1),

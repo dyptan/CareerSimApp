@@ -172,8 +172,15 @@ final class TypicalPolicy: Policy {
         if !masterDecided, g.educationOpen,
            let bachelor = p.degrees.first(where: { $0.level == .Bachelor }), let profile = bachelor.profile {
             masterDecided = true
-            if Double.random(in: 0..<1) < 0.15 {
+            // ~15 % go on to a master's and ~8 % to a doctorate (MD, JD, PhD) —
+            // about 4 % of US adults hold a professional or doctoral degree.
+            let roll = Double.random(in: 0..<1)
+            if roll < 0.15 {
                 g.applyToSchool(g.school(level: .Master, profile: profile, tier: .state), tag: "typical:master")
+                return
+            }
+            if roll < 0.23 {
+                g.applyToSchool(g.school(level: .Doctorate, profile: profile, tier: .state), tag: "typical:doctorate")
                 return
             }
         }

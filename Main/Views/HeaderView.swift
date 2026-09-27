@@ -34,29 +34,20 @@ struct HeaderView: View {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
                 .disabled(player.hasRetired)
-
-                // The running score, at body weight so it reads as the run's
-                // headline number rather than chrome. Simplified mode has a
-                // fixed goal instead of a score, so it keeps the plain savings
-                // figure; the Game Over sheet spells the formula out.
-                if player.isSimplified {
-                    Text("Savings: \(player.savings.formatted(.number)) $")
-                } else {
-                    Text("🏅 Score: \(player.leaderboardScore.formatted(.number))")
-                }
             }
 
             Spacer()
 
-            // The two controls that move the run itself, stacked together: end
-            // it, or let a year pass. **Skip** lives here rather than in the
-            // footer so the row below stays what the year can be *spent* on —
-            // every button there opens a choice, and this one is the choice to
-            // make none.
+            // The two controls that concern the run itself, stacked together:
+            // check (or end) it, or let a year pass. **Skip** lives here rather
+            // than in the footer so the row below stays what the year can be
+            // *spent* on — every button there opens a choice, and this one is
+            // the choice to make none.
             VStack(alignment: .trailing, spacing: 8) {
-                // Opens the Game Over sheet directly — no confirmation pop-up;
-                // the sheet's own "Keep playing" button is the way back.
-                Button("Stop") { appUIState.showRetirementSheet = true }
+                // Opens the score sheet: the running score, with Keep playing
+                // and Start over (see `RetirementView`). The header itself no
+                // longer shows the score.
+                Button("Score") { appUIState.showRetirementSheet = true }
                     .buttonStyle(.bordered)
                     .font(.headline)
 

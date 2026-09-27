@@ -31,7 +31,7 @@ struct LifeRecord {
     var finalScore = 0
     var finalSavings = 0
     var salaryEarnings = 0          // gross pay actually banked by advanceYear (half in a layoff year)
-    var otherIncome = 0             // project pay + endorsements (gross)
+    var otherIncome = 0             // endorsements (gross) — projects pay nothing
     var highestEQF = 0
     var studentLoanAt30 = 0
     var ageFirstJob: Int?
@@ -323,7 +323,7 @@ final class Game {
         // short (`Player.layoffYearPay`).
         let paid = jobBefore.map { player.lostJobThisYear ? Player.layoffYearPay(for: $0) : $0.annualIncome } ?? 0
         rec.salaryEarnings += paid
-        rec.otherIncome += player.lastYearProjectPay + player.lastYearEndorsements
+        rec.otherIncome += player.lastYearEndorsements
         if paid > 0, studyingBefore { rec.studyWhileWorkingYears += 1 }
 
         if (22...64).contains(ageBefore) {

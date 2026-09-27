@@ -128,15 +128,8 @@ enum GameConstants {
 
     // MARK: - Fame pays
     //
-    // In show business and the creator economy, fame is the income: an audience
-    // is what brand deals, streams, royalties and fees are priced on. Pay is
-    // steeply uneven — most projects earn little, a famous name earns a fortune.
-
-    /// A landed project pays its base × (1 + fame in its field)^this — so each
-    /// extra point of fame is worth more than the last.
-    static let projectPayFameExponent: Double = 1.5
-    /// Ceiling on that multiple of the base pay.
-    static let projectPayMaxMultiple: Double = 200
+    // Projects pay no money — they build fame and skills. A famous
+    // entertainment name, though, is paid by brands to carry their products.
 
     /// Entertainment fame at which brands start paying for endorsements, and
     /// what they pay: this base × fame^exponent a year.
@@ -357,6 +350,14 @@ enum GameConstants {
     /// ticket. Also the odds of a breakthrough-gated career without its award.
     /// Seat scarcity is applied after it, so a C-suite long shot sits at 0.1%.
     static let hireFloor: Double = 0.01
+
+    /// "Degree preferred": office roles paying at least
+    /// `degreePreferredMinIncome` that don't require a degree still favour
+    /// graduates — `degreePreferenceRatio` of the odds per level a non-graduate
+    /// is below `degreePreferredEQF` (see `Job.prefersDegree`).
+    static let degreePreferredEQF: Int = 5
+    static let degreePreferredMinIncome: Int = 55_000
+    static let degreePreferenceRatio: Double = 0.6
 
     /// Share of title-holding applicants a professional roster can take — the
     /// seat hurdle on every rung above Amateur of the Player ladder. NCAA:

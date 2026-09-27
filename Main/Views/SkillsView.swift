@@ -42,7 +42,6 @@ struct SkillsView: View {
                 || player.outstandingLoan > 0
                 || player.studentLoan > 0
                 || showsTuition
-                || player.lastYearProjectPay > 0
                 || player.endorsementIncome > 0
         case .skills:
             return SoftSkills.skillNames.contains { player.softSkills[keyPath: $0.keyPath] > 0 }
@@ -128,7 +127,7 @@ struct SkillsView: View {
                     if studying.level == .HighSchool, !player.highSchoolGrades.isEmpty {
                         labelledRow(
                             "📝", "Grade average", gpaLabel,
-                            hint: "Your high-school GPA so far, averaged over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). Academic skills set each year's grade; a year spent on a Study activity lifts it. Universities weigh it at admission — up to half the decision at an elite school."
+                            hint: "Your average school grade so far, over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). School skills set each year's grade, and choosing a Study activity pushes it up. Colleges look at it when you apply — the top colleges care about it a lot."
                         )
                     }
                 }
@@ -137,6 +136,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Occupation").font(.headline)
+                InfoHint(title: "Occupation", message: SectionHints.occupation(simplified: player.isSimplified))
                 Spacer()
                 // What you are, visible while collapsed: the job if you have
                 // one, otherwise what you're studying.
@@ -191,7 +191,7 @@ struct SkillsView: View {
         let tenure = player.experienceByRole[job.baseTitle, default: 0]
         labelledRow(
             "🧭", "In this role", "\(tenure) yr\(tenure == 1 ? "" : "s")",
-            hint: "Years spent as \(job.baseTitle). Seniority counts toward promotion — how much depends on the industry — and toward roles that ask for experience in this line of work."
+            hint: "How many years you've worked as \(job.baseTitle). More years help you get promoted, and some jobs only hire people with enough years in this kind of work."
         )
 
         // Promotions are a realistic-mode mechanic only.
@@ -221,13 +221,13 @@ struct SkillsView: View {
             .map { kp -> String in
                 let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
                 let pic = SoftSkills.pictogram(forKeyPath: kp) ?? ""
-                return "\(pic) \(label): you have \(player.softSkills[keyPath: kp]), it asks for \(required[keyPath: kp])"
+                return "\(pic) \(label): you have \(player.softSkills[keyPath: kp]), it needs \(required[keyPath: kp])"
             }
         guard !gaps.isEmpty else {
-            return "You already have every skill \(next.displayTitle) asks for — readiness counts in full toward your promotion."
+            return "You already have every skill \(next.displayTitle) needs. 🎉 That helps your promotion chances as much as it can."
         }
         return """
-        How well your skills match what \(next.displayTitle) asks for. Employers promote people who can already do the job above, so closing these gaps raises your promotion odds:
+        How ready your skills are for \(next.displayTitle). Bosses like to promote people who can already do the next job — so growing these skills makes a promotion more likely:
 
         \(gaps.joined(separator: "\n"))
         """
@@ -245,70 +245,70 @@ struct SkillsView: View {
                 moneyRow(
                     "💰", "Savings", player.savings,
                     hint: player.isSimplified
-                        ? "Everything you've earned so far. In Simplified mode you bank your whole paycheck."
-                        : "Everything you've banked so far. It earns about \(pct(GameConstants.investmentReturn)) a year after inflation while it's in the black — and markets fall in the year a downturn begins."
+                        ? "All the money you've earned so far. In Simplified mode you keep your whole paycheck."
+                        : "The money you've saved. It grows by about \(pct(GameConstants.investmentReturn)) a year while it's above zero — but it can drop in a year when the economy turns bad."
                 )
 
                 if let job = player.currentOccupation {
                     moneyRow(
                         "🧾", "Gross income", job.annualIncome, suffix: " / yr",
-                        hint: "What \(job.displayTitle) pays before tax and living costs."
+                        hint: "What \(job.displayTitle) pays in a year, before taxes and living costs."
                     )
                     if !player.isSimplified {
                         moneyRow(
                             "🏦", "Banked from pay", bankedFromPay(job), suffix: " / yr",
-                            hint: "The first \(player.difficulty.livingCostFloor.formatted(.number)) $ of pay goes on living costs. You keep \(pct(player.difficulty.savingsRate)) of the rest after tax (\(pct(GameConstants.highEarnerSavingsRate)) of anything above \(GameConstants.highEarnerThreshold.formatted(.number)) $). Out of work, rent still comes out of savings."
+                            hint: "The first \(player.difficulty.livingCostFloor.formatted(.number)) $ of your pay goes on living costs like rent and food. You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(GameConstants.highEarnerThreshold.formatted(.number)) $). If you have no job, living costs come out of your savings."
                         )
                     }
-                } else if player.lastYearProjectPay == 0 && player.endorsementIncome == 0 {
-                    labelledRow("🧾", "Gross income", "Not working", hint: "No job, no pay. Open Jobs to start applying — or earn from Projects.")
+                } else if player.endorsementIncome == 0 {
+                    labelledRow("🧾", "Gross income", "Not working", hint: "No job means no pay. Open Jobs to apply for one.")
                 }
 
-                // Fame pays too: project earnings and brand deals, on top of any salary.
-                if player.lastYearProjectPay > 0 {
-                    moneyRow(
-                        "🎬", "Project pay (last year)", player.lastYearProjectPay,
-                        hint: "What your landed project paid last year, before tax and living costs. Project pay rises steeply with your fame in its field."
-                    )
-                }
+                // Fame can pay too: brand deals, on top of any salary.
                 if player.endorsementIncome > 0 {
                     moneyRow(
                         "🤝", "Endorsements", player.endorsementIncome, suffix: " / yr",
-                        hint: "Brands pay a famous entertainment name to carry their products — athletes, stars and creators alike. It rises steeply with your 🎬 Entertainment fame, and is paid every year on top of anything else you earn."
+                        hint: "Brands pay famous people — athletes, stars and creators — to show off their products. The more 🎬 Entertainment fame you have, the more they pay, every year."
                     )
                 }
 
                 if showsTuition, let edu = player.currentEducation {
+                    // What the student pays: the family covers its share.
+                    let share = player.difficulty.familyTuitionShare
+                    let yours = Int((Double(edu.annualTuition) * (1 - share)).rounded())
                     moneyRow(
-                        "🎓", "Tuition", -edu.annualTuition, suffix: " / yr",
-                        hint: "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year while you're enrolled."
+                        "🎓", "Tuition", -yours, suffix: " / yr",
+                        hint: share > 0
+                            ? "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year. Your family pays \(pct(share)) of it, so you pay \(yours.formatted(.number)) $ — from savings first, then as a student loan."
+                            : "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year while you study — from savings first, then as a student loan."
                     )
                 }
 
                 if player.outstandingLoan > 0 {
                     moneyRow(
                         "📉", "Venture loan owed", -player.outstandingLoan,
-                        hint: "Borrowed to fund a venture. It accrues \(pct(GameConstants.ventureLoanAnnualInterest)) interest a year and is repaid automatically from savings until it's cleared."
+                        hint: "Money you borrowed to start a business. It grows by \(pct(GameConstants.ventureLoanAnnualInterest)) a year until it's paid back. Payments come out of your savings and pay each year."
                     )
                 }
 
                 if player.studentLoan > 0 {
                     moneyRow(
                         "🎓", "Student loan owed", -player.studentLoan,
-                        hint: "Borrowed to pay tuition. It accrues \(pct(GameConstants.studentLoanAnnualInterest)) interest a year after inflation. Repayments are deferred while you study, then come out of savings."
+                        hint: "Money you borrowed for school. It grows by \(pct(GameConstants.studentLoanAnnualInterest)) a year. You don't pay it back while you're studying — after that, payments come out of your savings and pay each year."
                     )
                 }
 
                 Divider()
                 moneyRow(
                     "🏅", "Net worth", player.netWorth,
-                    hint: "Savings minus any outstanding venture or student loan. Divided by your age, this is your leaderboard score."
+                    hint: "What you own minus what you owe: your savings (and any business you own) minus your loans. Divide it by your age and you get your score."
                 )
             }
             .padding(.top, 4)
         } label: {
             HStack {
                 Text("Finances").font(.headline)
+                InfoHint(title: "Finances", message: SectionHints.finances(simplified: player.isSimplified))
                 Spacer()
                 // Net worth stays visible while collapsed — the number that matters.
                 Text("\(player.netWorth.formatted(.number)) $")
@@ -392,7 +392,7 @@ struct SkillsView: View {
                 Text("Skills").font(.headline)
                 InfoHint(
                     title: "Skills",
-                    message: "Skills are what you bring besides degrees and experience. They count toward:\n\n💼 Getting hired — each job lists the skills it asks for\n⬆️ Promotions — your fit for your role and for the next one up\n🎓 Admissions — each degree field looks for its own\n📝 School grades, 🏅 contests, and 🚀 ventures\n\nBuild them through Activities, and later events, courses and projects. Tap a skill's ⓘ to see where it matters most."
+                    message: "Skills are the things you're good at, besides school and work experience. They help with:\n\n💼 Getting hired — every job lists the skills it needs\n⬆️ Promotions — doing your job well and being ready for the next one\n🎓 Getting into college — each subject looks for its own skills\n📝 School grades, 🏅 contests and 🚀 starting a business\n\nGrow them with Activities, and later with events, courses and projects. Tap a skill's ⓘ to see where it helps most."
                 )
             }
         }
@@ -419,7 +419,10 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Fame").font(.headline)
+            HStack(spacing: 6) {
+                Text("Fame").font(.headline)
+                InfoHint(title: "Fame", message: SectionHints.fame)
+            }
         }
     }
 
@@ -457,6 +460,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Trophies").font(.headline)
+                InfoHint(title: "Trophies", message: SectionHints.trophies)
                 Spacer()
                 Text("🏆 \(trophies.reduce(0) { $0 + $1.count })")
                     .font(.subheadline.monospacedDigit())
@@ -504,7 +508,10 @@ struct SkillsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 4)
         } label: {
-            Text("Credentials").font(.headline)
+            HStack(spacing: 6) {
+                Text("Credentials").font(.headline)
+                InfoHint(title: "Credentials", message: SectionHints.credentials(simplified: player.isSimplified))
+            }
         }
     }
 
@@ -584,6 +591,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Economy").font(.headline)
+                InfoHint(title: "Economy", message: SectionHints.economy)
                 Spacer()
                 // The player's own industry stays visible while collapsed — the
                 // one climate that is affecting them right now.
@@ -603,11 +611,12 @@ struct SkillsView: View {
         """
         \(player.macroClimate.blurb)
 
-        Every sector below is this cycle scaled by how much it transmits — a \
-        hotel chain amplifies it, a school district barely feels it — plus \
-        whatever is happening to that sector on its own account.
+        Every industry below feels the economy in its own way. Some, like \
+        hotels and building, feel every up and down. Others, like schools and \
+        hospitals, barely notice.
 
-        So a sector can be slumping in a good year, or booming through a bad one.
+        Each industry also has good and bad years of its own — so one can be \
+        struggling in a good year, or doing great in a bad one.
         """
     }
 
@@ -623,30 +632,24 @@ struct SkillsView: View {
     /// What this climate is doing to the player's odds in this industry, in the
     /// terms the other hints use — multipliers on hiring, points on promotion.
     private func industrySummary(_ industry: Industry, _ climate: IndustryClimate) -> String {
-        func signed(_ v: Double) -> String {
-            let p = Int((v * 100).rounded())
-            return p >= 0 ? "+\(p)%" : "\(p)%"
-        }
-        func times(_ v: Double) -> String { "×\(String(format: "%.2f", v))" }
-
         var lines = [climate.blurb, ""]
-        lines.append("🎯 Hire odds here: \(times(climate.hireFactor))")
-        lines.append("⬆️ Promotion odds here: \(times(climate.promotionFactor))")
-        lines.append("✂️ Layoff risk here: \(times(climate.layoffFactor))")
-        lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
+        lines.append("🎯 Getting hired here: \(Self.easierOrHarder(climate.hireFactor))")
+        lines.append("⬆️ Getting promoted here: \(Self.easierOrHarder(climate.promotionFactor))")
+        lines.append("✂️ Chance of losing your job: \(Self.higherOrLower(climate.layoffFactor))")
+        lines.append("🎲 Projects in this field: \(Self.easierOrHarder(climate.projectFactor))")
 
         lines.append("")
         if industry.beta > 1.0 {
-            lines.append("📊 Amplifies the economy (×\(String(format: "%.1f", industry.beta))) — a discretionary field, so it swings harder than the cycle both ways.")
+            lines.append("📊 Feels the economy more than most — when money is tight, people cut back on this first.")
         } else if industry.beta < 1.0 {
-            lines.append("📊 Damps the economy (×\(String(format: "%.1f", industry.beta))) — a defensive field that rides out downturns better than most.")
+            lines.append("📊 Feels the economy less than most — people still need it in hard times.")
         } else {
-            lines.append("📊 Moves with the economy (×1.0).")
+            lines.append("📊 Goes up and down with the economy.")
         }
         if industry.volatility > 1.0 {
-            lines.append("🎲 Also swings on its own account, cycle or no cycle.")
+            lines.append("🎲 It also has big ups and downs of its own.")
         } else if industry.volatility < 1.0 {
-            lines.append("🎲 Little movement of its own — it mostly just follows the cycle.")
+            lines.append("🎲 It mostly just follows the economy.")
         }
         return lines.joined(separator: "\n")
     }
@@ -669,7 +672,10 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Experience").font(.headline)
+            HStack(spacing: 6) {
+                Text("Experience").font(.headline)
+                InfoHint(title: "Experience", message: SectionHints.experience)
+            }
         }
     }
 
@@ -679,36 +685,48 @@ struct SkillsView: View {
     private func promotionOddsSummary(for job: Job) -> String {
         let odds = player.promotionOdds(for: job)
         guard odds.promotes, let next = odds.nextRole else {
-            return "There's no rung above this role to be promoted into. Your pay still creeps up with a small merit raise each year, up to the top of the role's band — to earn more, apply for a bigger role."
+            return "There's no higher job to be promoted to from here. Your pay still goes up a little each year, up to a limit. To earn more, apply for a bigger job."
         }
         func signed(_ v: Double) -> String {
             let s = Int((v * 100).rounded())
             return s >= 0 ? "+\(s)%" : "\(s)%"
         }
-        let c = odds.culture
-        let readinessLine = "Readiness for \(next.displayTitle): \(pct(odds.readiness)) — weighs \(pct(c.readiness))"
         let gate = odds.eligible
-            ? (odds.seat < 1 ? "Only \(pct(odds.seat)) of those ready for \(next.displayTitle) get the seat." : "")
-            : "Not yet eligible for \(next.displayTitle) — it needs its full requirements and years in the role first."
+            ? (odds.seat < 1 ? "\n\nThere aren't many \(next.displayTitle) jobs — only \(pct(odds.seat)) of the people who are ready get one." : "")
+            : "\n\nYou can't be promoted to \(next.displayTitle) yet — you need what it asks for and enough years in this job first."
+        let slowing = (odds.passedOver < 1 || odds.ageFade < 1)
+            ? "\n• Promotions get harder after many years in the same job, and later in your career."
+            : ""
         return """
-        Each year you get a shot at a step up to \(next.displayTitle). \(job.industry.promotionCultureBlurb)
+        Each year you have a chance to be promoted to \(next.displayTitle). \(job.industry.promotionCultureBlurb)
 
-        Merit — \(pct(odds.merit)):
-        • Performance in the role: \(pct(odds.performance)) — weighs \(pct(c.performance))
-        • \(readinessLine)
-        • Seniority (\(odds.tenureYears) of \(GameConstants.promotionSeniorityYears) yr): \(pct(odds.seniority)) — weighs \(pct(c.seniority))
+        What counts:
+        • How well you do your job: \(pct(odds.performance))
+        • How ready you are for \(next.displayTitle): \(pct(odds.readiness))
+        • Years in this job: \(odds.tenureYears) (full credit at \(GameConstants.promotionSeniorityYears))
+        • People you know in \(job.category.rawValue): \(signed(odds.network))
+        • Your fame in \(job.category.rawValue): \(signed(odds.fame))
+        • Your schooling for this job: \(signed(odds.education))
 
-        Then:
-        • Network (\(job.category.rawValue)): \(signed(odds.network))
-        • Fame (\(job.category.rawValue)): \(signed(odds.fame))
-        • Education vs. what the role expects: \(signed(odds.education))
-        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): ×\(String(format: "%.2f", odds.climate.promotionFactor))
-        • Passed over (years in role) ×\(String(format: "%.2f", odds.passedOver)), career stage ×\(String(format: "%.2f", odds.ageFade))
-        Total: \(pct(odds.total))
-        \(gate)
+        This year:
+        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): \(Self.easierOrHarder(odds.climate.promotionFactor))\(slowing)
 
-        Your industry's climate moves these odds every year — see Economy.
+        Your chance this year: \(pct(odds.total))\(gate)
         """
+    }
+
+    /// A multiplier as plain words: "30% easier than usual", "normal".
+    static func easierOrHarder(_ factor: Double) -> String {
+        let p = Int(((factor - 1) * 100).rounded())
+        if p == 0 { return "normal" }
+        return p > 0 ? "\(p)% easier than usual" : "\(-p)% harder than usual"
+    }
+
+    /// A risk multiplier as plain words: "60% higher than usual", "normal".
+    static func higherOrLower(_ factor: Double) -> String {
+        let p = Int(((factor - 1) * 100).rounded())
+        if p == 0 { return "normal" }
+        return p > 0 ? "\(p)% higher than usual" : "\(-p)% lower than usual"
     }
 
     /// The pictogram for an experience role — its own industry icon, falling back
@@ -735,4 +753,37 @@ struct SkillsView: View {
         appUIState: appUIState
     )
     .padding()
+}
+
+/// What each expandable section of the main screen is for — the ⓘ beside its
+/// title. Kept together so the sections explain themselves in one voice.
+private enum SectionHints {
+    static func occupation(simplified: Bool) -> String {
+        "What you're doing right now: your job, or the school you're at.\n\n"
+            + (simplified
+               ? "For a job, you'll see how many years you've been there."
+               : "For a job, you'll see how many years you've been there and your chance of being promoted. Tap each ⓘ to learn more.")
+    }
+
+    static func finances(simplified: Bool) -> String {
+        simplified
+            ? "Your money. In Simplified mode you keep everything you earn."
+            : "Your money: what you earn, what you save and what you owe.\n\nThe number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it."
+    }
+
+    static let fame = "How well known you are in each field.\n\nYou get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers."
+
+    static let trophies = "Titles you've won in contests.\n\nEvery year you practise an activity, you're entered in its biggest contest. Trophies make you more famous, and top colleges like them."
+
+    static func credentials(simplified: Bool) -> String {
+        "Everything you've earned and keep: school diplomas and degrees"
+            + (simplified ? "" : ", plus certificates and licences")
+            + ".\n\nMany jobs need a certain degree"
+            + (simplified ? "" : " or licence")
+            + " before you can apply."
+    }
+
+    static let economy = "How the economy is doing this year — overall, and in each industry.\n\nIn a good year it's easier to get hired and promoted. In a bad year it's harder, and more people lose their jobs. Your own industry is shown in bold."
+
+    static let experience = "How many years you've worked in each job.\n\nMany jobs need years of experience before they'll hire you, and years in the same kind of work help you move up."
 }

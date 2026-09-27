@@ -207,11 +207,11 @@ struct RootView: View {
         .alert("Laid Off", isPresented: $player.showLayoffAlert) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("A downturn hit your employer and your position was cut.")
+            Text("Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.")
         }
         // A founder's venture folding is a major setback worth a pop-up — they're
         // not laid off, their business fails (see the ongoing venture risk).
-        .alert("Venture Folded 📉", isPresented: $player.showVentureFailureAlert) {
+        .alert("Business Closed 📉", isPresented: $player.showVentureFailureAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(player.ventureFailureMessage)
@@ -403,7 +403,7 @@ struct ModeSelectionView: View {
                             .font(.callout.bold())
                             .padding(.top, 2)
                         if !difficulty.isSimplified {
-                            Text("💵 Save \(Int(difficulty.savingsRate * 100))% of pay above \(difficulty.livingCostFloor / 1000)k living costs · 📉 \(Int(difficulty.turmoilChance * 100))% downturn risk/yr")
+                            Text("💵 Save \(Int(difficulty.savingsRate * 100))% of pay above \(difficulty.livingCostFloor / 1000)k · 📉 \(Int(difficulty.turmoilChance * 100))% chance of a bad economy each year")
                                 .font(.caption.bold())
                                 .foregroundStyle(.secondary)
                         }
@@ -538,7 +538,7 @@ struct CoachView: View {
     private var tips: [Tip] {
         [
             Tip(icon: "🎂", title: "One turn = one year",
-                body: "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you fancy this year? Tap the blue Skip button at the top."),
+                body: "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top."),
             Tip(icon: "🎒", title: "Build your life from the buttons",
                 body: "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become."),
             Tip(icon: "📈", title: "Watch yourself grow",

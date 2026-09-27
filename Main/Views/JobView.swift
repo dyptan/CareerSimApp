@@ -27,7 +27,7 @@ struct JobDetail: View {
     /// their hire odds at the posted rate are above zero.
     private var industryOptions: [Industry] {
         posting.possibleIndustries.filter {
-            posting.inIndustry($0).hireProbability(for: player, requestedSalary: Double(posting.annualIncome)) > 0
+            posting.inIndustry($0).hireProbability(for: player, requestedSalary: Double(posting.offeredSalary(for: player))) > 0
         }
     }
 
@@ -67,8 +67,7 @@ struct JobDetail: View {
                 return "\(axis.pictogram) \(axis.label): \(min(held, target))/\(target)"
             }
             .joined(separator: "\n")
-        return "\n\nThe skills this role asks for — each counts in proportion, and "
-            + "nothing else is scored:\n\n\(list)"
+        return "\n\nSkills this job looks for (each one helps, even if you're only part of the way there):\n\n\(list)"
     }
 
     /// Plain-language breakdown of the hire-probability formula with the
@@ -83,116 +82,96 @@ struct JobDetail: View {
             let s = Int((v * 100).rounded())
             return s >= 0 ? "+\(s)%" : "\(s)%"
         }
-        func times(_ v: Double) -> String { "×\(String(format: "%.2f", v))" }
-
         guard allRequirementsMet else {
             let gaps = CareerGraph.missingHardRequirements(for: job, player: player)
             let needs = gaps.isEmpty
-                ? "the required degree, licences and experience"
+                ? "the right schooling, licences and experience"
                 : gaps.joined(separator: "; ")
-            return "Hire chance is 0% until you have: \(needs).\(softSkillsClause)"
+            return "You can't get this job yet. First you need: \(needs).\(softSkillsClause)"
         }
 
         let b = job.hireBreakdown(for: player, requestedSalary: requestedSalary)
 
         // Breakthrough gate: without the signature title, odds sit at the floor.
         if b.breakthroughMissing, let key = job.breakthroughFame {
-            return "This career is gated on a breakthrough achievement. Hire chance stays at the \(pct(b.floor)) floor until you earn the “\(key)” title. \(breakthroughHowTo(key)) Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
+            return "This career has a special door: you need the “\(key)” title first. Until then your chance stays at \(pct(b.floor)). \(breakthroughHowTo(key)) Once you have it, it's the biggest help there is — +\(Int((Job.breakthroughBonus * 100).rounded()))%.\(softSkillsClause)"
         }
-        let hasBreakthrough = job.breakthroughFame != nil
 
         let asked = job.askedSoftSkills.count
         let matched = job.softSkillsHelpfulScore(for: player)
         let fit = b.requirements
         let shortfall = job.educationShortfall(for: player)
         let madeUp = shortfall - job.creditedEducationShortfall(for: player)
-        let educationFitLabel: String = {
-            guard shortfall > 0 else {
-                return job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field"
+        let schoolLabel: String = {
+            if shortfall > 0 {
+                let short = "\(shortfall) school level\(shortfall == 1 ? "" : "s") below what this job wants"
+                return madeUp > 0 ? short + " (your work experience makes up \(madeUp))" : short
             }
-            let short = "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
-            return madeUp > 0 ? short + ", \(madeUp) made up by equivalent experience" : short
+            if job.degreePreferenceFactor(for: player) < 1 { return "employers here prefer a college degree" }
+            if job.requirements.education.minEQF < 5 { return "you have the schooling it needs" }
+            return job.hasAcceptedDegree(for: player) ? "you have the right degree" : "you have a degree, but in a different subject"
         }()
-        let topPosition = job.isTopLeadership
         let fameLabel = job.category.fameCategory?.rawValue ?? "general"
         let climate = player.climate(for: job.industry)
-
-        let topPrestige = (player.degrees.map { $0.tier.prestige }.max() ?? 0)
-        let prestigeLabel: String = {
+        let topPrestige = (player.degrees.filter { $0.profile != nil }.map { $0.tier.prestige }.max() ?? 0)
+        let schoolName: String = {
             switch topPrestige {
-            case 3: return "Elite"
-            case 2: return "State"
-            case 1: return "Community"
-            default: return "no degree"
+            case 3: return "a top college"
+            case 2: return "a state college"
+            default: return "your school"
             }
         }()
-
         let expYears = job.expectedYearsExperience
         let playerYears = job.relevantYears(for: player)
 
-        var bring = [
-            "• Base (the role expects \(job.requirements.education.educationLabel())): \(pct(b.base))",
-            "• Skill match: \(matched)/\(asked) skills met, \(pct(b.skillFit)) fit → \(pct(b.skill))",
-            "• Degree prestige (\(prestigeLabel)): \(signed(b.prestige))",
-            "• Network (\(job.category.rawValue)): \(signed(b.network))",
+        /// A multiplier in plain words.
+        func effect(_ f: Double) -> String {
+            if f == 0 { return "closes this job for now" }
+            let p = Int(((f - 1) * 100).rounded())
+            if p == 0 { return "no change" }
+            return p > 0 ? "+\(p)% boost" : "cuts your chance to \(Int((f * 100).rounded()))% of normal"
+        }
+
+        var helps = [
+            "• Your skills: \(matched) of \(asked) are strong enough (\(pct(b.skillFit)) match)",
+            "• Starting chance for this kind of job: \(pct(b.base)) (jobs that need more school start lower)",
         ]
-        if b.fame > 0 {
-            bring.append("• Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(b.fame))")
-        }
-        if hasBreakthrough {
-            bring.append("• Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(b.breakthrough))")
-        }
-        if b.credential > 0 {
-            bring.append("• Relevant credential: \(signed(b.credential))")
-        }
+        if b.prestige != 0 { helps.append("• Going to \(schoolName): \(signed(b.prestige))") }
+        if b.network != 0 { helps.append("• People you know in \(job.category.rawValue): \(signed(b.network))") }
+        if b.fame > 0 { helps.append("• Your fame (\(fameLabel)): \(signed(b.fame))") }
+        if job.breakthroughFame != nil { helps.append("• Your “\(job.breakthroughFame ?? "")” title: \(signed(b.breakthrough))") }
+        if b.credential > 0 { helps.append("• A course for this field: \(signed(b.credential))") }
+
+        let salaryLine: String = {
+            if b.salaryFit > 1 { return "asking for less helps a little (\(effect(b.salaryFit)))" }
+            if b.salaryFit < 1 { return "asking for a lot more \(effect(b.salaryFit))" }
+            return "fair ✓"
+        }()
 
         var market: [String] = []
-        if b.demand != 1 {
-            market.append(b.demand < 1
-                ? "• \(job.baseTitle) roles are oversubscribed: \(times(b.demand))"
-                : "• Employers are short of \(job.baseTitle)s: \(times(b.demand))")
+        if b.demand < 1 { market.append("• Lots of people want this job: \(effect(b.demand))") }
+        if b.demand > 1 { market.append("• Employers need more \(job.baseTitle)s: \(effect(b.demand))") }
+        if job.rung > 0 { market.append("• Joining above the starting level: \(effect(b.rungDecay))") }
+        market.append("• \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()) this year: \(effect(b.climate))")
+        if b.opportunity != 1 { market.append("• \(player.difficulty.title) mode: \(effect(b.opportunity))") }
+        if b.seat < 1 {
+            market.append("• Only a few people get a job like this each year: \(pct(b.seat)) of the people who qualify\(job.isExecutive ? " (having run your own company helps)" : "")")
         }
-        if job.rung > 0 {
-            market.append("• Hiring in from outside, \(job.rung) rung\(job.rung == 1 ? "" : "s") above entry: \(times(b.rungDecay))")
-        }
-        market.append("• \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): \(times(b.climate))")
-        if b.opportunity != 1 {
-            market.append("• \(player.difficulty.title) difficulty: \(times(b.opportunity))")
-        }
-
-        var product = "\(pct(b.merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(b.salaryFit))"
-        for factor in [b.demand, b.rungDecay, b.climate, b.opportunity] where factor != 1 {
-            product += " × \(String(format: "%.2f", factor))"
-        }
-        product += " = \(pct(b.scaled))"
-
-        let seatLine: String = b.seat < 1
-            ? "\nThen the seat: only a few qualified candidates land a seat like this each year — \(times(b.seat))\(job.isExecutive ? ", eased by a founder track record (years running ventures, rounds, exits)" : "")."
-            : ""
-        let finalLine = b.seat < 1
-            ? "Final (clamped \(pct(b.floor))–\(pct(b.ceiling)), then × the seat): \(pct(b.final))"
-            : "Final (clamped \(pct(b.floor))–\(pct(b.ceiling))): \(pct(b.final))"
 
         return """
-        Formula: what you bring × how well you meet the requirements × salary fit × the market.
+        Your chance: \(pct(b.final))
 
-        What you bring:
-        \(bring.joined(separator: "\n"))
-        Subtotal: \(pct(b.merit))
+        What helps:
+        \(helps.joined(separator: "\n"))
 
-        How well you meet the requirements (these multiply — a requirement you
-        can't meet at all is ×0, which closes the role):
-        • Education (\(educationFitLabel)): \(times(fit.education))
-        • Licences and certificates: \(times(fit.credentials))
-        • Experience (\(playerYears)/\(expYears) yr expected): \(times(fit.experience))
-        • Salary fit: \(pct(b.salaryFit))
+        Your school and experience:
+        • School: \(schoolLabel) — \(effect(fit.education))
+        • Licences: \(fit.credentials > 0 ? "all set ✓" : "missing")
+        • Experience: \(expYears == 0 ? "none needed ✓" : "\(playerYears) of \(expYears) years — \(effect(fit.experience))")
+        • Your salary ask: \(salaryLine)
 
-        The market:
-        \(market.joined(separator: "\n"))
-
-        \(product)\(seatLine)
-        \(finalLine)
-        \(softSkillsClause)
+        This year's job market:
+        \(market.joined(separator: "\n"))\(softSkillsClause)
         """
     }
 
@@ -242,7 +221,7 @@ struct JobDetail: View {
                 if !job.educationIsMandatory && job.requirements.education.minEQF > 0 {
                     InfoHint(
                         title: "🎓 Preferred education",
-                        message: "Not required — but it counts on every application and every promotion. A degree in an accepted field counts most, an unrelated one a little, and falling short of this level costs you."
+                        message: "You don't strictly need it — but it helps every time you apply and every time you could be promoted. A degree in the right subject helps most, a degree in another subject helps less, and having less schooling than this makes it harder."
                     )
                 }
                 Spacer()
@@ -317,7 +296,7 @@ struct JobDetail: View {
                 credentialSection(
                     title: "Preferred (helpful):",
                     trainings: helpfulTrainings,
-                    footnote: "Not required — a relevant credential raises your hire odds in this field, and counts as one level of the schooling a role here expects."
+                    footnote: "Not needed — but one of these makes it easier to get hired in this field, and counts as one level of the schooling a job here wants."
                 )
             }
 
@@ -336,8 +315,8 @@ struct JobDetail: View {
                     .padding(.horizontal)
 
                 Text(held
-                     ? "This is the single biggest factor in getting signed."
-                     : "\(breakthroughHowTo(key)) Without it, you won't be signed (odds stay at \(Int((GameConstants.hireFloor * 100).rounded()))%).")
+                     ? "You have it! This is the biggest help there is for getting signed."
+                     : "\(breakthroughHowTo(key)) Without it, teams won't sign you (your chance stays at \(Int((GameConstants.hireFloor * 100).rounded()))%).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -355,7 +334,10 @@ struct JobDetail: View {
             applyButton
         }
         .onAppear {
-            requestedSalary = Double(job.income)
+            // The offer for this applicant: the median adjusted for their
+            // experience — what a posted-rate role pays and where the slider
+            // starts (`Job.offeredSalary`).
+            requestedSalary = Double(job.offeredSalary(for: player))
         }
     }
 
@@ -400,10 +382,10 @@ struct JobDetail: View {
     private func experienceHint(baseYears: Int) -> String {
         let floorYears = job.minimumQualifyingYears(simplified: false)
         var text = floorYears < baseYears
-            ? "\(baseYears) yr expected. With under \(floorYears) yr the role is closed; in between, every missing year costs you a lot — the odds scale with the square of the share you have. Every year beyond \(baseYears) raises your hire chance a little."
-            : "\(baseYears) yr required to qualify — every extra year raises your hire chance a little."
+            ? "This job wants \(baseYears) years of experience. With less than \(floorYears), you can't apply yet. In between you can, but each missing year makes it much harder. Every year over \(baseYears) helps a little more."
+            : "You need \(baseYears) years of experience to apply. Every extra year helps a little more."
         if job.isLadderVariant {
-            text += "\n\nYears as \(job.baseTitle) count in full; your other \(JobCategory.icon(for: job.category)) \(job.category.rawValue) years count half."
+            text += "\n\nYears as \(job.baseTitle) count fully. Other years in \(JobCategory.icon(for: job.category)) \(job.category.rawValue) count half."
         }
         // Related industries are credited too — notably, entrepreneurship
         // experience counts toward Business roles.
@@ -413,8 +395,8 @@ struct JobDetail: View {
                 .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
                 .joined(separator: ", ")
             text += job.isLadderVariant
-                ? "\n\nYour \(names) experience counts at half value too."
-                : "\n\nYour \(names) experience counts toward this too."
+                ? "\n\nYears in \(names) count half too."
+                : "\n\nYears in \(names) count too."
         }
         return text
     }
@@ -425,17 +407,17 @@ struct JobDetail: View {
                 Text("Salary:")
                     .font(.title2.bold())
                 if !isSimplified {
-                    InfoHint(title: "💵 Salary", message: "This role pays the going rate — there's no offer to argue over.")
+                    InfoHint(title: "💵 Salary", message: "This job pays a set amount — you can't ask for more. It starts a bit lower for beginners and a bit higher if you have years of experience in this work.")
                 }
                 Spacer()
-                Text("\(job.income.formatted(.number)) $/yr")
+                Text("\(job.offeredSalary(for: player).formatted(.number)) $/yr")
                     .font(.headline)
             }
             .padding(.horizontal)
 
 
             HStack(spacing: 6) {
-                Text(allRequirementsMet ? "✓ You qualify for this role." : lockedMessage)
+                Text(allRequirementsMet ? "✓ You can apply for this job." : lockedMessage)
                     .font(.subheadline)
                     .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
                 Spacer()
@@ -459,7 +441,7 @@ struct JobDetail: View {
                 .font(.subheadline)
             InfoHint(
                 title: "🏢 Employer's industry",
-                message: "\(posting.id) roles exist in every kind of organisation. Pick which to apply to — each industry's climate this year moves your hire odds there, and decides how your pay and promotions fare while you work in it."
+                message: "Every kind of company needs a \(posting.id). Pick which one to apply to. Some industries are doing better than others this year — that changes your chance of getting hired, and how your pay and promotions go while you work there."
             )
             Spacer()
             Picker("Employer", selection: Binding(
@@ -469,7 +451,7 @@ struct JobDetail: View {
                 ForEach(industryOptions) { industry in
                     // The same salary and rounding as the hire-probability row,
                     // so the menu and the page agree.
-                    let salary = requestedSalary > 0 ? requestedSalary : Double(posting.income)
+                    let salary = requestedSalary > 0 ? requestedSalary : Double(posting.offeredSalary(for: player))
                     let odds = posting.inIndustry(industry).hireProbability(for: player, requestedSalary: salary)
                     Text("\(industry.icon) \(industry.rawValue) · \(Int(odds * 100))%")
                         .tag(industry)
@@ -483,9 +465,9 @@ struct JobDetail: View {
 
     private var hireProbabilityRow: some View {
         HStack(spacing: 6) {
-            Text("Hire probability:")
+            Text("Chance to get hired:")
             InfoHint(
-                title: "How hire probability is calculated",
+                title: "What your chance depends on",
                 message: hireProbabilityFormulaText
             )
             Spacer()
@@ -499,7 +481,7 @@ struct JobDetail: View {
 
     private var salaryNegotiationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Salary negotiation")
+            Text("Ask for a salary")
                 .font(.title2.bold())
                 .padding(.horizontal)
 
@@ -535,7 +517,7 @@ struct JobDetail: View {
     /// accurate as new star tracks are added.
     private func breakthroughHowTo(_ key: String) -> String {
         switch key {
-        case "Junior Champion": return "Win a Junior Championship as a teen — train a sport for years to raise your odds."
+        case "Junior Champion": return "Win a Junior Championship as a teen. Practise a sport for years to get better at it."
         default:                return "Earn the “\(key)” title first."
         }
     }
@@ -566,10 +548,10 @@ struct JobDetail: View {
         // "no", so call it out first.
         if let key = job.breakthroughFame,
            !player.fameAwards.contains(where: { $0.title == key }) {
-            return "Employers here look for the “\(key)” title — earn it first to unlock this career."
+            return "Teams here want the “\(key)” title — win it first to open this career."
         }
 
-        return "Your odds were \(pct(hireProbability)) and the roll didn't land. Try again next year."
+        return "You had a \(pct(hireProbability)) chance, and this time it didn't work out. Don't give up — try again next year!"
     }
 
     private var applyDisabled: Bool { !allRequirementsMet }
@@ -589,7 +571,7 @@ struct JobDetail: View {
         Button {
             // Convert defensively: a degenerate slider state could leave the
             // bound value non-finite, and Int(_:) traps on NaN/infinity.
-            let salary = requestedSalary.isFinite ? Int(requestedSalary) : job.income
+            let salary = requestedSalary.isFinite ? Int(requestedSalary) : job.offeredSalary(for: player)
             let success = player.applyForJob(job, requestedSalary: salary)
             // Applying is how the year was spent, offer or no offer, so the
             // answer is a pop-up on the game view rather than a banner in a

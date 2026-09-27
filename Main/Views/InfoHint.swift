@@ -28,6 +28,14 @@ struct InfoHint: View {
                     .font(.callout)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            // The popover picks up the styling around its ⓘ — a section
+            // title's blue tint and centring, a bold row's weight — so it sets
+            // its own and reads the same wherever the ⓘ sits. `Color.primary`,
+            // not `.primary`: the hierarchical style resolves against the
+            // inherited tint and stays blue.
+            .foregroundStyle(Color.primary)
+            .multilineTextAlignment(.leading)
+            .fontWeight(nil)
             .padding()
             .frame(idealWidth: 300, maxWidth: 320, alignment: .leading)
             .modifier(CompactPopoverAdaptation())

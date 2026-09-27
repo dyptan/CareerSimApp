@@ -385,15 +385,15 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
     var promotionCultureBlurb: String {
         let c = promotionCulture
         if c.seniority >= 0.45 {
-            return "\(rawValue) promotes largely on seniority — time in the role counts most."
+            return "In \(rawValue), the years you've worked there count the most."
         }
         if c.readiness >= 0.45 {
-            return "\(rawValue) promotes people already working at the next level — readiness for the role above counts most."
+            return "In \(rawValue), being ready for the next job counts the most."
         }
         if c.performance >= 0.45 {
-            return "\(rawValue) promotes on results — how well you do the job you have counts most."
+            return "In \(rawValue), doing your current job well counts the most."
         }
-        return "\(rawValue) weighs results, readiness and time served fairly evenly."
+        return "In \(rawValue), doing well, being ready and years worked all count about the same."
     }
 
     /// How much of the national cycle this sector transmits — its beta. 1.0 moves
@@ -562,11 +562,11 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
     /// One line for the Macroeconomics panel.
     var blurb: String {
         switch self {
-        case .boom:     return "Hiring hard and paying up — the best year to apply or ask."
-        case .growth:   return "Expanding. Openings are easier to come by than usual."
-        case .steady:   return "Neither growing nor shrinking. The odds are the plain ones."
-        case .slowdown: return "Tightening. Fewer openings, fewer promotions, more layoffs."
-        case .slump:    return "Contracting — many postings pulled, merit raises paused, layoffs up."
+        case .boom:     return "Business is great! Lots of hiring — a great year to apply for a job."
+        case .growth:   return "Growing. It's easier than usual to find a job."
+        case .steady:   return "Steady — not growing or shrinking. Chances are normal."
+        case .slowdown: return "Slowing down. Fewer jobs and promotions, and more people losing their jobs."
+        case .slump:    return "Having a hard time. Some jobs disappear, pay stops growing, and more people lose their jobs."
         }
     }
 }

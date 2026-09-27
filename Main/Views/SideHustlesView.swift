@@ -84,7 +84,6 @@ struct SideHustleRow: View {
             .joined(separator: "\n")
 
         let locked = !player.canTakeProject(hustle)
-        let pay = player.projectPay(for: hustle)
 
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
@@ -101,10 +100,6 @@ struct SideHustleRow: View {
                     Text("🔒 Needs the “\(award)” title")
                         .font(.caption2)
                         .foregroundStyle(.orange)
-                } else if pay > 0 {
-                    Text("💵 \(pay.formatted(.number)) $ if it lands")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(.secondary)
                 }
             }
             .opacity(locked ? 0.5 : 1.0)
@@ -127,20 +122,17 @@ struct SideHustleRow: View {
         .padding(5)
     }
 
-    /// The project hint, kept to what the player can act on: the blurb, the
-    /// odds and what moves them, what a win pays, what the year costs either
-    /// way. The mechanic used to be spelled out in full prose, which made every
-    /// row a wall of text to read past.
-    /// What a landed year pays, and why: the base scaled by fame in the field.
-    private func payLine(for hustle: SideHustle) -> String? {
-        if let award = hustle.requiresAward, !player.canTakeProject(hustle) {
-            return "🔒 Opens once you hold the “\(award)” title — chase it under Projects."
-        }
-        guard hustle.basePay > 0 else { return "💵 Unpaid — this one is for the name it makes you." }
-        let fame = String(format: "%.1f", player.famePoints(for: hustle.fameCategory))
-        return "💵 Pays \(player.projectPay(for: hustle).formatted(.number)) $ if it lands — \(hustle.basePay.formatted(.number)) $ at no fame, rising steeply with your \(hustle.fameCategory.icon) \(hustle.fameCategory.rawValue) fame (\(fame) now)."
+    /// Why a star project is still closed, if it is.
+    private func lockLine(for hustle: SideHustle) -> String? {
+        guard let award = hustle.requiresAward, !player.canTakeProject(hustle) else { return nil }
+        return "🔒 Opens once you hold the “\(award)” title — chase it under Projects."
     }
 
+    /// The project hint, kept to what the player can act on: the blurb, the
+    /// odds and what moves them, the fame a win banks (projects pay no money —
+    /// they build fame and skills), what the year costs either way. The
+    /// mechanic used to be spelled out in full prose, which made every row a
+    /// wall of text to read past.
     private func infoMessage(for hustle: SideHustle, odds: Double,
                              talentHint: String, growthHint: String) -> String {
         let oddsPct = Int((odds * 100).rounded())
@@ -149,38 +141,38 @@ struct SideHustleRow: View {
 
         // Naming the drivers with where the player stands now makes a 0% row
         // read as "not yet" rather than "broken".
-        var oddsLine = "Odds rise with the skills below, your \(player.totalExperienceYears) yr of work experience"
+        var oddsLine = "Your chance goes up with the skills below, your \(player.totalExperienceYears) years of work"
         if let cat = hustle.experienceCategory {
             let field = player.industryExperience(for: cat)
-            oddsLine += " (your \(field) yr in \(JobCategory.icon(for: cat)) \(cat.rawValue) count double)"
+            oddsLine += " (your \(field) years in \(JobCategory.icon(for: cat)) \(cat.rawValue) count double)"
         }
-        oddsLine += ", and the \(fame) fame you've already banked — reputation compounds inside its own field."
+        oddsLine += ", and the \(fame) fame you already have — being known in a field makes the next project there easier."
 
         let climate = player.projectClimate(for: hustle)
         let climateLine = climate == .steady
             ? nil
-            : "\(climate.icon) The field is \(climate.rawValue.lowercased()) this year: ×\(String(format: "%.2f", climate.projectFactor)) on these odds."
+            : "\(climate.icon) This field is \(climate.rawValue.lowercased()) this year: \(SkillsView.easierOrHarder(climate.projectFactor))."
 
         // Only the fame is at stake — the skill gains and the banked experience
         // land either way, so the loss line says what is actually lost.
-        var lossLine = "Lose: only the fame."
+        var lossLine = "If it doesn't work out: you just miss the fame — you keep the skills."
         if let cat = hustle.experienceCategory {
             let credited = cat.creditedExperienceCategories
                 .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
                 .joined(separator: ", ")
-            lossLine += " 📅 The year still banks \(JobCategory.icon(for: cat)) \(cat.rawValue) experience"
-            lossLine += credited.isEmpty ? "." : ", which also counts toward \(credited) roles."
+            lossLine += " 📅 The year still counts as \(JobCategory.icon(for: cat)) \(cat.rawValue) work experience"
+            lossLine += credited.isEmpty ? "." : ", which also helps for \(credited) jobs."
         }
 
         return [
             hustle.blurb,
-            "🎲 \(oddsPct)% success · 🌟 \(fame) fame",
+            "🎲 \(oddsPct)% chance it works · 🌟 \(fame) fame",
             oddsLine,
             climateLine,
-            "Draws on:\n\(talentHint)",
-            "Builds, win or lose:\n\(growthHint)",
-            payLine(for: hustle),
-            "Win: \(fame) fame — it lifts this project's pay and odds next time, and hiring odds for \(category.rawValue) roles.",
+            "Needs:\n\(talentHint)",
+            "Grows, whether it works or not:\n\(growthHint)",
+            lockLine(for: hustle),
+            "If it works: \(fame) fame — it makes your next project easier and helps you get \(category.rawValue) jobs. Projects don't pay money: they're for fame and skills.",
             lossLine,
         ].compactMap { $0 }.joined(separator: "\n\n")
     }

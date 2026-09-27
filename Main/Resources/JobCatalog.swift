@@ -465,7 +465,11 @@ enum JobCatalog {
     static let hiringDemandByBaseTitle: [String: Double] = [
         // Commission sales: many apply, few survive the quota — half of
         // wholesale/manufacturing reps hold a bachelor's despite the HS listing.
-        "Sales Representative": 0.6,
+        "Sales Representative": 0.5,
+        // Airlines accept a few percent of cabin-crew applicants (Delta: ~1 %).
+        "Flight Attendant": 0.3,
+        // A small occupation (~60k lodging managers) that promotes from within.
+        "Hotel Manager": 0.5,
         "Investment Banker": 0.35,
         "Management Consultant": 0.45,
         "TV Presenter": 0.30,
@@ -538,6 +542,9 @@ enum JobCatalog {
     /// engineering/science/technology degrees.
     static let acceptedProfilesByBaseTitle: [String: [TertiaryProfile]] = [
         "Architect": [.engineering, .design, .arts],
+        // Accountancy is a licensed profession built on an accounting or
+        // business degree (the CPA's 150 credit hours are mostly accounting).
+        "Accountant": [.business],
         // Game roles hire from technology, design and arts alike, so they keep
         // that spread rather than inheriting whichever category now holds them.
         "Game Designer": [.technology, .design, .arts],
@@ -1224,7 +1231,7 @@ enum JobCatalog {
         // Media / Writing / Broadcast
         .init(title: "Content Writer", category: .showBusiness, income: 58_000, icon: "✍️", summary: "Creates written content for various channels.", minEQF: 4),
         .init(title: "Photographer", category: .showBusiness, income: 44_000, icon: "📷", summary: "Takes photos for commercial and personal use.", minEQF: 3),
-        .init(title: "Video Editor", category: .showBusiness, income: 72_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 4),
+        .init(title: "Video Editor", category: .showBusiness, income: 72_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 5),  // BLS: bachelor's
         .init(title: "Social Media Manager", category: .showBusiness, income: 70_000, icon: "📱", summary: "Runs brand presence and campaigns across social platforms.", minEQF: 5),
         // Sports / Fitness
         // Agriculture

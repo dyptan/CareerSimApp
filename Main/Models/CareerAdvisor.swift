@@ -159,8 +159,63 @@ enum CareerAdvisor {
     /// paid path happened to end in the C-suite; now it can end at a surgeon's
     /// salary, one seat short of the goal.
     static func goalAdjustedRaise(_ job: Job, pay: Int, player: Player) -> Int {
-        reachesGoal(job, player) ? 2 * offer(job, player) : offer(job, player) - pay
+        reachesGoal(job, player) ? 2 * offer(job, player) : prospectPay(job, player) - pay
     }
+
+    /// What a role is worth over the career it starts, not just its first
+    /// year: the average pay over the next `prospectHorizonYears`, assuming
+    /// each rung above is reached once its stated years are served. A medical
+    /// residency pays $68k, but it is three years at the door of a $245–300k
+    /// attending career — judged by the residency alone, medicine would never
+    /// look worth it. A standalone role is worth its offer.
+    static func prospectPay(_ job: Job, _ player: Player) -> Int {
+        let now = offer(job, player)
+        guard let rungs = ladderRungs[job.baseTitle], rungs.count > 1 else { return now }
+        let start = job.requirements.minYearsExperience
+        let above = rungs.filter { $0.rung > job.rung }.sorted { $0.rung < $1.rung }
+        var total = 0.0
+        var pay = Double(now)
+        var year = 0
+        for rung in above {
+            let reachedAt = min(prospectHorizonYears, max(year, rung.minYears - start))
+            total += pay * Double(reachedAt - year)
+            year = reachedAt
+            pay = max(pay, Double(rung.income))
+        }
+        total += pay * Double(prospectHorizonYears - year)
+        return Int((total / Double(prospectHorizonYears)).rounded())
+    }
+
+    /// A role's pay in words: its offer, and — when the ladder it starts pays
+    /// much more later (a residency, an apprenticeship) — what it grows to.
+    static func payStory(_ job: Job, _ player: Player) -> String {
+        let start = offer(job, player)
+        let later = prospectPay(job, player)
+        guard Double(later) >= Double(start) * 1.25 else { return "\(money(start)) a year" }
+        return "\(money(start)) a year to start, growing to about \(money(later)) later"
+    }
+
+    /// How far ahead a ladder's prospects are counted (see `prospectPay`).
+    static let prospectHorizonYears = 20
+
+    /// Every ladder's rungs at their catalogue pay, by base title — built once.
+    private static let ladderRungs: [String: [(rung: Int, minYears: Int, income: Int)]] =
+        Dictionary(grouping: JobCatalog.allJobs().filter { !$0.isEntrepreneurial }, by: \.baseTitle)
+            .mapValues { $0.map { (rung: $0.rung, minYears: $0.requirements.minYearsExperience, income: $0.income) } }
+
+    /// An application or an admission is a roll the player can take again
+    /// next year: the chance of succeeding within `retryAttempts` tries, and
+    /// the years the failed tries are expected to cost. Judging every move by
+    /// a single year's odds would make the long, selective routes (medical
+    /// school, then a residency match) look far worse than they are.
+    static func retryOutlook(_ odds: Double) -> (chance: Double, extraYears: Int) {
+        guard odds > 0 else { return (0, 0) }
+        let chance = 1 - pow(1 - min(1, odds), Double(retryAttempts))
+        let extra = min(retryAttempts - 1, Int(((1 - odds) / odds).rounded()))
+        return (chance, max(0, extra))
+    }
+
+    static let retryAttempts = 3
 
     /// A role's hire odds once a move has changed its requirement factors — for
     /// roles the player can't apply to yet, where `hireProbability` would only
@@ -193,20 +248,21 @@ enum CareerAdvisor {
         for job in upgrades(player, jobs) {
             let odds = job.hireProbability(for: player, requestedSalary: Double(offer(job, player)))
             guard odds >= minimumApplyOdds else { continue }
-            let value = careerValue(odds: odds, raise: goalAdjustedRaise(job, pay: pay, player: player),
-                                    delay: 0, player: player)
+            let outlook = retryOutlook(odds)
+            let value = careerValue(odds: outlook.chance, raise: goalAdjustedRaise(job, pay: pay, player: player),
+                                    delay: outlook.extraYears, player: player)
             if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, odds, value) }
         }
         guard let best else { return nil }
         let job = best.job
         let salary = offer(job, player)
         var detail = player.isSimplified
-            ? "You qualify. \(money(salary)) a year"
-            : "\(percent(best.odds)) chance of an offer · \(money(salary)) a year"
-        detail += pay > 0 && salary > pay ? " (+\(money(salary - pay)) on today)." : "."
-        detail += " Find it under \(job.category.rawValue)."
+            ? "You can get this job! It pays \(money(salary)) a year"
+            : "You have a \(percent(best.odds)) chance to get it. It pays \(payStory(job, player))"
+        detail += pay > 0 && salary > pay ? " — \(money(salary - pay)) more than you earn now." : "."
+        detail += " Look for it under \(job.category.rawValue)."
         if reachesGoal(job, player) {
-            detail += " 🏆 This reaches your goal!"
+            detail += " 🏆 Getting this job reaches your goal!"
         }
         return Tip(kind: .applyNow, icon: job.icon, title: "Apply to be \(article(for: job.id)) \(job.id)",
                    detail: detail, destination: .jobs(job.workSetting), job: job, value: best.value)
@@ -244,19 +300,20 @@ enum CareerAdvisor {
         let expectedPay = Player.promotionPay(current: current, next: next, raise: raise)
         let value = careerValue(odds: chance, raise: expectedPay - current, delay: 1 + wait, player: player)
 
+        let years = wait == 1 ? "1 more year" : "\(wait) more years"
         var detail = wait == 0
-            ? "\(percent(chance)) promotion odds this year → about \(money(expectedPay)) a year."
-            : "Eligible in \(wait) yr, once you have \(next.requirements.minYearsExperience) yr as \(next.experienceLadder ?? job.baseTitle); then about \(percent(chance)) a year → about \(money(expectedPay)) a year."
+            ? "You have a \(percent(chance)) chance to move up this year. You'd earn about \(money(expectedPay)) a year."
+            : "Keep going for \(years) — you need \(next.requirements.minYearsExperience) years as \(next.experienceLadder ?? job.baseTitle) first. Then you'll have about a \(percent(chance)) chance each year to move up and earn about \(money(expectedPay)) a year."
         var destination: Destination?
         if odds.education < 0 {
             // Studying full-time means leaving the job — no button that would
             // undo the very climb this tip is about.
-            detail += " Your missing \(job.requirements.education.educationLabel()) holds promotions back, but studying for it means leaving this job."
+            detail += " Not having a \(job.requirements.education.educationLabel()) holds you back — but going back to school means leaving this job."
         } else if let lever = biggestTrainableGap(for: next, player: player) {
-            detail += " Biggest lever: \(lever.gap.axis.pictogram) \(lever.gap.axis.label) (\(lever.gap.have)/\(lever.gap.need)) — \(lever.activity.label) trains it."
+            detail += " Best way to help: grow your \(lever.gap.axis.pictogram) \(lever.gap.axis.label) (\(lever.gap.have) of \(lever.gap.need)). \(lever.activity.label) is good practice for it."
             destination = .activities(lever.activity.kind)
         }
-        return Tip(kind: .climb, icon: "📈", title: "Aim for \(next.id)",
+        return Tip(kind: .climb, icon: "📈", title: "Work toward \(next.id)",
                    detail: detail, destination: destination, job: next, value: value)
     }
 
@@ -280,14 +337,14 @@ enum CareerAdvisor {
             guard others > 0 else { continue }
             // The odds once the credential is held: the fit today with the
             // credentials factor lifted from 0 to 1.
-            let odds = estimatedOdds(for: job, player: player, requirementFactor: others)
-            let value = careerValue(odds: odds, raise: goalAdjustedRaise(job, pay: pay, player: player),
-                                    delay: missing.count, player: player)
+            let outlook = retryOutlook(estimatedOdds(for: job, player: player, requirementFactor: others))
+            let value = careerValue(odds: outlook.chance, raise: goalAdjustedRaise(job, pay: pay, player: player),
+                                    delay: missing.count + outlook.extraYears, player: player)
             if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, missing, value) }
         }
         guard let best, let first = best.missing.first else { return nil }
-        var detail = "Opens \(best.job.id) at \(money(offer(best.job, player))) a year"
-        detail += best.missing.count > 1 ? " — together with \(best.missing[1].friendlyName)." : "."
+        var detail = "This opens the \(best.job.id) job, which pays \(payStory(best.job, player))"
+        detail += best.missing.count > 1 ? ". You'll also need \(best.missing[1].friendlyName)." : "."
         return Tip(kind: .train, icon: "📜", title: "Take \(first.friendlyName)",
                    detail: detail, destination: .education, job: best.job, value: best.value)
     }
@@ -328,7 +385,10 @@ enum CareerAdvisor {
                       }) else { continue }
                 licences = missing
             }
-            let delay = years + licences.count
+            // Admission can be retried: the chance of getting in within a few
+            // tries, and the years the failed tries cost.
+            let admission = retryOutlook(degree.admissionProbability(player: player))
+            let delay = years + licences.count + admission.extraYears
             // The education factor today against the one the degree earns: a
             // pass/fail gate in the regulated fields and simplified mode, the
             // relevant-degree premium everywhere else.
@@ -338,34 +398,47 @@ enum CareerAdvisor {
                                       requirementFactor: ageFactor(job, player, inYears: delay)
                                           * fit.experience * educationAfter)
             let now = estimatedOdds(for: job, player: player, requirementFactor: fit.factor)
-            let gain = after - now
+            // Applications can be retried too: what the degree buys is the
+            // chance of landing the role within a few tries.
+            let hire = retryOutlook(after)
+            let gain = hire.chance - retryOutlook(now).chance
             guard gain > 0 else { continue }
-            // Admission is a roll of its own — a rejection still spends the year.
-            let admission = degree.admissionProbability(player: player)
             // Study is full-time: the job (and its pay) goes, and — outside
-            // simplified mode — tuition is due.
-            let tuition = player.isSimplified ? 0 : degree.totalTuition
-            let cost = Double(pay * degree.yearsToComplete + tuition)
-            let value = admission * careerValue(odds: gain, raise: goalAdjustedRaise(job, pay: pay, player: player),
-                                                delay: delay, player: player) - cost
+            // simplified mode — the student's share of tuition is due, for the
+            // degree after this one too when this is only the first step.
+            let cost = Double(pay * degree.yearsToComplete + studentTuition(degree, toward: minEQF, player: player))
+            let value = admission.chance * careerValue(odds: gain, raise: goalAdjustedRaise(job, pay: pay, player: player),
+                                                       delay: delay + hire.extraYears, player: player) - cost
             if beats(value, job, best.map { ($0.value, $0.job.id) }) {
                 best = (job, degree, years, licences, value)
             }
         }
         guard let best else { return nil }
         let firstStep = best.degree.eqf < best.job.requirements.education.minEQF
-        let salary = offer(best.job, player)
         var detail = firstStep
-            ? "First step toward \(best.job.id) (\(money(salary)) a year) — about \(best.years) years of study in all"
-            : "Opens \(best.job.id) at \(money(salary)) a year after \(best.years) years of study"
+            ? "This is the first step to becoming \(article(for: best.job.id)) \(best.job.id) (\(payStory(best.job, player))). It's about \(best.years) years of school in total"
+            : "This opens the \(best.job.id) job (\(payStory(best.job, player))) after \(best.years) years of school"
         if !best.licences.isEmpty {
             let names = best.licences.map(\.friendlyName).joined(separator: " and ")
             detail += ", then \(names) (\(best.licences.count) more year\(best.licences.count == 1 ? "" : "s"))"
         }
         detail += "."
-        if pay > 0 { detail += " You'd give up your job while studying." }
+        if pay > 0 { detail += " You'd have to leave your job while you study." }
         return Tip(kind: .study, icon: best.degree.pictogram, title: "Study for a \(best.degree.degreeName)",
                    detail: detail, destination: .education, job: best.job, value: best.value)
+    }
+
+    /// The tuition the student pays (net of the family's share) to hold EQF
+    /// `target` starting with `degree` — the next degree up priced at a state
+    /// school in the same field.
+    static func studentTuition(_ degree: Education, toward target: Int, player: Player) -> Int {
+        guard !player.isSimplified else { return 0 }
+        var total = degree.totalTuition
+        if let profile = degree.profile, degree.eqf < target {
+            let next: Level.Stage = target >= Level(stage: .Doctorate).eqf ? .Doctorate : .Master
+            total += Education(next, profile: profile, tier: .state).totalTuition
+        }
+        return Int((Double(total) * (1 - player.difficulty.familyTuitionShare)).rounded())
     }
 
     /// One year of the right activity toward a role that pays more — or, for a
@@ -407,8 +480,8 @@ enum CareerAdvisor {
         guard let best else { return nil }
         let gap = best.gap
         let detail = isChild
-            ? "Aiming for \(best.job.id) one day (\(money(best.job.income)) a year)? It asks \(gap.axis.label) \(gap.need) — you're at \(gap.have)."
-            : "\(best.job.id) (\(money(offer(best.job, player))) a year) asks \(gap.axis.label) \(gap.need) — you're at \(gap.have)."
+            ? "Want to be \(article(for: best.job.id)) \(best.job.id) one day? It pays \(money(best.job.income)) a year and needs \(gap.axis.label) \(gap.need). You're at \(gap.have) — keep practising!"
+            : "The \(best.job.id) job (\(money(offer(best.job, player))) a year) needs \(gap.axis.label) \(gap.need). You're at \(gap.have)."
         return Tip(kind: .buildSkill, icon: gap.axis.pictogram,
                    title: "Build \(gap.axis.label) with \(best.activity.label)",
                    detail: detail, destination: .activities(best.activity.kind),
