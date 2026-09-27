@@ -14,6 +14,11 @@ final class AppUIState: ObservableObject {
     @Published var showExecutiveSheet: Bool = false
     @Published var showEventsSheet: Bool = false
     @Published var showRetirementSheet: Bool = false
+    /// The career advisor's sheet (see `CareerAdvisor`). Opened from the header.
+    @Published var showAdvisorSheet: Bool = false
+    /// The sheet an advisor tip asked for, opened once the advisor has
+    /// finished dismissing — two sheets can't be presented at once.
+    @Published var advisorFollowUp: CareerAdvisor.Destination?
 
     /// The Activities sheet's open tab, kept across the yearly close so a
     /// player who practises every year lands back on their tab.
@@ -88,6 +93,8 @@ final class AppUIState: ObservableObject {
         showExecutiveSheet = false
         showEventsSheet = false
         showRetirementSheet = false
+        showAdvisorSheet = false
+        advisorFollowUp = nil
         hasSelectedMode = false
         showGoalSheet = false
         hasShownGoal = false

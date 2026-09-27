@@ -27,6 +27,14 @@ struct HeaderView: View {
                     InfoHint(title: "Game mode", message: gameModeSummary)
                 }
 
+                // Free to open at any age: reading advice never spends the year.
+                Button { appUIState.showAdvisorSheet = true } label: {
+                    Label("Advice", systemImage: "lightbulb")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(player.hasRetired)
+
                 // The running score, at body weight so it reads as the run's
                 // headline number rather than chrome. Simplified mode has a
                 // fixed goal instead of a score, so it keeps the plain savings

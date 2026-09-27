@@ -33,6 +33,25 @@ struct RootView: View {
         player.advanceYear(appUIState: appUIState)
     }
 
+    /// Opens the sheet an advisor tip pointed to, now that the advisor is gone.
+    private func openAdvisorFollowUp() {
+        guard let destination = appUIState.advisorFollowUp else { return }
+        appUIState.advisorFollowUp = nil
+        switch destination {
+        case .jobs(let setting):
+            // A saved "kind of work" filter mustn't hide the role just recommended.
+            if let filter = appUIState.jobSettingFilter, filter != setting {
+                appUIState.jobSettingFilter = nil
+            }
+            appUIState.showCareersSheet = true
+        case .education:
+            appUIState.showTertiarySheet = true
+        case .activities(let tab):
+            appUIState.activitiesTab = tab
+            appUIState.showActivitiesSheet = true
+        }
+    }
+
     private var gameView: some View {
         VStack(alignment: .leading, spacing: 8) {
             HeaderView(player: player, appUIState: appUIState)
@@ -142,6 +161,14 @@ struct RootView: View {
         }
         .sheet(isPresented: $appUIState.showRetirementSheet) {
             RetirementView(player: player, appUIState: appUIState)
+        }
+        .sheet(isPresented: $appUIState.showAdvisorSheet, onDismiss: openAdvisorFollowUp) {
+            GameSheet(title: "Advisor", hint: AdvisorView.hint, isPresented: $appUIState.showAdvisorSheet) {
+                AdvisorView(player: player) { destination in
+                    appUIState.advisorFollowUp = destination
+                    appUIState.showAdvisorSheet = false
+                }
+            }
         }
         .sheet(isPresented: $appUIState.showGoalSheet) {
             GoalView(player: player, appUIState: appUIState)

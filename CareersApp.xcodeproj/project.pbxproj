@@ -51,9 +51,12 @@
 		AA00000000000000000000EE /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000ED /* GameCenterManager.swift */; };
 		AA00000000000000000000F3 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000F2 /* ConfettiSwiftUI */; };
 		AA0000000000000000000103 /* CareerGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* CareerGraph.swift */; };
+		AA0000000000000000000121 /* CareerAdvisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000120 /* CareerAdvisor.swift */; };
+		AA0000000000000000000123 /* AdvisorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000122 /* AdvisorView.swift */; };
 		AA0000000000000000000111 /* ExecutiveDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000110 /* ExecutiveDecision.swift */; };
 		AA0000000000000000000113 /* ExecutiveDecisionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000112 /* ExecutiveDecisionsView.swift */; };
 		AA000000000000000000020B /* CareerGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020A /* CareerGraphTests.swift */; };
+		AA0000000000000000000125 /* CareerAdvisorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000124 /* CareerAdvisorTests.swift */; };
 		AA000000000000000000020E /* VentureLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020D /* VentureLaunchTests.swift */; };
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
@@ -127,10 +130,13 @@
 		AA00000000000000000000E7 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E9 /* Competition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Competition.swift; sourceTree = "<group>"; };
 		AA00000000000000000000ED /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		AA0000000000000000000120 /* CareerAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerAdvisor.swift; sourceTree = "<group>"; };
+		AA0000000000000000000122 /* AdvisorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000102 /* CareerGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraph.swift; sourceTree = "<group>"; };
 		AA0000000000000000000110 /* ExecutiveDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecision.swift; sourceTree = "<group>"; };
 		AA0000000000000000000112 /* ExecutiveDecisionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecisionsView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000201 /* CareersAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CareersAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000124 /* CareerAdvisorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerAdvisorTests.swift; sourceTree = "<group>"; };
 		AA000000000000000000020A /* CareerGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraphTests.swift; sourceTree = "<group>"; };
 		AA000000000000000000020D /* VentureLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VentureLaunchTests.swift; sourceTree = "<group>"; };
 		C20D77EA24B665D7002E7AEA /* CareersApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CareersApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000020A /* CareerGraphTests.swift */,
+				AA0000000000000000000124 /* CareerAdvisorTests.swift */,
 				AA000000000000000000020D /* VentureLaunchTests.swift */,
 			);
 			path = CareersAppTests;
@@ -227,6 +234,7 @@
 				5596D81B2E9AE4EF00E98CEF /* Job.swift */,
 				84F851C82EA0F30F0066C41A /* Player.swift */,
 				AA0000000000000000000102 /* CareerGraph.swift */,
+				AA0000000000000000000120 /* CareerAdvisor.swift */,
 				550618412ED2245900C56E99 /* Training.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
 				AA00000000000000000000A1 /* GameConstants.swift */,
@@ -248,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				550C550E2EB02BDE00887B96 /* HeaderView.swift */,
+				AA0000000000000000000122 /* AdvisorView.swift */,
 				55A6ED002E9542000033B674 /* JobView.swift */,
 				55C06F5D2E96DEB600BD5017 /* CategoryRow.swift */,
 				84F851CA2EA0F3130066C41A /* RootView.swift */,
@@ -385,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000000000000000000020B /* CareerGraphTests.swift in Sources */,
+				AA0000000000000000000125 /* CareerAdvisorTests.swift in Sources */,
 				AA000000000000000000020E /* VentureLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,6 +426,8 @@
 				84C2E8702E9C1C0F0093E507 /* JobCategory.swift in Sources */,
 				550618422ED2245900C56E99 /* Training.swift in Sources */,
 				AA0000000000000000000103 /* CareerGraph.swift in Sources */,
+				AA0000000000000000000121 /* CareerAdvisor.swift in Sources */,
+				AA0000000000000000000123 /* AdvisorView.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
 				555CC10D2FF1341B00426E7E /* Sport.swift in Sources */,
