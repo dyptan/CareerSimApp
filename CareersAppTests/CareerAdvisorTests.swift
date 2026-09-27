@@ -48,9 +48,13 @@ final class CareerAdvisorTests: XCTestCase {
     func testNeverSuggestsALongShotApplication() {
         let player = graduate(age: 22)
         guard let tip = CareerAdvisor.applyNowTip(player, CareerAdvisor.catalogue(player)) else { return }
-        let odds = tip.job.hireProbability(for: player, requestedSalary: Double(tip.job.income))
+        // Read at the ask the advisor quotes and the Jobs sheet defaults to —
+        // the experience-adjusted offer. Asking a newcomer's full posted pay
+        // is asking ~18% over the offer, which reads lower than the tip did.
+        let offer = tip.job.offeredSalary(for: player)
+        let odds = tip.job.hireProbability(for: player, requestedSalary: Double(offer))
         XCTAssertGreaterThanOrEqual(odds, CareerAdvisor.minimumApplyOdds)
-        XCTAssertGreaterThan(tip.job.income, CareerAdvisor.currentPay(player))
+        XCTAssertGreaterThan(offer, CareerAdvisor.currentPay(player))
         XCTAssertTrue(player.availableJobs.contains { $0.id == tip.job.id },
                       "\(tip.job.id) isn't posted this year — the Jobs sheet wouldn't list it.")
     }
