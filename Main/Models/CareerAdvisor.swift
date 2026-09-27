@@ -4,13 +4,14 @@ import Foundation
 /// moves most likely to pay off, each ranked by the same yardstick.
 ///
 /// It introduces **no rules of its own**. Every number it quotes comes from the
-/// formulas the game actually rolls — `Job.hireProbability`,
-/// `Player.promotionOdds`, `Job.requirementFit`, `Training.requirements`,
-/// `Education.admissionProbability` — so its advice can't drift from the game
-/// it's advising on. It only ever looks at this year's postings
-/// (`Player.availableJobs`), the same list the Jobs sheet shows, so every role
-/// it names is one the player can find and every odds figure matches the one
-/// quoted there.
+/// formulas the game actually rolls — `Job.hireBreakdown` (behind
+/// `Job.hireProbability`, asked at `Job.offeredSalary`), `Player.promotionOdds`
+/// and `Player.promotionPay`, `Job.requirementFit`,
+/// `Training.requirements`, `Education.admissionProbability` — so its advice
+/// can't drift from the game it's advising on. It only ever looks at this
+/// year's postings (`Player.availableJobs`), the same list the Jobs sheet
+/// shows, so every role it names is one the player can find and every odds
+/// figure matches the one quoted there.
 ///
 /// Deterministic and side-effect free: it never mutates the player, and the
 /// same state always yields the same tips (ties break on the role's title),
@@ -90,7 +91,7 @@ enum CareerAdvisor {
 
     /// This year's employee postings at their published median salary — the
     /// roles the Jobs sheet lists, each in the industry it's posted in (so a
-    /// sector in a slump, whose postings are withdrawn, is never recommended).
+    /// posting a slump withdrew this year is never recommended).
     /// Founder ventures are left out: they carry their own capital-and-grit
     /// maths and sheet.
     static func catalogue(_ player: Player) -> [Job] {
@@ -107,6 +108,13 @@ enum CareerAdvisor {
         player.currentOccupation?.annualIncome ?? 0
     }
 
+    /// What `job` would pay the player if they landed it: the offer for their
+    /// experience (`Job.offeredSalary`) — the salary the Jobs sheet opens the
+    /// application at, and what a posted-rate role pays.
+    static func offer(_ job: Job, _ player: Player) -> Int {
+        job.offeredSalary(for: player)
+    }
+
     /// Expected extra lifetime pay from a move that succeeds with `odds`,
     /// raises pay by `raise` a year, and starts paying after `delay` years.
     static func careerValue(odds: Double, raise: Int, delay: Int, player: Player) -> Double {
@@ -120,20 +128,51 @@ enum CareerAdvisor {
         return value > best.value || (value == best.value && job.id < best.id)
     }
 
-    /// Jobs that would pay more than the player earns today.
+    /// Jobs that would pay more than the player earns today — and, in
+    /// Simplified mode, any top-leadership seat not yet reached, whatever it
+    /// pays (see `goalAdjustedRaise`). A Simplified player already *in* such a
+    /// seat is never advised to step off the finish line for more money, or
+    /// the advice would swing them between the goal and a better-paid job
+    /// below it every year.
     private static func upgrades(_ player: Player, _ jobs: [Job]) -> [Job] {
         let pay = currentPay(player)
         let heldId = player.currentOccupation?.id
-        return jobs.filter { $0.income > pay && $0.id != heldId }
+        let holdsGoal = player.isSimplified && player.goalMet
+        return jobs.filter { job in
+            guard job.id != heldId, !holdsGoal || job.isTopLeadership else { return false }
+            return offer(job, player) > pay || reachesGoal(job, player)
+        }
     }
 
-    /// The part of a role's hire odds that doesn't depend on its hard gates:
-    /// the soft-skill fit, the formula's dominant term. Used for roles the
-    /// player can't apply to yet, where `hireProbability` would only say zero;
-    /// the caller multiplies in the requirement factors the move would leave.
-    static func estimatedOdds(for job: Job, player: Player) -> Double {
-        if player.isSimplified { return 1.0 }
-        return max(0.05, min(0.95, 0.2 + 0.7 * job.softSkillFit(for: player)))
+    /// Whether landing `job` would meet Simplified mode's goal (a top
+    /// leadership seat — see `Player.goalMet`).
+    static func reachesGoal(_ job: Job, _ player: Player) -> Bool {
+        player.isSimplified && job.isTopLeadership && !player.goalMet
+    }
+
+    /// The yearly gain a move toward `job` is valued at: the rise its offer
+    /// (`offer`) brings over today's pay — or, for a seat that meets
+    /// Simplified's goal, twice its whole pay. Simplified mode's finish line is a top-leadership seat, not a
+    /// number, so reaching it outranks a merely better-paid role even when it
+    /// pays less than the job it replaces (a surgeon stepping up to chief
+    /// medical officer). Before degrees gated every Simplified role, the best-
+    /// paid path happened to end in the C-suite; now it can end at a surgeon's
+    /// salary, one seat short of the goal.
+    static func goalAdjustedRaise(_ job: Job, pay: Int, player: Player) -> Int {
+        reachesGoal(job, player) ? 2 * offer(job, player) : offer(job, player) - pay
+    }
+
+    /// A role's hire odds once a move has changed its requirement factors — for
+    /// roles the player can't apply to yet, where `hireProbability` would only
+    /// say zero. It is the game's own breakdown (`Job.hireBreakdown`, asking
+    /// the salary on offer) with the product of the requirement factors — age,
+    /// education, licences, experience — neutralised and replaced by
+    /// `requirementFactor`, the product the move would leave: every other term
+    /// (merit, demand, rung decay, climate, the difficulty, the floor, the
+    /// ceiling and the seat) is exactly what the roll would use.
+    static func estimatedOdds(for job: Job, player: Player, requirementFactor: Double) -> Double {
+        job.hireBreakdown(for: player, requestedSalary: Double(offer(job, player)))
+            .odds(requirementFactor: requirementFactor)
     }
 
     /// Careers like Professional Player sit at the odds floor without their
@@ -152,22 +191,21 @@ enum CareerAdvisor {
         let pay = currentPay(player)
         var best: (job: Job, odds: Double, value: Double)?
         for job in upgrades(player, jobs) {
-            let odds = job.hireProbability(for: player, requestedSalary: Double(job.income))
+            let odds = job.hireProbability(for: player, requestedSalary: Double(offer(job, player)))
             guard odds >= minimumApplyOdds else { continue }
-            var value = careerValue(odds: odds, raise: job.income - pay, delay: 0, player: player)
-            // Simplified mode's finish line is a top-leadership seat, not a
-            // number — a role that reaches it outranks a merely better-paid one.
-            if player.isSimplified, job.isTopLeadership { value *= 2 }
+            let value = careerValue(odds: odds, raise: goalAdjustedRaise(job, pay: pay, player: player),
+                                    delay: 0, player: player)
             if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, odds, value) }
         }
         guard let best else { return nil }
         let job = best.job
+        let salary = offer(job, player)
         var detail = player.isSimplified
-            ? "You qualify. \(money(job.income)) a year"
-            : "\(percent(best.odds)) chance of an offer · \(money(job.income)) a year"
-        detail += pay > 0 ? " (+\(money(job.income - pay)) on today)." : "."
+            ? "You qualify. \(money(salary)) a year"
+            : "\(percent(best.odds)) chance of an offer · \(money(salary)) a year"
+        detail += pay > 0 && salary > pay ? " (+\(money(salary - pay)) on today)." : "."
         detail += " Find it under \(job.category.rawValue)."
-        if player.isSimplified, job.isTopLeadership {
+        if reachesGoal(job, player) {
             detail += " 🏆 This reaches your goal!"
         }
         return Tip(kind: .applyNow, icon: job.icon, title: "Apply to be \(article(for: job.id)) \(job.id)",
@@ -177,53 +215,49 @@ enum CareerAdvisor {
     /// Staying put for a promotion — with the one lever that would help most.
     ///
     /// Mirrors how `Player.advanceYear` pays a promotion out: a win steps up to
-    /// the next rung only when the player already meets its requirements (and,
-    /// for an executive seat, wins the seat roll too); otherwise it's a raise
-    /// in place. Realistic mode only — simplified mode never promotes, the way
-    /// up there is applying, which `applyNowTip` covers.
+    /// the next rung — only once the player meets its full requirements, all of
+    /// its years included, and clears its seat (`Job.promotionSeatChance`) —
+    /// at a raise clamped into the new rung's band (`Player.promotionPay`).
+    /// There is no in-place raise to wait for any more, so a role with no rung
+    /// above offers no climb. When only years stand between the player and the
+    /// rung, the tip counts the wait; any other gap (a degree, a licence) is
+    /// the train and study tips' business. Realistic mode only — simplified
+    /// mode never promotes, the way up there is applying, which `applyNowTip`
+    /// covers.
     static func climbTip(_ player: Player) -> Tip? {
         guard !player.isSimplified, let job = player.currentOccupation else { return nil }
         let odds = player.promotionOdds(for: job)
-        guard odds.promotes, odds.total > 0 else { return nil }
+        guard odds.promotes, let next = odds.nextRole else { return nil }
+        let wait: Int
+        if odds.eligible {
+            wait = 0
+        } else {
+            let fit = next.requirementFit(for: player)
+            guard fit.age * fit.education * fit.credentials > 0 else { return nil }
+            wait = max(0, next.requirements.minYearsExperience - next.relevantYears(for: player))
+        }
+        let chance = odds.roll * odds.seat
+        guard chance > 0 else { return nil }
 
         let current = job.annualIncome
         let raise = (GameConstants.promotionRaise.lowerBound + GameConstants.promotionRaise.upperBound) / 2
-        let raised = Double(current) * (1 + raise)
-        let next = odds.nextRole
-        let stepsUp = next.map { $0.allRequirementsMet(for: player) } ?? false
-        var expectedPay = raised
-        if let next, stepsUp {
-            let seat = (next.isExecutive && !next.isEntrepreneurial) ? player.executiveSeatChance : 1.0
-            expectedPay = seat * max(Double(next.income), raised) + (1 - seat) * raised
-        }
-        let value = careerValue(odds: odds.total, raise: Int(expectedPay) - current, delay: 1, player: player)
+        let expectedPay = Player.promotionPay(current: current, next: next, raise: raise)
+        let value = careerValue(odds: chance, raise: expectedPay - current, delay: 1 + wait, player: player)
 
-        let title: String
-        var detail: String
+        var detail = wait == 0
+            ? "\(percent(chance)) promotion odds this year → about \(money(expectedPay)) a year."
+            : "Eligible in \(wait) yr, once you have \(next.requirements.minYearsExperience) yr as \(next.experienceLadder ?? job.baseTitle); then about \(percent(chance)) a year → about \(money(expectedPay)) a year."
         var destination: Destination?
-        if let next, stepsUp {
-            title = "Aim for \(next.id)"
-            detail = "\(percent(odds.total)) promotion odds this year → up to \(money(next.income)) a year."
-        } else {
-            title = "Push for a raise as \(job.id)"
-            detail = "\(percent(odds.total)) odds of a raise this year."
-            if let next {
-                let gaps = CareerGraph.missingHardRequirements(for: next, player: player)
-                if let gap = gaps.first {
-                    detail += " \(next.id) is out of reach until you clear: \(gap)."
-                }
-            }
-        }
         if odds.education < 0 {
             // Studying full-time means leaving the job — no button that would
             // undo the very climb this tip is about.
             detail += " Your missing \(job.requirements.education.educationLabel()) holds promotions back, but studying for it means leaving this job."
-        } else if let lever = biggestTrainableGap(for: next ?? job, player: player) {
+        } else if let lever = biggestTrainableGap(for: next, player: player) {
             detail += " Biggest lever: \(lever.gap.axis.pictogram) \(lever.gap.axis.label) (\(lever.gap.have)/\(lever.gap.need)) — \(lever.activity.label) trains it."
             destination = .activities(lever.activity.kind)
         }
-        return Tip(kind: .climb, icon: "📈", title: title,
-                   detail: detail, destination: destination, job: next ?? job, value: value)
+        return Tip(kind: .climb, icon: "📈", title: "Aim for \(next.id)",
+                   detail: detail, destination: destination, job: next, value: value)
     }
 
     /// A course the player can enrol in today that opens a better role.
@@ -232,28 +266,27 @@ enum CareerAdvisor {
         // Education sheet, which only opens between studies.
         guard !player.isSimplified, canOpenEducation(player) else { return nil }
         let pay = currentPay(player)
-        let held = player.hardSkills.trainings
         var best: (job: Job, missing: [Training], value: Double)?
         for job in upgrades(player, jobs) where !lacksBreakthrough(job, player) {
             let fit = job.requirementFit(for: player)
-            // Only roles the courses alone stand between the player and.
-            let others = fit.age * fit.education * fit.experience
-            guard fit.credentials == 0, others > 0 else { continue }
-            let needed = job.requirements.hardSkills.trainings
-                .filter { $0.isStatutory || job.category.requiresCredentials }
-            let missing = needed.subtracting(held).sorted { $0.rawValue < $1.rawValue }
+            guard fit.credentials == 0 else { continue }
+            let missing = missingCredentials(for: job, player: player)
             guard !missing.isEmpty, missing.count <= maxTrainingSteps,
                   missing.allSatisfy({ enrollable($0, player) }) else { continue }
+            // Only roles the courses alone stand between the player and — with
+            // age judged when the courses are done (one spare-time slot a year,
+            // so each course is a year).
+            let others = ageFactor(job, player, inYears: missing.count) * fit.education * fit.experience
+            guard others > 0 else { continue }
             // The odds once the credential is held: the fit today with the
             // credentials factor lifted from 0 to 1.
-            let odds = min(0.95, estimatedOdds(for: job, player: player) * others)
-            // One spare-time slot a year, so each course is a year.
-            let value = careerValue(odds: odds, raise: job.income - pay,
+            let odds = estimatedOdds(for: job, player: player, requirementFactor: others)
+            let value = careerValue(odds: odds, raise: goalAdjustedRaise(job, pay: pay, player: player),
                                     delay: missing.count, player: player)
             if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, missing, value) }
         }
         guard let best, let first = best.missing.first else { return nil }
-        var detail = "Opens \(best.job.id) at \(money(best.job.income)) a year"
+        var detail = "Opens \(best.job.id) at \(money(offer(best.job, player))) a year"
         detail += best.missing.count > 1 ? " — together with \(best.missing[1].friendlyName)." : "."
         return Tip(kind: .train, icon: "📜", title: "Take \(first.friendlyName)",
                    detail: detail, destination: .education, job: best.job, value: best.value)
@@ -261,30 +294,51 @@ enum CareerAdvisor {
 
     /// A degree the player can enrol in today that opens — or starts the road
     /// to — a better role, net of the pay and tuition it costs.
+    ///
+    /// Counts the roles a degree opens only together with a licence taken after
+    /// it — a physician's medical licence, a lawyer's bar, a nurse's RN, a
+    /// pharmacist's board exam — when the degree is what makes those licences
+    /// enrollable: each is a further year before the role pays.
     static func studyTip(_ player: Player, _ jobs: [Job]) -> Tip? {
         guard canOpenEducation(player) else { return nil }
         let offered = player.offeredDegrees
         guard !offered.isEmpty else { return nil }
         let pay = currentPay(player)
-        var best: (job: Job, degree: Education, years: Int, value: Double)?
+        var best: (job: Job, degree: Education, years: Int, licences: [Training], value: Double)?
         for job in upgrades(player, jobs) where !job.educationMet(for: player) && !lacksBreakthrough(job, player) {
             let fit = job.requirementFit(for: player)
-            // Only roles education is the limiter on.
-            let others = fit.age * fit.credentials * fit.experience
-            guard others > 0 else { continue }
+            let minEQF = job.requirements.education.minEQF
+            // Experience doesn't grow while studying full-time.
+            guard fit.experience > 0 else { continue }
             let accepted = job.requirements.education.acceptedProfiles ?? []
             let fitting = offered.filter { degree in
                 accepted.isEmpty || degree.profile.map(accepted.contains) == true
             }
-            guard let degree = bestDegree(fitting, toward: job.requirements.education.minEQF) else { continue }
-            let years = yearsOfStudy(from: degree, to: job.requirements.education.minEQF)
+            guard let degree = bestDegree(fitting, toward: minEQF) else { continue }
+            let years = yearsOfStudy(from: degree, to: minEQF)
+            // Only roles education is the limiter on — or education plus the
+            // licences the finished degree makes enrollable.
+            var licences: [Training] = []
+            if fit.credentials == 0 {
+                let missing = missingCredentials(for: job, player: player)
+                guard !missing.isEmpty, missing.count <= maxTrainingSteps,
+                      missing.allSatisfy({
+                          enrollableAfterDegree($0, eqf: minEQF, alongside: Set(missing),
+                                                player: player, inYears: years)
+                      }) else { continue }
+                licences = missing
+            }
+            let delay = years + licences.count
             // The education factor today against the one the degree earns: a
             // pass/fail gate in the regulated fields and simplified mode, the
             // relevant-degree premium everywhere else.
             let educationAfter = (job.educationIsMandatory || player.isSimplified)
                 ? 1.0 : GameConstants.relevantDegreeMultiplier
-            let estimate = estimatedOdds(for: job, player: player) * others
-            let gain = min(0.95, estimate * educationAfter) - min(0.95, estimate * fit.education)
+            let after = estimatedOdds(for: job, player: player,
+                                      requirementFactor: ageFactor(job, player, inYears: delay)
+                                          * fit.experience * educationAfter)
+            let now = estimatedOdds(for: job, player: player, requirementFactor: fit.factor)
+            let gain = after - now
             guard gain > 0 else { continue }
             // Admission is a roll of its own — a rejection still spends the year.
             let admission = degree.admissionProbability(player: player)
@@ -292,15 +346,23 @@ enum CareerAdvisor {
             // simplified mode — tuition is due.
             let tuition = player.isSimplified ? 0 : degree.totalTuition
             let cost = Double(pay * degree.yearsToComplete + tuition)
-            let value = admission * careerValue(odds: gain, raise: job.income - pay,
-                                                delay: years, player: player) - cost
-            if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, degree, years, value) }
+            let value = admission * careerValue(odds: gain, raise: goalAdjustedRaise(job, pay: pay, player: player),
+                                                delay: delay, player: player) - cost
+            if beats(value, job, best.map { ($0.value, $0.job.id) }) {
+                best = (job, degree, years, licences, value)
+            }
         }
         guard let best else { return nil }
         let firstStep = best.degree.eqf < best.job.requirements.education.minEQF
+        let salary = offer(best.job, player)
         var detail = firstStep
-            ? "First step toward \(best.job.id) (\(money(best.job.income)) a year) — about \(best.years) years of study in all."
-            : "Opens \(best.job.id) at \(money(best.job.income)) a year after \(best.years) years of study."
+            ? "First step toward \(best.job.id) (\(money(salary)) a year) — about \(best.years) years of study in all"
+            : "Opens \(best.job.id) at \(money(salary)) a year after \(best.years) years of study"
+        if !best.licences.isEmpty {
+            let names = best.licences.map(\.friendlyName).joined(separator: " and ")
+            detail += ", then \(names) (\(best.licences.count) more year\(best.licences.count == 1 ? "" : "s"))"
+        }
+        detail += "."
         if pay > 0 { detail += " You'd give up your job while studying." }
         return Tip(kind: .study, icon: best.degree.pictogram, title: "Study for a \(best.degree.degreeName)",
                    detail: detail, destination: .education, job: best.job, value: best.value)
@@ -320,8 +382,8 @@ enum CareerAdvisor {
         for job in upgrades(player, jobs) where !lacksBreakthrough(job, player) {
             let fit = job.requirementFit(for: player)
             // Children are years from any hire, so they're measured on skills alone.
-            let factor = isChild ? 1.0 : min(1.0, fit.factor)
-            guard factor > 0 else { continue }
+            guard isChild || fit.factor > 0 else { continue }
+            let breakdown = job.hireBreakdown(for: player, requestedSalary: Double(offer(job, player)))
             let asked = job.askedSoftSkills
             for keyPath in asked {
                 let need = job.requirements.softSkills[keyPath: keyPath]
@@ -329,9 +391,13 @@ enum CareerAdvisor {
                 guard have < need,
                       let (activity, weight) = bestActivity(for: keyPath, among: activities),
                       let axis = SoftSkills.allAxes.first(where: { $0.keyPath == keyPath }) else { continue }
-                // How much one year of it lifts this role's fit, and so its odds.
+                // How much one year of it lifts this role's fit, and so its
+                // odds: for an adult, the breakdown's own odds with the fit's
+                // added merit against today's; a child's skill term alone.
                 let gained = Double(min(have + weight, need) - have) / Double(need) / Double(asked.count)
-                let value = careerValue(odds: 0.7 * gained * factor, raise: job.income - pay,
+                let lift = gained * GameConstants.hireSkillWeight
+                let odds = isChild ? lift : breakdown.odds(extraMerit: lift) - breakdown.final
+                let value = careerValue(odds: odds, raise: goalAdjustedRaise(job, pay: pay, player: player),
                                         delay: 1, player: player)
                 if beats(value, job, best.map { ($0.value, $0.job.id) }) {
                     best = (job, SkillGap(axis: axis, have: have, need: need), activity, value)
@@ -342,7 +408,7 @@ enum CareerAdvisor {
         let gap = best.gap
         let detail = isChild
             ? "Aiming for \(best.job.id) one day (\(money(best.job.income)) a year)? It asks \(gap.axis.label) \(gap.need) — you're at \(gap.have)."
-            : "\(best.job.id) (\(money(best.job.income)) a year) asks \(gap.axis.label) \(gap.need) — you're at \(gap.have)."
+            : "\(best.job.id) (\(money(offer(best.job, player))) a year) asks \(gap.axis.label) \(gap.need) — you're at \(gap.have)."
         return Tip(kind: .buildSkill, icon: gap.axis.pictogram,
                    title: "Build \(gap.axis.label) with \(best.activity.label)",
                    detail: detail, destination: .activities(best.activity.kind),
@@ -408,16 +474,53 @@ enum CareerAdvisor {
     /// Years from enrolling in `degree` to holding EQF `target` — the degree
     /// itself plus each higher level still to climb after it.
     static func yearsOfStudy(from degree: Education, to target: Int) -> Int {
-        let ladder: [Level.Stage] = [.Master, .Doctorate]
-        let further = ladder
-            .filter { Level(stage: $0).eqf > degree.eqf && Level(stage: $0).eqf <= target }
-            .reduce(0) { $0 + Level(stage: $1).yearsToComplete() }
-        return degree.yearsToComplete + further
+        // A doctorate follows a bachelor's directly, so the climb to EQF 7
+        // skips the master's; only a master's-level target needs one.
+        let next: Level.Stage? = target >= Level(stage: .Doctorate).eqf ? .Doctorate
+            : target >= Level(stage: .Master).eqf ? .Master : nil
+        guard let next, Level(stage: next).eqf > degree.eqf else { return degree.yearsToComplete }
+        return degree.yearsToComplete + Level(stage: next).yearsToComplete()
     }
 
     private static func enrollable(_ training: Training, _ player: Player) -> Bool {
         if case .ok = training.requirements(player) { return true }
         return false
+    }
+
+    /// The credentials `job` gates on that the player doesn't hold — the ones
+    /// `Job.hardSkillsMet` checks: statutory licences everywhere, every listed
+    /// credential in a regulated field. Sorted so advice is deterministic.
+    static func missingCredentials(for job: Job, player: Player) -> [Training] {
+        job.requirements.hardSkills.trainings
+            .filter { $0.isStatutory || job.category.requiresCredentials }
+            .subtracting(player.hardSkills.trainings)
+            .sorted { $0.rawValue < $1.rawValue }
+    }
+
+    /// The age factor for `job` once `years` have passed — a move that takes
+    /// time lands when the player is older (see `Job.minimumHireAge`).
+    static func ageFactor(_ job: Job, _ player: Player, inYears years: Int) -> Double {
+        player.age + years >= job.minimumHireAge ? 1.0 : 0.0
+    }
+
+    /// Whether `training` could be taken right after finishing a degree at EQF
+    /// `eqf`, `years` from now — `Training.requirements` with the degree
+    /// counted as held and the other credentials in `alongside` counted
+    /// toward its prerequisites (they're taken in turn). Experience doesn't
+    /// grow while studying, so an experience gate must already be met.
+    static func enrollableAfterDegree(_ training: Training, eqf: Int, alongside: Set<Training>,
+                                      player: Player, inYears years: Int) -> Bool {
+        guard player.age + years >= training.minAge,
+              max(player.highestEQF, eqf) >= training.minEQF else { return false }
+        let held = player.hardSkills.trainings
+        guard training.prerequisites.allSatisfy({ held.contains($0) || alongside.contains($0) }) else {
+            return false
+        }
+        if training.minYearsExperience > 0 {
+            let years = training.field.map { player.industryExperience(for: $0) } ?? player.totalExperienceYears
+            guard years >= training.minYearsExperience else { return false }
+        }
+        return true
     }
 
     /// Mirrors the footer's gate on the **Education** button.

@@ -39,6 +39,12 @@ struct Competition: Identifiable, Hashable {
     /// open events (nil `sports`).
     var minSportYears: Int = 0
 
+    /// Overrides the tier's win cap (`winCap`) for an event whose field is far
+    /// deeper than its trophy's weight suggests. Used for the Junior
+    /// Championship: it is the scouting gate into professional sport, contested
+    /// by every serious youth player, so a title is a genuine long shot.
+    var maxWinChance: Double? = nil
+
     enum Discipline: String { case athletic = "Athletic", esports = "E-Sports", creative = "Creative", mind = "Mind", academic = "Academic" }
 
     static func == (lhs: Competition, rhs: Competition) -> Bool { lhs.id == rhs.id }
@@ -80,8 +86,29 @@ struct Competition: Identifiable, Hashable {
     func winProbability(for soft: SoftSkills, years: Int) -> Double {
         let skillTerm = skillFit(for: soft) * 0.30
         let sportTerm = sportFit(forYears: years) * 0.25
-        return max(0.02, min(0.55, 0.02 + skillTerm + sportTerm))
+        // The whole curve scales with the tier's cap, so a perfect competitor
+        // reaches the cap and a newcomer stays a long shot at every level.
+        let cap = winCap
+        return max(0.005, min(cap, (0.02 + skillTerm + sportTerm) * cap / Competition.baseWinCap))
     }
+
+    /// The best odds of winning in any one year, by how big the title is. A
+    /// school ribbon goes to one child in a class; a national title to one
+    /// competitor in thousands; an Olympic medal or a world final to a handful
+    /// in a generation (about 1 in 10 Olympians medal at all). Keyed off the
+    /// trophy's `fameWeight`, which already ranks the tiers.
+    var winCap: Double {
+        if let maxWinChance { return maxWinChance }
+        switch fameWeight {
+        case ..<0.75: return Competition.baseWinCap   // school, local, club
+        case ..<1.5:  return 0.20                     // youth / regional
+        case ..<2.5:  return 0.12                     // national
+        default:      return 0.04                     // international / Olympic
+        }
+    }
+
+    /// The cap the skill and sport terms were tuned against.
+    static let baseWinCap = 0.55
 }
 
 enum CompetitionCatalog {
@@ -238,7 +265,10 @@ enum CompetitionCatalog {
             skills: [\.collaborationAndTeamwork, \.spacialNavigationAndOrientation, \.resilienceAndEndurance, \.stressResistanceAndEmotionalRegulation],
             sports: [.soccer, .basketball, .tennis],
             stages: [.teen],
-            minSportYears: 1
+            minSportYears: 1,
+            // About 1 in 30 dedicated youth players: NCAA puts the high-school-
+            // to-pro odds at well under 1 %, and the title is the scouts' gate.
+            maxWinChance: 0.035
         ),
         Competition(
             id: "junior-athletics-meet",

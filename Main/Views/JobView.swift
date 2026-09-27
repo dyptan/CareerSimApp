@@ -73,49 +73,9 @@ struct JobDetail: View {
 
     /// Plain-language breakdown of the hire-probability formula with the
     /// player's *current* numbers plugged in. Shown in the InfoHint popover.
+    /// Every figure is read off `Job.hireBreakdown` — the same terms the roll
+    /// uses — so the explanation can't drift from the odds.
     private var hireProbabilityFormulaText: String {
-        guard allRequirementsMet else {
-            var needs: [String] = []
-            if job.educationIsMandatory { needs.append("the required degree") }
-            if job.category.requiresCredentials { needs.append("the required license and certification") }
-            needs.append("the baseline years of experience")
-            return "Hire chance is 0% until you have \(needs.joined(separator: ", ")).\(softSkillsClause)"
-        }
-
-        // Breakthrough gate: without the signature title, odds sit at the floor.
-        if let key = job.breakthroughFame,
-           !player.fameAwards.contains(where: { $0.title == key }) {
-            return "This career is gated on a breakthrough achievement. Hire chance stays at the 5% floor until you earn the “\(key)” title. \(breakthroughHowTo(key)) Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
-        }
-        let hasBreakthrough = job.breakthroughFame != nil
-
-        let asked = job.askedSoftSkills.count
-        let matched = job.softSkillsHelpfulScore(for: player)
-        let skillScore = job.softSkillFit(for: player)
-        let skillContribution = skillScore * 0.7
-        let prestige = job.relevantPrestigeBonus(for: player)
-        let fit = job.requirementFit(for: player)
-        let shortfall = job.educationShortfall(for: player)
-        let educationFitLabel = shortfall > 0
-            ? "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
-            : (job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field")
-        let opportunity = player.difficulty.opportunityBonus
-        let network = player.networkBonus(for: job.category)
-        let topPosition = job.isTopLeadership
-        let executiveSeat = job.isExecutive && !job.isEntrepreneurial
-        let fame = player.fameHireBonus(for: job.category, topPosition: topPosition, executive: executiveSeat)
-        let showFame = fame > 0
-        let fameLabel = (job.category.fameCategory?.rawValue ?? "general") + (executiveSeat ? " or business" : "")
-        let scarcity = executiveSeat ? player.executiveSeatChance : 1.0
-        let breakthrough = hasBreakthrough ? Job.breakthroughBonus : 0.0
-        let credential = player.trainingCareerBonus(for: job.category)
-        let salaryFit = job.salaryAlignmentFactor(requestedSalary: requestedSalary)
-        let merit = 0.2 + skillContribution + prestige + opportunity + network + fame
-            + breakthrough + credential
-        let climate = player.climate(for: job.industry)
-        let raw = merit * fit.factor * salaryFit
-        let final = fit.isBlocked ? 0.0 : max(0.05, min(0.95, raw * climate.hireFactor * scarcity))
-
         func pct(_ v: Double) -> String {
             "\(Int((v * 100).rounded()))%"
         }
@@ -123,6 +83,39 @@ struct JobDetail: View {
             let s = Int((v * 100).rounded())
             return s >= 0 ? "+\(s)%" : "\(s)%"
         }
+        func times(_ v: Double) -> String { "×\(String(format: "%.2f", v))" }
+
+        guard allRequirementsMet else {
+            let gaps = CareerGraph.missingHardRequirements(for: job, player: player)
+            let needs = gaps.isEmpty
+                ? "the required degree, licences and experience"
+                : gaps.joined(separator: "; ")
+            return "Hire chance is 0% until you have: \(needs).\(softSkillsClause)"
+        }
+
+        let b = job.hireBreakdown(for: player, requestedSalary: requestedSalary)
+
+        // Breakthrough gate: without the signature title, odds sit at the floor.
+        if b.breakthroughMissing, let key = job.breakthroughFame {
+            return "This career is gated on a breakthrough achievement. Hire chance stays at the \(pct(b.floor)) floor until you earn the “\(key)” title. \(breakthroughHowTo(key)) Earn it and it becomes the single biggest factor in getting signed — worth +\(Int((Job.breakthroughBonus * 100).rounded()))% on top of the usual skill, experience, and fame terms.\(softSkillsClause)"
+        }
+        let hasBreakthrough = job.breakthroughFame != nil
+
+        let asked = job.askedSoftSkills.count
+        let matched = job.softSkillsHelpfulScore(for: player)
+        let fit = b.requirements
+        let shortfall = job.educationShortfall(for: player)
+        let madeUp = shortfall - job.creditedEducationShortfall(for: player)
+        let educationFitLabel: String = {
+            guard shortfall > 0 else {
+                return job.hasAcceptedDegree(for: player) ? "degree in an accepted field" : "degree, but an unrelated field"
+            }
+            let short = "\(shortfall) level\(shortfall == 1 ? "" : "s") below what this role expects"
+            return madeUp > 0 ? short + ", \(madeUp) made up by equivalent experience" : short
+        }()
+        let topPosition = job.isTopLeadership
+        let fameLabel = job.category.fameCategory?.rawValue ?? "general"
+        let climate = player.climate(for: job.industry)
 
         let topPrestige = (player.degrees.map { $0.tier.prestige }.max() ?? 0)
         let prestigeLabel: String = {
@@ -137,29 +130,68 @@ struct JobDetail: View {
         let expYears = job.expectedYearsExperience
         let playerYears = job.relevantYears(for: player)
 
+        var bring = [
+            "• Base (the role expects \(job.requirements.education.educationLabel())): \(pct(b.base))",
+            "• Skill match: \(matched)/\(asked) skills met, \(pct(b.skillFit)) fit → \(pct(b.skill))",
+            "• Degree prestige (\(prestigeLabel)): \(signed(b.prestige))",
+            "• Network (\(job.category.rawValue)): \(signed(b.network))",
+        ]
+        if b.fame > 0 {
+            bring.append("• Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(b.fame))")
+        }
+        if hasBreakthrough {
+            bring.append("• Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(b.breakthrough))")
+        }
+        if b.credential > 0 {
+            bring.append("• Relevant credential: \(signed(b.credential))")
+        }
+
+        var market: [String] = []
+        if b.demand != 1 {
+            market.append(b.demand < 1
+                ? "• \(job.baseTitle) roles are oversubscribed: \(times(b.demand))"
+                : "• Employers are short of \(job.baseTitle)s: \(times(b.demand))")
+        }
+        if job.rung > 0 {
+            market.append("• Hiring in from outside, \(job.rung) rung\(job.rung == 1 ? "" : "s") above entry: \(times(b.rungDecay))")
+        }
+        market.append("• \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): \(times(b.climate))")
+        if b.opportunity != 1 {
+            market.append("• \(player.difficulty.title) difficulty: \(times(b.opportunity))")
+        }
+
+        var product = "\(pct(b.merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(b.salaryFit))"
+        for factor in [b.demand, b.rungDecay, b.climate, b.opportunity] where factor != 1 {
+            product += " × \(String(format: "%.2f", factor))"
+        }
+        product += " = \(pct(b.scaled))"
+
+        let seatLine: String = b.seat < 1
+            ? "\nThen the seat: only a few qualified candidates land a seat like this each year — \(times(b.seat))\(job.isExecutive ? ", eased by a founder track record (years running ventures, rounds, exits)" : "")."
+            : ""
+        let finalLine = b.seat < 1
+            ? "Final (clamped \(pct(b.floor))–\(pct(b.ceiling)), then × the seat): \(pct(b.final))"
+            : "Final (clamped \(pct(b.floor))–\(pct(b.ceiling))): \(pct(b.final))"
+
         return """
-        Formula: what you bring × how well you meet the requirements × salary fit.
+        Formula: what you bring × how well you meet the requirements × salary fit × the market.
 
         What you bring:
-        • Base: 20%
-        • Skill match: \(matched)/\(asked) skills met, \(pct(skillScore)) fit → \(pct(skillContribution))
-        • Degree prestige (\(prestigeLabel)): \(signed(prestige))
-        • Network (\(job.category.rawValue)): \(signed(network))\(showFame ? "\n        • Fame (\(fameLabel))\(topPosition ? " — top role, weighted heavily" : ""): \(signed(fame))" : "")\(hasBreakthrough ? "\n        • Breakthrough (\(job.breakthroughFame ?? "") title): \(signed(breakthrough))" : "")
-        • Difficulty bonus: \(signed(opportunity))\(credential > 0 ? "\n        • Relevant credential: \(signed(credential))" : "")
-        Subtotal: \(pct(merit))
+        \(bring.joined(separator: "\n"))
+        Subtotal: \(pct(b.merit))
 
         How well you meet the requirements (these multiply — a requirement you
         can't meet at all is ×0, which closes the role):
-        • Education (\(educationFitLabel)): ×\(String(format: "%.2f", fit.education))
-        • Licences and certificates: ×\(String(format: "%.2f", fit.credentials))
-        • Experience (\(playerYears)/\(expYears) yr expected): ×\(String(format: "%.2f", fit.experience))
-        • Salary fit: \(pct(salaryFit))
+        • Education (\(educationFitLabel)): \(times(fit.education))
+        • Licences and certificates: \(times(fit.credentials))
+        • Experience (\(playerYears)/\(expYears) yr expected): \(times(fit.experience))
+        • Salary fit: \(pct(b.salaryFit))
 
-        Then the industry's year:
-        • \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()): ×\(String(format: "%.2f", climate.hireFactor))\(executiveSeat ? "\n        • C-suite seats are scarce: ×\(String(format: "%.2f", scarcity)) — a business track record (years running ventures, rounds, exits) eases it" : "")
+        The market:
+        \(market.joined(separator: "\n"))
 
-        \(pct(merit)) × \(String(format: "%.2f", fit.factor)) × \(pct(salaryFit)) × \(String(format: "%.2f", climate.hireFactor))\(executiveSeat ? " × \(String(format: "%.2f", scarcity))" : "") = \(pct(raw * climate.hireFactor * scarcity))
-        Final (clamped 5–95%): \(pct(final))
+        \(product)\(seatLine)
+        \(finalLine)
         \(softSkillsClause)
         """
     }
@@ -276,13 +308,16 @@ struct JobDetail: View {
 
             // Preferred (helpful) credentials — non-gating skill-building programs
             // whose careerBoost covers this field. Never required; holding one
-            // meaningfully lifts the hire odds (see Player.trainingCareerBonus).
-            let helpfulTrainings = Training.helpfulByCategory[job.category] ?? []
+            // lifts the hire odds (see Player.trainingCareerBonus) and stands in
+            // for one level of missing schooling (Job.equivalentExperienceCredit).
+            // One the role already lists above isn't repeated here.
+            let helpfulTrainings = (Training.helpfulByCategory[job.category] ?? [])
+                .filter { !requiredHard.trainings.contains($0) }
             if !isSimplified && !helpfulTrainings.isEmpty {
                 credentialSection(
                     title: "Preferred (helpful):",
                     trainings: helpfulTrainings,
-                    footnote: "Not required — a relevant credential meaningfully raises your hire odds in this field."
+                    footnote: "Not required — a relevant credential raises your hire odds in this field, and counts as one level of the schooling a role here expects."
                 )
             }
 
@@ -302,7 +337,7 @@ struct JobDetail: View {
 
                 Text(held
                      ? "This is the single biggest factor in getting signed."
-                     : "\(breakthroughHowTo(key)) Without it, you won't be signed (odds stay at 5%).")
+                     : "\(breakthroughHowTo(key)) Without it, you won't be signed (odds stay at \(Int((GameConstants.hireFloor * 100).rounded()))%).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -359,18 +394,27 @@ struct JobDetail: View {
     /// Pay for a role you take at the advertised rate. Still shows the hire
     /// odds in the realistic modes — what you can't argue about, you can still
     /// weigh.
-    /// The experience ⓘ: the qualifying bar, that more years help, and which
-    /// other fields' experience is credited here.
+    /// The experience ⓘ: the qualifying bar (the same arithmetic as
+    /// `Job.experienceFactor`, via `minimumQualifyingYears`), that more years
+    /// help, and which other experience is credited here.
     private func experienceHint(baseYears: Int) -> String {
-        var text = "\(baseYears) yr required to qualify — every extra year raises your hire chance."
-        // Standalone roles credit related industries too — notably,
-        // entrepreneurship experience counts toward Business roles.
-        let credited = job.isLadderVariant ? [] : job.category.creditedExperienceCategories
+        let floorYears = job.minimumQualifyingYears(simplified: false)
+        var text = floorYears < baseYears
+            ? "\(baseYears) yr expected. With under \(floorYears) yr the role is closed; in between, every missing year costs you a lot — the odds scale with the square of the share you have. Every year beyond \(baseYears) raises your hire chance a little."
+            : "\(baseYears) yr required to qualify — every extra year raises your hire chance a little."
+        if job.isLadderVariant {
+            text += "\n\nYears as \(job.baseTitle) count in full; your other \(JobCategory.icon(for: job.category)) \(job.category.rawValue) years count half."
+        }
+        // Related industries are credited too — notably, entrepreneurship
+        // experience counts toward Business roles.
+        let credited = job.category.creditedExperienceCategories
         if !credited.isEmpty {
             let names = credited
                 .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
                 .joined(separator: ", ")
-            text += "\n\nYour \(names) experience counts toward this too."
+            text += job.isLadderVariant
+                ? "\n\nYour \(names) experience counts at half value too."
+                : "\n\nYour \(names) experience counts toward this too."
         }
         return text
     }
@@ -391,7 +435,7 @@ struct JobDetail: View {
 
 
             HStack(spacing: 6) {
-                Text(allRequirementsMet ? "✓ You qualify for this role." : (job.educationIsMandatory ? "🔒 Get the degree and experience first." : "🔒 Get the experience first."))
+                Text(allRequirementsMet ? "✓ You qualify for this role." : lockedMessage)
                     .font(.subheadline)
                     .foregroundStyle(allRequirementsMet ? Color.green : Color.secondary)
                 Spacer()
@@ -518,8 +562,8 @@ struct JobDetail: View {
         func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }
 
         // The breakthrough gate (e.g. a pro-player role needing a junior title)
-        // pins odds at the 5% floor — by far the likeliest reason for a "no", so
-        // call it out first.
+        // pins odds at the hiring floor — by far the likeliest reason for a
+        // "no", so call it out first.
         if let key = job.breakthroughFame,
            !player.fameAwards.contains(where: { $0.title == key }) {
             return "Employers here look for the “\(key)” title — earn it first to unlock this career."
@@ -529,6 +573,17 @@ struct JobDetail: View {
     }
 
     private var applyDisabled: Bool { !allRequirementsMet }
+
+    /// What still stands between the player and this role, for the posted-pay
+    /// section: the first hard gap (`CareerGraph.missingHardRequirements`, the
+    /// same gates the Apply button checks) — an age, a degree, a licence or
+    /// years of experience.
+    private var lockedMessage: String {
+        guard let gap = CareerGraph.missingHardRequirements(for: job, player: player).first else {
+            return "🔒 Not open to you yet."
+        }
+        return "🔒 First: \(gap)."
+    }
 
     private var applyButton: some View {
         Button {

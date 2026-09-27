@@ -246,7 +246,7 @@ struct SkillsView: View {
                     "💰", "Savings", player.savings,
                     hint: player.isSimplified
                         ? "Everything you've earned so far. In Simplified mode you bank your whole paycheck."
-                        : "Everything you've banked so far. It compounds at \(pct(GameConstants.investmentReturn)) a year while it's in the black."
+                        : "Everything you've banked so far. It earns about \(pct(GameConstants.investmentReturn)) a year after inflation while it's in the black — and markets fall in the year a downturn begins."
                 )
 
                 if let job = player.currentOccupation {
@@ -257,7 +257,7 @@ struct SkillsView: View {
                     if !player.isSimplified {
                         moneyRow(
                             "🏦", "Banked from pay", bankedFromPay(job), suffix: " / yr",
-                            hint: "You keep \(pct(player.difficulty.savingsRate)) of gross pay — the rest goes to tax and living costs. Lower-income households have to spend a bigger share just to get by."
+                            hint: "The first \(player.difficulty.livingCostFloor.formatted(.number)) $ of pay goes on living costs. You keep \(pct(player.difficulty.savingsRate)) of the rest after tax (\(pct(GameConstants.highEarnerSavingsRate)) of anything above \(GameConstants.highEarnerThreshold.formatted(.number)) $). Out of work, rent still comes out of savings."
                         )
                     }
                 } else if player.lastYearProjectPay == 0 && player.endorsementIncome == 0 {
@@ -295,7 +295,7 @@ struct SkillsView: View {
                 if player.studentLoan > 0 {
                     moneyRow(
                         "🎓", "Student loan owed", -player.studentLoan,
-                        hint: "Borrowed to pay tuition. It accrues \(pct(GameConstants.studentLoanAnnualInterest)) interest a year and is repaid from savings once you're earning."
+                        hint: "Borrowed to pay tuition. It accrues \(pct(GameConstants.studentLoanAnnualInterest)) interest a year after inflation. Repayments are deferred while you study, then come out of savings."
                     )
                 }
 
@@ -328,7 +328,7 @@ struct SkillsView: View {
 
     /// The share of this job's gross pay that actually reaches savings.
     private func bankedFromPay(_ job: Job) -> Int {
-        Int((Double(job.annualIncome) * player.difficulty.savingsRate).rounded())
+        player.annualSaving(gross: job.annualIncome, atAge: player.age)
     }
 
     private func pct(_ value: Double) -> String {
@@ -631,9 +631,8 @@ struct SkillsView: View {
 
         var lines = [climate.blurb, ""]
         lines.append("🎯 Hire odds here: \(times(climate.hireFactor))")
-        lines.append(climate.freezesRaises
-                     ? "⬆️ Raises: frozen while the field is contracting"
-                     : "⬆️ Promotion odds here: \(signed(climate.promotionDelta))")
+        lines.append("⬆️ Promotion odds here: \(times(climate.promotionFactor))")
+        lines.append("✂️ Layoff risk here: \(times(climate.layoffFactor))")
         lines.append("🎲 Projects in this field: \(times(climate.projectFactor))")
 
         lines.append("")
@@ -679,19 +678,20 @@ struct SkillsView: View {
     /// first, then the modifiers.
     private func promotionOddsSummary(for job: Job) -> String {
         let odds = player.promotionOdds(for: job)
-        guard odds.promotes else {
-            return "This role doesn't offer in-place promotions — unskilled work rarely comes with a raise-and-title bump. Climb by applying to a higher role instead."
+        guard odds.promotes, let next = odds.nextRole else {
+            return "There's no rung above this role to be promoted into. Your pay still creeps up with a small merit raise each year, up to the top of the role's band — to earn more, apply for a bigger role."
         }
         func signed(_ v: Double) -> String {
             let s = Int((v * 100).rounded())
             return s >= 0 ? "+\(s)%" : "\(s)%"
         }
         let c = odds.culture
-        let readinessLine = odds.nextRole.map {
-            "Readiness for \($0.displayTitle): \(pct(odds.readiness)) — weighs \(pct(c.readiness))"
-        } ?? "Readiness: top of the ladder, judged on the job you do — weighs \(pct(c.readiness))"
+        let readinessLine = "Readiness for \(next.displayTitle): \(pct(odds.readiness)) — weighs \(pct(c.readiness))"
+        let gate = odds.eligible
+            ? (odds.seat < 1 ? "Only \(pct(odds.seat)) of those ready for \(next.displayTitle) get the seat." : "")
+            : "Not yet eligible for \(next.displayTitle) — it needs its full requirements and years in the role first."
         return """
-        Each year in a skilled role you get a shot at a raise and title bump. \(job.industry.promotionCultureBlurb)
+        Each year you get a shot at a step up to \(next.displayTitle). \(job.industry.promotionCultureBlurb)
 
         Merit — \(pct(odds.merit)):
         • Performance in the role: \(pct(odds.performance)) — weighs \(pct(c.performance))
@@ -702,12 +702,12 @@ struct SkillsView: View {
         • Network (\(job.category.rawValue)): \(signed(odds.network))
         • Fame (\(job.category.rawValue)): \(signed(odds.fame))
         • Education vs. what the role expects: \(signed(odds.education))
-        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): \(signed(odds.climate.promotionDelta))
+        • \(odds.climate.icon) \(job.industry.rawValue) is \(odds.climate.rawValue.lowercased()): ×\(String(format: "%.2f", odds.climate.promotionFactor))
+        • Passed over (years in role) ×\(String(format: "%.2f", odds.passedOver)), career stage ×\(String(format: "%.2f", odds.ageFade))
         Total: \(pct(odds.total))
+        \(gate)
 
-        \(odds.climate.freezesRaises
-          ? "Raises are frozen while \(job.industry.rawValue) is contracting — see Economy."
-          : "Your industry's climate moves these odds every year — see Economy.")
+        Your industry's climate moves these odds every year — see Economy.
         """
     }
 

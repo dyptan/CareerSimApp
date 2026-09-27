@@ -78,7 +78,7 @@ struct HeaderView: View {
         var lines: [String] = []
         lines.append("\(player.difficulty.icon) \(player.difficulty.title)")
         if !player.isSimplified {
-            lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of gross income each year")
+            lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of pay above \(player.difficulty.livingCostFloor.formatted(.number)) $ of living costs each year")
         }
         lines.append("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)")
         return lines.joined(separator: "\n")

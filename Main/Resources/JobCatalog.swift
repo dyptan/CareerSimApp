@@ -381,11 +381,15 @@ enum JobCatalog {
         "Police Officer": HardSkills(trainings: [.policeAcademy]),
         "Security Guard": HardSkills(trainings: [.securityGuard]),
         // Service / hospitality
+        // Every state licenses hairdressers and cosmetologists (BLS), so the
+        // cosmetology licence is statutory — a hard gate.
         "Hairdresser/Barber": HardSkills(trainings: [.cosmetology]),
         "Beautician/Cosmetologist": HardSkills(trainings: [.cosmetology]),
-        "Flight Attendant": HardSkills(trainings: [.flightAttendantCert]),
-        // Education — teachers are hired on a teaching certificate (a helpful
-        // signal in this non-regulated field, not a hard gate).
+        // No Flight Attendant row: airlines train and FAA-certify cabin crew
+        // *after* hiring them, so the certificate is not something an applicant
+        // brings.
+        // Education — public-school teachers need a state teaching licence on
+        // top of the degree (BLS), so the certificate is statutory.
         "Teacher": HardSkills(trainings: [.teachingCertificate]),
         // Agriculture — pesticides require a state applicator license
         "Farmer": HardSkills(trainings: [.pesticideApplicator]),
@@ -397,14 +401,16 @@ enum JobCatalog {
     /// considering an applicant. Senior, management, and regulated roles set this
     /// above zero; entry-level jobs are absent and default to 0.
     static let minYearsByTitle: [String: Int] = [
-        "Hotel Manager": 5,
+        // Lodging managers: HS + under 5 years (BLS) — credited from any
+        // hospitality work.
+        "Hotel Manager": 3,
         "Sales Manager": 3,
         "Project Manager": 3,
         "Event Planner": 2,
         "Human Resources Specialist": 1,
         "Business Analyst": 2,
         "Financial Analyst": 2,
-        "Marketing Specialist": 2,
+        "Marketing Specialist": 1,
         // Security is a second-career field — hired out of IT/networking, not
         // straight from school.
         "Cybersecurity Analyst": 2,
@@ -413,26 +419,115 @@ enum JobCatalog {
         // JD + Bar are the real barrier, not prior experience. (Senior Lawyer
         // and Managing Partner carry the experience gates.)
         "Lawyer": 0,
-        // Physicians need residency and psychologists need supervised hours
-        // before practising, so both keep an experience floor — but dentists
-        // and veterinarians practise as soon as they're degreed and licensed.
-        "Physician": 2,
+        // Psychologists need supervised hours before practising, so they keep
+        // an experience floor — but dentists and veterinarians practise as soon
+        // as they're degreed and licensed. (Physicians climb out of residency
+        // on their own ladder; see the Physician rungs.)
         "Psychologist": 2,
-        // First Officer is the entry airline-pilot seat (hired on the
-        // commercial licence + hours); a full "Pilot" reads as captain-track.
-        "First Officer": 1,
+        // First Officer is the entry airline-pilot seat, hired on the commercial
+        // licence plus the 1,000–1,500 flight hours an ATP or restricted ATP
+        // demands; a full "Pilot" reads as captain-track.
+        "First Officer": 2,
         "Pilot": 3,
         "Airline Captain": 8,
-        "Research Scientist": 3,
+        "Research Scientist": 2,
         "Architect": 4,
         "Aerospace Engineer": 2,
+        // Years on the Physician ladder — residency included — not any health
+        // work (see `tenureLadderByBaseTitle`): general surgery residency runs
+        // five years, anesthesiology four plus the intern year.
         "Surgeon": 5,
         "Anesthesiologist": 5,
         "Management Consultant": 2,
-        "Investment Banker": 2,
+        // Analyst → associate takes three years at most banks.
+        "Investment Banker": 3,
         "Data Scientist": 2,
         "Cloud Architect": 5,
         "Office Manager": 3,
+    ]
+
+    // MARK: - Hiring demand
+
+    /// How oversubscribed a role is: a multiplier on every application's odds
+    /// (see `Job.hireBreakdown`), keyed by base title so it covers every rung.
+    /// Unlisted roles are 1.0. Below 1, qualified people outnumber the seats;
+    /// above 1, employers are short of hands.
+    ///
+    /// * Elite funnels: Goldman Sachs took 0.72% of 360,000 summer-analyst
+    ///   applicants in 2025; strategy consulting and broadcast presenting are
+    ///   the same shape.
+    /// * Judicial seats are few and appointed or elected; a hospital system has
+    ///   one chief medical officer and a law firm a handful of equity partners.
+    /// * Tech is loose: software-development postings sit 27–36% below Feb 2020
+    ///   (Indeed/FRED) and recent CS graduates face 6.1% unemployment (NY Fed).
+    /// * Shortage occupations — nursing and care work, teaching, the licensed
+    ///   trades, long-haul trucking — hire readily.
+    static let hiringDemandByBaseTitle: [String: Double] = [
+        // Commission sales: many apply, few survive the quota — half of
+        // wholesale/manufacturing reps hold a bachelor's despite the HS listing.
+        "Sales Representative": 0.6,
+        "Investment Banker": 0.35,
+        "Management Consultant": 0.45,
+        "TV Presenter": 0.30,
+        "Journalist": 0.60,
+        "Art Director": 0.50,
+        "Game Designer": 0.60,
+        "Narrative Designer": 0.60,
+        "Judge": 0.10,
+        "Managing Partner": 0.25,
+        "Chief Medical Officer": 0.25,
+        "Firefighter": 0.50,
+        "Software Engineer": 0.80,
+        "Data Scientist": 0.75,
+        "Registered Nurse": 1.40,
+        "Licensed Practical Nurse": 1.30,
+        "Nursing Aide": 1.30,
+        "Personal Care Aide": 1.40,
+        "Teacher": 1.30,
+        "Truck Driver": 1.30,
+        "Electrician": 1.20,
+        "Plumber": 1.20,
+        "HVAC Technician": 1.20,
+    ]
+
+    // MARK: - Minimum age
+
+    /// Roles a licensing law closes to the young beyond the general rule in
+    /// `Job.minimumHireAge` (which only ever raises to this). Keyed by base
+    /// title.
+    static let minimumAgeByBaseTitle: [String: Int] = [
+        // Serving alcohol: 21 in most states.
+        "Bartender": 21,
+        // Home-care agencies and Medicaid-funded aide programs hire adults.
+        "Personal Care Aide": 18,
+        // Airlines hire cabin crew from 18 at the youngest (many from 21).
+        "Flight Attendant": 18,
+    ]
+
+    // MARK: - Tenure on another ladder
+
+    /// Standalone roles whose experience bar can only be earned on another
+    /// ladder, keyed by base title → that ladder's name. A surgeon's or an
+    /// anesthesiologist's five years are years as a doctor — residency and
+    /// attending practice — not five years in any health job, which is what a
+    /// standalone role's whole-category count would otherwise accept (two
+    /// years as a nursing aide used to qualify). See `Job.relevantYears`.
+    static let tenureLadderByBaseTitle: [String: String] = [
+        "Surgeon": "Physician",
+        "Anesthesiologist": "Physician",
+    ]
+
+    // MARK: - Command posts
+
+    /// Top rungs that command a whole unit — a precinct, a fire station, a
+    /// school's teaching staff, a restaurant group's kitchens. A promotion into
+    /// one clears `GameConstants.commandPostSeatChance` (one seat per unit)
+    /// rather than the general `leadershipSeatChance`. Keyed by full title.
+    static let commandPostTitles: Set<String> = [
+        "Lead Police Officer",
+        "Lead Firefighter",
+        "Lead Teacher",
+        "Executive Chef",
     ]
 
     // MARK: - Accepted degree fields
@@ -1024,126 +1119,134 @@ enum JobCatalog {
         // millions, were barely represented. US employment figures in the
         // comments are approximate (BLS OES, ~2023), kept here so a future edit
         // can tell a common job from a rare one.
-        .init(title: "Personal Care Aide", category: .service, income: 30_000, icon: "🤲", summary: "Helps elderly and disabled clients with daily living at home.", minEQF: 2),                     // ~3.7M — the single largest occupation
-        .init(title: "Customer Service Representative", category: .administration, income: 38_000, icon: "🎧", summary: "Answers customer questions and resolves complaints.", minEQF: 3),                 // ~2.9M
-        .init(title: "Stocker/Order Filler", category: .retail, income: 32_000, icon: "📦", summary: "Keeps shelves filled and picks orders in stores and warehouses.", minEQF: 2),                        // ~2.9M
-        .init(title: "Office Clerk", category: .administration, income: 37_000, icon: "🗂️", summary: "Handles filing, data entry, and general office tasks.", minEQF: 3),                                  // ~2.6M
-        .init(title: "Cook", category: .hospitality, income: 33_000, icon: "🍲", summary: "Cooks to order on the line in restaurants and canteens.", minEQF: 2),                                            // ~2.4M
-        .init(title: "Operations Manager", category: .business, income: 78_000, icon: "🗃️", summary: "Runs the day-to-day of a site, branch, or department.", minEQF: 4, minYears: 3),                    // ~3.5M
-        .init(title: "Sales Representative", category: .business, income: 62_000, icon: "🤝", summary: "Sells products and services to businesses.", minEQF: 3),                                           // ~1.5M
-        .init(title: "Store Manager", category: .retail, income: 48_000, icon: "🏪", summary: "Runs a shop floor — staffing, stock, and takings.", minEQF: 3, minYears: 2),                                 // ~1.2M
-        .init(title: "Maintenance & Repair Worker", category: .construction, income: 45_000, icon: "🔧", summary: "Keeps buildings and equipment working — the general fixer.", minEQF: 3),                 // ~1.5M
-        .init(title: "Bookkeeping Clerk", category: .administration, income: 45_000, icon: "🧮", summary: "Keeps the ledgers, invoices, and payments straight.", minEQF: 3),                               // ~1.5M
-        .init(title: "Teaching Assistant", category: .education, income: 32_000, icon: "✏️", summary: "Supports a classroom teacher and works with pupils in small groups.", minEQF: 3),                    // ~1.3M
-        .init(title: "Groundskeeper", category: .agriculture, income: 35_000, icon: "🌳", summary: "Maintains lawns, parks, and grounds.", minEQF: 2),                                                      // ~1.1M
-        .init(title: "Childcare Worker", category: .education, income: 30_000, icon: "🧸", summary: "Cares for young children in nurseries and homes.", minEQF: 3),                                        // ~1.0M
-        .init(title: "Bartender", category: .hospitality, income: 31_000, icon: "🍸", summary: "Mixes and serves drinks at a bar.", minEQF: 2),                                                             // ~0.7M
-        .init(title: "Heavy Equipment Operator", category: .construction, income: 52_000, icon: "🚜", summary: "Runs excavators, loaders, and bulldozers on site.", minEQF: 3),                             // ~0.5M
-        .init(title: "Pharmacy Technician", category: .health, income: 40_000, icon: "⚗️", summary: "Prepares prescriptions under a pharmacist's supervision.", minEQF: 3),                                 // ~0.46M
+        //
+        // Pay is the BLS OEWS May 2025 median for the matching occupation
+        // (fixed 2026 dollars — the game has no inflation). A ladder spreads
+        // across the occupation's range: entry rung ≈ P25, the bare rung ≈ the
+        // median, Senior ≈ P75, Lead/Master/Principal ≈ P90. The rare,
+        // competitive tops (elite athlete, managing partner, CMO, airline
+        // captain) are priced off their own markets; Farmer and TV Presenter
+        // are documented exceptions.
+        .init(title: "Personal Care Aide", category: .service, income: 36_000, icon: "🤲", summary: "Helps elderly and disabled clients with daily living at home.", minEQF: 2),                     // ~3.7M — the single largest occupation
+        .init(title: "Customer Service Representative", category: .administration, income: 44_500, icon: "🎧", summary: "Answers customer questions and resolves complaints.", minEQF: 3),                 // ~2.9M
+        .init(title: "Stocker/Order Filler", category: .retail, income: 37_000, icon: "📦", summary: "Keeps shelves filled and picks orders in stores and warehouses.", minEQF: 2),                        // ~2.9M
+        .init(title: "Office Clerk", category: .administration, income: 45_000, icon: "🗂️", summary: "Handles filing, data entry, and general office tasks.", minEQF: 3),                                  // ~2.6M
+        .init(title: "Cook", category: .hospitality, income: 37_500, icon: "🍲", summary: "Cooks to order on the line in restaurants and canteens.", minEQF: 2),                                            // ~2.4M
+        .init(title: "Operations Manager", category: .business, income: 100_000, icon: "🗃️", summary: "Runs the day-to-day of a site, branch, or department.", minEQF: 5, minYears: 5),  // BLS: bachelor's + 5 yrs                    // ~3.5M
+        .init(title: "Sales Representative", category: .business, income: 72_000, icon: "🤝", summary: "Sells products and services to businesses.", minEQF: 3),                                           // ~1.5M
+        .init(title: "Store Manager", category: .retail, income: 48_000, icon: "🏪", summary: "Runs a shop floor — staffing, stock, and takings.", minEQF: 3, minYears: 4),                                 // ~1.2M
+        .init(title: "Maintenance & Repair Worker", category: .construction, income: 49_500, icon: "🔧", summary: "Keeps buildings and equipment working — the general fixer.", minEQF: 3),                 // ~1.5M
+        .init(title: "Bookkeeping Clerk", category: .administration, income: 50_500, icon: "🧮", summary: "Keeps the ledgers, invoices, and payments straight.", minEQF: 3),                               // ~1.5M
+        .init(title: "Teaching Assistant", category: .education, income: 37_000, icon: "✏️", summary: "Supports a classroom teacher and works with pupils in small groups.", minEQF: 3),                    // ~1.3M
+        .init(title: "Groundskeeper", category: .agriculture, income: 39_000, icon: "🌳", summary: "Maintains lawns, parks, and grounds.", minEQF: 2),                                                      // ~1.1M
+        .init(title: "Childcare Worker", category: .education, income: 35_000, icon: "🧸", summary: "Cares for young children in nurseries and homes.", minEQF: 3),                                        // ~1.0M
+        .init(title: "Bartender", category: .hospitality, income: 34_500, icon: "🍸", summary: "Mixes and serves drinks at a bar.", minEQF: 2),                                                             // ~0.7M
+        .init(title: "Heavy Equipment Operator", category: .construction, income: 60_000, icon: "🚜", summary: "Runs excavators, loaders, and bulldozers on site.", minEQF: 3),                             // ~0.5M
+        .init(title: "Pharmacy Technician", category: .health, income: 46_000, icon: "⚗️", summary: "Prepares prescriptions under a pharmacist's supervision.", minEQF: 3),                                 // ~0.46M
         .init(title: "Real Estate Agent", category: .business, income: 54_000, icon: "🏡", summary: "Lists, shows, and sells property on commission.", minEQF: 3),                                          // ~0.45M
-        .init(title: "Insurance Agent", category: .business, income: 57_000, icon: "📋", summary: "Sells and services insurance policies.", minEQF: 3),                                                     // ~0.44M
-        .init(title: "Bank Teller", category: .business, income: 37_000, icon: "🏧", summary: "Handles deposits, withdrawals, and everyday branch banking.", minEQF: 3),                                    // ~0.36M
+        .init(title: "Insurance Agent", category: .business, income: 62_000, icon: "📋", summary: "Sells and services insurance policies.", minEQF: 3),                                                     // ~0.44M
+        .init(title: "Bank Teller", category: .business, income: 41_000, icon: "🏧", summary: "Handles deposits, withdrawals, and everyday branch banking.", minEQF: 3),                                    // ~0.36M
 
-        .init(title: "Light Truck Delivery Driver", category: .transportation, income: 42_000, icon: "🚐", summary: "Delivers goods locally using vans or small trucks.", minEQF: 3),
+        .init(title: "Light Truck Delivery Driver", category: .transportation, income: 45_000, icon: "🚐", summary: "Delivers goods locally using vans or small trucks.", minEQF: 3),
         // Retail
-        .init(title: "Retail Salesperson", category: .retail, income: 30_000, icon: "🛍️", summary: "Sells products directly to customers.", minEQF: 3),
-        .init(title: "Cashier", category: .retail, income: 26_000, icon: "💳", summary: "Handles customer payments and transactions.", minEQF: 2),
+        .init(title: "Retail Salesperson", category: .retail, income: 35_000, icon: "🛍️", summary: "Sells products directly to customers.", minEQF: 3),
+        .init(title: "Cashier", category: .retail, income: 32_500, icon: "💳", summary: "Handles customer payments and transactions.", minEQF: 2),
         // Hospitality — restaurants, hotels, and events
-        .init(title: "Waiter/Waitress", category: .hospitality, income: 24_000, icon: "🍽️", summary: "Serves food and beverages to customers.", minEQF: 2),
-        .init(title: "Food Preparation Worker", category: .hospitality, income: 25_000, icon: "🍳", summary: "Prepares ingredients and supports kitchen staff.", minEQF: 2),
-        .init(title: "Dishwasher", category: .hospitality, income: 23_000, icon: "🧽", summary: "Cleans dishes and kitchenware in food-service settings.", minEQF: 1),
-        .init(title: "Fast Food Worker", category: .hospitality, income: 24_000, icon: "🍔", summary: "Takes orders and prepares food at quick-service counters.", minEQF: 1),
-        .init(title: "Housekeeper", category: .hospitality, income: 27_000, icon: "🧺", summary: "Cleans and tidies rooms in hotels and facilities.", minEQF: 1),
-        .init(title: "Janitor/Cleaner", category: .hospitality, income: 34_000, icon: "🧹", summary: "Maintains cleanliness of buildings and facilities.", minEQF: 1),
-        .init(title: "Flight Attendant", category: .hospitality, income: 48_000, icon: "🛫", summary: "Ensures passenger safety and comfort.", minEQF: 3),
-        .init(title: "Baker", category: .hospitality, income: 32_000, icon: "🥐", summary: "Bakes bread, pastries, and other goods.", minEQF: 3),
-        .init(title: "Hotel Manager", category: .hospitality, income: 72_000, icon: "🏨", summary: "Oversees hotel operations and staff.", minEQF: 5),
-        .init(title: "Event Planner", category: .hospitality, income: 55_000, icon: "🎉", summary: "Organizes events and logistics.", minEQF: 5),
+        .init(title: "Waiter/Waitress", category: .hospitality, income: 35_000, icon: "🍽️", summary: "Serves food and beverages to customers.", minEQF: 2),
+        .init(title: "Food Preparation Worker", category: .hospitality, income: 35_000, icon: "🍳", summary: "Prepares ingredients and supports kitchen staff.", minEQF: 2),
+        .init(title: "Dishwasher", category: .hospitality, income: 34_000, icon: "🧽", summary: "Cleans dishes and kitchenware in food-service settings.", minEQF: 1),
+        .init(title: "Fast Food Worker", category: .hospitality, income: 31_000, icon: "🍔", summary: "Takes orders and prepares food at quick-service counters.", minEQF: 1),
+        .init(title: "Housekeeper", category: .hospitality, income: 35_000, icon: "🧺", summary: "Cleans and tidies rooms in hotels and facilities.", minEQF: 1),
+        .init(title: "Janitor/Cleaner", category: .hospitality, income: 37_000, icon: "🧹", summary: "Maintains cleanliness of buildings and facilities.", minEQF: 1),
+        .init(title: "Flight Attendant", category: .hospitality, income: 63_500, icon: "🛫", summary: "Ensures passenger safety and comfort.", minEQF: 3),
+        .init(title: "Baker", category: .hospitality, income: 37_000, icon: "🥐", summary: "Bakes bread, pastries, and other goods.", minEQF: 3),
+        .init(title: "Hotel Manager", category: .hospitality, income: 72_000, icon: "🏨", summary: "Oversees hotel operations and staff.", minEQF: 4),
+        .init(title: "Event Planner", category: .hospitality, income: 61_000, icon: "🎉", summary: "Organizes events and logistics.", minEQF: 5),
         // Personal Services — personal and general services
-        .init(title: "Hairdresser/Barber", category: .service, income: 32_000, icon: "💇", summary: "Cuts and styles hair for clients.", minEQF: 4),
-        .init(title: "Beautician/Cosmetologist", category: .service, income: 30_000, icon: "💄", summary: "Provides beauty treatments and services.", minEQF: 4),
-        .init(title: "Surgeon", category: .health, income: 350_000, icon: "🔪", summary: "Performs operations to treat injuries and disease.", minEQF: 7),
-        .init(title: "Anesthesiologist", category: .health, income: 330_000, icon: "💉", summary: "Manages anesthesia and patient vitals during surgery.", minEQF: 7),
-        .init(title: "Pharmacist", category: .health, income: 132_000, icon: "💊", summary: "Dispenses medications and advises patients.", minEQF: 7),
-        .init(title: "Medical Assistant", category: .health, income: 37_000, icon: "🩺", summary: "Supports clinical staff with patient care.", minEQF: 3),
-        .init(title: "Nursing Aide", category: .health, income: 30_000, icon: "🛏️", summary: "Assists patients with daily living tasks.", minEQF: 3),
-        .init(title: "Licensed Practical Nurse", category: .health, income: 55_000, icon: "💉", summary: "Gives basic nursing care under an RN or physician.", minEQF: 3),
-        .init(title: "Dental Assistant", category: .health, income: 38_000, icon: "🦷", summary: "Supports dental professionals during procedures.", minEQF: 3),
-        .init(title: "Dentist", category: .health, income: 160_000, icon: "🦷", summary: "Diagnoses and treats dental conditions.", minEQF: 7),
-        .init(title: "Physiotherapist", category: .health, income: 65_000, icon: "🤸", summary: "Provides rehabilitation and physical therapy.", minEQF: 7),
-        .init(title: "Psychologist", category: .health, income: 90_000, icon: "🧠", summary: "Studies behavior and provides therapy.", minEQF: 7),
-        .init(title: "Paramedic", category: .health, income: 52_000, icon: "🚑", summary: "Provides emergency medical care.", minEQF: 4),
-        .init(title: "Veterinarian", category: .health, income: 105_000, icon: "🐾", summary: "Cares for animal health and treatments.", minEQF: 7),
+        .init(title: "Hairdresser/Barber", category: .service, income: 37_000, icon: "💇", summary: "Cuts and styles hair for clients.", minEQF: 4),
+        .init(title: "Beautician/Cosmetologist", category: .service, income: 36_000, icon: "💄", summary: "Provides beauty treatments and services.", minEQF: 4),
+        .init(title: "Surgeon", category: .health, income: 415_000, icon: "🔪", summary: "Performs operations to treat injuries and disease.", minEQF: 7),
+        .init(title: "Anesthesiologist", category: .health, income: 390_000, icon: "💉", summary: "Manages anesthesia and patient vitals during surgery.", minEQF: 7),
+        .init(title: "Pharmacist", category: .health, income: 141_000, icon: "💊", summary: "Dispenses medications and advises patients.", minEQF: 7),
+        .init(title: "Medical Assistant", category: .health, income: 45_500, icon: "🩺", summary: "Supports clinical staff with patient care.", minEQF: 3),
+        .init(title: "Nursing Aide", category: .health, income: 42_000, icon: "🛏️", summary: "Assists patients with daily living tasks.", minEQF: 3),
+        .init(title: "Licensed Practical Nurse", category: .health, income: 64_500, icon: "💉", summary: "Gives basic nursing care under an RN or physician.", minEQF: 3),
+        .init(title: "Dental Assistant", category: .health, income: 48_000, icon: "🦷", summary: "Supports dental professionals during procedures.", minEQF: 3),
+        .init(title: "Dentist", category: .health, income: 171_000, icon: "🦷", summary: "Diagnoses and treats dental conditions.", minEQF: 7),
+        .init(title: "Physiotherapist", category: .health, income: 103_000, icon: "🤸", summary: "Provides rehabilitation and physical therapy.", minEQF: 7),
+        .init(title: "Psychologist", category: .health, income: 100_500, icon: "🧠", summary: "Studies behavior and provides therapy.", minEQF: 7),
+        .init(title: "Paramedic", category: .health, income: 60_500, icon: "🚑", summary: "Provides emergency medical care.", minEQF: 4),
+        .init(title: "Veterinarian", category: .health, income: 130_000, icon: "🐾", summary: "Cares for animal health and treatments.", minEQF: 7),
         // Social
-        .init(title: "Social Worker", category: .publicServices, income: 48_000, icon: "🤝", summary: "Supports vulnerable individuals and families.", minEQF: 5),
-        .init(title: "IT Support Specialist", category: .technology, income: 52_000, icon: "🛠️", summary: "Provides technical help desk support.", minEQF: 3),
-        .init(title: "Software Tester/QA", category: .technology, income: 68_000, icon: "🔍", summary: "Tests software for defects and quality.", minEQF: 3),
-        .init(title: "Cybersecurity Analyst", category: .technology, income: 105_000, icon: "🔐", summary: "Defends systems and networks against attacks.", minEQF: 5),
+        .init(title: "Social Worker", category: .publicServices, income: 60_000, icon: "🤝", summary: "Supports vulnerable individuals and families.", minEQF: 5),
+        .init(title: "IT Support Specialist", category: .technology, income: 60_000, icon: "🛠️", summary: "Provides technical help desk support.", minEQF: 3),
+        .init(title: "Software Tester/QA", category: .technology, income: 100_000, icon: "🔍", summary: "Tests software for defects and quality.", minEQF: 5),
+        .init(title: "Cybersecurity Analyst", category: .technology, income: 125_000, icon: "🔐", summary: "Defends systems and networks against attacks.", minEQF: 5),
         .init(title: "Cloud Architect", category: .technology, income: 160_000, icon: "☁️", summary: "Designs and runs large-scale cloud infrastructure.", minEQF: 5),
-        .init(title: "Translator/Interpreter", category: .business, income: 50_000, icon: "🌐", summary: "Converts text between languages and provides live interpretation.", minEQF: 5),
+        .init(title: "Translator/Interpreter", category: .business, income: 60_000, icon: "🌐", summary: "Converts text between languages and provides live interpretation.", minEQF: 5),
         // Administration — back-office functions common to every business
-        .init(title: "Administrative Assistant", category: .administration, income: 40_000, icon: "📎", summary: "Supports a team with scheduling, mail, and records.", minEQF: 3),
-        .init(title: "Receptionist", category: .administration, income: 33_000, icon: "📞", summary: "Greets visitors and manages front-desk tasks.", minEQF: 3),
+        .init(title: "Administrative Assistant", category: .administration, income: 47_500, icon: "📎", summary: "Supports a team with scheduling, mail, and records.", minEQF: 3),
+        .init(title: "Receptionist", category: .administration, income: 38_000, icon: "📞", summary: "Greets visitors and manages front-desk tasks.", minEQF: 3),
         .init(title: "Payroll Specialist", category: .administration, income: 52_000, icon: "💵", summary: "Processes payroll and employee benefits.", minEQF: 4),
-        .init(title: "Human Resources Specialist", category: .administration, income: 62_000, icon: "🧑‍💼", summary: "Manages hiring and employee relations.", minEQF: 5),
-        .init(title: "Office Manager", category: .administration, income: 64_000, icon: "🗄️", summary: "Runs day-to-day office operations and admin staff.", minEQF: 4),
+        .init(title: "Human Resources Specialist", category: .administration, income: 76_000, icon: "🧑‍💼", summary: "Manages hiring and employee relations.", minEQF: 5),
+        .init(title: "Office Manager", category: .administration, income: 69_500, icon: "🗄️", summary: "Runs day-to-day office operations and admin staff.", minEQF: 4),
         // Construction / Trades
-        .init(title: "Construction Laborer", category: .construction, income: 36_000, icon: "🏗️", summary: "Performs physical tasks on construction sites.", minEQF: 2),
-        .init(title: "Roofer", category: .construction, income: 45_000, icon: "🏠", summary: "Installs and repairs roofs in all weather.", minEQF: 1),
-        .init(title: "Painter (Construction)", category: .construction, income: 36_000, icon: "🎨", summary: "Paints buildings and interior spaces.", minEQF: 2),
-        .init(title: "HVAC Technician", category: .construction, income: 55_000, icon: "🌡️", summary: "Installs and services heating and cooling systems.", minEQF: 4),
+        .init(title: "Construction Laborer", category: .construction, income: 47_000, icon: "🏗️", summary: "Performs physical tasks on construction sites.", minEQF: 2),
+        .init(title: "Roofer", category: .construction, income: 55_000, icon: "🏠", summary: "Installs and repairs roofs in all weather.", minEQF: 1),
+        .init(title: "Painter (Construction)", category: .construction, income: 49_000, icon: "🎨", summary: "Paints buildings and interior spaces.", minEQF: 2),
+        .init(title: "HVAC Technician", category: .construction, income: 61_000, icon: "🌡️", summary: "Installs and services heating and cooling systems.", minEQF: 4),
         // Manufacturing
-        .init(title: "Factory Worker", category: .manufacturing, income: 34_000, icon: "🏭", summary: "Operates production-line equipment and assembles goods.", minEQF: 1),
-        .init(title: "Assembler", category: .manufacturing, income: 36_000, icon: "🔩", summary: "Assembles parts and products to spec.", minEQF: 1),
-        .init(title: "Machine Operator", category: .manufacturing, income: 42_000, icon: "⚙️", summary: "Runs and monitors manufacturing machinery.", minEQF: 2),
-        .init(title: "Welder", category: .manufacturing, income: 47_000, icon: "🔥", summary: "Joins metal parts for fabrication and repair.", minEQF: 3),
-        .init(title: "Machinist", category: .manufacturing, income: 50_000, icon: "🛠️", summary: "Machines precision metal parts from blueprints.", minEQF: 3),
+        .init(title: "Factory Worker", category: .manufacturing, income: 42_000, icon: "🏭", summary: "Operates production-line equipment and assembles goods.", minEQF: 1),
+        .init(title: "Assembler", category: .manufacturing, income: 44_500, icon: "🔩", summary: "Assembles parts and products to spec.", minEQF: 1),
+        .init(title: "Machine Operator", category: .manufacturing, income: 47_500, icon: "⚙️", summary: "Runs and monitors manufacturing machinery.", minEQF: 2),
+        .init(title: "Welder", category: .manufacturing, income: 54_000, icon: "🔥", summary: "Joins metal parts for fabrication and repair.", minEQF: 3),
+        .init(title: "Machinist", category: .manufacturing, income: 58_500, icon: "🛠️", summary: "Machines precision metal parts from blueprints.", minEQF: 3),
         .init(title: "Quality Control Inspector", category: .manufacturing, income: 46_000, icon: "🔎", summary: "Checks products against quality standards.", minEQF: 3),
         // Transportation — vehicle operation, material handling, and maintenance
-        .init(title: "Truck Driver", category: .transportation, income: 50_000, icon: "🚚", summary: "Transports goods over long distances.", minEQF: 3),
-        .init(title: "Bus Driver", category: .transportation, income: 42_000, icon: "🚌", summary: "Operates passenger buses on scheduled routes.", minEQF: 3),
-        .init(title: "Taxi Driver", category: .transportation, income: 32_000, icon: "🚕", summary: "Provides on-demand passenger transport.", minEQF: 2),
-        .init(title: "Delivery Courier", category: .transportation, income: 30_000, icon: "🛵", summary: "Delivers parcels and food by bike, scooter, or on foot.", minEQF: 1),
-        .init(title: "Mover", category: .transportation, income: 32_000, icon: "📦", summary: "Loads, hauls, and unloads household and office goods.", minEQF: 1),
-        .init(title: "Warehouse Worker", category: .transportation, income: 34_000, icon: "🪜", summary: "Picks, packs, and moves warehouse inventory.", minEQF: 2),
-        .init(title: "Forklift Operator", category: .transportation, income: 36_000, icon: "🏗️", summary: "Operates forklifts to move goods.", minEQF: 2),
+        .init(title: "Truck Driver", category: .transportation, income: 58_500, icon: "🚚", summary: "Transports goods over long distances.", minEQF: 3),
+        .init(title: "Bus Driver", category: .transportation, income: 55_000, icon: "🚌", summary: "Operates passenger buses on scheduled routes.", minEQF: 3),
+        .init(title: "Taxi Driver", category: .transportation, income: 40_000, icon: "🚕", summary: "Provides on-demand passenger transport.", minEQF: 2),
+        .init(title: "Delivery Courier", category: .transportation, income: 38_000, icon: "🛵", summary: "Delivers parcels and food by bike, scooter, or on foot.", minEQF: 1),
+        .init(title: "Mover", category: .transportation, income: 40_000, icon: "📦", summary: "Loads, hauls, and unloads household and office goods.", minEQF: 1),
+        .init(title: "Warehouse Worker", category: .transportation, income: 39_000, icon: "🪜", summary: "Picks, packs, and moves warehouse inventory.", minEQF: 2),
+        .init(title: "Forklift Operator", category: .transportation, income: 46_000, icon: "🏗️", summary: "Operates forklifts to move goods.", minEQF: 2),
         .init(title: "Mechanic", category: .transportation, income: 52_000, icon: "🔧", summary: "Repairs vehicles and machinery.", minEQF: 4),
-        .init(title: "Aircraft Maintenance Technician", category: .transportation, income: 68_000, icon: "🛩️", summary: "Inspects, services, and repairs aircraft.", minEQF: 4),
+        .init(title: "Aircraft Maintenance Technician", category: .transportation, income: 80_000, icon: "🛩️", summary: "Inspects, services, and repairs aircraft.", minEQF: 4),
         // Moving goods: the planning and management behind the vehicles
         .init(title: "Dispatcher", category: .transportation, income: 46_000, icon: "📡", summary: "Routes drivers and crews and tracks deliveries.", minEQF: 3),
         .init(title: "Judge", category: .law, income: 155_000, icon: "👨‍⚖️", summary: "Presides over court proceedings and rulings.", minEQF: 7),
-        .init(title: "Security Guard", category: .publicServices, income: 32_000, icon: "🛡️", summary: "Protects property and ensures public safety.", minEQF: 3),
+        .init(title: "Security Guard", category: .publicServices, income: 38_000, icon: "🛡️", summary: "Protects property and ensures public safety.", minEQF: 3),
         // Engineering
-        .init(title: "Architect", category: .engineering, income: 88_000, icon: "📐", summary: "Designs building plans and structures.", minEQF: 5),
-        .init(title: "Chemical Engineer", category: .engineering, income: 82_000, icon: "🧪", summary: "Applies chemistry to industrial processes.", minEQF: 5),
-        .init(title: "Aerospace Engineer", category: .engineering, income: 115_000, icon: "🚀", summary: "Designs aircraft, spacecraft, and propulsion systems.", minEQF: 5),
-        .init(title: "Fashion Designer", category: .design, income: 55_000, icon: "👗", summary: "Designs clothing collections and sells to buyers.", minEQF: 4),
+        .init(title: "Architect", category: .engineering, income: 99_000, icon: "📐", summary: "Designs building plans and structures.", minEQF: 5),
+        .init(title: "Chemical Engineer", category: .engineering, income: 120_000, icon: "🧪", summary: "Applies chemistry to industrial processes.", minEQF: 5),
+        .init(title: "Aerospace Engineer", category: .engineering, income: 130_000, icon: "🚀", summary: "Designs aircraft, spacecraft, and propulsion systems.", minEQF: 5),
+        .init(title: "Fashion Designer", category: .design, income: 78_000, icon: "👗", summary: "Designs clothing collections and sells to buyers.", minEQF: 5),  // BLS: bachelor's
         // Media / Writing / Broadcast
-        .init(title: "Content Writer", category: .showBusiness, income: 44_000, icon: "✍️", summary: "Creates written content for various channels.", minEQF: 4),
-        .init(title: "Photographer", category: .showBusiness, income: 40_000, icon: "📷", summary: "Takes photos for commercial and personal use.", minEQF: 3),
-        .init(title: "Video Editor", category: .showBusiness, income: 55_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 4),
-        .init(title: "Social Media Manager", category: .showBusiness, income: 58_000, icon: "📱", summary: "Runs brand presence and campaigns across social platforms.", minEQF: 5),
+        .init(title: "Content Writer", category: .showBusiness, income: 58_000, icon: "✍️", summary: "Creates written content for various channels.", minEQF: 4),
+        .init(title: "Photographer", category: .showBusiness, income: 44_000, icon: "📷", summary: "Takes photos for commercial and personal use.", minEQF: 3),
+        .init(title: "Video Editor", category: .showBusiness, income: 72_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 4),
+        .init(title: "Social Media Manager", category: .showBusiness, income: 70_000, icon: "📱", summary: "Runs brand presence and campaigns across social platforms.", minEQF: 5),
         // Sports / Fitness
         // Agriculture
-        .init(title: "Farmhand", category: .agriculture, income: 28_000, icon: "🧑‍🌾", summary: "Plants, harvests, and tends crops and livestock.", minEQF: 1),
+        .init(title: "Farmhand", category: .agriculture, income: 36_000, icon: "🧑‍🌾", summary: "Plants, harvests, and tends crops and livestock.", minEQF: 1),
         .init(title: "Farmer", category: .agriculture, income: 32_000, icon: "🚜", summary: "Operates agricultural production and livestock.", minEQF: 2),
         // Arts / Creative
-        .init(title: "Animator", category: .design, income: 65_000, icon: "🎞️", summary: "Animates characters and motion for film, advertising, and games.", minEQF: 4),
-        .init(title: "Interior Designer", category: .design, income: 60_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
+        .init(title: "Animator", category: .design, income: 95_000, icon: "🎞️", summary: "Animates characters and motion for film, advertising, and games.", minEQF: 5),
+        .init(title: "Interior Designer", category: .design, income: 67_000, icon: "🛋️", summary: "Designs and styles indoor spaces for clients.", minEQF: 4),
         // Games — split across design and technology by what the role does
         .init(title: "Level Designer", category: .design, income: 68_000, icon: "🗺️", summary: "Builds and balances the game's levels and pacing.", minEQF: 4),
         .init(title: "Narrative Designer", category: .design, income: 72_000, icon: "✍️", summary: "Writes the story, characters, and branching dialogue.", minEQF: 5),
 
         // Capstone roles: senior seats that top out a track under their own
         // name rather than as a rung of a ladder.
-        .init(title: "Marketing Director", category: .business, income: 145_000, icon: "📣", summary: "Leads the marketing function and brand strategy.", minEQF: 5, minYears: 8),
-        .init(title: "Managing Partner", category: .law, income: 220_000, icon: "⚖️", summary: "Equity partner driving client relationships and firm strategy — the top of the law track.", minEQF: 7, minYears: 8),
-        .init(title: "Nurse Practitioner", category: .health, income: 125_000, icon: "🥼", summary: "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy.", minEQF: 6, minYears: 2),
-        .init(title: "Art Director", category: .showBusiness, income: 110_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, publications, or a game.", minEQF: 5, minYears: 8),
-        .init(title: "Chief Medical Officer", category: .health, income: 300_000, icon: "🏥", summary: "Sets clinical strategy and quality across a health system.", minEQF: 7, minYears: 12),
-        .init(title: "Chief Technology Officer", category: .technology, income: 320_000, icon: "🧠", summary: "Owns technology strategy for the whole organization.", minEQF: 6, minYears: 12),
-        .init(title: "Chief Executive Officer", category: .business, income: 400_000, icon: "👔", summary: "Leads the entire company and answers to the board.", minEQF: 6, minYears: 15),
-        .init(title: "Sales Director", category: .business, income: 175_000, icon: "📈", summary: "Owns the entire sales organization and revenue strategy.", minEQF: 5, minYears: 10),
+        .init(title: "Marketing Director", category: .business, income: 165_000, icon: "📣", summary: "Leads the marketing function and brand strategy.", minEQF: 5, minYears: 8),
+        .init(title: "Managing Partner", category: .law, income: 500_000, icon: "⚖️", summary: "Equity partner driving client relationships and firm strategy — the top of the law track.", minEQF: 7, minYears: 8),
+        .init(title: "Nurse Practitioner", category: .health, income: 132_000, icon: "🥼", summary: "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy.", minEQF: 6, minYears: 2),
+        .init(title: "Art Director", category: .showBusiness, income: 115_000, icon: "🖼️", summary: "Sets the visual direction for campaigns, films, publications, or a game.", minEQF: 5, minYears: 8),
+        .init(title: "Chief Medical Officer", category: .health, income: 450_000, icon: "🏥", summary: "Sets clinical strategy and quality across a health system.", minEQF: 7, minYears: 12),
+        .init(title: "Chief Technology Officer", category: .technology, income: 320_000, icon: "🧠", summary: "Owns technology strategy for the whole organization.", minEQF: 5, minYears: 12),
+        .init(title: "Chief Executive Officer", category: .business, income: 400_000, icon: "👔", summary: "Leads the entire company and answers to the board.", minEQF: 5, minYears: 15),
+        .init(title: "Sales Director", category: .business, income: 220_000, icon: "📈", summary: "Owns the entire sales organization and revenue strategy.", minEQF: 5, minYears: 10),
     ]
 
     // MARK: - Rows: career ladders
@@ -1162,56 +1265,60 @@ enum JobCatalog {
         // Fleet Manager is absorbed rather than kept as a rung: it was the same
         // seniority as the warehouse job, just with vehicles instead of racking.
         .init(name: "Logistics Coordinator", category: .transportation, icon: "🗒️", rungs: [
-            .init(label: "", income: 52_000, summary: "Schedules shipments and keeps freight moving to plan.", minEQF: 4),
-            .init(label: "", income: 70_000, summary: "Runs a distribution site — racking, shifts, and throughput.", minEQF: 4, minYears: 3, icon: "🏬", title: "Warehouse Manager"),
-            .init(label: "", income: 98_000, summary: "Owns the end-to-end supply chain and its suppliers.", minEQF: 5, minYears: 6, icon: "🔗", title: "Supply Chain Manager"),
+            .init(label: "", income: 55_000, summary: "Schedules shipments and keeps freight moving to plan.", minEQF: 4),
+            .init(label: "", income: 82_000, summary: "Runs a distribution site — racking, shifts, and throughput.", minEQF: 4, minYears: 3, icon: "🏬", title: "Warehouse Manager"),
+            .init(label: "", income: 120_000, summary: "Owns the end-to-end supply chain and its suppliers.", minEQF: 5, minYears: 6, icon: "🔗", title: "Supply Chain Manager"),
         ]),
         .init(name: "Airline Pilot", category: .transportation, icon: "✈️", rungs: [
-            .init(label: "", income: 95_000, summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5, icon: "🧑‍✈️", title: "First Officer"),
-            .init(label: "", income: 155_000, summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5, icon: "✈️", title: "Pilot"),
-            .init(label: "", income: 205_000, summary: "Commands the flight deck of commercial airliners.", minEQF: 5, icon: "👨‍✈️", title: "Airline Captain"),
+            .init(label: "", income: 100_000, summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5, icon: "🧑‍✈️", title: "First Officer"),
+            .init(label: "", income: 200_000, summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5, icon: "✈️", title: "Pilot"),
+            .init(label: "", income: 330_000, summary: "Commands the flight deck of commercial airliners.", minEQF: 5, icon: "👨‍✈️", title: "Airline Captain"),
         ]),
         // Modelling is the entry rung of this craft rather than a separate job:
         // "3D Modeler" carried a nearly identical skill profile and sat below the
         // base rung on pay, so it is that ladder's first step.
         .init(name: "3D Artist", category: .design, icon: "🎨", rungs: [
-            .init(label: "Junior", income: 58_000, summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 4, icon: "🧊"),
+            .init(label: "Junior", income: 62_000, summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 5, icon: "🧊"),
             // Games — art, design and engineering ladders inside a studio
-            .init(label: "", income: 64_000, summary: "Creates textured, lit 3D art for games and film.", minEQF: 4, minYears: 2),
-            .init(label: "Senior", income: 95_000, summary: "Owns key art and sets the visual bar for the team.", minEQF: 4, minYears: 5),
+            .init(label: "", income: 85_000, summary: "Creates textured, lit 3D art for games and film.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 115_000, summary: "Owns key art and sets the visual bar for the team.", minEQF: 5, minYears: 5),
         ]),
         .init(name: "Accountant", category: .administration, icon: "📒", rungs: [
             // Business / Finance
-            .init(label: "Junior", income: 52_000, summary: "Books transactions and supports month-end close.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 72_000, summary: "Prepares financial records and statements.", minEQF: 5),
-            .init(label: "Senior", income: 105_000, summary: "Owns ledger areas and supervises junior accountants.", minEQF: 5, minYears: 4),
+            .init(label: "Junior", income: 62_000, summary: "Books transactions and supports month-end close.", minEQF: 4, minYears: 0),
+            .init(label: "", income: 84_000, summary: "Prepares financial records and statements.", minEQF: 5, minYears: 1),
+            .init(label: "Senior", income: 115_000, summary: "Owns ledger areas and supervises junior accountants.", minEQF: 5, minYears: 4),
         ]),
         .init(name: "Business Analyst", category: .business, icon: "📈", rungs: [
-            .init(label: "Junior", income: 58_000, summary: "Gathers requirements and documents processes.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 80_000, summary: "Analyzes business needs and recommends solutions.", minEQF: 5),
-            .init(label: "Senior", income: 115_000, summary: "Leads cross-functional analysis and drives recommendations.", minEQF: 5, minYears: 4),
+            .init(label: "Junior", income: 62_000, summary: "Gathers requirements and documents processes.", minEQF: 4, minYears: 0),
+            .init(label: "", income: 85_000, summary: "Analyzes business needs and recommends solutions.", minEQF: 5),
+            .init(label: "Senior", income: 120_000, summary: "Leads cross-functional analysis and drives recommendations.", minEQF: 5, minYears: 4),
         ]),
         .init(name: "Carpenter", category: .construction, icon: "🪚", rungs: [
-            .init(label: "Apprentice", income: 34_000, summary: "Learns carpentry on site under a master carpenter.", minEQF: 3, minYears: 0),
-            .init(label: "", income: 52_000, summary: "Builds and repairs wooden structures.", minEQF: 4),
-            .init(label: "Master", income: 76_000, summary: "Master tradesperson on bespoke and large-scale builds.", minEQF: 4, minYears: 6),
+            .init(label: "Apprentice", income: 38_000, summary: "Learns carpentry on site under a master carpenter.", minEQF: 3, minYears: 0),
+            // Journeyman: a four-year apprenticeship, entered from high school.
+            .init(label: "", income: 60_000, summary: "Builds and repairs wooden structures.", minEQF: 3, minYears: 4),
+            .init(label: "Master", income: 85_000, summary: "Master tradesperson on bespoke and large-scale builds.", minEQF: 4, minYears: 6),
         ]),
         .init(name: "Chef", category: .hospitality, icon: "👨‍🍳", rungs: [
-            .init(label: "", income: 52_000, summary: "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", minEQF: 3),
+            // Chefs and head cooks come up through the line: HS plus years of
+            // kitchen work (BLS) — credited from any hospitality job, so a
+            // cook's years count.
+            .init(label: "", income: 45_000, summary: "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", minEQF: 3, minYears: 3),
             // Hospitality (chef ladder)
-            .init(label: "Sous", income: 65_000, summary: "Second-in-command in the kitchen, runs daily service.", minEQF: 4, minYears: 3),
-            .init(label: "Head", income: 92_000, summary: "Owns menu, sourcing, and kitchen leadership.", minEQF: 4, minYears: 6),
-            .init(label: "Executive", income: 140_000, summary: "Oversees multiple kitchens and culinary brand.", minEQF: 4, minYears: 10),
+            .init(label: "Sous", income: 58_000, summary: "Second-in-command in the kitchen, runs daily service.", minEQF: 4, minYears: 4),
+            .init(label: "Head", income: 72_000, summary: "Owns menu, sourcing, and kitchen leadership.", minEQF: 4, minYears: 6),
+            .init(label: "Executive", income: 100_000, summary: "Oversees multiple kitchens and culinary brand.", minEQF: 4, minYears: 10),
         ]),
         .init(name: "Civil Engineer", category: .engineering, icon: "🛣️", rungs: [
             // Engineering disciplines
-            .init(label: "Junior", income: 64_000, summary: "Drafts plans and supports senior engineers on site.", minEQF: 5, minYears: 0),
-            .init(label: "", income: 88_000, summary: "Designs infrastructure and public works.", minEQF: 5),
-            .init(label: "Senior", income: 125_000, summary: "Leads infrastructure projects and signs off on designs.", minEQF: 5, minYears: 6),
+            .init(label: "Junior", income: 75_000, summary: "Drafts plans and supports senior engineers on site.", minEQF: 5, minYears: 0),
+            .init(label: "", income: 101_000, summary: "Designs infrastructure and public works.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 135_000, summary: "Leads infrastructure projects and signs off on designs.", minEQF: 5, minYears: 6),
         ]),
         .init(name: "Data Analyst", category: .technology, icon: "📊", rungs: [
             .init(label: "Junior", income: 62_000, summary: "Builds basic dashboards and runs ad-hoc queries under supervision.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 85_000, summary: "Analyzes data to inform decisions.", minEQF: 5),
+            .init(label: "", income: 85_000, summary: "Analyzes data to inform decisions.", minEQF: 5, minYears: 2),
             .init(label: "Senior", income: 118_000, summary: "Owns analytical workstreams and partners with leadership on decisions.", minEQF: 5, minYears: 4),
         ]),
         .init(name: "Data Scientist", category: .technology, icon: "📈", rungs: [
@@ -1219,28 +1326,30 @@ enum JobCatalog {
             .init(label: "", income: 130_000, summary: "Builds models and extracts insight from large datasets.", minEQF: 5),
         ]),
         .init(name: "Electrical Engineer", category: .engineering, icon: "🔋", rungs: [
-            .init(label: "Junior", income: 64_000, summary: "Supports design and testing of electrical systems.", minEQF: 5, minYears: 0),
-            .init(label: "", income: 86_000, summary: "Designs electrical systems and circuits.", minEQF: 5),
-            .init(label: "Senior", income: 122_000, summary: "Leads electrical-system architecture for complex products.", minEQF: 5, minYears: 6),
+            .init(label: "Junior", income: 82_000, summary: "Supports design and testing of electrical systems.", minEQF: 5, minYears: 0),
+            .init(label: "", income: 120_000, summary: "Designs electrical systems and circuits.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 155_000, summary: "Leads electrical-system architecture for complex products.", minEQF: 5, minYears: 6),
         ]),
         .init(name: "Electrician", category: .construction, icon: "🔌", rungs: [
             // Trades — apprentice entry beneath the journeyman base role and master
             .init(label: "Apprentice", income: 40_000, summary: "Trains on the job toward a journeyman electrician license.", minEQF: 3, minYears: 0),
-            .init(label: "", income: 62_000, summary: "Installs and repairs electrical systems.", minEQF: 4),
+            // Journeyman: a four-year apprenticeship, entered from high school
+            // (46% of electricians hold no more than a diploma — BLS).
+            .init(label: "", income: 63_000, summary: "Installs and repairs electrical systems.", minEQF: 3, minYears: 4),
             // Construction trades
-            .init(label: "Master", income: 92_000, summary: "Licensed master responsible for jobs and apprentices.", minEQF: 4, minYears: 5),
+            .init(label: "Master", income: 95_000, summary: "Licensed master responsible for jobs and apprentices.", minEQF: 4, minYears: 5),
         ]),
         .init(name: "Financial Analyst", category: .business, icon: "💹", rungs: [
-            .init(label: "Junior", income: 68_000, summary: "Builds forecasting models with senior oversight.", minEQF: 5, minYears: 0),
+            .init(label: "Junior", income: 75_000, summary: "Builds forecasting models with senior oversight.", minEQF: 5, minYears: 0),
             // Business / Finance
-            .init(label: "", income: 95_000, summary: "Analyzes financial performance and forecasts.", minEQF: 5),
-            .init(label: "Senior", income: 140_000, summary: "Partners with executives on capital planning and strategy.", minEQF: 5, minYears: 5),
+            .init(label: "", income: 103_000, summary: "Analyzes financial performance and forecasts.", minEQF: 5),
+            .init(label: "Senior", income: 145_000, summary: "Partners with executives on capital planning and strategy.", minEQF: 5, minYears: 5),
         ]),
         .init(name: "Firefighter", category: .publicServices, icon: "🔥", rungs: [
-            .init(label: "", income: 57_000, summary: "Responds to fires, accidents, and rescue emergencies.", minEQF: 3),
+            .init(label: "", income: 59_000, summary: "Responds to fires, accidents, and rescue emergencies.", minEQF: 3),
             // Public Services — Firefighting / Rescue track (base "Firefighter")
-            .init(label: "Senior", income: 85_000, summary: "Experienced firefighter leading a crew on emergency calls.", minEQF: 3, minYears: 6, icon: "🚒"),
-            .init(label: "Lead", income: 120_000, summary: "Commands a fire station and emergency operations.", minEQF: 4, minYears: 12, icon: "🚒"),
+            .init(label: "Senior", income: 88_000, summary: "Experienced firefighter leading a crew on emergency calls.", minEQF: 3, minYears: 6, icon: "🚒"),
+            .init(label: "Lead", income: 115_000, summary: "Commands a fire station and emergency operations.", minEQF: 4, minYears: 12, icon: "🚒"),
         ]),
         .init(name: "Game Designer", category: .design, icon: "🎮", rungs: [
             .init(label: "", income: 78_000, summary: "Designs mechanics, systems, and the player experience.", minEQF: 5),
@@ -1248,24 +1357,24 @@ enum JobCatalog {
             .init(label: "Lead", income: 150_000, summary: "Sets the design vision for the entire title.", minEQF: 5, minYears: 9),
         ]),
         .init(name: "Graphic Artist", category: .design, icon: "🎨", rungs: [
-            .init(label: "Junior", income: 36_000, summary: "Produces assets to spec under art-director review.", minEQF: 3, minYears: 0),
+            .init(label: "Junior", income: 45_000, summary: "Produces assets to spec under art-director review.", minEQF: 3, minYears: 0),
             // Design
-            .init(label: "", income: 50_000, summary: "Creates visual artwork for media.", minEQF: 4),
-            .init(label: "Senior", income: 72_000, summary: "Owns visual identity work and directs junior artists.", minEQF: 4, minYears: 4),
+            .init(label: "", income: 63_000, summary: "Creates visual artwork for media.", minEQF: 4, minYears: 2),
+            .init(label: "Senior", income: 85_000, summary: "Owns visual identity work and directs junior artists.", minEQF: 4, minYears: 4),
         ]),
         .init(name: "Investment Banker", category: .business, icon: "🏦", rungs: [
-            .init(label: "Junior", income: 110_000, summary: "Analyst building models and pitch decks on live deals under senior bankers.", minEQF: 5, minYears: 0),
-            .init(label: "", income: 175_000, summary: "Structures deals, raises capital, and advises on M&A.", minEQF: 5),
+            .init(label: "Junior", income: 180_000, summary: "Analyst building models and pitch decks on live deals under senior bankers.", minEQF: 5, minYears: 0),
+            .init(label: "", income: 300_000, summary: "Structures deals, raises capital, and advises on M&A.", minEQF: 5),
         ]),
         .init(name: "Lab Technician", category: .science, icon: "🧪", rungs: [
             // Science
             // Science — two tracks: a Lab Technician trade ladder and a
             // doctorate-gated Research Scientist ladder (Senior/Lead/Principal
             // rungs live in the seniority ladders below).
-            .init(label: "", income: 42_000, summary: "Runs lab tests, preps samples, and records results.", minEQF: 4),
+            .init(label: "", income: 52_000, summary: "Runs lab tests, preps samples, and records results.", minEQF: 4),
             // Science — Laboratory track (base "Lab Technician")
-            .init(label: "Senior", income: 58_000, summary: "Leads lab testing and trains junior technicians.", minEQF: 4, minYears: 5),
-            .init(label: "Lead", income: 74_000, summary: "Runs the lab's daily operations, safety, and quality.", minEQF: 5, minYears: 9, icon: "🔬"),
+            .init(label: "Senior", income: 65_000, summary: "Leads lab testing and trains junior technicians.", minEQF: 4, minYears: 5),
+            .init(label: "Lead", income: 80_000, summary: "Runs the lab's daily operations, safety, and quality.", minEQF: 5, minYears: 9, icon: "🔬"),
         ]),
         .init(name: "Lawyer", category: .law, icon: "⚖️", rungs: [
             // Law / Public Services
@@ -1274,18 +1383,18 @@ enum JobCatalog {
             .init(label: "Senior", income: 170_000, summary: "Senior associate leading cases and mentoring junior lawyers.", minEQF: 7, minYears: 6),
         ]),
         .init(name: "Management Consultant", category: .business, icon: "🧠", rungs: [
-            .init(label: "Junior", income: 85_000, summary: "Runs analysis workstreams on client engagements under a lead consultant.", minEQF: 5, minYears: 0),
-            .init(label: "", income: 140_000, summary: "Advises companies on strategy and operations.", minEQF: 5),
+            .init(label: "Junior", income: 95_000, summary: "Runs analysis workstreams on client engagements under a lead consultant.", minEQF: 5, minYears: 0),
+            .init(label: "", income: 150_000, summary: "Advises companies on strategy and operations.", minEQF: 5),
         ]),
         .init(name: "Marketing Specialist", category: .business, icon: "📣", rungs: [
-            .init(label: "Junior", income: 46_000, summary: "Executes campaigns under direction from senior marketers.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 64_000, summary: "Creates and runs marketing campaigns.", minEQF: 5),
-            .init(label: "Senior", income: 94_000, summary: "Owns marketing programs and reports on impact.", minEQF: 5, minYears: 4),
+            .init(label: "Junior", income: 56_000, summary: "Executes campaigns under direction from senior marketers.", minEQF: 4, minYears: 0),
+            .init(label: "", income: 79_000, summary: "Creates and runs marketing campaigns.", minEQF: 5),
+            .init(label: "Senior", income: 105_000, summary: "Owns marketing programs and reports on impact.", minEQF: 5, minYears: 4),
         ]),
         .init(name: "Mechanical Engineer", category: .engineering, icon: "⚙️", rungs: [
-            .init(label: "Junior", income: 62_000, summary: "Assists in design and analysis of mechanical components.", minEQF: 5, minYears: 0),
-            .init(label: "", income: 84_000, summary: "Designs mechanical systems and machinery.", minEQF: 5),
-            .init(label: "Senior", income: 120_000, summary: "Owns mechanical design projects end-to-end.", minEQF: 5, minYears: 6),
+            .init(label: "Junior", income: 76_000, summary: "Assists in design and analysis of mechanical components.", minEQF: 5, minYears: 0),
+            .init(label: "", income: 104_000, summary: "Designs mechanical systems and machinery.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 140_000, summary: "Owns mechanical design projects end-to-end.", minEQF: 5, minYears: 6),
         ]),
         // Show business, trimmed to the roles real employment supports. Three
         // pairs here were one occupation apiece, split across two rows:
@@ -1296,63 +1405,70 @@ enum JobCatalog {
         // of the category, and the roles a player was least likely to be able to
         // make a living at anyway.
         .init(name: "Fitness Instructor", category: .showBusiness, icon: "🤸", rungs: [
-            .init(label: "", income: 34_000, summary: "Leads group exercise and gym classes.", minEQF: 2),
-            .init(label: "", income: 40_000, summary: "Coaches clients one-on-one toward their goals.", minEQF: 3, minYears: 2, icon: "🏋️", title: "Personal Trainer"),
+            .init(label: "", income: 40_000, summary: "Leads group exercise and gym classes.", minEQF: 2),
+            .init(label: "", income: 50_000, summary: "Coaches clients one-on-one toward their goals.", minEQF: 3, minYears: 2, icon: "🏋️", title: "Personal Trainer"),
         ]),
         .init(name: "TV Presenter", category: .showBusiness, icon: "📺", rungs: [
             .init(label: "", income: 70_000, summary: "Presents television programs and live segments.", minEQF: 5),
             .init(label: "", income: 95_000, summary: "Anchors television news broadcasts.", minEQF: 5, minYears: 3, icon: "🎙️", title: "News Anchor"),
         ]),
         .init(name: "Journalist", category: .showBusiness, icon: "📰", rungs: [
-            .init(label: "", income: 48_000, summary: "Reports news and stories for media outlets.", minEQF: 5),
+            .init(label: "", income: 52_000, summary: "Reports news and stories for media outlets.", minEQF: 5),
             .init(label: "Senior", income: 78_000, summary: "Runs a beat and breaks the stories others follow.", minEQF: 5, minYears: 5),
             .init(label: "", income: 135_000, summary: "Leads a publication's editorial vision and newsroom.", minEQF: 5, minYears: 10, icon: "🗞️", title: "Editor-in-Chief"),
         ]),
         .init(name: "Municipal Worker", category: .publicServices, icon: "🧹", rungs: [
-            .init(label: "", income: 40_000, summary: "Keeps the city running — sanitation, parks, roads, and facilities.", minEQF: 2),
+            .init(label: "", income: 45_000, summary: "Keeps the city running — sanitation, parks, roads, and facilities.", minEQF: 2),
             // Public Services — Municipal Services track (base "Municipal Worker")
-            .init(label: "Senior", income: 55_000, summary: "Seasoned public-works hand running crews and equipment.", minEQF: 2, minYears: 5, icon: "🧰"),
+            .init(label: "Senior", income: 56_000, summary: "Seasoned public-works hand running crews and equipment.", minEQF: 2, minYears: 5, icon: "🧰"),
             .init(label: "Lead", income: 72_000, summary: "Supervises municipal crews, budgets, and city services.", minEQF: 3, minYears: 10, icon: "🏛️"),
         ]),
         .init(name: "Paralegal", category: .law, icon: "📑", rungs: [
             // Law
-            .init(label: "Junior", income: 38_000, summary: "Files documents and supports research for senior staff.", minEQF: 3, minYears: 0),
-            .init(label: "", income: 48_000, summary: "Assists lawyers with research and documentation.", minEQF: 4),
-            .init(label: "Senior", income: 65_000, summary: "Manages caseload research and trains junior paralegals.", minEQF: 4, minYears: 4),
+            .init(label: "Junior", income: 48_000, summary: "Files documents and supports research for senior staff.", minEQF: 3, minYears: 0),
+            .init(label: "", income: 63_000, summary: "Assists lawyers with research and documentation.", minEQF: 4, minYears: 2),
+            .init(label: "Senior", income: 80_000, summary: "Manages caseload research and trains junior paralegals.", minEQF: 4, minYears: 4),
         ]),
         .init(name: "Physician", category: .health, icon: "🩺", rungs: [
-            // Health
-            .init(label: "", income: 220_000, summary: "Diagnoses and treats illnesses.", minEQF: 7),
-            // Medicine — attending rung between resident physician and CMO
-            .init(label: "Senior", income: 280_000, summary: "Attending physician supervising residents and complex cases.", minEQF: 7, minYears: 5),
+            // Residency comes first: three to five years of supervised hospital
+            // training on a stipend (AAMC PGY-1 ~$67–70k) before a doctor
+            // practises as an attending. Its years are Physician-ladder years,
+            // which is what the Surgeon and Anesthesiologist bars count (see
+            // `tenureLadderByBaseTitle`).
+            .init(label: "Resident", income: 68_000, summary: "Trains under supervision in a hospital residency.", minEQF: 7, minYears: 0),
+            // Health — the attending physician (family medicine median $244k)
+            .init(label: "", income: 245_000, summary: "Diagnoses and treats illnesses as an attending physician.", minEQF: 7, minYears: 3),
+            // Medicine — senior attending between physician and CMO
+            .init(label: "Senior", income: 300_000, summary: "Senior attending supervising residents and complex cases.", minEQF: 7, minYears: 6),
         ]),
         .init(name: "Player", category: .showBusiness, icon: "🥅", rungs: [
             // The breakthrough-gated star track — a rare, lottery-upside career.
             // The entry rung is easy to *qualify* for (no degree, no tenure) but
             // effectively closed without its signature achievement: hire odds sit
-            // at the 5% floor until you hold it (see `Job.breakthroughFameByRole`).
+            // at the hiring floor until you hold it (see `Job.breakthroughFameByRole`).
             // Screen and music stars are paid per project instead (see the star
             // projects in `SideHustleCatalog`); team athletes hold real contracts.
             // Athletics — the pro-player track, opened by a junior-competition win
             // ("Junior Champion", from the teen Junior Championship).
-            .init(label: "Amateur", income: 30_000, summary: "Signed to a club's development squad after a standout junior career.", minEQF: 1, minYears: 0),
-            .init(label: "Professional", income: 130_000, summary: "Earns a living on a professional team's roster.", minEQF: 1, minYears: 3, icon: "⚽"),
-            .init(label: "Elite", income: 320_000, summary: "A marquee starter with major contracts and sponsorships.", minEQF: 1, minYears: 7, icon: "🌟"),
+            .init(label: "Amateur", income: 35_000, summary: "Signed to a club's development squad after a standout junior career.", minEQF: 1, minYears: 0),
+            .init(label: "Professional", income: 250_000, summary: "Earns a living on a professional team's roster.", minEQF: 1, minYears: 3, icon: "⚽"),
+            .init(label: "Elite", income: 2_000_000, summary: "A marquee starter with major contracts and sponsorships.", minEQF: 1, minYears: 7, icon: "🌟"),
         ]),
         .init(name: "Plumber", category: .construction, icon: "🚰", rungs: [
             .init(label: "Apprentice", income: 40_000, summary: "Learns the plumbing trade under a licensed plumber.", minEQF: 3, minYears: 0),
-            .init(label: "", income: 60_000, summary: "Installs and repairs plumbing systems.", minEQF: 4),
-            .init(label: "Master", income: 88_000, summary: "Licensed master plumber leading complex installations.", minEQF: 4, minYears: 5),
+            // Journeyman: a four-year apprenticeship, entered from high school.
+            .init(label: "", income: 64_000, summary: "Installs and repairs plumbing systems.", minEQF: 3, minYears: 4),
+            .init(label: "Master", income: 92_000, summary: "Licensed master plumber leading complex installations.", minEQF: 4, minYears: 5),
         ]),
         .init(name: "Police Officer", category: .publicServices, icon: "👮", rungs: [
             // Public Services — three tracks, each climbed by seniority:
             // Law Enforcement (Police Officer), Firefighting/Rescue (Firefighter),
             // and Municipal Services (Municipal Worker). Entry rungs here; the
             // Senior/Lead rungs live in the seniority ladders below.
-            .init(label: "", income: 67_000, summary: "Enforces laws and protects the public on patrol.", minEQF: 3),
+            .init(label: "", income: 72_000, summary: "Enforces laws and protects the public on patrol.", minEQF: 3),
             // Public Services — Law Enforcement track (base "Police Officer")
-            .init(label: "Senior", income: 95_000, summary: "Veteran officer leading patrols and mentoring recruits.", minEQF: 3, minYears: 5),
-            .init(label: "Lead", income: 130_000, summary: "Commands a precinct and sets policing strategy.", minEQF: 4, minYears: 12, icon: "🚓"),
+            .init(label: "Senior", income: 100_000, summary: "Veteran officer leading patrols and mentoring recruits.", minEQF: 3, minYears: 5),
+            .init(label: "Lead", income: 135_000, summary: "Commands a precinct and sets policing strategy.", minEQF: 4, minYears: 12, icon: "🚓"),
         ]),
         .init(name: "Project Manager", category: .business, icon: "📋", rungs: [
             .init(label: "", income: 98_000, summary: "Plans and oversees projects to completion.", minEQF: 5),
@@ -1361,61 +1477,66 @@ enum JobCatalog {
             .init(label: "Lead", income: 175_000, summary: "Heads the PMO and the organization's most critical programs.", minEQF: 5, minYears: 10),
         ]),
         .init(name: "Registered Nurse", category: .health, icon: "🩺", rungs: [
-            .init(label: "", income: 81_000, summary: "Provides patient care, administers medication, and coordinates with medical teams.", minEQF: 5),
+            // The RN licence needs only an associate degree (EQF 4) — a quarter
+            // of RNs hold one (BLS) — so the ADN route works; charge nurses,
+            // who lead the shift, are expected to hold the BSN.
+            .init(label: "", income: 82_000, summary: "Provides patient care, administers medication, and coordinates with medical teams.", minEQF: 4),
             // Health
-            .init(label: "Senior", income: 110_000, summary: "Experienced floor nurse mentoring newer staff.", minEQF: 5, minYears: 5),
-            .init(label: "Charge", income: 130_000, summary: "Coordinates the nursing shift and triages escalations — the top of the floor-nursing ladder.", minEQF: 5, minYears: 8),
+            .init(label: "Senior", income: 102_000, summary: "Experienced floor nurse mentoring newer staff.", minEQF: 4, minYears: 5),
+            .init(label: "Charge", income: 118_000, summary: "Coordinates the nursing shift and triages escalations — the top of the floor-nursing ladder.", minEQF: 5, minYears: 8),
         ]),
         .init(name: "Research Scientist", category: .science, icon: "🔬", rungs: [
             // Science — Research track (base "Research Scientist", doctorate-gated)
-            .init(label: "Junior", income: 72_000, summary: "Early-career scientist running experiments under a senior lead.", minEQF: 7, minYears: 0),
-            .init(label: "", income: 90_000, summary: "Designs and runs experiments to answer scientific questions.", minEQF: 7),
+            .init(label: "Junior", income: 62_000, summary: "Early-career scientist running experiments under a senior lead.", minEQF: 7, minYears: 0),
+            .init(label: "", income: 105_000, summary: "Designs and runs experiments to answer scientific questions.", minEQF: 7),
             .init(label: "Senior", income: 145_000, summary: "Leads research programs and publishes original work.", minEQF: 7, minYears: 6),
-            .init(label: "Principal", income: 195_000, summary: "Sets research agenda for the lab and supervises projects.", minEQF: 7, minYears: 10),
+            .init(label: "Principal", income: 190_000, summary: "Sets research agenda for the lab and supervises projects.", minEQF: 7, minYears: 10),
         ]),
         .init(name: "Sales Manager", category: .business, icon: "📈", rungs: [
-            .init(label: "", income: 98_000, summary: "Leads sales teams and strategies.", minEQF: 5),
-            .init(label: "Senior", income: 150_000, summary: "Runs regional sales orgs and hits aggressive targets.", minEQF: 5, minYears: 7),
+            .init(label: "", income: 125_000, summary: "Leads sales teams and strategies.", minEQF: 5),
+            .init(label: "Senior", income: 175_000, summary: "Runs regional sales orgs and hits aggressive targets.", minEQF: 5, minYears: 7),
         ]),
         .init(name: "Software Engineer", category: .technology, icon: "💻", rungs: [
             // Technology
-            .init(label: "Junior", income: 78_000, summary: "Entry-level developer learning the codebase and shipping small features.", minEQF: 5, minYears: 0),
+            .init(label: "Junior", income: 88_000, summary: "Entry-level developer learning the codebase and shipping small features.", minEQF: 5, minYears: 0),
             // Technology
-            .init(label: "", income: 115_000, summary: "Designs and implements software systems.", minEQF: 5),
-            .init(label: "Senior", income: 155_000, summary: "Owns major systems, mentors peers, and drives technical direction.", minEQF: 5, minYears: 5),
-            .init(label: "Staff", income: 200_000, summary: "Sets engineering strategy across teams and unblocks complex initiatives.", minEQF: 6, minYears: 9),
-            .init(label: "Principal", income: 245_000, summary: "Top-of-ladder IC; defines architecture for the whole organization.", minEQF: 6, minYears: 12),
+            // The mid-level engineer ("L4 / Engineer II") — postings ask 2–5
+            // years, which is what makes the junior rung the way in.
+            .init(label: "", income: 125_000, summary: "Designs and implements software systems.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 165_000, summary: "Owns major systems, mentors peers, and drives technical direction.", minEQF: 5, minYears: 5),
+            .init(label: "Staff", income: 210_000, summary: "Sets engineering strategy across teams and unblocks complex initiatives.", minEQF: 5, minYears: 9),
+            .init(label: "Principal", income: 250_000, summary: "Top-of-ladder IC; defines architecture for the whole organization.", minEQF: 5, minYears: 12),
         ]),
         .init(name: "Systems Administrator", category: .technology, icon: "🖧", rungs: [
             // MARK: Added rungs so every professional track has ≥3 levels.
             // Prefixed rungs gate on same-track (per-role) experience; the
             // Director/Partner capstones stay reachable on broad industry years.
             // Tech — junior entry beneath the Systems Administrator ladder
-            .init(label: "Junior", income: 62_000, summary: "Maintains servers and accounts under senior guidance.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 80_000, summary: "Maintains IT infrastructure.", minEQF: 4),
-            .init(label: "Senior", income: 110_000, summary: "Architects infrastructure and leads incident response.", minEQF: 4, minYears: 5),
+            .init(label: "Junior", income: 70_000, summary: "Maintains servers and accounts under senior guidance.", minEQF: 4, minYears: 0),
+            .init(label: "", income: 99_000, summary: "Maintains IT infrastructure.", minEQF: 4, minYears: 2),
+            .init(label: "Senior", income: 125_000, summary: "Architects infrastructure and leads incident response.", minEQF: 4, minYears: 5),
         ]),
         .init(name: "Teacher", category: .education, icon: "🏫", rungs: [
             .init(label: "", income: 48_000, summary: "Teaches a class of students their core subjects.", minEQF: 5),
             // Education — Teacher track (base "Teacher", degree-gated)
-            .init(label: "Senior", income: 66_000, summary: "Veteran teacher mentoring staff and leading a department.", minEQF: 5, minYears: 6, icon: "📚"),
-            .init(label: "Lead", income: 92_000, summary: "Heads the school's academics and leads the teaching staff.", minEQF: 6, minYears: 11, icon: "🍎"),
+            .init(label: "Senior", income: 72_000, summary: "Veteran teacher mentoring staff and leading a department.", minEQF: 5, minYears: 6, icon: "📚"),
+            .init(label: "Lead", income: 106_000, summary: "Heads the school's academics and leads the teaching staff.", minEQF: 6, minYears: 11, icon: "🍎"),
         ]),
         .init(name: "Tutor", category: .education, icon: "📖", rungs: [
             // Education — two tracks: an accessible Tutor ladder and a
             // degree-gated Teacher ladder (Senior/Lead rungs in the seniority
             // ladders below).
-            .init(label: "", income: 34_000, summary: "Coaches students one-on-one in specific subjects.", minEQF: 3),
+            .init(label: "", income: 40_000, summary: "Coaches students one-on-one in specific subjects.", minEQF: 3),
             // Education — Tutor track (base "Tutor", accessible)
-            .init(label: "Senior", income: 46_000, summary: "Experienced tutor running group sessions and mentoring tutors.", minEQF: 4, minYears: 5),
+            .init(label: "Senior", income: 48_000, summary: "Experienced tutor running group sessions and mentoring tutors.", minEQF: 4, minYears: 5),
             .init(label: "Lead", income: 60_000, summary: "Runs a tutoring center's staff, curriculum, and clients.", minEQF: 5, minYears: 9),
         ]),
         .init(name: "UX/UI Designer", category: .design, icon: "🖥️", rungs: [
             // Design
-            .init(label: "Junior", income: 60_000, summary: "Produces wireframes and visual assets under senior direction.", minEQF: 4, minYears: 0),
-            .init(label: "", income: 82_000, summary: "Designs user interfaces and experiences.", minEQF: 5),
-            .init(label: "Senior", income: 120_000, summary: "Leads end-to-end design of major product surfaces.", minEQF: 5, minYears: 5),
-            .init(label: "Lead", income: 155_000, summary: "Sets design vision and mentors the design team.", minEQF: 5, minYears: 8),
+            .init(label: "Junior", income: 72_000, summary: "Produces wireframes and visual assets under senior direction.", minEQF: 4, minYears: 0),
+            .init(label: "", income: 104_000, summary: "Designs user interfaces and experiences.", minEQF: 5, minYears: 2),
+            .init(label: "Senior", income: 135_000, summary: "Leads end-to-end design of major product surfaces.", minEQF: 5, minYears: 5),
+            .init(label: "Lead", income: 165_000, summary: "Sets design vision and mentors the design team.", minEQF: 5, minYears: 8),
         ]),
     ]
 
@@ -1456,8 +1577,11 @@ enum JobCatalog {
     static let allBaseTitles: [String] =
         standaloneRoles.map(\.title) + ladders.map(\.name) + ventures.map(\.title)
 
-    /// Builds the full job database. Salaries are the present-day published
-    /// figures; a small random variance is applied when each `Job` is constructed.
+    /// Builds the full job database. Salaries are the BLS OEWS May 2025
+    /// medians; each posting's pay is spread by its category's employer-to-
+    /// employer variance when the `Job` is constructed (see
+    /// `JobCategory.salaryVariance`) — though what the player is offered is
+    /// built from the median (`Job.offeredSalary`).
     /// The whole market. **Not deterministic**: each posting draws its employer's
     /// sector from the markets that role can sit in, so re-reading the catalogue
     /// is a fresh year's listings rather than the same ones again. `Player`
@@ -1466,6 +1590,22 @@ enum JobCatalog {
         standaloneRoles.map(job(from:))
             + ladders.flatMap(jobs(for:))
             + ventures.map(job(from:))
+    }
+
+    /// Every ladder's rungs in order, keyed by ladder name — the unfiltered
+    /// catalogue a promotion reads the rung above from, whatever this year's
+    /// postings hold (a slump withdraws postings; it doesn't abolish the rung
+    /// above the player's own). Built once: a rung's requirements and
+    /// catalogue pay are fixed, and a promotion keeps the employer's sector.
+    static let rungsByLadder: [String: [Job]] = Dictionary(
+        uniqueKeysWithValues: ladders.map { ($0.name, jobs(for: $0)) }
+    )
+
+    /// The rung above `job` on its ladder, or nil at the top of a ladder and
+    /// for a role with no ladder.
+    static func rung(above job: Job) -> Job? {
+        guard let rungs = rungsByLadder[job.baseTitle], job.rung + 1 < rungs.count else { return nil }
+        return rungs[job.rung + 1].atBaseSalary()
     }
 
     /// Role pictogram keyed by base title — for surfacing a role's own industry

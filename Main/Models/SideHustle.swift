@@ -53,6 +53,11 @@ struct SideHustle: Identifiable, Hashable {
     /// A fame award the player must hold to take this project on — the big-
     /// break titles that open the star projects. `nil` for open projects.
     var requiresAward: String? = nil
+    /// The most fame can multiply `basePay` by. Star projects keep the full
+    /// `GameConstants.projectPayMaxMultiple`; everyday gig work tops out at a
+    /// working performer's living — most actors and musicians never earn a
+    /// full-time wage from the craft, and gig rates don't scale with renown.
+    var payMaxMultiple: Double = GameConstants.projectPayMaxMultiple
 
     /// What a landed year pays: the base, multiplied by the player's fame in
     /// this project's field — the audience brand deals, streams, royalties and
@@ -60,7 +65,7 @@ struct SideHustle: Identifiable, Hashable {
     /// a famous name.
     func pay(famePoints: Double) -> Int {
         guard basePay > 0 else { return 0 }
-        let multiple = min(GameConstants.projectPayMaxMultiple,
+        let multiple = min(payMaxMultiple,
                            pow(1 + max(0, famePoints), GameConstants.projectPayFameExponent))
         return Int((Double(basePay) * multiple).rounded())
     }
@@ -94,10 +99,11 @@ struct SideHustle: Identifiable, Hashable {
     static let talentWeight = 0.7
     static let experienceWeight = 0.3
 
-    /// Fame snowball: how much each weighted fame point lifts a fame project's
-    /// odds, and the cap that lift tops out at.
-    static let fameLiftPerPoint = 0.03
-    static let maxFameLift = 0.15
+    /// Fame snowball: how much each weighted fame point adds to the project's
+    /// fit (so the lift is a share of its `successCeiling`), and the cap that
+    /// lift tops out at.
+    static let fameLiftPerPoint = 0.05
+    static let maxFameLift = 0.30
 
     /// 0...1 measure of how far the player's working life backs this project up.
     /// `fieldYears` — credited years in the project's own `experienceCategory`,
@@ -130,25 +136,45 @@ struct SideHustle: Identifiable, Hashable {
     func successProbability(for soft: SoftSkills, famePoints: Double = 0,
                             totalExperienceYears: Int = 0,
                             fieldExperienceYears: Int = 0,
-                            climate: IndustryClimate = .steady) -> Double {
+                            climate: IndustryClimate = .steady,
+                            age: Int? = nil) -> Double {
         let fit = SideHustle.talentWeight * talentFit(for: soft)
             + SideHustle.experienceWeight * experienceFit(totalYears: totalExperienceYears,
                                                           fieldYears: fieldExperienceYears)
+        // Fame raises the odds *within* the project's ceiling — at most
+        // `maxFameLift` of it — so a long shot stays a long shot and talent,
+        // not a couple of banked gigs, is what reaches the cap.
         let fameLift = min(famePoints * SideHustle.fameLiftPerPoint, SideHustle.maxFameLift)
-        let raw = (fit * successCeiling + fameLift) * climate.projectFactor
+        let raw = successCeiling * min(1, fit + fameLift) * climate.projectFactor
+            * (age.map(castingAgeFactor) ?? 1)
         return min(successCeiling, max(0, raw))
     }
+
+    /// For a big break, how much the player's age still lets them be
+    /// discovered: breakout roles and debut hits go overwhelmingly to people
+    /// in their twenties, so the lottery thins after 30 and all but closes
+    /// after 40. Every other project is age-blind.
+    func castingAgeFactor(_ age: Int) -> Double {
+        guard SideHustle.bigBreakIds.contains(id) else { return 1 }
+        switch age {
+        case ..<30: return 1.0
+        case ..<40: return 0.4
+        default:    return 0.1
+        }
+    }
+
+    static let bigBreakIds: Set<String> = ["bigBreakActing", "bigBreakMusic"]
 
     /// Rolls a single year of this venture: a `FameGrant` on success, nothing on
     /// a flop. No money is staked, so there is nothing to salvage. The experience
     /// and fame arguments are the odds inputs described on `successProbability`.
     func resolve(for soft: SoftSkills, famePoints: Double = 0,
                  totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0,
-                 climate: IndustryClimate = .steady) -> Outcome {
+                 climate: IndustryClimate = .steady, age: Int? = nil) -> Outcome {
         let odds = successProbability(for: soft, famePoints: famePoints,
                                       totalExperienceYears: totalExperienceYears,
                                       fieldExperienceYears: fieldExperienceYears,
-                                      climate: climate)
+                                      climate: climate, age: age)
         guard Double.random(in: 0...1) < odds else {
             return Outcome(hustle: self, success: false, odds: odds, grantedFame: nil, pay: 0)
         }
@@ -259,7 +285,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Rising Performer",
             successCeiling: 0.6,
-            basePay: 6000
+            basePay: 6000,
+            payMaxMultiple: 8
         ),
         SideHustle(
             id: "releaseAlbum",
@@ -291,7 +318,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)],
             fameTitle: "Working Actor",
             successCeiling: 0.9,
-            basePay: 12000
+            basePay: 12000,
+            payMaxMultiple: 5
         ),
         SideHustle(
             id: "musicGigs",
@@ -305,7 +333,8 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1)],
             fameTitle: "Gigging Musician",
             successCeiling: 0.9,
-            basePay: 10000
+            basePay: 10000,
+            payMaxMultiple: 5
         ),
         // --- Star work: open only to a name the big break has made. Paid per
         // film or tour, priced on how famous you are.
@@ -358,7 +387,9 @@ enum SideHustleCatalog {
                      .init(keyPath: \.creativityAndInsightfulThinking, weight: 1),
                      .init(keyPath: \.resilienceAndEndurance, weight: 1)],
             fameTitle: "Breakout Role",
-            successCeiling: 0.05,
+            // About 1 in 200 a year even for real talent: a lead role is a
+            // lottery that most working actors never win.
+            successCeiling: 0.005,
             basePay: 20000
         ),
         SideHustle(
@@ -373,7 +404,7 @@ enum SideHustleCatalog {
                      .init(keyPath: \.communicationAndNetworking, weight: 1),
                      .init(keyPath: \.visionaryThinkingAndAmbition, weight: 1)],
             fameTitle: "Hit Record",
-            successCeiling: 0.05,
+            successCeiling: 0.005,
             basePay: 15000
         ),
         // --- Self-initiated creative works (unlocked to everyone, stage-gated) ---

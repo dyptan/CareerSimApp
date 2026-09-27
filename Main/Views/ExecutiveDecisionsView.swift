@@ -32,9 +32,11 @@ struct ExecutiveDecisionsView: View {
             header
             ScrollView {
                 VStack(spacing: 12) {
-                    // Investment rounds are for scalable ventures only.
+                    // Investment rounds are for scalable ventures only, and a
+                    // stake sale needs something vested to sell.
                     ForEach(ExecutiveDecisionCatalog.all.filter {
-                        $0.kind != .investmentRound || player.canRaiseInvestmentRound
+                        ($0.kind != .investmentRound || player.canRaiseInvestmentRound)
+                            && ($0.kind != .sellShares || player.shareStakeValue() > 0)
                     }) { decision in
                         card(for: decision)
                     }
@@ -191,7 +193,7 @@ struct ExecutiveDecisionsView: View {
             let odds = Int((player.investmentRoundOdds() * 100).rounded())
             let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
             return """
-            A gamble. ~\(odds)% to close this year, driven by your pitch — 💬 Persuasion most of all, then vision, communication and leadership (worth +\(Int((player.investmentRoundSkillFit() * 40).rounded()))% of up to +40% right now) — your network, and above all your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +55%).
+            A gamble. ~\(odds)% to close this year, driven by your pitch — 💬 Persuasion most of all, then vision, communication and leadership (worth +\(Int((player.investmentRoundSkillFit() * 40).rounded()))% of up to +40% right now) — your network, and above all your business (💼) fame: the market backs founders it has heard of. Your reputation is worth +\(famePts)% on the odds right now (up to +25%). A company raises at most \(GameConstants.maxInvestmentRounds) rounds, and investors want a year of traction first.
 
             The money goes into the company, not your pocket: your stake is worth ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)) even after the investors' share, the business can pay you \(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))% more, and you bank business fame. Cash it in by selling your stake. Failure costs only the year's effort.
             """

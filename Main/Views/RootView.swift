@@ -403,7 +403,7 @@ struct ModeSelectionView: View {
                             .font(.callout.bold())
                             .padding(.top, 2)
                         if !difficulty.isSimplified {
-                            Text("💵 Save \(Int(difficulty.savingsRate * 100))% of income · 📉 \(Int(difficulty.turmoilChance * 100))% downturn risk/yr")
+                            Text("💵 Save \(Int(difficulty.savingsRate * 100))% of pay above \(difficulty.livingCostFloor / 1000)k living costs · 📉 \(Int(difficulty.turmoilChance * 100))% downturn risk/yr")
                                 .font(.caption.bold())
                                 .foregroundStyle(.secondary)
                         }

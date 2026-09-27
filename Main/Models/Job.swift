@@ -166,7 +166,7 @@ extension Job {
     /// Hire-probability bonus once the player holds this role's breakthrough
     /// fame award. Large enough to dominate the formula — it is the single
     /// most important factor for a gated career.
-    static let breakthroughBonus: Double = 0.40
+    static let breakthroughBonus: Double = 0.20
 
     func educationMet(for player: Player) -> Bool {
         let playerEQF = player.highestEQF
@@ -224,17 +224,38 @@ extension Job {
         }
     }
 
-    /// Years of the player's experience relevant to this role: same-role tenure
-    /// for a rung on a seniority ladder (so unrelated jobs in the industry don't
-    /// qualify you for a promotion), or accumulated whole-industry years for a
-    /// standalone role (entry-level, or a top capstone with no junior rung).
-    /// Standalone roles credit related industries too — notably, entrepreneurship
-    /// experience counts toward Business roles (see `Player.industryExperience`).
+    /// Years of the player's experience relevant to this role. A standalone role
+    /// (entry-level, or a top capstone with no junior rung) or a ladder's entry
+    /// rung counts accumulated whole-industry years, crediting related
+    /// industries too — notably, entrepreneurship experience counts toward
+    /// Business roles (see `Player.industryExperience`).
+    ///
+    /// A rung above entry counts tenure on *this* ladder in full and the rest of
+    /// the player's years in the field at half value (rounded down):
+    /// `roleYears + (industryYears − roleYears) / 2`. Lateral moves at the same
+    /// level are common in tech and business, so a data analyst's four years
+    /// count for something toward mid-level software engineering — but not as
+    /// much as four years on the engineering ladder itself.
+    ///
+    /// A role whose years can only be earned on another ladder
+    /// (`JobCatalog.tenureLadderByBaseTitle` — a surgeon's years are years as a
+    /// doctor) counts that ladder's tenure alone.
     func relevantYears(for player: Player) -> Int {
-        if isLadderVariant {
-            return player.experienceByRole[baseTitle] ?? 0
+        if let ladder = JobCatalog.tenureLadderByBaseTitle[baseTitle] {
+            return player.experienceByRole[ladder] ?? 0
         }
-        return player.industryExperience(for: category)
+        let industryYears = player.industryExperience(for: category)
+        guard isLadderVariant else { return industryYears }
+        let roleYears = player.experienceByRole[baseTitle] ?? 0
+        return roleYears + max(0, industryYears - roleYears) / 2
+    }
+
+    /// The ladder whose tenure this role's experience bar reads, when it isn't
+    /// whole-category years: its own ladder for a rung above entry, or the one
+    /// `JobCatalog.tenureLadderByBaseTitle` names. For "5 yr as Physician"-style
+    /// labels.
+    var experienceLadder: String? {
+        JobCatalog.tenureLadderByBaseTitle[baseTitle] ?? (isLadderVariant ? baseTitle : nil)
     }
 
     /// Years of experience this role expects — its catalog baseline
@@ -243,14 +264,30 @@ extension Job {
         requirements.minYearsExperience
     }
 
-    /// Whether the player meets the role's *baseline* experience
-    /// (`minYearsExperience`). A hard gate in every mode — you can't be hired (or
-    /// found a venture) below the baseline. Above it, the tier-scaled
-    /// `experienceFactor` rewards extra years probabilistically.
+    /// Whether the player has the role's full stated experience
+    /// (`minYearsExperience`). Simplified mode gates on exactly this; the
+    /// realistic modes consider an applicant from `minimumQualifyingYears`
+    /// (see `experienceFactor`), and a promotion into a rung requires it in
+    /// full.
     func experienceMet(for player: Player) -> Bool {
         let required = requirements.minYearsExperience
         guard required > 0 else { return true }
         return relevantYears(for: player) >= required
+    }
+
+    /// Fewest relevant years at which an application is considered at all:
+    /// the full figure in Simplified, otherwise the smallest whole number of
+    /// years whose `experienceFactor` is above zero — `experienceStretchMin` of
+    /// the stated years, or enough to reach `executiveExperienceMinFactor` on a
+    /// seat-scarce role. The same arithmetic as `experienceFactor`, so the UI's
+    /// "closed below N years" and the odds can't disagree.
+    func minimumQualifyingYears(simplified: Bool) -> Int {
+        let required = requirements.minYearsExperience
+        guard required > 0 else { return 0 }
+        if simplified { return required }
+        return (1...required).first { years in
+            experienceFactor(ratio: Double(years) / Double(required)) > 0
+        } ?? required
     }
 
     func hardSkillsMet(for player: Player) -> Bool {
@@ -277,21 +314,76 @@ extension Job {
     /// degree is optional and merely lifts the odds (see `educationFactor`).
     var educationIsMandatory: Bool { category.educationIsMandatory }
 
-    /// The education gate for hiring: enforced only where a degree is mandatory.
-    /// Elsewhere it's always "met" so a lack of degree never blocks the
-    /// application — it just costs hire probability.
+    /// The realistic-mode education gate: enforced only where a degree is
+    /// mandatory. Elsewhere it's always "met" so a lack of degree never blocks
+    /// the application — it just costs hire probability. (Simplified mode gates
+    /// every role on `educationMet`; see `educationFactor`.)
     func educationGateMet(for player: Player) -> Bool {
         guard educationIsMandatory else { return true }
         return educationMet(for: player)
     }
 
-    /// Age gate for unskilled roles. Jobs that demand no formal education
-    /// (`requirements.education.minEQF == 0`) still require the player to be
-    /// of legal working age (`GameConstants.minimumWorkingAge`). Roles that
-    /// require a degree clear this gate implicitly via years in school.
+    /// Categories whose work falls under the FLSA's Hazardous Occupations Orders
+    /// (driving, roofing, power-driven machinery, excavation), closed to minors.
+    private static let hazardousCategories: Set<JobCategory> = [
+        .construction, .manufacturing, .transportation,
+    ]
+
+    /// Categories whose basic roles 14–15-year-olds may legally hold: shops,
+    /// food service and personal services (DOL Fact Sheet #43).
+    private static let teenWorkCategories: Set<JobCategory> = [
+        .retail, .hospitality, .service,
+    ]
+
+    /// The youngest a player may be hired into this role, following US
+    /// child-labour law and what employers screen for:
+    ///
+    /// * **21** for a top leadership seat (`isTopLeadership`) — nobody runs a
+    ///   shop floor, a ward or a company at 18;
+    /// * **18** for the hazardous categories (construction, manufacturing,
+    ///   transportation) and for any role expecting a post-secondary
+    ///   qualification (EQF 4+);
+    /// * **14** for basic retail, food-service and personal-service work
+    ///   (EQF ≤ 2);
+    /// * **16** for everything else;
+    ///
+    /// raised by `JobCatalog.minimumAgeByBaseTitle` where a licensing law sets a
+    /// higher bar (serving alcohol, say). Founders need to be adults to stake
+    /// capital (`GameConstants.minimumEntrepreneurAge`).
+    ///
+    /// This replaces a gate that checked age only for roles expecting no
+    /// schooling at all, on the theory that school takes care of the rest —
+    /// but outside the regulated fields education only grades the odds, so a
+    /// 14-year-old could apply to be a software engineer and a 16-year-old
+    /// cashier could become store manager.
+    var minimumHireAge: Int {
+        if isEntrepreneurial { return GameConstants.minimumEntrepreneurAge }
+        let minEQF = requirements.education.minEQF
+        let byRule: Int
+        if isTopLeadership {
+            byRule = GameConstants.minimumLeadershipAge
+        } else if minEQF >= 4 || Job.hazardousCategories.contains(category) {
+            byRule = GameConstants.adultRoleAge
+        } else if minEQF <= 2 && Job.teenWorkCategories.contains(category) {
+            byRule = GameConstants.minimumWorkingAge
+        } else {
+            byRule = GameConstants.minimumNonHazardousAge
+        }
+        return max(byRule, JobCatalog.minimumAgeByBaseTitle[baseTitle] ?? 0)
+    }
+
+    /// Whether the player is old enough to be hired into this role (see
+    /// `minimumHireAge`).
     func ageGateMet(for player: Player) -> Bool {
-        guard requirements.education.minEQF == 0 else { return true }
-        return player.age >= GameConstants.minimumWorkingAge
+        guard player.age >= minimumHireAge else { return false }
+        // Professional sport signs its players young: a first pro contract
+        // after the mid-twenties is vanishingly rare. A player already on the
+        // ladder can still step up it.
+        if baseTitle == "Player", rung >= 1, player.currentOccupation?.baseTitle != "Player",
+           player.age > GameConstants.latestProSigningAge {
+            return false
+        }
+        return true
     }
 
     /// The player's best formal qualification, in EQF levels. Uses the highest
@@ -305,6 +397,36 @@ extension Job {
     /// Zero once they meet or exceed the bar.
     func educationShortfall(for player: Player) -> Int {
         max(0, requirements.education.minEQF - playerEducationLevel(for: player))
+    }
+
+    /// EQF levels of a shortfall the player's *equivalent experience* makes up
+    /// — at most `GameConstants.equivalentExperienceMaxCredit` (one level), and
+    /// only ever toward a shortfall, never beyond the bar. Any one of these is
+    /// enough, and they don't stack:
+    ///
+    /// * a held credential whose `careerBoost` covers this field — the
+    ///   portfolio a coding bootcamp or a design program leaves you with;
+    /// * `GameConstants.equivalentExperienceFame` points of fame in the field's
+    ///   bucket — a body of shipped work people know;
+    /// * `GameConstants.equivalentExperienceYears` years in the field.
+    ///
+    /// It never opens a regulated profession (there the degree is absolute; see
+    /// `educationFactor`), and Simplified mode doesn't use it.
+    func equivalentExperienceCredit(for player: Player) -> Int {
+        let viaCredential = player.trainingCareerBonus(for: category) > 0
+        let viaFame = category.fameCategory.map {
+            player.famePoints(for: $0) >= GameConstants.equivalentExperienceFame
+        } ?? false
+        let viaYears = player.industryExperience(for: category) >= GameConstants.equivalentExperienceYears
+        return (viaCredential || viaFame || viaYears) ? GameConstants.equivalentExperienceMaxCredit : 0
+    }
+
+    /// The shortfall left once equivalent experience is credited
+    /// (`educationShortfall` less `equivalentExperienceCredit`, never negative).
+    func creditedEducationShortfall(for player: Player) -> Int {
+        let shortfall = educationShortfall(for: player)
+        guard shortfall > 0 else { return 0 }
+        return max(0, shortfall - equivalentExperienceCredit(for: player))
     }
 
     /// Whether the player holds a qualification at or above the role's expected
@@ -328,9 +450,10 @@ extension Job {
 
     /// Every hard requirement expressed as a factor on the hire odds.
     ///
-    /// A requirement that is genuinely absolute — a statutory licence, a degree
-    /// in a regulated profession, no relevant experience whatsoever —
-    /// contributes **zero**, and zero times anything is zero. That is what makes
+    /// A requirement that is genuinely absolute — being old enough, a statutory
+    /// licence, a degree in a regulated profession (in Simplified, for every
+    /// role), well under the expected years of experience — contributes
+    /// **zero**, and zero times anything is zero. That is what makes
     /// it absolute, so there is no separate boolean gate that something else has
     /// to agree with. Everything else grades.
     struct RequirementFit {
@@ -362,41 +485,80 @@ extension Job {
         !requirementFit(for: player).isBlocked
     }
 
-    /// Education as a multiplier. In the regulated professions the degree is
-    /// absolute, so it is 1 or 0. Everywhere else it grades: short of the
-    /// expected level costs `educationShortfallPerLevel` a level down to a
-    /// floor, and clearing the bar pays — more in a field the role accepts than
-    /// in an unrelated one.
+    /// Education as a multiplier.
+    ///
+    /// * **Simplified mode and the regulated professions:** absolute — 1 with
+    ///   the expected level in a field the role accepts (`educationMet`), else
+    ///   0. In Simplified this holds for *every* role, so the degree a child
+    ///   picks decides which careers open to them.
+    /// * **Everywhere else it grades.** Each level short compounds —
+    ///   `educationShortfallRatioDegree` (×0.30) a level for a degree-level role,
+    ///   `educationShortfallRatioSubDegree` (×0.60) below that — down to
+    ///   `educationShortfallFloor`, after `equivalentExperienceCredit` has made
+    ///   up at most one level. Clearing the bar pays in a field the role accepts
+    ///   (`relevantDegreeMultiplier`) and costs in an unrelated one
+    ///   (`unrelatedDegreeMultiplier`). Meeting the bar only through equivalent
+    ///   experience counts like an unrelated degree where the role lists
+    ///   fields, and as neutral (×1) where it doesn't.
     func educationFactor(for player: Player) -> Double {
         if educationIsMandatory || player.isSimplified {
-            return educationGateMet(for: player) ? 1.0 : 0.0
+            return educationMet(for: player) ? 1.0 : 0.0
         }
         let required = requirements.education.minEQF
         guard required > 0 else { return 1.0 }
-        let shortfall = educationShortfall(for: player)
-        if shortfall > 0 {
-            return max(GameConstants.educationShortfallFloor,
-                       1.0 - Double(shortfall) * GameConstants.educationShortfallPerLevel)
+        if educationShortfall(for: player) == 0 {
+            return hasAcceptedDegree(for: player)
+                ? GameConstants.relevantDegreeMultiplier
+                : GameConstants.unrelatedDegreeMultiplier
         }
-        return hasAcceptedDegree(for: player)
-            ? GameConstants.relevantDegreeMultiplier
-            : GameConstants.unrelatedDegreeMultiplier
+        let credited = creditedEducationShortfall(for: player)
+        guard credited > 0 else {
+            let listsFields = !(requirements.education.acceptedProfiles ?? []).isEmpty
+            return listsFields ? GameConstants.unrelatedDegreeMultiplier : 1.0
+        }
+        let ratio = required >= 5
+            ? GameConstants.educationShortfallRatioDegree
+            : GameConstants.educationShortfallRatioSubDegree
+        return max(GameConstants.educationShortfallFloor, pow(ratio, Double(credited)))
     }
 
-    /// Experience as a multiplier: pro-rata up to what the employer expects, a
-    /// modest edge beyond it, and zero with no relevant years at all — you can't
-    /// claim a background you don't have. Simplified mode keeps the old
-    /// all-or-nothing answer, so a young player sees "you qualify" or not.
+    /// Experience as a multiplier: a modest edge beyond what the employer
+    /// expects, and below it the square of the share held — but nothing at all
+    /// under `experienceStretchMin` of it (see `experienceFactor(ratio:)`).
+    /// Simplified mode keeps the all-or-nothing answer, so a young player sees
+    /// "you qualify" or not.
     func experienceFactor(for player: Player) -> Double {
         let required = requirements.minYearsExperience
         guard required > 0 else { return 1.0 }
         if player.isSimplified { return experienceMet(for: player) ? 1.0 : 0.0 }
-        let ratio = Double(relevantYears(for: player)) / Double(required)
+        return experienceFactor(ratio: Double(relevantYears(for: player)) / Double(required))
+    }
+
+    /// The realistic-mode experience factor for holding `ratio` of the stated
+    /// years:
+    ///
+    /// * at or above the figure, up to `experienceVeteranMultiplier` for a
+    ///   veteran;
+    /// * from `experienceStretchMin` (0.6) up to it, `ratio²` — 4 of 5 years
+    ///   ×0.64, 3 of 5 ×0.36 — a stretch hire, and a costly one;
+    /// * below that, 0: the application isn't considered, which is what makes
+    ///   the stated years a real requirement rather than a pro-rata discount.
+    ///
+    /// A seat-scarce role (C-suite, director, partner — see `seatScarcity`) is
+    /// also closed while the factor is under `executiveExperienceMinFactor`: a
+    /// CEO search doesn't look at someone with a fraction of the record.
+    func experienceFactor(ratio: Double) -> Double {
+        let factor: Double
         if ratio >= 1.0 {
-            return min(GameConstants.experienceVeteranMultiplier,
-                       1.0 + (ratio - 1.0) * GameConstants.experienceVeteranRate)
+            factor = min(GameConstants.experienceVeteranMultiplier,
+                         1.0 + (ratio - 1.0) * GameConstants.experienceVeteranRate)
+        } else if ratio < GameConstants.experienceStretchMin {
+            factor = 0
+        } else {
+            factor = ratio * ratio
         }
-        return ratio
+        if seatScarcity != nil, factor < GameConstants.executiveExperienceMinFactor { return 0 }
+        return factor
     }
 
     /// Education's contribution to the annual promotion odds. Being
@@ -413,75 +575,262 @@ extension Job {
         return hasAcceptedDegree(for: player) ? GameConstants.promotionRelevantDegreeBonus : 0.0
     }
 
-    func salaryAlignmentFactor(requestedSalary: Double) -> Double {
-        let ratio = requestedSalary / Double(annualIncome)
-        if ratio <= 1.0 { return 1.0 }
-        // Asking more than budget: probability drops steeply above 33% excess.
-        return max(0.0, 1.0 - (ratio - 1.0) * 3.0)
+    /// What this employer offers the player: the posting's median scaled by
+    /// the player's relevant years (`relevantYears`) —
+    /// `offerExperienceBase + offerExperiencePerYear × years`, clamped to
+    /// `offerExperienceBase…offerExperienceCap` — so a newcomer starts at 85% of
+    /// the median and a ten-year veteran earns 115%. It is the salary a hire at
+    /// a posted rate is paid, the negotiation slider's opening position, and
+    /// the reference the salary ask is judged against.
+    ///
+    /// Built from the catalogue median (`income`), which is what every listing
+    /// shows. Simplified keeps the money simple and pays the median; a founder
+    /// isn't offered anything.
+    func offeredSalary(for player: Player) -> Int {
+        guard !player.isSimplified, !isEntrepreneurial else { return income }
+        let years = Double(relevantYears(for: player))
+        let share = min(GameConstants.offerExperienceCap,
+                        max(GameConstants.offerExperienceBase,
+                            GameConstants.offerExperienceBase + GameConstants.offerExperiencePerYear * years))
+        return Int((Double(income) * share).rounded())
     }
 
-    func hireProbability(for player: Player, requestedSalary: Double) -> Double {
-        // Founders aren't "hired" — their odds come from capital + founder grit.
-        // Preview the odds as if the target capital were fully funded.
-        if isEntrepreneurial {
-            return founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
+    /// How the salary asked for moves the odds, against the salary on offer
+    /// (`offeredSalary`). A modest counter is expected and costs nothing (up to
+    /// `GameConstants.salaryAskTolerance`); asking at or under
+    /// `salaryAskDiscountRatio` earns a small edge; beyond the tolerance each
+    /// point over costs `salaryAskPenaltyRate` points of odds.
+    func salaryAlignmentFactor(requestedSalary: Double, offer: Double) -> Double {
+        guard offer > 0 else { return 1.0 }
+        let ratio = requestedSalary / offer
+        if ratio <= GameConstants.salaryAskDiscountRatio { return GameConstants.salaryAskDiscountBonus }
+        return max(0.0, 1.0 - max(0.0, ratio - GameConstants.salaryAskTolerance)
+                   * GameConstants.salaryAskPenaltyRate)
+    }
+
+    // MARK: Hiring
+
+    /// Every term of one application's odds, computed once in
+    /// `Job.hireBreakdown` and read by everything that quotes them — the roll
+    /// itself (`hireProbability`), the ⓘ breakdown in `JobDetail`, and the
+    /// Career Advisor's estimates — so no two of them can show a different
+    /// number from the one the game actually rolls.
+    ///
+    ///     merit = base + skill + prestige + network + fame + credential + breakthrough
+    ///     raw   = merit × requirement factors × salary fit × demand × rung decay
+    ///     final = clamp(raw × climate × opportunity × time out of work,
+    ///                   floor…ceiling) × seat
+    ///
+    /// A zero requirement factor closes the role (0); a breakthrough-gated
+    /// career without its award sits at the floor; Simplified mode hires with
+    /// certainty once the requirements are met; a founder venture's figure is
+    /// its preparation (`founderSuccessProbability`) instead.
+    struct HireBreakdown {
+        // What the applicant brings — added together.
+        /// Starting merit for the role's education level
+        /// (`GameConstants.hireBaseByEQF`).
+        let base: Double
+        /// 0…1 soft-skill fit (`Job.softSkillFit`).
+        let skillFit: Double
+        /// The fit's contribution: `skillFit × GameConstants.hireSkillWeight`.
+        let skill: Double
+        /// Prestige of the best relevant degree's school.
+        let prestige: Double
+        /// Professional network in the field (`Player.networkBonus`).
+        let network: Double
+        /// Fame in the field's bucket (`Player.fameHireBonus`).
+        let fame: Double
+        /// A skill-building credential that covers the field
+        /// (`Player.trainingCareerBonus`).
+        let credential: Double
+        /// The breakthrough award's bonus, when the career has one and it's held.
+        let breakthrough: Double
+
+        // How well the requirements are met — multiplied.
+        /// Age, education, licences and experience (`Job.requirementFit`).
+        let requirements: RequirementFit
+
+        // The market — multiplied.
+        /// How oversubscribed the role is (`JobCatalog.hiringDemandByBaseTitle`).
+        let demand: Double
+        /// `GameConstants.externalHireRungDecay` per rung above entry.
+        let rungDecay: Double
+        /// The salary on offer to this player (`Job.offeredSalary`) — the
+        /// reference the ask is judged against.
+        let offer: Double
+        /// The salary ask (`Job.salaryAlignmentFactor`).
+        let salaryFit: Double
+        /// The employer industry's climate this year (`IndustryClimate.hireFactor`).
+        let climate: Double
+        /// The difficulty's hiring multiplier (`Difficulty.opportunityHireMultiplier`).
+        let opportunity: Double
+        /// Time out of work: each consecutive year unemployed beyond the first
+        /// costs a little (`Player.unemploymentHireMultiplier`).
+        let unemployment: Double
+        /// Seat scarcity, applied after the floor (`Job.seatChance`).
+        let seat: Double
+        let floor: Double
+        let ceiling: Double
+
+        // How the final figure is decided.
+        let isSimplified: Bool
+        /// A breakthrough-gated career whose award isn't held.
+        let breakthroughMissing: Bool
+        /// A founder venture's odds, which replace the whole formula.
+        let founderOdds: Double?
+
+        /// Everything the applicant brings, before the requirements.
+        var merit: Double { base + skill + prestige + network + fame + credential + breakthrough }
+
+        /// Merit through the requirements, the salary ask and the market's shape,
+        /// before the year's climate.
+        var raw: Double { merit * requirements.factor * salaryFit * demand * rungDecay }
+
+        /// `raw` through the climate, the difficulty and time out of work — the
+        /// figure the floor and ceiling clamp.
+        var scaled: Double { raw * climate * opportunity * unemployment }
+
+        /// The odds the game rolls.
+        var final: Double { odds() }
+
+        /// The odds with some terms swapped out — how the Career Advisor asks
+        /// "what would they be once…?" without a second copy of the formula.
+        /// `requirementFactor` replaces the product of the requirement factors
+        /// (say, with the missing licence counted as held); `extraMerit` adds to
+        /// what the applicant brings (a skill point more). With neither, this is
+        /// `final`.
+        func odds(requirementFactor: Double? = nil, extraMerit: Double = 0) -> Double {
+            if let founderOdds { return founderOdds }
+            let factor = requirementFactor ?? requirements.factor
+            guard factor > 0 else { return 0 }
+            if breakthroughMissing { return floor * seat }
+            if isSimplified { return 1.0 }
+            let value = (merit + extraMerit) * factor * salaryFit * demand * rungDecay
+                * climate * opportunity * unemployment
+            return min(ceiling, max(floor, value)) * seat
         }
-        // One formula: the hard requirements are factors, not a separate gate.
-        // A zero among them closes the role outright.
-        let fit = requirementFit(for: player)
-        guard !fit.isBlocked else { return 0.0 }
+    }
+
+    /// Starting merit for this role's education level
+    /// (`GameConstants.hireBaseByEQF`).
+    var hireBase: Double {
+        let table = GameConstants.hireBaseByEQF
+        return table[min(max(requirements.education.minEQF, 0), table.count - 1)]
+    }
+
+    /// How oversubscribed this role is, from `JobCatalog.hiringDemandByBaseTitle`
+    /// (1.0 when unlisted).
+    var hiringDemand: Double {
+        JobCatalog.hiringDemandByBaseTitle[baseTitle] ?? 1.0
+    }
+
+    /// The narrowing pyramid on an outside application:
+    /// `externalHireRungDecay` per rung above the ladder's entry.
+    var externalHireRungDecay: Double {
+        pow(GameConstants.externalHireRungDecay, Double(rung))
+    }
+
+    /// The base seat chance for a scarce seat, or nil for an ordinary role:
+    /// `cSuiteSeatChance` for a "Chief …" title (CEO, CTO, Chief Medical
+    /// Officer, Editor-in-Chief), `directorSeatChance` for a Director or Partner
+    /// title. Founders make their own seat. Such seats also close to applicants
+    /// well short of the expected years (see `experienceFactor(ratio:)`).
+    var seatScarcity: Double? {
+        guard !isEntrepreneurial else { return nil }
+        if id.contains("Chief") { return GameConstants.cSuiteSeatChance }
+        // A professional roster has a few dozen places per club and hundreds of
+        // title-holding juniors chasing them.
+        if baseTitle == "Player", rung >= 1 { return GameConstants.proRosterChance }
+        if id.contains("Director") || id.contains("Partner") { return GameConstants.directorSeatChance }
+        return nil
+    }
+
+    /// The chance of clearing this role's seat hurdle — 1 for an ordinary role.
+    /// On a commercial executive seat (`isExecutive`) a founder track record
+    /// eases it (`Player.executiveTrackRecord`): a board hires people who have
+    /// run a company. Read by hiring and by promotions into the seat alike.
+    func seatChance(for player: Player) -> Double {
+        guard let base = seatScarcity else { return 1.0 }
+        return min(1.0, base + (isExecutive ? player.executiveTrackRecord : 0))
+    }
+
+    /// The seat on a *promotion* into this rung (see `Player.promotionOdds`):
+    /// the hiring seat for a "Chief …", Director or Partner title
+    /// (`seatChance`); `commandPostSeatChance` for a command post
+    /// (`JobCatalog.commandPostTitles`); `leadershipSeatChance` for any other
+    /// top rung (`isTopLeadership` — staff engineer, head chef, charge nurse);
+    /// 1 for an ordinary rung. The top of a ladder has fewer seats than the
+    /// people below it who are ready for one.
+    func promotionSeatChance(for player: Player) -> Double {
+        if seatScarcity != nil { return seatChance(for: player) }
+        if JobCatalog.commandPostTitles.contains(id) { return GameConstants.commandPostSeatChance }
+        if isTopLeadership { return GameConstants.leadershipSeatChance }
+        return 1.0
+    }
+
+    /// Every term of an application at `requestedSalary` (see `HireBreakdown`).
+    func hireBreakdown(for player: Player, requestedSalary: Double) -> HireBreakdown {
+        hireBreakdown(for: player, requestedSalary: requestedSalary, requirements: requirementFit(for: player))
+    }
+
+    private func hireBreakdown(for player: Player, requestedSalary: Double,
+                               requirements fit: RequirementFit) -> HireBreakdown {
         // Breakthrough gate: a career like Professional Player is effectively
         // closed without its signature fame award (a junior-competition win) —
         // odds sit at the floor no matter how skilled the applicant, in every
-        // mode. Holding it opens the door (and adds a dominant bonus below).
-        let hasBreakthrough: Bool
-        if let key = breakthroughFame {
-            hasBreakthrough = player.fameAwards.contains { $0.title == key }
-            if !hasBreakthrough { return 0.05 }
-        } else {
-            hasBreakthrough = false
+        // mode. Holding it opens the door and is the dominant term.
+        let hasBreakthrough = breakthroughFame.map { key in
+            player.fameAwards.contains { $0.title == key }
         }
-        // Simplified mode: meeting the gate (degree + experience) is a sure hire.
-        // No skill score, prestige, tier, or salary-fit adjustments.
-        if player.isSimplified { return 1.0 }
-        // A relevant skill-building credential (coding/game-dev/design/performing
-        // program) demonstrably helps you land a role in its field.
-        //
-        // The old "nothing to show" special case lived here — a hardcoded 0.05
-        // for an applicant with no degree, credential or experience. The
-        // requirement factors express that by composition now: missing education
-        // multiplies down to its floor, and the absence of a credential or
-        // experience simply earns nothing.
-        let credential = player.trainingCareerBonus(for: category)
-        let skillScore = softSkillFit(for: player)
-        let prestige = relevantPrestigeBonus(for: player)
-        // A professional network in this field — built by attending its summits
-        // and conferences — tilts the odds in the applicant's favour.
-        let network = player.networkBonus(for: category)
-        // Industry-scoped fame opens doors — and a body of accomplished projects
-        // (the main fame source) is a significant lift for roles in that same
-        // field: a strong portfolio nearly rivals the soft-skill fit term, but
-        // helps only its own field (see fameHireBonus). Top leadership roles
-        // weight reputation even more heavily.
-        let fame = player.fameHireBonus(for: category, topPosition: isTopLeadership,
-                                        executive: isExecutive && !isEntrepreneurial)
-        // The breakthrough fame award (held — we returned at the floor above if
-        // not) is the dominant hiring factor for gated careers.
-        let breakthrough = hasBreakthrough ? Self.breakthroughBonus : 0.0
-        // What the applicant brings, before the requirements are applied.
-        let merit = 0.2 + skillScore * 0.7 + prestige + player.difficulty.opportunityBonus
-            + network + fame + breakthrough + credential
-        let raw = merit * fit.factor * salaryAlignmentFactor(requestedSalary: requestedSalary)
-        // What this industry is doing this year. A booming field hires people it
-        // would pass over in a slump, and the same application is a materially
-        // different bet depending on when it lands (see `IndustryClimate`).
-        let climate = player.climate(for: industry).hireFactor
-        // C-suite scarcity: executive seats are few, so even a strong candidate
-        // faces long odds of landing one — most qualified applicants never make it
-        // to the top, unless they've run a company before. Founders make their
-        // own seat, so they're exempt.
-        let scarcity = (isExecutive && !isEntrepreneurial) ? player.executiveSeatChance : 1.0
-        return max(0.05, min(0.95, raw * climate * scarcity))
+        let skillFit = softSkillFit(for: player)
+        let offer = Double(offeredSalary(for: player))
+        return HireBreakdown(
+            base: hireBase,
+            skillFit: skillFit,
+            skill: skillFit * GameConstants.hireSkillWeight,
+            prestige: relevantPrestigeBonus(for: player),
+            // A professional network in this field — built at its summits and
+            // conferences — tilts the odds in the applicant's favour.
+            network: player.networkBonus(for: category),
+            // Industry-scoped fame opens doors in its own field only; top
+            // leadership roles weight reputation more heavily.
+            fame: player.fameHireBonus(for: category, topPosition: isTopLeadership),
+            // A relevant skill-building credential (coding/game-dev/design/
+            // production program) demonstrably helps land a role in its field.
+            credential: player.trainingCareerBonus(for: category),
+            breakthrough: hasBreakthrough == true ? Self.breakthroughBonus : 0.0,
+            requirements: fit,
+            demand: hiringDemand,
+            rungDecay: externalHireRungDecay,
+            offer: offer,
+            salaryFit: salaryAlignmentFactor(requestedSalary: requestedSalary, offer: offer),
+            // What this industry is doing this year: a booming field hires
+            // people it would pass over in a slump (see `IndustryClimate`).
+            climate: player.climate(for: industry).hireFactor,
+            opportunity: player.difficulty.opportunityHireMultiplier,
+            unemployment: player.unemploymentHireMultiplier,
+            seat: seatChance(for: player),
+            floor: GameConstants.hireFloor,
+            ceiling: GameConstants.hireCeiling,
+            isSimplified: player.isSimplified,
+            breakthroughMissing: hasBreakthrough == false,
+            // Founders aren't "hired" — their odds come from capital + founder
+            // grit, previewed as if the target capital were fully funded.
+            founderOdds: isEntrepreneurial
+                ? founderSuccessProbability(for: player, investedCapital: targetCapital ?? 0)
+                : nil
+        )
+    }
+
+    /// The odds an application at `requestedSalary` succeeds — the rolled
+    /// figure, `hireBreakdown(for:requestedSalary:).final`. A role a
+    /// requirement closes is 0 whatever else the breakdown holds, so its other
+    /// terms aren't scored (the advisor and the harness ask this of every
+    /// posting, every year).
+    func hireProbability(for player: Player, requestedSalary: Double) -> Double {
+        let fit = requirementFit(for: player)
+        if fit.isBlocked, !isEntrepreneurial { return 0 }
+        return hireBreakdown(for: player, requestedSalary: requestedSalary, requirements: fit).final
     }
 
     // MARK: - Entrepreneurial path
@@ -521,13 +870,22 @@ extension Job {
 
     /// True for a senior seat where equity/strategy plays make sense — the roles
     /// that unlock the Boardroom (`ExecutiveDecision`). Covers every founder
-    /// venture plus the top leadership rung of a business-style track (C-suite,
-    /// director, partner in Business/Entrepreneurship/Finance/Technology). A
-    /// Head Chef or Charge Nurse tops out their ladder too, but doesn't run a
-    /// cap table — so `isTopLeadership` alone isn't enough.
+    /// venture plus the top leadership seat of a business-style track (the
+    /// C-suite and the director capstones in Business/Entrepreneurship/
+    /// Technology). A Head Chef or Charge Nurse tops out their ladder too, but
+    /// doesn't run a cap table — so `isTopLeadership` alone isn't enough.
+    ///
+    /// Two kinds of apex are *not* executive seats even in those fields, though
+    /// they stay `isTopLeadership` for Simplified's goal: the individual-
+    /// contributor rungs (Staff, Principal and Lead — a principal engineer
+    /// designs the architecture, they don't run the company) and the
+    /// operations-manager capstone (~3.5M US jobs — middle management, not the
+    /// boardroom).
     var isExecutive: Bool {
         if isEntrepreneurial { return true }
         guard isTopLeadership else { return false }
+        guard !Job.individualContributorApexLabels.contains(rungLabel),
+              !Job.nonExecutiveCapstones.contains(id) else { return false }
         switch category {
         case .business, .entrepreneurship, .technology:
             return true
@@ -535,6 +893,12 @@ extension Job {
             return false
         }
     }
+
+    /// Apex rung labels that lead work rather than a company (see `isExecutive`).
+    private static let individualContributorApexLabels: Set<String> = ["Staff", "Principal", "Lead"]
+
+    /// Top-leadership capstones that are middle management, not executive seats.
+    private static let nonExecutiveCapstones: Set<String> = ["Operations Manager"]
 
     /// Whether pay for this role is something the player argues for, rather than
     /// a posted rate they take or leave.
@@ -564,12 +928,13 @@ extension Job {
     ]
 
     /// Whether this is unskilled work — a role requiring no post-secondary
-    /// education or training (below `GameConstants.promotionMinEQF`). Such jobs
-    /// don't hand out in-place promotions (see `Player.promotionChance`); the
-    /// player climbs out of them by applying to a higher role instead.
+    /// education or training (below `GameConstants.promotionMinEQF`). Its merit
+    /// raises stop at the lower pay band (`payCeilingMultipleSubDegree`); it is
+    /// promoted like any other rung where a ladder has one above it (a patrol
+    /// officer, an apprentice), and a standalone unskilled role — like any
+    /// standalone role — has no rung to be promoted to.
     /// Founder ventures are exempt: they carry `minEQF: 0` because founders
-    /// aren't gated on degrees, not because the work is unskilled — a growing
-    /// business raises its owner's pay (the in-place merit-raise branch).
+    /// aren't gated on degrees, not because the work is unskilled.
     var isLowSkilled: Bool {
         !isEntrepreneurial && requirements.education.minEQF < GameConstants.promotionMinEQF
     }
@@ -604,7 +969,7 @@ extension Job {
         let capital = min(capitalRatio, 1.0) * 0.09                 // up to +9%
         // A relevant skill-building credential (e.g. a Coding Bootcamp for a SaaS
         // startup, a Game Dev Program for an indie studio) lifts a founder's odds.
-        let credential = player.trainingCareerBonus(for: category) // up to +15%
+        let credential = player.trainingCareerBonus(for: category) // up to +10%
         // A business name: years running ventures, rounds closed and exits
         // made. Serial founders start their next venture better placed.
         let reputation = min(GameConstants.founderReputationCap,
@@ -669,6 +1034,16 @@ extension Job {
         case 2:  return 0.05  // State
         default: return 0.0   // Community / unranked
         }
+    }
+
+    /// The most merit raises can take this role's pay to: its catalogue median
+    /// times `payCeilingMultipleSubDegree` below EQF 4, `payCeilingMultipleSkilled`
+    /// from it — the top of the band. See `Player.stepRaise`.
+    var payCeiling: Int {
+        let multiple = requirements.education.minEQF >= GameConstants.promotionMinEQF
+            ? GameConstants.payCeilingMultipleSkilled
+            : GameConstants.payCeilingMultipleSubDegree
+        return Int((Double(income) * multiple).rounded())
     }
 
     /// The job priced at its published median, with no random variance. Used by

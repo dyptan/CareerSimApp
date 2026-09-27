@@ -84,10 +84,13 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     /// almost anyone who walks in; an elite school takes almost nobody on a thin
     /// record however open the door formally is.
     var admissionFloor: Double {
+        // Community colleges are open access; more than half of four-year
+        // colleges admit two-thirds of applicants or more (Pew 2019); Ivy-plus
+        // schools admit ~4 % (Class of 2029).
         switch self {
-        case .community: return 0.70
-        case .state:     return 0.30
-        case .elite:     return 0.03
+        case .community: return 0.95
+        case .state:     return 0.45
+        case .elite:     return 0.01
         }
     }
 
@@ -99,16 +102,51 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     /// time, so getting in is earned over years rather than given.
     var admissionFitSpan: Double {
         switch self {
-        case .community: return 0.28
-        case .state:     return 0.60
-        case .elite:     return 0.62
+        case .community: return 0.03
+        case .state:     return 0.47
+        case .elite:     return 0.34
         }
     }
 
-    /// Annual tuition in USD for the given degree level.
-    /// Reflects rough US averages: community ≪ state ≪ private elite. Doctorates
-    /// are largely funded (assistantships/stipends), so they cost little to nothing.
-    func annualTuition(for level: Level.Stage) -> Int {
+    /// How steeply the band rewards fit (`raw = floor + span × fit^exponent`).
+    /// Linear for open and state schools; steep at an elite school, where a
+    /// merely good record barely moves the odds and only an outstanding one
+    /// does — most top-scoring applicants are still turned away.
+    var admissionFitExponent: Double {
+        switch self {
+        case .community, .state: return 1.0
+        case .elite:             return 2.5
+        }
+    }
+
+    /// The schools that offer `level` in `profile` — one source for the
+    /// Education sheet and the balance harness. Simplified has a single
+    /// neutral community school. Elite institutions exist only for white-
+    /// collar fields; community colleges award no master's or doctorates.
+    static func offered(level: Level.Stage, profile: TertiaryProfile, simplified: Bool) -> [EducationTier] {
+        if simplified { return [.community] }
+        return allCases.filter { tier in
+            (tier != .elite || profile.isWhiteCollar)
+                && (tier != .community || (level != .Master && level != .Doctorate))
+        }
+    }
+
+    /// Annual tuition in USD for the given degree level and field — the net
+    /// price a middle-income student has to finance (College Board 2025-26:
+    /// public 4-year ~$11.9k published, private nonprofit ~$16.9k net). A
+    /// research doctorate is funded; a professional doctorate is not:
+    /// medicine (AAMC median debt $200k) and law (ABA: $32k public, $58k
+    /// private) are among the costliest degrees there are.
+    func annualTuition(for level: Level.Stage, profile: TertiaryProfile? = nil) -> Int {
+        if level == .Doctorate, let profile {
+            switch (self, profile) {
+            case (.elite, .health): return 75_000
+            case (_, .health):      return 60_000
+            case (.elite, .law):    return 58_000
+            case (_, .law):         return 32_000
+            default:                break
+            }
+        }
         switch (self, level) {
         case (.community, .Vocational): return 4_000
         case (.community, .Bachelor):   return 4_000
@@ -116,12 +154,12 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
         case (.community, .Doctorate):  return 0       // funded
 
         case (.state, .Vocational):     return 8_000
-        case (.state, .Bachelor):       return 12_000
+        case (.state, .Bachelor):       return 10_000
         case (.state, .Master):         return 22_000
         case (.state, .Doctorate):      return 3_000   // mostly funded; nominal fees
 
         case (.elite, .Vocational):     return 18_000
-        case (.elite, .Bachelor):       return 58_000
+        case (.elite, .Bachelor):       return 30_000   // net of heavy need-based aid
         case (.elite, .Master):         return 55_000
         case (.elite, .Doctorate):      return 8_000   // funded; some private fees
 

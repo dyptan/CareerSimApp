@@ -122,9 +122,67 @@ final class CareerAdvisorTests: XCTestCase {
         XCTAssertNil(CareerAdvisor.studyTip(player, CareerAdvisor.catalogue(player)))
     }
 
+    /// The advisor's estimate is the game's own breakdown: with nothing
+    /// changed, it quotes exactly the odds the roll would use.
+    func testEstimateIsTheRollWhenNothingChanges() {
+        let player = graduate(age: 30)
+        player.experience[.business] = 6
+        for job in CareerAdvisor.catalogue(player) {
+            let fit = job.requirementFit(for: player)
+            XCTAssertEqual(CareerAdvisor.estimatedOdds(for: job, player: player, requirementFactor: fit.factor),
+                           job.hireProbability(for: player, requestedSalary: Double(job.offeredSalary(for: player))),
+                           accuracy: 1e-12, "\(job.id)")
+        }
+    }
+
+    /// A licence that only the finished degree makes enrollable — the RN
+    /// licence after nursing school, the medical licence after the MD — still
+    /// counts toward a degree tip, a year later; one that also needs years of
+    /// practice doesn't.
+    func testLicencesTheDegreeUnlocksCountTowardAStudyTip() throws {
+        let player = graduate()
+        XCTAssertTrue(CareerAdvisor.enrollableAfterDegree(.medicalLicense, eqf: 7, alongside: [.medicalLicense],
+                                                          player: player, inYears: 8))
+        XCTAssertFalse(CareerAdvisor.enrollableAfterDegree(.boardCertified, eqf: 7, alongside: [.boardCertified],
+                                                           player: player, inYears: 8),
+                       "Board certification needs residency years the degree doesn't give.")
+
+        let nurse = try XCTUnwrap(CareerAdvisor.catalogue(player).first { $0.id == "Registered Nurse" })
+        XCTAssertEqual(nurse.requirementFit(for: player).credentials, 0, "Premise: the RN licence is missing.")
+        let tip = try XCTUnwrap(CareerAdvisor.studyTip(player, [nurse]),
+                                "A school-leaver should be pointed at the degree that leads to nursing.")
+        XCTAssertEqual(tip.job.id, "Registered Nurse")
+        XCTAssertTrue(tip.detail.contains(Training.nurse.friendlyName), tip.detail)
+    }
+
+    /// In Simplified the finish line is a top-leadership seat, not a salary:
+    /// the advisor points a qualified player at the seat whatever it pays, and
+    /// never points someone already in it back down for more money.
+    func testSimplifiedAdviceAimsAtTheGoalAndStaysThere() throws {
+        let player = Player()
+        player.difficulty = .simplified
+        player.configureStart(age: 18)
+        player.age = 40
+        player.degrees.append(Education(.Doctorate, profile: .health))
+        player.experience[.health] = 15
+        let jobs = CareerAdvisor.catalogue(player)
+        player.currentOccupation = try XCTUnwrap(jobs.first { $0.id == "Surgeon" })
+        XCTAssertFalse(player.goalMet)
+        let tip = try XCTUnwrap(CareerAdvisor.applyNowTip(player, jobs))
+        XCTAssertTrue(tip.job.isTopLeadership, "Advised \(tip.job.id) instead of a seat that meets the goal.")
+
+        player.currentOccupation = tip.job
+        XCTAssertTrue(player.goalMet)
+        if let next = CareerAdvisor.applyNowTip(player, jobs) {
+            XCTAssertTrue(next.job.isTopLeadership, "Advised stepping off the finish line to \(next.job.id).")
+        }
+    }
+
     func testYearsOfStudyCountTheWholeClimb() {
         let bachelor = Education(.Bachelor, profile: .health)
-        XCTAssertEqual(CareerAdvisor.yearsOfStudy(from: bachelor, to: 5), 3)
-        XCTAssertEqual(CareerAdvisor.yearsOfStudy(from: bachelor, to: 7), 3 + 2 + 3)
+        XCTAssertEqual(CareerAdvisor.yearsOfStudy(from: bachelor, to: 5), 4)
+        XCTAssertEqual(CareerAdvisor.yearsOfStudy(from: bachelor, to: 6), 4 + 2)
+        // A US doctorate follows a bachelor's directly.
+        XCTAssertEqual(CareerAdvisor.yearsOfStudy(from: bachelor, to: 7), 4 + 4)
     }
 }

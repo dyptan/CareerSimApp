@@ -35,13 +35,63 @@ enum CareerGraph {
     /// excluded — these are blockers, not nice-to-haves. An empty array means
     /// every hard gate is met (the player is hireable, subject to the odds roll).
     static func missingHardRequirements(for job: Job, player: Player) -> [String] {
+        var gaps = gapsBesidesExperience(for: job, player: player)
+
+        // Experience closes the role below `minimumQualifyingYears` — the full
+        // figure in Simplified, most of it elsewhere, where the years between
+        // only scale the odds down (see `Job.experienceFactor`). Report it as a
+        // blocker only when it is one. Ventures are exempt: capital is their
+        // sole hard requirement, and experience is purely a probability term
+        // (see `Job.founderSuccessProbability`).
+        if !job.isEntrepreneurial, job.experienceFactor(for: player) == 0 {
+            let needed = job.minimumQualifyingYears(simplified: player.isSimplified)
+            let expected = job.requirements.minYearsExperience
+            gaps.append(needed < expected
+                        ? "\(needed) yr \(experienceScope(job)) (role expects \(expected) yr)"
+                        : "\(expected) yr \(experienceScope(job))")
+        }
+        return gaps
+    }
+
+    /// What still stands between the player and a promotion into `next`, the
+    /// rung above their own. Mirrors the promotion gate in `Player.promotionOdds`
+    /// — every hard requirement, plus *all* of the rung's stated years
+    /// (`Job.experienceMet`), not just the share an outside application is
+    /// considered on. Empty when a winning roll would step them up.
+    static func missingPromotionRequirements(for next: Job, player: Player) -> [String] {
+        var gaps = gapsBesidesExperience(for: next, player: player)
+        if !next.experienceMet(for: player) {
+            let have = next.relevantYears(for: player)
+            gaps.append("\(next.requirements.minYearsExperience) yr \(experienceScope(next)) (you have \(have))")
+        }
+        return gaps
+    }
+
+    /// Where a role's years must have been earned, for the gap strings: "as
+    /// <ladder>" for a rung or a role that counts another ladder's tenure,
+    /// otherwise "in <category>".
+    private static func experienceScope(_ job: Job) -> String {
+        job.experienceLadder.map { "as \($0)" } ?? "in \(job.category.rawValue)"
+    }
+
+    /// Every hard gap except the experience bar — age, degree, licences.
+    private static func gapsBesidesExperience(for job: Job, player: Player) -> [String] {
         var gaps: [String] = []
 
         if !job.ageGateMet(for: player) {
-            gaps.append("Reach working age (\(GameConstants.minimumWorkingAge))")
+            gaps.append("Reach age \(job.minimumHireAge)")
         }
-        if job.educationIsMandatory, !job.educationMet(for: player) {
-            gaps.append("Earn \(job.requirements.education.educationLabel())")
+        // The degree is absolute in the regulated professions — and, in
+        // Simplified mode, for every role (see `Job.educationFactor`).
+        if job.educationIsMandatory || player.isSimplified, !job.educationMet(for: player) {
+            if player.highestEQF < job.requirements.education.minEQF {
+                gaps.append("Earn \(job.requirements.education.educationLabel())")
+            } else {
+                let fields = (job.requirements.education.acceptedProfiles ?? [])
+                    .map { $0.rawValue.capitalized }
+                    .joined(separator: " / ")
+                gaps.append("A degree in \(fields)")
+            }
         }
 
         // Simplified mode hires on degree + experience alone (no hard-skill gate),
@@ -58,15 +108,6 @@ enum CareerGraph {
             }
         }
 
-        // Experience grades rather than gates now (see `Job.experienceFactor`):
-        // partial years scale the odds down, but only *no* relevant years closes
-        // the role outright. Report it as a blocker only when it is one. Ventures
-        // are exempt: capital is their sole hard requirement, and experience is
-        // purely a probability term (see `Job.founderSuccessProbability`).
-        if !job.isEntrepreneurial,
-           job.requirements.minYearsExperience > 0, job.relevantYears(for: player) == 0 {
-            gaps.append("Any experience in \(job.category.rawValue) (role expects \(job.requirements.minYearsExperience) yr)")
-        }
         return gaps
     }
 

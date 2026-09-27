@@ -74,9 +74,9 @@ struct Level: Codable, Hashable, Identifiable {
         case .MiddleSchool: return "Ages roughly 11–13. Subjects branch out into science, history, languages, and the arts."
         case .HighSchool: return "Ages roughly 14–17. A diploma is needed for most jobs and to apply to college or vocational programmes."
         case .Vocational: return "Hands-on training (1–3 years) for a specific trade — like welding, plumbing, nursing assistant, or electrician work. Faster and cheaper than a Bachelor’s."
-        case .Bachelor: return "Three to four years of university. The most common entry point to professional jobs."
+        case .Bachelor: return "Four years of university. The most common entry point to professional jobs."
         case .Master: return "One to two more years of focused study after a Bachelor. Opens up senior roles and research careers."
-        case .Doctorate: return "Three or more years of original research after a Master. Required for university professors, scientists, and physicians."
+        case .Doctorate: return "Four years after a Bachelor — medical school, law school, or a research PhD. Required for physicians, lawyers, professors and scientists. Medicine and law are expensive and selective."
         }
     }
 
@@ -87,9 +87,9 @@ struct Level: Codable, Hashable, Identifiable {
         case .MiddleSchool: return 3
         case .HighSchool: return 3
         case .Vocational: return 2
-        case .Bachelor: return 3
+        case .Bachelor: return 4
         case .Master: return 2
-        case .Doctorate: return 3
+        case .Doctorate: return 4
         }
     }
 }

@@ -11,17 +11,20 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     // app, so they stay fixed. Only the player-facing `title`/`blurb` track the
     // displayed names (Simplified / Relaxed / Real Life).
 
-    /// "Simplified". Kid-friendly: getting hired needs only the right degree plus
-    /// enough years in the field. No soft-skill hiring score, hard skills, company
-    /// tiers, education tiers, salary negotiation, or economy simulation.
+    /// "Simplified". Kid-friendly: getting hired needs only the right degree —
+    /// the level *and* a field the role accepts, for every role — plus enough
+    /// years in the field and being old enough; meet that and the offer is
+    /// certain. No soft-skill hiring score, hard skills, company tiers,
+    /// education tiers, salary negotiation, or economy simulation.
     /// Junior→senior still progresses through years of experience.
     case simplified
     /// "Relaxed". High-income family, no recessions, and opportunities tilted in
     /// the player's favour — a large share of income is saved, the economy never
-    /// falters, and hiring and college admission come easier.
+    /// falters (layoffs are rare), and hiring and college admission come easier.
     case comfortable
-    /// "Real Life". Middle-income household, baseline volatility. The original
-    /// realistic-mode balance.
+    /// "Real Life". Middle-income household, baseline volatility: a recession
+    /// every seven years or so, and a small yearly layoff risk that depends on
+    /// the employer's sector.
     case middleClass
 
     var id: String { rawValue }
@@ -70,9 +73,9 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         case .simplified:
             return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
         case .comfortable:
-            return "High-income family. You keep a large share of every paycheck, the economy never falters, and doors open more easily at work and school."
+            return "High-income family. Your family pays for college, you keep more of every paycheck, the economy never falters, layoffs are rare, and doors open more easily at work and school."
         case .middleClass:
-            return "A typical household budget and an ordinary, occasionally shaky economy."
+            return "A typical household budget and an ordinary, occasionally shaky economy — a recession every several years, and layoffs that hit some industries harder than others."
         }
     }
 
@@ -94,31 +97,62 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    /// Share of gross income that actually becomes savings after taxes and
-    /// living costs. Low-income households must spend a larger fraction just to
-    /// get by, so far less is left to bank (and compound) each year. Unused in
-    /// Simplified, which banks the whole paycheck.
+    /// Share of gross income *above the living-cost floor* (`livingCostFloor`)
+    /// that becomes savings once taxes are paid — up to
+    /// `GameConstants.highEarnerThreshold`, above which the higher
+    /// `highEarnerSavingsRate` applies (see `Player.annualSaving`). A low
+    /// earner spends nearly everything just to get by; a professional banks a
+    /// real share. Effective rates come out near Vanguard's plan-participant
+    /// averages: ~4 % of gross at $45k, ~10 % at $100k, ~19 % at $400k.
+    /// Unused in Simplified, which banks the whole paycheck.
     var savingsRate: Double {
         switch self {
         case .simplified:  return 1.0
-        case .comfortable: return 0.12
-        case .middleClass: return 0.05
+        case .comfortable: return 0.16
+        case .middleClass: return 0.15
         }
     }
 
-    /// Annual chance that a fresh economic downturn begins. No economy in
-    /// Simplified.
+    /// A year's basic living costs (rent, food, transport) — nothing is saved
+    /// below it. Relaxed's well-off family covers some of the basics (a car, a
+    /// room at home), so its floor is lower. None in Simplified.
+    var livingCostFloor: Int {
+        switch self {
+        case .simplified:  return 0
+        case .comfortable: return 30_000
+        case .middleClass: return 32_000
+        }
+    }
+
+    /// Share of tuition the student's family pays. Real Life: a typical
+    /// middle-income parent contribution, which leaves a state bachelor's
+    /// graduate near the College Board's ~$29k average debt. Relaxed: a
+    /// high-income family pays it all.
+    var familyTuitionShare: Double {
+        switch self {
+        case .simplified:  return 1.0
+        case .comfortable: return 1.0
+        case .middleClass: return 0.40
+        }
+    }
+
+    /// Annual chance that a fresh economic downturn begins in a calm year. No
+    /// economy in Simplified, and none in Relaxed. Real Life: with the chance a
+    /// downturn drags on (`prolongedTurmoilChance`) this puts ~15% of years in
+    /// recession and a new one every 7–9 years — the NBER post-war record
+    /// (expansions ~64 months, contractions ~10).
     var turmoilChance: Double {
         switch self {
         case .simplified:  return 0.0
         case .comfortable: return 0.0
-        case .middleClass: return 0.10
+        case .middleClass: return 0.14
         }
     }
 
-    /// Additive boost to hiring and college-admission odds in realistic settings.
-    /// "Relaxed" tilts opportunities in the player's favour; the others leave the
-    /// underlying odds untouched.
+    /// Additive boost to college-admission odds in realistic settings. "Relaxed"
+    /// tilts opportunities in the player's favour; the others leave the
+    /// underlying odds untouched. Hiring uses `opportunityHireMultiplier`
+    /// instead.
     var opportunityBonus: Double {
         switch self {
         case .simplified:  return 0.0
@@ -127,26 +161,42 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// Multiplier on every job application's odds (before the floor and
+    /// ceiling; see `Job.hireBreakdown`). "Relaxed" makes hiring ~25% easier for
+    /// everyone. A multiplier rather than an added bonus, so it can't turn an
+    /// unqualified long shot into a near coin-flip — an additive lift helps a
+    /// weak profile far more, in relative terms, than a strong one.
+    var opportunityHireMultiplier: Double {
+        switch self {
+        case .simplified:  return 1.0
+        case .comfortable: return 1.25
+        case .middleClass: return 1.0
+        }
+    }
+
     /// When a downturn begins, the chance it becomes *prolonged* — persisting
-    /// for several more years (see `GameConstants.prolongedTurmoilExtraYears`)
-    /// instead of clearing after the year it strikes.
+    /// for another year or two (see `GameConstants.prolongedTurmoilExtraYears`)
+    /// instead of clearing after the year it strikes. Most US recessions are
+    /// over within a year.
     var prolongedTurmoilChance: Double {
         switch self {
         case .simplified:  return 0.0
         case .comfortable: return 0.15
-        case .middleClass: return 0.30
+        case .middleClass: return 0.15
         }
     }
 
-    /// Multiplier applied to the baseline annual job-loss risk during a downturn.
-    /// `GameConstants.baseLayoffRisk` is the *calm-economy* layoff chance; in a
-    /// recession layoffs spike, and the harsher the economy the harder they hit.
-    /// Capped by `GameConstants.turmoilMaxLayoffChance`.
+    /// Multiplier on every employee's yearly layoff risk (see
+    /// `Player.layoffRisk(for:)`), which is rolled every year, not only in a
+    /// recession: `GameConstants.baseLayoffRisk` × the sector's beta × its
+    /// climate × this, capped by `GameConstants.turmoilMaxLayoffChance`. Real
+    /// Life carries the plain risk (~2% a year in an average sector); Relaxed
+    /// half of it; Simplified none.
     var layoffSeverity: Double {
         switch self {
         case .simplified:  return 0.0
-        case .comfortable: return 2.0
-        case .middleClass: return 3.5
+        case .comfortable: return 0.5
+        case .middleClass: return 1.0
         }
     }
 }
