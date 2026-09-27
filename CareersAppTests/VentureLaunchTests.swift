@@ -309,19 +309,31 @@ final class VentureLaunchTests: XCTestCase {
     /// its term — debt doesn't outgrow a healthy income — and still saves a
     /// little alongside.
     func testLoanIsRepaidFromIncomeWithinItsTerm() throws {
-        let player = Player()
-        player.difficulty = .comfortable              // no downturns, so no layoffs
-        player.configureStart(age: 30)
-        player.pinNeutralEconomy()
-        player.savings = 0
-        player.currentOccupation = try dayJob(income: 60_000)
-        player.outstandingLoan = 60_000
-        player.ventureLoanPayment = Player.annualLoanPayment(
-            balance: 60_000, rate: GameConstants.ventureLoanAnnualInterest)
+        // Layoffs are rolled every year, even in Relaxed (about 1% a year), and
+        // a lost job rightly stops the instalments — so the claim is about a
+        // borrower who keeps the job: a term cut short by a layoff is re-run
+        // rather than read.
         let ui = AppUIState()
-        for _ in 0..<GameConstants.loanTermYears { player.advanceYear(appUIState: ui) }
-        XCTAssertEqual(player.outstandingLoan, 0, "The loan should be repaid within its term.")
-        XCTAssertGreaterThan(player.savings, 0, "The borrower still saves alongside the instalments.")
+        for _ in 0..<20 {
+            let player = Player()
+            player.difficulty = .comfortable          // no downturns; layoffs rare
+            player.configureStart(age: 30)
+            player.pinNeutralEconomy()
+            player.savings = 0
+            player.currentOccupation = try dayJob(income: 60_000)
+            player.outstandingLoan = 60_000
+            player.ventureLoanPayment = Player.annualLoanPayment(
+                balance: 60_000, rate: GameConstants.ventureLoanAnnualInterest)
+            for _ in 0..<GameConstants.loanTermYears {
+                player.advanceYear(appUIState: ui)
+                if player.currentOccupation == nil { break }
+            }
+            guard player.currentOccupation != nil else { continue }
+            XCTAssertEqual(player.outstandingLoan, 0, "The loan should be repaid within its term.")
+            XCTAssertGreaterThan(player.savings, 0, "The borrower still saves alongside the instalments.")
+            return
+        }
+        XCTFail("Twenty terms in a row ended in a layoff — Relaxed layoffs should be rare.")
     }
 
     /// Under-18 players can never pay money or go into debt, so a founding
