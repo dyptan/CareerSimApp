@@ -6,18 +6,21 @@ struct RetirementView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Game Over")
+            // Opened from the header's Score button any time, and on its own at
+            // the end of a career — so it reads as a progress check until the
+            // run is actually over.
+            Text(player.hasRetired ? "Game Over" : "Your score")
                 .font(.largeTitle.bold())
                 .padding(.top)
 
             Text(player.hasRetired
                  ? "You reached \(GameConstants.retirementAge) — your career is over and this score is final."
-                 : "You wrapped up your career at age \(player.age).")
+                 : "You're \(player.age). Here's how your life is going so far — keep playing to grow your score, or start over.")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Text("Money earned: \(player.savings.formatted(.number)) $")
+            Text("\(player.isSimplified ? "Money earned" : "Savings"): \(player.savings.formatted(.number)) $")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -33,10 +36,10 @@ struct RetirementView: View {
                     .foregroundStyle(.orange)
             }
 
-            // The header no longer carries a running score, so this is the only
-            // place the formula is spelled out — hence the full arithmetic
-            // rather than a bare number. Debt counts against it, which is why
-            // the caption says net worth and not savings.
+            // The header no longer carries the running score — this sheet, behind
+            // the header's Score button, is where it lives, so the formula is
+            // spelled out in full. Debt counts against it, which is why the
+            // caption says net worth and not savings.
             HStack(spacing: 6) {
                 Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
                     .font(.subheadline.bold())
@@ -47,27 +50,34 @@ struct RetirementView: View {
                 )
             }
 
-            Button {
-                player.reset()
-                appUIState.reset()
-            } label: {
-                Text("Restart")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.top, 8)
-
-            // The sheet also opens from the header's finish-game control, so an
-            // accidental visit needs a way back that isn't wiping the run —
-            // especially on macOS, where a sheet can't be swiped away. Once the
-            // horizon is reached there is no run left to go back to, so the way
-            // back is withheld rather than shown leading nowhere.
+            // The sheet opens from the header's Score button to check on the
+            // run, so its main button is the way back to the game — especially
+            // on macOS, where a sheet can't be swiped away — and wiping the run
+            // is the secondary choice. Once the horizon is reached there is no
+            // run left to go back to, so Restart is the only button.
             if !player.hasRetired {
                 Button {
                     appUIState.showRetirementSheet = false
                 } label: {
                     Text("Keep playing")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 8)
+            }
+
+            if player.hasRetired {
+                Button(action: startOver) {
+                    Text("Restart")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 8)
+            } else {
+                Button(action: startOver) {
+                    Text("Start over")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -78,7 +88,22 @@ struct RetirementView: View {
         #if os(macOS)
         .frame(minWidth: 700, minHeight: 400)
         #endif
-        .onAppear { GameCenterManager.shared.submit(score: player.leaderboardScore) }
+        // Only a finished career submits on sight; checking the score mid-run
+        // doesn't (see `startOver`).
+        .onAppear {
+            if player.hasRetired { GameCenterManager.shared.submit(score: player.leaderboardScore) }
+        }
+    }
+
+    /// Wipes the run and returns to the start screen. Starting over mid-run
+    /// ends it early, so its score is banked now; a finished career banked it
+    /// when the sheet appeared.
+    private func startOver() {
+        if !player.hasRetired {
+            GameCenterManager.shared.submit(score: player.leaderboardScore)
+        }
+        player.reset()
+        appUIState.reset()
     }
 }
 

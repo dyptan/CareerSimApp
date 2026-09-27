@@ -136,6 +136,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Occupation").font(.headline)
+                InfoHint(title: "Occupation", message: SectionHints.occupation(simplified: player.isSimplified))
                 Spacer()
                 // What you are, visible while collapsed: the job if you have
                 // one, otherwise what you're studying.
@@ -307,6 +308,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Finances").font(.headline)
+                InfoHint(title: "Finances", message: SectionHints.finances(simplified: player.isSimplified))
                 Spacer()
                 // Net worth stays visible while collapsed — the number that matters.
                 Text("\(player.netWorth.formatted(.number)) $")
@@ -417,7 +419,10 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Fame").font(.headline)
+            HStack(spacing: 6) {
+                Text("Fame").font(.headline)
+                InfoHint(title: "Fame", message: SectionHints.fame)
+            }
         }
     }
 
@@ -455,6 +460,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Trophies").font(.headline)
+                InfoHint(title: "Trophies", message: SectionHints.trophies)
                 Spacer()
                 Text("🏆 \(trophies.reduce(0) { $0 + $1.count })")
                     .font(.subheadline.monospacedDigit())
@@ -502,7 +508,10 @@ struct SkillsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 4)
         } label: {
-            Text("Credentials").font(.headline)
+            HStack(spacing: 6) {
+                Text("Credentials").font(.headline)
+                InfoHint(title: "Credentials", message: SectionHints.credentials(simplified: player.isSimplified))
+            }
         }
     }
 
@@ -582,6 +591,7 @@ struct SkillsView: View {
         } label: {
             HStack {
                 Text("Economy").font(.headline)
+                InfoHint(title: "Economy", message: SectionHints.economy)
                 Spacer()
                 // The player's own industry stays visible while collapsed — the
                 // one climate that is affecting them right now.
@@ -662,7 +672,10 @@ struct SkillsView: View {
             }
             .padding(.top, 4)
         } label: {
-            Text("Experience").font(.headline)
+            HStack(spacing: 6) {
+                Text("Experience").font(.headline)
+                InfoHint(title: "Experience", message: SectionHints.experience)
+            }
         }
     }
 
@@ -740,4 +753,37 @@ struct SkillsView: View {
         appUIState: appUIState
     )
     .padding()
+}
+
+/// What each expandable section of the main screen is for — the ⓘ beside its
+/// title. Kept together so the sections explain themselves in one voice.
+private enum SectionHints {
+    static func occupation(simplified: Bool) -> String {
+        "What you're doing right now: your job, or the school you're at.\n\n"
+            + (simplified
+               ? "For a job, you'll see how many years you've been there."
+               : "For a job, you'll see how many years you've been there and your chance of being promoted. Tap each ⓘ to learn more.")
+    }
+
+    static func finances(simplified: Bool) -> String {
+        simplified
+            ? "Your money. In Simplified mode you keep everything you earn."
+            : "Your money: what you earn, what you save and what you owe.\n\nThe number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it."
+    }
+
+    static let fame = "How well known you are in each field.\n\nYou get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers."
+
+    static let trophies = "Titles you've won in contests.\n\nEvery year you practise an activity, you're entered in its biggest contest. Trophies make you more famous, and top colleges like them."
+
+    static func credentials(simplified: Bool) -> String {
+        "Everything you've earned and keep: school diplomas and degrees"
+            + (simplified ? "" : ", plus certificates and licences")
+            + ".\n\nMany jobs need a certain degree"
+            + (simplified ? "" : " or licence")
+            + " before you can apply."
+    }
+
+    static let economy = "How the economy is doing this year — overall, and in each industry.\n\nIn a good year it's easier to get hired and promoted. In a bad year it's harder, and more people lose their jobs. Your own industry is shown in bold."
+
+    static let experience = "How many years you've worked in each job.\n\nMany jobs need years of experience before they'll hire you, and years in the same kind of work help you move up."
 }

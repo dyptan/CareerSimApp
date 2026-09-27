@@ -14,6 +14,10 @@ struct StatusBarView: View {
 
     @State private var isExpanded = false
 
+    /// The ⓘ beside the bar, in the same voice as the main screen's section
+    /// hints (see `SkillsView`).
+    static let hint = "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.\n\nThe newest one is shown here. Open it to see them all, newest first."
+
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             ScrollView {
@@ -37,6 +41,7 @@ struct StatusBarView: View {
                     Text("Age \(latest.age) — \(latest.message)")
                         .lineLimit(1)
                         .truncationMode(.tail)
+                    InfoHint(title: "Your story", message: Self.hint)
                 }
                 .font(.caption.bold())
             }
