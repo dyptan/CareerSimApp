@@ -742,7 +742,7 @@ final class Player: ObservableObject {
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
-    /// Professional network built by attending industry `CareerEvent`s, keyed by
+    /// Professional network built at industry `CareerEvent`s, keyed by
     /// the event's industry. Improves hiring odds on that field's postings and
     /// the chance of promotion while working in it (see `networkBonus`).
     @Published var networkByCategory: [JobCategory: Int] = [:]
@@ -897,20 +897,14 @@ final class Player: ObservableObject {
         return min(0.95, 0.05 + seniority + voice + fame)
     }
 
-    /// Attends `event`: its soft-skill nudges and its network in the field.
-    /// Spends the year.
-    func attendEvent(_ event: CareerEvent) {
-        guard canJoinEvent(event) else { return }
-        applySkillBoosts(event.abilities)
-        networkByCategory[event.category, default: 0] += event.networkWeight
-    }
-
-    /// Applies to take `event`'s stage: the player attends either way (its
-    /// nudges and network land now), and the application is decided with the
-    /// rest of the year-end accounting in `advanceYear`. Spends the year.
+    /// Applies to take `event`'s stage — the one way to take part in an event.
+    /// The player goes either way, so its soft-skill nudges and base network in
+    /// the field land now; the application is decided with the rest of the
+    /// year-end accounting in `advanceYear`. Spends the year.
     func applyToPresent(_ event: CareerEvent, into selectedEvents: inout Set<String>) {
         guard canJoinEvent(event), !selectedEvents.contains(event.id) else { return }
-        attendEvent(event)
+        applySkillBoosts(event.abilities)
+        networkByCategory[event.category, default: 0] += event.networkWeight
         selectedEvents.insert(event.id)
     }
 
@@ -1285,9 +1279,9 @@ final class Player: ObservableObject {
         appUIState.selectedTrainings.removeAll()
 
         appUIState.selectedActivities.removeAll()
-        // Events applied their attendance effects when taken. Decide each
-        // application to take the stage: accepted, it banks the presenter's
-        // extra network and a fame award; turned down, the player attended.
+        // Events applied their base effects when the application went in.
+        // Decide each one: accepted, it banks the presenter's extra network and
+        // a fame award; turned down, the player still went and keeps the base.
         for id in appUIState.selectedEvents {
             guard let event = EventCatalog.byId[id] else { continue }
             if Double.random(in: 0...1) < presentOdds(event) {
@@ -1296,7 +1290,7 @@ final class Player: ObservableObject {
                       category: event.category.fameCategory, weight: event.presenterFameWeight)
                 recordStatus("🎤", "\(event.presenterPastLabel) at \(event.name)")
             } else {
-                recordStatus("🎟️", "\(event.name) turned down your application — you attended instead")
+                recordStatus("🎟️", "\(event.name) said no this time — you still went and met people")
             }
         }
         appUIState.selectedEvents.removeAll()

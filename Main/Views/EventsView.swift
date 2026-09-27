@@ -1,12 +1,14 @@
 import SwiftUI
 
 /// Professional events this year — summits, conferences, expos, festivals and
-/// pitch competitions. Each is tied to an industry. **Attend** to bank its
-/// network there (open to anyone working in or studying toward the field, or
-/// to anyone for an open call), or **apply to take the stage** — acceptance
-/// odds from experience, communication and fame (see `Player.presentOdds`);
-/// accepted, it banks more network plus a fame award, and a rejection still
-/// counts as attending. Either way the year is spent.
+/// pitch competitions. Each is tied to an industry, and there is one way to
+/// take part: **apply to take the stage** — speak, present, perform or pitch,
+/// in the event's own words. The acceptance odds come from experience,
+/// communication and fame (see `Player.presentOdds`); accepted, it banks the
+/// field's network plus a fame title, and turned down, the player still goes
+/// and banks a little network. Either way the year is spent. Rows follow the
+/// Projects sheet (see `SideHustleRow`): the odds beside the name, one button,
+/// an ⓘ.
 struct EventsView: View {
     @ObservedObject var player: Player
     @Binding var selectedEvents: Set<String>
@@ -15,18 +17,22 @@ struct EventsView: View {
 
     /// The sheet's title ⓘ.
     static let hint = """
-    Events help you meet people and get known in a field — both make it easier to get hired and promoted there. Going to one uses up your year.
+    At an event you ask to go on stage — to give a talk, perform or pitch. 🎲 is your chance they say yes.
 
-    🎟️ Go and listen: open to anyone who works or studies in that field.
-    🎤 Give a talk: apply to speak — your chance goes up with years in the field, being good at talking, and fame there. If they say yes, you meet more people and win a title. If not, you still get to attend.
-    📣 Open calls (auditions, festivals, pitch and talk contests) are open to everyone.
+    If they pick you, you get known in that field and meet lots of people there — both help you get hired and promoted. If not, you still go and meet a few people.
+
+    Taking part uses up your year.
     """
 
-    /// Events the player can join first, then the rest, each group by name.
+    /// Events the player can join first, best odds first — so the stages the
+    /// player has built toward lead, as on the Projects sheet — then by name.
+    /// Closed events show no odds, so they just go by name.
     private var events: [CareerEvent] {
         EventCatalog.all.sorted {
             let a = player.canJoinEvent($0), b = player.canJoinEvent($1)
-            return a == b ? $0.name < $1.name : a
+            guard a == b else { return a }
+            let oddsA = a ? player.presentOdds($0) : 0, oddsB = b ? player.presentOdds($1) : 0
+            return oddsA == oddsB ? $0.name < $1.name : oddsA > oddsB
         }
     }
 
@@ -45,60 +51,72 @@ struct EventsView: View {
     private func row(for event: CareerEvent) -> some View {
         let locked = !player.canJoinEvent(event)
         let odds = player.presentOdds(event)
-        let category = event.category
-        let field = "\(JobCategory.icon(for: category)) \(category.rawValue)"
 
-        let skills: String = event.abilities
-            .map { ability -> String in
-                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
-                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
-                return "\(pic) \(label) +\(ability.weight)"
-            }
-            .joined(separator: ", ")
-
-        HStack(alignment: .center, spacing: 8) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("\(event.icon)  \(event.name)")
-                    .font(.headline)
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 8) {
+                    Text("\(event.icon)  \(event.name)")
+                        .font(.headline)
+                    if !locked {
+                        // Event names run long; the name wraps, the odds don't.
+                        Text("🎲 \(Int((odds * 100).rounded()))%")
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(Color.forOdds(odds))
+                            .fixedSize()
+                    }
+                }
                 if locked {
-                    Text("🔒 Work or study in \(category.rawValue) to take part")
+                    Text("🔒 Work or study in \(event.category.rawValue) to take part")
                         .font(.caption2)
                         .foregroundStyle(.orange)
-                } else {
-                    Text("🎤 \(Int((odds * 100).rounded()))% to \(event.presenterActionLabel.lowercased())\(event.isOpenCall ? " · 📣 open call" : "")")
-                        .font(.caption2.monospacedDigit())
-                        .foregroundStyle(Color.forOdds(odds))
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(locked ? 0.5 : 1.0)
+            Spacer(minLength: 8)
 
-            VStack(spacing: 6) {
-                TakeButton(label: event.presenterActionLabel) {
-                    player.applyToPresent(event, into: &selectedEvents)
-                    onCommit()
-                }
-                TakeButton(label: "Attend") {
-                    player.attendEvent(event)
-                    onCommit()
-                }
+            // Applying is committing the year to it — the sheet closes and the
+            // year runs, so there is only ever one application to hold.
+            TakeButton(label: event.presenterActionLabel) {
+                player.applyToPresent(event, into: &selectedEvents)
+                onCommit()
             }
             .disabled(locked)
             .opacity(locked ? 0.5 : 1.0)
 
             InfoHint(
                 title: "\(event.icon) \(event.name)",
-                message: """
-                \(event.blurb)
-
-                🎟️ Attend: \(field) network +\(event.networkWeight).
-                🎤 \(event.presenterActionLabel): \(Int((odds * 100).rounded()))% to be accepted — network +\(event.networkPoints) and the “\(event.presenterFameTitle)” fame award. Turned down, you attended.
-
-                Builds: \(skills).
-                """
+                message: infoMessage(for: event, odds: odds, locked: locked)
             )
         }
         .padding(5)
+    }
+
+    /// The event hint, in the Projects hint's shape: what it is, the odds and
+    /// what moves them, what a yes and a no each bring, and the skills it
+    /// grows either way.
+    private func infoMessage(for event: CareerEvent, odds: Double, locked: Bool) -> String {
+        let field = "\(JobCategory.icon(for: event.category)) \(event.category.rawValue)"
+        let voiceKeyPath: WritableKeyPath<SoftSkills, Int> = \.communicationAndNetworking
+        let voice = "\(SoftSkills.pictogram(forKeyPath: voiceKeyPath) ?? "") \(SoftSkills.label(forKeyPath: voiceKeyPath) ?? "talking")"
+        let grows = event.abilities
+            .map { ability -> String in
+                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
+                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
+                return "\(pic) \(label) +\(ability.weight)"
+            }
+            .joined(separator: "\n")
+
+        let chance = locked
+            ? "🔒 Work or study in \(field) to take part. Then your chance goes up with years of work there, your \(voice) skill and your fame in the field."
+            : "🎲 \(Int((odds * 100).rounded()))% chance they pick you. It goes up with years of work in \(field), your \(voice) skill and your fame there."
+        return [
+            event.blurb,
+            chance,
+            event.isOpenCall ? "📣 Anyone can apply." : nil,
+            "If they pick you: you win the “\(event.presenterFameTitle)” title (🌟 fame) and meet lots of people in \(field), who can help you get hired and promoted there.",
+            "If not: you still go and meet a few people.",
+            "Grows either way:\n\(grows)",
+        ].compactMap { $0 }.joined(separator: "\n\n")
     }
 }
 

@@ -1944,8 +1944,8 @@ final class FamePaysTests: XCTestCase {
     }
 }
 
-/// Events work like real conferences: attend if you're in the field, apply to
-/// take the stage with odds rather than a years-in-the-field wall.
+/// Events work like real calls for speakers: take part if you're in the field,
+/// by applying to take the stage — odds rather than a years-in-the-field wall.
 final class EventAccessTests: XCTestCase {
 
     private func adult(age: Int = 22) -> Player {
@@ -1991,6 +1991,26 @@ final class EventAccessTests: XCTestCase {
         veteran.experience[.technology] = 8
         XCTAssertGreaterThan(rookie.presentOdds(summit), 0.04)
         XCTAssertGreaterThan(veteran.presentOdds(summit), rookie.presentOdds(summit))
+    }
+
+    /// Applying to the stage is the only way in: the player goes either way, so
+    /// the base network and the skill nudges land at once, and the application
+    /// waits for the year's end. Applying twice doesn't count twice.
+    func testApplyingBanksTheBaseAndQueuesTheApplication() throws {
+        let summit = try XCTUnwrap(EventCatalog.byId["tech-summit"])
+        let player = adult()
+        player.experience[.technology] = 1
+        let voice = player.softSkills.communicationAndNetworking
+        var applications: Set<String> = []
+
+        player.applyToPresent(summit, into: &applications)
+        XCTAssertEqual(player.networkPoints(for: .technology), summit.networkWeight)
+        XCTAssertGreaterThan(player.softSkills.communicationAndNetworking, voice)
+        XCTAssertEqual(applications, [summit.id])
+
+        player.applyToPresent(summit, into: &applications)
+        XCTAssertEqual(player.networkPoints(for: .technology), summit.networkWeight,
+                       "A second application to the same event banks nothing more.")
     }
 }
 

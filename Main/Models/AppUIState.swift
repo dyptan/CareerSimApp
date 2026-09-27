@@ -43,7 +43,7 @@ final class AppUIState: ObservableObject {
     /// Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
     /// Ids of the professional events the player applied to take the stage at
-    /// this year (see `EventCatalog`). Attendance effects apply on selection;
+    /// this year (see `EventCatalog`). Base effects apply on selection;
     /// the application is decided — and any fame banked — by `Player.advanceYear`.
     @Published var selectedEvents: Set<String> = []
     /// Sports the player is committing this year's spare-time slot to.
