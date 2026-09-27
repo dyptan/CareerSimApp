@@ -9,11 +9,11 @@ struct AdvisorView: View {
     let onGo: (CareerAdvisor.Destination) -> Void
 
     static let hint = """
-    The advisor looks at your skills, education, experience and this year's job market, and suggests the moves most likely to pay off.
+    The advisor looks at your skills, your school and work so far, and this year's jobs. Then it suggests the moves most likely to help your career.
 
-    📊 Tips are ranked by expected extra pay over the rest of your career: the chance a move works × the raise it brings × the years left to enjoy it.
+    📊 The best tips come first. A tip ranks higher when it's likely to work, pays more, and leaves you more years to enjoy it.
 
-    It uses the game's own odds, so the chances it quotes are the ones you'd get. Nothing here spends your year.
+    The chances it shows are the game's real chances. Reading tips is free — it doesn't use up your year.
     """
 
     var body: some View {
@@ -21,7 +21,7 @@ struct AdvisorView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 if tips.isEmpty {
-                    Text("Nothing beats staying the course right now. Keep building your skills and check back next year. 👍")
+                    Text("Right now, the best move is to keep going! Keep building your skills and check back next year. 👍")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 } else {
@@ -43,7 +43,7 @@ struct AdvisorView: View {
                 .frame(width: 32)
             VStack(alignment: .leading, spacing: 6) {
                 if isTopPick {
-                    Text("TOP PICK")
+                    Text("BEST MOVE")
                         .font(.caption2.bold())
                         .foregroundStyle(.tint)
                 }

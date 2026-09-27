@@ -27,11 +27,11 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     var description: String {
         switch self {
         case .community:
-            return "Open admissions, low tuition, practical focus. Great way to start when budget or grades are tight."
+            return "Almost everyone gets in, and it doesn't cost much. A great place to start if money or grades are tight."
         case .state:
-            return "Solid mainstream university — moderate tuition, broad recognition, balanced admission bar."
+            return "A good, well-known university. It costs more, and you need decent grades and skills to get in."
         case .elite:
-            return "Highly selective top-ranked school — steep tuition, demanding admissions, but strong career boost."
+            return "One of the very best schools. Very hard to get into and it costs a lot — but it gives your career a big boost."
         }
     }
 

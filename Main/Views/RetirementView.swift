@@ -43,7 +43,7 @@ struct RetirementView: View {
                     .foregroundStyle(.secondary)
                 InfoHint(
                     title: "🏅 Score",
-                    message: "Your net worth — savings minus any loans still owed — divided by your age. Building wealth younger scores higher."
+                    message: "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score."
                 )
             }
 

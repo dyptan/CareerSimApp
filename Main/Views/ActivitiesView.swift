@@ -21,13 +21,13 @@ struct ActivitiesView: View {
 
     /// The sheet's title ⓘ: how levels, contests and the Study tab work.
     static let hint = """
-    Taking an activity spends the year.
+    Picking an activity uses up your year.
 
-    🏅 Each year you practise, you level up (Beginner → Expert) and automatically enter its top contest. Wins earn trophies and fame — and selective universities count trophies.
+    🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies.
 
-    📝 Study also lifts that year's school grade, which universities weigh at admission.
+    📝 Study activities also raise your school grade for the year, which colleges look at when you apply.
 
-    🏆 On a row means you practised it last year — tap it for this year's contest and odds.
+    🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.
     """
 
     /// The remembered tab (it lives in `AppUIState`, so it survives the sheet

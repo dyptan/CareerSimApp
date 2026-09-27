@@ -392,7 +392,7 @@ final class Player: ObservableObject {
     @Published var showProjectOutcomeAlert: Bool = false
     /// Title of the project result pop-up — it differs on a hit and a flop.
     @Published var projectOutcomeTitle: String = ""
-    /// Body of the project result pop-up, naming the project and what it earned.
+    /// Body of the project result pop-up, naming the project and the title it earned.
     @Published var projectOutcomeMessage: String = ""
 
     /// Incremented on a celebratory stroke of luck (a promotion, or a long-shot
@@ -446,12 +446,6 @@ final class Player: ObservableObject {
         return fameAwards.contains { $0.title == award }
     }
 
-    /// What a landed project would pay this year, on the player's current fame
-    /// in its field.
-    func projectPay(for hustle: SideHustle) -> Int {
-        hustle.pay(famePoints: famePoints(for: hustle.fameCategory))
-    }
-
     /// Yearly endorsement income: brands pay a famous entertainment name —
     /// athletes, stars and creators alike — to carry their products. Nothing
     /// below `GameConstants.endorsementFameThreshold`, then steeply rising.
@@ -462,9 +456,8 @@ final class Player: ObservableObject {
         return min(GameConstants.endorsementMax, Int(pay.rounded()))
     }
 
-    /// Gross pay last year from landed projects, and from endorsements — shown
-    /// in Finances next to the salary.
-    @Published var lastYearProjectPay: Int = 0
+    /// Gross pay last year from endorsements — shown in Finances next to the
+    /// salary. (Projects pay nothing: they build fame and skills.)
     @Published var lastYearEndorsements: Int = 0
 
     /// The climate a project rides: its own industry when it has one, otherwise
@@ -483,8 +476,7 @@ final class Player: ObservableObject {
         if outcome.success {
             projectOutcomeTitle = "\(hustle.icon) It landed!"
             let earned = outcome.grantedFame.map { " You earned the “\($0.title)” title." } ?? ""
-            let paid = outcome.pay > 0 ? " It paid \(outcome.pay.formatted(.number)) $." : ""
-            projectOutcomeMessage = "\(hustle.label) paid off!" + paid + earned
+            projectOutcomeMessage = "\(hustle.label) worked out!" + earned
         } else {
             projectOutcomeTitle = "\(hustle.icon) It didn't land"
             projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway."
@@ -663,7 +655,7 @@ final class Player: ObservableObject {
         return Int((Double(shareStakeValue()) * (1 - GameConstants.equitySaleTaxRate)).rounded())
     }
 
-    /// What a year's gross income (pay, project fees, endorsements) adds to
+    /// What a year's gross income (pay and endorsements) adds to
     /// savings: nothing below the mode's living-cost floor, `savingsRate` of
     /// the slice above it, and `highEarnerSavingsRate` of anything past
     /// `highEarnerThreshold`. A minor living at home has no floor. Simplified
@@ -1135,9 +1127,13 @@ final class Player: ObservableObject {
         let education = job.educationPromotionTerm(for: self)
         let passedOver = Player.promotionPassedOver(yearsInRole: years)
         let ageFade = Player.promotionAgeFade(age: age)
-        let roll = max(0, min(1.0, (merit + network + fame + education)
+        let contested = max(0, min(1.0, (merit + network + fame + education)
                                    * climate.promotionFactor * passedOver * ageFade))
         let eligible = next.allRequirementsMet(for: self) && next.experienceMet(for: self)
+        // A training rung (a medical residency) isn't a contest: finishing it
+        // is what makes you the next rung, so the step is certain once the
+        // years are served.
+        let roll = job.rungLabel == "Resident" ? 1.0 : contested
         let seat = next.promotionSeatChance(for: self)
         return PromotionOdds(promotes: true, performance: performance, readiness: readiness,
                              seniority: seniority, tenureYears: years, nextRole: next,
@@ -1394,9 +1390,9 @@ final class Player: ObservableObject {
             savings += Int((Double(savings) * rate).rounded())
         }
 
-        // Tally the year's gross income — pay here, project fees and
-        // endorsements below — and bank what it leaves once living costs and
-        // taxes are paid, in one go at the end (`annualSaving`). A layoff year
+        // Tally the year's gross income — pay here, endorsements below — and
+        // bank what it leaves once living costs and taxes are paid, in one go
+        // at the end (`annualSaving`). A layoff year
         // earns `layoffYearPayShare` of the pay (months worked, severance and
         // unemployment insurance) and banks no experience.
         var grossThisYear = 0
@@ -1478,7 +1474,6 @@ final class Player: ObservableObject {
         // no hobby can build. Recognition is what the roll is for — only a hit
         // banks an industry-scoped fame award. So a flop still moves the player
         // forward, just quietly. All are repeatable year after year.
-        lastYearProjectPay = 0
         for id in appUIState.selectedSideHustles {
             guard let hustle = SideHustleCatalog.byId[id], canTakeProject(hustle) else { continue }
             // A year committed to an experience-building venture (the
@@ -1511,12 +1506,6 @@ final class Player: ObservableObject {
                 softSkills[keyPath: ability.keyPath] = min(softSkills[keyPath: ability.keyPath] + ability.weight, 10)
             }
             if outcome.success {
-                // Fame pays: the project's earnings, banked like any income.
-                if outcome.pay > 0 {
-                    lastYearProjectPay += outcome.pay
-                    grossThisYear += outcome.pay
-                    recordStatus("💵", "\(hustle.label) paid \(outcome.pay.formatted(.number)) $")
-                }
                 if let grant = outcome.grantedFame {
                     award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
                     recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
@@ -1748,7 +1737,7 @@ final class Player: ObservableObject {
             currentOccupation = nil
             clearVenture()
             showVentureFailureAlert = true
-            ventureFailureMessage = "\(job.baseTitle) folded this year. Selling off what was left recovered \(recovered.formatted(.number)) $ of your stake — but any loan must still be repaid."
+            ventureFailureMessage = "\(job.baseTitle) had to close this year. Selling what was left got back \(recovered.formatted(.number)) $ — but you still have to pay back any loan."
             recordStatus("📉", "\(job.baseTitle) folded — recovered \(recovered.formatted(.number)) $")
             // A fold costs no reputation — the lessons count for something.
             award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
@@ -2026,7 +2015,6 @@ final class Player: ObservableObject {
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan
         ventureLoanPayment = fresh.ventureLoanPayment
-        lastYearProjectPay = fresh.lastYearProjectPay
         lastYearEndorsements = fresh.lastYearEndorsements
         studentLoanPayment = fresh.studentLoanPayment
         ventureFoundedAge = fresh.ventureFoundedAge

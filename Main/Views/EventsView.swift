@@ -15,11 +15,11 @@ struct EventsView: View {
 
     /// The sheet's title ⓘ.
     static let hint = """
-    Events grow your network and fame in their field — both raise your hiring and promotion odds there. Taking part spends the year.
+    Events help you meet people and get known in a field — both make it easier to get hired and promoted there. Going to one uses up your year.
 
-    🎟️ Attend: open to anyone working in or studying toward the field.
-    🎤 Take the stage: apply — your odds rise with years in the field, communication and fame there. Accepted, you bank more network and a fame award; turned down, you attended.
-    📣 Open calls (castings, festivals, pitch and talk competitions) are open to anyone.
+    🎟️ Go and listen: open to anyone who works or studies in that field.
+    🎤 Give a talk: apply to speak — your chance goes up with years in the field, being good at talking, and fame there. If they say yes, you meet more people and win a title. If not, you still get to attend.
+    📣 Open calls (auditions, festivals, pitch and talk contests) are open to everyone.
     """
 
     /// Events the player can join first, then the rest, each group by name.

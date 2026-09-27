@@ -44,7 +44,7 @@ struct SeniorityOffersView: View {
 
     @ViewBuilder
     private func seniorityCard(for offer: Job) -> some View {
-        let prob = offer.hireProbability(for: player, requestedSalary: Double(offer.annualIncome))
+        let prob = offer.hireProbability(for: player, requestedSalary: Double(offer.offeredSalary(for: player)))
         let probColor = Color.forOdds(prob)
         let qualifies = offer.allRequirementsMet(for: player)
         let yearsExpected = player.isSimplified ? offer.requirements.minYearsExperience : offer.expectedYearsExperience
@@ -79,14 +79,14 @@ struct SeniorityOffersView: View {
 
             if player.isSimplified {
                 HStack {
-                    Text(qualifies ? "✓ You qualify" : "🔒 Not yet")
+                    Text(qualifies ? "✓ You can apply" : "🔒 Not yet")
                         .font(.caption.bold())
                         .foregroundStyle(qualifies ? Color.green : Color.secondary)
                     Spacer()
                 }
             } else {
                 HStack {
-                    Text("Hire chance at base salary:")
+                    Text("Chance to get hired:")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()

@@ -87,7 +87,7 @@ struct InstitutionTiersView: View {
                         .font(.subheadline.bold())
                     InfoHint(
                         title: "Admission requirement",
-                        message: "The education level below is the one thing you must already hold to apply here. Everything else only moves your odds."
+                        message: "You need to have finished this school level before you can apply. Everything else just changes your chance of getting in."
                     )
                 }
                 .padding(.top, 4)
@@ -173,7 +173,7 @@ struct InstitutionTiersView: View {
                 Text("Admission chance:")
                 InfoHint(
                     title: "How admission works",
-                    message: "Your current education level is the only hard requirement — once you have it you can always apply. From there, your odds rise with how well your soft skills overlap with what this school looks for — and, for a first degree, with your high-school grades, and at selective schools with your trophies — and fall with how selective the school is. Matching every one makes you fully qualified, but selective schools still turn away strong applicants — and a school may still take a chance on you when your soft skills are thin. Build the skills listed above through activities and projects, and lift your grades with Study activities while at school, to improve your chances. Applying is how you spend the year, so it costs a year whether or not you get in."
+                    message: "You can apply as soon as you've finished the school level above. After that, your chance goes up with:\n\n• the skills this school looks for\n• your high-school grades (for a first degree)\n• your prizes and titles (at top schools)\n\nPicky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not."
                 )
                 Spacer()
                 Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
@@ -205,12 +205,12 @@ struct InstitutionTiersView: View {
     private func gradesHint(for education: Education, gpa: Double) -> String {
         let share = Int((education.gradeWeight * 100).rounded())
         let record = player.highSchoolGrades.isEmpty
-            ? "You have no high-school years on record here, so your grades are estimated from the skills you arrived with."
-            : "Your GPA is the average of your \(player.highSchoolGrades.count) high-school year\(player.highSchoolGrades.count == 1 ? "" : "s")."
+            ? "You don't have high-school grades yet, so the game guesses them from your skills."
+            : "Your grade average comes from your \(player.highSchoolGrades.count) high-school year\(player.highSchoolGrades.count == 1 ? "" : "s")."
         return """
-        Grades make up \(share)% of what \(schoolName(education).lowercased()) weighs here, next to \(Int((education.softSkillWeight * 100).rounded()))% for soft skills\(education.accoladeWeight > 0 ? " and \(Int((education.accoladeWeight * 100).rounded()))% for trophies and accolades" : ""). A C average (2.0) adds nothing, a straight-A 4.0 counts in full.
+        \(schoolName(education)) cares about: grades \(share)%, skills \(Int((education.softSkillWeight * 100).rounded()))%\(education.accoladeWeight > 0 ? ", prizes and titles \(Int((education.accoladeWeight * 100).rounded()))%" : ""). A C average (2.0) doesn't help; straight A's (4.0) help the most.
 
-        \(record) Each year's grade comes from your academic skills — and a year spent on a Study activity lifts it. Skills alone top out at a B+.
+        \(record) Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is a B+.
         """
     }
 
@@ -229,18 +229,18 @@ struct InstitutionTiersView: View {
             .map { "\($0.icon) \($0.title)\($0.count > 1 ? " ×\($0.count)" : "")" }
             .joined(separator: "\n")
         return """
-        Trophies and accolades make up \(share)% of what \(schoolName(education).lowercased()) weighs here. Bigger titles count for more — an olympiad medal or national championship is worth many sports-day ribbons. Roughly a national title plus a few local wins counts in full.
+        Prizes and titles are \(share)% of what \(schoolName(education).lowercased()) looks at. Bigger prizes count more — winning a national championship is worth lots of school ribbons. About one national title plus a few local wins gets you full marks.
 
-        Win them through Activities: every year you practise, you enter that activity's top contest.\(top.isEmpty ? "" : "\n\nYour strongest:\n\(top)")
+        Win them with Activities: every year you practise, you enter that activity's biggest contest.\(top.isEmpty ? "" : "\n\nYour best ones:\n\(top)")
         """
     }
 
     private func admissionSoftSkillsHint(for overlap: [Education.SoftSkillOverlap]) -> String {
         let list = overlap
-            .map { "\($0.pictogram) \($0.label): you have \($0.have), they look for \($0.target)" }
+            .map { "\($0.pictogram) \($0.label): you have \($0.have), they'd like \($0.target)" }
             .joined(separator: "\n")
         return """
-        Every skill here counts toward your admission chance. Reaching the level a school looks for scores that skill in full, falling short scores it in part — and no gap can shut you out, it only lowers the odds.
+        Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance.
 
         \(list)
         """
@@ -271,8 +271,8 @@ struct InstitutionTiersView: View {
         } else {
             player.reportApplicationOutcome(
                 title: "🎓 Not this year",
-                message: "\(schoolName(education)) turned you down — your odds were "
-                    + "\(Int((admission * 100).rounded()))%. Try again next year."
+                message: "\(schoolName(education)) said no this time — you had a "
+                    + "\(Int((admission * 100).rounded()))% chance. You can try again next year!"
             )
             onCommit()
         }

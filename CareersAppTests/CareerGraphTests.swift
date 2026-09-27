@@ -1904,17 +1904,24 @@ final class FamePaysTests: XCTestCase {
         XCTAssertTrue(player.canTakeProject(film))
     }
 
-    /// Project pay starts small and rises steeply with fame in its field.
-    func testProjectPayRisesSteeplyWithFame() throws {
-        let podcast = try XCTUnwrap(SideHustleCatalog.byId["projectPodcast"])
-        XCTAssertEqual(podcast.pay(famePoints: 0), podcast.basePay)
-        let known = podcast.pay(famePoints: 5)
-        let famous = podcast.pay(famePoints: 10)
-        XCTAssertGreaterThan(known, podcast.basePay * 5)
-        XCTAssertGreaterThan(famous - known, known - podcast.basePay,
-                             "Each extra point of fame should be worth more than the last.")
-        let unpaid = try XCTUnwrap(SideHustleCatalog.byId["projectLibrary"])
-        XCTAssertEqual(unpaid.pay(famePoints: 20), 0, "Open source is unpaid, however famous.")
+    /// Projects build fame and skills only: a landed project banks its fame
+    /// title and no money.
+    func testProjectsPayNoMoney() throws {
+        let gigs = try XCTUnwrap(SideHustleCatalog.byId["actingGigs"])
+        for _ in 0..<50 {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            player.age = 30
+            player.savings = 0
+            for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
+            let ui = AppUIState()
+            ui.selectedSideHustles = [gigs.id]
+            player.advanceYear(appUIState: ui)
+            XCTAssertEqual(player.savings, 0, "A project year adds no money.")
+            if player.fameAwards.contains(where: { $0.title == (gigs.fameTitle ?? gigs.label) }) { return }
+        }
+        XCTFail("A near-certain project should land at least once in 50 tries.")
     }
 
     /// Brands pay a famous entertainment name — nothing below the threshold.

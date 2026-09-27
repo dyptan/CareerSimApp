@@ -105,7 +105,7 @@ struct JobsView: View {
                 }
             }
             if categories().isEmpty {
-                Text("No roles match these filters. Widen the setting, or turn off \"Only roles I qualify for\".")
+                Text("No jobs match these filters. Try another kind of work, or turn off \"Only roles I qualify for\".")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -251,7 +251,7 @@ struct EntrepreneurshipView: View {
         let firstYear = Int((Player.ventureRamp(year: 1) * 100).rounded())
         player.reportApplicationOutcome(
             title: "🎉 Venture launched!",
-            message: "You put \(capital.formatted(.number)) $ in and the doors are open. Year one pays about \(firstYear)% of the full income while you find customers."
+            message: "You put in \(capital.formatted(.number)) $ and opened your business! In the first year it pays about \(firstYear)% of the full amount while you find customers."
         )
         onCommit()
     }
@@ -347,27 +347,27 @@ private struct VentureRow: View {
 
         guard player.maxVentureStake > 0 else {
             return (header + [
-                "🔒 You need something to stake. Earn and save first — capital is the only thing that can stop you launching."
+                "🔒 You need some money to start a business. Work and save first — then you can start any business you like."
             ]).joined(separator: "\n\n")
         }
 
         let target = (job.targetCapital ?? 0).formatted(.number)
-        var funding = "💰 Stake: \(stake.formatted(.number)) $ of the \(target) $ this needs, savings first."
+        var funding = "💰 You'd put in \(stake.formatted(.number)) $ of the \(target) $ it needs, from your savings first."
         if borrowed > 0 {
-            funding += " \(borrowed.formatted(.number)) $ is borrowed against your income at \(Int(GameConstants.ventureLoanAnnualInterest * 100))% — owed whatever happens to the business."
+            funding += " \(borrowed.formatted(.number)) $ would be a loan that grows \(Int((GameConstants.ventureLoanAnnualInterest * 100).rounded()))% a year — you pay it back even if the business closes."
         }
         let full = job.annualIncome.formatted(.number)
         let ramp = GameConstants.ventureIncomeRamp.map { "\(Int(($0 * 100).rounded()))%" }.joined(separator: ", then ")
 
         var lines = header + [
             funding,
-            "🚀 It always opens. \(Int((survival * 100).rounded()))% chance it survives year 1 — set by your \(player.industryExperience(for: job.category)) yr in \(job.category.rawValue) (\(job.requirements.minYearsExperience) expected), the skills it runs on, 🔭 Visionary, 💬 Persuader, and your stake. The risk falls each year it lasts; a recession raises it.",
-            "💵 Pays \(ramp) of its \(full) $ income in the first two years, then the full amount — swinging with the market.",
-            "📉 If it folds, you recover \(Int(GameConstants.ventureFoldRecovery * 100))% of the stake.",
-            "🌟 Every year in business, round closed and exit builds 💼 business fame — which makes your next venture more likely to last.",
+            "🚀 It always opens. It has a \(Int((survival * 100).rounded()))% chance to make it through the first year. What helps: your \(player.industryExperience(for: job.category)) years in \(job.category.rawValue) (\(job.requirements.minYearsExperience) is good), the skills it needs, 🔭 Visionary, 💬 Persuader, and the money you put in. Each year it lasts, it gets safer — but a bad economy makes it riskier.",
+            "💵 It pays \(ramp) of its \(full) $ in the first two years, then the full amount — more in good years, less in bad ones.",
+            "📉 If it closes, you get back \(Int(GameConstants.ventureFoldRecovery * 100))% of the money you put in.",
+            "🌟 Every year in business, every investment you win and every sale makes you better known in 💼 Business — so your next business is more likely to last.",
         ]
         if job.isScalableVenture {
-            lines.append("🦄 Can scale: raise investment rounds in the Boardroom, and — rarely — break out for a fortune.")
+            lines.append("🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.")
         }
         return lines.joined(separator: "\n\n")
     }

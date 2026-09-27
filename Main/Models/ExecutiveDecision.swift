@@ -63,7 +63,7 @@ enum ExecutiveDecisionCatalog {
             kind: .investmentRound,
             label: "Announce an Investment Round",
             icon: "🚀",
-            blurb: "Take your startup to investors and raise a growth round. Land it and the company grows — and so does what your stake is worth. Fall short and you've spent the year chasing term sheets.",
+            blurb: "Ask investors to put money into your company. If they say yes, the company grows — and so does your share of it. If they say no, you've spent the year trying.",
             talents: [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation,
                       \.leadershipAndInfluence, \.communicationAndNetworking]
         ),
@@ -72,7 +72,7 @@ enum ExecutiveDecisionCatalog {
             kind: .sellShares,
             label: "Sell Your Stake",
             icon: "💸",
-            blurb: "Put your equity on the market at a price you set. Ask near its fair value and a buyer bites readily; hold out for a premium and you may find no takers this year. A recession thins the buyers further. A founder's exit pays fees and capital-gains tax; a hired executive sells only the shares vested since the last sale, taxed as income.",
+            blurb: "Sell your share of the company for a price you choose. Ask close to what it's worth and someone will probably buy; ask for much more and nobody may buy this year. When the economy is bad, there are fewer buyers.",
             talents: [\.persuasionAndNegotiation, \.visionaryThinkingAndAmbition]
         ),
     ]

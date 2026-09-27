@@ -257,6 +257,9 @@ enum Report {
             out += "  - first job: " + top(r, { $0.firstJob }) + "\n"
             out += "  - at 25: " + top(r, { $0.jobAt25 }) + "\n"
             out += "  - at 45: " + top(r, { $0.jobAt45 }) + "\n"
+            // Split by schooling, to see where each education level ends up.
+            out += "  - at 45, HS or less: " + top(r, { $0.eqfAt45 <= 3 ? ($0.jobAt45 ?? "(none)") : "·other" }, 6) + "\n"
+            out += "  - at 45, bachelor+: " + top(r, { $0.eqfAt45 >= 5 ? ($0.jobAt45 ?? "(none)") : "·other" }, 6) + "\n"
         }
         return out
     }

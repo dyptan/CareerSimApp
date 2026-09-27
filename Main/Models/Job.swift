@@ -507,9 +507,9 @@ extension Job {
         let required = requirements.education.minEQF
         guard required > 0 else { return 1.0 }
         if educationShortfall(for: player) == 0 {
-            return hasAcceptedDegree(for: player)
+            return (hasAcceptedDegree(for: player)
                 ? GameConstants.relevantDegreeMultiplier
-                : GameConstants.unrelatedDegreeMultiplier
+                : GameConstants.unrelatedDegreeMultiplier) * degreePreferenceFactor(for: player)
         }
         let credited = creditedEducationShortfall(for: player)
         guard credited > 0 else {
@@ -520,6 +520,27 @@ extension Job {
             ? GameConstants.educationShortfallRatioDegree
             : GameConstants.educationShortfallRatioSubDegree
         return max(GameConstants.educationShortfallFloor, pow(ratio, Double(credited)))
+    }
+
+    /// Whether employers filling this role prefer a graduate even though the
+    /// posting doesn't require one: well-paid office work below degree level.
+    /// About half of insurance agents and sales representatives hold a
+    /// bachelor's although BLS lists a high-school diploma as the entry
+    /// requirement — "degree preferred" is how most such postings read.
+    var prefersDegree: Bool {
+        !educationIsMandatory && !isEntrepreneurial && workSetting == .office
+            && requirements.education.minEQF < GameConstants.degreePreferredEQF
+            && income >= GameConstants.degreePreferredMinIncome
+    }
+
+    /// The penalty a non-graduate pays on a role that prefers a degree
+    /// (`prefersDegree`): `degreePreferenceRatio` per level below a bachelor's,
+    /// less any equivalent experience in the field. 1 for everyone else.
+    func degreePreferenceFactor(for player: Player) -> Double {
+        guard prefersDegree else { return 1.0 }
+        let short = max(0, GameConstants.degreePreferredEQF - player.highestEQF
+                        - equivalentExperienceCredit(for: player))
+        return pow(GameConstants.degreePreferenceRatio, Double(short))
     }
 
     /// Experience as a multiplier: a modest edge beyond what the employer
@@ -1015,7 +1036,9 @@ extension Job {
     /// Hire-probability bonus from the player's most prestigious *relevant* degree.
     /// Prefers degrees in the job's accepted profiles when such a list is set.
     func relevantPrestigeBonus(for player: Player) -> Double {
-        let eligible = player.degrees.filter { $0.eqf >= requirements.education.minEQF }
+        // Only a college degree carries a school's name — a high-school diploma
+        // is stored with a default tier but earns no prestige.
+        let eligible = player.degrees.filter { $0.profile != nil && $0.eqf >= requirements.education.minEQF }
         guard !eligible.isEmpty else { return 0.0 }
 
         let matching: [Education]
