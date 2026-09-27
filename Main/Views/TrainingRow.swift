@@ -77,7 +77,7 @@ struct TrainingRow: View {
         let edgeHint: String = {
             guard let boost = training.careerBoost else { return "" }
             let fields = boost.categories.map(\.rawValue).sorted().joined(separator: ", ")
-            return "\n\n🎯 An edge landing jobs and launching ventures in: \(fields)"
+            return "\n\n🎯 An edge landing jobs and launching ventures in: \(fields) — and it counts as one level of the schooling roles there expect."
         }()
         let hintMessage: String = {
             let base = boostsHint.isEmpty

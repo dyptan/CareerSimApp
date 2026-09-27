@@ -122,26 +122,18 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Maximum fractional swing above or below the base salary in a single year.
-    /// e.g. 0.5 means actual pay can range from 50 % to 150 % of the base.
+    /// Employer-to-employer spread on a posting's pay: each year's posting is
+    /// priced within ± this share of the catalogue median (see `Job.init`).
+    /// Nothing the player is offered reads it — listings show the median and an
+    /// offer is built from it (`Job.offeredSalary`), and a promotion pays from
+    /// the rung's catalogue median — so it only colours the raw postings.
+    /// Project-driven show business and founders' incomes swing wider.
     var salaryVariance: Double {
         switch self {
-        case .entrepreneurship:
-            return 0.55   // founder income swings wildly with the venture
-        case .showBusiness:
-            return 0.50   // heavily project-based / performance-driven
-        case .technology, .engineering, .science:
-            return 0.40   // bonuses, stock, market swings
-        case .business, .law:
-            return 0.40
-        case .construction, .manufacturing:
-            return 0.30   // seasonal and contract variability
-        case .agriculture, .transportation, .retail, .service, .hospitality:
-            return 0.30
-        case .health, .education, .publicServices:
-            return 0.10   // salaried / regulated
+        case .entrepreneurship, .showBusiness:
+            return 0.25
         default:
-            return 0.20
+            return 0.10
         }
     }
 
@@ -352,14 +344,6 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// How much of the national cycle this sector transmits — its beta. 1.0 moves
-    /// with the economy; above 1 amplifies it, below 1 damps it.
-    ///
-    /// Above 1, the discretionary trades: when households and advertisers cut a
-    /// budget, this is the budget. Below 1, the defensive ones — people fall ill,
-    /// children go to school and the bins get collected in every economy, so
-    /// public payrolls barely notice a recession. This is what makes one downturn
-    /// land unevenly instead of flattening the whole economy at once.
     /// What this industry promotes on, as weights that sum to 1:
     ///
     /// * **performance** — how well you do the job you hold (your skill fit for it);
@@ -412,20 +396,32 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
         return "\(rawValue) weighs results, readiness and time served fairly evenly."
     }
 
+    /// How much of the national cycle this sector transmits — its beta. 1.0 moves
+    /// with the economy; above 1 amplifies it, below 1 damps it. It also scales
+    /// the sector's yearly layoff risk (see `Player.layoffRisk(for:)`).
+    ///
+    /// Ranked on the 2007–09 record and JOLTS layoff rates: housing and capital
+    /// goods fall first and hardest (construction lost ~16% of its jobs), then
+    /// the discretionary trades; people fall ill, children go to school and the
+    /// bins get collected in every economy, so public payrolls barely notice.
     var beta: Double {
         switch self {
-        case .hospitalityTourism, .mediaEntertainment, .retailTrade:
-            return 1.6   // first budget households and advertisers cut
-        case .construction, .automotive, .manufacturing, .logistics:
-            return 1.3   // capital spending stops early in a downturn
-        case .software, .hardware:
+        case .construction:
+            return 1.8   // housing and capital projects stop first
+        case .manufacturing, .automotive:
+            return 1.5   // capital goods and big-ticket purchases
+        case .logistics, .hospitalityTourism, .mediaEntertainment:
+            return 1.3   // freight volumes, travel and advertising budgets
+        case .retailTrade:
+            return 1.2
+        case .software, .hardware, .professionalServices:
             return 1.1
-        case .healthcare, .education, .government:
-            return 0.3   // defensive: funded through the cycle
+        case .finance, .aerospaceDefense:
+            return 1.0
         case .pharmaBiotech, .energy, .agriFood, .telecom:
             return 0.6   // people still take their medicine and heat their homes
-        default:
-            return 1.0
+        case .healthcare, .education, .government:
+            return 0.3   // defensive: funded through the cycle
         }
     }
 
@@ -491,9 +487,6 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Multiplier on hire odds for a role in this industry. A slump does not
-    /// close a field — someone is always hired somewhere — it just makes the
-    /// same application a markedly worse bet.
     /// Multiplier on a founder's income this year: customers spend freely in a
     /// boom and pull back hard in a slump.
     var revenueFactor: Double {
@@ -506,26 +499,45 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Multiplier on hire odds for a role in this industry. A slump does not
+    /// close a field — someone is always hired somewhere — it just makes the
+    /// same application a worse bet: JOLTS 2007–09 hires fell ~28%, openings
+    /// ~50% (and a slump also withdraws some postings outright; see
+    /// `GameConstants.slumpPostingWithdrawalChance`).
     var hireFactor: Double {
         switch self {
         case .boom:     return 1.30
         case .growth:   return 1.12
         case .steady:   return 1.00
-        case .slowdown: return 0.80
-        case .slump:    return 0.55
+        case .slowdown: return 0.88
+        case .slump:    return 0.70
         }
     }
 
-    /// Additive term on the annual promotion odds. Employers hand out titles
-    /// when the order book is full and freeze them when it isn't; a slump
-    /// freezes raises outright (see `Player.promotionOdds`).
-    var promotionDelta: Double {
+    /// Multiplier on the annual promotion odds. Employers hand out titles when
+    /// the order book is full and hold them back when it isn't — Pave: growing
+    /// firms promote 18.3% a year, flat ones 14.9%, shrinking ones 11.5% — but
+    /// even a slump only thins promotions (see `Player.promotionOdds`).
+    var promotionFactor: Double {
         switch self {
-        case .boom:     return  0.06
-        case .growth:   return  0.03
-        case .steady:   return  0.00
-        case .slowdown: return -0.04
-        case .slump:    return -0.10
+        case .boom:     return 1.25
+        case .growth:   return 1.10
+        case .steady:   return 1.00
+        case .slowdown: return 0.85
+        case .slump:    return 0.60
+        }
+    }
+
+    /// Multiplier on the yearly layoff risk of a job in this industry (see
+    /// `Player.layoffRisk(for:)`). BLS displacement runs ~1.5% of the employed a
+    /// year in calm times and ~2.3× that in the worst recession since the war.
+    var layoffFactor: Double {
+        switch self {
+        case .boom:     return 0.6
+        case .growth:   return 0.8
+        case .steady:   return 1.0
+        case .slowdown: return 1.6
+        case .slump:    return 2.5
         }
     }
 
@@ -543,8 +555,9 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Whether employers in this industry have stopped promoting altogether.
-    var freezesRaises: Bool { self == .slump }
+    /// Whether employers in this industry have paused merit raises — a slump.
+    /// Promotions still happen, just less often (`promotionFactor`).
+    var pausesMeritRaises: Bool { self == .slump }
 
     /// One line for the Macroeconomics panel.
     var blurb: String {
@@ -552,8 +565,8 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
         case .boom:     return "Hiring hard and paying up — the best year to apply or ask."
         case .growth:   return "Expanding. Openings are easier to come by than usual."
         case .steady:   return "Neither growing nor shrinking. The odds are the plain ones."
-        case .slowdown: return "Tightening. Fewer openings, slower raises."
-        case .slump:    return "Contracting — postings pulled and raises frozen."
+        case .slowdown: return "Tightening. Fewer openings, fewer promotions, more layoffs."
+        case .slump:    return "Contracting — many postings pulled, merit raises paused, layoffs up."
         }
     }
 }

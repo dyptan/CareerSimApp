@@ -32,8 +32,10 @@ struct FameAward: Identifiable, Hashable {
     var id: String { title }
 
     /// Total reputation this shelf entry contributes: per-instance `weight`
-    /// multiplied by the number of times it's been earned.
-    var totalWeight: Double { weight * Double(count) }
+    /// scaled by the square root of the times it's been earned. Repeating the
+    /// same accolade still builds a name, but with diminishing returns — the
+    /// tenth season of club gigs is not ten times the first.
+    var totalWeight: Double { weight * Double(count).squareRoot() }
 }
 
 final class Player: ObservableObject {
@@ -125,27 +127,45 @@ final class Player: ObservableObject {
     /// portfolio nearly rivals the soft-skill fit term). **Top positions** weight
     /// reputation even more heavily — a public profile is often what separates the
     /// shortlist for a leadership seat — so they earn a steeper per-point rate and
-    /// a higher cap (+0.50). See `Job.isTopLeadership` / `Job.hireProbability`.
+    /// a higher cap (+0.50). See `Job.isTopLeadership` / `Job.hireBreakdown`.
     ///
-    /// For an **executive seat** a business (💼) name counts too — whichever is
-    /// higher — since running a company is the credential a board hires for,
-    /// whatever the industry.
-    func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false, executive: Bool = false) -> Double {
-        let rate = topPosition ? 0.12 : 0.07
-        let cap = topPosition ? 0.50 : 0.35
-        var points = famePoints(for: jobCategory.fameCategory)
-        if executive { points = max(points, famePoints(for: .business)) }
-        return min(cap, points * rate)
+    /// Only the field's own bucket counts — an executive seat no longer swaps in
+    /// business fame as well, because a founder's record already eases the seat
+    /// hurdle (`executiveTrackRecord`); counting it in both places made the
+    /// same points pay twice.
+    func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false) -> Double {
+        // A tie-breaker in hiring, not a substitute for the skills and
+        // credentials an employer screens on: at most +0.20 (+0.30 for a top
+        // seat, where reputation weighs more), against the skill term's 0.60.
+        let rate = topPosition ? 0.06 : 0.04
+        let cap = topPosition ? 0.30 : 0.20
+        return min(cap, famePoints(for: jobCategory.fameCategory) * rate)
     }
 
-    /// The chance of clearing the C-suite scarcity hurdle: the base
-    /// `GameConstants.executiveSeatChance`, eased by a business track record —
-    /// years running ventures, rounds, exits — up to +30 points.
-    var executiveSeatChance: Double {
-        let trackRecord = min(GameConstants.executiveTrackRecordCap,
-                              famePoints(for: .business) * GameConstants.executiveTrackRecordPerPoint)
-        return min(1, GameConstants.executiveSeatChance + trackRecord)
+    /// How much a founder's track record — years running ventures, rounds,
+    /// exits, even a fold — eases the seat hurdle on a commercial executive
+    /// seat (`Job.seatChance`): `executiveTrackRecordPerPoint` a point of
+    /// business (💼) fame, up to `executiveTrackRecordCap`.
+    var executiveTrackRecord: Double {
+        min(GameConstants.executiveTrackRecordCap,
+            founderTrackRecordPoints * GameConstants.executiveTrackRecordPerPoint)
     }
+
+    /// Fame earned by actually founding and running companies — ventures run,
+    /// folded, broken out, funded or sold. Boards hire operators with a P&L
+    /// behind them, so a pitch-night slot or a crowdfunding campaign (business
+    /// fame too) doesn't count here.
+    var founderTrackRecordPoints: Double {
+        fameAwards
+            .filter { award in
+                award.title.hasPrefix("Founder of ") || Player.founderTrackRecordTitles.contains(award.title)
+            }
+            .reduce(0) { $0 + $1.totalWeight }
+    }
+
+    static let founderTrackRecordTitles: Set<String> = [
+        "Founder's Lessons", "Breakout Startup", "Successful Exit", "Raised a Round",
+    ]
 
     /// Years a prolonged recession still has to run. While positive, each
     /// `advanceYear` keeps the downturn in force (hiring freeze + layoff risk)
@@ -208,9 +228,11 @@ final class Player: ObservableObject {
     /// Rolls the economy forward one year.
     ///
     /// One national cycle moves first: most of last year carries over, a shock
-    /// moves it, and a declared recession drags it down (otherwise it reverts
-    /// gently toward neutral, so no boom lasts forever). Then each sector's own
-    /// deviation moves on the same pattern, scaled by its `volatility`.
+    /// moves it, and a declared recession drags it down; otherwise it drifts
+    /// gently upward (`expansionDrift` — growth is the economy's normal state)
+    /// while reverting toward neutral, so no boom lasts forever. Then each
+    /// sector's own deviation moves on the same pattern, scaled by its
+    /// `volatility`.
     ///
     /// A sector's published trend is its share of the national cycle — its
     /// `beta` — plus that deviation. That is the whole model: one economy,
@@ -219,7 +241,7 @@ final class Player: ObservableObject {
         let macroShock = Double.random(in: -GameConstants.macroTrendShock...GameConstants.macroTrendShock)
         let macroCycle = recession
             ? -GameConstants.recessionDrag
-            : -macroTrend * GameConstants.industryMeanReversion
+            : GameConstants.expansionDrift - macroTrend * GameConstants.industryMeanReversion
         macroTrend = min(1.0, max(-1.0,
             macroTrend * GameConstants.macroTrendPersistence + macroShock + macroCycle))
 
@@ -412,7 +434,8 @@ final class Player: ObservableObject {
             famePoints: famePoints(for: hustle.fameCategory),
             totalExperienceYears: totalExperienceYears,
             fieldExperienceYears: hustle.experienceCategory.map { industryExperience(for: $0) } ?? 0,
-            climate: projectClimate(for: hustle)
+            climate: projectClimate(for: hustle),
+            age: age
         )
     }
 
@@ -580,20 +603,9 @@ final class Player: ObservableObject {
         guard balance > 0 else { return 0 }
         let n = Double(GameConstants.loanTermYears)
         let payment = Double(balance) * rate / (1 - pow(1 + rate, -n))
-        return Int(payment.rounded())
-    }
-
-    /// This year's instalments due on both loans (interest included), capped
-    /// at what each balance will be once this year's interest is added.
-    private var loanInstalmentsDue: Int {
-        func due(_ balance: Int, _ payment: Int, _ rate: Double) -> Int {
-            guard balance > 0 else { return 0 }
-            let owed = Int((Double(balance) * (1 + rate)).rounded())
-            let instalment = payment > 0 ? payment : Player.annualLoanPayment(balance: balance, rate: rate)
-            return min(instalment, owed)
-        }
-        return due(outstandingLoan, ventureLoanPayment, GameConstants.ventureLoanAnnualInterest)
-            + due(studentLoan, studentLoanPayment, GameConstants.studentLoanAnnualInterest)
+        // Rounded up, so the loan is cleared within its term rather than
+        // leaving a dollar of rounding behind.
+        return Int(payment.rounded(.up))
     }
 
     /// One year of a loan: interest accrues, then the instalment is paid —
@@ -603,11 +615,16 @@ final class Player: ObservableObject {
         guard balance > 0 else { return false }
         balance = Int((Double(balance) * (1 + rate)).rounded())
         let instalment = min(balance, payment > 0 ? payment : Player.annualLoanPayment(balance: balance, rate: rate))
-        let fromIncome = min(instalment, income)
+        // Part from savings, part by spending less (`income` is what spending
+        // can give up this year), then savings again for anything left.
+        let fromSaved = min(Int((Double(instalment) * GameConstants.debtServiceFromSavingsShare).rounded()),
+                            max(0, savings))
+        savings -= fromSaved
+        let fromIncome = min(instalment - fromSaved, income)
         income -= fromIncome
-        let fromSavings = min(instalment - fromIncome, max(0, savings))
+        let fromSavings = min(instalment - fromSaved - fromIncome, max(0, savings))
         savings -= fromSavings
-        balance -= fromIncome + fromSavings
+        balance -= fromSaved + fromIncome + fromSavings
         if balance == 0 { payment = 0; return true }
         return false
     }
@@ -631,7 +648,36 @@ final class Player: ObservableObject {
 
     /// What the player is actually worth: banked savings less any outstanding
     /// venture loan and student debt. Can go negative while debt is being repaid.
-    var netWorth: Int { savings - outstandingLoan - studentLoan }
+    var netWorth: Int { savings - outstandingLoan - studentLoan + heldEquityValue }
+
+    /// Equity the player holds but hasn't sold, at what it would fetch: a
+    /// running business at `privateEquityDiscount` of its stake value (illiquid,
+    /// key-person risk, taxed on sale), a hired executive's vested shares after
+    /// the income tax due on them. The Fed's SCF counts both in net worth.
+    var heldEquityValue: Int {
+        guard !isSimplified, let job = currentOccupation else { return 0 }
+        if job.isEntrepreneurial {
+            return Int((Double(shareStakeValue()) * GameConstants.privateEquityDiscount).rounded())
+        }
+        guard job.isExecutive else { return 0 }
+        return Int((Double(shareStakeValue()) * (1 - GameConstants.equitySaleTaxRate)).rounded())
+    }
+
+    /// What a year's gross income (pay, project fees, endorsements) adds to
+    /// savings: nothing below the mode's living-cost floor, `savingsRate` of
+    /// the slice above it, and `highEarnerSavingsRate` of anything past
+    /// `highEarnerThreshold`. A minor living at home has no floor. Simplified
+    /// banks everything. One rule, read by the year's banking and the views.
+    func annualSaving(gross: Int, atAge livedAge: Int) -> Int {
+        guard gross > 0 else { return 0 }
+        if isSimplified { return gross }
+        let floor = livedAge < GameConstants.adultRoleAge ? 0 : difficulty.livingCostFloor
+        let threshold = GameConstants.highEarnerThreshold
+        let base = max(0, min(gross, threshold) - floor)
+        let top = max(0, gross - threshold)
+        return Int((Double(base) * difficulty.savingsRate
+                    + Double(top) * GameConstants.highEarnerSavingsRate).rounded())
+    }
 
     /// The player's running score, recalculated from current state (so it's
     /// always up to date each year): "wealth velocity" — net worth (savings minus
@@ -674,8 +720,33 @@ final class Player: ObservableObject {
             if currentOccupation?.isEntrepreneurial != true, ventureFoundedAge != nil {
                 clearVenture()
             }
+            // A new position — a hire, a promotion, a venture founded, or
+            // leaving work — starts the clock in the role again. The same job
+            // re-stated (a merit raise, a venture's new year of income) doesn't.
+            if currentOccupation?.id != oldValue?.id {
+                yearsInRole = 0
+                equityVestedYears = 0
+            }
         }
     }
+
+    /// Full years banked in the current position — since the last hire,
+    /// promotion or venture founded (reset by `currentOccupation`). Drives
+    /// promotion seniority and being passed over (`promotionOdds`) and the step
+    /// in the merit-raise schedule (`stepRaise`). Distinct from
+    /// `experienceByRole`, which counts the whole ladder and never resets.
+    @Published var yearsInRole: Int = 0
+
+    /// Years of equity grants vested and not yet sold in a hired executive seat
+    /// (see `shareStakeValue`). Grants vest a year at a time; selling realises
+    /// them and the count starts again. Reset by a new position.
+    @Published var equityVestedYears: Int = 0
+
+    /// Consecutive years an adult has spent with no job and not enrolled in
+    /// study — the length of the current spell out of work. A year worked, even
+    /// one cut short by a layoff, or a year of study ends it. Drives
+    /// `unemploymentHireMultiplier`.
+    @Published var consecutiveUnemployedYears: Int = 0
     @Published var currentEducation: Education?
     @Published var savings: Int
     @Published var lockedTrainings: Set<Training>
@@ -895,19 +966,22 @@ final class Player: ObservableObject {
     }
 
     /// Additive boost to the annual promotion probability from the player's
-    /// network in their current field. Smaller than the hiring bonus (0.6% per
-    /// point, capped at 0.05) — knowing the right people helps you move up, but
-    /// performance (soft skills) still carries most of the weight.
+    /// network in their current field. Smaller than the hiring bonus
+    /// (`networkPromotionPerPoint` a point up to `networkPromotionCap`) —
+    /// knowing the right people helps you move up, but performance (soft
+    /// skills) still carries most of the weight.
     func networkPromotionBonus(for category: JobCategory) -> Double {
-        min(0.05, Double(networkPoints(for: category)) * 0.006)
+        min(GameConstants.networkPromotionCap,
+            Double(networkPoints(for: category)) * GameConstants.networkPromotionPerPoint)
     }
 
     /// Additive boost to the annual promotion probability from the player's fame
-    /// in their current field. A *significant* lever — 3% per weighted point up
-    /// to a 0.15 ceiling, three times the network bonus's reach — because a known
-    /// name is first in line for the next rung, especially the senior ones.
+    /// in their current field: `famePromotionPerPoint` a weighted point up to
+    /// `famePromotionCap`. A known name is first in line for the next rung, but
+    /// it tips a close call rather than deciding it.
     func famePromotionBonus(for category: JobCategory) -> Double {
-        min(0.15, famePoints(for: category.fameCategory) * 0.03)
+        min(GameConstants.famePromotionCap,
+            famePoints(for: category.fameCategory) * GameConstants.famePromotionPerPoint)
     }
 
     // MARK: - Training purchase / refund
@@ -932,74 +1006,126 @@ final class Player: ObservableObject {
 
     /// The per-term breakdown behind `promotionChance`, so the UI can explain the
     /// odds the same way the hire-probability InfoHint does. `promotes` is false
-    /// for unskilled roles that never promote in place (all other terms zero).
+    /// when the role has no rung above it — a standalone role, the top of a
+    /// ladder, a founder — and every other term is then zero: only a real rung
+    /// change is a promotion (pay otherwise grows by merit raises; see
+    /// `stepRaise(for:)`).
     struct PromotionOdds {
         let promotes: Bool
         /// 0...1: skill fit for the role held — how well you do the job.
         let performance: Double
         /// 0...1: skill fit for the next rung — how ready you are for the job
-        /// above. Equal to `performance` at the top of a ladder, where a raise is
-        /// judged on the job you already do.
+        /// above.
         let readiness: Double
         /// 0...1: time in the role against `GameConstants.promotionSeniorityYears`.
         let seniority: Double
+        /// Years in the current role (`Player.yearsInRole`).
         let tenureYears: Int
-        /// The rung above, when the ladder has one.
+        /// The rung above.
         let nextRole: Job?
         /// The industry's weights for the three merit terms.
         let culture: (performance: Double, readiness: Double, seniority: Double)
-        /// The merit terms, weighted by the industry and scaled into a chance.
+        /// `GameConstants.promotionRungDecay` per rung the role sits above its
+        /// ladder's entry — the pyramid narrowing.
+        let rungDecay: Double
+        /// The merit terms, weighted by the industry, scaled into a chance and
+        /// narrowed by `rungDecay`.
         let merit: Double
         let network: Double
         let fame: Double
-        /// The industry's climate this year, whose `promotionDelta` is folded
-        /// into `total` (and which zeroes it outright in a slump).
-        let climate: IndustryClimate
         /// Formal education measured against what the role expects — negative
         /// while under-credentialled (see `Job.educationPromotionTerm`).
         let education: Double
+        /// The industry's climate this year, whose `promotionFactor` multiplies
+        /// the sum.
+        let climate: IndustryClimate
+        /// Multiplier fading the odds after `promotionPassedOverAfterYears` in
+        /// one role — being passed over.
+        let passedOver: Double
+        /// Multiplier fading the odds late in a career.
+        let ageFade: Double
+        /// `(merit + network + fame + education) × climate × passed over × age
+        /// fade`, clamped to 0…1 — the year's roll, before the rung's own bars.
+        let roll: Double
+        /// Whether the player meets the rung above's full requirements — its
+        /// degree and licences *and* all of its stated years (`experienceMet`).
+        let eligible: Bool
+        /// The seat on the rung above (`Job.promotionSeatChance`).
+        let seat: Double
+        /// The chance of stepping up this year: `roll × seat` when eligible,
+        /// otherwise 0.
         let total: Double
     }
 
-    /// The next rung of `job`'s ladder in this year's postings, if it has one.
-    /// Requirements aren't checked — this is the role the player is measured
-    /// against, not a guarantee they can step into it.
+    /// The next rung of `job`'s ladder — read off the catalogue, not this
+    /// year's postings, so a slump that withdraws the posting (or a random
+    /// draw that posts it in another sector) can't cancel the player's own
+    /// promotion. Requirements aren't checked — this is the role the player is
+    /// measured against, not a guarantee they can step into it.
     func nextRung(after job: Job) -> Job? {
-        availableJobs.first { $0.baseTitle == job.baseTitle && $0.rung == job.rung + 1 }
+        guard !job.isEntrepreneurial else { return nil }
+        return JobCatalog.rung(above: job)
+    }
+
+    /// Late-career fade on the promotion odds: 1 up to
+    /// `promotionAgeFadeStart`, falling linearly to `promotionAgeFadeFloor` at
+    /// `promotionAgeFadeEnd`, and staying there.
+    static func promotionAgeFade(age: Int) -> Double {
+        let start = GameConstants.promotionAgeFadeStart, end = GameConstants.promotionAgeFadeEnd
+        guard age > start else { return 1.0 }
+        let t = min(1.0, Double(age - start) / Double(end - start))
+        return 1.0 - t * (1.0 - GameConstants.promotionAgeFadeFloor)
+    }
+
+    /// Being passed over: 1 for the first `promotionPassedOverAfterYears` in a
+    /// role, then `promotionPassedOverRate` less a year, down to
+    /// `promotionPassedOverFloor`.
+    static func promotionPassedOver(yearsInRole: Int) -> Double {
+        let over = max(0, yearsInRole - GameConstants.promotionPassedOverAfterYears)
+        return max(GameConstants.promotionPassedOverFloor,
+                   1.0 - GameConstants.promotionPassedOverRate * Double(over))
     }
 
     /// Full breakdown of the annual promotion odds for `job`. Single source of
-    /// truth for both `promotionChance` and the Occupation section's hint.
+    /// truth for `promotionChance`, the roll in `advanceYear`, the Occupation
+    /// section's hint and the advisor.
     ///
     /// Merit is three things, weighted the way the job's industry weighs them
     /// (`Industry.promotionCulture`): **performance** in the role held (skill fit
     /// for it), **readiness** for the next rung (skill fit for the role above —
     /// where the leadership and planning a ladder adds begin to count), and
-    /// **seniority**. A civil servant climbs mostly on years served; a
-    /// consultant mostly on already working at the next level.
+    /// **seniority** — years in the current role, so it resets on the way up.
+    /// A civil servant climbs mostly on years served; a consultant mostly on
+    /// already working at the next level. Merit narrows by
+    /// `promotionRungDecay` a rung, so the pyramid thins toward the top.
+    ///
+    /// Network, fame and education add to it, and the sum is multiplied by the
+    /// industry's climate (a slump thins promotions, it doesn't stop them),
+    /// by being passed over after years in one role, and by the late-career
+    /// fade. A win moves up one rung only when the player meets that rung's
+    /// full requirements — its years included — and clears its seat.
     func promotionOdds(for job: Job) -> PromotionOdds {
         let culture = job.industry.promotionCulture
         let climate = self.climate(for: job.industry)
-        let years = experienceByRole[job.baseTitle, default: 0]
-        // Unskilled jobs don't promote in place — in real life a raise-and-title
-        // bump rarely lands in work needing no post-secondary training; the
-        // player advances by applying upward instead.
-        // Founders aren't promoted: their pay moves with the business — its age,
-        // its market and its luck (see `advanceVenture`).
-        guard !job.isLowSkilled, !job.isEntrepreneurial else {
+        let years = yearsInRole
+        // Founders aren't promoted: their pay moves with the business (see
+        // `advanceVenture`). And with no rung above there is nothing to be
+        // promoted to — the top of a ladder, or a standalone role.
+        guard let next = nextRung(after: job) else {
             return PromotionOdds(promotes: false, performance: 0, readiness: 0, seniority: 0,
-                                 tenureYears: years, nextRole: nil, culture: culture, merit: 0,
-                                 network: 0, fame: 0, climate: climate, education: 0, total: 0)
+                                 tenureYears: years, nextRole: nil, culture: culture, rungDecay: 1,
+                                 merit: 0, network: 0, fame: 0, education: 0, climate: climate,
+                                 passedOver: 1, ageFade: 1, roll: 0, eligible: false, seat: 1, total: 0)
         }
-        let next = nextRung(after: job)
         let performance = job.softSkillFit(for: self)
-        let readiness = next?.softSkillFit(for: self) ?? performance
+        let readiness = next.softSkillFit(for: self)
         let seniority = min(1.0, Double(years) / Double(GameConstants.promotionSeniorityYears))
         let weighted = culture.performance * performance
             + culture.readiness * readiness
             + culture.seniority * seniority
         let floor = GameConstants.promotionMeritFloor
-        let merit = GameConstants.promotionMeritChance * (floor + (1 - floor) * weighted)
+        let rungDecay = pow(GameConstants.promotionRungDecay, Double(job.rung))
+        let merit = GameConstants.promotionMeritChance * (floor + (1 - floor) * weighted) * rungDecay
 
         let network = networkPromotionBonus(for: job.category)
         let fame = famePromotionBonus(for: job.category)
@@ -1007,26 +1133,103 @@ final class Player: ObservableObject {
         // the qualification is possible outside the regulated professions, but
         // it holds back the climb until you go and earn it.
         let education = job.educationPromotionTerm(for: self)
-        // What the industry is doing. A contracting field freezes raises outright
-        // — which is what the blanket recession freeze used to do to every field
-        // at once, now scoped to the industries actually in trouble.
-        let total = climate.freezesRaises
-            ? 0
-            : max(0, min(1.0, merit + network + fame + education + climate.promotionDelta))
+        let passedOver = Player.promotionPassedOver(yearsInRole: years)
+        let ageFade = Player.promotionAgeFade(age: age)
+        let roll = max(0, min(1.0, (merit + network + fame + education)
+                                   * climate.promotionFactor * passedOver * ageFade))
+        let eligible = next.allRequirementsMet(for: self) && next.experienceMet(for: self)
+        let seat = next.promotionSeatChance(for: self)
         return PromotionOdds(promotes: true, performance: performance, readiness: readiness,
                              seniority: seniority, tenureYears: years, nextRole: next,
-                             culture: culture, merit: merit, network: network, fame: fame,
-                             climate: climate, education: education, total: total)
+                             culture: culture, rungDecay: rungDecay, merit: merit,
+                             network: network, fame: fame, education: education, climate: climate,
+                             passedOver: passedOver, ageFade: ageFade, roll: roll,
+                             eligible: eligible, seat: seat, total: eligible ? roll * seat : 0)
     }
 
     /// Annual promotion probability for a job — see `promotionOdds` for the
     /// terms: industry-weighted merit (performance, readiness for the next rung,
-    /// seniority), plus network, fame, education and the industry's climate.
+    /// seniority), plus network, fame and education, through the climate, the
+    /// plateau and the rung's own bars and seat.
     func promotionChance(for job: Job) -> Double {
         promotionOdds(for: job).total
     }
 
+    /// Pay on a rung step: a raise of `raise` on current pay, clamped into the
+    /// new rung's band — `promotionPayFloorShare…promotionPayCeilingShare` of
+    /// its catalogue median (`income`, not a posting's) — and never below
+    /// current pay: a promotion is never a pay cut.
+    static func promotionPay(current: Int, next: Job, raise: Double) -> Int {
+        let raised = Double(current) * (1 + raise)
+        let band = min(max(raised, Double(next.income) * GameConstants.promotionPayFloorShare),
+                       Double(next.income) * GameConstants.promotionPayCeilingShare)
+        return max(current, Int(band.rounded()))
+    }
+
+    // MARK: - Merit raises
+
+    /// This year's step (merit) raise for `job` as a fraction of pay, before
+    /// the band cap: `annualStepRaiseByTenure` for the years in the role
+    /// (then `annualStepRaiseLate`), scaled by 0.5 + performance fit — so 1–3%
+    /// early on. Zero for a founder and in a slumping industry, where raises
+    /// are paused. Every employee gets it, a cashier as much as an engineer.
+    func stepRaise(for job: Job) -> Double {
+        guard !job.isEntrepreneurial, !climate(for: job.industry).pausesMeritRaises else { return 0 }
+        let schedule = GameConstants.annualStepRaiseByTenure
+        let step = yearsInRole < schedule.count ? schedule[yearsInRole] : GameConstants.annualStepRaiseLate
+        return step * (0.5 + job.softSkillFit(for: self))
+    }
+
+    /// Pay after this year's merit raise: `stepRaise` on current pay, stopped
+    /// at the role's band (`Job.payCeiling`) and never lowering it — pay already
+    /// above the band simply stops growing.
+    func payAfterStepRaise(for job: Job) -> Int {
+        let raised = Int((Double(job.annualIncome) * (1 + stepRaise(for: job))).rounded())
+        return max(job.annualIncome, min(raised, job.payCeiling))
+    }
+
+    // MARK: - Layoffs and time out of work
+
+    /// This year's chance an employee in `job` is laid off, rolled every
+    /// realistic year: `baseLayoffRisk` × the employer sector's beta (never
+    /// below `layoffBetaFloor`) × its climate's `layoffFactor` × the
+    /// difficulty's `layoffSeverity`, capped at `turmoilMaxLayoffChance`. A
+    /// government nurse faces a fraction of a builder's risk; a slumping sector
+    /// several times a booming one's. Founders aren't laid off — their
+    /// businesses fold (see `advanceVenture`).
+    func layoffRisk(for job: Job) -> Double {
+        guard !isSimplified, !job.isEntrepreneurial else { return 0 }
+        let risk = GameConstants.baseLayoffRisk
+            * max(GameConstants.layoffBetaFloor, job.industry.beta)
+            * climate(for: job.industry).layoffFactor
+            * difficulty.layoffSeverity
+        return min(GameConstants.turmoilMaxLayoffChance, risk)
+    }
+
+    /// Gross pay banked in the year `job` is lost to a layoff:
+    /// `layoffYearPayShare` of a year — the months worked, severance and
+    /// unemployment insurance.
+    static func layoffYearPay(for job: Job) -> Int {
+        Int((Double(job.annualIncome) * GameConstants.layoffYearPayShare).rounded())
+    }
+
+    /// Duration dependence on the hire odds: 1 for the first year out of work,
+    /// then `unemploymentHirePenalty` for each consecutive year beyond it, down
+    /// to `unemploymentHireFloor`. Realistic modes only.
+    var unemploymentHireMultiplier: Double {
+        guard !isSimplified else { return 1.0 }
+        let beyondFirst = max(0, consecutiveUnemployedYears - 1)
+        return max(GameConstants.unemploymentHireFloor,
+                   pow(GameConstants.unemploymentHirePenalty, Double(beyondFirst)))
+    }
+
     // MARK: - Year progression
+
+    /// This year's chance that a professional playing career ends at `age`
+    /// (`GameConstants.athleteRetirementChanceByAge`).
+    static func athleteRetirementChance(atAge age: Int) -> Double {
+        GameConstants.athleteRetirementChanceByAge.last { age >= $0.fromAge }?.chance ?? 0
+    }
 
     func advanceYear(appUIState: AppUIState) {
         // Past the horizon there are no more years to live: the score is final,
@@ -1043,6 +1246,10 @@ final class Player: ObservableObject {
         // Read before the birthday: the age-18 transition in `RootView` ends
         // high school, and the year just lived still needs its grade.
         let wasInHighSchool = currentEducation?.level == .HighSchool
+        // Whether this year was spent enrolled in a degree — read before the
+        // graduation step clears it. A year of study isn't time out of work.
+        let studiedThisYear = currentEducation?.profile != nil
+            && (appUIState.yearsLeftToGraduation ?? 0) > 0
         age += 1
         lastPromotionRaisePct = 0
         lastCompetitionWins = 0
@@ -1114,7 +1321,9 @@ final class Player: ObservableObject {
             // accrues interest and is repaid later (see the servicing below), so
             // reaching for a pricey degree with no means is a lasting cost rather
             // than a free negative balance.
-            let tuition = edu.annualTuition
+            // The family covers its share (`familyTuitionShare`); the student
+            // finances the rest.
+            let tuition = Int((Double(edu.annualTuition) * (1 - difficulty.familyTuitionShare)).rounded())
             let fromSavings = min(max(0, savings), tuition)
             savings -= fromSavings
             let borrowed = tuition - fromSavings
@@ -1141,62 +1350,61 @@ final class Player: ObservableObject {
         // Re-roll the job market for the new year (fresh tiers and salaries).
         regenerateAvailableJobs()
 
-        // Economic turmoil (realistic mode only): a downturn can cost the player
-        // their current job and freezes hiring at unstable employers. An ongoing
-        // (prolonged) recession keeps running; otherwise this year may trigger a
-        // new one, whose odds and likelihood of dragging on depend on difficulty.
-        // Tracks whether the economy is in a downturn this year; promotions freeze
-        // while it is — employers don't hand out raises in a recession.
+        // The business cycle (realistic mode only). An ongoing (prolonged)
+        // recession keeps running; otherwise this year may trigger a new one,
+        // whose odds and likelihood of dragging on depend on difficulty. A
+        // recession drags every sector down through its beta — which thins
+        // hiring and promotions and raises layoff risk sector by sector; it no
+        // longer freezes anything outright.
         var recessionThisYear = false
+        var downturnStarted = false
         if !isSimplified {
             if turmoilYearsRemaining > 0 {
                 turmoilYearsRemaining -= 1
                 recessionThisYear = true
-                applyEconomicTurmoil()
             } else if Double.random(in: 0...1) < difficulty.turmoilChance {
                 recessionThisYear = true
+                downturnStarted = true
                 if Double.random(in: 0...1) < difficulty.prolongedTurmoilChance {
                     turmoilYearsRemaining = Int.random(in: GameConstants.prolongedTurmoilExtraYears)
                 }
-                applyEconomicTurmoil()
             }
         }
         economyInRecession = recessionThisYear
 
         // Roll the industry cycle. Simplified mode has no economy at all, so its
-        // industries stay neutral and every climate term reads 1.0 / 0.0.
+        // industries stay neutral and every climate term reads 1.0.
         if !isSimplified {
             advanceIndustryTrends(recession: recessionThisYear)
-            // Postings dry up in a contracting field — the industry-scoped
-            // version of the blanket cyclical-sector freeze this replaces.
-            availableJobs = availableJobs.filter { !climate(for: $0.industry).freezesRaises }
+            withdrawSlumpingPostings()
         }
+
+        // Layoffs (realistic mode): every employee faces a small risk every
+        // year, set by the employer's sector and its climate (`layoffRisk`).
+        // Rolled once the year's climate is known and before pay is banked —
+        // a layoff year still banks part of its pay (below).
+        let laidOff = rollLayoff()
 
         // Investment growth (realistic mode only): the accumulated balance
-        // compounds each year at a market-like return, whether or not the player
-        // is employed. Skipped while in the red — no returns on a negative balance.
+        // compounds each year at a real market return, whether or not the player
+        // is employed — and takes a hit in the year a downturn begins. Skipped
+        // while in the red — no returns on a negative balance.
         if !isSimplified, savings > 0 {
-            savings += Int((Double(savings) * GameConstants.investmentReturn).rounded())
+            let rate = downturnStarted ? GameConstants.downturnStartReturn : GameConstants.investmentReturn
+            savings += Int((Double(savings) * rate).rounded())
         }
 
-        // Bank the year's pay and experience — skipped if a layoff just cleared
-        // the occupation, since an unemployed year earns nothing. Realistic mode
-        // saves only the personal-saving-rate share of income (the rest is taxes
-        // and living costs); simplified mode banks the whole paycheck.
-        // Loan instalments are a fixed bill, not a saving: they come out of pay
-        // first (up to the debt-service ceiling), and only what's left is
-        // subject to the saving rate. The set-aside is spent in the servicing
-        // below.
-        var incomeForLoans = 0
-        if let job = currentOccupation {
-            incomeForLoans = isSimplified ? 0 : min(
-                loanInstalmentsDue,
-                Int((Double(job.annualIncome) * GameConstants.maxDebtServiceShare).rounded())
-            )
-            let saved = isSimplified
-                ? job.annualIncome
-                : Int((Double(job.annualIncome - incomeForLoans) * difficulty.savingsRate).rounded())
-            savings += saved
+        // Tally the year's gross income — pay here, project fees and
+        // endorsements below — and bank what it leaves once living costs and
+        // taxes are paid, in one go at the end (`annualSaving`). A layoff year
+        // earns `layoffYearPayShare` of the pay (months worked, severance and
+        // unemployment insurance) and banks no experience.
+        var grossThisYear = 0
+        let bankedJob = laidOff ?? currentOccupation
+        if let job = bankedJob {
+            grossThisYear += laidOff != nil ? Player.layoffYearPay(for: job) : job.annualIncome
+        }
+        if laidOff == nil, let job = currentOccupation {
             experience[job.category, default: 0] += 1
             experienceByRole[job.baseTitle, default: 0] += 1
             // A year running your own venture builds commercial/founder acumen on
@@ -1205,65 +1413,33 @@ final class Player: ObservableObject {
             if job.isEntrepreneurial, job.category != .entrepreneurship {
                 experience[.entrepreneurship, default: 0] += 1
             }
+            // The step in this year's merit raise is read before the year is
+            // counted, so the first year in a role earns the first step.
+            let meritRaise = isSimplified ? job.annualIncome : payAfterStepRaise(for: job)
+            yearsInRole += 1
+            if job.isExecutive, !job.isEntrepreneurial { equityVestedYears += 1 }
 
-            // Promotion (realistic mode): a yearly shot at a raise, its odds set
-            // by industry-weighted merit (performance, readiness, seniority) plus
-            // network, fame and education — see `promotionOdds`.
-            // A win bumps pay and fires the celebration confetti. Frozen during a
-            // downturn — no raises while the economy is in a recession.
-            if !isSimplified, !recessionThisYear, let current = currentOccupation {
-                let odds = promotionChance(for: current)
-                if Double.random(in: 0...1) < odds {
-                    // Prefer a real rung change: step to the next rung of the
-                    // same ladder, provided the player now meets its full
-                    // requirements (degree, credential, and the tenure just
-                    // banked). Only fall back to an in-place merit raise when
-                    // there's no rung above, or the player doesn't yet meet its
-                    // bar. The ladder declares its own order, so "the next rung"
-                    // is a single unambiguous job. Read off this year's postings
-                    // (regenerated above, and unpruned since promotions are
-                    // frozen in a recession) so the rung pays what its posting
-                    // advertises.
-                    let base = current.baseTitle
-                    let nextIndex = current.rung + 1
-                    var nextRung = availableJobs.first {
-                        $0.baseTitle == base && $0.rung == nextIndex
-                            && $0.allRequirementsMet(for: self)
-                    }
+            // Promotion (realistic mode): a yearly shot at the next rung, its
+            // odds set by industry-weighted merit (performance, readiness,
+            // seniority) plus network, fame and education, through the climate
+            // and the plateau — and only when the player meets that rung's full
+            // requirements and clears its seat (see `promotionOdds`). There is
+            // no in-place "promotion": a year without a rung step earns the
+            // merit raise instead.
+            var promoted = false
+            if !isSimplified, !job.isEntrepreneurial {
+                promoted = rollPromotion(from: job)
+            }
 
-                    // C-suite scarcity: taking an executive seat clears one more
-                    // competitive hurdle — there are few of them and many contenders.
-                    // Miss it and you keep climbing, banking an in-place raise this
-                    // year instead of the title (founders make their own seat, exempt).
-                    if let candidate = nextRung, candidate.isExecutive, !candidate.isEntrepreneurial,
-                       Double.random(in: 0...1) >= executiveSeatChance {
-                        nextRung = nil
-                    }
-
-                    // Never a pay cut on a promotion: take the higher of the new
-                    // rung's pay and a raise on the current salary. With no rung
-                    // to move into, the raise applies in place.
-                    let raise = Double.random(in: GameConstants.promotionRaise)
-                    let raised = Int((Double(current.annualIncome) * (1 + raise)).rounded())
-                    var promoted = nextRung ?? current
-                    // A promotion is at the same employer: the sector stays put,
-                    // whatever industry this year's posting of the rung names.
-                    promoted.industry = current.industry
-                    promoted.annualIncome = max(promoted.annualIncome, raised)
-                    currentOccupation = promoted
-                    lastPromotionRaisePct = current.annualIncome > 0
-                        ? max(0, Int((((Double(promoted.annualIncome) / Double(current.annualIncome)) - 1) * 100).rounded()))
-                        : 0
-                    celebrateIfLucky(odds)
-                    showPromotionAlert = true
-                    if nextRung != nil {
-                        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(promoted.annualIncome.formatted(.number)) $ a year."
-                        recordStatus("⬆️", "Promoted to \(promoted.id)")
-                    } else {
-                        promotionMessage = "You got a raise — +\(lastPromotionRaisePct)%, now \(promoted.annualIncome.formatted(.number)) $ a year."
-                        recordStatus("⬆️", "Promoted in \(current.baseTitle) — pay +\(lastPromotionRaisePct)%")
-                    }
-                }
+            // The merit raise (realistic mode): every employee's pay creeps up
+            // a little each year in the role, up to the band's top. Paused in a
+            // slumping industry; a year with a promotion already got its raise.
+            if !isSimplified, !promoted, !job.isEntrepreneurial, meritRaise > job.annualIncome {
+                let pct = Int(((Double(meritRaise) / Double(job.annualIncome) - 1) * 100).rounded())
+                var raised = job
+                raised.annualIncome = meritRaise
+                currentOccupation = raised
+                recordStatus("💵", "Merit raise\(pct > 0 ? " of \(pct)%" : "") — now \(meritRaise.formatted(.number)) $ a year")
             }
 
             // A founder's year (realistic mode): the business may fold, may —
@@ -1271,6 +1447,24 @@ final class Player: ObservableObject {
             if !isSimplified, job.isEntrepreneurial {
                 advanceVenture(job, recession: recessionThisYear)
             }
+
+            // A professional athlete's body sets the end of the career, not the
+            // ladder: most pros are done by their mid-30s. The fame stays — it
+            // opens broadcasting, coaching and endorsement doors afterwards.
+            if job.baseTitle == "Player", job.rung >= 1,
+               Double.random(in: 0...1) < Player.athleteRetirementChance(atAge: age) {
+                currentOccupation = nil
+                recordStatus("🏁", "Retired from professional sport at \(age)")
+            }
+        }
+
+        // The spell out of work: a year with no job at all, lived as an adult
+        // and not spent studying, lengthens it; a year worked (even one cut
+        // short by a layoff) or studied ends it.
+        if bankedJob == nil, !studiedThisYear, age - 1 >= GameConstants.adultRoleAge {
+            consecutiveUnemployedYears += 1
+        } else {
+            consecutiveUnemployedYears = 0
         }
 
         // Spare-time projects. Nothing is staked but the year, and nothing is
@@ -1309,7 +1503,8 @@ final class Player: ObservableObject {
                                          famePoints: famePoints(for: hustle.fameCategory),
                                          totalExperienceYears: careerYears,
                                          fieldExperienceYears: fieldYears,
-                                         climate: projectClimate(for: hustle))
+                                         climate: projectClimate(for: hustle),
+                                         age: age - 1)
             // The practice lands either way — applied before the roll is read,
             // so nothing about the outcome can gate it.
             for ability in hustle.growth {
@@ -1319,9 +1514,7 @@ final class Player: ObservableObject {
                 // Fame pays: the project's earnings, banked like any income.
                 if outcome.pay > 0 {
                     lastYearProjectPay += outcome.pay
-                    savings += isSimplified
-                        ? outcome.pay
-                        : Int((Double(outcome.pay) * difficulty.savingsRate).rounded())
+                    grossThisYear += outcome.pay
                     recordStatus("💵", "\(hustle.label) paid \(outcome.pay.formatted(.number)) $")
                 }
                 if let grant = outcome.grantedFame {
@@ -1341,11 +1534,7 @@ final class Player: ObservableObject {
         // Endorsements: a famous entertainment name is paid to carry brands,
         // year in, year out — on top of whatever else the year earned.
         lastYearEndorsements = endorsementIncome
-        if lastYearEndorsements > 0 {
-            savings += isSimplified
-                ? lastYearEndorsements
-                : Int((Double(lastYearEndorsements) * difficulty.savingsRate).rounded())
-        }
+        grossThisYear += lastYearEndorsements
 
         // Competitions: practising a discipline automatically enters you into
         // its top eligible contest — no menu, no entry fee. Win odds start low
@@ -1372,20 +1561,35 @@ final class Player: ObservableObject {
         }
         lastCompetitionWins = competitionWins
 
+        // Bank what the year's income leaves after living costs and tax. An
+        // adult with less than the living-cost floor coming in (out of work,
+        // not studying) draws the shortfall's share from savings instead —
+        // rent doesn't stop with the paycheck — but never goes into the red.
+        let livedAge = age - 1
+        savings += annualSaving(gross: grossThisYear, atAge: livedAge)
+        if !isSimplified, livedAge >= GameConstants.adultRoleAge, !studiedThisYear,
+           grossThisYear < difficulty.livingCostFloor {
+            let draw = Int((Double(difficulty.livingCostFloor - grossThisYear) * GameConstants.unemployedDrawShare).rounded())
+            savings -= min(max(0, savings), draw)
+        }
+
         // Service the loans: interest accrues, then the year's instalment is
-        // paid from the income set aside for it, then from savings. A folded
-        // venture still owes — the debt outlives the business — and whatever
-        // can't be paid stays owed and keeps accruing.
+        // paid — partly from savings, partly by spending less (see
+        // `serviceLoan`). A folded venture still owes — the debt outlives the
+        // business — and whatever can't be paid stays owed and keeps accruing.
+        // Student loans are deferred while enrolled (interest still accrues),
+        // as federal loans are.
+        var spendingCut = isSimplified ? 0 : Int((Double(grossThisYear) * GameConstants.maxDebtServiceShare).rounded())
         if serviceLoan(&outstandingLoan, payment: &ventureLoanPayment,
-                       rate: GameConstants.ventureLoanAnnualInterest, income: &incomeForLoans) {
+                       rate: GameConstants.ventureLoanAnnualInterest, income: &spendingCut) {
             recordStatus("🏦", "Paid off your venture loan")
         }
-        if serviceLoan(&studentLoan, payment: &studentLoanPayment,
-                       rate: GameConstants.studentLoanAnnualInterest, income: &incomeForLoans) {
+        if studiedThisYear, studentLoan > 0 {
+            studentLoan = Int((Double(studentLoan) * (1 + GameConstants.studentLoanAnnualInterest)).rounded())
+        } else if serviceLoan(&studentLoan, payment: &studentLoanPayment,
+                              rate: GameConstants.studentLoanAnnualInterest, income: &spendingCut) {
             recordStatus("🎓", "Paid off your student loan")
         }
-        // Any set-aside the instalments didn't need is ordinary pay again.
-        savings += Int((Double(incomeForLoans) * difficulty.savingsRate).rounded())
 
         // The year just lived may have been the last one. Raise the Game Over
         // sheet after everything else has settled, so the final score already
@@ -1396,34 +1600,60 @@ final class Player: ObservableObject {
         }
     }
 
-    /// Resolves an economic downturn for the year: pulls risky offers from the
-    /// market and rolls the player's current job against the base job-loss risk.
-    /// The downturn is surfaced to the player only through the header recession
-    /// note (see `economyInRecession`), not a pop-up.
-    private func applyEconomicTurmoil() {
-        // Postings are pulled by industry rather than by a blanket cyclical-sector
-        // rule now — see the climate filter in `advanceYear`, which runs after the
-        // trends are rolled and so knows which fields are actually contracting.
-        guard currentOccupation != nil else { return }
-        // Founders own their business — they aren't laid off. A downturn still
-        // squeezes them elsewhere (frozen hiring/raises, and thinner odds of
-        // finding a buyer if they try to sell their stake in the Boardroom).
-        if currentOccupation?.isEntrepreneurial == true { return }
-        // Job-loss probability is the calm-economy base risk amplified by how
-        // severe the downturn is on this difficulty (e.g. 0.08 × 6, capped).
-        let lossChance = min(
-            GameConstants.turmoilMaxLayoffChance,
-            GameConstants.baseLayoffRisk * difficulty.layoffSeverity
-        )
-        if Double.random(in: 0...1) < lossChance {
-            let lost = currentOccupation
-            currentOccupation = nil
-            lostJobThisYear = true
-            showLayoffAlert = true
-            if let lost {
-                recordStatus("💼", "Laid off from \(lost.baseTitle)")
-            }
+    /// Withdraws part of a slumping sector's postings: each role whose
+    /// industry is in a slump — every rung of a ladder together — is pulled
+    /// from this year's market with `slumpPostingWithdrawalChance`. Openings
+    /// fall sharply in a contraction, but never to zero, so a laid-off worker
+    /// can still find something to apply for. Promotions read the catalogue,
+    /// not this list (see `nextRung`), so the player's own ladder is untouched.
+    private func withdrawSlumpingPostings() {
+        var withdrawn: [String: Bool] = [:]
+        availableJobs = availableJobs.filter { job in
+            guard climate(for: job.industry) == .slump else { return true }
+            if let decided = withdrawn[job.baseTitle] { return !decided }
+            let pull = Double.random(in: 0...1) < GameConstants.slumpPostingWithdrawalChance
+            withdrawn[job.baseTitle] = pull
+            return !pull
         }
+    }
+
+    /// Rolls this year's layoff (see `layoffRisk`). On a layoff the job is
+    /// gone, the pop-up and the status line fire, and the job lost is returned
+    /// so the year can bank its partial pay; nil when the player keeps their
+    /// job (or has none, or is a founder — businesses fold instead).
+    private func rollLayoff() -> Job? {
+        guard let job = currentOccupation else { return nil }
+        let risk = layoffRisk(for: job)
+        guard risk > 0, Double.random(in: 0...1) < risk else { return nil }
+        currentOccupation = nil
+        lostJobThisYear = true
+        showLayoffAlert = true
+        recordStatus("💼", "Laid off from \(job.baseTitle) — paid about half the year, with severance")
+        return job
+    }
+
+    /// Rolls the year's promotion for `job` (see `promotionOdds`) and, on a
+    /// win, steps up one rung at the same employer: pay rises by
+    /// `promotionRaise`, clamped into the new rung's band (`promotionPay`).
+    /// Returns whether the player was promoted.
+    private func rollPromotion(from job: Job) -> Bool {
+        let odds = promotionOdds(for: job)
+        guard odds.total > 0, let next = odds.nextRole,
+              Double.random(in: 0...1) < odds.total else { return false }
+        var promoted = next
+        // A promotion is at the same employer: the sector stays put.
+        promoted.industry = job.industry
+        promoted.annualIncome = Player.promotionPay(current: job.annualIncome, next: next,
+                                                    raise: Double.random(in: GameConstants.promotionRaise))
+        currentOccupation = promoted        // restarts the years in the role
+        lastPromotionRaisePct = job.annualIncome > 0
+            ? max(0, Int(((Double(promoted.annualIncome) / Double(job.annualIncome) - 1) * 100).rounded()))
+            : 0
+        celebrateIfLucky(odds.total)
+        showPromotionAlert = true
+        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(promoted.annualIncome.formatted(.number)) $ a year."
+        recordStatus("⬆️", "Promoted to \(promoted.id) — pay +\(lastPromotionRaisePct)%")
+        return true
     }
 
     /// Applies for admission to a school — a roll in every mode. Records the
@@ -1448,6 +1678,7 @@ final class Player: ObservableObject {
             var hiredJob = job
             hiredJob.annualIncome = requestedSalary
             currentOccupation = hiredJob
+            yearsInRole = 0                 // a new position, even under the same title
             recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(requestedSalary.formatted(.number)) $/year")
         }
         return hired
@@ -1509,7 +1740,7 @@ final class Player: ObservableObject {
         let foldRisk = min(
             GameConstants.ventureMaxFailureRisk,
             Player.ventureFoldRisk(year: year, preparation: venturePreparation)
-                * (recession ? difficulty.layoffSeverity : 1.0)
+                * (recession ? GameConstants.ventureRecessionFoldMultiplier : 1.0)
         )
         if Double.random(in: 0...1) < foldRisk {
             let recovered = Int((Double(ventureStake) * GameConstants.ventureFoldRecovery).rounded())
@@ -1583,8 +1814,8 @@ final class Player: ObservableObject {
     /// Deliberately steep: raising capital turns on who the market has heard of,
     /// so a well-known founder's reputation is the single biggest swing after
     /// raw skill fit. Reaching the cap takes ~5 points of business (💼) fame.
-    private static let investmentRoundFameRate = 0.11
-    private static let investmentRoundFameCap = 0.55
+    private static let investmentRoundFameRate = 0.06
+    private static let investmentRoundFameCap = 0.25
 
     /// The player's business (💼) fame contribution to an investment round —
     /// exposed so the Boardroom can show how much of the odds reputation is
@@ -1607,7 +1838,7 @@ final class Player: ObservableObject {
         let fit = investmentRoundSkillFit()
         let network = networkBonus(for: job.category)   // up to +0.12
         let fame = investmentRoundFameBonus()           // up to +0.55 (business fame)
-        return max(0.05, min(0.95, 0.12 + fit * 0.40 + network + fame))
+        return max(0.05, min(GameConstants.investmentRoundMaxOdds, 0.12 + fit * 0.40 + network + fame))
     }
 
     /// 0...1 weighted fit of the pitch skills (see `investmentRoundSkills`).
@@ -1628,9 +1859,17 @@ final class Player: ObservableObject {
     /// — and each investment round and a breakout multiply it.
     func shareStakeValue() -> Int {
         guard let job = currentOccupation else { return 0 }
-        let years = job.isEntrepreneurial && ventureFoundedAge != nil
-            ? ventureYears
-            : experienceByRole[job.baseTitle, default: 0]
+        // A hired executive owns only the equity grants that have vested since
+        // they last sold — each year a fraction of pay (`execEquityGrantShare`),
+        // up to `execEquityMaxMultiple` years' worth. Selling uses it up.
+        if !job.isEntrepreneurial {
+            let grant = job.id.contains("Chief")
+                ? GameConstants.execEquityGrantShareCSuite
+                : GameConstants.execEquityGrantShare
+            let multiple = min(Double(equityVestedYears) * grant, GameConstants.execEquityMaxMultiple)
+            return Int((Double(job.annualIncome) * multiple).rounded())
+        }
+        let years = ventureFoundedAge != nil ? ventureYears : experienceByRole[job.baseTitle, default: 0]
         var multiple = min(0.75 + Double(years) * 0.15, 2.5)
         var income = Double(job.annualIncome)
         if job.isEntrepreneurial, ventureMatureIncome > 0 {
@@ -1645,7 +1884,11 @@ final class Player: ObservableObject {
     /// a scalable venture — well under 1% of real businesses ever raise venture
     /// capital, and a restaurant isn't one of them.
     var canRaiseInvestmentRound: Bool {
+        // Investors want a year of traction first, and a company rarely raises
+        // more than a seed plus a few priced rounds (A–C) before an exit.
         currentOccupation?.isScalableVenture == true
+            && ventureYears >= 1
+            && ventureRoundsRaised < GameConstants.maxInvestmentRounds
     }
 
     /// Bounds for the asking-price slider: a buyer will entertain anything from a
@@ -1692,7 +1935,11 @@ final class Player: ObservableObject {
                 recordStatus("🤝", "No buyer for your \(job.baseTitle) stake at \(ask.formatted(.number)) $ this year")
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
             }
-            savings += ask
+            // What reaches the bank: a hired executive's vested shares are taxed
+            // as income; a founder's exit pays broker fees and capital-gains tax.
+            let kept = job.isEntrepreneurial ? 1 - GameConstants.founderExitCostRate : 1 - GameConstants.equitySaleTaxRate
+            let proceeds = Int((Double(ask) * kept).rounded())
+            savings += proceeds
             // An owner-founder who sells their stake exits the venture entirely —
             // the seat is gone, freeing them to start something new (and the
             // Ventures button returns). Ownership is what an entrepreneurial seat
@@ -1702,11 +1949,12 @@ final class Player: ObservableObject {
                 currentOccupation = nil            // clears the venture state too
                 // A successful exit is the strongest founder credential there is.
                 award("Successful Exit", icon: decision.icon, category: .business, weight: GameConstants.founderExitFame)
-                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ — exited the venture")
+                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ (\(proceeds.formatted(.number)) $ after fees and tax) — exited the venture")
             } else {
-                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $")
+                equityVestedYears = 0
+                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $ (\(proceeds.formatted(.number)) $ after tax)")
             }
-            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: ask, fameTitle: nil)
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: proceeds, fameTitle: nil)
         case .investmentRound:
             let odds = investmentRoundOdds()
             let succeeded = Double.random(in: 0...1) < odds
@@ -1726,7 +1974,7 @@ final class Player: ObservableObject {
             // Closing a round is a business milestone: it banks business (💼)
             // fame, which in turn lifts the odds on the next round — a founder's
             // reputation compounds.
-            award(title, icon: decision.icon, category: .business, weight: 1.5)
+            award(title, icon: decision.icon, category: .business, weight: 0.75)
             let growthAxes: [WritableKeyPath<SoftSkills, Int>] =
                 [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation]
             for kp in growthAxes {
@@ -1764,6 +2012,7 @@ final class Player: ObservableObject {
         statusEvents = fresh.statusEvents
         lostJobThisYear = fresh.lostJobThisYear
         showLayoffAlert = fresh.showLayoffAlert
+        consecutiveUnemployedYears = fresh.consecutiveUnemployedYears
         age = fresh.age
         softSkills = fresh.softSkills
         hardSkills = fresh.hardSkills
@@ -1771,6 +2020,8 @@ final class Player: ObservableObject {
         experience = fresh.experience
         experienceByRole = fresh.experienceByRole
         currentOccupation = fresh.currentOccupation
+        yearsInRole = fresh.yearsInRole
+        equityVestedYears = fresh.equityVestedYears
         currentEducation = fresh.currentEducation
         savings = fresh.savings
         outstandingLoan = fresh.outstandingLoan

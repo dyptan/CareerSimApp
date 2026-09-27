@@ -398,7 +398,10 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// game dev, design, performing arts) legally gate nothing, so their payoff is
     /// this soft probability lift: a relevant credential meaningfully raises the
     /// odds of being hired into the field (`Job.hireProbability`) and of a venture
-    /// in it succeeding (`Job.founderSuccessProbability`). `nil` for the licences,
+    /// in it succeeding (`Job.founderSuccessProbability`), and counts as one
+    /// level of the schooling a role there expects
+    /// (`Job.equivalentExperienceCredit`). The CPA carries a small one too — a
+    /// valued credential no accounting job requires. `nil` for the licences,
     /// which don't move the odds — they open (or close) the door outright.
     var careerBoost: CareerBoost? { rules.careerBoost }
 
@@ -552,11 +555,18 @@ extension Training {
         // MARK: Role-defining certifications
         .cna:                  .init(),
         .dentalAssistant:      .init(),
+        // Airlines train and certify cabin crew after hiring, so no job asks
+        // for this one up front — it builds the skills the work leans on.
         .flightAttendantCert:  .init(),
-        .teachingCertificate:  .init(minEQF: 5),
-        .cosmetology:          .init(),
+        // A public-school teaching licence and a state cosmetology licence are
+        // both required by law to practise (BLS), so they gate every employer.
+        .teachingCertificate:  .init(isStatutory: true, minEQF: 5),
+        .cosmetology:          .init(isStatutory: true),
         .emt:                  .init(),
-        .cpa:                  .init(minEQF: 5),
+        // Valued but not required to work as an accountant: a modest edge in
+        // accounting and business roles rather than a gate.
+        .cpa:                  .init(minEQF: 5,
+                                     careerBoost: .init(categories: [.administration, .business], weight: 0.10)),
         .boardCertified:       .init(minEQF: 7, minYearsExperience: 3, field: .health),
         // A pharmacy technician is trained and registered, not degreed — it is
         // the way into a dispensary without the pharmacist's doctorate.
@@ -620,16 +630,18 @@ extension Training {
         // MARK: Skill-building programs
         // Non-statutory and non-gating: their value is the edge in landing a job
         // or launching a venture in the field, plus the soft skills they build.
-        // Open entry — a bootcamp or a studio course asks for none of your
-        // schooling, only the year.
+        // The portfolio one leaves you with also stands in for one level of the
+        // schooling a role in the field expects (`Job.equivalentExperienceCredit`),
+        // which is why the added edge is modest. Open entry — a bootcamp or a
+        // studio course asks for none of your schooling, only the year.
         .codingBootcamp:       .init(minEQF: 0,
-                                     careerBoost: .init(categories: [.technology, .engineering], weight: 0.15)),
+                                     careerBoost: .init(categories: [.technology, .engineering], weight: 0.10)),
         .gameDevProgram:       .init(minEQF: 0,
-                                     careerBoost: .init(categories: [.design, .technology], weight: 0.15)),
+                                     careerBoost: .init(categories: [.design, .technology], weight: 0.10)),
         .productDesign:        .init(minEQF: 0,
-                                     careerBoost: .init(categories: [.design], weight: 0.15)),
+                                     careerBoost: .init(categories: [.design], weight: 0.10)),
         .musicProduction:      .init(minEQF: 0,
-                                     careerBoost: .init(categories: [.showBusiness], weight: 0.12)),
+                                     careerBoost: .init(categories: [.showBusiness], weight: 0.08)),
     ]
 
     /// This credential's rules. Falls back to the defaults for a case with no

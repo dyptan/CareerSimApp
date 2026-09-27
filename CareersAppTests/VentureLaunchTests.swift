@@ -199,6 +199,8 @@ final class VentureLaunchTests: XCTestCase {
         for _ in 0..<60 {
             let founder = realisticFounder(savings: 80_000)
             founder.foundVenture(saas, investedCapital: 80_000)
+            XCTAssertFalse(founder.canRaiseInvestmentRound, "Investors want a year of traction first.")
+            founder.ventureFoundedAge = founder.age - 1
             XCTAssertTrue(founder.canRaiseInvestmentRound)
             let savings = founder.savings
             let valueBefore = founder.shareStakeValue()
@@ -284,21 +286,28 @@ final class VentureLaunchTests: XCTestCase {
     }
 
     /// A founder's track record counts at the top of other companies too — a
-    /// failed founder included: business fame eases the C-suite hurdle.
+    /// failed founder included: business fame eases the seat hurdle on a
+    /// commercial executive seat, within its cap.
     func testFounderTrackRecordHelpsLandAnExecutiveSeat() throws {
         let ceo = try XCTUnwrap(JobCatalog.allJobs().first { $0.isExecutive && !$0.isEntrepreneurial })
         let player = realisticFounder(savings: 0)
         let before = ceo.hireProbability(for: player, requestedSalary: Double(ceo.annualIncome))
-        let seatBefore = player.executiveSeatChance
+        let seatBefore = ceo.seatChance(for: player)
+        XCTAssertLessThan(seatBefore, 1, "Premise: \(ceo.id) is a scarce seat.")
         player.award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
         player.award("Founder of Specialty Coffee Roastery", icon: "☕", category: .business, weight: 1.5)
-        XCTAssertGreaterThan(player.executiveSeatChance, seatBefore)
+        XCTAssertGreaterThan(ceo.seatChance(for: player), seatBefore)
         XCTAssertGreaterThanOrEqual(ceo.hireProbability(for: player, requestedSalary: Double(ceo.annualIncome)), before)
+        // However long the record, it only eases the hurdle.
+        for _ in 0..<20 { player.award("Successful Exit", icon: "💸", category: .business, weight: GameConstants.founderExitFame) }
+        XCTAssertLessThanOrEqual(ceo.seatChance(for: player),
+                                 (ceo.seatScarcity ?? 1) + GameConstants.executiveTrackRecordCap + 1e-9)
     }
 
-    /// A loan is a fixed bill paid out of income: a salaried borrower clears a
-    /// venture loan within its term, even on a thin saving rate — debt no
-    /// longer outgrows a healthy income.
+    /// A loan is a fixed bill, paid partly from what would have been saved and
+    /// partly by spending less: a salaried borrower clears a venture loan within
+    /// its term — debt doesn't outgrow a healthy income — and still saves a
+    /// little alongside.
     func testLoanIsRepaidFromIncomeWithinItsTerm() throws {
         let player = Player()
         player.difficulty = .comfortable              // no downturns, so no layoffs

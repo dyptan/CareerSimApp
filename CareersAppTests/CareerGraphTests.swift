@@ -95,6 +95,8 @@ final class CatalogIntegrityTests: XCTestCase {
             ("workSettingByBaseTitle", Array(JobCatalog.workSettingByBaseTitle.keys)),
             ("industriesByBaseTitle", Array(JobCatalog.industriesByBaseTitle.keys)),
             ("Job.publicPayScaleTitles", Array(Job.publicPayScaleTitles)),
+            ("hiringDemandByBaseTitle", Array(JobCatalog.hiringDemandByBaseTitle.keys)),
+            ("minimumAgeByBaseTitle", Array(JobCatalog.minimumAgeByBaseTitle.keys)),
         ]
         let known = baseTitles
         for (name, keys) in tables {
@@ -396,10 +398,13 @@ final class CatalogIntegrityTests: XCTestCase {
     /// The same factor has to reach promotions, not just hiring — being
     /// under-credentialled for the role you hold should cap how far you climb.
     func testDegreeMovesPromotionOdds() {
-        guard let job = JobCatalog.allJobs().first(where: {
-            !$0.isEntrepreneurial && !$0.educationIsMandatory
-                && $0.requirements.education.minEQF >= 5 && !$0.isLowSkilled
-        }) else { return XCTFail("No non-regulated degree-level skilled role.") }
+        // A rung with one above it: only a real rung step is a promotion now.
+        let all = JobCatalog.allJobs()
+        guard let job = all.first(where: { candidate in
+            !candidate.isEntrepreneurial && !candidate.educationIsMandatory
+                && candidate.requirements.education.minEQF >= 5 && !candidate.isLowSkilled
+                && all.contains { $0.baseTitle == candidate.baseTitle && $0.rung == candidate.rung + 1 }
+        }) else { return XCTFail("No non-regulated degree-level skilled role with a rung above.") }
 
         let none = Self.candidate(eqf: nil, profile: nil)
         let relevant = Self.candidate(eqf: .Bachelor,
@@ -409,7 +414,7 @@ final class CatalogIntegrityTests: XCTestCase {
 
         XCTAssertLessThan(withoutDegree.education, 0,
                           "Holding a degree-level role without the degree should hold promotions back.")
-        XCTAssertGreaterThan(withDegree.total, withoutDegree.total,
+        XCTAssertGreaterThan(withDegree.roll, withoutDegree.roll,
                              "The degree should raise the annual promotion odds.")
         XCTAssertGreaterThanOrEqual(withoutDegree.total, 0, "Odds must never go negative.")
     }
@@ -753,14 +758,14 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0, "No credential, no bonus.")
 
         player.hardSkills.trainings.insert(.codingBootcamp)
-        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.15, accuracy: 1e-9,
+        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.10, accuracy: 1e-9,
                        "A Coding Bootcamp should lift technology odds.")
         XCTAssertEqual(player.trainingCareerBonus(for: .health), 0,
                        "It should do nothing for an unrelated field.")
 
         // A second tech-relevant credential doesn't stack — the strongest applies.
         player.hardSkills.trainings.insert(.gameDevProgram)
-        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.15, accuracy: 1e-9,
+        XCTAssertEqual(player.trainingCareerBonus(for: .technology), 0.10, accuracy: 1e-9,
                        "Bonuses take the strongest relevant credential, not the sum.")
     }
 
@@ -795,7 +800,8 @@ final class CareerGraphTests: XCTestCase {
         player.difficulty = .middleClass
         player.configureStart(age: 40)
         // The climate is a common factor either side of the credential, but a bad
-        // enough year floors both at 5% and the difference vanishes. Pin it.
+        // enough year floors both at the hiring floor and the difference
+        // vanishes. Pin it.
         player.pinNeutralEconomy()
         player.experience[.technology] = 12   // seasoned enough to clear tech gates
 
@@ -853,9 +859,15 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertTrue(player.canMakeExecutiveDecisions)
 
         let rookie = player.shareStakeValue()
-        player.experienceByRole[ceo.baseTitle] = 8
+        XCTAssertEqual(rookie, 0, "A new hire has nothing vested yet.")
+        player.equityVestedYears = 3
         let veteran = player.shareStakeValue()
         XCTAssertGreaterThan(veteran, rookie, "Longer tenure should vest more equity.")
+        player.equityVestedYears = 100
+        XCTAssertEqual(player.shareStakeValue(),
+                       Int((Double(ceo.annualIncome) * GameConstants.execEquityMaxMultiple).rounded()),
+                       "Unsold vested equity is capped.")
+        player.equityVestedYears = 3
 
         // Asking above fair value should find fewer buyers; odds stay in bounds.
         let fair = player.shareStakeValue()
@@ -870,9 +882,13 @@ final class CareerGraphTests: XCTestCase {
         guard let decision = ExecutiveDecisionCatalog.byId["sellShares"] else { return }
         let before = player.savings
         let outcome = player.resolveExecutiveDecision(decision, askPrice: fair)
-        // Whether or not a buyer appears, savings move by exactly the cash booked.
+        // Whether or not a buyer appears, savings move by exactly the cash booked
+        // — the ask less the income tax due on vested shares — and a sale uses
+        // the vested equity up.
         XCTAssertEqual(player.savings, before + outcome.cash)
-        XCTAssertEqual(outcome.cash, outcome.success ? fair : 0)
+        XCTAssertEqual(outcome.cash, outcome.success
+                       ? Int((Double(fair) * (1 - GameConstants.equitySaleTaxRate)).rounded()) : 0)
+        if outcome.success { XCTAssertEqual(player.shareStakeValue(), 0) }
         XCTAssertTrue(player.hasUsedExecutiveDecision(decision),
                       "A decision should be marked used for the year.")
     }
@@ -885,6 +901,7 @@ final class CareerGraphTests: XCTestCase {
         }
         let player = Player()
         player.currentOccupation = ceo
+        player.equityVestedYears = 2
         let fair = player.shareStakeValue()
         let normalOdds = player.shareSaleOdds(askPrice: fair)
         player.economyInRecession = true
@@ -951,13 +968,14 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertEqual(player.investmentRoundOdds(), plain, accuracy: 0.0001,
                        "Only business fame should move investment-round odds.")
 
-        // A big business reputation should be a large, capped swing.
+        // A big business reputation should be a real, capped lift — but not
+        // one that makes a round a formality.
         player.award("Serial Founder", icon: "💼", category: .business, weight: 10)
-        XCTAssertEqual(player.investmentRoundFameBonus(), 0.55, accuracy: 0.0001,
+        XCTAssertEqual(player.investmentRoundFameBonus(), 0.25, accuracy: 0.0001,
                        "Ample business fame should saturate the fame bonus at its cap.")
-        XCTAssertGreaterThan(player.investmentRoundOdds() - plain, 0.30,
+        XCTAssertGreaterThan(player.investmentRoundOdds() - plain, 0.15,
                              "Business fame should be a significant lift, not a rounding error.")
-        XCTAssertLessThanOrEqual(player.investmentRoundOdds(), 0.95)
+        XCTAssertLessThanOrEqual(player.investmentRoundOdds(), GameConstants.investmentRoundMaxOdds)
     }
 
     // MARK: - Investment round outcome
@@ -1048,7 +1066,7 @@ final class CareerGraphTests: XCTestCase {
                        "The ladder should read as the three real flight-deck ranks.")
 
         // Experience gates come from `minYearsByTitle`, which keys on full title.
-        XCTAssertEqual(rungs.map(\.requirements.minYearsExperience), [1, 3, 8],
+        XCTAssertEqual(rungs.map(\.requirements.minYearsExperience), [2, 3, 8],
                        "Each rank should expect more hours than the one below it.")
 
         // Pay and sector rise and hold respectively.
@@ -1115,9 +1133,10 @@ final class CareerGraphTests: XCTestCase {
     /// climate reaches hiring, promotions and projects alike.
     func testClimateMovesHiringPromotionAndProjectOdds() throws {
         let jobs = JobCatalog.allJobs()
-        guard let job = jobs.first(where: {
-            $0.category == .technology && !$0.isEntrepreneurial && !$0.isLowSkilled
-                && $0.requirements.minYearsExperience == 0
+        guard let job = jobs.first(where: { candidate in
+            candidate.category == .technology && !candidate.isEntrepreneurial && !candidate.isLowSkilled
+                && candidate.requirements.minYearsExperience == 0
+                && jobs.contains { $0.baseTitle == candidate.baseTitle && $0.rung == candidate.rung + 1 }
         }) else {
             XCTFail("Expected an entry-level technology role."); return
         }
@@ -1146,10 +1165,11 @@ final class CareerGraphTests: XCTestCase {
             job.hireOddsAtPostedRate(for: slumping),
             "A booming industry should hire more readily than a slumping one.")
 
-        XCTAssertGreaterThan(booming.promotionChance(for: job), slumping.promotionChance(for: job),
-                             "Raises follow the industry's fortunes.")
-        XCTAssertEqual(slumping.promotionChance(for: job), 0,
-                       "A contracting industry freezes raises outright.")
+        // Promotions thin in a slump rather than stopping outright.
+        let boomRoll = booming.promotionOdds(for: job).roll
+        let slumpRoll = slumping.promotionOdds(for: job).roll
+        XCTAssertGreaterThan(boomRoll, slumpRoll, "Promotions follow the industry's fortunes.")
+        XCTAssertGreaterThan(slumpRoll, 0, "A contracting industry thins promotions, it doesn't freeze them.")
 
         XCTAssertGreaterThan(booming.projectOdds(for: project), slumping.projectOdds(for: project),
                              "A project needs an audience — the cycle reaches it too.")
@@ -1394,8 +1414,8 @@ final class CareerGraphTests: XCTestCase {
 
     /// The pro-athlete star track exists in the catalogue and is effectively
     /// closed without its signature achievement:
-    /// a fully-qualified applicant who lacks the award sits at the 5% floor, and
-    /// holding it lifts the odds well above the floor.
+    /// a fully-qualified applicant who lacks the award sits at the hiring
+    /// floor, and holding it lifts the odds well above the floor.
     func testStarCareersAreBreakthroughGated() {
         let jobs = JobCatalog.allJobs()
         let gates: [(base: String, award: String)] = [
@@ -1420,8 +1440,8 @@ final class CareerGraphTests: XCTestCase {
                           "A 40-year-old should meet the entry rung's requirements for '\(job.id)'.")
 
             let gated = job.hireOddsAtPostedRate(for: player)
-            XCTAssertEqual(gated, 0.05, accuracy: 0.0001,
-                           "Without the breakthrough, '\(job.id)' odds sit at the 5% floor.")
+            XCTAssertEqual(gated, GameConstants.hireFloor, accuracy: 0.0001,
+                           "Without the breakthrough, '\(job.id)' odds sit at the hiring floor.")
 
             player.award(gate.award, icon: "🏅", category: .entertainment, weight: 2.0)
             let opened = job.hireOddsAtPostedRate(for: player)
@@ -1432,9 +1452,10 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Early-choice balance (Phase 3)
 
-    /// An elite school turns away even a flawless applicant a good share of the
-    /// time — a maxed candidate (skills, straight A's, a shelf of titles) tops
-    /// out around 65%, not the old 82%.
+    /// An elite school turns away even a flawless applicant most of the time —
+    /// a maxed candidate (skills, straight A's, a shelf of titles) tops out
+    /// around 35%, as at Ivy-plus schools where most top-scoring applicants are
+    /// rejected.
     func testEliteAdmissionTurnsAwayEvenTopApplicants() {
         let player = Player()
         player.difficulty = .middleClass
@@ -1445,8 +1466,8 @@ final class CareerGraphTests: XCTestCase {
 
         let elite = Education(.Bachelor, profile: .business, tier: .elite)
         let odds = elite.admissionProbability(player: player)
-        XCTAssertGreaterThan(odds, 0.5, "A perfect applicant should still have a real shot.")
-        XCTAssertLessThanOrEqual(odds, 0.66, "An elite school shouldn't be a near-lock even when maxed.")
+        XCTAssertGreaterThan(odds, 0.25, "A perfect applicant should still have a real shot.")
+        XCTAssertLessThanOrEqual(odds, 0.40, "An elite school shouldn't be a near-lock even when maxed.")
     }
 
     /// Applying costs the year whether or not you get in, so a school-leaver with
@@ -1545,15 +1566,19 @@ final class CareerGraphTests: XCTestCase {
             // most forgiving elsewhere — if even this is a roll, all of them are.
             let school = Education(.Bachelor, profile: .business, tier: .community)
 
+            // Skills are read at the selective tier: an open-access college takes
+            // nearly everyone, so there is little left for them to buy there.
+            let selective = player.isSimplified ? school : Education(.Bachelor, profile: .business, tier: .state)
+
             let blankSlate = school.admissionProbability(player: player)
+            let blankSelective = selective.admissionProbability(player: player)
             XCTAssertGreaterThan(blankSlate, 0,
                                  "A thin applicant should still have a chance in \(difficulty.title).")
 
             for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 10 }
-            let maxedOut = school.admissionProbability(player: player)
-            XCTAssertGreaterThan(maxedOut, blankSlate,
+            XCTAssertGreaterThan(selective.admissionProbability(player: player), blankSelective,
                                  "Soft skills should pay off in \(difficulty.title).")
-            XCTAssertLessThan(maxedOut, 1.0,
+            XCTAssertLessThan(school.admissionProbability(player: player), 1.0,
                               "Admission is never a certainty in \(difficulty.title).")
         }
     }
@@ -1626,9 +1651,9 @@ extension Job {
     /// `Job.init` jitters `annualIncome` by the category's salary variance, so
     /// asking for the *catalogue* `income` instead is often asking above the
     /// posting — and `salaryAlignmentFactor` punishes that steeply enough to
-    /// floor the odds at 5%, run to run, hiding whatever the test meant to
-    /// measure. Asking the posted rate exactly gives a ratio of 1.0 and a factor
-    /// of 1.0 every time.
+    /// floor the odds, run to run, hiding whatever the test meant to measure.
+    /// Asking the posted rate exactly gives a ratio of 1.0 and a factor of 1.0
+    /// every time.
     func hireOddsAtPostedRate(for player: Player) -> Double {
         hireProbability(for: player, requestedSalary: Double(annualIncome))
     }
@@ -1752,7 +1777,7 @@ final class SchoolGradeTests: XCTestCase {
         }
         let eliteGain = odds(.elite, gpa: 4.0) - odds(.elite, gpa: 2.0)
         let communityGain = odds(.community, gpa: 4.0) - odds(.community, gpa: 2.0)
-        XCTAssertGreaterThan(eliteGain, 0.2, "A straight-A record should transform an elite application.")
+        XCTAssertGreaterThan(eliteGain, 0.15, "A straight-A record should transform an elite application.")
         XCTAssertGreaterThan(eliteGain, communityGain * 3,
                              "Grades should matter far more at an elite school than an open-door college.")
     }
@@ -1770,7 +1795,7 @@ final class SchoolGradeTests: XCTestCase {
             }
             return Education(.Bachelor, profile: .business, tier: tier).admissionProbability(player: player)
         }
-        XCTAssertGreaterThan(odds(.elite, withTitles: true) - odds(.elite, withTitles: false), 0.1,
+        XCTAssertGreaterThan(odds(.elite, withTitles: true) - odds(.elite, withTitles: false), 0.05,
                              "A shelf of titles should move an elite application.")
         XCTAssertEqual(odds(.community, withTitles: true), odds(.community, withTitles: false), accuracy: 0.0001,
                        "An open-door college doesn't ask what you've won.")
@@ -1816,6 +1841,7 @@ final class PromotionModelTests: XCTestCase {
         for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = skills }
         p.currentOccupation = job
         p.experienceByRole[job.baseTitle] = years
+        p.yearsInRole = years
         return p
     }
 
@@ -1839,15 +1865,23 @@ final class PromotionModelTests: XCTestCase {
         XCTAssertEqual(next.rung, 1)
         XCTAssertEqual(odds.readiness, next.softSkillFit(for: p), accuracy: 0.0001)
 
+        // `roll` is the yearly chance before the rung's own gates (years in
+        // role, seat) are applied — one year in, the next rung isn't open yet.
         let ready = worker(in: job, skills: 10, years: 1).promotionOdds(for: job)
-        XCTAssertGreaterThan(ready.total, odds.total, "Being ready for the role above should raise the odds.")
+        XCTAssertGreaterThan(ready.roll, odds.roll, "Being ready for the role above should raise the odds.")
     }
 
     /// A civil servant's years count for far more than a software engineer's.
     func testSeniorityWeighsMoreInThePublicSectorThanInSoftware() throws {
-        let jobs = JobCatalog.allJobs().filter { !$0.isLowSkilled && !$0.isEntrepreneurial }
-        let publicJob = try XCTUnwrap(jobs.first { $0.industry == .government })
-        let softwareJob = try XCTUnwrap(jobs.first { $0.industry == .software })
+        let all = JobCatalog.allJobs()
+        let jobs = all.filter { candidate in
+            !candidate.isLowSkilled && !candidate.isEntrepreneurial
+                && all.contains { $0.baseTitle == candidate.baseTitle && $0.rung == candidate.rung + 1 }
+        }
+        // The same rung posted in each sector, so only the promotion culture differs.
+        let rung = try XCTUnwrap(jobs.first)
+        let publicJob = rung.inIndustry(.government)
+        let softwareJob = rung.inIndustry(.software)
 
         func seniorityGain(_ job: Job) -> Double {
             worker(in: job, skills: 5, years: 5).promotionOdds(for: job).merit
@@ -1978,5 +2012,310 @@ final class IndustryChoiceTests: XCTestCase {
         XCTAssertGreaterThan(clerk.inIndustry(industries[0]).hireProbability(for: player, requestedSalary: salary),
                              clerk.inIndustry(industries[1]).hireProbability(for: player, requestedSalary: salary))
         XCTAssertEqual(clerk.inIndustry(industries[1]).industry, industries[1])
+    }
+}
+
+/// The hiring model: one shared breakdown, requirements that bind, demand and
+/// seat scarcity that make the competitive ladders rare, and age gates that
+/// follow child-labour law.
+final class HiringModelTests: XCTestCase {
+
+    private func job(_ title: String) throws -> Job {
+        try XCTUnwrap(JobCatalog.allJobs().first { $0.id == title }, "Missing \(title).").atBaseSalary()
+    }
+
+    /// A realistic-mode adult in a steady economy with every skill at `skills`.
+    private func adult(age: Int = 30, skills: Int = 5, _ difficulty: Difficulty = .middleClass) -> Player {
+        let p = Player()
+        p.difficulty = difficulty
+        p.configureStart(age: 18)
+        p.age = age
+        p.pinNeutralEconomy()
+        for axis in SoftSkills.allAxes { p.softSkills[keyPath: axis.keyPath] = skills }
+        return p
+    }
+
+    // MARK: One source of truth
+
+    /// The rolled figure *is* the breakdown's final figure, and the breakdown's
+    /// terms compose into it the documented way — so the ⓘ text and the
+    /// advisor, which read the same breakdown, can't quote a different number.
+    func testHireProbabilityIsTheBreakdownsFinal() {
+        let players = [adult(), adult(age: 18, skills: 1), adult(age: 45, skills: 8, .comfortable)]
+        players[2].experience[.business] = 20
+        players[2].degrees.append(Education(.Bachelor, profile: .business, tier: .state))
+        for player in players {
+            for job in JobCatalog.allJobs() {
+                let ask = Double(job.annualIncome)
+                let b = job.hireBreakdown(for: player, requestedSalary: ask)
+                XCTAssertEqual(job.hireProbability(for: player, requestedSalary: ask), b.final, accuracy: 1e-12)
+                guard !job.isEntrepreneurial, !b.requirements.isBlocked, !b.breakthroughMissing else { continue }
+                let expected = min(b.ceiling, max(b.floor, b.merit * b.requirements.factor * b.salaryFit
+                    * b.demand * b.rungDecay * b.climate * b.opportunity)) * b.seat
+                XCTAssertEqual(b.final, expected, accuracy: 1e-12, "\(job.id)'s breakdown doesn't compose.")
+                XCTAssertEqual(b.odds(requirementFactor: b.requirements.factor), b.final, accuracy: 1e-12)
+            }
+        }
+    }
+
+    // MARK: Requirements that bind
+
+    /// Every rung above a ladder's entry expects more years than the one below
+    /// it — which is what makes the junior rung the way in rather than a rung
+    /// nobody takes.
+    func testEveryRungAboveEntryExpectsMoreYearsThanTheOneBelow() {
+        for ladder in JobCatalog.ladders {
+            let rungs = JobCatalog.jobs(for: ladder)
+            for (lower, upper) in zip(rungs, rungs.dropFirst()) {
+                XCTAssertGreaterThan(upper.requirements.minYearsExperience, lower.requirements.minYearsExperience,
+                                     "\(upper.id) should expect more years than \(lower.id).")
+            }
+        }
+    }
+
+    /// A top leadership seat — Simplified's finish line — takes years to earn.
+    func testTopLeadershipTakesYears() {
+        for job in JobCatalog.allJobs() where job.isTopLeadership {
+            XCTAssertGreaterThanOrEqual(job.requirements.minYearsExperience, 4,
+                                        "\(job.id) is top leadership on \(job.requirements.minYearsExperience) years.")
+        }
+    }
+
+    /// Under 60% of the stated years the application isn't considered; from
+    /// there to the full figure it scales with the square of the share.
+    func testExperienceBelowTheStretchClosesTheRole() throws {
+        let senior = try job("Senior Software Engineer")
+        XCTAssertEqual(senior.requirements.minYearsExperience, 5)
+        let player = adult()
+        player.degrees.append(Education(.Bachelor, profile: .technology, tier: .state))
+        func factor(years: Int) -> Double {
+            player.experienceByRole["Software Engineer"] = years
+            player.experience[.technology] = years
+            return senior.experienceFactor(for: player)
+        }
+        XCTAssertEqual(factor(years: 2), 0, "2 of 5 years is too few to be considered.")
+        XCTAssertEqual(factor(years: 3), 0.36, accuracy: 1e-9)
+        XCTAssertEqual(factor(years: 4), 0.64, accuracy: 1e-9)
+        XCTAssertEqual(factor(years: 5), 1.0, accuracy: 1e-9)
+        XCTAssertEqual(senior.minimumQualifyingYears(simplified: false), 3)
+        XCTAssertEqual(senior.minimumQualifyingYears(simplified: true), 5)
+    }
+
+    /// Other years in the field count half toward a rung above entry.
+    func testRelatedYearsCountHalfTowardUpperRungs() throws {
+        let mid = try job("Software Engineer")
+        let player = adult()
+        player.experience[.technology] = 5           // five years in tech…
+        player.experienceByRole["Data Analyst"] = 5   // …none of them on this ladder
+        XCTAssertEqual(mid.relevantYears(for: player), 2)
+        player.experienceByRole["Software Engineer"] = 1
+        player.experience[.technology] = 6
+        XCTAssertEqual(mid.relevantYears(for: player), 1 + 5 / 2)
+    }
+
+    /// A seat search doesn't consider someone with a fraction of the record:
+    /// a CEO seat needs most of its fifteen years.
+    func testExecutiveSeatsNeedMostOfTheRecord() throws {
+        let ceo = try job("Chief Executive Officer")
+        let player = adult(age: 45)
+        player.degrees.append(Education(.Bachelor, profile: .business, tier: .state))
+        player.experience[.business] = 10
+        XCTAssertEqual(ceo.hireOddsAtPostedRate(for: player), 0,
+                       "10 of 15 years clears the stretch rule but not an executive search.")
+        player.experience[.business] = 11
+        XCTAssertGreaterThan(ceo.hireOddsAtPostedRate(for: player), 0)
+    }
+
+    /// Each level of missing schooling compounds on a degree-level role, one
+    /// level of it can be made up by equivalent experience, and an unrelated
+    /// degree counts for much less than the right one.
+    func testEducationShortfallCompounds() throws {
+        let junior = try job("Junior Software Engineer")
+        XCTAssertFalse(junior.educationIsMandatory, "Premise: a degree grades rather than gates here.")
+        let hs = adult(age: 18)
+        XCTAssertEqual(junior.educationFactor(for: hs),
+                       pow(GameConstants.educationShortfallRatioDegree, 2), accuracy: 1e-9)
+        hs.hardSkills.trainings.insert(.codingBootcamp)
+        XCTAssertEqual(junior.equivalentExperienceCredit(for: hs), 1)
+        XCTAssertEqual(junior.educationFactor(for: hs), GameConstants.educationShortfallRatioDegree, accuracy: 1e-9,
+                       "A bootcamp portfolio stands in for one level, not two.")
+        hs.experience[.technology] = 10
+        XCTAssertEqual(junior.equivalentExperienceCredit(for: hs), GameConstants.equivalentExperienceMaxCredit,
+                       "Credits don't stack.")
+
+        let unrelated = adult(age: 22)
+        unrelated.degrees.append(Education(.Bachelor, profile: .arts, tier: .state))
+        let relevant = adult(age: 22)
+        relevant.degrees.append(Education(.Bachelor, profile: .technology, tier: .state))
+        XCTAssertEqual(junior.educationFactor(for: unrelated), GameConstants.unrelatedDegreeMultiplier, accuracy: 1e-9)
+        XCTAssertEqual(junior.educationFactor(for: relevant), GameConstants.relevantDegreeMultiplier, accuracy: 1e-9)
+    }
+
+    /// The complaint case: a raw 18-year-old school-leaver is shut out of the
+    /// mid-level engineering role and a long shot for the junior one.
+    func testSchoolLeaverIsALongShotForDegreeWork() throws {
+        let mid = try job("Software Engineer")
+        let junior = try job("Junior Software Engineer")
+        for _ in 0..<50 {
+            let player = Player()
+            player.difficulty = .middleClass
+            player.configureStart(age: 18)
+            player.pinEconomy(to: 0.8)                     // even in a boom
+            XCTAssertFalse(mid.allRequirementsMet(for: player), "The mid rung needs years first.")
+            XCTAssertLessThanOrEqual(junior.hireOddsAtPostedRate(for: player), 0.05)
+        }
+    }
+
+    // MARK: Demand, pyramid and seats
+
+    /// Oversubscribed seats hire far less readily than shortage occupations.
+    func testDemandSeparatesEliteFunnelsFromShortageWork() throws {
+        XCTAssertLessThan(try job("Junior Investment Banker").hiringDemand, 1)
+        XCTAssertLessThan(try job("Judge").hiringDemand, 0.2)
+        XCTAssertGreaterThan(try job("Registered Nurse").hiringDemand, 1)
+        XCTAssertEqual(try job("Cashier").hiringDemand, 1, "Unlisted roles are neutral.")
+        let staff = try job("Staff Software Engineer")
+        XCTAssertEqual(staff.externalHireRungDecay, pow(GameConstants.externalHireRungDecay, 3), accuracy: 1e-12)
+    }
+
+    /// Seat scarcity is applied after the floor, so even the longest shot at
+    /// a "Chief …" seat stays below the floor, and no candidate — however
+    /// strong — clears more than the seat allows.
+    func testSeatScarcityComesAfterTheFloor() throws {
+        let ceo = try job("Chief Executive Officer")
+        XCTAssertEqual(ceo.seatScarcity, GameConstants.cSuiteSeatChance)
+        XCTAssertEqual(try job("Marketing Director").seatScarcity, GameConstants.directorSeatChance)
+        XCTAssertNil(try job("Senior Software Engineer").seatScarcity)
+
+        // Qualified on paper (the years), hopeless on merit: no schooling, no skills.
+        let weak = adult(age: 50, skills: 0)
+        weak.degrees = []
+        weak.experience[.business] = 15
+        XCTAssertEqual(ceo.hireOddsAtPostedRate(for: weak),
+                       GameConstants.hireFloor * GameConstants.cSuiteSeatChance, accuracy: 1e-9)
+
+        let star = adult(age: 50, skills: 10)
+        star.experience[.business] = 30
+        star.degrees.append(Education(.Master, profile: .business, tier: .elite))
+        star.pinEconomy(to: 0.9)
+        XCTAssertLessThanOrEqual(ceo.hireOddsAtPostedRate(for: star),
+                                 GameConstants.hireCeiling * ceo.seatChance(for: star) + 1e-9)
+    }
+
+    /// Individual-contributor apexes and the operations capstone top their
+    /// tracks (Simplified's goal) but don't run a company.
+    func testOnlyRealExecutiveSeatsAreExecutive() throws {
+        for title in ["Staff Software Engineer", "Principal Software Engineer", "Operations Manager"] {
+            let role = try job(title)
+            XCTAssertTrue(role.isTopLeadership, "\(title) still tops its track.")
+            XCTAssertFalse(role.isExecutive, "\(title) doesn't unlock the Boardroom.")
+            XCTAssertEqual(role.seatChance(for: adult()), 1, "\(title) isn't a scarce seat.")
+        }
+        XCTAssertTrue(try job("Chief Executive Officer").isExecutive)
+        XCTAssertTrue(try job("Sales Director").isExecutive)
+    }
+
+    // MARK: Age gates
+
+    func testMinimumHireAgesFollowChildLabourLaw() throws {
+        let expected: [String: Int] = [
+            "Cashier": GameConstants.minimumWorkingAge,
+            "Fast Food Worker": GameConstants.minimumWorkingAge,
+            "Receptionist": GameConstants.minimumNonHazardousAge,
+            "Truck Driver": GameConstants.adultRoleAge,
+            "Construction Laborer": GameConstants.adultRoleAge,
+            "Junior Software Engineer": GameConstants.adultRoleAge,
+            "Store Manager": GameConstants.minimumLeadershipAge,
+            "Chief Executive Officer": GameConstants.minimumLeadershipAge,
+            "Bartender": 21,
+        ]
+        for (title, age) in expected {
+            let role = try job(title)
+            XCTAssertEqual(role.minimumHireAge, age, "\(title)")
+            let young = adult(age: age - 1)
+            young.experience = Dictionary(uniqueKeysWithValues: JobCategory.allCases.map { ($0, 20) })
+            XCTAssertFalse(role.ageGateMet(for: young), "\(title) at \(age - 1)")
+            XCTAssertEqual(role.hireOddsAtPostedRate(for: young), 0, "\(title) at \(age - 1)")
+        }
+        // No role at all hires a 13-year-old, and no degree-track role a minor.
+        for role in JobCatalog.allJobs() {
+            XCTAssertGreaterThanOrEqual(role.minimumHireAge, GameConstants.minimumWorkingAge, role.id)
+            if role.requirements.education.minEQF >= 4 {
+                XCTAssertGreaterThanOrEqual(role.minimumHireAge, GameConstants.adultRoleAge, role.id)
+            }
+        }
+    }
+
+    // MARK: Difficulty and pay ask
+
+    /// Relaxed makes every application 25% likelier rather than adding a flat
+    /// bonus that would mostly help the unqualified.
+    func testRelaxedMultipliesTheOdds() throws {
+        let clerk = try job("Office Clerk")
+        let real = adult(skills: 1)
+        let relaxed = adult(skills: 1, .comfortable)
+        relaxed.softSkills = real.softSkills
+        let a = clerk.hireBreakdown(for: real, requestedSalary: Double(clerk.annualIncome))
+        let b = clerk.hireBreakdown(for: relaxed, requestedSalary: Double(clerk.annualIncome))
+        XCTAssertEqual(b.merit, a.merit, accuracy: 1e-12, "Relaxed adds nothing to merit.")
+        XCTAssertEqual(b.scaled, a.scaled * relaxed.difficulty.opportunityHireMultiplier, accuracy: 1e-12)
+    }
+
+    /// A modest counter costs nothing, a low ask earns a small edge, and a big
+    /// one costs steeply.
+    func testSalaryAskTolerance() throws {
+        let role = try job("Office Manager")
+        let pay = Double(role.annualIncome)
+        func fit(_ ask: Double) -> Double { role.salaryAlignmentFactor(requestedSalary: ask, offer: pay) }
+        XCTAssertEqual(fit(pay), 1.0, accuracy: 1e-9)
+        XCTAssertEqual(fit(pay * 1.05), 1.0, accuracy: 1e-9)
+        XCTAssertEqual(fit(pay * 1.15),
+                       1 - 0.10 * GameConstants.salaryAskPenaltyRate, accuracy: 1e-9)
+        XCTAssertEqual(fit(pay * 0.85), GameConstants.salaryAskDiscountBonus, accuracy: 1e-9)
+        XCTAssertEqual(fit(pay * 2), 0)
+    }
+
+    // MARK: Simplified
+
+    /// Simplified still hires with certainty once qualified — but "qualified"
+    /// means the right degree for every role, not only the regulated ones.
+    func testSimplifiedGatesEveryRoleOnTheRightDegree() throws {
+        let junior = try job("Junior Software Engineer")
+        func kid(_ degree: Education?) -> Player {
+            let p = Player()
+            p.difficulty = .simplified
+            p.configureStart(age: 18)
+            p.age = 22
+            if let degree { p.degrees.append(degree) }
+            return p
+        }
+        XCTAssertEqual(junior.hireOddsAtPostedRate(for: kid(nil)), 0)
+        XCTAssertEqual(junior.hireOddsAtPostedRate(for: kid(Education(.Bachelor, profile: .arts, tier: .community))), 0)
+        XCTAssertEqual(junior.hireOddsAtPostedRate(for: kid(Education(.Bachelor, profile: .technology, tier: .community))), 1)
+    }
+
+    // MARK: Credentials
+
+    /// A credential a role lists either gates it or moves the odds — never
+    /// neither.
+    func testListedCredentialsGateOrHelp() throws {
+        let teacher = try job("Teacher")
+        let hairdresser = try job("Hairdresser/Barber")
+        XCTAssertTrue(Training.teachingCertificate.isStatutory)
+        XCTAssertTrue(Training.cosmetology.isStatutory)
+        let player = adult()
+        player.degrees.append(Education(.Bachelor, profile: .education, tier: .state))
+        XCTAssertFalse(teacher.hardSkillsMet(for: player), "Teaching needs the licence.")
+        XCTAssertFalse(hairdresser.hardSkillsMet(for: player), "Hairdressing needs the licence.")
+        XCTAssertTrue(try job("Flight Attendant").requirements.hardSkills.trainings.isEmpty,
+                      "Airlines train cabin crew after hiring.")
+        XCTAssertNotNil(Training.cpa.careerBoost, "A CPA is an edge, not a gate.")
+        for role in JobCatalog.allJobs() where !role.isEntrepreneurial {
+            for training in role.requirements.hardSkills.trainings {
+                let gates = training.isStatutory || role.category.requiresCredentials
+                XCTAssertTrue(gates || training.careerBoost?.categories.contains(role.category) == true,
+                              "\(role.id) lists \(training.rawValue), which does nothing for it.")
+            }
+        }
     }
 }

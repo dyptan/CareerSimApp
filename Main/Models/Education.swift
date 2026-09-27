@@ -33,7 +33,7 @@ struct Education: Codable, Hashable, Identifiable {
     var pictogram: String { Level(stage: level).pictogram }
 
     /// Per-year tuition for this institution tier at this degree level.
-    var annualTuition: Int { tier.annualTuition(for: level) }
+    var annualTuition: Int { tier.annualTuition(for: level, profile: profile) }
 
     /// Total tuition over the duration of the degree.
     var totalTuition: Int { annualTuition * yearsToComplete }
@@ -91,8 +91,9 @@ struct Education: Codable, Hashable, Identifiable {
             x = Education.enforceMinimums(x, for: .Master, profile: p)
             r = Education.clamped(x)
         case .Doctorate:
+            // A US doctorate (MD, JD, PhD) follows a bachelor's directly.
             var x = Education.elevated(base, by: 3)
-            x.minEQF = 6
+            x.minEQF = 5
             x = Education.enforceMinimums(x, for: .Doctorate, profile: p)
             r = Education.clamped(x)
         default:
@@ -208,10 +209,20 @@ struct Education: Codable, Hashable, Identifiable {
         let fit = softSkillWeight * softSkillFit(player: player)
             + gradeWeight * player.academicFit
             + accoladeWeight * player.accoladeFit
-        let raw = tier.admissionFloor
-            + tier.admissionFitSpan * fit
-            + player.difficulty.opportunityBonus
+        let band = tier.admissionFloor + tier.admissionFitSpan * pow(max(0, fit), tier.admissionFitExponent)
+        let raw = band * Education.admissionLevelScale(level) + player.difficulty.opportunityBonus
         return max(0.02, min(0.98, raw))
+    }
+
+    /// Graduate programmes are more selective than the same school's
+    /// undergraduate intake: medical schools admit ~41–45 % of applicants
+    /// (AAMC 2025) and PhD programmes fewer still.
+    static func admissionLevelScale(_ level: Level.Stage) -> Double {
+        switch level {
+        case .Master:    return 0.9
+        case .Doctorate: return 0.45
+        default:         return 1.0
+        }
     }
 
     var degreeName: String {
@@ -535,9 +546,12 @@ func availableNextEducations(holds: [Education]) -> [Education] {
         available.append(Education(.Master, profile: profile))
     }
 
-    let masterProfiles = Set(holds.filter { $0.level == .Master }.compactMap(\.profile))
+    // A doctorate opens in every field with a bachelor's (or master's) — a US
+    // MD, JD or PhD programme admits straight from a bachelor's degree.
+    let doctorateProfiles = bachelorProfiles
+        .union(holds.filter { $0.level == .Master }.compactMap(\.profile))
     for profile in TertiaryProfile.allCases
-    where masterProfiles.contains(profile) && !alreadyHeld(.Doctorate, profile) {
+    where doctorateProfiles.contains(profile) && !alreadyHeld(.Doctorate, profile) {
         available.append(Education(.Doctorate, profile: profile))
     }
 

@@ -72,7 +72,7 @@ enum ExecutiveDecisionCatalog {
             kind: .sellShares,
             label: "Sell Your Stake",
             icon: "💸",
-            blurb: "Put your equity on the market at a price you set. Ask near its fair value and a buyer bites readily; hold out for a premium and you may find no takers this year. A recession thins the buyers further.",
+            blurb: "Put your equity on the market at a price you set. Ask near its fair value and a buyer bites readily; hold out for a premium and you may find no takers this year. A recession thins the buyers further. A founder's exit pays fees and capital-gains tax; a hired executive sells only the shares vested since the last sale, taxed as income.",
             talents: [\.persuasionAndNegotiation, \.visionaryThinkingAndAmbition]
         ),
     ]
