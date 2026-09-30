@@ -87,7 +87,7 @@ for s in scenarios {
 
 var report = "# Career Sim balance baseline\n\n"
 report += "Lives per scenario: \(lives) (start 18), \(youngLives) (start 7). Threads: \(threads). "
-report += "Salaries in fixed 2026 USD; net worth = savings − student loan − venture loan, at age \(GameConstants.retirementAge).\n\n"
+report += "Salaries in fixed 2026 money — US dollars, or the country's own currency where a scenario names one (the money columns then carry that currency, and “≥ 1M” is scaled by the country's general pay level); net worth = savings − student loan − venture loan, at age \(GameConstants.retirementAge).\n\n"
 report += "## 1. Wealth at \(GameConstants.retirementAge)\n\n" + Report.wealth(results) + "\n"
 report += "## 2. Lifetime gross pay, loans, first job\n\n" + Report.earnings(results) + "\n"
 report += "## 3. Lifetime pay by highest education attained (share of lives · median lifetime pay)\n\n" + Report.education(results) + "\n"

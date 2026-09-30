@@ -395,7 +395,8 @@ final class CountryTests: XCTestCase {
         let ui = AppUIState()
         player.advanceYear(appUIState: ui)
         XCTAssertEqual(player.highSchoolGrades.count, 1, "The year's grade is still recorded…")
-        XCTAssertFalse(player.statusEvents.contains { $0.message.contains("Abitur grade") }, "…but not reported.")
+        XCTAssertFalse(player.statusEvents.contains { $0.icon == "📝" || $0.message.contains("school year") || $0.message.contains("grade") },
+                       "…but not reported: the old per-year line was “Finished the school year …”.")
 
         let line = player.graduationStatus(for: Education(.HighSchool))
         XCTAssertTrue(line.hasPrefix("Graduated — Abitur · Abitur grade "), line)
@@ -425,8 +426,8 @@ final class CountryTests: XCTestCase {
     }
 
     func testTheDrivingLicenceOpensAtTheCountrysDrivingAge() {
-        let ages: [Country: Int] = [.unitedStates: 16, .canada: 16, .unitedKingdom: 17,
-                                    .germany: 18, .france: 18, .italy: 18, .japan: 18, .ukraine: 18]
+        let ages: [Country: Int] = [.unitedStates: 16, .canada: 16, .unitedKingdom: 17, .france: 17,
+                                    .germany: 18, .italy: 18, .japan: 18, .ukraine: 18]
         for country in Country.allCases { XCTAssertEqual(country.drivingAge, ages[country], country.title) }
 
         func blockedReason(_ country: Country) -> String? {
@@ -510,6 +511,95 @@ final class CountryTests: XCTestCase {
         XCTAssertTrue(german.contains("Exzellenzuniversität"), german)
         XCTAssertFalse(german.contains("Ivy"), german)
         XCTAssertTrue(text(note("Chief Executive Officer", in: .unitedStates)).contains("Elite / Ivy League"))
+    }
+
+    // MARK: Fixes from the independent double-check
+
+    /// The Bac mention is read off the number shown: 15.975 prints as 16.0, so it is "très bien".
+    func testTheFrenchMentionAlwaysMatchesTheNumberShown() {
+        for step in 0...4000 {
+            let gpa = Double(step) / 1000
+            let label = Country.france.gradeLabel(gpa)
+            let shown = Double(label.prefix { $0.isNumber || $0 == "." })!
+            let expected = shown >= 16 ? "très bien" : shown >= 14 ? "bien" : shown >= 12 ? "assez bien" : "passable"
+            XCTAssertTrue(label.hasSuffix("(\(expected))"), "\(label) at \(gpa)")
+        }
+        XCTAssertEqual(Country.france.gradeLabel(2.9), "16.0/20 (très bien)")
+    }
+
+    /// An American sees the requirement labels the game always used.
+    func testTheUSKeepsItsRequirementLabelsExactly() {
+        for eqf in 0...8 {
+            let requirement = Education.Requirements(minEQF: eqf)
+            XCTAssertEqual(requirement.educationLabel(in: .unitedStates), requirement.educationLabel(), "EQF \(eqf)")
+        }
+        XCTAssertEqual(Education.Requirements(minEQF: 4).educationLabel(in: .germany), "Ausbildung")
+        XCTAssertEqual(Education.Requirements(minEQF: 3).educationLabel(in: .unitedKingdom), "A-levels")
+    }
+
+    /// The hire-gap banner named the requirement in the US's words in every country.
+    func testTheHireGapNamesTheRequirementInTheCountrysWords() throws {
+        let german = player(in: .germany, age: 18)
+        let job = try XCTUnwrap(german.availableJobs.first { $0.educationIsMandatory && $0.requirements.education.minEQF == 4 })
+        let gaps = CareerGraph.missingHardRequirements(for: job, player: german).joined(separator: " ")
+        XCTAssertTrue(gaps.contains("Ausbildung"), gaps)
+        XCTAssertFalse(gaps.contains("College / Vocational"), gaps)
+    }
+
+    func testTheSimpleTellingKeepsTheUSFiguresForAmericansOnly() {
+        let american = text(note("Airline Pilot", in: .unitedStates, voice: .simple)) + text(note("Player", in: .unitedStates, voice: .simple))
+        XCTAssertTrue(american.contains("about 1,500 hours"), american)
+        XCTAssertTrue(american.contains("1 to 5 in every 100"), american)
+        for country in Country.allCases where country != .unitedStates {
+            let other = text(note("Airline Pilot", in: country, voice: .simple)) + text(note("Player", in: country, voice: .simple))
+            XCTAssertFalse(other.contains("1,500") || other.contains("1 to 5"), country.title)
+        }
+    }
+
+    /// The asked-for salary is floored at the minimum wage, and the log says what was paid.
+    func testAHireIsNeverPaidUnderTheMinimumWage() throws {
+        let player = player(in: .germany, age: 30)
+        let job = try XCTUnwrap(player.availableJobs.first { $0.id == "Fast Food Worker" })
+        var hired = false
+        for _ in 0..<300 where !hired { hired = player.applyForJob(job, requestedSalary: 10_000) }
+        XCTAssertTrue(hired, "A fast-food job at a modest ask is hired within a few tries.")
+        XCTAssertEqual(player.currentOccupation?.annualIncome, Country.germany.minimumAnnualPay)
+        XCTAssertTrue(player.statusEvents.last?.message.contains(Country.germany.money(Country.germany.minimumAnnualPay)) ?? false,
+                      "The log names the pay, not the ask.")
+    }
+
+    func testVentureCapitalIsPricedInTheCountrysMoney() {
+        let american = JobCatalog.allJobs(in: .unitedStates).filter { $0.targetCapital != nil }
+        XCTAssertFalse(american.isEmpty)
+        for country in abroad {
+            var local: [String: Int] = [:]
+            for job in JobCatalog.allJobs(in: country) { if let capital = job.targetCapital { local[job.id] = capital } }
+            for job in american {
+                XCTAssertEqual(local[job.id], country.localCapital(job.targetCapital!), "\(country.title): \(job.id)")
+            }
+        }
+        XCTAssertEqual(Country.germany.localCapital(100_000), 90_000)
+        XCTAssertEqual(Country.japan.localCapital(100_000), 12_000_000)
+        XCTAssertEqual(Country.unitedStates.localCapital(100_000), 100_000)
+    }
+
+    /// Interest-free (BAföG): paid down in equal parts, never grown, gone within the term.
+    func testAnInterestFreeStudentLoanIsPaidDownAndNeverGrows() throws {
+        let player = player(in: .germany, age: 25)
+        player.currentOccupation = try XCTUnwrap(player.availableJobs.first { $0.id == "Machinist" }).atBaseSalary()
+        player.currentEducation = nil
+        player.savings = 1_000_000      // so a layoff can't leave an instalment unpaid
+        player.studentLoan = 10_000
+        player.studentLoanPayment = Player.annualLoanPayment(balance: 10_000, rate: 0)
+        XCTAssertEqual(player.studentLoanPayment, 10_000 / GameConstants.loanTermYears)
+        let ui = AppUIState()
+        var last = player.studentLoan
+        for _ in 0..<(GameConstants.loanTermYears + 2) {
+            player.advanceYear(appUIState: ui)
+            XCTAssertLessThanOrEqual(player.studentLoan, last, "Interest-free: the balance never grows.")
+            last = player.studentLoan
+        }
+        XCTAssertEqual(player.studentLoan, 0, "…and is repaid within the loan term.")
     }
 }
 

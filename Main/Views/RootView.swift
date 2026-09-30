@@ -413,7 +413,7 @@ struct ModeSelectionView: View {
         switch startAge {
         case ..<10:   return "🎒 You'll start in \(school.primarySchool)."
         case 10..<14: return "🎒 You'll start in \(school.middleSchool) (\(school.primarySchool) done)."
-        case 14..<18: return "🎒 You'll start in the last years of school, working toward \(school.schoolLeaving)."
+        case 14..<18: return "🎒 You'll start in your last years of school (\(school.middleSchool) done)."
         default:      return "🎓 You'll start having just finished \(school.schoolLeaving) — time to choose your next step."
         }
     }

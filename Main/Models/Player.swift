@@ -1737,7 +1737,7 @@ final class Player: ObservableObject {
             hiredJob.annualIncome = job.isEntrepreneurial ? requestedSalary : max(country.minimumAnnualPay, requestedSalary)
             currentOccupation = hiredJob
             yearsInRole = 0                 // a new position, even under the same title
-            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(money(requestedSalary))/year")
+            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(money(hiredJob.annualIncome))/year")
         }
         return hired
     }

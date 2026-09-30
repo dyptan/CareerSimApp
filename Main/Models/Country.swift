@@ -91,7 +91,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     var generalPayScale: Double { profile.generalPayScale }
 
     /// The age a driving licence can be taken: 16 in the US and Canada (by state
-    /// and province), 17 in the UK, 18 elsewhere.
+    /// and province), 17 in the UK and France, 18 elsewhere.
     var drivingAge: Int { profile.drivingAge }
 
     /// Full-time pay at the minimum wage: the least any job may pay — its
@@ -158,7 +158,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         lines.append("• Living costs take the first \(money(livingCostFloor)) of pay.")
         lines.append("• Scores go to their own \(profile.adjective) leaderboard.")
         lines.append("")
-        lines.append("Still American for now: school ages and tracks, licence names and the advisor's real-world facts.")
+        lines.append("Still American for now: school ages and tracks, licence names and most of the advisor's real-world facts.")
         return lines.joined(separator: "\n")
     }
 
@@ -313,8 +313,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "First Officer": 110_000, "Pilot": 200_000, "Airline Captain": 300_000,
                       ]),
         step: 500,
-        // The federal minimum wage, C$17.75 an hour (2025), 40 hours for 52 weeks.
-        minimumAnnualPay: 36_900, minimumWageNote: "The federal minimum wage (C$17.75 an hour)",
+        // The federal minimum wage, C$18.15 an hour from 1 April 2026, 40 hours for 52 weeks.
+        minimumAnnualPay: 37_750, minimumWageNote: "The federal minimum wage (C$18.15 an hour)",
         tuition: TuitionTable(
             vocational: [.community: 4_000, .state: 5_000, .elite: 7_000],
             bachelor: [.community: 5_000, .state: 7_400, .elite: 10_000],
@@ -334,7 +334,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// ONS Annual Survey of Hours and Earnings for the curve (£25k at $30k,
     /// £39k at $60k, £63k at $130k, £95k at $250k); NHS Agenda for Change and the
     /// 2025–26 medical pay awards (resident doctors, consultants), the teachers'
-    /// pay award. English universities may charge up to £9,535 a year — the
+    /// pay award. English universities may charge up to £9,790 a year (2026/27) — the
     /// same at Oxford as anywhere — and most PhDs are funded. A Plan 5 student
     /// loan carries inflation-only interest.
     private static let unitedKingdomProfile = Profile(
@@ -353,17 +353,17 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         // The National Living Wage, £12.71 an hour from April 2026, 37.5 hours for 52 weeks.
         minimumAnnualPay: 24_800, minimumWageNote: "The National Living Wage (£12.71 an hour)",
         tuition: TuitionTable(
-            vocational: TuitionTable.flat(0), bachelor: TuitionTable.flat(9_535),
+            vocational: TuitionTable.flat(0), bachelor: TuitionTable.flat(9_790),
             master: [.community: 10_000, .state: 12_000, .elite: 18_000],
             doctorate: TuitionTable.flat(0),
-            professional: [.health: TuitionTable.flat(9_535), .law: [.community: 12_000, .state: 15_000, .elite: 18_000]]),
+            professional: [.health: TuitionTable.flat(9_790), .law: [.community: 12_000, .state: 15_000, .elite: 18_000]]),
         studentLoanInterest: 0,
         livingCostFloor: 26_000, highEarnerThreshold: 125_000,
         generalPayScale: 0.65, capitalScale: 0.75, drivingAge: 17,
         schooling: .british,
         highlights: [
             "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.",
-            "Every English university charges up to £9,535 a year — the famous ones too — and most PhDs are funded.",
+            "Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.",
         ])
 
     /// INSEE salary data for the curve (€22k at $30k, €34k at $60k, €56k at
@@ -387,8 +387,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Managing Partner": 250_000,
                       ]),
         step: 500,
-        // The SMIC, €11.88 an hour, on the legal 35-hour week.
-        minimumAnnualPay: 21_600, minimumWageNote: "The minimum wage (SMIC, on a 35-hour week)",
+        // The SMIC, €12.31 an hour from 1 June 2026, on the legal 35-hour week.
+        minimumAnnualPay: 22_400, minimumWageNote: "The minimum wage (SMIC, on a 35-hour week)",
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: [.community: 280, .state: 280, .elite: 12_000],
@@ -397,7 +397,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
             professional: [.health: TuitionTable.flat(500), .law: [.community: 500, .state: 500, .elite: 14_000]]),
         studentLoanInterest: 0.01,
         livingCostFloor: 24_000, highEarnerThreshold: 120_000,
-        generalPayScale: 0.57, capitalScale: 0.85,
+        generalPayScale: 0.57, capitalScale: 0.85, drivingAge: 17,
         schooling: .french,
         highlights: [
             "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.",
@@ -445,10 +445,11 @@ enum Country: String, Codable, CaseIterable, Identifiable {
 
     /// MHLW wage census for the curve (¥2.8M at $30k, ¥4.4M at $60k, ¥7.2M at
     /// $130k, ¥11M at $250k); pay is seniority-based and compressed. National
-    /// universities — the University of Tokyo among them — charge the standard
-    /// ¥535,800 a year, less than most private universities; private medical
-    /// schools cost millions of yen a year. JASSO loans are interest-free or
-    /// nearly so.
+    /// universities charge the standard ¥535,800 a year, less than most private
+    /// universities (the University of Tokyo raised its undergraduate fee to
+    /// ¥642,960 for 2025 entrants — the top national tier is priced at the
+    /// standard rate); private medical schools cost millions of yen a year.
+    /// JASSO loans are interest-free or nearly so.
     private static let japanProfile = Profile(
         title: "Japan", adjective: "Japanese", flag: "🇯🇵", currencySymbol: "¥", currencyName: "yen",
         leaderboardSuffix: "jp",
@@ -545,6 +546,9 @@ extension Country {
         /// What the school-leaving grade is called: "GPA", "Abitur grade".
         let gradeName: String
         let scale: GradeScale
+        /// Requirement labels that read differently from the stage names
+        /// ("College / Vocational" for a level-4 job); by EQF level.
+        var requirementNames: [Int: String] = [:]
     }
 
     /// The ways countries write a school-leaving grade.
@@ -584,6 +588,7 @@ extension Country {
     /// What an education requirement at EQF `minEQF` reads as here: the
     /// country's school names below a degree, the international ones above.
     func educationLevelName(minEQF: Int) -> String {
+        if let named = schooling.requirementNames[min(max(minEQF, 1), 4)], minEQF <= 4 { return named }
         switch minEQF {
         case ...1: return schooling.primarySchool
         case 2:    return schooling.middleSchool
@@ -591,7 +596,8 @@ extension Country {
         case 4:    return schooling.vocational
         case 5:    return "University — Bachelor's"
         case 6:    return "University — Master's"
-        default:   return "Doctorate"
+        case 7:    return "Doctorate"
+        default:   return "Doctorate+"
         }
     }
 
@@ -631,7 +637,7 @@ extension Country {
             }
             return "\(String(format: "%.1f", note)) (\(word))"
         case .baccalaureat:
-            let note = 8 + 2.75 * g
+            let note = ((8 + 2.75 * g) * 10).rounded() / 10   // the mention follows the number shown
             let mention: String
             switch note {
             case 16...: mention = "très bien"
@@ -655,7 +661,8 @@ extension Country.Schooling {
         primarySchool: "Primary School", middleSchool: "Middle School", schoolLeaving: "High School",
         vocational: "Vocational Diploma",
         tiers: [.community: "Community College", .state: "State University", .elite: "Elite / Ivy League"],
-        gradeName: "GPA", scale: .gpa)
+        gradeName: "GPA", scale: .gpa,
+        requirementNames: [1: "Primary school", 2: "Middle school", 3: "High school", 4: "College / Vocational"])
 
     static let canadian = Self(
         primarySchool: "Elementary School", middleSchool: "Middle School", schoolLeaving: "High School Diploma",

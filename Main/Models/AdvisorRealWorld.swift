@@ -42,17 +42,20 @@ enum AdvisorRealWorld {
         /// The countries this is true in; nil means everywhere.
         var only: Set<Country>?
         /// A sentence added to `real` for one country — the local figure behind
-        /// a general claim ("In the US, about 73% of them do").
+        /// a general claim ("In the US, about 73% of new CEOs are inside hires").
         var tail: [Country: String]
+        /// The same for the simple telling, in a beginner's words.
+        var simpleTail: [Country: String]
 
         init(real: String, game: String?, simple: String? = nil, tutorial: String? = nil,
-             only: Set<Country>? = nil, tail: [Country: String] = [:]) {
+             only: Set<Country>? = nil, tail: [Country: String] = [:], simpleTail: [Country: String] = [:]) {
             self.real = real
             self.game = game
             self.simple = simple
             self.tutorial = tutorial
             self.only = only
             self.tail = tail
+            self.simpleTail = simpleTail
         }
     }
 
@@ -74,6 +77,7 @@ enum AdvisorRealWorld {
                 case .simple:
                     guard let simple = point.simple else { return nil }
                     real = simple
+                    if let tail = point.simpleTail[country] { real += " " + tail }
                 }
                 return Point(real: real, game: difficulty.isSimplified ? point.tutorial : point.game)
             }
@@ -169,14 +173,14 @@ enum AdvisorRealWorld {
             Point(real: "Most new CEOs come from inside the company. They typically spent years running a division with its own profit and loss, or served as COO or CFO, while the board watched.",
                   game: "Years open the door: \(wanted) years in Business, and nothing under about \(door). Any Business job counts, and so do years running your own company.",
                   simple: "Most new CEOs already worked at the company for years, running a big part of it while the bosses watched.",
-                  tail: [.unitedStates: "In the US, about 73% of them do."]),
+                  tail: [.unitedStates: "In the US, about 73% of new CEOs are inside hires."]),
             Point(real: "Boards hire results — growth delivered, turnarounds, deals — and the ability to speak for the company to investors, staff and the press. A public reputation and friends on other boards help, but only on top of a record.",
                   game: "Business fame and your network add to your chance (up to +\(pct(Player.fameHireCap(topPosition: true))) and +\(pct(Player.networkHireCap))) — until your application is already at the cap, when more changes nothing."),
             Point(real: "The other door is to build a company yourself. A founder doesn't wait to be picked, though most start-ups fail. Boards like people who have run a business, even one that failed — yet most new big-company CEOs had never been a CEO before.",
                   game: "That's the founder track record: it lifts the seat from \(pct(GameConstants.cSuiteSeatChance)) to at most \(pct(GameConstants.cSuiteSeatChance + GameConstants.executiveTrackRecordCap)). It eases the odds; it never decides them.",
                   simple: "Some people start their own company instead. Most new companies fail, but people who tried still learn a lot — and bosses notice.",
                   tutorial: noCompanies,
-                  tail: [.unitedStates: "In the US, about 84% had not."]),
+                  tail: [.unitedStates: "In the US, about 84% of new big-company CEOs had not."]),
             Point(real: "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.",
                   game: "\(country.tierName(.elite)) adds +\(pct(Job.prestigeBonus(forPrestige: 3))) to your chance, \(country.tierName(.state)) +\(pct(Job.prestigeBonus(forPrestige: 2))) — small next to the seat."),
             Point(real: "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.",
@@ -295,7 +299,8 @@ enum AdvisorRealWorld {
                   game: "Flight school and its licence are the gate; years of experience open each rung.",
                   simple: "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.",
                   tutorial: "Simplified mode skips the licence: years of work open each step up (\(AdvisorCoach.list(years))).",
-                  tail: [.unitedStates: "In the US that normally means 1,500 flight hours (fewer through some approved flight schools)."]),
+                  tail: [.unitedStates: "In the US that normally means 1,500 flight hours (fewer through some approved flight schools)."],
+                  simpleTail: [.unitedStates: "In the US that is about 1,500 hours."]),
             Point(real: "At airlines, seniority decides who flies the bigger aircraft and who becomes a captain — years of service count for more than talent.",
                   game: "Each rung asks for more years (\(AdvisorCoach.list(years))) and pays far more.",
                   simple: "The longer a pilot has worked for an airline, the bigger the plane they get to fly.",
@@ -309,7 +314,8 @@ enum AdvisorRealWorld {
                   game: "The Junior Champion title opens the door, and even then only \(pct(GameConstants.proRosterChance)) of title-holders make a roster.",
                   simple: "Very few young players become professionals, and most were noticed as teenagers.",
                   tutorial: "The Junior Champion title opens the door — and in Simplified mode, once you have it, a team spot is yours.",
-                  tail: [.unitedStates: "In US college sport roughly 1–5% are drafted."]),
+                  tail: [.unitedStates: "In US college sport roughly 1–5% are drafted."],
+                  simpleTail: [.unitedStates: "In US college sport only about 1 to 5 in every 100 get picked."]),
             Point(real: "Careers are short and an injury can end one without warning, so most athletes need a second career.",
                   game: "Careers end early in the game too.",
                   simple: "A sports career can end suddenly with an injury, so most athletes need a second job.",

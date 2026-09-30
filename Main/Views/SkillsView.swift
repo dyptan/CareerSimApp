@@ -127,7 +127,7 @@ struct SkillsView: View {
                     if studying.level == .HighSchool, !player.highSchoolGrades.isEmpty {
                         labelledRow(
                             "📝", player.country.schooling.gradeName, gpaLabel,
-                            hint: "Your average school grade so far, over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). School skills set each year's grade, and choosing a Study activity pushes it up. Colleges look at it when you apply — the top colleges care about it a lot."
+                            hint: "Your average school grade so far, over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). School skills set each year's grade, and choosing a Study activity pushes it up. Universities look at it when you apply — the top ones care about it a lot."
                         )
                     }
                 }
@@ -257,7 +257,7 @@ struct SkillsView: View {
                     if !player.isSimplified {
                         moneyRow(
                             "🏦", "Banked from pay", bankedFromPay(job), suffix: " / yr",
-                            hint: "The first \(player.money(player.livingCostFloor)) of your pay goes on living costs like rent and food. You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(player.money(GameConstants.highEarnerThreshold))). If you have no job, living costs come out of your savings."
+                            hint: "The first \(player.money(player.livingCostFloor)) of your pay goes on living costs like rent and food. You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(player.money(player.country.highEarnerThreshold))). If you have no job, living costs come out of your savings."
                         )
                     }
                 } else if player.endorsementIncome == 0 {

@@ -206,7 +206,7 @@ struct InstitutionTiersView: View {
         let share = Int((education.gradeWeight * 100).rounded())
         let record = player.highSchoolGrades.isEmpty
             ? "You don't have school grades yet, so the game guesses them from your skills."
-            : "Your grade comes from your \(player.highSchoolGrades.count) school year\(player.highSchoolGrades.count == 1 ? "" : "s") before \(player.country.schooling.schoolLeaving)."
+            : "Your grade comes from your \(player.highSchoolGrades.count) school year\(player.highSchoolGrades.count == 1 ? "" : "s")."
         return """
         \(schoolName(education)) cares about: grades \(share)%, skills \(Int((education.softSkillWeight * 100).rounded()))%\(education.accoladeWeight > 0 ? ", prizes and titles \(Int((education.accoladeWeight * 100).rounded()))%" : ""). \(player.country.gradeLabel(GameConstants.gradeFloor)) doesn't help; \(player.country.gradeLabel(4.0)) helps the most.
 

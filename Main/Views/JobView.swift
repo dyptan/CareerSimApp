@@ -107,7 +107,7 @@ struct JobDetail: View {
                 let short = "\(shortfall) school level\(shortfall == 1 ? "" : "s") below what this job wants"
                 return madeUp > 0 ? short + " (your work experience makes up \(madeUp))" : short
             }
-            if job.degreePreferenceFactor(for: player) < 1 { return "employers here prefer a college degree" }
+            if job.degreePreferenceFactor(for: player) < 1 { return "employers here prefer a university degree" }
             if job.requirements.education.minEQF < 5 { return "you have the schooling it needs" }
             return job.hasAcceptedDegree(for: player) ? "you have the right degree" : "you have a degree, but in a different subject"
         }()
@@ -116,8 +116,8 @@ struct JobDetail: View {
         let topPrestige = (player.degrees.filter { $0.profile != nil }.map { $0.tier.prestige }.max() ?? 0)
         let schoolName: String = {
             switch topPrestige {
-            case 3: return "a top college"
-            case 2: return "a state college"
+            case 3: return player.country.tierName(.elite)
+            case 2: return player.country.tierName(.state)
             default: return "your school"
             }
         }()
@@ -136,7 +136,7 @@ struct JobDetail: View {
             "• Your skills: \(matched) of \(asked) are strong enough (\(pct(b.skillFit)) match)",
             "• Starting chance for this kind of job: \(pct(b.base)) (jobs that need more school start lower)",
         ]
-        if b.prestige != 0 { helps.append("• Going to \(schoolName): \(signed(b.prestige))") }
+        if b.prestige != 0 { helps.append("• A degree from \(schoolName): \(signed(b.prestige))") }
         if b.network != 0 { helps.append("• People you know in \(job.category.rawValue): \(signed(b.network))") }
         if b.fame > 0 { helps.append("• Your fame (\(fameLabel)): \(signed(b.fame))") }
         if job.breakthroughFame != nil { helps.append("• Your “\(job.breakthroughFame ?? "")” title: \(signed(b.breakthrough))") }
