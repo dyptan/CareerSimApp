@@ -89,7 +89,7 @@ final class AdvisorPolicy: Policy {
             // The degree the tip names ("Study for a <degreeName>"), at the tier
             // `offeredDegrees` carries (state) — community in Simplified, which
             // offers only one school.
-            guard let degree = p.offeredDegrees.first(where: { "Study for a \($0.degreeName)" == tip.title }),
+            guard let degree = p.offeredDegrees.first(where: { "Study for a \($0.degreeName(in: p.country))" == tip.title }),
                   let profile = degree.profile else { return false }
             let school = g.school(level: degree.level, profile: profile, tier: degree.tier)
             guard g.canApplyToSchool(school) else { return false }
@@ -127,14 +127,17 @@ final class TypicalPolicy: Policy {
     var masterDecided = false
     var nextLookAge = 0
 
-    /// Lowest pay a job-seeker holds out for, by qualification.
+    /// Lowest pay a job-seeker holds out for, by qualification — US figures,
+    /// priced in the player's country the way the catalogue prices a job.
     func reservationWage(_ p: Player) -> Int {
+        let us: Int
         switch p.highestEQF {
         case ...3: return 0
-        case 4: return 35_000
-        case 5: return 45_000
-        default: return 55_000
+        case 4: us = 35_000
+        case 5: us = 45_000
+        default: us = 55_000
         }
+        return p.country.localPay(title: "", category: .administration, reference: us)
     }
 
     func act(_ g: Game) {

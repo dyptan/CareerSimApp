@@ -38,7 +38,7 @@ struct JobDetail: View {
 
     enum ApplicationResult { case hired, rejected }
 
-    private var sliderMin: Double { Double(job.income) * 0.5 }
+    private var sliderMin: Double { max(Double(player.country.minimumAnnualPay), Double(job.income) * 0.5) }
     private var sliderMax: Double { Double(job.income) * 2.0 }
 
     private var isSimplified: Bool { player.isSimplified }
@@ -190,7 +190,7 @@ struct JobDetail: View {
 
             HStack(spacing: 12) {
                 Text("Market median")
-                Text("\(job.income) $")
+                Text(player.money(job.income))
                     .font(.caption.bold())
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -230,7 +230,7 @@ struct JobDetail: View {
             let eduPlayerLevel = job.playerEducationLevel(for: player)
             let eduRequired = job.requirements.education.minEQF
             RequirementRow(
-                label: job.requirements.education.educationLabel(),
+                label: job.requirements.education.educationLabel(in: player.country),
                 emoji: "🎓",
                 style: .meter(current: eduPlayerLevel, required: eduRequired)
             )
@@ -409,7 +409,7 @@ struct JobDetail: View {
                     InfoHint(title: "💵 Salary", message: "This job pays a set amount — you can't ask for more. It starts a bit lower for beginners and a bit higher if you have years of experience in this work.")
                 }
                 Spacer()
-                Text("\(job.offeredSalary(for: player).formatted(.number)) $/yr")
+                Text("\(player.money(job.offeredSalary(for: player)))/yr")
                     .font(.headline)
             }
             .padding(.horizontal)
@@ -487,19 +487,19 @@ struct JobDetail: View {
             HStack {
                 Text("Your ask:")
                 Spacer()
-                Text("\(Int(requestedSalary).formatted(.number)) $")
+                Text("\(player.money(Int(requestedSalary)))")
                     .font(.headline)
             }
             .padding(.horizontal)
 
-            Slider(value: $requestedSalary, in: sliderMin...sliderMax, step: 500)
+            Slider(value: $requestedSalary, in: sliderMin...sliderMax, step: Double(player.country.moneyStep))
                 .padding(.horizontal)
 
             HStack {
-                Text("\(Int(sliderMin).formatted(.number)) $")
+                Text("\(player.money(Int(sliderMin)))")
                     .font(.caption).foregroundStyle(.secondary)
                 Spacer()
-                Text("\(Int(sliderMax).formatted(.number)) $")
+                Text("\(player.money(Int(sliderMax)))")
                     .font(.caption).foregroundStyle(.secondary)
             }
             .padding(.horizontal)
@@ -524,7 +524,7 @@ struct JobDetail: View {
     /// What to say on a win. The header already shows the new job, so this says
     /// what it means rather than repeating the title.
     private var successMessage: String {
-        "You start as \(job.displayTitle) on \(Int(requestedSalary).formatted(.number)) $ a year."
+        "You start as \(job.displayTitle) on \(player.money(Int(requestedSalary))) a year."
     }
 
     private func resultMessage(_ result: ApplicationResult) -> String {

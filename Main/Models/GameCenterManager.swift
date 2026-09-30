@@ -25,8 +25,10 @@ import AppKit
 final class GameCenterManager: ObservableObject {
     static let shared = GameCenterManager()
 
-    /// Leaderboard identifier created in App Store Connect. Replace with yours.
-    static let leaderboardID = "dev.dyptan.carrersim.wealth_velocity"
+    /// The US leaderboard's identifier in App Store Connect. Every country has a
+    /// board of its own (`Country.leaderboardID`), since a score is money ÷ age
+    /// and euros aren't dollars.
+    static let leaderboardID = GameCenterLeaderboards.wealthVelocity
 
     /// True once the local player has signed into Game Center.
     @Published private(set) var isAuthenticated = false
@@ -63,12 +65,12 @@ final class GameCenterManager: ObservableObject {
     /// caller has to remember the rule.
     func submitScore(of player: Player) {
         guard player.difficulty.keepsScore else { return }
-        submit(score: player.leaderboardScore)
+        submit(score: player.leaderboardScore, to: player.country.leaderboardID)
     }
 
     /// No-op — logged — when the player isn't signed in, Game Center isn't
     /// configured, or score ≤ 0.
-    private func submit(score: Int) {
+    private func submit(score: Int, to leaderboardID: String) {
         guard score > 0 else { return }
         guard GKLocalPlayer.local.isAuthenticated else {
             print("[GameCenter] not authenticated; skipping score \(score)")
@@ -78,7 +80,7 @@ final class GameCenterManager: ObservableObject {
             score,
             context: 0,
             player: GKLocalPlayer.local,
-            leaderboardIDs: [GameCenterManager.leaderboardID]
+            leaderboardIDs: [leaderboardID]
         ) { error in
             if let error {
                 print("[GameCenter] score submission failed: \(error.localizedDescription)")

@@ -4,7 +4,11 @@ import Foundation
 struct Job: Identifiable, Codable, Hashable {
     let id: String
     let category: JobCategory
-    let income: Int            // base/reference salary shown in job listings
+    let income: Int            // base/reference salary shown in job listings, in local money
+    /// The catalogue's US-dollar median for the role (`income` before
+    /// `Country.localPay`). Rules about the *role* — which ones prefer a
+    /// degree — read this, so they don't shift with a country's pay levels.
+    let referenceIncome: Int
     let summary: String
     let icon: String
     let requirements: Requirements
@@ -36,13 +40,14 @@ struct Job: Identifiable, Codable, Hashable {
     var industry: Industry
 
     init(id: String, category: JobCategory, income: Int, summary: String, icon: String,
-         requirements: Requirements, targetCapital: Int? = nil,
+         requirements: Requirements, targetCapital: Int? = nil, referenceIncome: Int? = nil,
          baseTitle: String? = nil, rung: Int = 0, rungLabel: String = "",
          workSetting: WorkSetting = .office,
          industry: Industry = .professionalServices) {
         self.id = id
         self.category = category
         self.income = income
+        self.referenceIncome = referenceIncome ?? income
         self.summary = summary
         self.icon = icon
         self.requirements = requirements
@@ -116,6 +121,11 @@ struct Job: Identifiable, Codable, Hashable {
                 if let profiles = acceptedProfiles {
                     try container.encode(profiles.map { $0.rawValue }, forKey: .acceptedProfiles)
                 }
+            }
+
+            /// The requirement in `country`'s school names (see `Country.educationLevelName`).
+            func educationLabel(in country: Country) -> String {
+                country.educationLevelName(minEQF: minEQF)
             }
 
             func educationLabel() -> String {
@@ -530,7 +540,7 @@ extension Job {
     var prefersDegree: Bool {
         !educationIsMandatory && !isEntrepreneurial && workSetting == .office
             && requirements.education.minEQF < GameConstants.degreePreferredEQF
-            && income >= GameConstants.degreePreferredMinIncome
+            && referenceIncome >= GameConstants.degreePreferredMinIncome
     }
 
     /// The penalty a non-graduate pays on a role that prefers a degree
@@ -613,7 +623,9 @@ extension Job {
         let share = min(GameConstants.offerExperienceCap,
                         max(GameConstants.offerExperienceBase,
                             GameConstants.offerExperienceBase + GameConstants.offerExperiencePerYear * years))
-        return Int((Double(income) * share).rounded())
+        // Never under the minimum wage: a newcomer's discount can't take a
+        // low-paid job below the legal floor (it binds in Germany).
+        return max(player.country.minimumAnnualPay, Int((Double(income) * share).rounded()))
     }
 
     /// How the salary asked for moves the odds, against the salary on offer

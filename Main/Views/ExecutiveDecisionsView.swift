@@ -55,7 +55,7 @@ struct ExecutiveDecisionsView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             HStack(spacing: 6) {
-                Text("💰 Savings: \(player.savings.formatted(.number)) $")
+                Text("💰 Savings: \(player.money(player.savings))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 InfoHint(
@@ -128,7 +128,7 @@ struct ExecutiveDecisionsView: View {
             HStack {
                 Text("Asking price")
                 Spacer()
-                Text("\(currentAsk.formatted(.number)) $").monospacedDigit()
+                Text("\(player.money(currentAsk))").monospacedDigit()
             }
             .font(.caption.bold())
 
@@ -142,7 +142,7 @@ struct ExecutiveDecisionsView: View {
                 )
             }
 
-            Text("🏷️ Worth about \(bounds.fair.formatted(.number)) $ · 🎲 ~\(Int((odds * 100).rounded()))% chance someone buys\(player.economyInRecession ? " · 📉 bad economy" : "")")
+            Text("🏷️ Worth about \(player.money(bounds.fair)) · 🎲 ~\(Int((odds * 100).rounded()))% chance someone buys\(player.economyInRecession ? " · 📉 bad economy" : "")")
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
@@ -153,7 +153,7 @@ struct ExecutiveDecisionsView: View {
     private func actionLabel(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound: return "Announce the round"
-        case .sellShares:      return "Offer for sale at \(currentAsk.formatted(.number)) $"
+        case .sellShares:      return "Offer for sale at \(player.money(currentAsk))"
         }
     }
 
@@ -165,7 +165,7 @@ struct ExecutiveDecisionsView: View {
             return "🎲 ~\(odds)% chance (💼 fame +\(famePts)%) · 📈 your share ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)), pay +\(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))%"
         case .sellShares:
             let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
-            return "🎲 ~\(odds)% chance someone buys · 💰 \(currentAsk.formatted(.number)) $"
+            return "🎲 ~\(odds)% chance someone buys · 💰 \(player.money(currentAsk))"
         }
     }
 
@@ -177,7 +177,7 @@ struct ExecutiveDecisionsView: View {
                 : "🚫 Investors said no this time. Grow your reputation and try again next year."
         case .sellShares:
             return outcome.success
-                ? "💸 Sold! \(outcome.cash.formatted(.number)) $ went into your savings."
+                ? "💸 Sold! \(player.money(outcome.cash)) went into your savings."
                 : "🤝 Nobody bought at that price this year. Ask for less, or try again next year."
         }
     }
@@ -208,9 +208,9 @@ struct ExecutiveDecisionsView: View {
             let bounds = player.shareAskingBounds()
             let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
             return """
-            Sell your share of the company for a price you choose. It's worth about \(bounds.fair.formatted(.number)) $ right now — \(player.currentOccupation?.isEntrepreneurial == true ? "what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors" : "the company shares you've earned since you last sold (part of your pay each year, up to twice your pay)").
+            Sell your share of the company for a price you choose. It's worth about \(player.money(bounds.fair)) right now — \(player.currentOccupation?.isEntrepreneurial == true ? "what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors" : "the company shares you've earned since you last sold (part of your pay each year, up to twice your pay)").
 
-            The more you ask, the fewer buyers: at \(currentAsk.formatted(.number)) $ there's about a \(odds)% chance someone buys this year\(player.economyInRecession ? " — fewer buyers than usual, because the economy is doing badly" : "").
+            The more you ask, the fewer buyers: at \(player.money(currentAsk)) there's about a \(odds)% chance someone buys this year\(player.economyInRecession ? " — fewer buyers than usual, because the economy is doing badly" : "").
 
             \(player.currentOccupation?.isEntrepreneurial == true ? "If it sells, you leave the business — it isn't yours any more, and you're free to start something new. Fees and taxes take \(Int((GameConstants.founderExitCostRate * 100).rounded()))% of the price." : "If it sells, you keep your job. Taxes take \(Int((GameConstants.equitySaleTaxRate * 100).rounded()))% of the price, and you start earning new shares from zero.")
             """

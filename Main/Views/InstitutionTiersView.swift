@@ -39,7 +39,7 @@ struct InstitutionTiersView: View {
     private func tierCard(for education: Education) -> some View {
         let r = education.requirements
         let highestEQF = player.highestEQF
-        let canAfford = player.savings >= education.totalTuition
+        let canAfford = player.savings >= education.totalTuition(in: player.country)
         // The qualification level is the only hard gate; soft skills just move the
         // odds of the admission roll, in every mode.
         let eqfMet = education.meetsRequirements(player: player)
@@ -48,16 +48,16 @@ struct InstitutionTiersView: View {
         VStack(alignment: .leading, spacing: 10) {
             if player.isSimplified {
                 HStack(spacing: 6) {
-                    Text("\(education.pictogram) \(education.degreeName)")
+                    Text("\(education.pictogram) \(education.degreeName(in: player.country))")
                         .font(.headline)
                     Spacer()
                 }
             } else {
                 HStack(spacing: 6) {
-                    Text("\(education.tier.pictogram) \(education.tier.friendlyName)")
+                    Text("\(education.tier.pictogram) \(player.country.tierName(education.tier))")
                         .font(.headline)
                     InfoHint(
-                        title: "\(education.tier.pictogram) \(education.tier.friendlyName)",
+                        title: "\(education.tier.pictogram) \(player.country.tierName(education.tier))",
                         message: education.tier.description
                     )
                     Spacer()
@@ -69,10 +69,10 @@ struct InstitutionTiersView: View {
                 // Simplified mode is kid-friendly — education is free, so its
                 // costs are hidden and only the duration is shown.
                 if !player.isSimplified {
-                    Label("\(education.annualTuition.formatted(.number)) $/yr", systemImage: "dollarsign.circle")
+                    Label("\(player.money(education.annualTuition(in: player.country)))/yr", systemImage: "banknote")
                         .font(.caption)
                         .foregroundStyle(canAfford ? Color.secondary : Color.red)
-                    Label("Total \(education.totalTuition.formatted(.number)) $", systemImage: "sum")
+                    Label("Total \(player.money(education.totalTuition(in: player.country)))", systemImage: "sum")
                         .font(.caption)
                         .foregroundStyle(canAfford ? Color.secondary : Color.red)
                 }
@@ -93,7 +93,7 @@ struct InstitutionTiersView: View {
                 .padding(.top, 4)
 
                 RequirementRow(
-                    label: r.educationLabel(),
+                    label: r.educationLabel(in: player.country),
                     emoji: "🎓",
                     style: .meter(current: highestEQF, required: r.minEQF)
                 )
@@ -105,10 +105,10 @@ struct InstitutionTiersView: View {
             if education.gradeWeight > 0 {
                 let gpa = player.highSchoolGPA
                 HStack(spacing: 6) {
-                    Text("📝 Your grades: GPA \(Player.formatGPA(gpa)) (\(Player.letterGrade(gpa)))")
+                    Text("📝 \(player.country.schooling.gradeName): \(player.country.gradeLabel(gpa))")
                         .font(.subheadline)
                     InfoHint(
-                        title: "📝 High-school grades",
+                        title: "📝 \(player.country.schooling.gradeName)",
                         message: gradesHint(for: education, gpa: gpa)
                     )
                     Spacer()
@@ -173,7 +173,7 @@ struct InstitutionTiersView: View {
                 Text("Admission chance:")
                 InfoHint(
                     title: "How admission works",
-                    message: "You can apply as soon as you've finished the school level above. After that, your chance goes up with:\n\n• the skills this school looks for\n• your high-school grades (for a first degree)\n• your prizes and titles (at top schools)\n\nPicky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not."
+                    message: "You can apply as soon as you've finished the school level above. After that, your chance goes up with:\n\n• the skills this school looks for\n• your \(player.country.schooling.gradeName) (for a first degree)\n• your prizes and titles (at top schools)\n\nPicky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not."
                 )
                 Spacer()
                 Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
@@ -205,12 +205,12 @@ struct InstitutionTiersView: View {
     private func gradesHint(for education: Education, gpa: Double) -> String {
         let share = Int((education.gradeWeight * 100).rounded())
         let record = player.highSchoolGrades.isEmpty
-            ? "You don't have high-school grades yet, so the game guesses them from your skills."
-            : "Your grade average comes from your \(player.highSchoolGrades.count) high-school year\(player.highSchoolGrades.count == 1 ? "" : "s")."
+            ? "You don't have school grades yet, so the game guesses them from your skills."
+            : "Your grade comes from your \(player.highSchoolGrades.count) school year\(player.highSchoolGrades.count == 1 ? "" : "s") before \(player.country.schooling.schoolLeaving)."
         return """
-        \(schoolName(education)) cares about: grades \(share)%, skills \(Int((education.softSkillWeight * 100).rounded()))%\(education.accoladeWeight > 0 ? ", prizes and titles \(Int((education.accoladeWeight * 100).rounded()))%" : ""). A C average (2.0) doesn't help; straight A's (4.0) help the most.
+        \(schoolName(education)) cares about: grades \(share)%, skills \(Int((education.softSkillWeight * 100).rounded()))%\(education.accoladeWeight > 0 ? ", prizes and titles \(Int((education.accoladeWeight * 100).rounded()))%" : ""). \(player.country.gradeLabel(GameConstants.gradeFloor)) doesn't help; \(player.country.gradeLabel(4.0)) helps the most.
 
-        \(record) Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is a B+.
+        \(record) Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is \(player.country.gradeLabel(GameConstants.gradeFloor + GameConstants.gradeSkillSpan)).
         """
     }
 
@@ -249,7 +249,7 @@ struct InstitutionTiersView: View {
     /// How the school reads in a message: the tier when tiers are shown, the
     /// degree itself in simplified mode, where there is only one school.
     private func schoolName(_ education: Education) -> String {
-        player.isSimplified ? "The school" : education.tier.friendlyName
+        player.isSimplified ? "The school" : player.country.tierName(education.tier)
     }
 
     /// Sends the application, which is how this year gets spent — an admission
@@ -265,7 +265,7 @@ struct InstitutionTiersView: View {
             } ?? ""
             player.reportApplicationOutcome(
                 title: "🎓 You're in!",
-                message: "\(schoolName(education)) accepted you onto \(education.degreeName)." + leavingNote
+                message: "\(schoolName(education)) accepted you onto \(education.degreeName(in: player.country))." + leavingNote
             )
             enroll(in: education)
         } else {
@@ -288,7 +288,7 @@ struct InstitutionTiersView: View {
     }
 
     private func applyLabel(eqfMet: Bool, education: Education) -> String {
-        if !eqfMet { return "Need \(education.requirements.educationLabel()) first" }
+        if !eqfMet { return "Need \(education.requirements.educationLabel(in: player.country)) first" }
         return "Apply"
     }
 

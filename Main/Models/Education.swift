@@ -32,11 +32,14 @@ struct Education: Codable, Hashable, Identifiable {
     var yearsToComplete: Int { Level(stage: level).yearsToComplete() }
     var pictogram: String { Level(stage: level).pictogram }
 
-    /// Per-year tuition for this institution tier at this degree level.
-    var annualTuition: Int { tier.annualTuition(for: level, profile: profile) }
+    /// Per-year tuition for this institution tier at this degree level, in
+    /// `country`'s money (`Country.annualTuition`).
+    func annualTuition(in country: Country) -> Int {
+        country.annualTuition(tier: tier, level: level, profile: profile)
+    }
 
     /// Total tuition over the duration of the degree.
-    var totalTuition: Int { annualTuition * yearsToComplete }
+    func totalTuition(in country: Country) -> Int { annualTuition(in: country) * yearsToComplete }
 
 
     // Admission preferences mirror the Job model: soft-skill levels reuse
@@ -52,6 +55,11 @@ struct Education: Codable, Hashable, Identifiable {
 
         init(minEQF: Int = 0) {
             self.minEQF = minEQF
+        }
+
+        /// The requirement in `country`'s school names (see `Country.educationLevelName`).
+        func educationLabel(in country: Country) -> String {
+            country.educationLevelName(minEQF: minEQF)
         }
 
         func educationLabel() -> String {
@@ -225,7 +233,21 @@ struct Education: Codable, Hashable, Identifiable {
         }
     }
 
-    var degreeName: String {
+    /// The qualification's name in `country`: school stages and the
+    /// school-leaving qualification in the country's own terms (Grundschule,
+    /// A-levels, Baccalauréat), a vocational one under its local name
+    /// (Ausbildung in Health); degrees keep their international names.
+    func degreeName(in country: Country) -> String {
+        if let local = country.schoolName(level) {
+            guard level == .Vocational else { return local }
+            if let prof = profile, prof.allowsVocational { return "\(local) in \(prof.rawValue.capitalized)" }
+            return local
+        }
+        return internationalName
+    }
+
+    /// The name everywhere but the school stages (Bachelor of Laws, Juris Doctor).
+    private var internationalName: String {
         switch (level, profile) {
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
             let title = prof.rawValue.capitalized

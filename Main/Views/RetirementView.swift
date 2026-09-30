@@ -24,18 +24,18 @@ struct RetirementView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Text("\(player.isSimplified ? "Money earned" : "Savings"): \(player.savings.formatted(.number)) $")
+            Text("\(player.isSimplified ? "Money earned" : "Savings"): \(player.money(player.savings))")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             if player.outstandingLoan > 0 {
-                Text("🏦 Venture loan owed: \(player.outstandingLoan.formatted(.number)) $")
+                Text("🏦 Venture loan owed: \(player.money(player.outstandingLoan))")
                     .font(.subheadline)
                     .foregroundStyle(.orange)
             }
 
             if player.studentLoan > 0 {
-                Text("🎓 Student loan owed: \(player.studentLoan.formatted(.number)) $")
+                Text("🎓 Student loan owed: \(player.money(player.studentLoan))")
                     .font(.subheadline)
                     .foregroundStyle(.orange)
             }
@@ -46,7 +46,7 @@ struct RetirementView: View {
             // caption says net worth and not savings.
             if keepsScore {
                 HStack(spacing: 6) {
-                    Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
+                    Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
                         .font(.subheadline.bold())
                         .foregroundStyle(.secondary)
                     InfoHint(

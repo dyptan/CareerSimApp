@@ -65,7 +65,7 @@ struct SeniorityOffersView: View {
                 .foregroundStyle(.secondary)
 
             HStack(spacing: 14) {
-                Label("\(offer.annualIncome.formatted(.number)) $/yr", systemImage: "dollarsign.circle")
+                Label("\(player.money(offer.annualIncome))/yr", systemImage: "banknote")
                     .font(.subheadline)
                 if yearsExpected > 0 {
                     Label(

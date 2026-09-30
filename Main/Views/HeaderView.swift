@@ -80,8 +80,9 @@ struct HeaderView: View {
     private var gameModeSummary: String {
         var lines: [String] = []
         lines.append("\(player.difficulty.icon) \(player.difficulty.title)")
+        lines.append("\(player.country.flag) \(player.country.title)")
         if !player.isSimplified {
-            lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of pay above \(player.difficulty.livingCostFloor.formatted(.number)) $ of living costs each year")
+            lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of pay above \(player.money(player.livingCostFloor)) of living costs each year")
         }
         lines.append("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)")
         return lines.joined(separator: "\n")

@@ -112,7 +112,7 @@ struct SkillsView: View {
                     }
                     HStack {
                         Text(studying.pictogram)
-                        Text(studying.degreeName)
+                        Text(studying.degreeName(in: player.country))
                         Spacer()
                         if let yearsLeft = appUIState.yearsLeftToGraduation, yearsLeft > 0 {
                             Text("\(yearsLeft) yr\(yearsLeft == 1 ? "" : "s") left")
@@ -126,7 +126,7 @@ struct SkillsView: View {
                     // first high-school year is on record.
                     if studying.level == .HighSchool, !player.highSchoolGrades.isEmpty {
                         labelledRow(
-                            "📝", "Grade average", gpaLabel,
+                            "📝", player.country.schooling.gradeName, gpaLabel,
                             hint: "Your average school grade so far, over \(player.highSchoolGrades.count) year\(player.highSchoolGrades.count == 1 ? "" : "s"). School skills set each year's grade, and choosing a Study activity pushes it up. Colleges look at it when you apply — the top colleges care about it a lot."
                         )
                     }
@@ -149,10 +149,10 @@ struct SkillsView: View {
         }
     }
 
-    /// "3.4 (B+)" — the high-school GPA with its letter.
+    /// The school-leaving grade as the player's country writes it: "3.4 (B+)",
+    /// "1.6 (good)", "AAB".
     private var gpaLabel: String {
-        let gpa = player.highSchoolGPA
-        return "\(Player.formatGPA(gpa)) (\(Player.letterGrade(gpa)))"
+        player.country.gradeLabel(player.highSchoolGPA)
     }
 
     private var occupationHeadline: String {
@@ -257,7 +257,7 @@ struct SkillsView: View {
                     if !player.isSimplified {
                         moneyRow(
                             "🏦", "Banked from pay", bankedFromPay(job), suffix: " / yr",
-                            hint: "The first \(player.difficulty.livingCostFloor.formatted(.number)) $ of your pay goes on living costs like rent and food. You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(GameConstants.highEarnerThreshold.formatted(.number)) $). If you have no job, living costs come out of your savings."
+                            hint: "The first \(player.money(player.livingCostFloor)) of your pay goes on living costs like rent and food. You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(player.money(GameConstants.highEarnerThreshold))). If you have no job, living costs come out of your savings."
                         )
                     }
                 } else if player.endorsementIncome == 0 {
@@ -275,12 +275,12 @@ struct SkillsView: View {
                 if showsTuition, let edu = player.currentEducation {
                     // What the student pays: the family covers its share.
                     let share = player.difficulty.familyTuitionShare
-                    let yours = Int((Double(edu.annualTuition) * (1 - share)).rounded())
+                    let yours = Int((Double(edu.annualTuition(in: player.country)) * (1 - share)).rounded())
                     moneyRow(
                         "🎓", "Tuition", -yours, suffix: " / yr",
                         hint: share > 0
-                            ? "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year. Your family pays \(pct(share)) of it, so you pay \(yours.formatted(.number)) $ — from savings first, then as a student loan."
-                            : "\(edu.degreeName) costs \(edu.annualTuition.formatted(.number)) $ a year while you study — from savings first, then as a student loan."
+                            ? "\(edu.degreeName(in: player.country)) costs \(player.money(edu.annualTuition(in: player.country))) a year. Your family pays \(pct(share)) of it, so you pay \(player.money(yours)) — from savings first, then as a student loan."
+                            : "\(edu.degreeName(in: player.country)) costs \(player.money(edu.annualTuition(in: player.country))) a year while you study — from savings first, then as a student loan."
                     )
                 }
 
@@ -294,7 +294,7 @@ struct SkillsView: View {
                 if player.studentLoan > 0 {
                     moneyRow(
                         "🎓", "Student loan owed", -player.studentLoan,
-                        hint: "Money you borrowed for school. It grows by \(pct(GameConstants.studentLoanAnnualInterest)) a year. You don't pay it back while you're studying — after that, payments come out of your savings and pay each year."
+                        hint: "Money you borrowed for school. It grows by \(pct(player.country.studentLoanInterest)) a year. You don't pay it back while you're studying — after that, payments come out of your savings and pay each year."
                     )
                 }
 
@@ -314,7 +314,7 @@ struct SkillsView: View {
                 InfoHint(title: "Finances", message: SectionHints.finances(simplified: player.isSimplified))
                 Spacer()
                 // Net worth stays visible while collapsed — the number that matters.
-                Text("\(player.netWorth.formatted(.number)) $")
+                Text("\(player.money(player.netWorth))")
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(player.netWorth < 0 ? .red : .secondary)
             }
@@ -343,7 +343,7 @@ struct SkillsView: View {
     private func moneyRow(_ icon: String, _ label: String, _ amount: Int, suffix: String = "", hint: String) -> some View {
         labelledRow(
             icon, label,
-            "\(amount.formatted(.number)) $\(suffix)",
+            "\(player.money(amount))\(suffix)",
             tint: amount < 0 ? .red : nil,
             hint: hint
         )
@@ -486,11 +486,11 @@ struct SkillsView: View {
                         ForEach(player.degrees, id: \.id) { degree in
                             HStack {
                                 Text(degree.pictogram)
-                                Text(degree.degreeName)
+                                Text(degree.degreeName(in: player.country))
                                 Spacer()
-                                // The diploma carries the GPA universities read.
+                                // The diploma carries the grade universities read.
                                 if degree.level == .HighSchool {
-                                    Text("GPA \(gpaLabel)")
+                                    Text(gpaLabel)
                                         .monospacedDigit()
                                         .foregroundStyle(.secondary)
                                 }

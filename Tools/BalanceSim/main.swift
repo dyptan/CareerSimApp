@@ -39,6 +39,10 @@ var scenarios: [Scenario] = []
 for policy in ["advisor", "typical", "passive", "striver"] {
     scenarios.append(Scenario(difficulty: .middleClass, policy: policy, startAge: 18, lives: lives))
 }
+// Every other country, priced in its own money (see `Country`).
+for country in Country.allCases where country != .default {
+    scenarios.append(Scenario(difficulty: .middleClass, policy: "typical", startAge: 18, lives: lives, country: country))
+}
 // Starting at 18 the dreamer has no junior title, so this isolates the screen-star route.
 scenarios.append(Scenario(difficulty: .middleClass, policy: "dreamer", startAge: 18, lives: lives))
 for policy in ["advisor", "typical", "dreamer"] {
@@ -61,7 +65,7 @@ func run(_ scenario: Scenario) -> ScenarioResult {
         guard lo < hi else { return }
         var local: [(Int, LifeRecord)] = []
         for i in lo..<hi {
-            let game = Game(difficulty: scenario.difficulty, startAge: scenario.startAge)
+            let game = Game(difficulty: scenario.difficulty, startAge: scenario.startAge, country: scenario.country)
             game.play(makePolicy(scenario.policy))
             local.append((i, game.rec))
         }

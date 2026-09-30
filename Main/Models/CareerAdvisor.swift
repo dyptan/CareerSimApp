@@ -186,7 +186,7 @@ enum CareerAdvisor {
     /// look worth it. A standalone role is worth its offer.
     static func prospectPay(_ job: Job, _ player: Player) -> Int {
         let now = offer(job, player)
-        guard let rungs = ladderRungs[job.baseTitle], rungs.count > 1 else { return now }
+        guard let rungs = ladderRungs[player.country]?[job.baseTitle], rungs.count > 1 else { return now }
         let start = job.requirements.minYearsExperience
         let above = rungs.filter { $0.rung > job.rung }.sorted { $0.rung < $1.rung }
         var total = 0.0
@@ -207,17 +207,20 @@ enum CareerAdvisor {
     static func payStory(_ job: Job, _ player: Player) -> String {
         let start = offer(job, player)
         let later = prospectPay(job, player)
-        guard Double(later) >= Double(start) * 1.25 else { return "\(money(start)) a year" }
-        return "\(money(start)) a year to start, growing to about \(money(later)) later"
+        guard Double(later) >= Double(start) * 1.25 else { return "\(money(start, player)) a year" }
+        return "\(money(start, player)) a year to start, growing to about \(money(later, player)) later"
     }
 
     /// How far ahead a ladder's prospects are counted (see `prospectPay`).
     static let prospectHorizonYears = 20
 
-    /// Every ladder's rungs at their catalogue pay, by base title — built once.
-    private static let ladderRungs: [String: [(rung: Int, minYears: Int, income: Int)]] =
-        Dictionary(grouping: JobCatalog.allJobs().filter { !$0.isEntrepreneurial }, by: \.baseTitle)
-            .mapValues { $0.map { (rung: $0.rung, minYears: $0.requirements.minYearsExperience, income: $0.income) } }
+    /// Every ladder's rungs at their catalogue pay, by base title, per
+    /// country — built once.
+    private static let ladderRungs: [Country: [String: [(rung: Int, minYears: Int, income: Int)]]] =
+        Dictionary(uniqueKeysWithValues: Country.allCases.map { country in
+            (country, Dictionary(grouping: JobCatalog.allJobs(in: country).filter { !$0.isEntrepreneurial }, by: \.baseTitle)
+                .mapValues { $0.map { (rung: $0.rung, minYears: $0.requirements.minYearsExperience, income: $0.income) } })
+        })
 
     /// An application or an admission is a roll the player can take again
     /// next year: the chance of succeeding within `retryAttempts` tries, and
@@ -273,9 +276,9 @@ enum CareerAdvisor {
         let job = best.job
         let salary = offer(job, player)
         var detail = player.isSimplified
-            ? "You can get this job! It pays \(money(salary)) a year"
+            ? "You can get this job! It pays \(money(salary, player)) a year"
             : "You have a \(percent(best.odds)) chance to get it. It pays \(payStory(job, player))"
-        detail += pay > 0 && salary > pay ? " — \(money(salary - pay)) more than you earn now." : "."
+        detail += pay > 0 && salary > pay ? " — \(money(salary - pay, player)) more than you earn now." : "."
         detail += " Look for it under \(job.category.rawValue)."
         if reachesGoal(job, player) {
             detail += " 🏆 Getting this job reaches your goal!"
@@ -318,13 +321,13 @@ enum CareerAdvisor {
 
         let years = wait == 1 ? "1 more year" : "\(wait) more years"
         var detail = wait == 0
-            ? "You have a \(percent(chance)) chance to move up this year. You'd earn about \(money(expectedPay)) a year."
-            : "Keep going for \(years) — you need \(next.requirements.minYearsExperience) years as \(next.experienceLadder ?? job.baseTitle) first. Then you'll have about a \(percent(chance)) chance each year to move up and earn about \(money(expectedPay)) a year."
+            ? "You have a \(percent(chance)) chance to move up this year. You'd earn about \(money(expectedPay, player)) a year."
+            : "Keep going for \(years) — you need \(next.requirements.minYearsExperience) years as \(next.experienceLadder ?? job.baseTitle) first. Then you'll have about a \(percent(chance)) chance each year to move up and earn about \(money(expectedPay, player)) a year."
         var destination: Destination?
         if odds.education < 0 {
             // Studying full-time means leaving the job — no button that would
             // undo the very climb this tip is about.
-            detail += " Not having a \(job.requirements.education.educationLabel()) holds you back — but going back to school means leaving this job."
+            detail += " Not having a \(job.requirements.education.educationLabel(in: player.country)) holds you back — but going back to school means leaving this job."
         } else if let lever = biggestTrainableGap(for: next, player: player) {
             detail += " Best way to help: grow your \(lever.gap.axis.pictogram) \(lever.gap.axis.label) (\(lever.gap.have) of \(lever.gap.need)). \(lever.activity.label) is good practice for it."
             destination = .activities(lever.activity.kind)
@@ -440,7 +443,7 @@ enum CareerAdvisor {
         }
         detail += "."
         if pay > 0 { detail += " You'd have to leave your job while you study." }
-        return Tip(kind: .study, icon: best.degree.pictogram, title: "Study for a \(best.degree.degreeName)",
+        return Tip(kind: .study, icon: best.degree.pictogram, title: "Study for a \(best.degree.degreeName(in: player.country))",
                    detail: detail, destination: .education, job: best.job, value: best.value)
     }
 
@@ -449,10 +452,10 @@ enum CareerAdvisor {
     /// school in the same field.
     static func studentTuition(_ degree: Education, toward target: Int, player: Player) -> Int {
         guard !player.isSimplified else { return 0 }
-        var total = degree.totalTuition
+        var total = degree.totalTuition(in: player.country)
         if let profile = degree.profile, degree.eqf < target {
             let next: Level.Stage = target >= Level(stage: .Doctorate).eqf ? .Doctorate : .Master
-            total += Education(next, profile: profile, tier: .state).totalTuition
+            total += Education(next, profile: profile, tier: .state).totalTuition(in: player.country)
         }
         return Int((Double(total) * (1 - player.difficulty.familyTuitionShare)).rounded())
     }
@@ -496,8 +499,8 @@ enum CareerAdvisor {
         guard let best else { return nil }
         let gap = best.gap
         let detail = isChild
-            ? "Want to be \(article(for: best.job.id)) \(best.job.id) one day? It pays \(money(best.job.income)) a year and needs \(gap.axis.label) \(gap.need). You're at \(gap.have) — keep practising!"
-            : "The \(best.job.id) job (\(money(offer(best.job, player))) a year) needs \(gap.axis.label) \(gap.need). You're at \(gap.have)."
+            ? "Want to be \(article(for: best.job.id)) \(best.job.id) one day? It pays \(money(best.job.income, player)) a year and needs \(gap.axis.label) \(gap.need). You're at \(gap.have) — keep practising!"
+            : "The \(best.job.id) job (\(money(offer(best.job, player), player)) a year) needs \(gap.axis.label) \(gap.need). You're at \(gap.have)."
         return Tip(kind: .buildSkill, icon: gap.axis.pictogram,
                    title: "Build \(gap.axis.label) with \(best.activity.label)",
                    detail: detail, destination: .activities(best.activity.kind),
@@ -599,7 +602,7 @@ enum CareerAdvisor {
     /// grow while studying, so an experience gate must already be met.
     static func enrollableAfterDegree(_ training: Training, eqf: Int, alongside: Set<Training>,
                                       player: Player, inYears years: Int) -> Bool {
-        guard player.age + years >= training.minAge,
+        guard player.age + years >= training.minAge(in: player.country),
               max(player.highestEQF, eqf) >= training.minEQF else { return false }
         let held = player.hardSkills.trainings
         guard training.prerequisites.allSatisfy({ held.contains($0) || alongside.contains($0) }) else {
@@ -624,7 +627,8 @@ enum CareerAdvisor {
         return "aeiou".contains(first) ? "an" : "a"
     }
 
-    static func money(_ amount: Int) -> String { "\(amount.formatted(.number)) $" }
+    /// An amount in the player's currency (`Country.money`).
+    static func money(_ amount: Int, _ player: Player) -> String { player.money(amount) }
 
     static func percent(_ probability: Double) -> String { "\(Int((probability * 100).rounded()))%" }
 }

@@ -63,7 +63,19 @@ struct AdvisorPlainLanguage: AdvisorLanguage {
 /// the player will act on, so a reply is shown only if every number in it
 /// appears in the facts it was written from.
 enum AdvisorGuard {
-    /// The numbers in `text`, as bare digits: "68,000 $" → "68000", "12%" → "12".
+    /// What separates thousands besides a comma or a point: a space, a
+    /// no-break or narrow no-break space, a thin space, an apostrophe.
+    private static let groupSeparators: Set<Character> = [" ", "\u{00A0}", "\u{202F}", "\u{2009}", "'", "\u{2019}"]
+
+    /// True when exactly three digits follow `index` — a thousands group.
+    private static func startsThousandsGroup(_ characters: [Character], after index: Int) -> Bool {
+        guard index + 3 < characters.count,
+              characters[(index + 1)...(index + 3)].allSatisfy(\.isNumber) else { return false }
+        return index + 4 >= characters.count || !characters[index + 4].isNumber
+    }
+
+    /// The numbers in `text`, as bare digits: "68,000 $" → "68000", "12%" → "12",
+    /// "45 000 €" → "45000" whichever way the locale groups thousands.
     static func numbers(in text: String) -> Set<String> {
         var found = Set<String>()
         var current = ""
@@ -80,6 +92,13 @@ enum AdvisorGuard {
                       !current.isEmpty,
                       index + 1 < characters.count, characters[index + 1].isNumber {
                 // A thousands separator or a decimal point inside a number.
+                current.append(character)
+            } else if groupSeparators.contains(character),
+                      !current.isEmpty,
+                      current.reversed().prefix(while: \.isNumber).count <= 3,
+                      startsThousandsGroup(characters, after: index) {
+                // A space (or apostrophe) grouping thousands, as French, Ukrainian
+                // and Swiss locales write them: "45 000" is one number, not two.
                 current.append(character)
             } else {
                 flush()
@@ -343,7 +362,7 @@ final class AdvisorConversation: ObservableObject {
             }
         } else {
             say(advisor: "A few jobs fit that. Which one do you mean?")
-            replies = matches.compactMap(AdvisorCoach.family).map(roleChip)
+            replies = matches.compactMap { AdvisorCoach.family($0) }.map(roleChip)
                 + [AdvisorReply(label: "← Other fields", kind: .backToFields)]
         }
     }
@@ -357,7 +376,7 @@ final class AdvisorConversation: ObservableObject {
         let named = text.lowercased().contains(title.lowercased())
         if AdvisorCoach.contentWords(text).count <= 2, !named, candidates.count > 1, candidates.contains(title) {
             say(advisor: "A few jobs fit that. Which one do you mean?")
-            replies = candidates.compactMap(AdvisorCoach.family).map(roleChip)
+            replies = candidates.compactMap { AdvisorCoach.family($0) }.map(roleChip)
                 + [AdvisorReply(label: "← Other fields", kind: .backToFields)]
             choosing = true
         } else {

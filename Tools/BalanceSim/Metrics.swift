@@ -50,8 +50,12 @@ struct Scenario {
     let policy: String
     let startAge: Int
     var lives: Int
+    var country: Country = .default
 
-    var label: String { "\(difficulty.title) · \(policy) · \(startAge)" }
+    /// US scenarios keep their old labels, so earlier baselines still line up.
+    var label: String {
+        "\(difficulty.title) · \(policy) · \(startAge)" + (country == .default ? "" : " · \(country.title)")
+    }
 }
 
 struct ScenarioResult {
