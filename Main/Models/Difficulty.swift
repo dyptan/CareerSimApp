@@ -68,12 +68,40 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// One short line for the picker card; the rest is in `details`.
     var blurb: String {
         switch self {
+        case .simplified:  return "Pick a degree and climb from junior to senior."
+        case .middleClass: return "Skills, odds, money and a shifting economy."
+        }
+    }
+
+    /// Everything the picker card leaves out — who it's for, the goal and the
+    /// assumptions behind the numbers — for the card's ⓘ.
+    var details: String {
+        switch self {
         case .simplified:
-            return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
+            return """
+                \(audience). The gentlest way in — a good first game.
+
+                🎯 Goal: \(goalHeadline) — reach a top leadership job.
+
+                • Getting hired only takes the right degree, enough years of work and being old enough. Meet those and the job is yours.
+                • No hiring odds, salary talks, school tiers or economy.
+                • You keep all your pay. There's no rent, tuition or loans.
+                • There's no score and no leaderboard.
+                """
         case .middleClass:
-            return "A typical household budget and an ordinary, occasionally shaky economy — a recession every several years, and layoffs that hit some industries harder than others."
+            return """
+                \(audience).
+
+                🎯 Goal: \(goalHeadline) — your net worth divided by your age when the career ends at \(GameConstants.retirementAge).
+
+                • Hiring is a roll: skills, fame, network, school prestige and the job market all count.
+                • 💵 A typical household: the first \(livingCostFloor.formatted(.number)) $ of pay goes on living costs, and you save \(Int(savingsRate * 100))% of the rest. Your family pays \(Int(familyTuitionShare * 100))% of tuition; you borrow the rest.
+                • 📉 About a \(Int(turmoilChance * 100))% chance each calm year that a recession starts, and layoffs that hit some industries harder than others.
+                • Scores go to the Game Center leaderboard.
+                """
         }
     }
 
