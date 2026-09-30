@@ -46,6 +46,23 @@ enum GameConstants {
     /// advances by one with each in-game year.
     static let startingAge: Int = 7
 
+    /// A player who starts later than `startingAge` didn't play the years
+    /// before it: no yearly choices, no purposeful practice. Each skipped year
+    /// still leaves a trace, but an unfocused one — this many soft-skill points
+    /// in a skill picked at random (`Player.seedSkippedYears`) — where a year of
+    /// chosen activity builds several points in the skills a goal needs (see
+    /// `Sport.abilities`). That gap is the point: an ambitious path, an elite
+    /// school say, is built from early choices, and a late start can't buy them back.
+    static let skippedYearSkillPoints: Int = 1
+
+    /// From this age the skipped years are adult ones, and they are worth less:
+    /// past school, professional activity — experience, projects, a network —
+    /// counts for more than the soft skills a year adds, and those have their own
+    /// yearly choices. Each such year is only `skippedAdultYearFalloff` as likely
+    /// to leave a boost as the one before it (the first is half as likely as a school year).
+    static let skippedYearsFullValueBelowAge: Int = 18
+    static let skippedAdultYearFalloff: Double = 0.5
+
     /// Minimum age at which a player can take any job at all — the age the Jobs
     /// sheet opens. FLSA child-labour rules (DOL Fact Sheet #43) let 14–15-year-
     /// olds work limited hours in non-hazardous retail and food-service jobs, so

@@ -1015,6 +1015,93 @@ final class CareerGraphTests: XCTestCase {
         XCTFail("Expected the round to close within many attempts at capped odds.")
     }
 
+    // MARK: - Starting later skips the early choices
+
+    private func skillTotal(_ skills: SoftSkills) -> Int {
+        SoftSkills.allAxes.reduce(0) { $0 + skills[keyPath: $1.keyPath] }
+    }
+
+    /// A game that starts at the start of childhood skips nothing.
+    func testStartingAtSevenAddsNoSkillPoints() {
+        for _ in 0..<50 {
+            let player = Player()
+            let before = player.softSkills
+            player.configureStart(age: GameConstants.startingAge)
+            XCTAssertEqual(player.softSkills, before)
+        }
+    }
+
+    /// Every year skipped through school leaves exactly one point, in any mode.
+    func testEachYearSkippedThroughSchoolLeavesOneRandomSkillPoint() {
+        for difficulty in Difficulty.allCases {
+            for startAge in 8...18 {
+                let player = Player()
+                player.difficulty = difficulty
+                let before = skillTotal(player.softSkills)
+                player.configureStart(age: startAge)
+                XCTAssertEqual(skillTotal(player.softSkills) - before,
+                               (startAge - GameConstants.startingAge) * GameConstants.skippedYearSkillPoints,
+                               "Starting at \(startAge) in \(difficulty.title).")
+            }
+        }
+    }
+
+    /// The boost isn't aimed: over many late starts every skill gets some, and
+    /// no skill is ever pushed past the cap.
+    func testTheBoostLandsOnAnySkillAndRespectsTheCap() {
+        var boosted = Set<String>()
+        for _ in 0..<300 {
+            let player = Player()
+            let before = player.softSkills
+            player.configureStart(age: 18)
+            for axis in SoftSkills.allAxes where player.softSkills[keyPath: axis.keyPath] > before[keyPath: axis.keyPath] {
+                boosted.insert(axis.label)
+            }
+        }
+        XCTAssertEqual(boosted, Set(SoftSkills.allAxes.map(\.label)), "Any skill can be the one that grows.")
+
+        let maxed = Player()
+        for axis in SoftSkills.allAxes { maxed.softSkills[keyPath: axis.keyPath] = 10 }
+        maxed.configureStart(age: 18)
+        XCTAssertTrue(SoftSkills.allAxes.allSatisfy { maxed.softSkills[keyPath: $0.keyPath] == 10 }, "10 is the cap.")
+    }
+
+    /// Past school the skipped years are worth less and less: professional
+    /// activity, not early soft skills, is what counts by then.
+    func testSkippedYearsPastEighteenFadeAway() {
+        XCTAssertEqual(Player.skippedYearYield(atAge: 7), 1)
+        XCTAssertEqual(Player.skippedYearYield(atAge: 17), 1, "Every school year counts in full.")
+        XCTAssertEqual(Player.skippedYearYield(atAge: 18), GameConstants.skippedAdultYearFalloff, accuracy: 1e-12)
+        var last = 1.0
+        for age in 18...40 {
+            let value = Player.skippedYearYield(atAge: age)
+            XCTAssertLessThan(value, last, "Age \(age) is worth less than the year before.")
+            XCTAssertGreaterThan(value, 0)
+            last = value
+        }
+
+        // Twelve adult years add about one point in all — not twelve.
+        let adultYears = (18..<30).reduce(0.0) { $0 + Player.skippedYearYield(atAge: $1) }
+        XCTAssertLessThan(adultYears, 1.01)
+        var extra = 0
+        let samples = 400
+        for _ in 0..<samples {
+            let player = Player()
+            let before = skillTotal(player.softSkills)
+            player.configureStart(age: 30)
+            extra += skillTotal(player.softSkills) - before - (18 - GameConstants.startingAge)
+        }
+        let mean = Double(extra) / Double(samples)
+        XCTAssertEqual(mean, adultYears, accuracy: 0.25, "The years past 18 add about \(adultYears) points, not 12.")
+    }
+
+    /// The reason a late start can't buy back the early choices: a year of
+    /// chosen activity builds more than a skipped year's random point.
+    func testAChosenYearBuildsMoreThanASkippedOne() {
+        let best = Sport.allCases.map { $0.abilities.reduce(0) { $0 + $1.weight } }.max() ?? 0
+        XCTAssertGreaterThan(best, GameConstants.skippedYearSkillPoints * 2)
+    }
+
     // MARK: - Open-ended realistic goal + running score
 
     /// Realistic modes are open-ended: no savings target ever counts as a goal,

@@ -368,7 +368,24 @@ struct ModeSelectionView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+
+            if let skipped = skippedYearsNote {
+                Text(skipped)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
+    }
+
+    /// What starting later costs: the years skipped leave a few random skill
+    /// points instead of the ones the player would have chosen.
+    private var skippedYearsNote: String? {
+        let years = min(startAge, GameConstants.skippedYearsFullValueBelowAge) - GameConstants.startingAge
+        guard years > 0 else { return nil }
+        let points = years * GameConstants.skippedYearSkillPoints
+        return "🎲 Skipping \(years) year\(years == 1 ? "" : "s") of childhood gives you \(points) random skill point\(points == 1 ? "" : "s"). Playing those years yourself builds far more."
     }
 
     /// Tells the player which school stage they'll begin in for the chosen age.

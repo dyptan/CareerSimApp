@@ -831,6 +831,9 @@ final class Player: ObservableObject {
     /// the stage in progress (if any) becomes `currentEducation`. Mirrors the
     /// age-10/14/18 transitions in `RootView`. Returns true when the player
     /// starts old enough (18) that the post-high-school decision should fire.
+    ///
+    /// The years before a later start weren't played, so each leaves a random
+    /// soft-skill boost (`seedSkippedYears`). Call it once per new game.
     @discardableResult
     func configureStart(age startAge: Int) -> Bool {
         age = startAge
@@ -848,7 +851,30 @@ final class Player: ObservableObject {
         } else {
             currentEducation = nil
         }
+        seedSkippedYears(before: startAge)
         return startAge >= 18
+    }
+
+    /// The chance that the year lived at `age` — one a later start skipped —
+    /// leaves a random skill boost: certain through school, then halving with
+    /// each adult year (`GameConstants.skippedAdultYearFalloff`).
+    static func skippedYearYield(atAge age: Int) -> Double {
+        guard age >= GameConstants.skippedYearsFullValueBelowAge else { return 1 }
+        return pow(GameConstants.skippedAdultYearFalloff,
+                   Double(age - GameConstants.skippedYearsFullValueBelowAge + 1))
+    }
+
+    /// Starting at `startAge` skips the years from `GameConstants.startingAge`
+    /// up to it. Each leaves `skippedYearSkillPoints` in one skill picked at
+    /// random — any of them, not the ones a goal needs — so starting late is
+    /// never a way round the early choices a narrow path is built on.
+    private func seedSkippedYears(before startAge: Int) {
+        guard startAge > GameConstants.startingAge else { return }
+        for lived in GameConstants.startingAge..<startAge
+        where Double.random(in: 0..<1) < Self.skippedYearYield(atAge: lived) {
+            guard let axis = SoftSkills.allAxes.randomElement() else { continue }
+            applySkillBoosts([WeightedAbility(keyPath: axis.keyPath, weight: GameConstants.skippedYearSkillPoints)])
+        }
     }
 
     // MARK: - Soft-skill boosts
