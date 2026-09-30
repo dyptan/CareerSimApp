@@ -167,12 +167,13 @@ enum AdvisorPathway {
 
     // MARK: - The pathway
 
-    /// The pathway to `guide`'s role from where the player stands. Nil in
-    /// Simplified (which has no odds, fame or network to weigh), for a player
-    /// who already holds the top of the ladder, and for a promotion — that has
-    /// its own maths (`Player.promotionOdds`).
+    /// The pathway to `guide`'s role from where the player stands. Nil for the
+    /// simple voice — Simplified has no odds, fame or network to weigh, and the
+    /// levers are an adult's planning, not a young player's — for a player who
+    /// already holds the top of the ladder, and for a promotion, which has its
+    /// own maths (`Player.promotionOdds`).
     static func pathway(for guide: AdvisorCoach.RoleGuide, player: Player) -> Pathway? {
-        guard !player.isSimplified, !guide.atTop, !guide.isPromotion else { return nil }
+        guard AdvisorVoice(player) == .standard, !guide.atTop, !guide.isPromotion else { return nil }
         let job = guide.focus
         let b = job.hireBreakdown(for: player, requestedSalary: Double(CareerAdvisor.offer(job, player)))
         let context = Context(player: player, job: job, guide: guide, b: b)
@@ -201,7 +202,7 @@ enum AdvisorPathway {
             title: guide.title, isNarrow: narrow, odds: odds,
             headline: headline(guide.title, odds: odds, exec: job.isExecutive, narrow: narrow),
             gates: gates(context, odds: odds, levers: levers),
-            levers: levers, note: AdvisorRealWorld.note(for: job))
+            levers: levers, note: AdvisorRealWorld.note(for: job, player: player))
     }
 
     // MARK: - Working it out
@@ -799,7 +800,7 @@ enum AdvisorPathway {
             headline: "\(c.guide.title) has one door: the “\(award)” title. Without it your chance stays at about \(chance(c.b.floor)), whatever else you do.",
             gates: [AdvisorCard(icon: "①", title: "Win the door-opener",
                                 detail: "Win the “\(award)” title first. Only then do skills, fame and the rest count.")],
-            levers: [lever], note: AdvisorRealWorld.note(for: c.job))
+            levers: [lever], note: AdvisorRealWorld.note(for: c.job, player: c.player))
     }
 
     // MARK: - Words

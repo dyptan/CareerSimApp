@@ -409,6 +409,13 @@ enum AdvisorCoach {
         }
     }
 
+    /// What a role asks of education, in words: "a bachelor's degree in Business".
+    static func educationPhrase(for job: Job) -> String {
+        let edu = job.requirements.education
+        let fields = list((edu.acceptedProfiles ?? []).map { $0.rawValue.capitalized }, conjunction: "or")
+        return degreePhrase(minEQF: edu.minEQF) + (fields.isEmpty ? "" : " in \(fields)")
+    }
+
     /// What the advisor tells a player who has picked `baseTitle`. Nil for a
     /// title that isn't a role.
     static func guide(for baseTitle: String, player: Player) -> RoleGuide? {
@@ -455,10 +462,8 @@ enum AdvisorCoach {
         // The degree.
         let edu = focus.requirements.education
         let inSchool = player.currentEducation != nil
-        let fields = list((edu.acceptedProfiles ?? []).map { $0.rawValue.capitalized }, conjunction: "or")
-        let inField = fields.isEmpty ? "" : " in \(fields)"
         if !focus.educationMet(for: player), edu.minEQF >= 4 || !inSchool {
-            let phrase = degreePhrase(minEQF: edu.minEQF) + inField
+            let phrase = educationPhrase(for: focus)
             needs.append(phrase)
             if let studying = player.currentEducation, studying.profile != nil,
                studying.eqf >= edu.minEQF,
@@ -829,6 +834,10 @@ enum AdvisorCoach {
     /// free question is answered from.
     static func playerFacts(_ player: Player) -> [String] {
         var facts = ["The player is \(player.age) years old."]
+        if player.isSimplified {
+            // What a model needs to answer "how do I get hired?" correctly here.
+            facts.append("They are playing the Simplified mode: getting hired only takes the right school, enough years of work and being old enough. There are no odds, luck, fame or seats to worry about.")
+        }
         if let job = player.currentOccupation {
             facts.append("They work as \(job.id), earning \(CareerAdvisor.money(job.annualIncome)) a year.")
         } else {
@@ -849,7 +858,7 @@ enum AdvisorCoach {
                 facts.append("Their goal is \(title).")
                 facts += Self.facts(guide, player: player)
                 if let path = AdvisorPathway.pathway(for: guide, player: player) { facts += path.facts }
-                if let note = AdvisorRealWorld.note(for: guide.focus) { facts += note.facts }
+                if let note = AdvisorRealWorld.note(for: guide.focus, player: player) { facts += note.facts }
             }
         case .exploring:
             facts.append("They haven't chosen a role and are trying different activities to find one.")

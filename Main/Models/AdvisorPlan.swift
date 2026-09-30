@@ -135,3 +135,53 @@ struct AdvisorCheckIn: Identifiable, Equatable {
 
     var id: Int { age }
 }
+
+/// How the advisor speaks: plain words and short sentences for a beginner or a
+/// young player, the full picture for everyone else.
+///
+/// It follows who is playing, not what is being said. The Simplified mode is
+/// the tutorial, so it always gets the simple voice; in Real Life the voice
+/// grows up when the player leaves middle school. The *facts* never change with
+/// the voice — only how they are put, and how much of the adult-sized analysis
+/// (odds, levers, real-world statistics) is worth a reader's time.
+enum AdvisorVoice: Equatable {
+    case simple
+    case standard
+
+    /// Players younger than this are still in primary or middle school (which
+    /// ends at 14), and read like it.
+    static let simpleBelowAge = 14
+
+    init(difficulty: Difficulty, age: Int) {
+        self = difficulty.isSimplified || age < Self.simpleBelowAge ? .simple : .standard
+    }
+
+    init(_ player: Player) {
+        self.init(difficulty: player.difficulty, age: player.age)
+    }
+
+    /// What a language model is told about how to write for this reader; empty
+    /// for the standard voice, which the base instructions already describe.
+    var styleGuide: String {
+        switch self {
+        case .simple:
+            return """
+                The player is a beginner or a child. Write for a young reader: very short sentences, everyday words a seven-year-old knows, and a warm, encouraging tone.
+                Avoid jargon and game words; if you must use one, explain it in a few plain words.
+                Say only what the facts say: do not add hopes, guesses or advice of your own, and keep an age or a number next to what it belongs to.
+                Copy every number exactly as written — never turn a percentage into a fraction such as "1 in 10".
+                A hard goal is something to work toward, never a reason to give up.
+                """
+        case .standard:
+            return ""
+        }
+    }
+
+    /// How long a free answer may run, in words a model can follow.
+    var answerLength: String {
+        switch self {
+        case .simple: return "three"
+        case .standard: return "four"
+        }
+    }
+}

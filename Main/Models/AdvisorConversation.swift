@@ -6,10 +6,12 @@ import Combine
 /// What the language layer is asked to put into words: what the message is
 /// about, the facts it may quote, and the plain text the game would show with
 /// no model at all. The facts are the only source of numbers — see `AdvisorGuard`.
+/// `voice` says who is reading, so a beginner isn't handed a textbook.
 struct AdvisorBrief: Equatable {
     let topic: String
     let facts: [String]
     let plain: String
+    var voice: AdvisorVoice = .standard
 }
 
 /// What a player's typed words ask for.
@@ -172,6 +174,15 @@ final class AdvisorConversation: ObservableObject {
         self.language = language
     }
 
+    /// How the advisor speaks to this player (`AdvisorVoice`): read fresh each
+    /// time, because a Real Life player grows out of the simple voice.
+    private var voice: AdvisorVoice { AdvisorVoice(player) }
+
+    /// A brief for the language layer, always addressed to the right reader.
+    private func brief(_ topic: String, facts: [String], plain: String) -> AdvisorBrief {
+        AdvisorBrief(topic: topic, facts: facts, plain: plain, voice: voice)
+    }
+
     /// Whether the text box has a use: to name a role, or — with a model — to ask.
     var acceptsText: Bool { choosing || language.isAvailable }
     var languageNote: String? { language.isAvailable ? nil : language.note }
@@ -233,7 +244,7 @@ final class AdvisorConversation: ObservableObject {
             if let guide = currentGuide() { await presentPathway(guide, forced: true) }
             offerFollowUps()
         case .realWorld:
-            if let guide = currentGuide(), let note = AdvisorRealWorld.note(for: guide.focus) { presentRealWorld(note) }
+            if let guide = currentGuide(), let note = AdvisorRealWorld.note(for: guide.focus, player: player) { presentRealWorld(note) }
             offerFollowUps()
         }
     }
@@ -285,7 +296,9 @@ final class AdvisorConversation: ObservableObject {
     private func askOpeningQuestion(changing: Bool) {
         say(advisor: changing
             ? "Sure — let's pick a new direction. Do you have a job in mind now, or would you like to explore again?"
-            : "Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine.")
+            : voice == .simple
+                ? "Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine."
+                : "Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine.")
         replies = [
             AdvisorReply(label: "🎯 I have a role in mind", kind: .haveRole),
             AdvisorReply(label: "🤔 I haven't decided yet", kind: .undecided),
@@ -387,8 +400,9 @@ final class AdvisorConversation: ObservableObject {
                 if let path = AdvisorPathway.pathway(for: guide, player: player) {
                     chips.append(AdvisorReply(label: path.isNarrow ? "🧭 The narrow path" : "🧭 What decides it", kind: .showPath))
                 }
-                if AdvisorRealWorld.note(for: guide.focus) != nil {
-                    chips.append(AdvisorReply(label: "🌍 How it works in real life", kind: .realWorld))
+                if AdvisorRealWorld.note(for: guide.focus, player: player) != nil {
+                    chips.append(AdvisorReply(label: voice == .simple ? "🌍 How it really works" : "🌍 How it works in real life",
+                                              kind: .realWorld))
                 }
             }
             replies = chips
@@ -452,13 +466,13 @@ final class AdvisorConversation: ObservableObject {
         if guide.steps.contains(where: { ![.listing, .apply].contains($0.kind) }) {
             plain += " Here's what would help most:"
         }
-        let brief = AdvisorBrief(
-            topic: "The player chose \(title) as their goal. Tell them where they stand and point them to the steps listed below your message.",
+        let brief = brief(
+            "The player chose \(title) as their goal. Tell them where they stand and point them to the steps listed below your message.",
             facts: AdvisorCoach.facts(guide, player: player), plain: plain)
         await say(brief, cards: guide.cards)
         if full {
             await presentPathway(guide, forced: false)
-            if let note = AdvisorRealWorld.note(for: guide.focus) { presentRealWorld(note) }
+            if let note = AdvisorRealWorld.note(for: guide.focus, player: player) { presentRealWorld(note) }
         }
     }
 
@@ -467,13 +481,15 @@ final class AdvisorConversation: ObservableObject {
     private func presentPathway(_ guide: AdvisorCoach.RoleGuide, forced: Bool) async {
         guard let path = AdvisorPathway.pathway(for: guide, player: player) else {
             if forced {
-                say(advisor: "There's no odds to weigh here: a Simplified game hires with certainty once you meet the requirements, and a promotion follows its own rules.")
+                say(advisor: player.isSimplified
+                    ? "There's no luck to worry about here: once you have the right school and enough years of work, the job is yours."
+                    : "There's nothing to plan on this one yet — just keep going with school, activities and trying new things.")
             }
             return
         }
         guard forced || path.isNarrow else { return }
-        let brief = AdvisorBrief(
-            topic: "The player's goal is \(path.title). Explain how narrow the path is and what decides it; the gates and the levers are listed below your message.",
+        let brief = brief(
+            "The player's goal is \(path.title). Explain how narrow the path is and what decides it; the gates and the levers are listed below your message.",
             facts: path.facts, plain: path.headline)
         await say(brief, heading: "🧭 The narrow path", cards: path.gates + path.leverCards)
     }
@@ -511,8 +527,8 @@ final class AdvisorConversation: ObservableObject {
                         detail: "Builds \(AdvisorCoach.list(idea.builds)).",
                         actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(idea.sport.kind)))])
         }
-        let brief = AdvisorBrief(
-            topic: "The player hasn't decided on a role. Encourage them to try different activities; the ideas are listed below your message.",
+        let brief = brief(
+            "The player hasn't decided on a role. Encourage them to try different activities; the ideas are listed below your message.",
             facts: facts, plain: plain)
         await say(brief, cards: cards)
     }
@@ -539,8 +555,8 @@ final class AdvisorConversation: ObservableObject {
         for title in checkIn.suggestions {
             if let card = suggestionCard(title) { cards.append(card) }
         }
-        let brief = AdvisorBrief(
-            topic: checkIn.role.map { "The advisor's yearly review of the player's progress toward \($0)." }
+        let brief = brief(
+            checkIn.role.map { "The advisor's yearly review of the player's progress toward \($0)." }
                 ?? "The advisor's yearly review of the player's exploring.",
             facts: AdvisorCoach.facts(checkIn), plain: checkIn.headline)
         await say(brief, heading: "📅 Check-in · age \(checkIn.age)", cards: cards)
@@ -578,8 +594,8 @@ final class AdvisorConversation: ObservableObject {
     }
 
     private func answer(_ question: String) async {
-        let brief = AdvisorBrief(
-            topic: "The player asked: \(question)",
+        let brief = brief(
+            "The player asked: \(question)",
             facts: AdvisorCoach.playerFacts(player), plain: "")
         if let reply = await withTimeout(Self.answerTimeout, { await self.language.answer(question, brief: brief) }) {
             say(advisor: reply)

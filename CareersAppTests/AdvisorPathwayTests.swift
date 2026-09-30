@@ -285,7 +285,7 @@ final class AdvisorPathwayTests: XCTestCase {
     // MARK: Real world
 
     func testHardCareersCarryARealWorldNoteThatPairsEachPointWithTheGame() throws {
-        let ceo = try XCTUnwrap(AdvisorRealWorld.note(for: try XCTUnwrap(AdvisorCoach.family(ceoTitle)).entry))
+        let ceo = try XCTUnwrap(AdvisorRealWorld.note(for: try XCTUnwrap(AdvisorCoach.family(ceoTitle)).entry, difficulty: .middleClass, voice: .standard))
         XCTAssertGreaterThanOrEqual(ceo.points.count, 5)
         XCTAssertTrue(ceo.points.allSatisfy { $0.game != nil }, "Each real-world point has its in-game counterpart.")
         let text = ceo.points.compactMap(\.game).joined(separator: " ")
@@ -302,12 +302,12 @@ final class AdvisorPathwayTests: XCTestCase {
                     "Investment Banker", "Management Consultant", "TV Presenter"]
         for title in hard {
             let family = try XCTUnwrap(AdvisorCoach.family(title), title)
-            let note = try XCTUnwrap(AdvisorRealWorld.note(for: family.entry), "No real-world note for \(title).")
+            let note = try XCTUnwrap(AdvisorRealWorld.note(for: family.entry, difficulty: .middleClass, voice: .standard), "No real-world note for \(title).")
             XCTAssertFalse(note.points.isEmpty, title)
             XCTAssertTrue(note.points.allSatisfy { !$0.real.isEmpty }, title)
         }
         for title in ["Cashier", "Software Engineer", "Registered Nurse", "Chef"] {
-            XCTAssertNil(AdvisorRealWorld.note(for: try XCTUnwrap(AdvisorCoach.family(title)).entry), title)
+            XCTAssertNil(AdvisorRealWorld.note(for: try XCTUnwrap(AdvisorCoach.family(title)).entry, difficulty: .middleClass, voice: .standard), title)
         }
     }
 
@@ -396,5 +396,150 @@ final class AdvisorPathwayTests: XCTestCase {
         XCTAssertFalse(chat.messages.contains { $0.heading == "🌍 Becoming a CEO" }, "Coming back shows the guide only.")
         await chat.choose(try XCTUnwrap(chat.replies.first { $0.kind == .realWorld }))
         XCTAssertTrue(chat.messages.contains { $0.heading == "🌍 Becoming a CEO" })
+    }
+
+    // MARK: Voice and mode
+
+    private let hardCareers = ["Chief Executive Officer", "Chief Technology Officer", "Chief Medical Officer", "Marketing Director",
+                               "Sales Director", "Managing Partner", "Physician", "Surgeon", "Judge", "Research Scientist",
+                               "Airline Pilot", "Player", "Investment Banker", "Management Consultant", "TV Presenter"]
+
+    private func note(_ title: String, _ difficulty: Difficulty, _ voice: AdvisorVoice) throws -> AdvisorRealWorld.Note {
+        let family = try XCTUnwrap(AdvisorCoach.family(title), title)
+        return try XCTUnwrap(AdvisorRealWorld.note(for: family.entry, difficulty: difficulty, voice: voice), title)
+    }
+
+    /// The advisor speaks to who is playing: the tutorial always simply, Real
+    /// Life simply until the player leaves middle school.
+    func testTheVoiceFollowsTheModeAndTheAge() {
+        XCTAssertEqual(AdvisorVoice(difficulty: .simplified, age: 7), .simple)
+        XCTAssertEqual(AdvisorVoice(difficulty: .simplified, age: 40), .simple, "Simplified is the tutorial at any age.")
+        XCTAssertEqual(AdvisorVoice(difficulty: .middleClass, age: 7), .simple)
+        XCTAssertEqual(AdvisorVoice(difficulty: .middleClass, age: AdvisorVoice.simpleBelowAge - 1), .simple)
+        XCTAssertEqual(AdvisorVoice(difficulty: .middleClass, age: AdvisorVoice.simpleBelowAge), .standard)
+        XCTAssertEqual(AdvisorVoice(executive()), .standard)
+        XCTAssertEqual(AdvisorVoice(teen()), .standard, "A 16-year-old in Real Life reads the full version.")
+    }
+
+    /// What the on-device model is told is the one place the voice changes its
+    /// words, so it has to say something for the simple voice — and nothing extra
+    /// for everyone else.
+    func testTheModelIsToldToWriteSimplyOnlyForTheSimpleVoice() {
+        let simple = AdvisorVoice.simple.styleGuide
+        XCTAssertTrue(simple.contains("very short sentences"), simple)
+        XCTAssertTrue(simple.contains("Avoid jargon"), simple)
+        XCTAssertTrue(simple.contains("Say only what the facts say"), "A small model invents when it isn't held to the facts.")
+        XCTAssertTrue(simple.contains("never turn a percentage into a fraction"),
+                      "A rewritten number would fail the number guard and waste the reply.")
+        XCTAssertEqual(AdvisorVoice.standard.styleGuide, "")
+        XCTAssertNotEqual(AdvisorVoice.simple.answerLength, AdvisorVoice.standard.answerLength)
+    }
+
+    /// Simplified hires with certainty, so its notes may not describe seats,
+    /// fame, prestige, demand or odds — none of which it has.
+    func testSimplifiedNeverHearsOfSeatsFameOrLuckItDoesNotHave() throws {
+        let notInSimplified = ["seat", "fame", "network", "prestige", "founder", "demand", "odds", "%", "applicant", "climate", "market"]
+        for title in hardCareers {
+            for text in try note(title, .simplified, .simple).points.compactMap(\.game) {
+                for word in notInSimplified {
+                    XCTAssertFalse(text.lowercased().contains(word), "\(title): “\(text)” talks of \(word), which Simplified doesn't have.")
+                }
+            }
+        }
+    }
+
+    /// …and what it does say is what the game does: the right school and the
+    /// years, then the job is certain; one year short and it is closed.
+    func testWhatTheSimplifiedNoteSaysIsWhatSimplifiedDoes() throws {
+        let ceo = try XCTUnwrap(AdvisorCoach.family(ceoTitle)).entry
+        let text = try note(ceoTitle, .simplified, .simple).points.compactMap(\.game).joined(separator: " ")
+        XCTAssertTrue(text.contains(AdvisorCoach.educationPhrase(for: ceo)), "It names the degree, not just “school”: \(text)")
+        XCTAssertTrue(text.contains("\(ceo.requirements.minYearsExperience) years of work in"), text)
+        XCTAssertTrue(text.contains("no companies to start"), "Simplified has no Ventures sheet.")
+
+        let player = executive()
+        player.difficulty = .simplified
+        let ask = Double(ceo.annualIncome)
+        XCTAssertEqual(ceo.hireProbability(for: player, requestedSalary: ask), 1.0, accuracy: 1e-9,
+                       "Qualified: “the job is yours”, with no seat to win.")
+        player.experience[.business] = ceo.requirements.minYearsExperience - 1
+        XCTAssertEqual(ceo.hireProbability(for: player, requestedSalary: ask), 0, "A year short: closed, not a long shot.")
+    }
+
+    func testThePilotAndDoctorTutorialLinesDescribeTheTutorial() throws {
+        let pilot = try note("Airline Pilot", .simplified, .simple).points.compactMap(\.game).joined(separator: " ")
+        XCTAssertTrue(pilot.contains("skips the licence"), pilot)
+        let doctor = try note("Physician", .simplified, .simple).points.compactMap(\.game).joined(separator: " ")
+        XCTAssertTrue(doctor.contains("no school bill") || doctor.contains("no licence to earn"), doctor)
+        XCTAssertTrue(doctor.contains("in Simplified mode too"), "School admission is still a roll there.")
+    }
+
+    /// The Junior Champion door is shut in every mode; Simplified only drops the
+    /// roster lottery behind it.
+    func testTheAthleteTutorialLineKeepsTheDoorAndDropsTheLottery() throws {
+        let text = try note("Player", .simplified, .simple).points.compactMap(\.game).joined(separator: " ")
+        XCTAssertTrue(text.contains("Junior Champion"), text)
+        XCTAssertFalse(text.contains("%"))
+
+        let family = try XCTUnwrap(AdvisorCoach.family("Player"))
+        let pro = try XCTUnwrap(family.rungs.first { $0.rung >= 1 })
+        let player = executive()
+        player.difficulty = .simplified
+        XCTAssertTrue(pro.hireBreakdown(for: player, requestedSalary: Double(pro.annualIncome)).breakthroughMissing,
+                      "No title, no door — in Simplified too.")
+        player.award("Junior Champion", icon: "🏆", category: nil, weight: 1)
+        let held = pro.hireBreakdown(for: player, requestedSalary: Double(pro.annualIncome))
+        XCTAssertFalse(held.breakthroughMissing)
+        XCTAssertEqual(held.odds(requirementFactor: 1), 1.0, accuracy: 1e-9, "With the title the spot is certain — no roster lottery.")
+    }
+
+    /// The beginner's telling is short, in short sentences, and drops the
+    /// statistics — while Real Life keeps its own game lines, which are true there.
+    func testTheSimpleTellingIsShortAndKeepsRealLifesGameLines() throws {
+        for title in hardCareers {
+            let full = try note(title, .middleClass, .standard)
+            let simple = try note(title, .middleClass, .simple)
+            XCTAssertFalse(simple.points.isEmpty, "\(title) has nothing for a young reader.")
+            XCTAssertLessThanOrEqual(simple.points.count, full.points.count, title)
+            for point in simple.points {
+                XCTAssertLessThanOrEqual(point.real.count, 220, "\(title): too long for a young reader: \(point.real)")
+                for sentence in point.real.split(separator: ".") {
+                    XCTAssertLessThanOrEqual(sentence.split(separator: " ").count, 30, "\(title): “\(sentence)” is a mouthful.")
+                }
+                for word in ["C-suite", "P&L", "applicants", "residency", "postdoctoral", "up or out"] {
+                    XCTAssertFalse(point.real.contains(word), "\(title): “\(word)” is jargon for a beginner.")
+                }
+            }
+            XCTAssertTrue(Set(simple.points.compactMap(\.game)).isSubset(of: Set(full.points.compactMap(\.game))),
+                          "\(title): Real Life's game lines are the same at any age.")
+        }
+        // Where the full telling has figures the simple one drops, the facts follow the telling.
+        let ceoFull = try note(ceoTitle, .middleClass, .standard).facts.joined()
+        let ceoSimple = try note(ceoTitle, .middleClass, .simple).facts.joined()
+        XCTAssertTrue(ceoFull.contains("170") && !ceoSimple.contains("170"))
+    }
+
+    /// A Simplified or young player is not handed the adult analysis of odds,
+    /// levers and seats; a Real Life player of 14 is.
+    func testTheAdultPathwayIsLeftOutForTheSimpleVoice() throws {
+        let player = teen()
+        player.age = AdvisorVoice.simpleBelowAge
+        XCTAssertNotNil(AdvisorPathway.pathway(for: try XCTUnwrap(AdvisorCoach.guide(for: ceoTitle, player: player)), player: player))
+        player.age = AdvisorVoice.simpleBelowAge - 1
+        XCTAssertNil(AdvisorPathway.pathway(for: try XCTUnwrap(AdvisorCoach.guide(for: ceoTitle, player: player)), player: player))
+
+        let simplified = executive()
+        simplified.difficulty = .simplified
+        XCTAssertNil(AdvisorPathway.pathway(for: try XCTUnwrap(AdvisorCoach.guide(for: ceoTitle, player: simplified)), player: simplified))
+    }
+
+    /// What a question is answered from says how hiring works in the player's
+    /// mode — otherwise a model reasons from Real Life's odds in the tutorial.
+    func testASimplifiedPlayersFactsSayHowHiringWorksThere() {
+        let simplified = executive()
+        simplified.difficulty = .simplified
+        XCTAssertTrue(AdvisorCoach.playerFacts(simplified).joined(separator: "\n")
+            .contains("no odds, luck, fame or seats"))
+        XCTAssertFalse(AdvisorCoach.playerFacts(executive()).joined(separator: "\n").contains("Simplified mode"))
     }
 }

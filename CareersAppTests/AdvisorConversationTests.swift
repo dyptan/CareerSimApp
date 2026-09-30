@@ -13,6 +13,22 @@ private struct StubLanguage: AdvisorLanguage {
     func answer(_ question: String, brief: AdvisorBrief) async -> String? { reply }
 }
 
+/// Remembers every brief it is handed, so a test can see who the advisor
+/// thought it was talking to. Says nothing itself: the plain text is shown.
+private final class RecordingLanguage: AdvisorLanguage, @unchecked Sendable {
+    var isAvailable = true
+    private let lock = NSLock()
+    private var stored: [AdvisorBrief] = []
+
+    var briefs: [AdvisorBrief] { lock.lock(); defer { lock.unlock() }; return stored }
+
+    func narrate(_ brief: AdvisorBrief) async -> String? { record(brief); return nil }
+    func interpret(_ text: String) async -> AdvisorIntent? { nil }
+    func answer(_ question: String, brief: AdvisorBrief) async -> String? { record(brief); return nil }
+
+    private func record(_ brief: AdvisorBrief) { lock.lock(); stored.append(brief); lock.unlock() }
+}
+
 /// The advisor's chat: the flow the player walks through, with and without a
 /// language model. Every path must work from buttons alone.
 @MainActor
@@ -311,5 +327,81 @@ final class AdvisorConversationTests: XCTestCase {
         XCTAssertNil(AdvisorGuard.accept("   ", facts: facts))
         XCTAssertNil(AdvisorGuard.accept(String(repeating: "word ", count: 400), facts: facts), "Rambling is rejected.")
         XCTAssertEqual(AdvisorGuard.accept("  No numbers at all.  ", facts: facts), "No numbers at all.")
+    }
+
+    // MARK: Who is reading
+
+    private func simplifiedPlayer(age: Int = 25) -> Player {
+        let player = adult(age: age)
+        player.difficulty = .simplified
+        return player
+    }
+
+    /// Every brief the language layer gets says who is reading, so it can write
+    /// for them — beginners and the young get the simple voice.
+    func testTheLanguageLayerIsToldWhoIsReading() async throws {
+        let readers: [(name: String, player: Player, voice: AdvisorVoice)] = [
+            ("a Real Life adult", adult(), .standard),
+            ("a Simplified adult", simplifiedPlayer(), .simple),
+            ("a Real Life child", adult(age: 10), .simple),
+            ("a Real Life 14-year-old", adult(age: 14), .standard),
+        ]
+        for reader in readers {
+            let language = RecordingLanguage()
+            let chat = chat(reader.player, language)
+            await chat.start()
+            await chat.choose(try reply(.haveRole, in: chat))
+            await chat.send("Registered Nurse")
+            XCTAssertFalse(language.briefs.isEmpty, reader.name)
+            XCTAssertTrue(language.briefs.allSatisfy { $0.voice == reader.voice }, "\(reader.name): \(language.briefs.map(\.voice))")
+        }
+    }
+
+    func testAFreeQuestionIsAnsweredInTheReadersVoiceToo() async throws {
+        let language = RecordingLanguage()
+        let chat = chat(simplifiedPlayer(), language)
+        await chat.start()
+        await chat.send("What should I do this year?")
+        XCTAssertEqual(language.briefs.last?.voice, .simple)
+    }
+
+    func testTheOpeningQuestionIsPutInTheReadersWords() async throws {
+        let simple = chat(simplifiedPlayer())
+        await simple.start()
+        let standard = chat(adult())
+        await standard.start()
+        let hello = try lastAdvisorMessage(simple).text
+        XCTAssertTrue(hello.contains("one day"), hello)
+        XCTAssertTrue(try lastAdvisorMessage(standard).text.contains("job in mind"))
+        XCTAssertEqual(simple.replies.map(\.kind), standard.replies.map(\.kind), "Same choices, other words.")
+    }
+
+    /// A Simplified player aiming at the top job hears how it works in real life
+    /// in a beginner's words, beside what *their* game does — no seat, no odds,
+    /// no "narrow path" that Simplified doesn't have.
+    func testASimplifiedPlayerAimingAtCEOGetsTheSimpleNoteAndNoOdds() async throws {
+        let chat = chat(simplifiedPlayer())
+        await chat.start()
+        await chat.choose(try reply(.haveRole, in: chat))
+        await chat.send("Chief Executive Officer")
+
+        let note = try XCTUnwrap(chat.messages.first { $0.heading == "🌍 Becoming a CEO" })
+        let text = note.cards.map(\.detail).joined(separator: "\n")
+        XCTAssertTrue(text.contains("🎮 In the game: In Simplified mode"), text)
+        XCTAssertFalse(text.contains("%"), "No seat chance in a game that hires with certainty:\n\(text)")
+        XCTAssertFalse(text.contains("C-suite"))
+        XCTAssertFalse(chat.messages.contains { $0.heading == "🧭 The narrow path" })
+        XCTAssertFalse(chat.replies.contains { $0.kind == .showPath })
+        XCTAssertEqual(try reply(.realWorld, in: chat).label, "🌍 How it really works")
+    }
+
+    func testAnAdultKeepsTheFullNoteAndTheLongLabel() async throws {
+        let chat = chat(adult(age: 38))
+        await chat.start()
+        await chat.choose(try reply(.haveRole, in: chat))
+        await chat.send("Chief Executive Officer")
+        let note = try XCTUnwrap(chat.messages.first { $0.heading == "🌍 Becoming a CEO" })
+        XCTAssertTrue(note.cards.map(\.detail).joined().contains("170 new CEOs"), "The full statistics are for adults.")
+        XCTAssertEqual(try reply(.realWorld, in: chat).label, "🌍 How it works in real life")
     }
 }

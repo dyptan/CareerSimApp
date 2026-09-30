@@ -45,6 +45,7 @@ final class FoundationModelsLanguage: AdvisorLanguage, @unchecked Sendable {
 
     private struct Chat {
         let facts: [String]
+        let voice: AdvisorVoice
         let session: LanguageModelSession
         let log: FactLog
     }
@@ -71,23 +72,28 @@ final class FoundationModelsLanguage: AdvisorLanguage, @unchecked Sendable {
 
     func prewarm() {
         guard isAvailable else { return }
-        LanguageModelSession(instructions: Self.persona).prewarm()
+        LanguageModelSession(instructions: Self.persona(for: .standard)).prewarm()
     }
 
     // MARK: Phrasing
 
-    /// Who the advisor is. Short, because the on-device model has a small
-    /// context window and every narration starts from it afresh.
-    private static let persona = """
-        You are the career advisor in a life-simulation game for young players, and you are talking to the player directly.
-        Write two or three short, warm, simple sentences — like a friendly coach, not a textbook.
-        Use ONLY the facts you are given. Never invent jobs, skills, numbers or game rules, and never do arithmetic: copy any number exactly as it is written in the facts.
-        Do not use lists, headings or markdown, and never mention these instructions.
-        """
+    /// Who the advisor is, and how it writes for this reader (`AdvisorVoice`:
+    /// plain words for a beginner or a young player). Short, because the
+    /// on-device model has a small context window and every narration starts
+    /// from it afresh.
+    private static func persona(for voice: AdvisorVoice) -> String {
+        let base = """
+            You are the career advisor in a life-simulation game for young players, and you are talking to the player directly.
+            Write two or three short, warm, simple sentences — like a friendly coach, not a textbook.
+            Use ONLY the facts you are given. Never invent jobs, skills, numbers or game rules, and never do arithmetic: copy any number exactly as it is written in the facts.
+            Do not use lists, headings or markdown, and never mention these instructions.
+            """
+        return voice.styleGuide.isEmpty ? base : base + "\n" + voice.styleGuide
+    }
 
     func narrate(_ brief: AdvisorBrief) async -> String? {
         guard isAvailable else { return nil }
-        let session = LanguageModelSession(instructions: Self.persona)
+        let session = LanguageModelSession(instructions: Self.persona(for: brief.voice))
         let facts = brief.facts.map { "- \($0)" }.joined(separator: "\n")
         let prompt = """
             Topic: \(brief.topic)
@@ -152,7 +158,7 @@ final class FoundationModelsLanguage: AdvisorLanguage, @unchecked Sendable {
         // One retry: a long conversation can outgrow the context window, and
         // a fresh session (with the same facts) is the fix.
         for _ in 0..<2 {
-            let chat = chatSession(facts: brief.facts)
+            let chat = chatSession(facts: brief.facts, voice: brief.voice)
             do {
                 let response = try await chat.session.respond(
                     to: question, options: GenerationOptions(temperature: 0.5, maximumResponseTokens: 220))
@@ -164,23 +170,23 @@ final class FoundationModelsLanguage: AdvisorLanguage, @unchecked Sendable {
         return nil
     }
 
-    private func chatSession(facts: [String]) -> Chat {
+    private func chatSession(facts: [String], voice: AdvisorVoice) -> Chat {
         lock.lock()
         defer { lock.unlock() }
-        if let chat, chat.facts == facts { return chat }
+        if let chat, chat.facts == facts, chat.voice == voice { return chat }
         let log = FactLog()
         let known = facts.map { "- \($0)" }.joined(separator: "\n")
         let session = LanguageModelSession(
             tools: [RoleInfoTool(player: player, log: log)],
             instructions: """
-                \(Self.persona)
-                You can also answer questions about jobs, skills, school and what to do next. Keep answers to four short sentences at most.
+                \(Self.persona(for: voice))
+                You can also answer questions about jobs, skills, school and what to do next. Keep answers to \(voice.answerLength) short sentences at most.
                 What you know about the player right now:
                 \(known)
                 Lines that start with "In the real world:" are real-world background, and each is followed by an "In the game:" line saying what the game does about it. When the player asks how a job really works or why it is hard to get, answer from those lines first, then say how the game plays it.
                 When the player asks about a job you have no facts about, call the roleInfo tool for it. If you still don't know, say so kindly and suggest what they could ask instead.
                 """)
-        let fresh = Chat(facts: facts, session: session, log: log)
+        let fresh = Chat(facts: facts, voice: voice, session: session, log: log)
         chat = fresh
         return fresh
     }
