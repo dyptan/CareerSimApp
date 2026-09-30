@@ -130,7 +130,9 @@ final class FoundationModelsLanguage: AdvisorLanguage, @unchecked Sendable {
         do {
             let response = try await session.respond(
                 to: "The player typed: \"\(text)\"", schema: schema,
-                options: GenerationOptions(samplingMode: .greedy))
+                // Temperature 0 — a reading should be repeatable. (Not `sampling: .greedy`:
+                // that argument was renamed in the 27 SDK, and this must build on both.)
+                options: GenerationOptions(temperature: 0))
             let kind = try response.content.value(String.self, forProperty: "kind")
             let role = try response.content.value(String.self, forProperty: "role")
             switch kind {
