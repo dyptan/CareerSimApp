@@ -7,8 +7,16 @@
 # would otherwise fail with exit code 65.
 #
 # The CareersAppTests target holds the unit tests (career-graph invariants
-# and the venture-launch lifecycle). It deploys to macOS 13.0, which matches
-# the runner, so the test step below runs it after the build.
+# and the venture-launch lifecycle). It deploys to macOS 13.0, which the
+# runner satisfies, so the test step below runs it after the build.
+#
+# Xcode 27 is required: the career advisor's language layer builds against the
+# 27 SDK (Foundation Models, guarded by `canImport`). GitHub ships it on its own
+# image, selected by the `xcode-27` runner label — a public preview that runs
+# macOS 27, and the regular `macos-latest` image tops out at Xcode 26.6. The
+# job pins Xcode 27.0 (build 27A266a) rather than trusting the image default,
+# so an image update to a newer beta can't change what a pull request builds.
+# When the image goes GA, this can move back to a `macos-*` label.
 #
 # xcodebuild output is teed to a log file and piped through xcbeautify
 # (github-actions renderer). On failure the tail of the log is emitted
@@ -40,10 +48,13 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: xcode-27
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Select Xcode 27.0
+      run: sudo xcode-select -s /Applications/Xcode_27.0.app
 
     - name: Show Xcode version
       run: xcodebuild -version

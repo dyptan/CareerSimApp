@@ -8,8 +8,14 @@ struct JobsView: View {
     /// choice survives the sheet closing — which it now does every year.
     @Binding var settingFilter: WorkSetting?
     @Binding var qualifiedOnly: Bool
+    /// A role (a `Job.baseTitle`) to open straight onto — set when the advisor's
+    /// "See job listings" sent the player here. Taken on opening and cleared.
+    @Binding var focusRole: String?
     /// Applying spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
+
+    /// The roles pushed on top of the category list (see `focusRole`).
+    @State private var path: [String] = []
 
     /// Whether a posting survives the current filters. Both are catalogue facts,
     /// so filtering never changes what a role *is* — only what's listed.
@@ -46,21 +52,54 @@ struct JobsView: View {
         let inCategory = filteredJobs.filter { $0.category == category }
         let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
         return grouped
-            .map { (key, value) -> RoleGroup in
-                let sorted = value.sorted {
-                    if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
-                        return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
-                    }
-                    return $0.income < $1.income
-                }
-                return RoleGroup(baseTitle: key, variants: sorted)
-            }
+            .map { (key, value) in RoleGroup(baseTitle: key, variants: Self.leastToMostSenior(value)) }
             .sorted { $0.baseTitle < $1.baseTitle }
     }
 
+    /// A role's postings from least to most senior, by the experience they ask
+    /// for (with pay as the tiebreaker).
+    private static func leastToMostSenior(_ jobs: [Job]) -> [Job] {
+        jobs.sorted {
+            if $0.requirements.minYearsExperience != $1.requirements.minYearsExperience {
+                return $0.requirements.minYearsExperience < $1.requirements.minYearsExperience
+            }
+            return $0.income < $1.income
+        }
+    }
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             content
+                .navigationDestination(for: String.self) { roleDestination($0) }
+        }
+        .onAppear {
+            if let role = focusRole {
+                path = [role]
+                focusRole = nil
+            }
+        }
+    }
+
+    /// One role's postings — however the list is filtered, since the player
+    /// asked for this role by name. Seniority rungs first when there are
+    /// several, straight to the posting when there's one.
+    @ViewBuilder
+    private func roleDestination(_ baseTitle: String) -> some View {
+        let variants = Self.leastToMostSenior(
+            availableJobs.filter { $0.baseTitle == baseTitle && !$0.isEntrepreneurial })
+        if variants.count > 1 {
+            SeniorityOffersView(variants: variants, player: player,
+                                showCareersSheet: $showCareersSheet, onCommit: onCommit)
+        } else if let only = variants.first {
+            JobDetail(job: only.atBaseSalary(), player: player,
+                      showCareersSheet: $showCareersSheet, onCommit: onCommit)
+        } else {
+            Text("Nobody is posting \(baseTitle) jobs this year. The job market changes every year — check again next year.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .navigationTitle(baseTitle)
         }
     }
 
@@ -386,7 +425,8 @@ private struct CareersSheetPreviewContainer: View {
             player: player,
             showCareersSheet: $show,
             settingFilter: $settingFilter,
-            qualifiedOnly: $qualifiedOnly
+            qualifiedOnly: $qualifiedOnly,
+            focusRole: .constant(nil)
         )
     }
 }

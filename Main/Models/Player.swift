@@ -41,7 +41,7 @@ struct FameAward: Identifiable, Hashable {
 final class Player: ObservableObject {
     /// The single difficulty choice the game runs under: how much complexity is
     /// in play (Simplified strips skills, tiers, negotiation, and the economy)
-    /// plus, for the realistic settings, savings rate and economic volatility.
+    /// plus, in Real Life, savings rate and economic volatility.
     /// Set from the launch picker.
     @Published var difficulty: Difficulty = .default
     /// Convenience: true when only the basic (degree + experience) rules apply.
@@ -134,13 +134,17 @@ final class Player: ObservableObject {
     /// hurdle (`executiveTrackRecord`); counting it in both places made the
     /// same points pay twice.
     func fameHireBonus(for jobCategory: JobCategory, topPosition: Bool = false) -> Double {
-        // A tie-breaker in hiring, not a substitute for the skills and
-        // credentials an employer screens on: at most +0.20 (+0.30 for a top
-        // seat, where reputation weighs more), against the skill term's 0.60.
-        let rate = topPosition ? 0.06 : 0.04
-        let cap = topPosition ? 0.30 : 0.20
-        return min(cap, famePoints(for: jobCategory.fameCategory) * rate)
+        min(Player.fameHireCap(topPosition: topPosition),
+            famePoints(for: jobCategory.fameCategory) * Player.fameHireRate(topPosition: topPosition))
     }
+
+    /// Hire-odds lift per point of fame in the field, and the most it can add.
+    /// A tie-breaker in hiring, not a substitute for the skills and credentials
+    /// an employer screens on: at most +0.20 (+0.30 for a top seat, where
+    /// reputation weighs more), against the skill term's 0.60. Shared with the
+    /// advisor, which sizes how much more fame is still worth having.
+    static func fameHireRate(topPosition: Bool) -> Double { topPosition ? 0.06 : 0.04 }
+    static func fameHireCap(topPosition: Bool) -> Double { topPosition ? 0.30 : 0.20 }
 
     /// How much a founder's track record — years running ventures, rounds,
     /// exits, even a fold — eases the seat hurdle on a commercial executive
@@ -494,10 +498,11 @@ final class Player: ObservableObject {
 
     /// Whether the player has met the current setting's win condition. Only the
     /// Simplified mode has a fixed *target* — reaching a top leadership
-    /// ("C-suite") role. The realistic settings set no target, just a running
+    /// ("C-suite") role. Real Life sets no target, just a running
     /// `leaderboardScore` the player banks by finishing early or at
     /// `GameConstants.retirementAge`, whichever comes first (see
-    /// `hasRetired` and `RetirementView`).
+    /// `hasRetired` and `RetirementView`). Simplified keeps no score
+    /// (`Difficulty.keepsScore`).
     var goalMet: Bool {
         guard isSimplified else { return false }
         return currentOccupation?.isTopLeadership ?? false
@@ -765,6 +770,11 @@ final class Player: ObservableObject {
     /// different each game year.
     @Published var availableJobs: [Job] = []
 
+    /// How the career advisor is coaching the player: the path they chose
+    /// (a role in mind, or still exploring) and its yearly reviews. Reviewed
+    /// at the end of every `advanceYear` (see `AdvisorCoach.checkIn`).
+    @Published var advisorPlan = AdvisorPlan()
+
     init(
         age: Int = GameConstants.startingAge,
         softSkills: SoftSkills = SoftSkills(
@@ -821,6 +831,9 @@ final class Player: ObservableObject {
     /// the stage in progress (if any) becomes `currentEducation`. Mirrors the
     /// age-10/14/18 transitions in `RootView`. Returns true when the player
     /// starts old enough (18) that the post-high-school decision should fire.
+    ///
+    /// The years before a later start weren't played, so each leaves a random
+    /// soft-skill boost (`seedSkippedYears`). Call it once per new game.
     @discardableResult
     func configureStart(age startAge: Int) -> Bool {
         age = startAge
@@ -838,7 +851,30 @@ final class Player: ObservableObject {
         } else {
             currentEducation = nil
         }
+        seedSkippedYears(before: startAge)
         return startAge >= 18
+    }
+
+    /// The chance that the year lived at `age` — one a later start skipped —
+    /// leaves a random skill boost: certain through school, then halving with
+    /// each adult year (`GameConstants.skippedAdultYearFalloff`).
+    static func skippedYearYield(atAge age: Int) -> Double {
+        guard age >= GameConstants.skippedYearsFullValueBelowAge else { return 1 }
+        return pow(GameConstants.skippedAdultYearFalloff,
+                   Double(age - GameConstants.skippedYearsFullValueBelowAge + 1))
+    }
+
+    /// Starting at `startAge` skips the years from `GameConstants.startingAge`
+    /// up to it. Each leaves `skippedYearSkillPoints` in one skill picked at
+    /// random — any of them, not the ones a goal needs — so starting late is
+    /// never a way round the early choices a narrow path is built on.
+    private func seedSkippedYears(before startAge: Int) {
+        guard startAge > GameConstants.startingAge else { return }
+        for lived in GameConstants.startingAge..<startAge
+        where Double.random(in: 0..<1) < Self.skippedYearYield(atAge: lived) {
+            guard let axis = SoftSkills.allAxes.randomElement() else { continue }
+            applySkillBoosts([WeightedAbility(keyPath: axis.keyPath, weight: GameConstants.skippedYearSkillPoints)])
+        }
     }
 
     // MARK: - Soft-skill boosts
@@ -935,8 +971,12 @@ final class Player: ObservableObject {
     /// player's network in that field. Diminishing — each point adds 1.5% up to
     /// a 0.12 ceiling, so a network helps without ever guaranteeing an offer.
     func networkBonus(for category: JobCategory) -> Double {
-        min(0.12, Double(networkPoints(for: category)) * 0.015)
+        min(Player.networkHireCap, Double(networkPoints(for: category)) * Player.networkHirePerPoint)
     }
+
+    /// What each network point adds to a hire, and the most a network can add.
+    static let networkHirePerPoint = 0.015
+    static let networkHireCap = 0.12
 
     /// Additive hire/founder-probability lift from the player's skill-building
     /// trainings relevant to `category` — the coding/game-dev/design/performing
@@ -1574,6 +1614,14 @@ final class Player: ObservableObject {
             recordStatus("🎓", "Paid off your student loan")
         }
 
+        // The advisor reviews the year once it has fully settled — the new
+        // postings, the economy, any hire or promotion — so what it reports is
+        // what the player now faces. Nothing to review until they've answered
+        // its opening question.
+        if !hasRetired, let review = AdvisorCoach.checkIn(for: self) {
+            advisorPlan.record(review)
+        }
+
         // The year just lived may have been the last one. Raise the Game Over
         // sheet after everything else has settled, so the final score already
         // includes this year's pay, growth and loan servicing.
@@ -1748,7 +1796,8 @@ final class Player: ObservableObject {
             if Double.random(in: 0...1) < chance {
                 ventureBrokeOut = true
                 ventureMatureIncome = Int((Double(ventureMatureIncome) * GameConstants.ventureBreakoutIncomeMultiple).rounded())
-                award("Breakout Startup", icon: "🦄", category: job.industry.fameCategory ?? .business, weight: 2.0)
+                award("Breakout Startup", icon: "🦄", category: job.industry.fameCategory ?? .business,
+                      weight: GameConstants.founderBreakoutFame)
                 recordStatus("🦄", "\(job.baseTitle) broke out — revenue tripled and your stake is worth a fortune")
                 reportApplicationOutcome(
                     title: "🦄 Breakout!",
@@ -1957,7 +2006,7 @@ final class Player: ObservableObject {
             // Closing a round is a business milestone: it banks business (💼)
             // fame, which in turn lifts the odds on the next round — a founder's
             // reputation compounds.
-            award(title, icon: decision.icon, category: .business, weight: 0.75)
+            award(title, icon: decision.icon, category: .business, weight: GameConstants.investmentRoundFame)
             let growthAxes: [WritableKeyPath<SoftSkills, Int>] =
                 [\.visionaryThinkingAndAmbition, \.persuasionAndNegotiation]
             for kp in growthAxes {
@@ -2028,6 +2077,7 @@ final class Player: ObservableObject {
         highSchoolGrades = fresh.highSchoolGrades
         executiveActionsThisYear = []
         availableJobs = fresh.availableJobs
+        advisorPlan = fresh.advisorPlan
     }
 }
 

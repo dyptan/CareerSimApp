@@ -27,7 +27,7 @@ enum GameConstants {
 
     /// Real Life: the return in the first year of a new downturn — markets fall
     /// before the layoffs arrive (a 60/40 portfolio lost ~15–22 % real in 2008
-    /// and 2022). Relaxed has no downturns and earns `investmentReturn` flat.
+    /// and 2022). Outside a downturn it earns `investmentReturn` flat.
     static let downturnStartReturn: Double = -0.12
 
     /// Pay above this is saved at `highEarnerSavingsRate` instead of the mode's
@@ -45,6 +45,23 @@ enum GameConstants {
     /// Age at which a new game begins (childhood start). The player's age
     /// advances by one with each in-game year.
     static let startingAge: Int = 7
+
+    /// A player who starts later than `startingAge` didn't play the years
+    /// before it: no yearly choices, no purposeful practice. Each skipped year
+    /// still leaves a trace, but an unfocused one — this many soft-skill points
+    /// in a skill picked at random (`Player.seedSkippedYears`) — where a year of
+    /// chosen activity builds several points in the skills a goal needs (see
+    /// `Sport.abilities`). That gap is the point: an ambitious path, an elite
+    /// school say, is built from early choices, and a late start can't buy them back.
+    static let skippedYearSkillPoints: Int = 1
+
+    /// From this age the skipped years are adult ones, and they are worth less:
+    /// past school, professional activity — experience, projects, a network —
+    /// counts for more than the soft skills a year adds, and those have their own
+    /// yearly choices. Each such year is only `skippedAdultYearFalloff` as likely
+    /// to leave a boost as the one before it (the first is half as likely as a school year).
+    static let skippedYearsFullValueBelowAge: Int = 18
+    static let skippedAdultYearFalloff: Double = 0.5
 
     /// Minimum age at which a player can take any job at all — the age the Jobs
     /// sheet opens. FLSA child-labour rules (DOL Fact Sheet #43) let 14–15-year-
@@ -247,6 +264,11 @@ enum GameConstants {
     static let founderExitFame: Double = 2.0
     /// Business fame banked when a venture folds — the lessons.
     static let founderFoldFame: Double = 0.1
+    /// Business fame banked when a scalable venture breaks out (see
+    /// `Player.advanceYear`), and when a Boardroom investment round closes.
+    /// All of these count toward the founder track record (`Player.founderTrackRecordPoints`).
+    static let founderBreakoutFame: Double = 2.0
+    static let investmentRoundFame: Double = 0.75
     /// Preparation per point of business fame, and its cap (see
     /// `Job.founderSuccessProbability`).
     static let founderReputationPerPoint: Double = 0.04
@@ -330,7 +352,7 @@ enum GameConstants {
     //     merit = base(role's EQF) + skill fit × hireSkillWeight + prestige
     //             + network + fame + credential + breakthrough
     //     raw   = merit × requirement factors × salary fit × demand × rung decay
-    //     odds  = clamp(raw × climate × Relaxed multiplier, hireFloor…hireCeiling)
+    //     odds  = clamp(raw × climate × time out of work, hireFloor…hireCeiling)
     //             × seat scarcity
 
     /// Starting merit by the role's expected education (`minEQF`, index 0…7):

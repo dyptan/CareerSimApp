@@ -298,11 +298,14 @@ struct SkillsView: View {
                     )
                 }
 
-                Divider()
-                moneyRow(
-                    "🏅", "Net worth", player.netWorth,
-                    hint: "What you own minus what you owe: your savings (and any business you own) minus your loans. Divide it by your age and you get your score."
-                )
+                // The score is built on net worth; the tutorial keeps none.
+                if player.difficulty.keepsScore {
+                    Divider()
+                    moneyRow(
+                        "🏅", "Net worth", player.netWorth,
+                        hint: "What you own minus what you owe: your savings (and any business you own) minus your loans. Divide it by your age and you get your score."
+                    )
+                }
             }
             .padding(.top, 4)
         } label: {

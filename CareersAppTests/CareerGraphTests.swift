@@ -1015,6 +1015,93 @@ final class CareerGraphTests: XCTestCase {
         XCTFail("Expected the round to close within many attempts at capped odds.")
     }
 
+    // MARK: - Starting later skips the early choices
+
+    private func skillTotal(_ skills: SoftSkills) -> Int {
+        SoftSkills.allAxes.reduce(0) { $0 + skills[keyPath: $1.keyPath] }
+    }
+
+    /// A game that starts at the start of childhood skips nothing.
+    func testStartingAtSevenAddsNoSkillPoints() {
+        for _ in 0..<50 {
+            let player = Player()
+            let before = player.softSkills
+            player.configureStart(age: GameConstants.startingAge)
+            XCTAssertEqual(player.softSkills, before)
+        }
+    }
+
+    /// Every year skipped through school leaves exactly one point, in any mode.
+    func testEachYearSkippedThroughSchoolLeavesOneRandomSkillPoint() {
+        for difficulty in Difficulty.allCases {
+            for startAge in 8...18 {
+                let player = Player()
+                player.difficulty = difficulty
+                let before = skillTotal(player.softSkills)
+                player.configureStart(age: startAge)
+                XCTAssertEqual(skillTotal(player.softSkills) - before,
+                               (startAge - GameConstants.startingAge) * GameConstants.skippedYearSkillPoints,
+                               "Starting at \(startAge) in \(difficulty.title).")
+            }
+        }
+    }
+
+    /// The boost isn't aimed: over many late starts every skill gets some, and
+    /// no skill is ever pushed past the cap.
+    func testTheBoostLandsOnAnySkillAndRespectsTheCap() {
+        var boosted = Set<String>()
+        for _ in 0..<300 {
+            let player = Player()
+            let before = player.softSkills
+            player.configureStart(age: 18)
+            for axis in SoftSkills.allAxes where player.softSkills[keyPath: axis.keyPath] > before[keyPath: axis.keyPath] {
+                boosted.insert(axis.label)
+            }
+        }
+        XCTAssertEqual(boosted, Set(SoftSkills.allAxes.map(\.label)), "Any skill can be the one that grows.")
+
+        let maxed = Player()
+        for axis in SoftSkills.allAxes { maxed.softSkills[keyPath: axis.keyPath] = 10 }
+        maxed.configureStart(age: 18)
+        XCTAssertTrue(SoftSkills.allAxes.allSatisfy { maxed.softSkills[keyPath: $0.keyPath] == 10 }, "10 is the cap.")
+    }
+
+    /// Past school the skipped years are worth less and less: professional
+    /// activity, not early soft skills, is what counts by then.
+    func testSkippedYearsPastEighteenFadeAway() {
+        XCTAssertEqual(Player.skippedYearYield(atAge: 7), 1)
+        XCTAssertEqual(Player.skippedYearYield(atAge: 17), 1, "Every school year counts in full.")
+        XCTAssertEqual(Player.skippedYearYield(atAge: 18), GameConstants.skippedAdultYearFalloff, accuracy: 1e-12)
+        var last = 1.0
+        for age in 18...40 {
+            let value = Player.skippedYearYield(atAge: age)
+            XCTAssertLessThan(value, last, "Age \(age) is worth less than the year before.")
+            XCTAssertGreaterThan(value, 0)
+            last = value
+        }
+
+        // Twelve adult years add about one point in all — not twelve.
+        let adultYears = (18..<30).reduce(0.0) { $0 + Player.skippedYearYield(atAge: $1) }
+        XCTAssertLessThan(adultYears, 1.01)
+        var extra = 0
+        let samples = 400
+        for _ in 0..<samples {
+            let player = Player()
+            let before = skillTotal(player.softSkills)
+            player.configureStart(age: 30)
+            extra += skillTotal(player.softSkills) - before - (18 - GameConstants.startingAge)
+        }
+        let mean = Double(extra) / Double(samples)
+        XCTAssertEqual(mean, adultYears, accuracy: 0.25, "The years past 18 add about \(adultYears) points, not 12.")
+    }
+
+    /// The reason a late start can't buy back the early choices: a year of
+    /// chosen activity builds more than a skipped year's random point.
+    func testAChosenYearBuildsMoreThanASkippedOne() {
+        let best = Sport.allCases.map { $0.abilities.reduce(0) { $0 + $1.weight } }.max() ?? 0
+        XCTAssertGreaterThan(best, GameConstants.skippedYearSkillPoints * 2)
+    }
+
     // MARK: - Open-ended realistic goal + running score
 
     /// Realistic modes are open-ended: no savings target ever counts as a goal,
@@ -1024,9 +1111,44 @@ final class CareerGraphTests: XCTestCase {
         player.difficulty = .middleClass
         player.savings = 5_000_000
         XCTAssertFalse(player.goalMet, "Realistic mode should have no fixed savings goal.")
+    }
 
-        player.difficulty = .comfortable
-        XCTAssertFalse(player.goalMet)
+    /// Two modes only: the tutorial and the full game.
+    func testThereAreTwoModesAndRealLifeIsTheDefault() {
+        XCTAssertEqual(Difficulty.allCases, [.simplified, .middleClass])
+        XCTAssertEqual(Difficulty.default, .middleClass)
+        XCTAssertEqual(Difficulty.allCases.map(\.title), ["Simplified", "Real Life"])
+    }
+
+    /// Simplified is the tutorial: it banks the whole paycheck with no living
+    /// costs or tuition, so its net worth ÷ age isn't comparable with a Real
+    /// Life run's. It keeps no score — the score sheet, the Game Center
+    /// sign-in and every leaderboard submission key off this one flag.
+    func testOnlyRealLifeKeepsAScore() {
+        XCTAssertTrue(Difficulty.middleClass.keepsScore)
+        XCTAssertFalse(Difficulty.simplified.keepsScore)
+        // …and the two runs really do earn incomparable numbers.
+        XCTAssertEqual(Difficulty.simplified.savingsRate, 1.0)
+        XCTAssertEqual(Difficulty.simplified.livingCostFloor, 0)
+        XCTAssertLessThan(Difficulty.middleClass.savingsRate, 0.5)
+        XCTAssertGreaterThan(Difficulty.middleClass.livingCostFloor, 0)
+    }
+
+    /// Tennis and gymnastics are Real Life sports; the Simplified tutorial
+    /// keeps to the everyday ones.
+    func testEliteSportsAreOfferedInRealLifeButNotTheTutorial() {
+        XCTAssertEqual(Set(Sport.allCases.filter(\.isElite)), [.tennis, .gymnastics])
+        for difficulty in Difficulty.allCases {
+            let player = Player()
+            player.difficulty = difficulty
+            player.configureStart(age: 25)
+            for sport in Sport.allCases where sport.stages.contains(LifeStage.forAge(player.age)) {
+                let listed = ActivityListView.offered(to: player, kind: sport.kind).contains(sport)
+                let expected = !sport.isElite || !difficulty.isSimplified
+                XCTAssertEqual(listed, expected, "\(sport.label) in \(difficulty.title)")
+                XCTAssertEqual(sport.isOffered(in: difficulty), expected)
+            }
+        }
     }
 
     /// Simplified keeps its finish line: reaching a top-leadership role.
@@ -2068,7 +2190,7 @@ final class HiringModelTests: XCTestCase {
     /// terms compose into it the documented way — so the ⓘ text and the
     /// advisor, which read the same breakdown, can't quote a different number.
     func testHireProbabilityIsTheBreakdownsFinal() {
-        let players = [adult(), adult(age: 18, skills: 1), adult(age: 45, skills: 8, .comfortable)]
+        let players = [adult(), adult(age: 18, skills: 1), adult(age: 45, skills: 8)]
         players[2].experience[.business] = 20
         players[2].degrees.append(Education(.Bachelor, profile: .business, tier: .state))
         for player in players {
@@ -2078,7 +2200,7 @@ final class HiringModelTests: XCTestCase {
                 XCTAssertEqual(job.hireProbability(for: player, requestedSalary: ask), b.final, accuracy: 1e-12)
                 guard !job.isEntrepreneurial, !b.requirements.isBlocked, !b.breakthroughMissing else { continue }
                 let expected = min(b.ceiling, max(b.floor, b.merit * b.requirements.factor * b.salaryFit
-                    * b.demand * b.rungDecay * b.climate * b.opportunity)) * b.seat
+                    * b.demand * b.rungDecay * b.climate)) * b.seat
                 XCTAssertEqual(b.final, expected, accuracy: 1e-12, "\(job.id)'s breakdown doesn't compose.")
                 XCTAssertEqual(b.odds(requirementFactor: b.requirements.factor), b.final, accuracy: 1e-12)
             }
@@ -2274,19 +2396,6 @@ final class HiringModelTests: XCTestCase {
     }
 
     // MARK: Difficulty and pay ask
-
-    /// Relaxed makes every application 25% likelier rather than adding a flat
-    /// bonus that would mostly help the unqualified.
-    func testRelaxedMultipliesTheOdds() throws {
-        let clerk = try job("Office Clerk")
-        let real = adult(skills: 1)
-        let relaxed = adult(skills: 1, .comfortable)
-        relaxed.softSkills = real.softSkills
-        let a = clerk.hireBreakdown(for: real, requestedSalary: Double(clerk.annualIncome))
-        let b = clerk.hireBreakdown(for: relaxed, requestedSalary: Double(clerk.annualIncome))
-        XCTAssertEqual(b.merit, a.merit, accuracy: 1e-12, "Relaxed adds nothing to merit.")
-        XCTAssertEqual(b.scaled, a.scaled * relaxed.difficulty.opportunityHireMultiplier, accuracy: 1e-12)
-    }
 
     /// A modest counter costs nothing, a low ask earns a small edge, and a big
     /// one costs steeply.

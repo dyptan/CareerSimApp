@@ -639,7 +639,7 @@ extension Job {
     ///
     ///     merit = base + skill + prestige + network + fame + credential + breakthrough
     ///     raw   = merit × requirement factors × salary fit × demand × rung decay
-    ///     final = clamp(raw × climate × opportunity × time out of work,
+    ///     final = clamp(raw × climate × time out of work,
     ///                   floor…ceiling) × seat
     ///
     /// A zero requirement factor closes the role (0); a breakthrough-gated
@@ -683,8 +683,6 @@ extension Job {
         let salaryFit: Double
         /// The employer industry's climate this year (`IndustryClimate.hireFactor`).
         let climate: Double
-        /// The difficulty's hiring multiplier (`Difficulty.opportunityHireMultiplier`).
-        let opportunity: Double
         /// Time out of work: each consecutive year unemployed beyond the first
         /// costs a little (`Player.unemploymentHireMultiplier`).
         let unemployment: Double
@@ -707,9 +705,9 @@ extension Job {
         /// before the year's climate.
         var raw: Double { merit * requirements.factor * salaryFit * demand * rungDecay }
 
-        /// `raw` through the climate, the difficulty and time out of work — the
-        /// figure the floor and ceiling clamp.
-        var scaled: Double { raw * climate * opportunity * unemployment }
+        /// `raw` through the climate and time out of work — the figure the floor
+        /// and ceiling clamp.
+        var scaled: Double { raw * climate * unemployment }
 
         /// The odds the game rolls.
         var final: Double { odds() }
@@ -727,7 +725,7 @@ extension Job {
             if breakthroughMissing { return floor * seat }
             if isSimplified { return 1.0 }
             let value = (merit + extraMerit) * factor * salaryFit * demand * rungDecay
-                * climate * opportunity * unemployment
+                * climate * unemployment
             return min(ceiling, max(floor, value)) * seat
         }
     }
@@ -828,7 +826,6 @@ extension Job {
             // What this industry is doing this year: a booming field hires
             // people it would pass over in a slump (see `IndustryClimate`).
             climate: player.climate(for: industry).hireFactor,
-            opportunity: player.difficulty.opportunityHireMultiplier,
             unemployment: player.unemploymentHireMultiplier,
             seat: seatChance(for: player),
             floor: GameConstants.hireFloor,
@@ -1051,11 +1048,16 @@ extension Job {
             matching = eligible
         }
         let pool = matching.isEmpty ? eligible : matching
-        let bestPrestige = pool.map { $0.tier.prestige }.max() ?? 0
-        switch bestPrestige {
-        case 3:  return 0.10  // Elite
-        case 2:  return 0.05  // State
-        default: return 0.0   // Community / unranked
+        return Job.prestigeBonus(forPrestige: pool.map { $0.tier.prestige }.max() ?? 0)
+    }
+
+    /// What a school of `prestige` adds to a hire (`EducationTier.prestige`):
+    /// Elite +0.10, State +0.05, Community and unranked nothing.
+    static func prestigeBonus(forPrestige prestige: Int) -> Double {
+        switch prestige {
+        case 3:  return 0.10
+        case 2:  return 0.05
+        default: return 0.0
         }
     }
 

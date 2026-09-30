@@ -53,6 +53,15 @@
 		AA0000000000000000000103 /* CareerGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000102 /* CareerGraph.swift */; };
 		AA0000000000000000000121 /* CareerAdvisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000120 /* CareerAdvisor.swift */; };
 		AA0000000000000000000123 /* AdvisorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000122 /* AdvisorView.swift */; };
+		AA0000000000000000000127 /* AdvisorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000126 /* AdvisorPlan.swift */; };
+		AA0000000000000000000129 /* AdvisorCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000128 /* AdvisorCoach.swift */; };
+		AA000000000000000000012B /* AdvisorConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012A /* AdvisorConversation.swift */; };
+		AA0000000000000000000134 /* AdvisorPathway.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000133 /* AdvisorPathway.swift */; };
+		AA0000000000000000000136 /* AdvisorRealWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000135 /* AdvisorRealWorld.swift */; };
+		AA0000000000000000000138 /* AdvisorPathwayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000137 /* AdvisorPathwayTests.swift */; };
+		AA000000000000000000012D /* FoundationModelsLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012C /* FoundationModelsLanguage.swift */; };
+		AA0000000000000000000130 /* AdvisorCoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012F /* AdvisorCoachTests.swift */; };
+		AA0000000000000000000132 /* AdvisorConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000131 /* AdvisorConversationTests.swift */; };
 		AA0000000000000000000111 /* ExecutiveDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000110 /* ExecutiveDecision.swift */; };
 		AA0000000000000000000113 /* ExecutiveDecisionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000112 /* ExecutiveDecisionsView.swift */; };
 		AA000000000000000000020B /* CareerGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000020A /* CareerGraphTests.swift */; };
@@ -132,6 +141,15 @@
 		AA00000000000000000000ED /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		AA0000000000000000000120 /* CareerAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerAdvisor.swift; sourceTree = "<group>"; };
 		AA0000000000000000000122 /* AdvisorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000126 /* AdvisorPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorPlan.swift; sourceTree = "<group>"; };
+		AA0000000000000000000128 /* AdvisorCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorCoach.swift; sourceTree = "<group>"; };
+		AA000000000000000000012A /* AdvisorConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorConversation.swift; sourceTree = "<group>"; };
+		AA0000000000000000000133 /* AdvisorPathway.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorPathway.swift; sourceTree = "<group>"; };
+		AA0000000000000000000135 /* AdvisorRealWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorRealWorld.swift; sourceTree = "<group>"; };
+		AA0000000000000000000137 /* AdvisorPathwayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorPathwayTests.swift; sourceTree = "<group>"; };
+		AA000000000000000000012C /* FoundationModelsLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsLanguage.swift; sourceTree = "<group>"; };
+		AA000000000000000000012F /* AdvisorCoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorCoachTests.swift; sourceTree = "<group>"; };
+		AA0000000000000000000131 /* AdvisorConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorConversationTests.swift; sourceTree = "<group>"; };
 		AA0000000000000000000102 /* CareerGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerGraph.swift; sourceTree = "<group>"; };
 		AA0000000000000000000110 /* ExecutiveDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecision.swift; sourceTree = "<group>"; };
 		AA0000000000000000000112 /* ExecutiveDecisionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveDecisionsView.swift; sourceTree = "<group>"; };
@@ -169,6 +187,9 @@
 			children = (
 				AA000000000000000000020A /* CareerGraphTests.swift */,
 				AA0000000000000000000124 /* CareerAdvisorTests.swift */,
+				AA000000000000000000012F /* AdvisorCoachTests.swift */,
+				AA0000000000000000000131 /* AdvisorConversationTests.swift */,
+				AA0000000000000000000137 /* AdvisorPathwayTests.swift */,
 				AA000000000000000000020D /* VentureLaunchTests.swift */,
 			);
 			path = CareersAppTests;
@@ -199,6 +220,7 @@
 				C20D77ED24B665D7002E7AEA /* Main.swift */,
 				C2FEB33824B7CA02004FAB73 /* Views */,
 				C20D780824B685C4002E7AEA /* Models */,
+				AA000000000000000000012E /* Advisor */,
 				C20D780924B685CB002E7AEA /* Resources */,
 				C20D77F124B665D8002E7AEA /* Assets.xcassets */,
 				C20D77F324B665D8002E7AEA /* Preview Content */,
@@ -235,12 +257,25 @@
 				84F851C82EA0F30F0066C41A /* Player.swift */,
 				AA0000000000000000000102 /* CareerGraph.swift */,
 				AA0000000000000000000120 /* CareerAdvisor.swift */,
+				AA0000000000000000000126 /* AdvisorPlan.swift */,
+				AA0000000000000000000128 /* AdvisorCoach.swift */,
+				AA000000000000000000012A /* AdvisorConversation.swift */,
+				AA0000000000000000000133 /* AdvisorPathway.swift */,
+				AA0000000000000000000135 /* AdvisorRealWorld.swift */,
 				550618412ED2245900C56E99 /* Training.swift */,
 				55189E922F4DD9E9005FAC2C /* AppUIState.swift */,
 				AA00000000000000000000A1 /* GameConstants.swift */,
 				555CC10C2FF1341B00426E7E /* Sport.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		AA000000000000000000012E /* Advisor */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000012C /* FoundationModelsLanguage.swift */,
+			);
+			path = Advisor;
 			sourceTree = "<group>";
 		};
 		C20D780924B685CB002E7AEA /* Resources */ = {
@@ -395,6 +430,9 @@
 			files = (
 				AA000000000000000000020B /* CareerGraphTests.swift in Sources */,
 				AA0000000000000000000125 /* CareerAdvisorTests.swift in Sources */,
+				AA0000000000000000000130 /* AdvisorCoachTests.swift in Sources */,
+				AA0000000000000000000132 /* AdvisorConversationTests.swift in Sources */,
+				AA0000000000000000000138 /* AdvisorPathwayTests.swift in Sources */,
 				AA000000000000000000020E /* VentureLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -428,6 +466,12 @@
 				AA0000000000000000000103 /* CareerGraph.swift in Sources */,
 				AA0000000000000000000121 /* CareerAdvisor.swift in Sources */,
 				AA0000000000000000000123 /* AdvisorView.swift in Sources */,
+				AA0000000000000000000127 /* AdvisorPlan.swift in Sources */,
+				AA0000000000000000000129 /* AdvisorCoach.swift in Sources */,
+				AA000000000000000000012B /* AdvisorConversation.swift in Sources */,
+				AA0000000000000000000134 /* AdvisorPathway.swift in Sources */,
+				AA0000000000000000000136 /* AdvisorRealWorld.swift in Sources */,
+				AA000000000000000000012D /* FoundationModelsLanguage.swift in Sources */,
 				55F01AB32ECE3C3600EA9E4D /* EducationView.swift in Sources */,
 				550C55142EB16A9600887B96 /* JobsView.swift in Sources */,
 				555CC10D2FF1341B00426E7E /* Sport.swift in Sources */,

@@ -72,8 +72,8 @@ that performs it in the app (see the header of `Harness.swift`):
 | `striver` | The advisor, plus the upside ladders it ignores: launches the best-paying venture once it has the expected industry years, ≥ 50% of the target stake within reach and ≥ 80% first-year survival (from 25, up to 3 ventures); raises rounds for scalable ventures; sells a founder stake after 6 years or a breakout; sells vested shares every year while in a hired executive seat. |
 | `dreamer` | Soccer every school year (Junior Championship → pro "Player" ladder). With the junior title, applies up the Player ladder and stays there; otherwise (no title, or between contracts) holds the likeliest day job and spends every year on the Projects sheet chasing a Breakout Role, then starring in films. |
 
-Scenarios: `advisor`, `typical`, `passive`, `striver` at 18 in Real Life and
-Relaxed; `dreamer` at 18 in Real Life (no junior title possible, so it isolates
+Scenarios: `advisor`, `typical`, `passive`, `striver` at 18 in Real Life;
+`dreamer` at 18 in Real Life (no junior title possible, so it isolates
 the screen-star route); `advisor`, `typical`, `dreamer` from 7 in Real Life;
 `advisor`, `typical` from 7 in Simplified.
 
@@ -105,8 +105,8 @@ the screen-star route); `advisor`, `typical`, `dreamer` from 7 in Real Life;
 9. Most common first job / job at 25 / job at 45; 10. the action mix.
 11. **Snapshots** — admission odds at 18 by upbringing, and the 15 postings
     with the highest `hireProbability` (at JobDetail's default ask, the offer
-    `offeredSalary`) for a fresh 18-year-old HS graduate (Real Life and
-    Relaxed), fresh 22-year-olds with a state Bachelor's in
+    `offeredSalary`) for a fresh 18-year-old HS graduate (Real Life),
+    fresh 22-year-olds with a state Bachelor's in
     technology/business/health, and an 18-year-old raised
     by the advisor — Software Engineer is always shown for reference, and the
     graduates' tables also list their field's entry rungs.

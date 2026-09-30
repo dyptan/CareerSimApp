@@ -9,6 +9,8 @@ import AppKit
 /// Wraps Game Center: authenticates the local player and submits scores to a
 /// leaderboard. The score is the player's "wealth velocity" — savings ÷ age —
 /// so banking wealth at a younger age ranks higher (see `Player.leaderboardScore`).
+/// Only scored runs use it at all (`Difficulty.keepsScore`): the Simplified
+/// tutorial neither signs in nor submits.
 ///
 /// ── One-time setup required outside the code ──────────────────────────────
 ///  1. Xcode → CareersApp target → Signing & Capabilities → **+ Capability →
@@ -29,11 +31,17 @@ final class GameCenterManager: ObservableObject {
     /// True once the local player has signed into Game Center.
     @Published private(set) var isAuthenticated = false
 
+    private var hasStartedAuthentication = false
+
     private init() {}
 
-    /// Kicks off Game Center sign-in. Call once at launch. If Game Center needs
-    /// to show its sign-in UI, that view controller is presented automatically.
+    /// Kicks off Game Center sign-in, once — a scored run calls it as it
+    /// starts, so a Simplified player is never asked to sign in. If Game
+    /// Center needs to show its sign-in UI, that view controller is presented
+    /// automatically.
     func authenticate() {
+        guard !hasStartedAuthentication else { return }
+        hasStartedAuthentication = true
         GKLocalPlayer.local.authenticateHandler = { viewController, error in
             DispatchQueue.main.async {
                 if let viewController {
@@ -48,10 +56,19 @@ final class GameCenterManager: ObservableObject {
         }
     }
 
-    /// Submits a score to the leaderboard (Game Center keeps the player's best,
-    /// so it's safe to call at every game-ending moment). No-op — logged — when
-    /// the player isn't signed in, Game Center isn't configured, or score ≤ 0.
-    func submit(score: Int) {
+    /// Banks the player's score on the leaderboard (Game Center keeps the best,
+    /// so it's safe to call at every game-ending moment) — unless their mode
+    /// keeps no score (`Difficulty.keepsScore`): the Simplified tutorial's
+    /// numbers aren't comparable with a Real Life run's. The one way in, so no
+    /// caller has to remember the rule.
+    func submitScore(of player: Player) {
+        guard player.difficulty.keepsScore else { return }
+        submit(score: player.leaderboardScore)
+    }
+
+    /// No-op — logged — when the player isn't signed in, Game Center isn't
+    /// configured, or score ≤ 0.
+    private func submit(score: Int) {
         guard score > 0 else { return }
         guard GKLocalPlayer.local.isAuthenticated else {
             print("[GameCenter] not authenticated; skipping score \(score)")

@@ -115,10 +115,6 @@ enum Snapshot {
         let hs = sample(samples) { freshPlayer(.middleClass, age: 18, degree: nil) }
         out += render(hs) + "\n"
 
-        out += "#### Fresh 18-year-old high-school graduate — Relaxed (\(samples) samples)\n\n"
-        let hsRelaxed = sample(samples) { freshPlayer(.comfortable, age: 18, degree: nil) }
-        out += render(hsRelaxed, top: 10) + "\n"
-
         // The field's entry rungs are always listed, so a graduate's odds for
         // the job their degree leads to show even when unskilled work outranks it.
         let entryRungs: [TertiaryProfile: [String]] = [

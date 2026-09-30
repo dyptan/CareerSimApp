@@ -1,27 +1,23 @@
 import Foundation
 
-/// The single difficulty choice made once at launch. It rolls together how much
-/// of the simulation's complexity is in play (the kid-friendly "Simplified"
-/// setting strips skills, tiers, negotiation, and the economy entirely) with —
-/// for the realistic settings — the player's economic starting point: how much
-/// of each paycheck is left to save after living costs, and how turbulent the
-/// economy is (how often downturns strike and how likely they are to drag on).
+/// The single difficulty choice made once at launch. Two settings: "Simplified",
+/// a tutorial that strips skills, tiers, negotiation, and the economy entirely,
+/// and "Real Life", the full simulation — a middle-income household, and an
+/// economy whose downturns strike now and then and sometimes drag on.
 enum Difficulty: String, Codable, CaseIterable, Identifiable {
     // NOTE: the raw case names are persisted (Codable) and referenced across the
     // app, so they stay fixed. Only the player-facing `title`/`blurb` track the
-    // displayed names (Simplified / Relaxed / Real Life).
+    // displayed names (Simplified / Real Life).
 
-    /// "Simplified". Kid-friendly: getting hired needs only the right degree —
-    /// the level *and* a field the role accepts, for every role — plus enough
-    /// years in the field and being old enough; meet that and the offer is
-    /// certain. No soft-skill hiring score, hard skills, company tiers,
+    /// "Simplified". A kid-friendly tutorial: getting hired needs only the right
+    /// degree — the level *and* a field the role accepts, for every role — plus
+    /// enough years in the field and being old enough; meet that and the offer
+    /// is certain. No soft-skill hiring score, hard skills, company tiers,
     /// education tiers, salary negotiation, or economy simulation.
-    /// Junior→senior still progresses through years of experience.
+    /// Junior→senior still progresses through years of experience. It ends at a
+    /// goal, not a score, so it keeps no score and never reaches the leaderboard
+    /// (see `keepsScore`).
     case simplified
-    /// "Relaxed". High-income family, no recessions, and opportunities tilted in
-    /// the player's favour — a large share of income is saved, the economy never
-    /// falters (layoffs are rare), and hiring and college admission come easier.
-    case comfortable
     /// "Real Life". Middle-income household, baseline volatility: a recession
     /// every seven years or so, and a small yearly layoff risk that depends on
     /// the employer's sector.
@@ -39,8 +35,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     var audience: String {
         switch self {
         case .simplified:  return "Ages 7+ · easiest"
-        case .comfortable: return "Teens & up · forgiving"
-        case .middleClass: return "Adults · full challenge"
+        case .middleClass: return "Teens & up · full challenge"
         }
     }
 
@@ -52,10 +47,16 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// tiers, negotiation, or economy simulation.
     var isSimplified: Bool { self == .simplified }
 
+    /// Whether the run is scored — net worth ÷ age, shown on the score sheet
+    /// and submitted to Game Center (`Player.leaderboardScore`). Simplified is
+    /// the tutorial: it banks the whole paycheck and has no living costs or
+    /// tuition, so its numbers aren't comparable with a Real Life run's and
+    /// must never share a leaderboard with them.
+    var keepsScore: Bool { self == .middleClass }
+
     var title: String {
         switch self {
         case .simplified:  return "Simplified"
-        case .comfortable: return "Relaxed"
         case .middleClass: return "Real Life"
         }
     }
@@ -63,7 +64,6 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .simplified:  return "🧸"
-        case .comfortable: return "🛟"
         case .middleClass: return "⚖️"
         }
     }
@@ -72,28 +72,26 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .simplified:
             return "Pick a degree, work your way up from junior to senior. Easy to follow — great for younger players."
-        case .comfortable:
-            return "High-income family. Your family pays for college, you keep more of every paycheck, the economy never falters, layoffs are rare, and doors open more easily at work and school."
         case .middleClass:
             return "A typical household budget and an ordinary, occasionally shaky economy — a recession every several years, and layoffs that hit some industries harder than others."
         }
     }
 
-    /// Short name of this setting's goal, shown in the picker and header. The
-    /// realistic settings set no target to hit — just a score to grow across a
-    /// career that runs until `GameConstants.retirementAge` (or until the player
-    /// finishes early).
+    /// Short name of this setting's goal, shown in the picker and header. Real
+    /// Life sets no target to hit — just a score to grow across a career that
+    /// runs until `GameConstants.retirementAge` (or until the player finishes
+    /// early).
     var goalHeadline: String {
         switch self {
-        case .simplified:                return "Make it to the top"
-        case .comfortable, .middleClass: return "Best score by \(GameConstants.retirementAge)"
+        case .simplified:  return "Make it to the top"
+        case .middleClass: return "Best score by \(GameConstants.retirementAge)"
         }
     }
 
     var goalIcon: String {
         switch self {
-        case .simplified:                return "👔"
-        case .comfortable, .middleClass: return "🏅"
+        case .simplified:  return "👔"
+        case .middleClass: return "🏅"
         }
     }
 
@@ -108,69 +106,39 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     var savingsRate: Double {
         switch self {
         case .simplified:  return 1.0
-        case .comfortable: return 0.16
         case .middleClass: return 0.15
         }
     }
 
     /// A year's basic living costs (rent, food, transport) — nothing is saved
-    /// below it. Relaxed's well-off family covers some of the basics (a car, a
-    /// room at home), so its floor is lower. None in Simplified.
+    /// below it. None in Simplified.
     var livingCostFloor: Int {
         switch self {
         case .simplified:  return 0
-        case .comfortable: return 30_000
         case .middleClass: return 32_000
         }
     }
 
     /// Share of tuition the student's family pays. Real Life: a typical
     /// middle-income parent contribution, which leaves a state bachelor's
-    /// graduate near the College Board's ~$29k average debt. Relaxed: a
-    /// high-income family pays it all.
+    /// graduate near the College Board's ~$29k average debt. Simplified has no
+    /// tuition to pay.
     var familyTuitionShare: Double {
         switch self {
         case .simplified:  return 1.0
-        case .comfortable: return 1.0
         case .middleClass: return 0.40
         }
     }
 
     /// Annual chance that a fresh economic downturn begins in a calm year. No
-    /// economy in Simplified, and none in Relaxed. Real Life: with the chance a
+    /// economy in Simplified. Real Life: with the chance a
     /// downturn drags on (`prolongedTurmoilChance`) this puts ~15% of years in
     /// recession and a new one every 7–9 years — the NBER post-war record
     /// (expansions ~64 months, contractions ~10).
     var turmoilChance: Double {
         switch self {
         case .simplified:  return 0.0
-        case .comfortable: return 0.0
         case .middleClass: return 0.14
-        }
-    }
-
-    /// Additive boost to college-admission odds in realistic settings. "Relaxed"
-    /// tilts opportunities in the player's favour; the others leave the
-    /// underlying odds untouched. Hiring uses `opportunityHireMultiplier`
-    /// instead.
-    var opportunityBonus: Double {
-        switch self {
-        case .simplified:  return 0.0
-        case .comfortable: return 0.15
-        case .middleClass: return 0.0
-        }
-    }
-
-    /// Multiplier on every job application's odds (before the floor and
-    /// ceiling; see `Job.hireBreakdown`). "Relaxed" makes hiring ~25% easier for
-    /// everyone. A multiplier rather than an added bonus, so it can't turn an
-    /// unqualified long shot into a near coin-flip — an additive lift helps a
-    /// weak profile far more, in relative terms, than a strong one.
-    var opportunityHireMultiplier: Double {
-        switch self {
-        case .simplified:  return 1.0
-        case .comfortable: return 1.25
-        case .middleClass: return 1.0
         }
     }
 
@@ -181,7 +149,6 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     var prolongedTurmoilChance: Double {
         switch self {
         case .simplified:  return 0.0
-        case .comfortable: return 0.15
         case .middleClass: return 0.15
         }
     }
@@ -190,12 +157,11 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// `Player.layoffRisk(for:)`), which is rolled every year, not only in a
     /// recession: `GameConstants.baseLayoffRisk` × the sector's beta × its
     /// climate × this, capped by `GameConstants.turmoilMaxLayoffChance`. Real
-    /// Life carries the plain risk (~2% a year in an average sector); Relaxed
-    /// half of it; Simplified none.
+    /// Life carries the plain risk (~2% a year in an average sector);
+    /// Simplified none.
     var layoffSeverity: Double {
         switch self {
         case .simplified:  return 0.0
-        case .comfortable: return 0.5
         case .middleClass: return 1.0
         }
     }
