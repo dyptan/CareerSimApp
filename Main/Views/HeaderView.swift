@@ -28,12 +28,23 @@ struct HeaderView: View {
                 }
 
                 // Free to open at any age: reading advice never spends the year.
+                // A dot means the advisor has something waiting — its opening
+                // question, or a review of the year just lived.
                 Button { appUIState.showAdvisorSheet = true } label: {
                     Label("Advice", systemImage: "lightbulb")
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
                 .disabled(player.hasRetired)
+                .overlay(alignment: .topTrailing) {
+                    if player.advisorPlan.needsAttention, !player.hasRetired {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 9, height: 9)
+                            .offset(x: 3, y: -3)
+                            .accessibilityLabel("The advisor has something for you")
+                    }
+                }
             }
 
             Spacer()

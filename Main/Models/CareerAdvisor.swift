@@ -30,13 +30,29 @@ enum CareerAdvisor {
     enum Destination: Equatable {
         /// The Jobs sheet, showing roles of this setting.
         case jobs(WorkSetting)
+        /// The Jobs sheet, opened straight onto one role's postings (a
+        /// `Job.baseTitle`) — however the list is filtered.
+        case listing(String)
         case education
+        /// The Events sheet — conferences to attend or take the stage at.
+        case events
+        /// The Projects sheet — spare-time fame plays.
+        case projects
+        /// The Ventures sheet — founding a company.
+        case ventures
+        /// The Boardroom — an executive seat's equity plays.
+        case boardroom
         /// The Activities sheet, on this tab.
         case activities(ActivityKind)
 
         var buttonLabel: String {
             switch self {
             case .jobs: return "Open Jobs"
+            case .listing: return "See job listings"
+            case .events: return "Open Events"
+            case .projects: return "Open Projects"
+            case .ventures: return "Open Ventures"
+            case .boardroom: return "Open Boardroom"
             case .education: return "Open Education"
             case .activities: return "Open Activities"
             }
@@ -233,7 +249,7 @@ enum CareerAdvisor {
     /// Careers like Professional Player sit at the odds floor without their
     /// breakthrough award, whatever else the player does — so no skill,
     /// course or degree is worth recommending toward them.
-    private static func lacksBreakthrough(_ job: Job, _ player: Player) -> Bool {
+    static func lacksBreakthrough(_ job: Job, _ player: Player) -> Bool {
         guard let award = job.breakthroughFame else { return false }
         return !player.fameAwards.contains { $0.title == award }
     }
@@ -524,7 +540,7 @@ enum CareerAdvisor {
     }
 
     /// The offered activity that trains `keyPath` hardest, with its yearly gain.
-    private static func bestActivity(for keyPath: WritableKeyPath<SoftSkills, Int>,
+    static func bestActivity(for keyPath: WritableKeyPath<SoftSkills, Int>,
                                      among activities: [Sport]) -> (Sport, Int)? {
         activities
             .compactMap { sport -> (Sport, Int)? in
@@ -536,7 +552,7 @@ enum CareerAdvisor {
 
     /// Of the degrees on offer, the shortest one that meets `minEQF`, or failing
     /// that the highest one — the first step toward it.
-    private static func bestDegree(_ degrees: [Education], toward minEQF: Int) -> Education? {
+    static func bestDegree(_ degrees: [Education], toward minEQF: Int) -> Education? {
         let sufficient = degrees.filter { $0.eqf >= minEQF }
         if let shortest = sufficient.min(by: { ($0.yearsToComplete, $0.id) < ($1.yearsToComplete, $1.id) }) {
             return shortest

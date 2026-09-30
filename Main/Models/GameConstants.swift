@@ -247,6 +247,11 @@ enum GameConstants {
     static let founderExitFame: Double = 2.0
     /// Business fame banked when a venture folds — the lessons.
     static let founderFoldFame: Double = 0.1
+    /// Business fame banked when a scalable venture breaks out (see
+    /// `Player.advanceYear`), and when a Boardroom investment round closes.
+    /// All of these count toward the founder track record (`Player.founderTrackRecordPoints`).
+    static let founderBreakoutFame: Double = 2.0
+    static let investmentRoundFame: Double = 0.75
     /// Preparation per point of business fame, and its cap (see
     /// `Job.founderSuccessProbability`).
     static let founderReputationPerPoint: Double = 0.04

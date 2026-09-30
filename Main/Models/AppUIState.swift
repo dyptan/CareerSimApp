@@ -19,6 +19,10 @@ final class AppUIState: ObservableObject {
     /// The sheet an advisor tip asked for, opened once the advisor has
     /// finished dismissing — two sheets can't be presented at once.
     @Published var advisorFollowUp: CareerAdvisor.Destination?
+    /// The role (a `Job.baseTitle`) the Jobs sheet should open onto when the
+    /// advisor's "See job listings" sent the player there. The sheet takes it
+    /// on opening and clears it, so reopening Jobs later starts at the list.
+    @Published var jobFocusRole: String?
 
     /// The Activities sheet's open tab, kept across the yearly close so a
     /// player who practises every year lands back on their tab.
@@ -95,6 +99,7 @@ final class AppUIState: ObservableObject {
         showRetirementSheet = false
         showAdvisorSheet = false
         advisorFollowUp = nil
+        jobFocusRole = nil
         hasSelectedMode = false
         showGoalSheet = false
         hasShownGoal = false

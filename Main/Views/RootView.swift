@@ -44,8 +44,20 @@ struct RootView: View {
                 appUIState.jobSettingFilter = nil
             }
             appUIState.showCareersSheet = true
+        case .listing(let title):
+            // Straight onto that role's postings, whatever the list's filters say.
+            appUIState.jobFocusRole = title
+            appUIState.showCareersSheet = true
         case .education:
             appUIState.showTertiarySheet = true
+        case .events:
+            appUIState.showEventsSheet = true
+        case .projects:
+            appUIState.showSideHustlesSheet = true
+        case .ventures:
+            appUIState.showEntrepreneurshipSheet = true
+        case .boardroom:
+            appUIState.showExecutiveSheet = true
         case .activities(let tab):
             appUIState.activitiesTab = tab
             appUIState.showActivitiesSheet = true
@@ -107,6 +119,7 @@ struct RootView: View {
                 showCareersSheet: $appUIState.showCareersSheet,
                 settingFilter: $appUIState.jobSettingFilter,
                 qualifiedOnly: $appUIState.jobQualifiedOnly,
+                focusRole: $appUIState.jobFocusRole,
                 onCommit: { spendYear(closing: \.showCareersSheet) }
             )
             .frame(idealHeight: 500, alignment: .leading)

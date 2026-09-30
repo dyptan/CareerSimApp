@@ -1051,11 +1051,16 @@ extension Job {
             matching = eligible
         }
         let pool = matching.isEmpty ? eligible : matching
-        let bestPrestige = pool.map { $0.tier.prestige }.max() ?? 0
-        switch bestPrestige {
-        case 3:  return 0.10  // Elite
-        case 2:  return 0.05  // State
-        default: return 0.0   // Community / unranked
+        return Job.prestigeBonus(forPrestige: pool.map { $0.tier.prestige }.max() ?? 0)
+    }
+
+    /// What a school of `prestige` adds to a hire (`EducationTier.prestige`):
+    /// Elite +0.10, State +0.05, Community and unranked nothing.
+    static func prestigeBonus(forPrestige prestige: Int) -> Double {
+        switch prestige {
+        case 3:  return 0.10
+        case 2:  return 0.05
+        default: return 0.0
         }
     }
 
