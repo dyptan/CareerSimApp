@@ -439,6 +439,8 @@ struct ModeSelectionView: View {
         player.configureStart(age: startAge)
         player.regenerateAvailableJobs()
         appUIState.hasSelectedMode = true
+        // Only a scored run reaches the leaderboard, so only it signs in.
+        if difficulty.keepsScore { GameCenterManager.shared.authenticate() }
     }
 }
 

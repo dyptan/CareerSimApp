@@ -153,7 +153,6 @@ struct JobDetail: View {
         if b.demand > 1 { market.append("• Employers need more \(job.baseTitle)s: \(effect(b.demand))") }
         if job.rung > 0 { market.append("• Joining above the starting level: \(effect(b.rungDecay))") }
         market.append("• \(climate.icon) \(job.industry.rawValue) is \(climate.rawValue.lowercased()) this year: \(effect(b.climate))")
-        if b.opportunity != 1 { market.append("• \(player.difficulty.title) mode: \(effect(b.opportunity))") }
         if b.seat < 1 {
             market.append("• Only a few people get a job like this each year: \(pct(b.seat)) of the people who qualify\(job.isExecutive ? " (having run your own company helps)" : "")")
         }
@@ -537,8 +536,8 @@ struct JobDetail: View {
     /// already met (the button gates on that), so a "no" is either the
     /// breakthrough gate, a too-high salary ask, or simply losing the odds roll;
     /// this names the dominant lever and points at the ⓘ breakdown. Simplified
-    /// mode never rejects a qualified applicant, so this only fires in the
-    /// realistic settings.
+    /// mode never rejects a qualified applicant, so this only fires in Real
+    /// Life.
     private var rejectionAdvice: String? {
         guard applicationResult == .rejected else { return nil }
         func pct(_ v: Double) -> String { "\(Int((v * 100).rounded()))%" }

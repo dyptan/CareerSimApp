@@ -57,8 +57,9 @@ struct HeaderView: View {
             VStack(alignment: .trailing, spacing: 8) {
                 // Opens the score sheet: the running score, with Keep playing
                 // and Start over (see `RetirementView`). The header itself no
-                // longer shows the score.
-                Button("Score") { appUIState.showRetirementSheet = true }
+                // longer shows the score. Simplified keeps no score, so there
+                // it is a progress check.
+                Button(player.difficulty.keepsScore ? "Score" : "Progress") { appUIState.showRetirementSheet = true }
                     .buttonStyle(.bordered)
                     .font(.headline)
 

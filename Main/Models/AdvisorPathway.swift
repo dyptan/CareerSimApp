@@ -255,7 +255,7 @@ enum AdvisorPathway {
         /// The application's strength: the score the game clamps, against its ceiling.
         var strength: Double {
             let scaled = b.merit * qualifiedFactor * b.salaryFit * b.demand * b.rungDecay
-                * b.climate * b.opportunity * b.unemployment
+                * b.climate * b.unemployment
             return b.ceiling > 0 ? min(1, scaled / b.ceiling) : 1
         }
 

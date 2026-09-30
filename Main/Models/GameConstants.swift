@@ -27,7 +27,7 @@ enum GameConstants {
 
     /// Real Life: the return in the first year of a new downturn — markets fall
     /// before the layoffs arrive (a 60/40 portfolio lost ~15–22 % real in 2008
-    /// and 2022). Relaxed has no downturns and earns `investmentReturn` flat.
+    /// and 2022). Outside a downturn it earns `investmentReturn` flat.
     static let downturnStartReturn: Double = -0.12
 
     /// Pay above this is saved at `highEarnerSavingsRate` instead of the mode's
@@ -335,7 +335,7 @@ enum GameConstants {
     //     merit = base(role's EQF) + skill fit × hireSkillWeight + prestige
     //             + network + fame + credential + breakthrough
     //     raw   = merit × requirement factors × salary fit × demand × rung decay
-    //     odds  = clamp(raw × climate × Relaxed multiplier, hireFloor…hireCeiling)
+    //     odds  = clamp(raw × climate × time out of work, hireFloor…hireCeiling)
     //             × seat scarcity
 
     /// Starting merit by the role's expected education (`minEQF`, index 0…7):

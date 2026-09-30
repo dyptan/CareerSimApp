@@ -210,7 +210,7 @@ struct Education: Codable, Hashable, Identifiable {
             + gradeWeight * player.academicFit
             + accoladeWeight * player.accoladeFit
         let band = tier.admissionFloor + tier.admissionFitSpan * pow(max(0, fit), tier.admissionFitExponent)
-        let raw = band * Education.admissionLevelScale(level) + player.difficulty.opportunityBonus
+        let raw = band * Education.admissionLevelScale(level)
         return max(0.02, min(0.98, raw))
     }
 

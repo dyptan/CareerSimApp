@@ -4,18 +4,22 @@ struct RetirementView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
 
+    /// Simplified is the tutorial: no score, no leaderboard — this sheet is
+    /// just a progress check there (`Difficulty.keepsScore`).
+    private var keepsScore: Bool { player.difficulty.keepsScore }
+
     var body: some View {
         VStack(spacing: 16) {
             // Opened from the header's Score button any time, and on its own at
             // the end of a career — so it reads as a progress check until the
             // run is actually over.
-            Text(player.hasRetired ? "Game Over" : "Your score")
+            Text(player.hasRetired ? "Game Over" : (keepsScore ? "Your score" : "Your progress"))
                 .font(.largeTitle.bold())
                 .padding(.top)
 
             Text(player.hasRetired
-                 ? "You reached \(GameConstants.retirementAge) — your career is over and this score is final."
-                 : "You're \(player.age). Here's how your life is going so far — keep playing to grow your score, or start over.")
+                 ? "You reached \(GameConstants.retirementAge) — your career is over\(keepsScore ? " and this score is final." : ".")"
+                 : "You're \(player.age). Here's how your life is going so far — keep playing\(keepsScore ? " to grow your score" : ""), or start over.")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -40,14 +44,16 @@ struct RetirementView: View {
             // the header's Score button, is where it lives, so the formula is
             // spelled out in full. Debt counts against it, which is why the
             // caption says net worth and not savings.
-            HStack(spacing: 6) {
-                Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.secondary)
-                InfoHint(
-                    title: "🏅 Score",
-                    message: "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score."
-                )
+            if keepsScore {
+                HStack(spacing: 6) {
+                    Text("🏅 Score: \(max(0, player.netWorth).formatted(.number)) $ ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.secondary)
+                    InfoHint(
+                        title: "🏅 Score",
+                        message: "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score."
+                    )
+                }
             }
 
             // The sheet opens from the header's Score button to check on the
@@ -91,7 +97,7 @@ struct RetirementView: View {
         // Only a finished career submits on sight; checking the score mid-run
         // doesn't (see `startOver`).
         .onAppear {
-            if player.hasRetired { GameCenterManager.shared.submit(score: player.leaderboardScore) }
+            if player.hasRetired { GameCenterManager.shared.submitScore(of: player) }
         }
     }
 
@@ -100,7 +106,7 @@ struct RetirementView: View {
     /// when the sheet appeared.
     private func startOver() {
         if !player.hasRetired {
-            GameCenterManager.shared.submit(score: player.leaderboardScore)
+            GameCenterManager.shared.submitScore(of: player)
         }
         player.reset()
         appUIState.reset()
@@ -108,9 +114,9 @@ struct RetirementView: View {
 }
 
 /// Celebration shown the first time the mode's goal is reached. Only the
-/// Simplified mode has a fixed goal (top leadership); the realistic settings are
-/// open-ended and never trigger this (see `Player.goalMet`). Offers to keep
-/// playing or start over.
+/// Simplified mode has a fixed goal (top leadership); Real Life is open-ended
+/// and never triggers this (see `Player.goalMet`). Offers to keep playing or
+/// start over. The tutorial keeps no score, so nothing is banked here.
 struct GoalView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
@@ -163,6 +169,5 @@ struct GoalView: View {
         #if os(macOS)
         .frame(minWidth: 700, minHeight: 400)
         #endif
-        .onAppear { GameCenterManager.shared.submit(score: player.leaderboardScore) }
     }
 }

@@ -4,7 +4,7 @@ enum ActivityListView {
     static func offered(to player: Player, kind: ActivityKind) -> [Sport] {
         let stage = LifeStage.forAge(player.age)
         return Sport.allCases.filter {
-            $0.kind == kind && $0.stages.contains(stage) && (!$0.isElite || player.difficulty == .comfortable)
+            $0.kind == kind && $0.stages.contains(stage) && $0.isOffered(in: player.difficulty)
         }
     }
 }

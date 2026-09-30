@@ -20,14 +20,15 @@ struct ActivityListView: View {
     private var currentStage: LifeStage { LifeStage.forAge(player.age) }
 
     /// The disciplines of `kind` open to this player now: their life stage's,
-    /// minus the elite ones outside a well-off (`.comfortable`) run. Shared with
-    /// `ActivitiesView`, which hides a tab (and the footer its button) when empty.
+    /// minus the elite ones in the Simplified tutorial (`Sport.isOffered`).
+    /// Shared with `ActivitiesView`, which hides a tab (and the footer its
+    /// button) when empty.
     static func offered(to player: Player, kind: ActivityKind) -> [Sport] {
         let stage = LifeStage.forAge(player.age)
         return Sport.allCases.filter {
             $0.kind == kind
                 && $0.stages.contains(stage)
-                && (!$0.isElite || player.difficulty == .comfortable)
+                && $0.isOffered(in: player.difficulty)
         }
     }
 

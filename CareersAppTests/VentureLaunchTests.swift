@@ -309,18 +309,18 @@ final class VentureLaunchTests: XCTestCase {
     /// its term — debt doesn't outgrow a healthy income — and still saves a
     /// little alongside.
     func testLoanIsRepaidFromIncomeWithinItsTerm() throws {
-        // Layoffs are rolled every year, even in Relaxed (about 1% a year), and
-        // a lost job rightly stops the instalments — so the claim is about a
+        // Layoffs are rolled every year (about 2% a year in an average sector),
+        // and a lost job rightly stops the instalments — so the claim is about a
         // borrower who keeps the job: a term cut short by a layoff is re-run
         // rather than read.
         let ui = AppUIState()
         for _ in 0..<20 {
             let player = Player()
-            player.difficulty = .comfortable          // no downturns; layoffs rare
+            player.difficulty = .middleClass          // economy pinned neutral below
             player.configureStart(age: 30)
             player.pinNeutralEconomy()
             player.savings = 0
-            player.currentOccupation = try dayJob(income: 60_000)
+            player.currentOccupation = try dayJob(income: 100_000)   // Real Life's living-cost floor leaves a 60k earner nothing to save
             player.outstandingLoan = 60_000
             player.ventureLoanPayment = Player.annualLoanPayment(
                 balance: 60_000, rate: GameConstants.ventureLoanAnnualInterest)
@@ -333,7 +333,7 @@ final class VentureLaunchTests: XCTestCase {
             XCTAssertGreaterThan(player.savings, 0, "The borrower still saves alongside the instalments.")
             return
         }
-        XCTFail("Twenty terms in a row ended in a layoff — Relaxed layoffs should be rare.")
+        XCTFail("Twenty terms in a row ended in a layoff — layoffs should be rare.")
     }
 
     /// Under-18 players can never pay money or go into debt, so a founding

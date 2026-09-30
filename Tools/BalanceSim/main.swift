@@ -36,10 +36,8 @@ while !args.isEmpty {
 }
 
 var scenarios: [Scenario] = []
-for difficulty in [Difficulty.middleClass, .comfortable] {
-    for policy in ["advisor", "typical", "passive", "striver"] {
-        scenarios.append(Scenario(difficulty: difficulty, policy: policy, startAge: 18, lives: lives))
-    }
+for policy in ["advisor", "typical", "passive", "striver"] {
+    scenarios.append(Scenario(difficulty: .middleClass, policy: policy, startAge: 18, lives: lives))
 }
 // Starting at 18 the dreamer has no junior title, so this isolates the screen-star route.
 scenarios.append(Scenario(difficulty: .middleClass, policy: "dreamer", startAge: 18, lives: lives))

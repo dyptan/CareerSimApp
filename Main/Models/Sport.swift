@@ -212,15 +212,21 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// Gear- or coaching-heavy sports that only appear in `.comfortable`
-    /// ("Relaxed", well-off family) runs — court fees, club memberships, and
-    /// private coaching put them out of reach for average families.
-    /// `ActivityListView` hides them on every other difficulty.
+    /// Gear- or coaching-heavy sports — court fees, club memberships, private
+    /// coaching. Real Life offers them; the Simplified tutorial keeps to the
+    /// everyday sports (see `isOffered(in:)`).
     var isElite: Bool {
         switch self {
         case .tennis, .gymnastics: return true
         default:                   return false
         }
+    }
+
+    /// Whether the activity list offers this sport in `difficulty`: every sport
+    /// in Real Life, all but the elite ones in Simplified. The one rule behind
+    /// `ActivityListView.offered`.
+    func isOffered(in difficulty: Difficulty) -> Bool {
+        !isElite || !difficulty.isSimplified
     }
 
     /// Soft-skill bumps applied each year the player trains in this sport.

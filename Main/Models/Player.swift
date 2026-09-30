@@ -41,7 +41,7 @@ struct FameAward: Identifiable, Hashable {
 final class Player: ObservableObject {
     /// The single difficulty choice the game runs under: how much complexity is
     /// in play (Simplified strips skills, tiers, negotiation, and the economy)
-    /// plus, for the realistic settings, savings rate and economic volatility.
+    /// plus, in Real Life, savings rate and economic volatility.
     /// Set from the launch picker.
     @Published var difficulty: Difficulty = .default
     /// Convenience: true when only the basic (degree + experience) rules apply.
@@ -498,10 +498,11 @@ final class Player: ObservableObject {
 
     /// Whether the player has met the current setting's win condition. Only the
     /// Simplified mode has a fixed *target* — reaching a top leadership
-    /// ("C-suite") role. The realistic settings set no target, just a running
+    /// ("C-suite") role. Real Life sets no target, just a running
     /// `leaderboardScore` the player banks by finishing early or at
     /// `GameConstants.retirementAge`, whichever comes first (see
-    /// `hasRetired` and `RetirementView`).
+    /// `hasRetired` and `RetirementView`). Simplified keeps no score
+    /// (`Difficulty.keepsScore`).
     var goalMet: Bool {
         guard isSimplified else { return false }
         return currentOccupation?.isTopLeadership ?? false
