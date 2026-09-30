@@ -483,8 +483,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         ])
 
     /// State statistics for the curve (₴110k at $30k, ₴206k at $60k, ₴415k at
-    /// $130k, ₴750k at $250k), with IT paid close to international rates;
-    /// state pay programmes for doctors, nurses and teachers. Students on
+    /// $130k, ₴750k at $250k), with IT paid half again above the curve: the
+    /// best-paid path, well over the national average, but under what outsourcing
+    /// developers earn. (A factor of 2.5 put median wealth at ₴5.2M; 1.5 roughly
+    /// halves it and keeps IT clearly ahead.) State pay programmes for doctors, nurses and teachers. Students on
     /// state-funded places pay nothing; those on contract places pay the fees
     /// here. Priced in peacetime terms: the war's effects on pay, work and
     /// flights aren't modelled.
@@ -492,7 +494,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         title: "Ukraine", adjective: "Ukrainian", flag: "🇺🇦", currencySymbol: "₴", currencyName: "hryvnias",
         leaderboardSuffix: "ua",
         pay: PayModel(anchor: 110_000, exponent: 0.905,
-                      categoryFactor: [.technology: 2.5],
+                      categoryFactor: [.technology: 1.5],
                       stated: [
                         "Resident Physician": 150_000, "Physician": 360_000, "Senior Physician": 450_000,
                         "Surgeon": 540_000, "Anesthesiologist": 500_000, "Chief Medical Officer": 600_000,
@@ -518,7 +520,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         generalPayScale: 3.4, capitalScale: 20,
         schooling: .ukrainian,
         highlights: [
-            "Most pay is far below western Europe, but IT pays close to international rates — the best-paid path in the country.",
+            "Most pay is far below western Europe, but IT pays well above the national average — the best-paid path in the country.",
             "University is free on a state-funded place; these are the fees for a paid (contract) place.",
             "Priced as in peacetime: the war's effects on work and flights aren't in the game.",
         ])

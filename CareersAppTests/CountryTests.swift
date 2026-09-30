@@ -257,7 +257,7 @@ final class CountryTests: XCTestCase {
 
     /// Pay is compressed everywhere outside the US: a professional earns
     /// fewer times a cashier's pay than in America — except Ukraine's IT, which
-    /// is paid near international rates.
+    /// is paid far above the country's other work.
     func testProfessionalPayIsCompressedOutsideTheUS() {
         func ratio(_ country: Country, _ high: String, _ low: String) -> Double {
             let jobs = catalogue(country)
@@ -268,7 +268,7 @@ final class CountryTests: XCTestCase {
             XCTAssertLessThan(ratio(country, "Lawyer", "Cashier"), usLawyer, country.title)
         }
         XCTAssertGreaterThan(ratio(.ukraine, "Software Engineer", "Cashier"), ratio(.unitedStates, "Software Engineer", "Cashier"),
-                             "Ukrainian IT pays close to international rates.")
+                             "Ukrainian IT pays several times what other work does — more so than IT in the US.")
     }
 
     func testEveryCountryHasItsOwnCurrencyTuitionAndBoard() {
