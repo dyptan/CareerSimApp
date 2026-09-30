@@ -351,32 +351,24 @@ struct ModeSelectionView: View {
         }
     }
 
+    /// The starting age, with what it means — the school stage it begins in and
+    /// what skipping years costs — behind its ⓘ.
     private var ageChooser: some View {
-        VStack(spacing: 6) {
-            Text("Starting age")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-
-            Stepper(value: $startAge, in: 7...18) {
+        Stepper(value: $startAge, in: 7...18) {
+            HStack(spacing: 6) {
                 Text("Age \(startAge)")
                     .font(.headline.monospacedDigit())
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                InfoHint(title: "Starting age", message: ageDetails)
             }
-
-            Text(startingEducationNote)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if let skipped = skippedYearsNote {
-                Text(skipped)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    private var ageDetails: String {
+        var lines = [startingEducationNote]
+        if let skipped = skippedYearsNote { lines.append(skipped) }
+        lines.append("Starting at \(GameConstants.startingAge) lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.")
+        return lines.joined(separator: "\n\n")
     }
 
     /// What starting later costs: the years skipped leave a few random skill
@@ -398,52 +390,47 @@ struct ModeSelectionView: View {
         }
     }
 
+    /// One card per mode: its name and a short line. Who it's for, the goal and
+    /// the numbers behind it are in the card's ⓘ, which sits over the card
+    /// rather than inside its button so a tap on it opens the hint instead of
+    /// starting the game.
     private var difficultyChooser: some View {
-        VStack(spacing: 20) {
-            Text("How do you want to play?")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-
+        VStack(spacing: 14) {
             ForEach(Difficulty.allCases) { difficulty in
-                Button {
-                    start(difficulty)
-                } label: {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 8) {
-                            Text("\(difficulty.icon)  \(difficulty.title)")
-                                .font(.title2.bold())
-                            if difficulty.isRecommendedForNewPlayers {
-                                Text("Start here")
-                                    .font(.caption2.bold())
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(Capsule().fill(Color.accentColor))
-                                    .foregroundStyle(.white)
+                ZStack(alignment: .topTrailing) {
+                    Button {
+                        start(difficulty)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
+                                Text("\(difficulty.icon)  \(difficulty.title)")
+                                    .font(.title2.bold())
+                                if difficulty.isRecommendedForNewPlayers {
+                                    Text("Start here")
+                                        .font(.caption2.bold())
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(Capsule().fill(Color.accentColor))
+                                        .foregroundStyle(.white)
+                                }
                             }
-                        }
-                        Text(difficulty.audience)
-                            .font(.caption.bold())
-                            .foregroundStyle(.secondary)
-                        Text(difficulty.blurb)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text("🎯 Goal: \(difficulty.goalHeadline)")
-                            .font(.callout.bold())
-                            .padding(.top, 2)
-                        if !difficulty.isSimplified {
-                            Text("💵 Save \(Int(difficulty.savingsRate * 100))% of pay above \(difficulty.livingCostFloor / 1000)k · 📉 \(Int(difficulty.turmoilChance * 100))% chance of a bad economy each year")
-                                .font(.caption.bold())
+                            Text(difficulty.blurb)
+                                .font(.callout)
                                 .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .padding(.trailing, 28)
+                        .background(Color.secondary.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background(Color.secondary.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .buttonStyle(.plain)
+
+                    InfoHint(title: "\(difficulty.icon) \(difficulty.title)", message: difficulty.details)
+                        .padding(14)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
