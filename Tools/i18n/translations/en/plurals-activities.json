@@ -1,0 +1,21 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "%@ (%lld yrs)": {
+      "one": "%1$@ (%2$lld yr)",
+      "other": "%1$@ (%2$lld yrs)"
+    },
+    "Your chance goes up with the skills below, your %lld years of work%@, and the %@ fame you already have — being known in a field makes the next project there easier.": {
+      "one": "Your chance goes up with the skills below, your %1$lld year of work%2$@, and the %3$@ fame you already have — being known in a field makes the next project there easier.",
+      "other": "Your chance goes up with the skills below, your %1$lld years of work%2$@, and the %3$@ fame you already have — being known in a field makes the next project there easier."
+    },
+    " (your %lld years in %@ count double)": {
+      "one": " (your %1$lld year in %2$@ counts double)",
+      "other": " (your %1$lld years in %2$@ count double)"
+    },
+    "A company can raise money at most %lld times, and investors want to see a year in business first.": {
+      "one": "A company can raise money at most %lld time, and investors want to see a year in business first.",
+      "other": "A company can raise money at most %lld times, and investors want to see a year in business first."
+    }
+  }
+}

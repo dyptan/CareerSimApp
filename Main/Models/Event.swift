@@ -16,9 +16,16 @@ import Foundation
 /// a fame award in that industry.
 struct CareerEvent: Identifiable {
     let id: String
-    let name: String
+    private let nameResource: LocalizedStringResource
+    /// The event's name, in the player's language.
+    var name: String { String(localized: nameResource) }
+    /// The event's English name — only for code that needs a stable text (the id of the
+    /// default "<name> — Speaker" fame award); never shown.
+    var englishName: String { nameResource.key }
     let icon: String
-    let blurb: String
+    private let blurbResource: LocalizedStringResource
+    /// What the event is, in a sentence.
+    var blurb: String { String(localized: blurbResource) }
     /// Industry this event serves: presenting here builds that field's network
     /// and banks a fame award in it.
     let category: JobCategory
@@ -29,32 +36,73 @@ struct CareerEvent: Identifiable {
     /// `Player.networkByCategory` and feeds hiring + promotion; taking the
     /// stage banks more than this (see `networkPoints`).
     let networkWeight: Int
-    /// Verb on this event's one button — "Present" for a conference, but
-    /// "Perform" at a festival, "Compete" at a pitch, and so on. Purely
-    /// cosmetic; the mechanic is identical.
-    let presenterActionLabel: String
-    /// Bespoke title for the fame award a presenter banks (e.g. "Festival
-    /// Performer", "Pitch Winner"). `nil` falls back to "<name> — Speaker".
-    let presenterFameTitleOverride: String?
+    /// The stage role on this event's one button — "Present" for a conference, but
+    /// "Perform" at a festival, "Compete" at a pitch, and so on. Purely cosmetic; the
+    /// mechanic is identical. An id, not text: `label` / `pastLabel` / `statusLine`
+    /// give each language its own wording of the pair.
+    let presenterAction: PresenterAction
+    private let presenterFameTitleResource: LocalizedStringResource?
     /// An open call — a casting, a festival's emerging-artist stage, a pitch
     /// competition, a call for talks — that anyone may enter, in the field or
     /// not; the acceptance odds are the only gate.
     let isOpenCall: Bool
 
-    init(id: String, name: String, icon: String, blurb: String, category: JobCategory,
-         abilities: [WeightedAbility], networkWeight: Int,
-         presenterActionLabel: String = "Present",
-         presenterFameTitleOverride: String? = nil,
+    /// What a presenter does at an event. Each case carries its own button verb and its own
+    /// past-tense status line, so no language has to derive one from the other.
+    enum PresenterAction {
+        case present, perform, appear, speak, compete, demo
+
+        /// The imperative on the event's button.
+        var label: String {
+            switch self {
+            case .present: return String(localized: "Present", comment: "Button on an event row: give a talk or presentation at the event. A verb.")  // i18n:ignore translator comment
+            case .perform: return String(localized: "Perform", comment: "Button on an event row: perform on stage at a festival. A verb.")  // i18n:ignore translator comment
+            case .appear:  return String(localized: "Appear", comment: "Button on an event row: appear on a TV show. A verb.")  // i18n:ignore translator comment
+            case .speak:   return String(localized: "Speak", comment: "Button on an event row: give a talk at a conference. A verb.")  // i18n:ignore translator comment
+            case .compete: return String(localized: "Compete", comment: "Button on an event row: compete in a pitch competition. A verb.")  // i18n:ignore translator comment
+            case .demo:    return String(localized: "Demo", comment: "Button on an event row: demonstrate your work at an expo. A verb.")  // i18n:ignore translator comment
+            }
+        }
+
+        /// The past tense, alone.
+        var pastLabel: String {
+            switch self {
+            case .present: return String(localized: "Presented", comment: "Past tense of the event button 'Present'")  // i18n:ignore translator comment
+            case .perform: return String(localized: "Performed", comment: "Past tense of the event button 'Perform'")  // i18n:ignore translator comment
+            case .appear:  return String(localized: "Appeared", comment: "Past tense of the event button 'Appear'")  // i18n:ignore translator comment
+            case .speak:   return String(localized: "Spoke", comment: "Past tense of the event button 'Speak'")  // i18n:ignore translator comment
+            case .compete: return String(localized: "Competed", comment: "Past tense of the event button 'Compete'")  // i18n:ignore translator comment
+            case .demo:    return String(localized: "Demoed", comment: "Past tense of the event button 'Demo'")  // i18n:ignore translator comment
+            }
+        }
+
+        /// The status-log line for a stage taken at `event` ("Presented at Tech Summit").
+        func statusLine(at event: String) -> String {
+            switch self {
+            case .present: return L("Presented at \(event)")
+            case .perform: return L("Performed at \(event)")
+            case .appear:  return L("Appeared at \(event)")
+            case .speak:   return L("Spoke at \(event)")
+            case .compete: return L("Competed at \(event)")
+            case .demo:    return L("Demoed at \(event)")
+            }
+        }
+    }
+
+    init(id: String, name: LocalizedStringResource, icon: String, blurb: LocalizedStringResource,
+         category: JobCategory, abilities: [WeightedAbility], networkWeight: Int,
+         presenterAction: PresenterAction = .present,
+         presenterFameTitleOverride: LocalizedStringResource? = nil,
          isOpenCall: Bool = false) {
         self.id = id
-        self.name = name
+        self.nameResource = name
         self.icon = icon
-        self.blurb = blurb
+        self.blurbResource = blurb
         self.category = category
         self.abilities = abilities
         self.networkWeight = networkWeight
-        self.presenterActionLabel = presenterActionLabel
-        self.presenterFameTitleOverride = presenterFameTitleOverride
+        self.presenterAction = presenterAction
+        self.presenterFameTitleResource = presenterFameTitleOverride
         self.isOpenCall = isOpenCall
     }
 
@@ -63,18 +111,14 @@ struct CareerEvent: Identifiable {
     /// `GameConstants.presenterNetworkBonus`).
     var networkPoints: Int { networkWeight + GameConstants.presenterNetworkBonus }
 
-    /// The stage role in the past tense, for the status log.
-    var presenterPastLabel: String {
-        switch presenterActionLabel {
-        case "Present": return "Presented"
-        case "Perform": return "Performed"
-        case "Appear":  return "Appeared"
-        case "Speak":   return "Spoke"
-        case "Compete": return "Competed"
-        case "Demo":    return "Demoed"
-        default:        return "Took the stage"
-        }
-    }
+    /// The stage role on the button ("Present", "Perform" …), in the player's language.
+    var presenterActionLabel: String { presenterAction.label }
+
+    /// The stage role in the past tense, alone.
+    var presenterPastLabel: String { presenterAction.pastLabel }
+
+    /// The status-log line for taking the stage here: "Presented at Tech Summit".
+    var presenterStatusLine: String { presenterAction.statusLine(at: name) }
 
     /// Degree fields whose students count as being in this event's field.
     var studyProfiles: [TertiaryProfile] {
@@ -90,10 +134,17 @@ struct CareerEvent: Identifiable {
     }
 
     /// The fame accolade banked (when the year advances) for presenting here,
-    /// scoped to the event's industry. Spotlight events override the default
-    /// speaker wording.
+    /// scoped to the event's industry, in the player's language. Spotlight events
+    /// have a bespoke title ("Festival Performer"); the rest read "<name> — Speaker".
+    /// Its stable id is `presenterFameKey`.
     var presenterFameTitle: String {
-        presenterFameTitleOverride ?? "\(name) — Speaker"
+        if let presenterFameTitleResource { return String(localized: presenterFameTitleResource) }
+        return L("\(name) — Speaker")
+    }
+
+    /// The English title of that accolade: the id of the `FameAward` it banks. Never shown.
+    var presenterFameKey: String {
+        presenterFameTitleResource?.key ?? "\(englishName) — Speaker"
     }
 
     /// Reputation weight of the presenter fame award. Being accepted onto the
@@ -240,7 +291,7 @@ enum EventCatalog {
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2,
-            presenterActionLabel: "Demo"
+            presenterAction: .demo
         ),
         CareerEvent(
             id: "retail-expo",
@@ -265,7 +316,7 @@ enum EventCatalog {
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 1,
-            presenterActionLabel: "Demo"
+            presenterAction: .demo
         ),
         CareerEvent(
             id: "trades-expo",
@@ -278,7 +329,7 @@ enum EventCatalog {
                 .init(keyPath: \.communicationAndNetworking, weight: 1)
             ],
             networkWeight: 2,
-            presenterActionLabel: "Demo"
+            presenterAction: .demo
         ),
         CareerEvent(
             id: "manufacturing-show",
@@ -355,7 +406,7 @@ enum EventCatalog {
                 .init(keyPath: \.creativityAndInsightfulThinking, weight: 1)
             ],
             networkWeight: 2,
-            presenterActionLabel: "Perform",
+            presenterAction: .perform,
             presenterFameTitleOverride: "Festival Performer",
             isOpenCall: true
         ),
@@ -370,7 +421,7 @@ enum EventCatalog {
                 .init(keyPath: \.stressResistanceAndEmotionalRegulation, weight: 1)
             ],
             networkWeight: 2,
-            presenterActionLabel: "Appear",
+            presenterAction: .appear,
             presenterFameTitleOverride: "TV Personality",
             isOpenCall: true
         ),
@@ -384,7 +435,7 @@ enum EventCatalog {
                 .init(keyPath: \.communicationAndNetworking, weight: 2)
             ],
             networkWeight: 1,
-            presenterActionLabel: "Speak",
+            presenterAction: .speak,
             presenterFameTitleOverride: "Noted Speaker",
             isOpenCall: true
         ),
@@ -399,7 +450,7 @@ enum EventCatalog {
                 .init(keyPath: \.persuasionAndNegotiation, weight: 1)
             ],
             networkWeight: 2,
-            presenterActionLabel: "Compete",
+            presenterAction: .compete,
             presenterFameTitleOverride: "Pitch Winner",
             isOpenCall: true
         ),

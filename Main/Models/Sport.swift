@@ -73,34 +73,10 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var id: String { rawValue }
 
-    var label: String {
-        switch self {
-        case .running:      return "Running"
-        case .swimming:     return "Swimming"
-        case .cycling:      return "Cycling"
-        case .soccer:       return "Soccer"
-        case .basketball:   return "Basketball"
-        case .tennis:       return "Tennis"
-        case .martialArts:  return "Martial Arts"
-        case .gymnastics:   return "Gymnastics"
-        case .skateboarding: return "Skateboarding & BMX"
-        case .esports:      return "E-Sports"
-        case .music:        return "Music"
-        case .drawing:      return "Drawing & Painting"
-        case .photography:  return "Photography"
-        case .cooking:      return "Cooking"
-        case .dance:        return "Dance"
-        case .coding:       return "Coding"
-        case .chess:        return "Chess"
-        case .debate:       return "Debate"
-        case .studentCouncil: return "Student Council"
-        case .math:         return "Mathematics"
-        case .science:      return "Science"
-        case .literature:   return "Reading & Writing"
-        case .history:      return "History & Geography"
-        case .languages:    return "Foreign Languages"
-        }
-    }
+    /// What the player reads for this discipline — the localized name (`displayName`,
+    /// DisplayNames.swift). Kept under its old name for the callers that print it;
+    /// `rawValue` is the id and is never shown.
+    var label: String { displayName }
 
     var pictogram: String {
         switch self {
@@ -133,30 +109,30 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var description: String {
         switch self {
-        case .running:      return "Track and road running — the foundation of athletic endurance. Cheap to start, but the kilometres add up over years."
-        case .swimming:     return "Lap swimming and open water. A full-body endurance sport with low joint impact and a strong calm-under-pressure benefit."
-        case .cycling:      return "Road and gravel cycling. Long outdoor sessions build endurance and resilience to weather."
-        case .soccer:       return "Team football. A lifelong team sport that builds endurance and the habit of moving in sync with others."
-        case .basketball:   return "Five-a-side basketball. Fast-paced team sport rewarding agility, teamwork, and split-second decisions."
-        case .tennis:       return "Singles or doubles tennis. A racket sport that drills focus, footwork, and composure in long points."
-        case .martialArts:  return "Karate, judo, boxing — disciplines that drill technique, respect, and grit through repetition."
-        case .gymnastics:   return "Floor, bars, vault, beam. Years of precision, body control, and strength work build the toolkit of an Olympic-stream athlete."
-        case .skateboarding: return "Street and park skating, BMX tricks. An Olympic sport now — falls, balance, and nerve, one trick at a time."
-        case .esports:      return "Competitive video gaming. Hours of structured practice on a chosen title sharpen reflexes and tactical reading."
-        case .music:        return "Lessons on an instrument, graded exam by exam. Daily practice, and the nerve to perform what you've practised."
-        case .drawing:      return "Sketching, painting, and composition. Patient hands and a trained eye, built one piece at a time."
-        case .photography:  return "Framing, light, and timing. You learn to see a picture before you take it — and to plan the shoot around it."
-        case .cooking:      return "From first recipes to plating under pressure. Precise hands, invention, and cooking for other people."
-        case .dance:        return "Ballet, hip-hop, ballroom — technique drilled until it looks effortless, then performed."
-        case .coding:       return "Building programs, from block-based puzzles to real software. Logic, precision, and sticking with a bug until it's fixed."
-        case .chess:        return "Openings, tactics, endgames. The classic contest of pure calculation and nerve over the board."
-        case .debate:       return "Arguing a case against the clock — research it, build it, and persuade a room."
-        case .studentCouncil: return "Run for office, then run things: organise events, speak for your class, and get a room of classmates to agree. The one place school teaches leadership."
-        case .math:         return "Extra maths beyond the lesson: puzzles, proofs, and problem sets that stretch you."
-        case .science:      return "Experiments, lab reports, and a project of your own for the science fair."
-        case .literature:   return "Reading widely and writing often — spelling, essays, and stories."
-        case .history:      return "Maps, eras, and how the world got this way — the stuff quiz bowls are made of."
-        case .languages:    return "Learning another language properly: vocabulary, grammar, and speaking it out loud."
+        case .running:      return L("Track and road running — the foundation of athletic endurance. Cheap to start, but the kilometres add up over years.")
+        case .swimming:     return L("Lap swimming and open water. A full-body endurance sport with low joint impact and a strong calm-under-pressure benefit.")
+        case .cycling:      return L("Road and gravel cycling. Long outdoor sessions build endurance and resilience to weather.")
+        case .soccer:       return L("Team football. A lifelong team sport that builds endurance and the habit of moving in sync with others.")
+        case .basketball:   return L("Five-a-side basketball. Fast-paced team sport rewarding agility, teamwork, and split-second decisions.")
+        case .tennis:       return L("Singles or doubles tennis. A racket sport that drills focus, footwork, and composure in long points.")
+        case .martialArts:  return L("Karate, judo, boxing — disciplines that drill technique, respect, and grit through repetition.")
+        case .gymnastics:   return L("Floor, bars, vault, beam. Years of precision, body control, and strength work build the toolkit of an Olympic-stream athlete.")
+        case .skateboarding: return L("Street and park skating, BMX tricks. An Olympic sport now — falls, balance, and nerve, one trick at a time.")
+        case .esports:      return L("Competitive video gaming. Hours of structured practice on a chosen title sharpen reflexes and tactical reading.")
+        case .music:        return L("Lessons on an instrument, graded exam by exam. Daily practice, and the nerve to perform what you've practised.")
+        case .drawing:      return L("Sketching, painting, and composition. Patient hands and a trained eye, built one piece at a time.")
+        case .photography:  return L("Framing, light, and timing. You learn to see a picture before you take it — and to plan the shoot around it.")
+        case .cooking:      return L("From first recipes to plating under pressure. Precise hands, invention, and cooking for other people.")
+        case .dance:        return L("Ballet, hip-hop, ballroom — technique drilled until it looks effortless, then performed.")
+        case .coding:       return L("Building programs, from block-based puzzles to real software. Logic, precision, and sticking with a bug until it's fixed.")
+        case .chess:        return L("Openings, tactics, endgames. The classic contest of pure calculation and nerve over the board.")
+        case .debate:       return L("Arguing a case against the clock — research it, build it, and persuade a room.")
+        case .studentCouncil: return L("Run for office, then run things: organise events, speak for your class, and get a room of classmates to agree. The one place school teaches leadership.")
+        case .math:         return L("Extra maths beyond the lesson: puzzles, proofs, and problem sets that stretch you.")
+        case .science:      return L("Experiments, lab reports, and a project of your own for the science fair.")
+        case .literature:   return L("Reading widely and writing often — spelling, essays, and stories.")
+        case .history:      return L("Maps, eras, and how the world got this way — the stuff quiz bowls are made of.")
+        case .languages:    return L("Learning another language properly: vocabulary, grammar, and speaking it out loud.")
         }
     }
 
@@ -377,5 +353,40 @@ enum Sport: String, CaseIterable, Codable, Hashable, Identifiable {
                 .init(keyPath: \.selfDisciplineAndPerseverance, weight: 1)
             ]
         }
+    }
+}
+
+// MARK: - Hint lines for the skills an activity, event or project draws on
+
+/// One skill, written for a hint list: its pictogram and its name ("💬 Persuader"), and the
+/// same with the points a year of practice adds. Whole lines, so a translation can move the
+/// number ("+2") wherever its language puts it.
+enum SkillLine {
+    /// "💬 Persuader" — the skill's pictogram and (localized) name.
+    static func tag(_ keyPath: WritableKeyPath<SoftSkills, Int>) -> String {
+        let label = SoftSkills.label(forKeyPath: keyPath)
+            ?? String(localized: "Skill", comment: "Fallback name for a soft skill that has no label")  // i18n:ignore translator comment
+        let pic = SoftSkills.pictogram(forKeyPath: keyPath) ?? ""
+        return "\(pic) \(label)"
+    }
+
+    /// "💬 Persuader (+2)" — a list line in the Activities hint.
+    static func gain(_ ability: WeightedAbility) -> String {
+        L("\(tag(ability.keyPath)) (+\(ability.weight))")
+    }
+
+    /// "💬 Persuader +2" — a list line in the Events and Projects hints.
+    static func plus(_ ability: WeightedAbility) -> String {
+        L("\(tag(ability.keyPath)) +\(ability.weight)")
+    }
+}
+
+// MARK: - Sorting by displayed name
+
+/// How the catalogue lists order rows that tie: by the name the player reads. English keeps its
+/// plain code-point order (what it has always been); other languages sort the way they alphabetise.
+enum NameOrder {
+    static func before(_ a: String, _ b: String) -> Bool {
+        L10n.language == .english ? a < b : a.localizedStandardCompare(b) == .orderedAscending
     }
 }
