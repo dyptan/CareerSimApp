@@ -50,14 +50,16 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// The country a new game starts in unless the player picks another.
     static let `default`: Country = .unitedStates
 
-    var title: String { profile.title }
+    /// The country's name in the player's language ("Germany" / "Deutschland").
+    /// `rawValue` stays the English id.
+    var title: String { String(localized: profile.title) }
     var flag: String { profile.flag }
     var currencySymbol: String { profile.currencySymbol }
 
     /// An amount the way the game writes money: "68,000 $", "45.000 €",
-    /// "4,380,000 ¥". The grouping follows the device's locale, as it always has.
+    /// "4,380,000 ¥". The grouping follows the game's language and locale.
     func money(_ amount: Int) -> String {
-        "\(amount.formatted(.number)) \(currencySymbol)"
+        "\(Fmt.number(amount)) \(currencySymbol)"
     }
 
     /// The smallest step money moves in on a slider — 500 in most currencies,
@@ -149,26 +151,26 @@ enum Country: String, Codable, CaseIterable, Identifiable {
 
     // MARK: - Picker
 
-    /// What the country changes, for the picker's ⓘ.
+    /// What the country changes, for the picker's ⓘ. Every line is a whole
+    /// sentence (bullets included) so each language can phrase it its own way.
     var details: String {
         let tuition = { (tier: EducationTier) in self.annualTuition(tier: tier, level: .Bachelor, profile: nil) }
         guard profile.pay != nil else {
-            return """
-                Pay, prices and school costs from the United States, in dollars.
-
-                • Pay is the national median for each job.
-                • Universities charge tuition — from about \(money(tuition(.community))) a year at a community college to \(money(tuition(.elite))) or more at an elite one — so many students borrow.
-                """
+            return [
+                String(localized: profile.introduction),
+                "",
+                L("• Pay is the national median for each job."),
+                L("• Universities charge tuition — from about \(money(tuition(.community))) a year at a community college to \(money(tuition(.elite))) or more at an elite one — so many students borrow."),
+            ].joined(separator: "\n")
         }
-        var lines = ["Pay, prices and school costs from \(profile.titleInSentenceOrTitle), in \(profile.currencyName)."]
+        var lines = [String(localized: profile.introduction), ""]
+        lines += profile.highlights.map { "• " + String(localized: $0) }   // i18n:ignore bullet glyph; the text is a catalog string
+        lines.append(L("• \(String(localized: profile.minimumWageNote)): no job pays under \(money(minimumAnnualPay)) a year."))
+        lines.append(L("• A university year costs about \(money(tuition(.state))), or \(money(tuition(.elite))) at an elite school."))
+        lines.append(L("• Living costs take the first \(money(livingCostFloor)) of pay."))
+        if let note = profile.leaderboardNote { lines.append(String(localized: note)) }
         lines.append("")
-        lines += profile.highlights.map { "• \($0)" }
-        lines.append("• \(profile.minimumWageNote): no job pays under \(money(minimumAnnualPay)) a year.")
-        lines.append("• A university year costs about \(money(tuition(.state))), or \(money(tuition(.elite))) at an elite school.")
-        lines.append("• Living costs take the first \(money(livingCostFloor)) of pay.")
-        lines.append("• Scores go to their own \(profile.adjective) leaderboard.")
-        lines.append("")
-        lines.append("Still American for now: school ages and tracks, licence names and most of the advisor's real-world facts.")
+        lines.append(L("Still American for now: school ages and tracks, licence names and most of the advisor's real-world facts."))
         return lines.joined(separator: "\n")
     }
 
@@ -176,19 +178,22 @@ enum Country: String, Codable, CaseIterable, Identifiable {
 
     /// Everything that makes a country's money its own.
     struct Profile {
-        let title: String
-        /// "the United Kingdom", "Germany".
-        var titleInSentence: String? = nil
-        let adjective: String
+        /// The country's name (display text; the id is `Country.rawValue`).
+        let title: LocalizedStringResource
+        /// The picker's opening sentence, naming the country and its currency in
+        /// full ("Pay, prices and school costs from the United Kingdom, in pounds.").
+        /// A whole sentence per country, because "from Germany" / "from the
+        /// United Kingdom" take different articles and cases in other languages.
+        let introduction: LocalizedStringResource
         let flag: String
         let currencySymbol: String
-        let currencyName: String
         let leaderboardSuffix: String
         /// nil for the US: the catalogue already is its pay.
         let pay: PayModel?
         let step: Int
         let minimumAnnualPay: Int
-        let minimumWageNote: String
+        /// A noun phrase ("The minimum wage (€13.90 an hour)") that leads the picker line "…: no job pays under N a year."
+        let minimumWageNote: LocalizedStringResource
         /// nil for the US: `EducationTier.annualTuition` is its table.
         let tuition: TuitionTable?
         let studentLoanInterest: Double
@@ -200,10 +205,11 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         var drivingAge: Int = 18
         /// What school is called and how it is graded.
         var schooling: Schooling = .american
+        /// "• Scores go to their own German leaderboard." — a whole bullet, because the
+        /// adjective is a grammar trap. nil for the US, whose ⓘ has no such line.
+        var leaderboardNote: LocalizedStringResource? = nil
         /// What sets the country apart, for the picker's ⓘ.
-        let highlights: [String]
-
-        var titleInSentenceOrTitle: String { titleInSentence ?? title }
+        let highlights: [LocalizedStringResource]
     }
 
     struct PayModel {
@@ -266,11 +272,12 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     }
 
     private static let unitedStatesProfile = Profile(
-        title: "United States", titleInSentence: "the United States", adjective: "American",
-        flag: "🇺🇸", currencySymbol: "$", currencyName: "dollars", leaderboardSuffix: "",
+        title: LocalizedStringResource("United States", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from the United States, in dollars.", comment: "First line of the country picker's info text, about United States: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."),
+        flag: "🇺🇸", currencySymbol: "$", leaderboardSuffix: "",
         pay: nil, step: 500,
         // The federal $7.25 an hour — under every catalogue offer, so it never binds.
-        minimumAnnualPay: 15_080, minimumWageNote: "The federal minimum wage",
+        minimumAnnualPay: 15_080, minimumWageNote: LocalizedStringResource("The federal minimum wage", comment: "Noun phrase naming the minimum-wage rule in United States. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: nil, studentLoanInterest: GameConstants.studentLoanAnnualInterest,
         livingCostFloor: 32_000, highEarnerThreshold: GameConstants.highEarnerThreshold,
         generalPayScale: 1.0, capitalScale: 1.0, drivingAge: 16, highlights: [])
@@ -283,7 +290,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// transit ticket), the Excellence universities included; vocational school
     /// in the dual system is free; BAföG is half grant, half interest-free loan.
     private static let germanyProfile = Profile(
-        title: "Germany", adjective: "German", flag: "🇩🇪", currencySymbol: "€", currencyName: "euros",
+        title: LocalizedStringResource("Germany", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Germany, in euros.", comment: "First line of the country picker's info text, about Germany: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇩🇪", currencySymbol: "€",
         leaderboardSuffix: "de",
         pay: PayModel(anchor: 28_000, exponent: 0.689,
                       categoryFactor: [.manufacturing: 1.05, .education: 1.3, .transportation: 0.9],
@@ -301,7 +309,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 500,
         // €13.90 an hour in 2026, 40 hours for 52 weeks.
-        minimumAnnualPay: 28_900, minimumWageNote: "The minimum wage (€13.90 an hour)",
+        minimumAnnualPay: 28_900, minimumWageNote: LocalizedStringResource("The minimum wage (€13.90 an hour)", comment: "Noun phrase naming the minimum-wage rule in Germany. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(vocational: TuitionTable.flat(0), bachelor: TuitionTable.flat(600),
                               master: TuitionTable.flat(600), doctorate: TuitionTable.flat(600)),
         studentLoanInterest: 0,
@@ -309,9 +317,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 28_000, highEarnerThreshold: 150_000,
         generalPayScale: 0.6, capitalScale: 0.9,
         schooling: .german,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own German leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Germany."),
         highlights: [
-            "Everyday jobs pay about the same number of euros as dollars in the US; professional jobs pay roughly half. Doctors, nurses, teachers and pilots follow their German pay scales.",
-            "Public universities, the famous ones included, charge only a semester fee, and student loans are interest-free.",
+            LocalizedStringResource("Everyday jobs pay about the same number of euros as dollars in the US; professional jobs pay roughly half. Doctors, nurses, teachers and pilots follow their German pay scales.", comment: "Info bullet in the country picker describing Germany's pay and school costs."),
+            LocalizedStringResource("Public universities, the famous ones included, charge only a semester fee, and student loans are interest-free.", comment: "Info bullet in the country picker describing Germany's pay and school costs."),
         ])
 
     /// Statistics Canada earnings for the curve (C$36k at $30k, C$63k at $60k,
@@ -321,7 +330,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// for an undergraduate year), with medicine and law priced on their own.
     /// The federal share of a student loan has been interest-free since 2023.
     private static let canadaProfile = Profile(
-        title: "Canada", adjective: "Canadian", flag: "🇨🇦", currencySymbol: "C$", currencyName: "Canadian dollars",
+        title: LocalizedStringResource("Canada", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Canada, in Canadian dollars.", comment: "First line of the country picker's info text, about Canada: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇨🇦", currencySymbol: "C$",
         leaderboardSuffix: "ca",
         pay: PayModel(anchor: 36_000, exponent: 0.809,
                       categoryFactor: [.education: 1.2],
@@ -334,7 +344,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 500,
         // The federal minimum wage, C$18.15 an hour from 1 April 2026, 40 hours for 52 weeks.
-        minimumAnnualPay: 37_750, minimumWageNote: "The federal minimum wage (C$18.15 an hour)",
+        minimumAnnualPay: 37_750, minimumWageNote: LocalizedStringResource("The federal minimum wage (C$18.15 an hour)", comment: "Noun phrase naming the minimum-wage rule in Canada. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 4_000, .state: 5_000, .elite: 7_000],
             bachelor: [.community: 5_000, .state: 7_400, .elite: 10_000],
@@ -346,9 +356,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 35_000, highEarnerThreshold: 250_000,
         generalPayScale: 1.05, capitalScale: 1.25, drivingAge: 16,
         schooling: .canadian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Canadian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Canada."),
         highlights: [
-            "Pay is close to the US in Canadian dollars for everyday jobs, and lower for professionals. Doctors bill provincial health plans and earn among the most.",
-            "Tuition is moderate, and the federal part of a student loan is interest-free.",
+            LocalizedStringResource("Pay is close to the US in Canadian dollars for everyday jobs, and lower for professionals. Doctors bill provincial health plans and earn among the most.", comment: "Info bullet in the country picker describing Canada's pay and school costs."),
+            LocalizedStringResource("Tuition is moderate, and the federal part of a student loan is interest-free.", comment: "Info bullet in the country picker describing Canada's pay and school costs."),
         ])
 
     /// ONS Annual Survey of Hours and Earnings for the curve (£25k at $30k,
@@ -358,8 +369,9 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// same at Oxford as anywhere — and most PhDs are funded. A Plan 5 student
     /// loan carries inflation-only interest.
     private static let unitedKingdomProfile = Profile(
-        title: "United Kingdom", titleInSentence: "the United Kingdom", adjective: "British",
-        flag: "🇬🇧", currencySymbol: "£", currencyName: "pounds", leaderboardSuffix: "uk",
+        title: LocalizedStringResource("United Kingdom", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from the United Kingdom, in pounds.", comment: "First line of the country picker's info text, about United Kingdom: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."),
+        flag: "🇬🇧", currencySymbol: "£", leaderboardSuffix: "uk",
         pay: PayModel(anchor: 25_000, exponent: 0.63,
                       stated: [
                         "Resident Physician": 44_000, "Physician": 110_000, "Senior Physician": 135_000,
@@ -371,7 +383,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 500,
         // The National Living Wage, £12.71 an hour from April 2026, 37.5 hours for 52 weeks.
-        minimumAnnualPay: 24_800, minimumWageNote: "The National Living Wage (£12.71 an hour)",
+        minimumAnnualPay: 24_800, minimumWageNote: LocalizedStringResource("The National Living Wage (£12.71 an hour)", comment: "Noun phrase naming the minimum-wage rule in United Kingdom. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0), bachelor: TuitionTable.flat(9_790),
             master: [.community: 10_000, .state: 12_000, .elite: 18_000],
@@ -381,9 +393,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 26_000, highEarnerThreshold: 125_000,
         generalPayScale: 0.65, capitalScale: 0.75, drivingAge: 17,
         schooling: .british,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own British leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: United Kingdom."),
         highlights: [
-            "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.",
-            "Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.",
+            LocalizedStringResource("Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.", comment: "Info bullet in the country picker describing United Kingdom's pay and school costs."),
+            LocalizedStringResource("Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.", comment: "Info bullet in the country picker describing United Kingdom's pay and school costs."),
         ])
 
     /// INSEE salary data for the curve (€22k at $30k, €34k at $60k, €56k at
@@ -393,7 +406,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// plus the €105 student-life levy); the grandes écoles of business charge
     /// far more.
     private static let franceProfile = Profile(
-        title: "France", adjective: "French", flag: "🇫🇷", currencySymbol: "€", currencyName: "euros",
+        title: LocalizedStringResource("France", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from France, in euros.", comment: "First line of the country picker's info text, about France: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇫🇷", currencySymbol: "€",
         leaderboardSuffix: "fr",
         pay: PayModel(anchor: 22_000, exponent: 0.638,
                       stated: [
@@ -408,7 +422,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 500,
         // The SMIC, €12.31 an hour from 1 June 2026, on the legal 35-hour week.
-        minimumAnnualPay: 22_400, minimumWageNote: "The minimum wage (SMIC, on a 35-hour week)",
+        minimumAnnualPay: 22_400, minimumWageNote: LocalizedStringResource("The minimum wage (SMIC, on a 35-hour week)", comment: "Noun phrase naming the minimum-wage rule in France. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: [.community: 280, .state: 280, .elite: 12_000],
@@ -419,9 +433,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 24_000, highEarnerThreshold: 120_000,
         generalPayScale: 0.57, capitalScale: 0.85, drivingAge: 17,
         schooling: .french,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own French leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: France."),
         highlights: [
-            "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.",
-            "Public universities cost a few hundred euros a year; the elite business schools are the exception.",
+            LocalizedStringResource("Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.", comment: "Info bullet in the country picker describing France's pay and school costs."),
+            LocalizedStringResource("Public universities cost a few hundred euros a year; the elite business schools are the exception.", comment: "Info bullet in the country picker describing France's pay and school costs."),
         ])
 
     /// ISTAT earnings for the curve (€20k at $30k, €30k at $60k, €48k at $130k,
@@ -431,7 +446,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// family income (about €1,700 a year on average); Bocconi and the private
     /// medical schools charge far more.
     private static let italyProfile = Profile(
-        title: "Italy", adjective: "Italian", flag: "🇮🇹", currencySymbol: "€", currencyName: "euros",
+        title: LocalizedStringResource("Italy", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Italy, in euros.", comment: "First line of the country picker's info text, about Italy: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇮🇹", currencySymbol: "€",
         leaderboardSuffix: "it",
         pay: PayModel(anchor: 20_000, exponent: 0.591,
                       stated: [
@@ -446,7 +462,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 500,
         // No statutory minimum: collective agreements pay about €8.70 an hour at the bottom.
-        minimumAnnualPay: 18_000, minimumWageNote: "Collective agreements set the floor (Italy has no legal minimum wage)",
+        minimumAnnualPay: 18_000, minimumWageNote: LocalizedStringResource("Collective agreements set the floor (Italy has no legal minimum wage)", comment: "Noun phrase naming the minimum-wage rule in Italy. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: [.community: 1_200, .state: 1_700, .elite: 14_000],
@@ -458,9 +474,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 20_000, highEarnerThreshold: 100_000,
         generalPayScale: 0.5, capitalScale: 0.8,
         schooling: .italian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Italian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Italy."),
         highlights: [
-            "Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.",
-            "Public universities charge by family income; the private elite schools charge much more.",
+            LocalizedStringResource("Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.", comment: "Info bullet in the country picker describing Italy's pay and school costs."),
+            LocalizedStringResource("Public universities charge by family income; the private elite schools charge much more.", comment: "Info bullet in the country picker describing Italy's pay and school costs."),
         ])
 
     /// MHLW wage census for the curve (¥2.8M at $30k, ¥4.4M at $60k, ¥7.2M at
@@ -471,7 +488,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// standard rate); private medical schools cost millions of yen a year.
     /// JASSO loans are interest-free or nearly so.
     private static let japanProfile = Profile(
-        title: "Japan", adjective: "Japanese", flag: "🇯🇵", currencySymbol: "¥", currencyName: "yen",
+        title: LocalizedStringResource("Japan", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Japan, in yen.", comment: "First line of the country picker's info text, about Japan: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇯🇵", currencySymbol: "¥",
         leaderboardSuffix: "jp",
         pay: PayModel(anchor: 2_800_000, exponent: 0.645,
                       stated: [
@@ -486,7 +504,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 10_000,
         // The national weighted-average minimum wage, ¥1,121 an hour (October 2025), 2,080 hours.
-        minimumAnnualPay: 2_330_000, minimumWageNote: "The minimum wage (¥1,121 an hour on average)",
+        minimumAnnualPay: 2_330_000, minimumWageNote: LocalizedStringResource("The minimum wage (¥1,121 an hour on average)", comment: "Noun phrase naming the minimum-wage rule in Japan. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 800_000, .state: 1_000_000, .elite: 1_200_000],
             bachelor: [.community: 700_000, .state: 950_000, .elite: 535_800],
@@ -498,9 +516,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 2_700_000, highEarnerThreshold: 15_000_000,
         generalPayScale: 73, capitalScale: 120,
         schooling: .japanese,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Japanese leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Japan."),
         highlights: [
-            "Pay rises with seniority and is compressed: professionals earn far less than in the US.",
-            "The top national universities cost less than most private ones; private medical schools cost millions of yen a year.",
+            LocalizedStringResource("Pay rises with seniority and is compressed: professionals earn far less than in the US.", comment: "Info bullet in the country picker describing Japan's pay and school costs."),
+            LocalizedStringResource("The top national universities cost less than most private ones; private medical schools cost millions of yen a year.", comment: "Info bullet in the country picker describing Japan's pay and school costs."),
         ])
 
     /// State statistics for the curve (₴110k at $30k, ₴206k at $60k, ₴415k at
@@ -512,7 +531,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// here. Priced in peacetime terms: the war's effects on pay, work and
     /// flights aren't modelled.
     private static let ukraineProfile = Profile(
-        title: "Ukraine", adjective: "Ukrainian", flag: "🇺🇦", currencySymbol: "₴", currencyName: "hryvnias",
+        title: LocalizedStringResource("Ukraine", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Ukraine, in hryvnias.", comment: "First line of the country picker's info text, about Ukraine: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇺🇦", currencySymbol: "₴",
         leaderboardSuffix: "ua",
         pay: PayModel(anchor: 110_000, exponent: 0.905,
                       categoryFactor: [.technology: 1.5],
@@ -528,7 +548,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                       ]),
         step: 1_000,
         // ₴8,647 a month under the 2026 state budget.
-        minimumAnnualPay: 103_800, minimumWageNote: "The minimum wage (₴8,647 a month)",
+        minimumAnnualPay: 103_800, minimumWageNote: LocalizedStringResource("The minimum wage (₴8,647 a month)", comment: "Noun phrase naming the minimum-wage rule in Ukraine. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: [.community: 25_000, .state: 35_000, .elite: 70_000],
@@ -540,10 +560,11 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         livingCostFloor: 120_000, highEarnerThreshold: 1_500_000,
         generalPayScale: 3.4, capitalScale: 20,
         schooling: .ukrainian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Ukrainian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Ukraine."),
         highlights: [
-            "Most pay is far below western Europe, but IT pays well above the national average — the best-paid path in the country.",
-            "University is free on a state-funded place; these are the fees for a paid (contract) place.",
-            "Priced as in peacetime: the war's effects on work and flights aren't in the game.",
+            LocalizedStringResource("Most pay is far below western Europe, but IT pays well above the national average — the best-paid path in the country.", comment: "Info bullet in the country picker describing Ukraine's pay and school costs."),
+            LocalizedStringResource("University is free on a state-funded place; these are the fees for a paid (contract) place.", comment: "Info bullet in the country picker describing Ukraine's pay and school costs."),
+            LocalizedStringResource("Priced as in peacetime: the war's effects on work and flights aren't in the game.", comment: "Info bullet in the country picker describing Ukraine's pay and school costs."),
         ])
 
     // MARK: - More countries (generated from sourced 2025-26 data; see Tools/i18n and the PR)
@@ -553,7 +574,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Commonwealth-supported fees are set nationally by discipline band, not by university, so the community/state/elite tiers for bachelor, medicine and law are mapped to bands rather than institutions.
     /// HELP (HECS-HELP) is interest-free but indexed every 1 June to the lower of CPI and the Wage Price Index (2.8% in June 2026).
     private static let australiaProfile = Profile(
-        title: "Australia", adjective: "Australian", flag: "🇦🇺", currencySymbol: "A$", currencyName: "Australian dollars",
+        title: LocalizedStringResource("Australia", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Australia, in Australian dollars.", comment: "First line of the country picker's info text, about Australia: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇦🇺", currencySymbol: "A$",
         leaderboardSuffix: "au",
         pay: PayModel(anchor: 59_300, exponent: 0.623,
                       categoryFactor: [.technology: 0.85],
@@ -578,7 +600,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 260_000,
                       ]),
         step: 500,
-        minimumAnnualPay: 52_255, minimumWageNote: "The minimum wage (A$26.44 an hour)",
+        minimumAnnualPay: 52_255, minimumWageNote: LocalizedStringResource("The minimum wage (A$26.44 an hour)", comment: "Noun phrase naming the minimum-wage rule in Australia. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 1_500, .state: 3_500, .elite: 10_000],
             bachelor: TuitionTable.flat(9_537),
@@ -589,9 +611,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 55_000, highEarnerThreshold: 350_000,
         generalPayScale: 1.52, capitalScale: 1.4, drivingAge: 17, schooling: .australian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Australian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Australia."),
         highlights: [
-            "Pay is high and compressed: the minimum wage is about half the typical full-time wage.",
-            "University fees are set by subject, not by university, and HECS-HELP loans are indexed to prices, so they carry no real interest.",
+            LocalizedStringResource("Pay is high and compressed: the minimum wage is about half the typical full-time wage.", comment: "Info bullet in the country picker describing Australia's pay and school costs."),
+            LocalizedStringResource("University fees are set by subject, not by university, and HECS-HELP loans are indexed to prices, so they carry no real interest.", comment: "Info bullet in the country picker describing Australia's pay and school costs."),
         ])
 
     /// Brazil: the pay curve is fitted through the local pay of six reference jobs and the national median (39,000) and
@@ -599,7 +622,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Public federal and state universities charge no tuition, and this includes the most selective ones (USP, Unicamp, UFRJ).
     /// Fies (Fundo de Financiamento Estudantil) is the federal loan for tuition at private colleges.
     private static let brazilProfile = Profile(
-        title: "Brazil", adjective: "Brazilian", flag: "🇧🇷", currencySymbol: "R$", currencyName: "reais",
+        title: LocalizedStringResource("Brazil", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Brazil, in reais.", comment: "First line of the country picker's info text, about Brazil: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇧🇷", currencySymbol: "R$",
         leaderboardSuffix: "br",
         pay: PayModel(anchor: 18_100, exponent: 1.3,
                       categoryFactor: [.technology: 0.85],
@@ -624,7 +648,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 520_000,
                       ]),
         step: 1000,
-        minimumAnnualPay: 21_073, minimumWageNote: "The minimum wage (R$1,621 a month, paid 13 times)",
+        minimumAnnualPay: 21_073, minimumWageNote: LocalizedStringResource("The minimum wage (R$1,621 a month, paid 13 times)", comment: "Noun phrase naming the minimum-wage rule in Brazil. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 7_200, .state: 0, .elite: 18_000],
             bachelor: [.community: 9_600, .state: 0, .elite: 70_000],
@@ -635,9 +659,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 42_900, highEarnerThreshold: 170_000,
         generalPayScale: 0.741, capitalScale: 2.5, schooling: .brazilian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Brazilian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Brazil."),
         highlights: [
-            "The minimum wage is paid in 13 instalments, and the average worker earns about 2.3 times the minimum.",
-            "Public universities, the most selective included, charge no tuition, but entry is by the ENEM exam, and many students pay for a private college instead.",
+            LocalizedStringResource("The minimum wage is paid in 13 instalments, and the average worker earns about 2.3 times the minimum.", comment: "Info bullet in the country picker describing Brazil's pay and school costs."),
+            LocalizedStringResource("Public universities, the most selective included, charge no tuition, but entry is by the ENEM exam, and many students pay for a private college instead.", comment: "Info bullet in the country picker describing Brazil's pay and school costs."),
         ])
 
     /// China: the pay curve is fitted through the local pay of six reference jobs and the national median (64,000) and
@@ -645,7 +670,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Public tuition in China is state-regulated and low: about CN¥4,000-6,500 a year for most public bachelor's degrees.
     /// National Student Loan (国家助学贷款), state-backed and run through China Development Bank and the student's home county.
     private static let chinaProfile = Profile(
-        title: "China", adjective: "Chinese", flag: "🇨🇳", currencySymbol: "CN¥", currencyName: "yuan",
+        title: LocalizedStringResource("China", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from China, in yuan.", comment: "First line of the country picker's info text, about China: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇨🇳", currencySymbol: "CN¥",
         leaderboardSuffix: "cn",
         pay: PayModel(anchor: 37_700, exponent: 0.855,
                       stated: [
@@ -669,7 +695,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 1_000_000,
                       ]),
         step: 1000,
-        minimumAnnualPay: 32_880, minimumWageNote: "The minimum wage (Shanghai, CN¥2,740 a month)",
+        minimumAnnualPay: 32_880, minimumWageNote: LocalizedStringResource("The minimum wage (Shanghai, CN¥2,740 a month)", comment: "Noun phrase naming the minimum-wage rule in China. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 5_000, .state: 5_500, .elite: 6_500],
             bachelor: [.community: 5_000, .state: 5_500, .elite: 5_000],
@@ -680,9 +706,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0.02,
         livingCostFloor: 50_000, highEarnerThreshold: 260_000,
         generalPayScale: 1.14, capitalScale: 3.4, schooling: .chinese,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Chinese leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: China."),
         highlights: [
-            "Minimum wages are set province by province, and pay in IT and finance is far above hotels and catering.",
-            "Public universities charge a few thousand yuan a year, and one exam, the gaokao, decides where you can go.",
+            LocalizedStringResource("Minimum wages are set province by province, and pay in IT and finance is far above hotels and catering.", comment: "Info bullet in the country picker describing China's pay and school costs."),
+            LocalizedStringResource("Public universities charge a few thousand yuan a year, and one exam, the gaokao, decides where you can go.", comment: "Info bullet in the country picker describing China's pay and school costs."),
         ])
 
     /// India: the pay curve is fitted through the local pay of six reference jobs and the national median (210,000) and
@@ -690,7 +717,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// All amounts are annual fees for a typical domestic student in rupees, tuition plus compulsory institute fees, excluding hostel and mess.
     /// There is no income-contingent scheme.
     private static let indiaProfile = Profile(
-        title: "India", adjective: "Indian", flag: "🇮🇳", currencySymbol: "₹", currencyName: "rupees",
+        title: LocalizedStringResource("India", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from India, in rupees.", comment: "First line of the country picker's info text, about India: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇮🇳", currencySymbol: "₹",
         leaderboardSuffix: "in",
         pay: PayModel(anchor: 109_000, exponent: 1.286,
                       stated: [
@@ -714,7 +742,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 7_100_000,
                       ]),
         step: 5000,
-        minimumAnnualPay: 221_472, minimumWageNote: "The Delhi minimum wage (₹18,456 a month)",
+        minimumAnnualPay: 221_472, minimumWageNote: LocalizedStringResource("The Delhi minimum wage (₹18,456 a month)", comment: "Noun phrase naming the minimum-wage rule in India. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 3_000, .state: 15_000, .elite: 60_000],
             bachelor: [.community: 6_000, .state: 20_000, .elite: 210_000],
@@ -725,9 +753,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0.045,
         livingCostFloor: 300_000, highEarnerThreshold: 1_000_000,
         generalPayScale: 4.43, capitalScale: 20, schooling: .indian,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Indian leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: India."),
         highlights: [
-            "There is no single minimum wage: each state sets its own, and most workers earn little.",
-            "Elite government institutions such as AIIMS cost very little, but places go by national entrance exams.",
+            LocalizedStringResource("There is no single minimum wage: each state sets its own, and most workers earn little.", comment: "Info bullet in the country picker describing India's pay and school costs."),
+            LocalizedStringResource("Elite government institutions such as AIIMS cost very little, but places go by national entrance exams.", comment: "Info bullet in the country picker describing India's pay and school costs."),
         ])
 
     /// Mexico: the pay curve is fitted through the local pay of six reference jobs and the national median (135,000) and
@@ -735,7 +764,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Fee pages of private universities are dynamic simulators, so the private and elite figures are estimates.
     /// Mexico has no major national public student-loan scheme in the sources checked; most students rely on family funds, scholarships or free or cheap public universities.
     private static let mexicoProfile = Profile(
-        title: "Mexico", adjective: "Mexican", flag: "🇲🇽", currencySymbol: "MX$", currencyName: "Mexican pesos",
+        title: LocalizedStringResource("Mexico", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Mexico, in Mexican pesos.", comment: "First line of the country picker's info text, about Mexico: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇲🇽", currencySymbol: "MX$",
         leaderboardSuffix: "mx",
         pay: PayModel(anchor: 75_900, exponent: 1.04,
                       stated: [
@@ -759,7 +789,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 2_400_000,
                       ]),
         step: 1000,
-        minimumAnnualPay: 119_715, minimumWageNote: "The minimum wage (MX$315.04 a day)",
+        minimumAnnualPay: 119_715, minimumWageNote: LocalizedStringResource("The minimum wage (MX$315.04 a day)", comment: "Noun phrase naming the minimum-wage rule in Mexico. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 6_000, .state: 6_000, .elite: 90_000],
             bachelor: [.community: 6_000, .state: 5_500, .elite: 300_000],
@@ -770,9 +800,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0.05,
         livingCostFloor: 155_000, highEarnerThreshold: 590_000,
         generalPayScale: 2.6, capitalScale: 10, schooling: .mexican,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Mexican leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Mexico."),
         highlights: [
-            "Pay is low and unequal: nearly half of workers earn no more than one minimum wage.",
-            "Public universities such as UNAM are almost free, while the top private ones cost far more than most families earn.",
+            LocalizedStringResource("Pay is low and unequal: nearly half of workers earn no more than one minimum wage.", comment: "Info bullet in the country picker describing Mexico's pay and school costs."),
+            LocalizedStringResource("Public universities such as UNAM are almost free, while the top private ones cost far more than most families earn.", comment: "Info bullet in the country picker describing Mexico's pay and school costs."),
         ])
 
     /// Poland: the pay curve is fitted through the local pay of six reference jobs and the national median (93,000) and
@@ -780,7 +811,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Poland has no community colleges, and the most selective universities are public, so every cell is 0 for a full-time student at a public institution (Eurydice).
     /// Kredyt studencki: a bank loan guaranteed and subsidised by the state, paid out as 400-1,000 zł a month to full-time students for up to six years (Student360/Pekao).
     private static let polandProfile = Profile(
-        title: "Poland", adjective: "Polish", flag: "🇵🇱", currencySymbol: "zł", currencyName: "zloty",
+        title: LocalizedStringResource("Poland", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Poland, in zloty.", comment: "First line of the country picker's info text, about Poland: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇵🇱", currencySymbol: "zł",
         leaderboardSuffix: "pl",
         pay: PayModel(anchor: 53_900, exponent: 0.833,
                       stated: [
@@ -804,7 +836,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 384_000,
                       ]),
         step: 1000,
-        minimumAnnualPay: 57_672, minimumWageNote: "The minimum wage (4,806 zł a month)",
+        minimumAnnualPay: 57_672, minimumWageNote: LocalizedStringResource("The minimum wage (4,806 zł a month)", comment: "Noun phrase naming the minimum-wage rule in Poland. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: TuitionTable.flat(0),
@@ -815,9 +847,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 68_000, highEarnerThreshold: 360_000,
         generalPayScale: 1.6, capitalScale: 2, schooling: .polish,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Polish leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Poland."),
         highlights: [
-            "Full-time study at public universities is free, medicine and law included.",
-            "The state student loan charges less than inflation, so its real cost is nothing.",
+            LocalizedStringResource("Full-time study at public universities is free, medicine and law included.", comment: "Info bullet in the country picker describing Poland's pay and school costs."),
+            LocalizedStringResource("The state student loan charges less than inflation, so its real cost is nothing.", comment: "Info bullet in the country picker describing Poland's pay and school costs."),
         ])
 
     /// Spain: the pay curve is fitted through the local pay of six reference jobs and the national median (28,500) and
@@ -825,7 +858,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// All figures are first-enrolment public-university prices for 60 ECTS credits a year, 2024-25 (latest published by the Ministry; 2025-26 not yet listed).
     /// Spain has no public student-loan system.
     private static let spainProfile = Profile(
-        title: "Spain", adjective: "Spanish", flag: "🇪🇸", currencySymbol: "€", currencyName: "euros",
+        title: LocalizedStringResource("Spain", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Spain, in euros.", comment: "First line of the country picker's info text, about Spain: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇪🇸", currencySymbol: "€",
         leaderboardSuffix: "es",
         pay: PayModel(anchor: 16_200, exponent: 0.758,
                       categoryFactor: [.technology: 0.85],
@@ -850,7 +884,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 130_000,
                       ]),
         step: 500,
-        minimumAnnualPay: 17_094, minimumWageNote: "The minimum wage (€1,221 a month, paid in 14 instalments)",
+        minimumAnnualPay: 17_094, minimumWageNote: LocalizedStringResource("The minimum wage (€1,221 a month, paid in 14 instalments)", comment: "Noun phrase naming the minimum-wage rule in Spain. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: [.community: 717, .state: 922, .elite: 1_113],
@@ -861,9 +895,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0.02,
         livingCostFloor: 18_000, highEarnerThreshold: 100_000,
         generalPayScale: 0.457, capitalScale: 0.57, schooling: .spanish,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Spanish leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Spain."),
         highlights: [
-            "Public university costs about €900 a year, and vocational training (FP) has no tuition.",
-            "The minimum wage is paid in 14 instalments, and pay is low next to the rest of western Europe.",
+            LocalizedStringResource("Public university costs about €900 a year, and vocational training (FP) has no tuition.", comment: "Info bullet in the country picker describing Spain's pay and school costs."),
+            LocalizedStringResource("The minimum wage is paid in 14 instalments, and pay is low next to the rest of western Europe.", comment: "Info bullet in the country picker describing Spain's pay and school costs."),
         ])
 
     /// Sweden: the pay curve is fitted through the local pay of six reference jobs and the national median (459,600) and
@@ -871,7 +906,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Tuition is zero at every level for Swedish, EU/EEA and Swiss citizens and for people with permanent residence or a non-study residence permit (studera.nu); people who must pay face a 900 kr application fee.
     /// Both values are in percent.
     private static let swedenProfile = Profile(
-        title: "Sweden", adjective: "Swedish", flag: "🇸🇪", currencySymbol: "kr", currencyName: "Swedish kronor",
+        title: LocalizedStringResource("Sweden", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Sweden, in Swedish kronor.", comment: "First line of the country picker's info text, about Sweden: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇸🇪", currencySymbol: "kr",
         leaderboardSuffix: "se",
         pay: PayModel(anchor: 335_000, exponent: 0.493,
                       categoryFactor: [.technology: 0.95],
@@ -896,7 +932,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 1_100_000,
                       ]),
         step: 1000,
-        minimumAnnualPay: 319_512, minimumWageNote: "The retail pay floor (26,626 kr a month, no legal minimum)",
+        minimumAnnualPay: 319_512, minimumWageNote: LocalizedStringResource("The retail pay floor (26,626 kr a month, no legal minimum)", comment: "Noun phrase naming the minimum-wage rule in Sweden. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: TuitionTable.flat(0),
             bachelor: TuitionTable.flat(0),
@@ -907,9 +943,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 242_400, highEarnerThreshold: 1_800_000,
         generalPayScale: 7.86, capitalScale: 8.5, schooling: .swedish,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Swedish leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Sweden."),
         highlights: [
-            "There is no legal minimum wage: union agreements set the floor, retail's among them.",
-            "University is free, and student support is part grant, part loan.",
+            LocalizedStringResource("There is no legal minimum wage: union agreements set the floor, retail's among them.", comment: "Info bullet in the country picker describing Sweden's pay and school costs."),
+            LocalizedStringResource("University is free, and student support is part grant, part loan.", comment: "Info bullet in the country picker describing Sweden's pay and school costs."),
         ])
 
     /// Turkey: the pay curve is fitted through the local pay of six reference jobs and the national median (660,000) and
@@ -917,7 +954,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// Day (formal) programmes at state universities charge no tuition, including the very selective Boğaziçi, ODTÜ and İTÜ; evening (ikinci öğretim), non-thesis master's and second-degree students pay fees each university sets (amounts…
     /// KYK state student loan: 0% interest on the amount borrowed (debt = amount given), repaid monthly starting two years after the standard study period ends.
     private static let turkeyProfile = Profile(
-        title: "Turkey", adjective: "Turkish", flag: "🇹🇷", currencySymbol: "₺", currencyName: "Turkish lira",
+        title: LocalizedStringResource("Turkey", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from Turkey, in Turkish lira.", comment: "First line of the country picker's info text, about Turkey: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇹🇷", currencySymbol: "₺",
         leaderboardSuffix: "tr",
         pay: PayModel(anchor: 360_000, exponent: 0.886,
                       stated: [
@@ -941,7 +979,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 6_600_000,
                       ]),
         step: 10000,
-        minimumAnnualPay: 396_360, minimumWageNote: "The minimum wage (₺33,030 a month)",
+        minimumAnnualPay: 396_360, minimumWageNote: LocalizedStringResource("The minimum wage (₺33,030 a month)", comment: "Noun phrase naming the minimum-wage rule in Turkey. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 0, .state: 0, .elite: 500_000],
             bachelor: [.community: 0, .state: 0, .elite: 1_295_000],
@@ -952,9 +990,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 600_000, highEarnerThreshold: 2_500_000,
         generalPayScale: 11.1, capitalScale: 20, schooling: .turkish,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own Turkish leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Turkey."),
         highlights: [
-            "Prices rise about 30% a year, so pay here is in 2026 lira and ages fast.",
-            "State universities are free, while the top private ones cost over ₺1 million a year.",
+            LocalizedStringResource("Prices rise about 30% a year, so pay here is in 2026 lira and ages fast.", comment: "Info bullet in the country picker describing Turkey's pay and school costs."),   // i18n:ignore extracted as a catalog key; the audit reads "% a" as a format specifier
+            LocalizedStringResource("State universities are free, while the top private ones cost over ₺1 million a year.", comment: "Info bullet in the country picker describing Turkey's pay and school costs."),
         ])
 
     /// South Korea: the pay curve is fitted through the local pay of six reference jobs and the national median (42,500,000) and
@@ -962,7 +1001,8 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// All figures are annual (two semesters) tuition for a domestic student, in won, 2026 school year unless stated.
     /// Korea Student Aid Foundation (KOSAF, 한국장학재단) loans come in two forms: the income-contingent 취업 후 상환 학자금대출 (ICL) and an ordinary fixed-repayment loan, both at 1.7% a year (rates in this entry are deci…
     private static let southKoreaProfile = Profile(
-        title: "South Korea", adjective: "South Korean", flag: "🇰🇷", currencySymbol: "₩", currencyName: "won",
+        title: LocalizedStringResource("South Korea", comment: "Country name, shown in the country picker and on the score sheet."),
+        introduction: LocalizedStringResource("Pay, prices and school costs from South Korea, in won.", comment: "First line of the country picker's info text, about South Korea: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."), flag: "🇰🇷", currencySymbol: "₩",
         leaderboardSuffix: "kr",
         pay: PayModel(anchor: 21_000_000, exponent: 1.039,
                       categoryFactor: [.technology: 0.8],
@@ -987,7 +1027,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
                         "Airline Captain": 200_000_000,
                       ]),
         step: 100000,
-        minimumAnnualPay: 25_882_560, minimumWageNote: "The minimum wage (₩10,320 an hour)",
+        minimumAnnualPay: 25_882_560, minimumWageNote: LocalizedStringResource("The minimum wage (₩10,320 an hour)", comment: "Noun phrase naming the minimum-wage rule in South Korea. It leads the picker line \"<this>: no job pays under <amount> a year.\""),
         tuition: TuitionTable(
             vocational: [.community: 6_653_100, .state: 6_653_100, .elite: 7_000_000],
             bachelor: [.community: 6_653_100, .state: 7_273_000, .elite: 8_380_000],
@@ -998,9 +1038,10 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         studentLoanInterest: 0,
         livingCostFloor: 24_000_000, highEarnerThreshold: 160_000_000,
         generalPayScale: 719, capitalScale: 820, schooling: .korean,
+        leaderboardNote: LocalizedStringResource("• Scores go to their own South Korean leaderboard.", comment: "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: South Korea."),
         highlights: [
-            "The minimum wage is about 60% of the typical full-time wage.",
-            "University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.",
+            LocalizedStringResource("The minimum wage is about 60% of the typical full-time wage.", comment: "Info bullet in the country picker describing South Korea's pay and school costs."),   // i18n:ignore extracted as a catalog key; the audit reads "% a" as a format specifier
+            LocalizedStringResource("University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.", comment: "Info bullet in the country picker describing South Korea's pay and school costs."),
         ])
 
     // MARK: end of more countries
@@ -1014,20 +1055,51 @@ extension Country {
     /// admission reads); `gradeLabel` shows it the way this country writes a
     /// school-leaving grade.
     struct Schooling {
-        let primarySchool: String
-        let middleSchool: String
-        /// The school-leaving qualification — Abitur, A-levels, Baccalauréat.
-        let schoolLeaving: String
-        /// A vocational qualification, before its field: "Vocational Diploma", "Ausbildung".
-        let vocational: String
-        /// The three kinds of school a degree is taken at, open-access first.
-        let tiers: [EducationTier: String]
-        /// What the school-leaving grade is called: "GPA", "Abitur grade".
-        let gradeName: String
+        // The names are stored as catalog resources and read as plain strings, so
+        // a school's name follows the player's language wherever it is shown.
+        private let primarySchoolName: LocalizedStringResource
+        private let middleSchoolName: LocalizedStringResource
+        private let schoolLeavingName: LocalizedStringResource
+        private let vocationalName: LocalizedStringResource
+        private let tierNames: [EducationTier: LocalizedStringResource]
+        private let gradeLabelName: LocalizedStringResource
+        private let requirementResources: [Int: LocalizedStringResource]
         let scale: GradeScale
+
+        /// The primary school's name.
+        var primarySchool: String { String(localized: primarySchoolName) }
+        /// The lower-secondary school's name.
+        var middleSchool: String { String(localized: middleSchoolName) }
+        /// The school-leaving qualification — Abitur, A-levels, Baccalauréat.
+        var schoolLeaving: String { String(localized: schoolLeavingName) }
+        /// A vocational qualification, before its field: "Vocational Diploma", "Ausbildung".
+        var vocational: String { String(localized: vocationalName) }
+        /// The three kinds of school a degree is taken at, open-access first.
+        var tiers: [EducationTier: String] { tierNames.mapValues { String(localized: $0) } }
+        /// What the school-leaving grade is called: "GPA", "Abitur grade".
+        var gradeName: String { String(localized: gradeLabelName) }
         /// Requirement labels that read differently from the stage names
         /// ("College / Vocational" for a level-4 job); by EQF level.
-        var requirementNames: [Int: String] = [:]
+        var requirementNames: [Int: String] { requirementResources.mapValues { String(localized: $0) } }
+
+        init(primarySchool: LocalizedStringResource, middleSchool: LocalizedStringResource,
+             schoolLeaving: LocalizedStringResource, vocational: LocalizedStringResource,
+             tiers: [EducationTier: LocalizedStringResource], gradeName: LocalizedStringResource,
+             scale: GradeScale, requirementNames: [Int: LocalizedStringResource] = [:]) {
+            primarySchoolName = primarySchool
+            middleSchoolName = middleSchool
+            schoolLeavingName = schoolLeaving
+            vocationalName = vocational
+            tierNames = tiers
+            gradeLabelName = gradeName
+            self.scale = scale
+            requirementResources = requirementNames
+        }
+
+        /// The tier's name, if this country names it.
+        func tierName(_ tier: EducationTier) -> String? {
+            tierNames[tier].map { String(localized: $0) }
+        }
     }
 
     /// The ways countries write a school-leaving grade.
@@ -1049,10 +1121,21 @@ extension Country {
         /// The national multi-subject test, 100–200: "185/200".
         case nmt
         /// A straight-line scale: the game's 0–4 grade mapped onto `low…high`
-        /// and written with a printf `pattern` — "%.1f/10", "%.0f%%". `low` may
-        /// be above `high` where a smaller number is the better grade (a rank
-        /// out of 9).
-        case linear(low: Double, high: Double, pattern: String)
+        /// and written in `style`. `low` may be above `high` where a smaller
+        /// number is the better grade (a rank out of 9).
+        case linear(low: Double, high: Double, style: LinearStyle)
+
+        /// How a straight-line grade is written.
+        enum LinearStyle {
+            /// "84.5" — `digits` decimals.
+            case number(digits: Int)
+            /// "620/750" — over a stated maximum.
+            case outOf(Int, digits: Int)
+            /// "84%".
+            case percent
+            /// "3.0 (1 = best)", for a scale where 1 is the top grade.
+            case bestIsOne
+        }
 
         /// True where a smaller number is the better grade.
         var isInverted: Bool {
@@ -1087,16 +1170,16 @@ extension Country {
         case 2:    return schooling.middleSchool
         case 3:    return schooling.schoolLeaving
         case 4:    return schooling.vocational
-        case 5:    return "University — Bachelor's"
-        case 6:    return "University — Master's"
-        case 7:    return "Doctorate"
-        default:   return "Doctorate+"
+        case 5:    return String(localized: "University — Bachelor's", comment: "Education requirement: a bachelor's degree.")
+        case 6:    return String(localized: "University — Master's", comment: "Education requirement: a master's degree.")
+        case 7:    return String(localized: "Doctorate", comment: "Education requirement: a doctorate (PhD level).")
+        default:   return String(localized: "Doctorate+", comment: "Education requirement above a doctorate: post-doctoral work.")
         }
     }
 
     /// What a `tier` school is called here.
     func tierName(_ tier: EducationTier) -> String {
-        schooling.tiers[tier] ?? tier.friendlyName
+        schooling.tierName(tier) ?? tier.friendlyName
     }
 
     /// The school-leaving grade the game keeps on the US 4.0 scale, written the
@@ -1105,9 +1188,9 @@ extension Country {
         let g = max(0, min(4, gpa))
         switch schooling.scale {
         case .gpa:
-            return "\(String(format: "%.1f", g)) (\(Player.letterGrade(g)))"
+            return Self.gradeWithNote(Fmt.decimal(g), Player.letterGrade(g))
         case .percent:
-            return "\(Int((50 + 11.25 * g).rounded()))%"
+            return Fmt.percent(Double(Int((50 + 11.25 * g).rounded())) / 100)
         case .aLevels:
             switch g {
             case 3.85...:     return "A*A*A"
@@ -1123,145 +1206,297 @@ extension Country {
             let note = max(1.0, min(4.0, 5.0 - g))
             let word: String
             switch note {
-            case ..<1.55: word = "very good"
-            case ..<2.55: word = "good"
-            case ..<3.55: word = "satisfactory"
-            default:      word = "sufficient"
+            case ..<1.55: word = String(localized: "very good", comment: "Verbal rating of an Abitur grade of 1.0–1.5 (German sehr gut), shown in brackets after the number.")
+            case ..<2.55: word = String(localized: "good", comment: "Verbal rating of an Abitur grade of 1.6–2.5 (German gut), shown in brackets after the number.")
+            case ..<3.55: word = String(localized: "satisfactory", comment: "Verbal rating of an Abitur grade of 2.6–3.5 (German befriedigend), shown in brackets after the number.")
+            default:      word = String(localized: "sufficient", comment: "Verbal rating of the lowest passing Abitur grades (German ausreichend), shown in brackets after the number.")
             }
-            return "\(String(format: "%.1f", note)) (\(word))"
+            return Self.gradeWithNote(Fmt.decimal(note), word)
         case .baccalaureat:
             let note = ((8 + 2.75 * g) * 10).rounded() / 10   // the mention follows the number shown
             let mention: String
             switch note {
-            case 16...: mention = "très bien"
-            case 14...: mention = "bien"
-            case 12...: mention = "assez bien"
-            default:    mention = "passable"
+            case 16...: mention = String(localized: "très bien", comment: "French Baccalauréat mention for an average of 16 or more out of 20 (“with highest honours”). Shown in brackets after the number.")
+            case 14...: mention = String(localized: "bien", comment: "French Baccalauréat mention for an average of 14–15.9 out of 20 (“with honours”). Shown in brackets after the number.")
+            case 12...: mention = String(localized: "assez bien", comment: "French Baccalauréat mention for an average of 12–13.9 out of 20 (“with fair honours”). Shown in brackets after the number.")
+            default:    mention = String(localized: "passable", comment: "French Baccalauréat: a pass without a mention (average under 12 out of 20). Shown in brackets after the number.")
             }
-            return "\(String(format: "%.1f", note))/20 (\(mention))"
+            return String(localized: "\(Fmt.decimal(note))/20 (\(mention))",
+                          comment: "A French Baccalauréat average out of 20 with its mention in brackets, e.g. “15.8/20 (bien)”. First is the number, second the mention.")
         case .maturita:
-            return "\(max(60, Int((40 + 15 * g).rounded())))/100"
+            return String(localized: "\(max(60, Int((40 + 15 * g).rounded())))/100",
+                          comment: "An Italian maturità score out of 100, e.g. “85/100”.")
         case .hyotei:
-            return "\(String(format: "%.1f", 1 + g)) of 5"
+            return String(localized: "\(Fmt.decimal(1 + g)) of 5",
+                          comment: "A Japanese school record average on the five-point scale, e.g. “4.4 of 5”.")
         case .nmt:
-            return "\(Int((100 + 25 * g).rounded()))/200"
-        case .linear(let low, let high, let pattern):
-            return String(format: pattern, low + (high - low) * g / 4)
+            return String(localized: "\(Int((100 + 25 * g).rounded()))/200",
+                          comment: "A Ukrainian national multi-subject test (NMT) score out of 200, e.g. “185/200”.")
+        case .linear(let low, let high, let style):
+            let value = low + (high - low) * g / 4
+            switch style {
+            case .number(let digits):
+                return Fmt.decimal(value, digits: digits)
+            case .outOf(let maximum, let digits):
+                return String(localized: "\(Fmt.decimal(value, digits: digits))/\(maximum)",
+                              comment: "A grade over its maximum, e.g. “620/750” or “16.5/20”. First is the grade, second the maximum possible.")
+            case .percent:
+                return Fmt.percent(Double(Int(value.rounded())) / 100)
+            case .bestIsOne:
+                return String(localized: "\(Fmt.decimal(value)) (1 = best)",
+                              comment: "A grade on a scale where 1 is the best, e.g. “3.0 (1 = best)”. The number is the grade.")
+            }
         }
+    }
+
+    /// "3.4 (B+)" / "1.6 (good)": a grade with its letter or verbal rating in brackets.
+    private static func gradeWithNote(_ grade: String, _ note: String) -> String {
+        String(localized: "\(grade) (\(note))",
+               comment: "A school grade followed by its letter or verbal rating in brackets, e.g. “3.4 (B+)” or “1.6 (good)”. First is the grade, second the rating.")
     }
 }
 
 extension Country.Schooling {
     static let american = Self(
-        primarySchool: "Primary School", middleSchool: "Middle School", schoolLeaving: "High School",
-        vocational: "Vocational Diploma",
-        tiers: [.community: "Community College", .state: "State University", .elite: "Elite / Ivy League"],
-        gradeName: "GPA", scale: .gpa,
-        requirementNames: [1: "Primary school", 2: "Middle school", 3: "High school", 4: "College / Vocational"])
+        primarySchool: LocalizedStringResource("Primary School", comment: "School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."),
+        middleSchool: LocalizedStringResource("Middle School", comment: "School term: middle school / lower secondary school (United States, Canada)."),
+        schoolLeaving: LocalizedStringResource("High School", comment: "School term: school-leaving qualification or high school (United States)."),
+        vocational: LocalizedStringResource("Vocational Diploma", comment: "School term: vocational qualification (United States)."),
+        tiers: [
+            .community: LocalizedStringResource("Community College", comment: "School term: open-access college tier (United States)."),
+            .state: LocalizedStringResource("State University", comment: "School term: mainstream university tier (United States, India)."),
+            .elite: LocalizedStringResource("Elite / Ivy League", comment: "School term: top-tier university (United States)."),
+            ],
+        gradeName: LocalizedStringResource("GPA", comment: "School term: what the school-leaving grade is called (United States)."),
+        scale: .gpa,
+        requirementNames: [
+            1: LocalizedStringResource("Primary school", comment: "School term: requirement label: primary school (United States)."),
+            2: LocalizedStringResource("Middle school", comment: "School term: requirement label: middle school (United States)."),
+            3: LocalizedStringResource("High school", comment: "School term: requirement label: high school (United States)."),
+            4: LocalizedStringResource("College / Vocational", comment: "School term: requirement label: college / vocational (United States)."),
+        ])
 
     static let canadian = Self(
-        primarySchool: "Elementary School", middleSchool: "Middle School", schoolLeaving: "High School Diploma",
-        vocational: "College Diploma",
-        tiers: [.community: "College", .state: "University", .elite: "Top research university (U15)"],
-        gradeName: "Grade average", scale: .percent)
+        primarySchool: LocalizedStringResource("Elementary School", comment: "School term: primary school (Canada)."),
+        middleSchool: LocalizedStringResource("Middle School", comment: "School term: middle school / lower secondary school (United States, Canada)."),
+        schoolLeaving: LocalizedStringResource("High School Diploma", comment: "School term: school-leaving qualification or high school (Canada)."),
+        vocational: LocalizedStringResource("College Diploma", comment: "School term: vocational qualification (Canada)."),
+        tiers: [
+            .community: LocalizedStringResource("College", comment: "School term: open-access college tier (Canada, Ukraine)."),
+            .state: LocalizedStringResource("University", comment: "School term: mainstream university tier (Canada, United Kingdom, Ukraine, Australia)."),
+            .elite: LocalizedStringResource("Top research university (U15)", comment: "School term: top-tier university (Canada)."),
+            ],
+        gradeName: LocalizedStringResource("Grade average", comment: "School term: what the school-leaving grade is called (Canada)."),
+        scale: .percent)
 
     static let british = Self(
-        primarySchool: "Primary School", middleSchool: "Secondary School", schoolLeaving: "A-levels",
-        vocational: "BTEC Diploma",
-        tiers: [.community: "Further Education College", .state: "University", .elite: "Oxbridge / Russell Group"],
-        gradeName: "A-level grades", scale: .aLevels)
+        primarySchool: LocalizedStringResource("Primary School", comment: "School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."),
+        middleSchool: LocalizedStringResource("Secondary School", comment: "School term: middle school / lower secondary school (United Kingdom)."),
+        schoolLeaving: LocalizedStringResource("A-levels", comment: "School term: school-leaving qualification or high school (United Kingdom)."),
+        vocational: LocalizedStringResource("BTEC Diploma", comment: "School term: vocational qualification (United Kingdom)."),
+        tiers: [
+            .community: LocalizedStringResource("Further Education College", comment: "School term: open-access college tier (United Kingdom)."),
+            .state: LocalizedStringResource("University", comment: "School term: mainstream university tier (Canada, United Kingdom, Ukraine, Australia)."),
+            .elite: LocalizedStringResource("Oxbridge / Russell Group", comment: "School term: top-tier university (United Kingdom)."),
+            ],
+        gradeName: LocalizedStringResource("A-level grades", comment: "School term: what the school-leaving grade is called (United Kingdom)."),
+        scale: .aLevels)
 
     static let german = Self(
-        primarySchool: "Grundschule", middleSchool: "Gymnasium (lower school)", schoolLeaving: "Abitur",
-        vocational: "Ausbildung",
-        tiers: [.community: "Fachhochschule", .state: "Universität", .elite: "Exzellenzuniversität"],
-        gradeName: "Abitur grade", scale: .abitur)
+        primarySchool: LocalizedStringResource("Grundschule", comment: "School term: primary school (Germany)."),
+        middleSchool: LocalizedStringResource("Gymnasium (lower school)", comment: "School term: middle school / lower secondary school (Germany)."),
+        schoolLeaving: LocalizedStringResource("Abitur", comment: "School term: school-leaving qualification or high school (Germany)."),
+        vocational: LocalizedStringResource("Ausbildung", comment: "School term: vocational qualification (Germany)."),
+        tiers: [
+            .community: LocalizedStringResource("Fachhochschule", comment: "School term: open-access college tier (Germany)."),
+            .state: LocalizedStringResource("Universität", comment: "School term: mainstream university tier (Germany)."),
+            .elite: LocalizedStringResource("Exzellenzuniversität", comment: "School term: top-tier university (Germany)."),
+            ],
+        gradeName: LocalizedStringResource("Abitur grade", comment: "School term: what the school-leaving grade is called (Germany)."),
+        scale: .abitur)
 
     static let french = Self(
-        primarySchool: "École primaire", middleSchool: "Collège", schoolLeaving: "Baccalauréat",
-        vocational: "BTS",
-        tiers: [.community: "IUT", .state: "Université", .elite: "Grande école"],
-        gradeName: "Bac average", scale: .baccalaureat)
+        primarySchool: LocalizedStringResource("École primaire", comment: "School term: primary school (France)."),
+        middleSchool: LocalizedStringResource("Collège", comment: "School term: middle school / lower secondary school (France)."),
+        schoolLeaving: LocalizedStringResource("Baccalauréat", comment: "School term: school-leaving qualification or high school (France)."),
+        vocational: LocalizedStringResource("BTS", comment: "School term: vocational qualification (France)."),
+        tiers: [
+            .community: LocalizedStringResource("IUT", comment: "School term: open-access college tier (France)."),
+            .state: LocalizedStringResource("Université", comment: "School term: mainstream university tier (France)."),
+            .elite: LocalizedStringResource("Grande école", comment: "School term: top-tier university (France)."),
+            ],
+        gradeName: LocalizedStringResource("Bac average", comment: "School term: what the school-leaving grade is called (France)."),
+        scale: .baccalaureat)
 
     static let italian = Self(
-        primarySchool: "Scuola primaria", middleSchool: "Scuola media", schoolLeaving: "Diploma di maturità",
-        vocational: "ITS Diploma",
-        tiers: [.community: "ITS Academy", .state: "Università", .elite: "Top private university"],
-        gradeName: "Maturità score", scale: .maturita)
+        primarySchool: LocalizedStringResource("Scuola primaria", comment: "School term: primary school (Italy)."),
+        middleSchool: LocalizedStringResource("Scuola media", comment: "School term: middle school / lower secondary school (Italy)."),
+        schoolLeaving: LocalizedStringResource("Diploma di maturità", comment: "School term: school-leaving qualification or high school (Italy)."),
+        vocational: LocalizedStringResource("ITS Diploma", comment: "School term: vocational qualification (Italy)."),
+        tiers: [
+            .community: LocalizedStringResource("ITS Academy", comment: "School term: open-access college tier (Italy)."),
+            .state: LocalizedStringResource("Università", comment: "School term: mainstream university tier (Italy)."),
+            .elite: LocalizedStringResource("Top private university", comment: "School term: top-tier university (Italy)."),
+            ],
+        gradeName: LocalizedStringResource("Maturità score", comment: "School term: what the school-leaving grade is called (Italy)."),
+        scale: .maturita)
 
     static let japanese = Self(
-        primarySchool: "Elementary School (shōgakkō)", middleSchool: "Junior High School (chūgakkō)",
-        schoolLeaving: "High School (kōkō)", vocational: "Senmon Diploma",
-        tiers: [.community: "Junior College", .state: "Private University", .elite: "National University"],
-        gradeName: "Grade average (hyōtei)", scale: .hyotei)
+        primarySchool: LocalizedStringResource("Elementary School (shōgakkō)", comment: "School term: primary school (Japan)."),
+        middleSchool: LocalizedStringResource("Junior High School (chūgakkō)", comment: "School term: middle school / lower secondary school (Japan)."),
+        schoolLeaving: LocalizedStringResource("High School (kōkō)", comment: "School term: school-leaving qualification or high school (Japan)."), vocational: LocalizedStringResource("Senmon Diploma", comment: "School term: vocational qualification (Japan)."),
+        tiers: [
+            .community: LocalizedStringResource("Junior College", comment: "School term: open-access college tier (Japan, South Korea)."),
+            .state: LocalizedStringResource("Private University", comment: "School term: mainstream university tier (Japan)."),
+            .elite: LocalizedStringResource("National University", comment: "School term: top-tier university (Japan)."),
+            ],
+        gradeName: LocalizedStringResource("Grade average (hyōtei)", comment: "School term: what the school-leaving grade is called (Japan)."),
+        scale: .hyotei)
 
     static let ukrainian = Self(
-        primarySchool: "Primary School", middleSchool: "Basic Secondary School", schoolLeaving: "Atestat",
-        vocational: "Professional Junior Bachelor",
-        tiers: [.community: "College", .state: "University", .elite: "Top university"],
-        gradeName: "NMT score", scale: .nmt)
+        primarySchool: LocalizedStringResource("Primary School", comment: "School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."),
+        middleSchool: LocalizedStringResource("Basic Secondary School", comment: "School term: middle school / lower secondary school (Ukraine)."),
+        schoolLeaving: LocalizedStringResource("Atestat", comment: "School term: school-leaving qualification or high school (Ukraine)."),
+        vocational: LocalizedStringResource("Professional Junior Bachelor", comment: "School term: vocational qualification (Ukraine)."),
+        tiers: [
+            .community: LocalizedStringResource("College", comment: "School term: open-access college tier (Canada, Ukraine)."),
+            .state: LocalizedStringResource("University", comment: "School term: mainstream university tier (Canada, United Kingdom, Ukraine, Australia)."),
+            .elite: LocalizedStringResource("Top university", comment: "School term: top-tier university (Ukraine)."),
+            ],
+        gradeName: LocalizedStringResource("NMT score", comment: "School term: what the school-leaving grade is called (Ukraine)."),
+        scale: .nmt)
 
     // MARK: more countries (generated)
 
     static let australian = Self(
-        primarySchool: "Primary School", middleSchool: "Junior Secondary School", schoolLeaving: "Senior Secondary Certificate",
-        vocational: "TAFE Diploma",
-        tiers: [.community: "TAFE / Regional Institute", .state: "University", .elite: "Group of Eight"],
-        gradeName: "ATAR", scale: .linear(low: 30, high: 99.9, pattern: "%.1f"))
+        primarySchool: LocalizedStringResource("Primary School", comment: "School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."),
+        middleSchool: LocalizedStringResource("Junior Secondary School", comment: "School term: middle school / lower secondary school (Australia)."),
+        schoolLeaving: LocalizedStringResource("Senior Secondary Certificate", comment: "School term: school-leaving qualification or high school (Australia)."),
+        vocational: LocalizedStringResource("TAFE Diploma", comment: "School term: vocational qualification (Australia)."),
+        tiers: [
+            .community: LocalizedStringResource("TAFE / Regional Institute", comment: "School term: open-access college tier (Australia)."),
+            .state: LocalizedStringResource("University", comment: "School term: mainstream university tier (Canada, United Kingdom, Ukraine, Australia)."),
+            .elite: LocalizedStringResource("Group of Eight", comment: "School term: top-tier university (Australia)."),
+            ],
+        gradeName: LocalizedStringResource("ATAR", comment: "School term: what the school-leaving grade is called (Australia)."),
+        scale: .linear(low: 30, high: 99.9, style: .number(digits: 1)))
 
     static let brazilian = Self(
-        primarySchool: "Ensino Fundamental I", middleSchool: "Ensino Fundamental II", schoolLeaving: "Ensino Médio",
-        vocational: "Curso Técnico",
-        tiers: [.community: "Faculdade", .state: "Universidade pública", .elite: "Insper / FGV / PUC"],
-        gradeName: "ENEM score", scale: .linear(low: 400, high: 900, pattern: "%.0f"))
+        primarySchool: LocalizedStringResource("Ensino Fundamental I", comment: "School term: primary school (Brazil)."),
+        middleSchool: LocalizedStringResource("Ensino Fundamental II", comment: "School term: middle school / lower secondary school (Brazil)."),
+        schoolLeaving: LocalizedStringResource("Ensino Médio", comment: "School term: school-leaving qualification or high school (Brazil)."),
+        vocational: LocalizedStringResource("Curso Técnico", comment: "School term: vocational qualification (Brazil)."),
+        tiers: [
+            .community: LocalizedStringResource("Faculdade", comment: "School term: open-access college tier (Brazil)."),
+            .state: LocalizedStringResource("Universidade pública", comment: "School term: mainstream university tier (Brazil)."),
+            .elite: LocalizedStringResource("Insper / FGV / PUC", comment: "School term: top-tier university (Brazil)."),
+            ],
+        gradeName: LocalizedStringResource("ENEM score", comment: "School term: what the school-leaving grade is called (Brazil)."),
+        scale: .linear(low: 400, high: 900, style: .number(digits: 0)))
 
     static let chinese = Self(
-        primarySchool: "Primary School (xiaoxue)", middleSchool: "Junior Middle School (chuzhong)", schoolLeaving: "Senior High School (gaozhong)",
-        vocational: "Vocational College (gaozhi)",
-        tiers: [.community: "Higher Vocational College", .state: "Provincial University", .elite: "985 / Double First-Class University"],
-        gradeName: "Gaokao score", scale: .linear(low: 300, high: 720, pattern: "%.0f/750"))
+        primarySchool: LocalizedStringResource("Primary School (xiaoxue)", comment: "School term: primary school (China)."),
+        middleSchool: LocalizedStringResource("Junior Middle School (chuzhong)", comment: "School term: middle school / lower secondary school (China)."),
+        schoolLeaving: LocalizedStringResource("Senior High School (gaozhong)", comment: "School term: school-leaving qualification or high school (China)."),
+        vocational: LocalizedStringResource("Vocational College (gaozhi)", comment: "School term: vocational qualification (China)."),
+        tiers: [
+            .community: LocalizedStringResource("Higher Vocational College", comment: "School term: open-access college tier (China)."),
+            .state: LocalizedStringResource("Provincial University", comment: "School term: mainstream university tier (China)."),
+            .elite: LocalizedStringResource("985 / Double First-Class University", comment: "School term: top-tier university (China)."),
+            ],
+        gradeName: LocalizedStringResource("Gaokao score", comment: "School term: what the school-leaving grade is called (China)."),
+        scale: .linear(low: 300, high: 720, style: .outOf(750, digits: 0)))
 
     static let indian = Self(
-        primarySchool: "Primary School", middleSchool: "Secondary School (Class 10)", schoolLeaving: "Class 12 (Senior Secondary)",
-        vocational: "ITI / Polytechnic Diploma",
-        tiers: [.community: "Government Degree College", .state: "State University", .elite: "IIT / IIM / AIIMS"],
-        gradeName: "Class 12 percentage", scale: .linear(low: 40, high: 98, pattern: "%.0f%%"))
+        primarySchool: LocalizedStringResource("Primary School", comment: "School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."),
+        middleSchool: LocalizedStringResource("Secondary School (Class 10)", comment: "School term: middle school / lower secondary school (India)."),
+        schoolLeaving: LocalizedStringResource("Class 12 (Senior Secondary)", comment: "School term: school-leaving qualification or high school (India)."),
+        vocational: LocalizedStringResource("ITI / Polytechnic Diploma", comment: "School term: vocational qualification (India)."),
+        tiers: [
+            .community: LocalizedStringResource("Government Degree College", comment: "School term: open-access college tier (India)."),
+            .state: LocalizedStringResource("State University", comment: "School term: mainstream university tier (United States, India)."),
+            .elite: LocalizedStringResource("IIT / IIM / AIIMS", comment: "School term: top-tier university (India)."),
+            ],
+        gradeName: LocalizedStringResource("Class 12 percentage", comment: "School term: what the school-leaving grade is called (India)."),
+        scale: .linear(low: 40, high: 98, style: .percent))
 
     static let mexican = Self(
-        primarySchool: "Primaria", middleSchool: "Secundaria", schoolLeaving: "Bachillerato",
-        vocational: "Técnico Superior Universitario",
-        tiers: [.community: "Universidad Tecnológica", .state: "Universidad pública", .elite: "Tec de Monterrey / ITAM"],
-        gradeName: "Promedio", scale: .linear(low: 6, high: 10, pattern: "%.1f"))
+        primarySchool: LocalizedStringResource("Primaria", comment: "School term: primary school (Mexico)."),
+        middleSchool: LocalizedStringResource("Secundaria", comment: "School term: middle school / lower secondary school (Mexico)."),
+        schoolLeaving: LocalizedStringResource("Bachillerato", comment: "School term: school-leaving qualification or high school (Mexico, Spain)."),
+        vocational: LocalizedStringResource("Técnico Superior Universitario", comment: "School term: vocational qualification (Mexico)."),
+        tiers: [
+            .community: LocalizedStringResource("Universidad Tecnológica", comment: "School term: open-access college tier (Mexico)."),
+            .state: LocalizedStringResource("Universidad pública", comment: "School term: mainstream university tier (Mexico, Spain)."),
+            .elite: LocalizedStringResource("Tec de Monterrey / ITAM", comment: "School term: top-tier university (Mexico)."),
+            ],
+        gradeName: LocalizedStringResource("Promedio", comment: "School term: what the school-leaving grade is called (Mexico)."),
+        scale: .linear(low: 6, high: 10, style: .number(digits: 1)))
 
     static let polish = Self(
-        primarySchool: "Szkoła podstawowa", middleSchool: "Szkoła podstawowa (klasy 4–8)", schoolLeaving: "Matura",
-        vocational: "Technikum",
-        tiers: [.community: "Uczelnia zawodowa", .state: "Uniwersytet", .elite: "UW / UJ / SGH"],
-        gradeName: "Matura result", scale: .linear(low: 30, high: 98, pattern: "%.0f%%"))
+        primarySchool: LocalizedStringResource("Szkoła podstawowa", comment: "School term: primary school (Poland)."),
+        middleSchool: LocalizedStringResource("Szkoła podstawowa (klasy 4–8)", comment: "School term: middle school / lower secondary school (Poland)."),
+        schoolLeaving: LocalizedStringResource("Matura", comment: "School term: school-leaving qualification or high school (Poland)."),
+        vocational: LocalizedStringResource("Technikum", comment: "School term: vocational qualification (Poland)."),
+        tiers: [
+            .community: LocalizedStringResource("Uczelnia zawodowa", comment: "School term: open-access college tier (Poland)."),
+            .state: LocalizedStringResource("Uniwersytet", comment: "School term: mainstream university tier (Poland)."),
+            .elite: LocalizedStringResource("UW / UJ / SGH", comment: "School term: top-tier university (Poland)."),
+            ],
+        gradeName: LocalizedStringResource("Matura result", comment: "School term: what the school-leaving grade is called (Poland)."),
+        scale: .linear(low: 30, high: 98, style: .percent))
 
     static let spanish = Self(
-        primarySchool: "Educación Primaria", middleSchool: "ESO", schoolLeaving: "Bachillerato",
-        vocational: "Formación Profesional",
-        tiers: [.community: "FP Grado Superior", .state: "Universidad pública", .elite: "Carlos III / Pompeu Fabra / IE"],
-        gradeName: "Nota de admisión", scale: .linear(low: 5, high: 14, pattern: "%.2f/14"))
+        primarySchool: LocalizedStringResource("Educación Primaria", comment: "School term: primary school (Spain)."),
+        middleSchool: LocalizedStringResource("ESO", comment: "School term: middle school / lower secondary school (Spain)."),
+        schoolLeaving: LocalizedStringResource("Bachillerato", comment: "School term: school-leaving qualification or high school (Mexico, Spain)."),
+        vocational: LocalizedStringResource("Formación Profesional", comment: "School term: vocational qualification (Spain)."),
+        tiers: [
+            .community: LocalizedStringResource("FP Grado Superior", comment: "School term: open-access college tier (Spain)."),
+            .state: LocalizedStringResource("Universidad pública", comment: "School term: mainstream university tier (Mexico, Spain)."),
+            .elite: LocalizedStringResource("Carlos III / Pompeu Fabra / IE", comment: "School term: top-tier university (Spain)."),
+            ],
+        gradeName: LocalizedStringResource("Nota de admisión", comment: "School term: what the school-leaving grade is called (Spain)."),
+        scale: .linear(low: 5, high: 14, style: .outOf(14, digits: 2)))
 
     static let swedish = Self(
-        primarySchool: "Grundskola", middleSchool: "Högstadiet", schoolLeaving: "Gymnasieexamen",
-        vocational: "Yrkeshögskola",
-        tiers: [.community: "Folkhögskola", .state: "Högskola / Universitet", .elite: "KTH / Karolinska / Lund"],
-        gradeName: "Meritvärde", scale: .linear(low: 10, high: 20, pattern: "%.1f/20"))
+        primarySchool: LocalizedStringResource("Grundskola", comment: "School term: primary school (Sweden)."),
+        middleSchool: LocalizedStringResource("Högstadiet", comment: "School term: middle school / lower secondary school (Sweden)."),
+        schoolLeaving: LocalizedStringResource("Gymnasieexamen", comment: "School term: school-leaving qualification or high school (Sweden)."),
+        vocational: LocalizedStringResource("Yrkeshögskola", comment: "School term: vocational qualification (Sweden)."),
+        tiers: [
+            .community: LocalizedStringResource("Folkhögskola", comment: "School term: open-access college tier (Sweden)."),
+            .state: LocalizedStringResource("Högskola / Universitet", comment: "School term: mainstream university tier (Sweden)."),
+            .elite: LocalizedStringResource("KTH / Karolinska / Lund", comment: "School term: top-tier university (Sweden)."),
+            ],
+        gradeName: LocalizedStringResource("Meritvärde", comment: "School term: what the school-leaving grade is called (Sweden)."),
+        scale: .linear(low: 10, high: 20, style: .outOf(20, digits: 1)))
 
     static let turkish = Self(
-        primarySchool: "İlkokul", middleSchool: "Ortaokul", schoolLeaving: "Lise diploması",
-        vocational: "Önlisans (MYO)",
-        tiers: [.community: "Meslek Yüksekokulu", .state: "Devlet üniversitesi", .elite: "Bilkent / Koç / Sabancı"],
-        gradeName: "Diploma notu", scale: .linear(low: 50, high: 100, pattern: "%.0f/100"))
+        primarySchool: LocalizedStringResource("İlkokul", comment: "School term: primary school (Turkey)."),
+        middleSchool: LocalizedStringResource("Ortaokul", comment: "School term: middle school / lower secondary school (Turkey)."),
+        schoolLeaving: LocalizedStringResource("Lise diploması", comment: "School term: school-leaving qualification or high school (Turkey)."),
+        vocational: LocalizedStringResource("Önlisans (MYO)", comment: "School term: vocational qualification (Turkey)."),
+        tiers: [
+            .community: LocalizedStringResource("Meslek Yüksekokulu", comment: "School term: open-access college tier (Turkey)."),
+            .state: LocalizedStringResource("Devlet üniversitesi", comment: "School term: mainstream university tier (Turkey)."),
+            .elite: LocalizedStringResource("Bilkent / Koç / Sabancı", comment: "School term: top-tier university (Turkey)."),
+            ],
+        gradeName: LocalizedStringResource("Diploma notu", comment: "School term: what the school-leaving grade is called (Turkey)."),
+        scale: .linear(low: 50, high: 100, style: .outOf(100, digits: 0)))
 
     static let korean = Self(
-        primarySchool: "Elementary School (chodeung)", middleSchool: "Middle School (jung)", schoolLeaving: "High School (godeung)",
-        vocational: "Junior College (jeonmun)",
-        tiers: [.community: "Junior College", .state: "Regional University", .elite: "SKY (Seoul National, Korea, Yonsei)"],
-        gradeName: "CSAT grade", scale: .linear(low: 9, high: 1, pattern: "%.1f (1 = best)"))
+        primarySchool: LocalizedStringResource("Elementary School (chodeung)", comment: "School term: primary school (South Korea)."),
+        middleSchool: LocalizedStringResource("Middle School (jung)", comment: "School term: middle school / lower secondary school (South Korea)."),
+        schoolLeaving: LocalizedStringResource("High School (godeung)", comment: "School term: school-leaving qualification or high school (South Korea)."),
+        vocational: LocalizedStringResource("Junior College (jeonmun)", comment: "School term: vocational qualification (South Korea)."),
+        tiers: [
+            .community: LocalizedStringResource("Junior College", comment: "School term: open-access college tier (Japan, South Korea)."),
+            .state: LocalizedStringResource("Regional University", comment: "School term: mainstream university tier (South Korea)."),
+            .elite: LocalizedStringResource("SKY (Seoul National, Korea, Yonsei)", comment: "School term: top-tier university (South Korea)."),
+            ],
+        gradeName: LocalizedStringResource("CSAT grade", comment: "School term: what the school-leaving grade is called (South Korea)."),
+        scale: .linear(low: 9, high: 1, style: .bestIsOne))
 
     // MARK: end of more countries
 }
@@ -1269,5 +1504,5 @@ extension Country.Schooling {
 /// Game Center leaderboard identifiers. The US board is the original one; each
 /// other country's adds a suffix (see `Country.leaderboardID`).
 enum GameCenterLeaderboards {
-    static let wealthVelocity = "dev.dyptan.carrersim.wealth_velocity"
+    static let wealthVelocity = "dev.dyptan.carrersim.wealth_velocity"   // i18n:ignore Game Center leaderboard id
 }
