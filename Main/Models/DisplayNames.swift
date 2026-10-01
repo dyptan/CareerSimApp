@@ -54,3 +54,16 @@ extension Competition.Discipline { var displayName: String { rawValue } }
 
 // MARK: - Requests from other sections
 // Add `extension Type { var displayName: String { … } } // wanted by <section>` here; the owner takes it over.
+
+// wanted by jobs & skills screens (owner: jobs & catalogue): a role known only by its `baseTitle` id —
+// the experience list, the role list's sort — shown in the player's language.
+extension JobCatalog {
+    static func displayBaseTitle(for baseTitle: String) -> String { baseTitle }
+}
+
+// wanted by jobs & skills screens (owner: activities, which awards them): a fame award known by its English
+// title id (`FameAward.title`, `Job.breakthroughFame`), shown in the player's language.
+extension FameAward {
+    static func displayTitle(forId id: String) -> String { id }
+    var displayTitle: String { Self.displayTitle(forId: title) }
+}

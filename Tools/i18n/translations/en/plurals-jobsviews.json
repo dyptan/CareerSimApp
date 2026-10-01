@@ -1,0 +1,49 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "%lld roles": { "one": "%lld role", "other": "%lld roles" },
+    "🏢 Any of %lld industries — your choice": { "one": "🏢 Any of %lld industry — your choice", "other": "🏢 Any of %lld industries — your choice" },
+    "🧭 %lld yr exp expected": { "one": "🧭 %lld yr exp expected", "other": "🧭 %lld yr exp expected" },
+    "What helps: your %lld years in %@ (%@ is good), the skills it needs, %@, %@, and the money you put in.": {
+      "one": "What helps: your %1$lld year in %2$@ (%3$@ is good), the skills it needs, %4$@, %5$@, and the money you put in.",
+      "other": "What helps: your %1$lld years in %2$@ (%3$@ is good), the skills it needs, %4$@, %5$@, and the money you put in."
+    },
+    "• School: %lld school levels below what this job wants — %@": {
+      "one": "• School: %1$lld school level below what this job wants — %2$@",
+      "other": "• School: %1$lld school levels below what this job wants — %2$@"
+    },
+    "• School: %lld school levels below what this job wants (your work experience makes up %@) — %@": {
+      "one": "• School: %1$lld school level below what this job wants (your work experience makes up %2$@) — %3$@",
+      "other": "• School: %1$lld school levels below what this job wants (your work experience makes up %2$@) — %3$@"
+    },
+    "• Experience: %@ of %lld years — %@": {
+      "one": "• Experience: %1$@ of %2$lld year — %3$@",
+      "other": "• Experience: %1$@ of %2$lld years — %3$@"
+    },
+    "%lld yr as %@": { "one": "%1$lld yr as %2$@", "other": "%1$lld yr as %2$@" },
+    "%lld yr in %@": { "one": "%1$lld yr in %2$@", "other": "%1$lld yr in %2$@" },
+    "This job wants %lld years of experience.": {
+      "one": "This job wants %lld year of experience.",
+      "other": "This job wants %lld years of experience."
+    },
+    "With less than %lld years, you can't apply yet.": {
+      "one": "With less than %lld year, you can't apply yet.",
+      "other": "With less than %lld years, you can't apply yet."
+    },
+    "You need %lld years of experience to apply.": {
+      "one": "You need %lld year of experience to apply.",
+      "other": "You need %lld years of experience to apply."
+    },
+    "%lld yr exp.": { "one": "%lld yr exp.", "other": "%lld yr exp." },
+    "%lld yrs": { "one": "%lld yr", "other": "%lld yrs" },
+    "%lld yrs left": { "one": "%lld yr left", "other": "%lld yrs left" },
+    "Your average school grade so far, over %lld years.": {
+      "one": "Your average school grade so far, over %lld year.",
+      "other": "Your average school grade so far, over %lld years."
+    },
+    "📉 Declared downturn — roughly %lld more yrs to run.": {
+      "one": "📉 Declared downturn — roughly %lld more yr to run.",
+      "other": "📉 Declared downturn — roughly %lld more yrs to run."
+    }
+  }
+}
