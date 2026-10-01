@@ -32,7 +32,9 @@ struct EducationView: View {
     private var availableProfiles: [TertiaryProfile] {
         let fromDegrees = availableEducations.compactMap { $0.profile }
         let fromCourses = availableTrainings.compactMap { $0.profile }
-        return Set(fromDegrees + fromCourses).sorted { $0.rawValue < $1.rawValue }
+        return Set(fromDegrees + fromCourses).sorted {
+            $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending
+        }
     }
 
     private var availableTrainings: [Training] {
@@ -70,11 +72,16 @@ struct EducationView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack(spacing: 6) {
-                                    Text(profile.rawValue.capitalized)
+                                    Text(profile.displayName)
                                         .font(.headline)
+                                        .fixedSize(horizontal: false, vertical: true)
                                     InfoHint(
-                                        title: profile.rawValue.capitalized,
-                                        message: "\(profile.description)\n\n\(profile.degreeMeaning)\n\nLikely jobs: \(profile.helpfulJobs)."
+                                        title: profile.displayName,
+                                        message: [
+                                            profile.description,
+                                            profile.degreeMeaning,
+                                            L("Likely jobs: \(profile.helpfulJobs).")
+                                        ].joined(separator: "\n\n")
                                     )
                                 }
                             }
@@ -104,7 +111,7 @@ struct EducationView: View {
                     .padding(.vertical, 8)
             }
         }
-        .gameSheetClose($showTertiarySheet, title: "Education")
+        .gameSheetClose($showTertiarySheet, title: String(localized: "Education", comment: "Title of the Education screen, where the player picks a degree, course or licence to study for."))
     }
 }
 

@@ -4,15 +4,15 @@ import Foundation
 /// Affects tuition, admission soft-skill bar, and post-graduation hiring bonus.
 /// Only meaningful for tertiary levels (Vocational, Bachelor, Master, Doctorate).
 enum EducationTier: String, Codable, Hashable, CaseIterable {
-    case community = "Community"
-    case state = "State"
-    case elite = "Elite"
+    case community = "Community"  // i18n:ignore id
+    case state = "State"  // i18n:ignore id
+    case elite = "Elite"  // i18n:ignore id
 
     var friendlyName: String {
         switch self {
-        case .community: return "Community College"
-        case .state:     return "State University"
-        case .elite:     return "Elite / Ivy League"
+        case .community: return String(localized: "Community College", comment: "Institution tier: an open-admission two-year college (US).")
+        case .state:     return String(localized: "State University", comment: "Institution tier: a mainstream public university.")
+        case .elite:     return String(localized: "Elite / Ivy League", comment: "Institution tier: a top, highly selective university (Ivy League is the US group of elite universities).")
         }
     }
 
@@ -27,11 +27,11 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     var description: String {
         switch self {
         case .community:
-            return "Almost everyone gets in. A great place to start if grades are tight."
+            return L("Almost everyone gets in. A great place to start if grades are tight.")
         case .state:
-            return "A good, well-known university. You need decent grades and skills to get in."
+            return L("A good, well-known university. You need decent grades and skills to get in.")
         case .elite:
-            return "One of the very best schools. Very hard to get into — but it gives your career a big boost."
+            return L("One of the very best schools. Very hard to get into — but it gives your career a big boost.")
         }
     }
 

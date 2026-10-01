@@ -1,0 +1,13 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "%lld years": { "one": "%lld year", "other": "%lld years" },
+    "%lld years • compare schools": { "one": "%lld year • compare schools", "other": "%lld years • compare schools" },
+    "%lld yrs": { "one": "%lld yr", "other": "%lld yrs" },
+    "%lld yrs in %@": { "one": "%1$lld yr in %2$@", "other": "%1$lld yrs in %2$@" },
+    "%lld yrs work experience": { "one": "%lld yr work experience", "other": "%lld yrs work experience" },
+    "Requires %lld+ yrs in %@": { "one": "Requires %1$lld+ yr in %2$@", "other": "Requires %1$lld+ yrs in %2$@" },
+    "Requires %lld+ yrs in the workforce": { "one": "Requires %lld+ yr in the workforce", "other": "Requires %lld+ yrs in the workforce" },
+    "Your grade comes from your %lld school years.": { "one": "Your grade comes from your %lld school year.", "other": "Your grade comes from your %lld school years." }
+  }
+}

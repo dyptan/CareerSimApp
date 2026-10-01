@@ -24,7 +24,7 @@ struct TrainingRow: View {
         return Training.allCases
             .filter { $0.stages.contains(stage) }
             .filter { player.age >= $0.minAge(in: player.country) }
-            .sorted { $0.friendlyName < $1.friendlyName }
+            .sorted { $0.friendlyName.localizedStandardCompare($1.friendlyName) == .orderedAscending }
     }
 
     var body: some View {
@@ -64,51 +64,65 @@ struct TrainingRow: View {
             if training.minYearsExperience > 0 {
                 let fieldYears = training.field.map { player.industryExperience(for: $0) } ?? player.totalExperienceYears
                 let met = fieldYears >= training.minYearsExperience
-                let expLabel = training.field.map { "\(training.minYearsExperience) yrs in \($0.rawValue)" }
-                    ?? "\(training.minYearsExperience) yrs work experience"
+                let years = training.minYearsExperience
+                let expLabel = training.field.map { L("\(years) yrs in \($0.displayName)") }
+                    ?? L("\(years) yrs work experience")
                 lines.append("\(met ? "✅" : "❌") 💼 \(expLabel)")
             }
             guard !lines.isEmpty else { return "" }
-            return "\n\nRequirements:\n\n" + lines.joined(separator: "\n")
+            return [L("Requirements:"), lines.joined(separator: "\n")].joined(separator: "\n\n")
         }()
         // The hiring/founding edge a skill-building credential confers, spelled
         // out so its value is clear (licences carry none — their value is the
         // gate they clear).
         let edgeHint: String = {
             guard let boost = training.careerBoost else { return "" }
-            let fields = boost.categories.map(\.rawValue).sorted().joined(separator: ", ")
-            return "\n\n🎯 An edge landing jobs and launching ventures in: \(fields) — and it counts as one level of the schooling roles there expect."
+            let names = boost.categories.map(\.displayName)
+                .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+            return L("🎯 An edge landing jobs and launching ventures in: \(Fmt.list(names)) — and it counts as one level of the schooling roles there expect.")
         }()
         let hintMessage: String = {
-            let base = boostsHint.isEmpty
-                ? training.description
-                : "\(training.description)\n\nCompleting this course builds:\n\n\(boostsHint)"
-            return base + edgeHint + requirementsHint
+            // Whole paragraphs, in reading order: what it is, what it builds,
+            // the edge it gives, what it takes.
+            var paragraphs = [training.description]
+            if !boostsHint.isEmpty {
+                paragraphs.append([L("Completing this course builds:"), boostsHint].joined(separator: "\n\n"))
+            }
+            paragraphs.append(edgeHint)
+            paragraphs.append(requirementsHint)
+            return paragraphs.filter { !$0.isEmpty }.joined(separator: "\n\n")
         }()
 
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 HStack(spacing: 6) {
-                    Text("\(training.pictogram) \(training.friendlyName)")
+                    // The name wraps onto further lines when a translation is long; the
+                    // badges beside it keep their shape.
+                    Text(verbatim: "\(training.pictogram) \(training.friendlyName)")
                         .font(.body)
+                        .fixedSize(horizontal: false, vertical: true)
                     if training.isStatutory {
-                        Text("licence")
+                        Text("licence", comment: "Small badge on a credential that is a legally required licence (lower case).")
                             .font(.caption2)
+                            .lineLimit(1)
+                            .fixedSize()
                             .padding(.horizontal, 5)
                             .padding(.vertical, 1)
                             .background(Color.blue.opacity(0.15), in: Capsule())
                     }
                     if isEarned {
-                        Text("✓ Earned")
+                        Text("✓ Earned", comment: "Label on a course or licence the player already holds.")
                             .font(.caption.bold())
                             .foregroundStyle(.green)
+                            .lineLimit(1)
+                            .fixedSize()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .opacity(blockedReason != nil && !isEarned ? 0.5 : 1.0)
 
                 if !isEarned {
-                    TakeButton {
+                    TakeButton(label: String(localized: "Take", comment: "Button: enrol in a course or licence for the coming year.")) {
                         player.attemptTraining(training, into: &selectedTrainings, activities: &selectedActivities)
                         onCommit()
                     }
@@ -124,7 +138,7 @@ struct TrainingRow: View {
             // requirement breakdown lives in the info hint. Age isn't listed:
             // it's a visibility gate.
             if !isEarned, let blockedReason {
-                Text("🔒 \(blockedReason)")
+                Text(verbatim: "🔒 \(blockedReason)")
                     .font(.caption2)
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
