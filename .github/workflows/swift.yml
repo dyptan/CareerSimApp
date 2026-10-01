@@ -62,6 +62,15 @@ jobs:
     - name: Install xcbeautify
       run: brew install xcbeautify
 
+    # Every user-visible string must ship in all six languages. These read the String
+    # Catalogs and the translation files directly (no compile): a pull request that adds
+    # or changes English text without translating it fails here. See Tools/i18n/README.md.
+    - name: Check localisation
+      run: |
+        python3 Tools/i18n/i18n.py check
+        python3 Tools/i18n/i18n.py verify
+        python3 Tools/GameCenter/leaderboards.py check
+
     - name: Build
       id: build
       run: |
