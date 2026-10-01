@@ -73,6 +73,10 @@
 		C20D77EE24B665D7002E7AEA /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20D77ED24B665D7002E7AEA /* Main.swift */; };
 		C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F124B665D8002E7AEA /* Assets.xcassets */; };
 		C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */; };
+		AA0000000000000000000A02 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000A01 /* L10n.swift */; };
+		AA0000000000000000000A04 /* Catalogue.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000A03 /* Catalogue.xcstrings */; };
+		AA0000000000000000000A06 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000A05 /* InfoPlist.xcstrings */; };
+		AA0000000000000000000A08 /* DisplayNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000A07 /* DisplayNames.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -167,6 +171,10 @@
 		C20D77ED24B665D7002E7AEA /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		C20D77F124B665D8002E7AEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C20D77F424B665D8002E7AEA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AA0000000000000000000A01 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		AA0000000000000000000A03 /* Catalogue.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Catalogue.xcstrings; sourceTree = "<group>"; };
+		AA0000000000000000000A05 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		AA0000000000000000000A07 /* DisplayNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNames.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -255,6 +263,8 @@
 				AA00000000000000000000C1 /* EducationTier.swift */,
 				AA00000000000000000000D1 /* Difficulty.swift */,
 				C0C0C0C0C0C0C0C0C0C0C001 /* Country.swift */,
+				AA0000000000000000000A01 /* L10n.swift */,
+				AA0000000000000000000A07 /* DisplayNames.swift */,
 				AA00000000000000000000E1 /* SideHustle.swift */,
 				AA0000000000000000000110 /* ExecutiveDecision.swift */,
 				AA00000000000000000000E5 /* Event.swift */,
@@ -291,6 +301,8 @@
 			children = (
 				84F851C42E9E8D710066C41A /* AppIcon.icon */,
 				C0C0C0C0C0C0C0C0C0C0C011 /* Localizable.xcstrings */,
+				AA0000000000000000000A03 /* Catalogue.xcstrings */,
+				AA0000000000000000000A05 /* InfoPlist.xcstrings */,
 				553578DD2EE39324003C8BD2 /* JobCatalog.swift */,
 			);
 			path = Resources;
@@ -433,6 +445,8 @@
 				84F851C52E9E8D710066C41A /* AppIcon.icon in Resources */,
 				C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */,
 				C0C0C0C0C0C0C0C0C0C0C010 /* Localizable.xcstrings in Resources */,
+				AA0000000000000000000A04 /* Catalogue.xcstrings in Resources */,
+				AA0000000000000000000A06 /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,6 +523,8 @@
 				AA00000000000000000000E8 /* EventsView.swift in Sources */,
 				AA00000000000000000000EA /* Competition.swift in Sources */,
 				AA00000000000000000000EE /* GameCenterManager.swift in Sources */,
+				AA0000000000000000000A02 /* L10n.swift in Sources */,
+				AA0000000000000000000A08 /* DisplayNames.swift in Sources */,
 				AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */,
 				AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */,
 			);

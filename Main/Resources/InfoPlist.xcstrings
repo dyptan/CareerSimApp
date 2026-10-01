@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "The app's name on the home screen.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Karriere-Simulator" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Simulateur de carrière" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Simulatore di carriera" } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "キャリアシミュレーター" } },
+        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Симулятор кар’єри" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
