@@ -1,0 +1,97 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "You have to be %@ for this job — %lld more years.": {
+      "one": "You have to be %1$@ for this job — %2$lld more year.",
+      "other": "You have to be %1$@ for this job — %2$lld more years."
+    },
+    "%@ adds +%@ a year — about %lld years.": {
+      "one": "%1$@ adds +%2$@ a year — about %3$lld year.",
+      "other": "%1$@ adds +%2$@ a year — about %3$lld years."
+    },
+    "%lld years of experience": {
+      "one": "%lld year of experience",
+      "other": "%lld years of experience"
+    },
+    "This job expects %lld years of experience; you have %@. Working as %@ builds it.": {
+      "one": "This job expects %1$lld year of experience; you have %2$@. Working as %3$@ builds it.",
+      "other": "This job expects %1$lld years of experience; you have %2$@. Working as %3$@ builds it."
+    },
+    "This job expects %lld years of experience; you have %@. Working in %@ builds it.": {
+      "one": "This job expects %1$lld year of experience; you have %2$@. Working in %3$@ builds it.",
+      "other": "This job expects %1$lld years of experience; you have %2$@. Working in %3$@ builds it."
+    },
+    "%lld more moves of trying new things, and I'll suggest jobs that fit you.": {
+      "one": "%lld more move of trying new things, and I'll suggest jobs that fit you.",
+      "other": "%lld more moves of trying new things, and I'll suggest jobs that fit you."
+    },
+    "It enters you automatically each year you train %@, once you've trained %lld years.": {
+      "one": "It enters you automatically each year you train %1$@, once you've trained %2$lld year.",
+      "other": "It enters you automatically each year you train %1$@, once you've trained %2$lld years."
+    },
+    "%@ of %lld years": {
+      "one": "%1$@ of %2$lld year",
+      "other": "%1$@ of %2$lld years"
+    },
+    "One move a year — %@ — closes the whole gap in about %lld years.": {
+      "one": "One move a year — %1$@ — closes the whole gap in about %2$lld year.",
+      "other": "One move a year — %1$@ — closes the whole gap in about %2$lld years."
+    },
+    "It expects %lld years as %@.": {
+      "one": "It expects %1$lld year as %2$@.",
+      "other": "It expects %1$lld years as %2$@."
+    },
+    "It expects %lld years in %@.": {
+      "one": "It expects %1$lld year in %2$@.",
+      "other": "It expects %1$lld years in %2$@."
+    },
+    "Years open the door: %lld years in %@, and nothing under about %@. Any %@ job counts, and so do years running your own company.": {
+      "one": "Years open the door: %1$lld year in %2$@, and nothing under about %3$@. Any %4$@ job counts, and so do years running your own company.",
+      "other": "Years open the door: %1$lld years in %2$@, and nothing under about %3$@. Any %4$@ job counts, and so do years running your own company."
+    },
+    "It asks %lld years in %@, and only %@ of ideal applicants get a C-suite seat each year.": {
+      "one": "It asks %1$lld year in %2$@, and only %3$@ of ideal applicants get a C-suite seat each year.",
+      "other": "It asks %1$lld years in %2$@, and only %3$@ of ideal applicants get a C-suite seat each year."
+    },
+    "You need the medical licence and board certification, %lld years in %@, and a %@ seat.": {
+      "one": "You need the medical licence and board certification, %1$lld year in %2$@, and a %3$@ seat.",
+      "other": "You need the medical licence and board certification, %1$lld years in %2$@, and a %3$@ seat."
+    },
+    "You need a law doctorate, the bar and %lld years — and only %@ of ideal applicants get a partner seat.": {
+      "one": "You need a law doctorate, the bar and %1$lld year — and only %2$@ of ideal applicants get a partner seat.",
+      "other": "You need a law doctorate, the bar and %1$lld years — and only %2$@ of ideal applicants get a partner seat."
+    },
+    "It asks %lld years in %@, and %@ of ideal applicants get the seat each year.": {
+      "one": "It asks %1$lld year in %2$@, and %3$@ of ideal applicants get the seat each year.",
+      "other": "It asks %1$lld years in %2$@, and %3$@ of ideal applicants get the seat each year."
+    },
+    "%lld years of work as %@": {
+      "one": "%1$lld year of work as %2$@",
+      "other": "%1$lld years of work as %2$@"
+    },
+    "%lld years of work in %@": {
+      "one": "%1$lld year of work in %2$@",
+      "other": "%1$lld years of work in %2$@"
+    },
+    "Keep going for %lld more years.": {
+      "one": "Keep going for %lld more year.",
+      "other": "Keep going for %lld more years."
+    },
+    "You need %lld years as %@ first.": {
+      "one": "You need %1$lld year as %2$@ first.",
+      "other": "You need %1$lld years as %2$@ first."
+    },
+    "This is the first step toward the %@ job (%@). It's about %lld years of school in total.": {
+      "one": "This is the first step toward the %1$@ job (%2$@). It's about %3$lld year of school in total.",
+      "other": "This is the first step toward the %1$@ job (%2$@). It's about %3$lld years of school in total."
+    },
+    "This opens the %@ job (%@) after %lld years of school.": {
+      "one": "This opens the %1$@ job (%2$@) after %3$lld year of school.",
+      "other": "This opens the %1$@ job (%2$@) after %3$lld years of school."
+    },
+    "Then: %@ (%lld more years).": {
+      "one": "Then: %1$@ (%2$lld more year).",
+      "other": "Then: %1$@ (%2$lld more years)."
+    }
+  }
+}

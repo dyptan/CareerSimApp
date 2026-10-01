@@ -1,4 +1,5 @@
 import Foundation
+import NaturalLanguage
 
 /// The advisor's coaching — every fact it tells the player, before any words
 /// are put around it.
@@ -52,6 +53,14 @@ enum AdvisorCoach {
 
         var id: String { baseTitle }
         var entry: Job { rungs[0] }
+        /// The role's name in the player's language (`baseTitle` is the English id).
+        var displayName: String { entry.displayBaseTitle }
+    }
+
+    /// A role's name in the player's language, from its `baseTitle` id; the id itself when it
+    /// isn't a role.
+    static func displayName(ofRole baseTitle: String) -> String {
+        family(baseTitle)?.displayName ?? baseTitle
     }
 
     /// Every role in the game, by title, priced in `country`'s money. Built
@@ -93,53 +102,236 @@ enum AdvisorCoach {
         families.filter { $0.category == category }
     }
 
-    /// Words that carry no information in "I want to be a nurse".
-    private static let fillerWords: Set<String> = [
-        "i", "im", "want", "wanna", "to", "be", "a", "an", "the", "work", "working", "as", "job", "jobs",
-        "become", "like", "would", "love", "am", "in", "on", "for", "and", "or", "of", "my", "me", "do",
-        "something", "with", "it", "is", "so", "maybe", "think", "really", "one", "day",
+    // MARK: - Finding a role by what the player types
+
+    /// Words that carry no information in "I want to be a nurse", per language,
+    /// already folded (see `fold`). English is the original list, unchanged; the others
+    /// cover the same ground: "I want to be a …", "I like …", "something with …", "one day".
+    /// The active language's list is joined with English's, because a player may type
+    /// English words into a German game. Beyond these, a one-letter token never counts
+    /// (except a single ideograph, which is a word in Japanese), and, outside English,
+    /// a token that fills a large share of the catalogue's own text is dropped too
+    /// (`frequentTokens`) — so a language needs no complete list.
+    private static let fillerWords: [L10n.Language: Set<String>] = [
+        .english: [
+            "i", "im", "want", "wanna", "to", "be", "a", "an", "the", "work", "working", "as", "job", "jobs", // i18n:ignore stopword data
+            "become", "like", "would", "love", "am", "in", "on", "for", "and", "or", "of", "my", "me", "do", // i18n:ignore stopword data
+            "something", "with", "it", "is", "so", "maybe", "think", "really", "one", "day", // i18n:ignore stopword data
+        ],
+        .german: [
+            "ich", "will", "mochte", "moechte", "werden", "sein", "bin", "ein", "eine", "einen", "einem", "einer", "der", "die", // i18n:ignore stopword data
+            "das", "den", "dem", "des", "als", "arbeiten", "arbeit", "job", "jobs", "beruf", "gern", "gerne", "mag", "liebe", // i18n:ignore stopword data
+            "im", "in", "am", "an", "auf", "fur", "und", "oder", "mit", "von", "zu", "zum", "zur", "mein", "meine", "meinen", // i18n:ignore stopword data
+            "etwas", "vielleicht", "denke", "wirklich", "mal", "einmal", "tag", "eines", "ist", "es", "so", "auch", "noch", // i18n:ignore stopword data
+        ],
+        .french: [
+            "je", "veux", "voudrais", "vouloir", "etre", "devenir", "suis", "un", "une", "le", "la", "les", "des", "du", "de", // i18n:ignore stopword data
+            "en", "comme", "travailler", "travail", "metier", "job", "jobs", "aimerais", "aime", "adore", "dans", "sur", "pour", // i18n:ignore stopword data
+            "et", "ou", "mon", "ma", "mes", "quelque", "chose", "avec", "ca", "est", "donc", "peut", "pense", "vraiment", // i18n:ignore stopword data
+            "jour", "moi", "faire", "au", "aux", "ce", "cette", "qui", "que", // i18n:ignore stopword data
+        ],
+        .italian: [
+            "io", "voglio", "vorrei", "vuole", "diventare", "essere", "sono", "un", "uno", "una", "il", "lo", "la", "le", "gli", // i18n:ignore stopword data
+            "dei", "di", "da", "come", "lavorare", "lavoro", "mestiere", "job", "jobs", "mi", "piace", "piacerebbe", "amo", // i18n:ignore stopword data
+            "in", "su", "per", "ed", "mio", "mia", "miei", "qualcosa", "con", "forse", "penso", "davvero", "giorno", "fare", // i18n:ignore stopword data
+            "al", "alla", "allo", "ai", "alle", "del", "della", "dello", "nel", "nella", "che", "ma", "se", "non", "piu", // i18n:ignore stopword data
+        ],
+        .ukrainian: [
+            "хочу", "хотів", "хотіла", "бажаю", "бути", "стати", "працювати", "робота", "роботу", "професія", "як", "та", "або", // i18n:ignore stopword data
+            "на", "із", "зі", "до", "для", "про", "мій", "моя", "моє", "мої", "щось", "може", "думаю", "справді", "колись", // i18n:ignore stopword data
+            "день", "мені", "подобається", "люблю", "це", "є", "десь", "дуже", // i18n:ignore stopword data
+        ],
+        .japanese: [
+            "を", "が", "は", "に", "の", "で", "と", "も", "へ", "や", "か", "な", "ね", "よ", "て", "し", "たい", "なり", "なる", // i18n:ignore stopword data
+            "ない", "です", "ます", "した", "する", "して", "します", "ある", "いる", "なりたい", "たいです", "私", "わたし", // i18n:ignore stopword data
+            "僕", "ぼく", "仕事", "しごと", "職業", "好き", "すき", "働き", "働く", "みたい", "ような", "こと", "もの", "など", // i18n:ignore stopword data
+            "ので", "から", "まで", "とか", "たら", "いつか", "何か", "なにか", "ほしい", "やりたい", "思う", "思っ", "おもう", // i18n:ignore stopword data
+        ],
     ]
 
+    /// A token that fills at least this share of the catalogue's own role text says nothing
+    /// about any one role ("work", "people", "Arbeit"). Used outside English only, whose
+    /// searches are pinned to the list above.
+    static let frequentTokenShare = 0.15
+
+    /// Case-, diacritic- and width-insensitive form of `text` for comparing what the player
+    /// typed with what the catalogue says: "Ärztin" = "arztin", "Straße" = "strasse", full-width
+    /// "ＡＢＣ" = "abc". Diacritics stay in Ukrainian and Japanese, where they separate
+    /// letters (й/и) or carry voicing (か/が) rather than decorate.
+    static func fold(_ text: String, language: L10n.Language = L10n.language) -> String {
+        var options: String.CompareOptions = [.caseInsensitive, .widthInsensitive]
+        if language != .japanese, language != .ukrainian { options.insert(.diacriticInsensitive) }
+        return text.folding(options: options, locale: L10n.locale)
+    }
+
+    /// The words of `text`, folded, in order — no filtering. Segmented by the system's word
+    /// tokenizer for `language`, so Japanese ("看護師になりたい") falls into words even
+    /// though it has no spaces; a chunk the tokenizer keeps whole around an apostrophe or
+    /// hyphen ("I'm", "d'accord") is split into its letter-and-number runs, as the plain
+    /// English search always did.
+    static func tokens(_ text: String, language: L10n.Language = L10n.language) -> [String] {
+        let folded = fold(text, language: language)
+        guard !folded.isEmpty else { return [] }
+        let tokenizer = NLTokenizer(unit: .word)
+        tokenizer.string = folded
+        tokenizer.setLanguage(NLLanguage(rawValue: language.rawValue))
+        var words: [String] = []
+        tokenizer.enumerateTokens(in: folded.startIndex..<folded.endIndex) { range, _ in
+            words += folded[range].split { !$0.isLetter && !$0.isNumber }.map(String.init)
+            return true
+        }
+        return words
+    }
+
+    /// Whether `token` is empty of meaning on its own: one letter, or a listed filler word.
+    static func isFiller(_ token: String, language: L10n.Language = L10n.language, frequent: Set<String> = []) -> Bool {
+        if token.count <= 1 { return !isIdeograph(token) }
+        if frequent.contains(token) { return true }
+        return (fillerWords[language] ?? []).contains(token) || (fillerWords[.english] ?? []).contains(token)
+    }
+
+    private static func isIdeograph(_ token: String) -> Bool {
+        token.unicodeScalars.contains { $0.properties.isIdeographic }
+    }
+
+    /// The tokens that fill at least `share` of `documents` (each one a role's words), for
+    /// a catalogue of more than a few roles. Nothing to learn from a handful.
+    static func frequentTokens(in documents: [Set<String>], share: Double = frequentTokenShare) -> Set<String> {
+        guard documents.count >= 20 else { return [] }
+        var counts: [String: Int] = [:]
+        for document in documents { for token in document { counts[token, default: 0] += 1 } }
+        let limit = share * Double(documents.count)
+        return Set(counts.filter { Double($0.value) >= limit }.keys)
+    }
+
     /// The words of `text` that say something: "I want to be a nurse" → ["nurse"].
+    /// `frequent` is the language's high-frequency catalogue tokens, when known.
+    static func contentWords(_ text: String, language: L10n.Language, frequent: Set<String> = []) -> [String] {
+        tokens(text, language: language).filter { !isFiller($0, language: language, frequent: frequent) }
+    }
+
+    /// The words of `text` that say something, in the game's language.
     static func contentWords(_ text: String) -> [String] {
-        text.lowercased()
-            .split { !$0.isLetter && !$0.isNumber }
-            .map(String.init)
-            .filter { $0.count > 1 && !fillerWords.contains($0) }
+        let language = L10n.language
+        return contentWords(text, language: language, frequent: searchIndex(for: language).frequent)
+    }
+
+    /// Whether two folded words are the same word for searching: equal, or one starts the
+    /// other (at least four letters, allowing two to differ — "nurs" ~ "nurse", "software" ~
+    /// "softwares"). German compounds also match on their head ("Krankenpfleger" ~ "pfleger"),
+    /// and Japanese words match inside one another ("看護師長" ~ "看護師").
+    static func matches(_ a: String, _ b: String, language: L10n.Language = L10n.language) -> Bool {
+        if a == b { return true }
+        let (short, long) = a.count <= b.count ? (a, b) : (b, a)
+        switch language {
+        case .japanese where short.count >= 2 && long.contains(short): return true
+        case .german where short.count >= 5 && long.hasSuffix(short): return true
+        default: break
+        }
+        guard short.count >= 4 else { return false }
+        return long.hasPrefix(short) || short.commonPrefix(with: long).count >= max(4, short.count - 2)
+    }
+
+    /// What one role is searched against, in the game's language and in English.
+    struct SearchEntry {
+        let family: RoleFamily
+        /// Whole titles, folded: the role's own and its display name.
+        let titles: [String]
+        let titleWords: [String]
+        /// The words of every rung's name ("junior developer").
+        let rungWords: [String]
+        /// Field names (and, outside English, the industry's).
+        let fields: [String]
+        let summaries: [String]
+    }
+
+    struct SearchIndex {
+        let entries: [SearchEntry]
+        let frequent: Set<String>
+    }
+
+    private final class SearchCache: @unchecked Sendable {
+        private let lock = NSLock()
+        private var indexes: [L10n.Language: SearchIndex] = [:]
+        func index(_ language: L10n.Language, build: () -> SearchIndex) -> SearchIndex {
+            lock.lock(); defer { lock.unlock() }
+            if let cached = indexes[language] { return cached }
+            let built = build()
+            indexes[language] = built
+            return built
+        }
+    }
+    private static let searchCache = SearchCache()
+
+    /// The catalogue as the search reads it, built once per language.
+    static func searchIndex(for language: L10n.Language) -> SearchIndex {
+        searchCache.index(language) { buildSearchIndex(language) }
+    }
+
+    private static func buildSearchIndex(_ language: L10n.Language) -> SearchIndex {
+        func distinct(_ items: [String]) -> [String] {
+            var seen = Set<String>()
+            return items.filter { seen.insert($0).inserted }
+        }
+        let entries = families.map { family -> SearchEntry in
+            let entry = family.entry
+            let titles = distinct([fold(family.baseTitle, language: language), fold(entry.displayBaseTitle, language: language)])
+            let rungNames = family.rungs.flatMap { [$0.id, $0.catalogueTitle] }
+            var fields = [family.category.rawValue, family.category.displayName]
+            // The industry joins the field outside English only, so the English search stays as it was.
+            if language != .english { fields += [entry.industry.rawValue, entry.industry.displayName] }
+            return SearchEntry(
+                family: family, titles: titles,
+                titleWords: distinct(titles.flatMap { tokens($0, language: language) }),
+                rungWords: distinct(rungNames.flatMap { tokens($0, language: language) }),
+                fields: distinct(fields.map { fold($0, language: language) }),
+                summaries: distinct([fold(entry.summary, language: language), fold(entry.displaySummary, language: language)]))
+        }
+        // High-frequency tokens are a property of the language's own text.
+        let frequent: Set<String> = language == .english ? [] : frequentTokens(in: entries.map { entry in
+            Set(entry.summaries.flatMap { tokens($0, language: language) } + entry.titleWords)
+        })
+        return SearchIndex(entries: entries, frequent: frequent)
+    }
+
+    /// The words as one phrase, to compare with a whole title. Japanese writes no spaces between
+    /// its words ("システム エンジニア" is "システムエンジニア"); a Latin word typed among them keeps one.
+    static func phrase(_ words: [String], language: L10n.Language) -> String {
+        guard language == .japanese else { return words.joined(separator: " ") }
+        var phrase = ""
+        for word in words {
+            if let last = phrase.last, last.isASCII || word.first?.isASCII == true { phrase += " " }
+            phrase += word
+        }
+        return phrase
     }
 
     /// The roles a player's words point at, best match first: whole title, then
     /// title words, then a rung's name ("junior developer"), then the field.
     /// Deterministic, so it works — and is what the tests pin — with no language
-    /// model at all.
+    /// model at all. The words are read in the game's language (`L10n.language`) and
+    /// compared with the roles' names and summaries in that language *and* in English.
     static func search(_ query: String, limit: Int = 6) -> [RoleFamily] {
-        let words = contentWords(query)
+        search(query, limit: limit, language: L10n.language)
+    }
+
+    static func search(_ query: String, limit: Int = 6, language: L10n.Language) -> [RoleFamily] {
+        let index = searchIndex(for: language)
+        let words = contentWords(query, language: language, frequent: index.frequent)
         guard !words.isEmpty else { return [] }
-        let phrase = words.joined(separator: " ")
+        let phrase = Self.phrase(words, language: language)
 
-        func matches(_ a: String, _ b: String) -> Bool {
-            if a == b { return true }
-            let (short, long) = a.count <= b.count ? (a, b) : (b, a)
-            guard short.count >= 4 else { return false }
-            return long.hasPrefix(short) || short.commonPrefix(with: long).count >= max(4, short.count - 2)
-        }
-        func tokens(_ text: String) -> [String] {
-            text.lowercased().split { !$0.isLetter && !$0.isNumber }.map(String.init)
-        }
-
-        return families
-            .compactMap { family -> (family: RoleFamily, score: Int)? in
-                let title = family.baseTitle.lowercased()
-                let titleWords = tokens(title)
+        return index.entries
+            .compactMap { entry -> (family: RoleFamily, score: Int)? in
                 var score = 0
-                if title == phrase { score += 20 } else if title.contains(phrase) { score += 10 }
+                if entry.titles.contains(phrase) { score += 20 } else if entry.titles.contains(where: { $0.contains(phrase) }) { score += 10 }
                 for word in words {
-                    if titleWords.contains(where: { matches(word, $0) }) { score += 4 }
-                    else if family.rungs.contains(where: { tokens($0.id).contains { matches(word, $0) } }) { score += 3 }
-                    if family.category.rawValue.lowercased().contains(word) { score += 2 }
-                    if family.entry.summary.lowercased().contains(word) { score += 1 }
+                    if entry.titleWords.contains(where: { matches(word, $0, language: language) }) { score += 4 }
+                    else if entry.rungWords.contains(where: { matches(word, $0, language: language) }) { score += 3 }
+                    if entry.fields.contains(where: { $0.contains(word) }) { score += 2 }
+                    if entry.summaries.contains(where: { $0.contains(word) }) { score += 1 }
                 }
-                return score > 0 ? (family, score) : nil
+                return score > 0 ? (entry.family, score) : nil
             }
             .sorted { ($0.score, $1.family.baseTitle) > ($1.score, $0.family.baseTitle) }
             .prefix(limit)
@@ -211,7 +403,7 @@ enum AdvisorCoach {
         }
         return picks.map { sport in
             ActivityIdea(sport: sport, builds: sport.abilities.map { ability in
-                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
+                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill" // i18n:ignore fallback that never shows
                 let pictogram = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
                 return "\(pictogram) \(label) +\(ability.weight)"
             })
@@ -308,7 +500,7 @@ enum AdvisorCoach {
             for keyPath in asked {
                 guard let grown = gained[keyPath] else { continue }
                 used += min(grown, job.requirements.softSkills[keyPath: keyPath])
-                let label = SoftSkills.label(forKeyPath: keyPath) ?? "Skill"
+                let label = SoftSkills.label(forKeyPath: keyPath) ?? "Skill" // i18n:ignore fallback that never shows
                 let pictogram = SoftSkills.pictogram(forKeyPath: keyPath) ?? ""
                 hits.append((label: "\(pictogram) \(label)", gained: grown))
             }
@@ -374,7 +566,10 @@ enum AdvisorCoach {
         let needs: [String]
         let pay: String
 
+        /// The role's id (`Job.baseTitle`).
         var title: String { family.baseTitle }
+        /// The role's name in the player's language.
+        var displayTitle: String { family.displayName }
         var cards: [AdvisorCard] { steps.map(\.card) }
         var canApply: Bool { !closed && (odds.map { $0 >= CareerAdvisor.minimumApplyOdds } ?? true) }
         /// Whether the advice is about the next rung up rather than getting in.
@@ -412,22 +607,31 @@ enum AdvisorCoach {
             }
     }
 
-    /// The qualification a role's education floor stands for, in words.
+    /// The qualification a role's education floor stands for, in words. A noun phrase that
+    /// slots in as the object of "get" / "you'll need" / "still missing", so it keeps no
+    /// article-dependent case beyond that.
     static func degreePhrase(minEQF: Int) -> String {
         switch minEQF {
-        case ..<4: return "a school diploma"
-        case 4: return "a college or vocational diploma"
-        case 5: return "a bachelor's degree"
-        case 6: return "a master's degree"
-        default: return "a doctorate"
+        case ..<4: return String(localized: "a school diploma", comment: "A qualification, as the object of 'Get …' / 'You'll need …' / 'Still missing: …' in the career advisor's steps (secondary-school level)")
+        case 4: return String(localized: "a college or vocational diploma", comment: "A qualification, as the object of 'Get …' / 'You'll need …' (post-secondary vocational level, EQF 4)")
+        case 5: return String(localized: "a bachelor's degree", comment: "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 5)")
+        case 6: return String(localized: "a master's degree", comment: "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 6)")
+        default: return String(localized: "a doctorate", comment: "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 7)")
         }
     }
 
     /// What a role asks of education, in words: "a bachelor's degree in Business".
     static func educationPhrase(for job: Job) -> String {
         let edu = job.requirements.education
-        let fields = list((edu.acceptedProfiles ?? []).map { $0.rawValue.capitalized }, conjunction: "or")
-        return degreePhrase(minEQF: edu.minEQF) + (fields.isEmpty ? "" : " in \(fields)")
+        let fields = Fmt.list((edu.acceptedProfiles ?? []).map(\.displayName), .or)
+        guard !fields.isEmpty else { return degreePhrase(minEQF: edu.minEQF) }
+        switch edu.minEQF {
+        case ..<4: return String(localized: "a school diploma in \(fields)", comment: "A qualification with its field(s), e.g. 'a school diploma in Health or Science'. The argument is a list of study fields joined with 'or'")
+        case 4: return String(localized: "a college or vocational diploma in \(fields)", comment: "A qualification with its field(s). The argument is a list of study fields joined with 'or'")
+        case 5: return String(localized: "a bachelor's degree in \(fields)", comment: "A qualification with its field(s). The argument is a list of study fields joined with 'or'")
+        case 6: return String(localized: "a master's degree in \(fields)", comment: "A qualification with its field(s). The argument is a list of study fields joined with 'or'")
+        default: return String(localized: "a doctorate in \(fields)", comment: "A qualification with its field(s). The argument is a list of study fields joined with 'or'")
+        }
     }
 
     /// What the advisor tells a player who has picked `baseTitle`. Nil for a
@@ -456,12 +660,13 @@ enum AdvisorCoach {
 
         let pay = CareerAdvisor.payStory(focus, player)
         let listed = !onLadder && posting != nil
+        let roleName = family.displayName
         if !onLadder {
             if listed {
-                add(.listing, "🔎", "See who's hiring \(family.baseTitle)s this year.",
-                    [AdvisorAction(label: "See job listings", effect: .go(.listing(family.baseTitle)))])
+                add(.listing, "🔎", L("See who's hiring for \(roleName) this year."),
+                    [AdvisorAction(label: CareerAdvisor.Destination.listing(family.baseTitle).buttonLabel, effect: .go(.listing(family.baseTitle)))])
             } else {
-                add(.listing, "🔎", "Nobody is posting \(family.baseTitle) jobs this year — the market changes every year, so check again next year.")
+                add(.listing, "🔎", L("Nobody is posting \(roleName) jobs this year — the market changes every year, so check again next year."))
             }
         }
 
@@ -470,7 +675,7 @@ enum AdvisorCoach {
         // Too young.
         if fit.age == 0 {
             let years = max(1, focus.minimumHireAge - player.age)
-            add(.age, "🎂", "You have to be \(focus.minimumHireAge) for this job — \(years) more year\(years == 1 ? "" : "s").")
+            add(.age, "🎂", L("You have to be \(String(focus.minimumHireAge)) for this job — \(years) more years."))
         }
 
         // The degree.
@@ -482,12 +687,12 @@ enum AdvisorCoach {
             if let studying = player.currentEducation, studying.profile != nil,
                studying.eqf >= edu.minEQF,
                (edu.acceptedProfiles ?? []).isEmpty || studying.profile.map({ (edu.acceptedProfiles ?? []).contains($0) }) == true {
-                add(.education, "🎓", "Keep studying — your \(studying.degreeName(in: player.country)) is what this job asks for.")
+                add(.education, "🎓", L("Keep studying — your \(studying.degreeName(in: player.country)) is what this job asks for."))
             } else if CareerAdvisor.canOpenEducation(player) {
-                add(.education, "🎓", "Get \(phrase). It's the longest step, so start early.",
-                    [AdvisorAction(label: "Open Education", effect: .go(.education))])
+                add(.education, "🎓", String(localized: "Get \(phrase). It's the longest step, so start early.", comment: "Advisor step. The argument is a qualification as a noun phrase, e.g. 'a bachelor's degree in Business'"),
+                    [AdvisorAction(label: CareerAdvisor.Destination.education.buttonLabel, effect: .go(.education))])
             } else {
-                add(.education, "🎓", "You'll need \(phrase) — that comes after school.")
+                add(.education, "🎓", String(localized: "You'll need \(phrase) — that comes after school.", comment: "Advisor step for a player still at school. The argument is a qualification as a noun phrase, e.g. 'a bachelor's degree in Business'"))
             }
         }
 
@@ -496,20 +701,20 @@ enum AdvisorCoach {
             needs.append(licence.friendlyName)
             switch licence.requirements(player) {
             case .ok:
-                add(.licence, "🪪", "Earn the \(licence.friendlyName) — this job won't hire without it.",
-                    [AdvisorAction(label: "Open Education", effect: .go(.education))])
+                add(.licence, "🪪", L("Earn this credential: \(licence.friendlyName) — this job won't hire without it."),
+                    [AdvisorAction(label: CareerAdvisor.Destination.education.buttonLabel, effect: .go(.education))])
             case .blocked(let reason):
-                add(.licence, "🪪", "Earn the \(licence.friendlyName) — this job won't hire without it. (\(reason).)")
+                add(.licence, "🪪", L("Earn this credential: \(licence.friendlyName) — this job won't hire without it. (\(reason).)"))
             }
         }
 
         // The skills.
         for need in skills.prefix(3) {
-            var detail = "Grow \(need.label) from \(need.have) to \(need.need)."
+            var detail = L("Grow \(need.label) from \(need.have) to \(need.need).")
             var actions: [AdvisorAction] = []
             if let activity = need.activity, let perYear = need.perYear, let years = need.years {
-                detail += " \(activity.label) adds +\(perYear) a year — about \(years) year\(years == 1 ? "" : "s")."
-                actions = [AdvisorAction(label: "Open Activities", effect: .go(.activities(activity.kind)))]
+                detail += AdvisorCoach.sentenceGap + L("\(activity.label) adds +\(String(perYear)) a year — about \(years) years.")
+                actions = [AdvisorAction(label: CareerAdvisor.Destination.activities(activity.kind).buttonLabel, effect: .go(.activities(activity.kind)))]
             }
             add(.skill, need.pictogram, detail, actions)
         }
@@ -518,11 +723,12 @@ enum AdvisorCoach {
         let wanted = focus.requirements.minYearsExperience
         let years = focus.relevantYears(for: player)
         if wanted > 0, years < wanted {
-            needs.append("\(wanted) years of experience")
-            let field = focus.experienceLadder ?? focus.category.rawValue
-            add(.experience, "🧭",
-                "This job expects \(wanted) years of experience; you have \(years). Working in \(field) builds it.",
-                [AdvisorAction(label: "Open Jobs", effect: .go(.jobs(focus.workSetting)))])
+            needs.append(L("\(wanted) years of experience"))
+            let text = focus.displayExperienceLadder.map {
+                L("This job expects \(wanted) years of experience; you have \(String(years)). Working as \($0) builds it.")
+            } ?? L("This job expects \(wanted) years of experience; you have \(String(years)). Working in \(focus.category.displayName) builds it.")
+            add(.experience, "🧭", text,
+                [AdvisorAction(label: CareerAdvisor.Destination.jobs(focus.workSetting).buttonLabel, effect: .go(.jobs(focus.workSetting)))])
         }
 
         // The way in — or up.
@@ -530,24 +736,24 @@ enum AdvisorCoach {
             if let tip = CareerAdvisor.climbTip(player), tip.job.baseTitle == family.baseTitle {
                 add(.climb, "📈", tip.detail, tip.destination.map { [AdvisorAction(label: $0.buttonLabel, effect: .go($0))] } ?? [])
             } else {
-                add(.climb, "📈", "Keep working — the next step up is \(focus.id) (\(pay)).")
+                add(.climb, "📈", L("Keep working — the next step up is \(focus.catalogueTitle) (\(pay))."))
             }
         } else if !closed {
+            let listingAction = [AdvisorAction(label: CareerAdvisor.Destination.listing(family.baseTitle).buttonLabel, effect: .go(.listing(family.baseTitle)))]
             if listed {
                 let shot = odds ?? 1
                 let text: String
                 if simplified {
-                    text = "You can apply for \(focus.id) now!"
+                    text = L("You can apply for \(focus.catalogueTitle) now!")
                 } else if shot >= CareerAdvisor.minimumApplyOdds {
-                    text = "You can apply for \(focus.id) now — a \(CareerAdvisor.percent(shot)) chance."
+                    text = L("You can apply for \(focus.catalogueTitle) now — a \(CareerAdvisor.percent(shot)) chance.")
                 } else {
                     // Applying spends the whole year, so a long shot is a real cost.
-                    text = "You could apply for \(focus.id) now, but it's a long shot (\(AdvisorPathway.chance(shot))) — and an application spends the year. Lift your chances first."
+                    text = L("You could apply for \(focus.catalogueTitle) now, but it's a long shot (\(AdvisorPathway.chance(shot))) — and an application spends the year. Lift your chances first.")
                 }
-                add(.apply, shot >= CareerAdvisor.minimumApplyOdds || simplified ? "✅" : "🎲", text,
-                    [AdvisorAction(label: "See job listings", effect: .go(.listing(family.baseTitle)))])
+                add(.apply, shot >= CareerAdvisor.minimumApplyOdds || simplified ? "✅" : "🎲", text, listingAction)
             } else {
-                add(.apply, "✅", "You could apply for \(focus.id) — but there are no postings this year.")
+                add(.apply, "✅", L("You could apply for \(focus.catalogueTitle) — but there are no postings this year."))
             }
         }
 
@@ -562,23 +768,23 @@ enum AdvisorCoach {
     /// The opening line of a guide: the role, its pay and where the player stands.
     static func introduction(_ guide: RoleGuide, player: Player) -> String {
         let focus = guide.focus
-        if guide.atTop { return "You've reached the top of the \(guide.title) ladder — \(focus.id)! 🏆" }
+        if guide.atTop { return L("You've reached the top of the \(guide.displayTitle) ladder — \(focus.catalogueTitle)! 🏆") }
         if guide.isPromotion, let current = player.currentOccupation {
-            return "You're working as \(current.id). The next step up is \(focus.id): \(guide.pay)."
+            return L("You're working as \(current.catalogueTitle). The next step up is \(focus.catalogueTitle): \(guide.pay).")
         }
         // A ladder's entry rung has a name of its own ("First Officer"): say how
         // it relates to the role the player picked ("Airline Pilot").
-        var line = focus.id == guide.title
-            ? "\(guide.family.icon) \(guide.title) pays \(guide.pay)."
-            : "\(guide.family.icon) To be \(CareerAdvisor.article(for: guide.title)) \(guide.title), you start as \(CareerAdvisor.article(for: focus.id)) \(focus.id), which pays \(guide.pay)."
+        var sentences = [focus.id == guide.title
+            ? L("\(guide.displayTitle) pays \(guide.pay).")
+            : L("\(guide.displayTitle) starts at \(focus.catalogueTitle), which pays \(guide.pay).")]
         if guide.closed {
-            line += " You can't be hired for it yet."
+            sentences.append(L("You can't be hired for it yet."))
         } else if let odds = guide.odds {
-            line += " Your chance to be hired today is \(CareerAdvisor.percent(odds))."
+            sentences.append(L("Your chance to be hired today is \(CareerAdvisor.percent(odds))."))
         } else {
-            line += " You can apply for it now!"
+            sentences.append(L("You can apply for it now!"))
         }
-        return line
+        return guide.family.icon + " " + sentences.joinedAsSentences()
     }
 
     /// The facts a guide rests on, one per line — what the language layer may
@@ -590,7 +796,7 @@ enum AdvisorCoach {
         facts += guide.steps
             .filter { ![.listing, .apply].contains($0.kind) && !$0.card.detail.isEmpty }
             .prefix(5)
-            .map { "Still to do: \($0.card.detail)" }
+            .map { "Still to do: \($0.card.detail)" } // i18n:ignore model-facing fact, never shown to the player
         return facts
     }
 
@@ -645,10 +851,11 @@ enum AdvisorCoach {
 
         var progress: [String] = []
         if !tried.isEmpty {
-            progress.append("🧪 You've tried \(list(tried.map(\.label))).")
+            progress.append(L("🧪 You've tried \(Fmt.list(tried.map(\.label)))."))
         }
         if !gains.isEmpty {
-            progress.append("📈 Skills you've grown: " + gains.prefix(4).map { "\($0.pictogram) \($0.label) +\($0.gained)" }.joined(separator: ", ") + ".")
+            let grown = Fmt.list(gains.prefix(4).map { "\($0.pictogram) \($0.label) +\($0.gained)" })
+            progress.append(L("📈 Skills you've grown: \(grown)."))
         }
 
         let verdict: AdvisorCheckIn.Verdict
@@ -658,26 +865,31 @@ enum AdvisorCoach {
         let picks = moves >= exploreMoves && hasSignal ? Self.suggestions(for: player) : []
         if !picks.isEmpty {
             verdict = .readyToSuggest
-            headline = "You've tried a few things — I found jobs that might suit you!"
+            headline = L("You've tried a few things — I found jobs that might suit you!")
             suggestions = picks.map(\.baseTitle)
         } else {
             verdict = .exploring
             let left = exploreMoves - moves
             headline = left > 0
-                ? "\(left) more move\(left == 1 ? "" : "s") of trying new things, and I'll suggest jobs that fit you."
-                : "Try a couple more different things, so I can see what you like."
+                ? L("\(left) more moves of trying new things, and I'll suggest jobs that fit you.")
+                : L("Try a couple more different things, so I can see what you like.")
             let ideas = activityIdeas(for: player)
             if let idea = ideas.first, canPractise {
+                let builds = Fmt.list(idea.builds)
+                let open = [AdvisorAction(label: CareerAdvisor.Destination.activities(idea.sport.kind).buttonLabel,
+                                          effect: .go(.activities(idea.sport.kind)))]
                 if player.lastYearSports.isEmpty {
                     corrections.append(AdvisorCard(
-                        icon: idea.sport.pictogram, title: "Try something",
-                        detail: "You didn't practise anything last year. This year, try \(idea.sport.label) — it builds \(list(idea.builds)).",
-                        actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(idea.sport.kind)))]))
+                        icon: idea.sport.pictogram,
+                        title: String(localized: "Try something", comment: "Title of an advisor card nudging a player who practised nothing last year to try a new activity"),
+                        detail: L("You didn't practise anything last year. This year, try \(idea.sport.label) — it builds \(builds)."),
+                        actions: open))
                 } else if tried.count == 1, moves >= 2, let first = tried.first {
                     corrections.append(AdvisorCard(
-                        icon: idea.sport.pictogram, title: "Try something different",
-                        detail: "You've stuck with \(first.label). To find what you like, try \(idea.sport.label) — it builds \(list(idea.builds)).",
-                        actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(idea.sport.kind)))]))
+                        icon: idea.sport.pictogram,
+                        title: String(localized: "Try something different", comment: "Title of an advisor card nudging a player who has stuck with one activity to try another"),
+                        detail: L("You've stuck with \(first.label). To find what you like, try \(idea.sport.label) — it builds \(builds)."),
+                        actions: open))
                 }
             }
         }
@@ -693,11 +905,12 @@ enum AdvisorCoach {
         let focus = guide.focus
 
         // What changed since the last review.
+        let roleName = guide.displayTitle
         var progress: [String] = []
         var moved = false
         if let before = plan.lastMark {
             if !before.onLadder, now.onLadder {
-                progress.append("🎉 You got a job on the \(title) ladder!")
+                progress.append(L("🎉 You got a job on the \(roleName) ladder!"))
                 moved = true
             }
             for need in scoredNeeds(of: focus, player: player) {
@@ -705,39 +918,41 @@ enum AdvisorCoach {
                 let have = player.softSkills[keyPath: need.keyPath]
                 guard have > then else { continue }
                 moved = true
+                let skill = "\(need.pictogram) \(need.label)"
                 progress.append(have >= need.need
-                    ? "✅ \(need.pictogram) \(need.label) is now \(have) — the job asks for \(need.need)."
-                    : "📈 \(need.pictogram) \(need.label) went from \(then) to \(have) (the job asks for \(need.need)).")
+                    ? L("✅ \(skill) is now \(have) — the job asks for \(need.need).")
+                    : L("📈 \(skill) went from \(then) to \(have) (the job asks for \(need.need))."))
             }
             if now.educationLevel > before.educationLevel, let degree = player.degrees.last {
                 moved = true
-                progress.append("🎓 You earned your \(degree.degreeName(in: player.country)).")
+                progress.append(L("🎓 You earned your \(degree.degreeName(in: player.country))."))
             }
             let earned = now.licences.subtracting(before.licences)
             if !earned.isEmpty {
                 moved = true
-                progress.append("🪪 You earned the \(list(earned.map(\.friendlyName).sorted())).")
+                progress.append(L("🪪 You earned: \(Fmt.list(earned.map(\.friendlyName).sorted()))."))
             }
             let wanted = focus.requirements.minYearsExperience
             if wanted > 0, now.years > before.years, now.years <= wanted {
                 moved = true
-                progress.append("🧭 Another year of experience: \(now.years) of the \(wanted) this job expects.")
+                progress.append(L("🧭 Another year of experience: \(now.years) of the \(wanted) this job expects."))
             }
             if let bucket = focus.category.fameCategory, now.fame > before.fame + 0.05 {
                 moved = true
-                progress.append("🌟 Your \(bucket.icon) \(bucket.rawValue) fame went from \(AdvisorPathway.decimal(before.fame)) to \(AdvisorPathway.decimal(now.fame)).")
+                let fame = "\(bucket.icon) \(bucket.displayName)"
+                progress.append(L("🌟 Your \(fame) fame went from \(AdvisorPathway.decimal(before.fame)) to \(AdvisorPathway.decimal(now.fame))."))
             }
             if now.network > before.network {
                 moved = true
-                progress.append("🤝 Your network in \(focus.category.rawValue) grew from \(before.network) to \(now.network).")
+                progress.append(L("🤝 Your network in \(focus.category.displayName) grew from \(before.network) to \(now.network)."))
             }
             if now.founderPoints > before.founderPoints + 0.05, focus.isExecutive {
                 moved = true
                 let capPoints = GameConstants.executiveTrackRecordCap / GameConstants.executiveTrackRecordPerPoint
-                progress.append("🏗️ Your founder track record grew from \(AdvisorPathway.decimal(before.founderPoints)) to \(AdvisorPathway.decimal(now.founderPoints)) of \(AdvisorPathway.decimal(capPoints)) — the seat chance is now \(AdvisorPathway.percent(focus.seatChance(for: player))).")
+                progress.append(L("🏗️ Your founder track record grew from \(AdvisorPathway.decimal(before.founderPoints)) to \(AdvisorPathway.decimal(now.founderPoints)) of \(AdvisorPathway.decimal(capPoints)) — the seat chance is now \(AdvisorPathway.percent(focus.seatChance(for: player)))."))
             }
             if let was = before.odds, let odds = now.odds, abs(odds - was) >= oddsChangeWorthMentioning {
-                progress.append("🎯 Your chance to be hired went from \(CareerAdvisor.percent(was)) to \(CareerAdvisor.percent(odds)).")
+                progress.append(L("🎯 Your chance to be hired went from \(CareerAdvisor.percent(was)) to \(CareerAdvisor.percent(odds))."))
             }
         }
 
@@ -746,26 +961,26 @@ enum AdvisorCoach {
         let headline: String
         if guide.atTop {
             verdict = .goalReached
-            headline = "You made it! You're at the top of the \(title) ladder: \(focus.id). 🏆"
+            headline = L("You made it! You're at the top of the \(roleName) ladder: \(focus.catalogueTitle). 🏆")
             // Celebrated once, not every year after.
             if plan.checkIns.last?.verdict == .goalReached { return nil }
         } else if guide.isPromotion {
             verdict = .onTrack
-            headline = "You're working toward \(focus.id) — the next step up the \(title) ladder."
+            headline = L("You're working toward \(focus.catalogueTitle) — the next step up the \(roleName) ladder.")
         } else if guide.canApply && guide.posted {
             verdict = .ready
-            headline = guide.odds.map { "You're ready to apply for \(focus.id) — your chance is \(CareerAdvisor.percent($0))." }
-                ?? "You're ready to apply for \(focus.id)!"
+            headline = guide.odds.map { L("You're ready to apply for \(focus.catalogueTitle) — your chance is \(CareerAdvisor.percent($0)).") }
+                ?? L("You're ready to apply for \(focus.catalogueTitle)!")
         } else if guide.canApply {
             // Qualified, but nobody is hiring this year.
             verdict = .onTrack
-            headline = "You're qualified for \(focus.id) — now it's a matter of waiting for a posting."
+            headline = L("You're qualified for \(focus.catalogueTitle) — now it's a matter of waiting for a posting.")
         } else if moved {
             verdict = .onTrack
-            headline = "You're getting closer to \(title). Nice work!"
+            headline = L("You're getting closer to \(roleName). Nice work!")
         } else {
             verdict = .needsCorrection
-            headline = "This year didn't move you closer to \(title)."
+            headline = L("This year didn't move you closer to \(roleName).")
         }
 
         // What to change.
@@ -773,32 +988,39 @@ enum AdvisorCoach {
         if !guide.atTop {
             if !guide.posted, !guide.onLadder {
                 corrections.append(AdvisorCard(
-                    icon: "⏳", title: "Not hiring right now",
-                    detail: "Nobody is posting \(title) jobs this year. Keep building your skills and check again next year."))
+                    icon: "⏳",
+                    title: String(localized: "Not hiring right now", comment: "Title of an advisor card: nobody is posting the player's goal role this year"),
+                    detail: L("Nobody is posting \(roleName) jobs this year. Keep building your skills and check again next year.")))
             }
             if let was = plan.lastMark?.odds, let odds = now.odds, was - odds >= oddsDropWorthFlagging {
-                let slump = player.climate(for: focus.industry) == .slump
-                    ? " The \(focus.industry.rawValue) industry is in a slump, so employers are hiring less. Keep building skills and try again when it recovers."
-                    : ""
+                var detail = L("Your chance to be hired dropped from \(CareerAdvisor.percent(was)) to \(CareerAdvisor.percent(odds)).")
+                if player.climate(for: focus.industry) == .slump {
+                    detail += AdvisorCoach.sentenceGap + L("The \(focus.industry.displayName) industry is in a slump, so employers are hiring less. Keep building skills and try again when it recovers.")
+                }
                 corrections.append(AdvisorCard(
-                    icon: "📉", title: "Your chances fell",
-                    detail: "Your chance to be hired dropped from \(CareerAdvisor.percent(was)) to \(CareerAdvisor.percent(odds)).\(slump)"))
+                    icon: "📉",
+                    title: String(localized: "Your chances fell", comment: "Title of an advisor card: the player's hire odds for the goal role dropped since the last review"),
+                    detail: detail))
             }
             // Where the odds really turn — the levers of a hard-to-reach role.
             let path = AdvisorPathway.pathway(for: guide, player: player)
             if let path {
                 if path.odds.strength >= 0.999, !path.cappedLevers.isEmpty {
-                    let names = list(path.cappedLevers.filter { $0.kind != .seat }.map { $0.title.lowercased() })
-                    var detail = "Your application is already at the game's ceiling, so more \(names) changes nothing for now."
-                    if let next = path.bestMove { detail += " What's left: \(next.lever.title.lowercased())." }
-                    corrections.append(AdvisorCard(icon: "🎯", title: "Enough polish", detail: detail,
-                                                   actions: path.bestMove?.source.actions ?? []))
+                    let names = Fmt.list(path.cappedLevers.filter { $0.kind != .seat }.map(\.title))
+                    var detail = L("Your application is already at the game's ceiling, so more of these changes nothing for now: \(names).")
+                    if let next = path.bestMove { detail += AdvisorCoach.sentenceGap + L("What's left: \(next.lever.title).") }
+                    corrections.append(AdvisorCard(
+                        icon: "🎯",
+                        title: String(localized: "Enough polish", comment: "Title of an advisor card: the application is already as strong as the game counts"),
+                        detail: detail, actions: path.bestMove?.source.actions ?? []))
                 }
                 if !moved, let next = path.bestMove {
-                    var detail = "\(next.lever.title) is worth about +\(AdvisorPathway.points(next.lever.potential)) chance a year."
-                    detail += " \(next.source.title): \(next.source.detail)"
-                    corrections.append(AdvisorCard(icon: next.lever.icon, title: "Your biggest lever", detail: detail,
-                                                   actions: next.source.actions))
+                    var detail = L("\(next.lever.title) is worth about +\(AdvisorPathway.points(next.lever.potential)) chance a year.")
+                    detail += AdvisorCoach.sentenceGap + L("\(next.source.title): \(next.source.detail)")
+                    corrections.append(AdvisorCard(
+                        icon: next.lever.icon,
+                        title: String(localized: "Your biggest lever", comment: "Title of an advisor card naming the one thing that would raise the player's hire odds most"),
+                        detail: detail, actions: next.source.actions))
                 }
             }
             if path == nil, !moved, let lead = guide.skills.first, let activity = lead.activity, let perYear = lead.perYear {
@@ -808,18 +1030,22 @@ enum AdvisorCoach {
                 }
                 if !helped {
                     let detail = practised.isEmpty
-                        ? "Last year didn't build any of the skills this job asks for. Try \(activity.label) — it adds \(lead.label) +\(perYear) a year (you're at \(lead.have), the job asks for \(lead.need))."
-                        : "Last year you practised \(list(practised.map(\.label).sorted())) — good, but it doesn't build what \(title) asks for. Try \(activity.label) for \(lead.label) (you're at \(lead.have), the job asks for \(lead.need))."
+                        ? L("Last year didn't build any of the skills this job asks for. Try \(activity.label) — it adds \(lead.label) +\(String(perYear)) a year (you're at \(lead.have), the job asks for \(lead.need)).")
+                        : L("Last year you practised \(Fmt.list(practised.map(\.label).sorted())) — good, but it doesn't build what \(roleName) asks for. Try \(activity.label) for \(lead.label) (you're at \(lead.have), the job asks for \(lead.need)).")
                     corrections.append(AdvisorCard(
-                        icon: lead.pictogram, title: "Practise what the job needs", detail: detail,
-                        actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(activity.kind)))]))
+                        icon: lead.pictogram,
+                        title: String(localized: "Practise what the job needs", comment: "Title of an advisor card: last year's activities did not build the skills the goal role asks for"),
+                        detail: detail,
+                        actions: [AdvisorAction(label: CareerAdvisor.Destination.activities(activity.kind).buttonLabel, effect: .go(.activities(activity.kind)))]))
                 }
             }
             // Never leave a stalled year without a next step.
             if verdict == .needsCorrection, corrections.isEmpty,
                let next = guide.steps.first(where: { ![.listing, .apply].contains($0.kind) }) {
-                corrections.append(AdvisorCard(icon: next.card.icon, title: "Your next step",
-                                               detail: next.card.detail, actions: next.card.actions))
+                corrections.append(AdvisorCard(
+                    icon: next.card.icon,
+                    title: String(localized: "Your next step", comment: "Title of an advisor card: the next requirement to work on for the goal role"),
+                    detail: next.card.detail, actions: next.card.actions))
             }
         }
 
@@ -846,49 +1072,58 @@ enum AdvisorCoach {
 
     /// What the advisor knows about the player, one fact per line — what a
     /// free question is answered from.
+    ///
+    /// These lines are written for the language model, not the player: the model is told
+    /// which language to answer in, so its own wrapper sentences stay English. The names and
+    /// qualifications inside them are the player's language.
     static func playerFacts(_ player: Player) -> [String] {
-        var facts = ["The player is \(player.age) years old."]
+        var facts = ["The player is \(player.age) years old."] // i18n:ignore model-facing fact, never shown to the player
         if player.isSimplified {
             // What a model needs to answer "how do I get hired?" correctly here.
-            facts.append("They are playing the Simplified mode: getting hired only takes the right school, enough years of work and being old enough. There are no odds, luck, fame or seats to worry about.")
+            facts.append("They are playing the Simplified mode: getting hired only takes the right school, enough years of work and being old enough. There are no odds, luck, fame or seats to worry about.") // i18n:ignore model-facing fact
         }
         if let job = player.currentOccupation {
-            facts.append("They work as \(job.id), earning \(CareerAdvisor.money(job.annualIncome, player)) a year.")
+            facts.append("They work as \(job.catalogueTitle), earning \(CareerAdvisor.money(job.annualIncome, player)) a year.") // i18n:ignore model-facing fact
         } else {
-            facts.append("They have no job right now.")
+            facts.append("They have no job right now.") // i18n:ignore model-facing fact
         }
-        facts.append("Their best qualification: \(player.degrees.max { $0.eqf < $1.eqf }?.degreeName(in: player.country) ?? "none yet").")
+        facts.append("Their best qualification: \(player.degrees.max { $0.eqf < $1.eqf }?.degreeName(in: player.country) ?? "none yet").") // i18n:ignore model-facing fact
         let strongest = SoftSkills.allAxes
             .map { (label: $0.label, value: player.softSkills[keyPath: $0.keyPath]) }
             .filter { $0.value > 0 }
             .sorted { ($0.value, $1.label) > ($1.value, $0.label) }
             .prefix(4)
         if !strongest.isEmpty {
-            facts.append("Their strongest skills (out of 10): " + strongest.map { "\($0.label) \($0.value)" }.joined(separator: ", ") + ".")
+            facts.append("Their strongest skills (out of 10): " + strongest.map { "\($0.label) \($0.value)" }.joined(separator: ", ") + ".") // i18n:ignore model-facing fact
         }
         switch player.advisorPlan.path {
         case .target(let title):
             if let guide = guide(for: title, player: player) {
-                facts.append("Their goal is \(title).")
+                facts.append("Their goal is \(guide.displayTitle).") // i18n:ignore model-facing fact
                 facts += Self.facts(guide, player: player)
                 if let path = AdvisorPathway.pathway(for: guide, player: player) { facts += path.facts }
                 if let note = AdvisorRealWorld.note(for: guide.focus, player: player) { facts += note.facts }
             }
         case .exploring:
-            facts.append("They haven't chosen a role and are trying different activities to find one.")
+            facts.append("They haven't chosen a role and are trying different activities to find one.") // i18n:ignore model-facing fact
         case .unasked:
             break
         }
         return facts
     }
 
-    /// "a, b and c" — or "a, b or c".
+    /// Whole sentences set one after another: a space between them, except in Japanese, which
+    /// writes no space after a full stop.
+    static func sentences(_ parts: [String]) -> String {
+        parts.filter { !$0.isEmpty }.joined(separator: sentenceGap)
+    }
+
+    /// What goes between two sentences: a space, or nothing in Japanese.
+    static var sentenceGap: String { L10n.language == .japanese ? "" : " " }
+
+    /// "a, b and c" — or "a, b or c". A thin forwarder to `Fmt.list`, which follows the game's language.
     static func list(_ items: [String], conjunction: String = "and") -> String {
-        switch items.count {
-        case 0: return ""
-        case 1: return items[0]
-        default: return items.dropLast().joined(separator: ", ") + " \(conjunction) " + items[items.count - 1]
-        }
+        Fmt.list(items, conjunction == "or" ? .or : .and)
     }
 }
 
@@ -903,4 +1138,9 @@ extension AdvisorPlan {
         }
         unreadCount += 1
     }
+}
+
+extension Array where Element == String {
+    /// The elements as whole sentences one after another (`AdvisorCoach.sentences`).
+    func joinedAsSentences() -> String { AdvisorCoach.sentences(self) }
 }

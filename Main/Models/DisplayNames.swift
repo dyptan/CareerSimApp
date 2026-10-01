@@ -347,3 +347,5 @@ extension FameAward {
     static func displayTitle(forId id: String) -> String { id }
     var displayTitle: String { Self.displayTitle(forId: key) }
 }
+
+extension Job { var displayBreakthroughFame: String? { breakthroughFame } } // wanted by advisor: the signature title (an award id such as "Junior Champion") that opens a career, in the player's language
