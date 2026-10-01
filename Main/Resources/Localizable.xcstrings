@@ -1,0 +1,516 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+      "shouldTranslate" : false
+    },
+    "%@  %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@  %2$@"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "%@ %@ · %lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ · %3$lld%%"
+          }
+        }
+      }
+    },
+    "%@ %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@%3$@"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "%@ Without it, teams won't sign you (your chance stays at %lld%%)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ Without it, teams won't sign you (your chance stays at %2$lld%%)."
+          }
+        }
+      }
+    },
+    "%@/yr" : {
+
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "shouldTranslate" : false
+    },
+    "%lld %%" : {
+
+    },
+    "%lld %% match" : {
+
+    },
+    "%lld roles" : {
+
+    },
+    "%lld years" : {
+
+    },
+    "%lld years • compare schools" : {
+
+    },
+    "%lld yr exp." : {
+
+    },
+    "%lld yr%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld yr%2$@"
+          }
+        }
+      }
+    },
+    "%lld yr%@ left" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld yr%2$@ left"
+          }
+        }
+      }
+    },
+    "%lld yrs" : {
+
+    },
+    "%lld%% of the decision" : {
+
+    },
+    "1 role" : {
+
+    },
+    "Activities" : {
+
+    },
+    "Activity" : {
+
+    },
+    "Admission chance:" : {
+
+    },
+    "Admission requirement:" : {
+
+    },
+    "Advice" : {
+
+    },
+    "Age %lld" : {
+
+    },
+    "Age %lld — %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Age %1$lld — %2$@"
+          }
+        }
+      }
+    },
+    "Age:" : {
+
+    },
+    "Any" : {
+
+    },
+    "Apply" : {
+
+    },
+    "Ask for a salary" : {
+
+    },
+    "Ask me anything…" : {
+
+    },
+    "Asking price" : {
+
+    },
+    "Boardroom" : {
+
+    },
+    "Breakthrough:" : {
+
+    },
+    "Business Closed 📉" : {
+
+    },
+    "Career Sim" : {
+
+    },
+    "Champion! 🏆" : {
+
+    },
+    "Chance to get hired:" : {
+
+    },
+    "Close" : {
+
+    },
+    "Compare schools" : {
+
+    },
+    "Congratulations! 🎉" : {
+
+    },
+    "Congratulations! 🎓" : {
+
+    },
+    "Country" : {
+
+    },
+    "Courses" : {
+
+    },
+    "Credentials" : {
+
+    },
+    "Degrees" : {
+
+    },
+    "Degrees and professional courses unlock as you get older and finish school." : {
+
+    },
+    "Economy" : {
+
+    },
+    "Education" : {
+
+    },
+    "Education (preferred):" : {
+
+    },
+    "Education:" : {
+
+    },
+    "Employer" : {
+
+    },
+    "Events" : {
+
+    },
+    "Experience" : {
+
+    },
+    "Experience:" : {
+
+    },
+    "Fame" : {
+
+    },
+    "Fields of study" : {
+
+    },
+    "Finances" : {
+
+    },
+    "Game Over" : {
+
+    },
+    "Jobs" : {
+
+    },
+    "Keep playing" : {
+
+    },
+    "Kind of work" : {
+
+    },
+    "Laid Off" : {
+
+    },
+    "Leading as %@" : {
+
+    },
+    "Let's go! 🚀" : {
+
+    },
+    "Licences" : {
+
+    },
+    "Live a whole life, one year at a time — here's the idea:" : {
+
+    },
+    "Market median" : {
+
+    },
+    "No jobs match these filters. Try another kind of work, or turn off \"Only roles I qualify for\"." : {
+
+    },
+    "Nobody is posting %@ jobs this year. The job market changes every year — check again next year." : {
+
+    },
+    "OK" : {
+
+    },
+    "Occupation" : {
+
+    },
+    "Only roles I qualify for" : {
+
+    },
+    "Pick your character" : {
+
+    },
+    "Progress" : {
+
+    },
+    "Projects" : {
+
+    },
+    "Reached at age %lld." : {
+
+    },
+    "Requirements" : {
+
+    },
+    "Restart" : {
+
+    },
+    "Salary:" : {
+
+    },
+    "Score" : {
+
+    },
+    "Send" : {
+
+    },
+    "Skills" : {
+
+    },
+    "Skip" : {
+
+    },
+    "Start here" : {
+
+    },
+    "Start over" : {
+
+    },
+    "Thanks!" : {
+
+    },
+    "The advisor has something for you" : {
+
+    },
+    "The economy" : {
+
+    },
+    "Thinking…" : {
+
+    },
+    "Total %@" : {
+
+    },
+    "Trophies" : {
+
+    },
+    "Type a job, like “nurse”…" : {
+
+    },
+    "Ventures" : {
+
+    },
+    "Welcome to Career Sim! 👋" : {
+
+    },
+    "What this school looks for:" : {
+
+    },
+    "You have it! This is the biggest help there is for getting signed." : {
+
+    },
+    "You reached %lld — your career is over%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You reached %1$lld — your career is over%2$@"
+          }
+        }
+      }
+    },
+    "You're %lld. Here's how your life is going so far — keep playing%@, or start over." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You're %1$lld. Here's how your life is going so far — keep playing%2$@, or start over."
+          }
+        }
+      }
+    },
+    "Your ask:" : {
+
+    },
+    "Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one." : {
+
+    },
+    "Your progress" : {
+
+    },
+    "Your score" : {
+
+    },
+    "licence" : {
+
+    },
+    "×%lld" : {
+      "shouldTranslate" : false
+    },
+    "—" : {
+      "shouldTranslate" : false
+    },
+    "✓ Earned" : {
+
+    },
+    "✓ You can apply" : {
+
+    },
+    "🌟 %@" : {
+      "shouldTranslate" : false
+    },
+    "🎉" : {
+      "shouldTranslate" : false
+    },
+    "🎉 Goal reached!" : {
+
+    },
+    "🎓 Student loan owed: %@" : {
+
+    },
+    "🎲 %lld%%" : {
+
+    },
+    "🏅 Score: %@ ÷ %lld y.o. = %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "🏅 Score: %1$@ ÷ %2$lld y.o. = %3$@"
+          }
+        }
+      }
+    },
+    "🏆 %lld" : {
+      "shouldTranslate" : false
+    },
+    "🏆 Your accolades: %@" : {
+
+    },
+    "🏛️ Boardroom" : {
+
+    },
+    "🏢 Any of %lld industries — your choice" : {
+
+    },
+    "🏢 Employer" : {
+
+    },
+    "🏦 %@ of it borrowed" : {
+
+    },
+    "🏦 Venture loan owed: %@" : {
+
+    },
+    "🏷️ Worth about %@ · 🎲 ~%lld%% chance someone buys%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "🏷️ Worth about %1$@ · 🎲 ~%2$lld%% chance someone buys%3$@"
+          }
+        }
+      }
+    },
+    "💡" : {
+      "shouldTranslate" : false
+    },
+    "💰 Savings: %@" : {
+
+    },
+    "📉 Declared downturn this year." : {
+
+    },
+    "📉 Declared downturn — roughly %lld more yr to run." : {
+
+    },
+    "📝 %@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "📝 %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "🔒 %@" : {
+      "shouldTranslate" : false
+    },
+    "🔒 Needs the “%@” title" : {
+
+    },
+    "🔒 Not yet" : {
+
+    },
+    "🔒 Nothing to stake yet — earn and save first" : {
+
+    },
+    "🔒 Work or study in %@ to take part" : {
+
+    },
+    "🛡️ %lld%% survive year 1 · stake %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "🛡️ %1$lld%% survive year 1 · stake %2$@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
