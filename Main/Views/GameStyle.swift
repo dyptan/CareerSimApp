@@ -31,12 +31,32 @@ extension Color {
 /// Trainings, Projects. Tapping it spends the year on that row: the sheet
 /// closes and the year runs immediately, so there is nothing to toggle back
 /// off. Shared so "spend this year on X" looks the same in every sheet.
+///
+/// The default label is "Take"; a row with its own verb ("Launch", an event's
+/// "Present") passes `label:` — a literal is localized, a `String` already is.
 struct TakeButton: View {
-    var label: String = "Take"
+    private let label: Text
     let action: () -> Void
 
+    init(action: @escaping () -> Void) {
+        label = Text("Take", comment: "Button on an activity, training or project row: spend this year on it (a verb)")  // i18n:ignore translator comment
+        self.action = action
+    }
+
+    init(label: LocalizedStringKey, action: @escaping () -> Void) {
+        self.label = Text(label)
+        self.action = action
+    }
+
+    /// For a label that is already localized text.
+    @_disfavoredOverload
+    init(label: String, action: @escaping () -> Void) {
+        self.label = Text(verbatim: label)
+        self.action = action
+    }
+
     var body: some View {
-        Button(label, action: action)
+        Button(action: action) { label }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
     }
