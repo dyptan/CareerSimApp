@@ -1,5 +1,8 @@
 import Foundation
 import Combine
+#if canImport(NaturalLanguage)
+import NaturalLanguage
+#endif
 
 // MARK: - The language layer's contract
 
@@ -62,55 +65,102 @@ struct AdvisorPlainLanguage: AdvisorLanguage {
 /// up, or to "work out" a number it was never given; the advisor quotes odds
 /// the player will act on, so a reply is shown only if every number in it
 /// appears in the facts it was written from.
+///
+/// Numbers are compared as *values*, not as strings, and read the way people
+/// write them in every language the game ships in:
+///
+/// * digits of any script, full-width digits (`１２％`), vulgar fractions (`½`);
+/// * grouping by comma, point, space, no-break / narrow no-break / thin space or
+///   apostrophe (`45,000` `45.000` `45 000` `45’000`) and a decimal comma or point
+///   (`12,5` `12.5`) — read from the shape of the number, not the device's locale, so a
+///   reply in one language quoting facts in another still compares. A lone mark before
+///   exactly three digits (`1.234`) is a thousands mark (the game prints amounts, never
+///   three-place decimals); the decimal reading is accepted only if it is itself a fact;
+/// * Japanese quantity words (`680万円` is 6,800,000; `1億2000万`, `3千5百`, `三十`);
+/// * a scale word after a figure (`68 thousand`, `1,5 Millionen`, `3 тис.`);
+/// * spelled-out figures of 20 and over, in any of the game's languages
+///   (`sixty-eight thousand`, `achtundsechzigtausend`, `quatre-vingt-dix`,
+///   `sessantotto`, `двадцять`) — and a spelled-out number of any size next to a
+///   percent word (`twelve percent`, `zwölf Prozent`).
+///
+/// The percent sign (`73%`, `73 %`, `73 ％`, `73 pour cent`) carries no weight of
+/// its own: the value is compared. Small spelled-out counts ("two jobs", `三つ`,
+/// `一番`) are ordinary words and are not figures.
 enum AdvisorGuard {
-    /// What separates thousands besides a comma or a point: a space, a
-    /// no-break or narrow no-break space, a thin space, an apostrophe.
-    private static let groupSeparators: Set<Character> = [" ", "\u{00A0}", "\u{202F}", "\u{2009}", "'", "\u{2019}"]
+    /// One figure found in a text: its value, and — only where the text could be
+    /// read two ways ("1.234": a thousand, or one and a bit) — the other reading.
+    struct Figure: Hashable {
+        let value: Decimal
+        let alternative: Decimal?
 
-    /// True when exactly three digits follow `index` — a thousands group.
-    private static func startsThousandsGroup(_ characters: [Character], after index: Int) -> Bool {
-        guard index + 3 < characters.count,
-              characters[(index + 1)...(index + 3)].allSatisfy(\.isNumber) else { return false }
-        return index + 4 >= characters.count || !characters[index + 4].isNumber
+        init(_ value: Decimal, alternative: Decimal? = nil) {
+            self.value = value
+            self.alternative = alternative
+        }
     }
 
-    /// The numbers in `text`, as bare digits: "68,000 $" → "68000", "12%" → "12",
-    /// "45 000 €" → "45000" whichever way the locale groups thousands.
-    static func numbers(in text: String) -> Set<String> {
-        var found = Set<String>()
-        var current = ""
-        func flush() {
-            let digits = current.filter(\.isNumber)
-            if !digits.isEmpty { found.insert(digits) }
-            current = ""
-        }
-        let characters = Array(text)
-        for (index, character) in characters.enumerated() {
-            if character.isNumber {
-                current.append(character)
-            } else if (character == "," || character == "."),
-                      !current.isEmpty,
-                      index + 1 < characters.count, characters[index + 1].isNumber {
-                // A thousands separator or a decimal point inside a number.
-                current.append(character)
-            } else if groupSeparators.contains(character),
-                      !current.isEmpty,
-                      current.reversed().prefix(while: \.isNumber).count <= 3,
-                      startsThousandsGroup(characters, after: index) {
-                // A space (or apostrophe) grouping thousands, as French, Ukrainian
-                // and Swiss locales write them: "45 000" is one number, not two.
-                current.append(character)
+    // MARK: Reading
+
+    /// The figures in `text`, in order.
+    static func figures(in text: String) -> [Figure] {
+        let chars = Array(normalised(text))
+        var found: [Figure] = []
+        var previousWord = ""
+        var i = 0
+        while i < chars.count {
+            let c = chars[i]
+            if digit(c) != nil {
+                let (figure, next) = arabic(chars, i, allowTail: true)
+                found.append(figure)
+                previousWord = ""
+                i = next
+            } else if let fraction = vulgarFraction(c) {
+                found.append(Figure(fraction))
+                i += 1
+            } else if isJapaneseStart(chars, i) {
+                let (value, next) = japanese(chars, from: i, seed: nil)
+                if value >= 20 || percentFollows(chars, from: next) { found.append(Figure(value)) }
+                previousWord = ""
+                i = next
+            } else if isWordCharacter(c) {
+                let end = wordEnd(chars, from: i)
+                let word = lowered(chars[i..<end])
+                if numberPieces(word) != nil {
+                    let (values, next) = spelledRun(chars, from: i, previousWord: previousWord)
+                    found += values.map { Figure($0) }
+                    previousWord = ""
+                    i = next
+                } else {
+                    previousWord = word
+                    i = end
+                }
             } else {
-                flush()
+                i += 1
             }
         }
-        flush()
         return found
     }
 
-    /// Whether every number in `text` is one of the facts' numbers.
+    /// The numbers in `text` as values: "68,000 $" and "68 000 $" and "68.000 $"
+    /// (in a locale that groups with points) are all 68000, "12.5%" is 12.5, and
+    /// "680万円" is 6800000.
+    static func values(in text: String) -> Set<Decimal> {
+        Set(figures(in: text).map(\.value))
+    }
+
+    /// The same numbers written canonically — "68000", "12.5", never a grouped or
+    /// locale-formatted string — for callers that want text.
+    static func numbers(in text: String) -> Set<String> {
+        Set(values(in: text).map { NSDecimalNumber(decimal: $0).stringValue })
+    }
+
+    /// Whether every number in `text` is one of the facts' numbers. An ambiguous
+    /// figure ("1.234") passes if either reading is a fact.
     static func isGrounded(_ text: String, in facts: [String]) -> Bool {
-        numbers(in: text).isSubset(of: numbers(in: facts.joined(separator: "\n")))
+        let known = values(in: facts.joined(separator: "\n"))
+        return figures(in: text).allSatisfy { figure in
+            known.contains(figure.value) || figure.alternative.map(known.contains) == true
+        }
     }
 
     /// A model's reply ready to show, or nil when it isn't fit: empty, rambling,
@@ -119,6 +169,609 @@ enum AdvisorGuard {
         let text = reply.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, text.count <= maxLength, isGrounded(text, in: facts) else { return nil }
         return text
+    }
+
+    // MARK: Characters
+
+    /// Full-width ASCII (`１２％`, `，`, `．`) becomes plain ASCII — the effect of
+    /// `applyingTransform(.fullwidthToHalfwidth)` on digits and punctuation, without
+    /// its side effect of turning full-width katakana (`パーセント`) into half-width —
+    /// and the Arabic decimal, thousands and percent signs become theirs.
+    private static func normalised(_ text: String) -> String {
+        var scalars = String.UnicodeScalarView()
+        for scalar in text.unicodeScalars {
+            switch scalar.value {
+            case 0xFF01...0xFF5E: scalars.append(Unicode.Scalar(scalar.value - 0xFEE0) ?? scalar)
+            case 0x3000: scalars.append(" ")
+            case 0x066B: scalars.append(".")
+            case 0x066C: scalars.append(",")
+            case 0x066A: scalars.append("%")
+            default: scalars.append(scalar)
+            }
+        }
+        return String(scalars)
+    }
+
+    /// The value of a decimal digit of any script (`7`, `٧`, `७`); nil for anything else.
+    private static func digit(_ c: Character) -> Int? {
+        guard let scalar = c.unicodeScalars.first, scalar.properties.numericType == .decimal,
+              let value = scalar.properties.numericValue else { return nil }
+        return Int(value)
+    }
+
+    private static func vulgarFraction(_ c: Character) -> Decimal? {
+        guard c.unicodeScalars.count == 1, let scalar = c.unicodeScalars.first,
+              (0x00BC...0x00BE).contains(scalar.value) || (0x2150...0x215F).contains(scalar.value) || scalar.value == 0x2189,
+              let value = scalar.properties.numericValue, value > 0, value < 1 else { return nil }
+        return Decimal(string: String(value))
+    }
+
+    /// What separates thousands besides a comma or a point: a space, a
+    /// no-break or narrow no-break space, a thin or figure space, an apostrophe.
+    private static let groupSeparators: Set<Character> = [" ", "\u{00A0}", "\u{202F}", "\u{2009}", "\u{2007}", "'", "\u{2019}", "\u{02BC}"]
+
+    private static func isWordCharacter(_ c: Character) -> Bool {
+        c.isLetter && !isJapaneseDigit(c)
+    }
+
+    private static func wordEnd(_ chars: [Character], from start: Int) -> Int {
+        var end = start
+        while end < chars.count {
+            let c = chars[end]
+            if isWordCharacter(c) { end += 1 }
+            // An apostrophe inside a word: Ukrainian "п'ять", French "l'un".
+            else if isApostrophe(c), end > start, end + 1 < chars.count, isWordCharacter(chars[end + 1]) { end += 1 }
+            else { break }
+        }
+        return end
+    }
+
+    private static func isApostrophe(_ c: Character) -> Bool { c == "'" || c == "\u{2019}" || c == "\u{02BC}" }
+
+    private static func lowered(_ slice: ArraySlice<Character>) -> String {
+        String(slice).lowercased()
+            .replacingOccurrences(of: "\u{2019}", with: "'")
+            .replacingOccurrences(of: "\u{02BC}", with: "'")
+    }
+
+    // MARK: Figures written with digits
+
+    /// A number written with digits at `start`: its grouping and decimal marks
+    /// resolved, a following scale word or Japanese quantity word applied.
+    private static func arabic(_ chars: [Character], _ start: Int, allowTail: Bool) -> (Figure, Int) {
+        var i = start
+        var integer = ""
+        while i < chars.count, let d = digit(chars[i]) { integer.append(String(d)); i += 1 }
+        var lastGroup = integer.count      // digits in the latest integer run
+        var fraction = ""
+        var grouping: Character?           // the mark that groups thousands in this number
+        var ambiguous: Character?          // a lone point/comma + exactly three digits
+
+        while i + 1 < chars.count {
+            let mark = chars[i]
+            guard let first = digit(chars[i + 1]) else { break }
+            var run = String(first)
+            var j = i + 2
+            while j < chars.count, let d = digit(chars[j]) { run.append(String(d)); j += 1 }
+
+            if groupSeparators.contains(mark) {
+                // A space (or apostrophe) grouping thousands: "45 000", never inside a fraction.
+                guard fraction.isEmpty, ambiguous == nil, run.count == 3, lastGroup <= 3,
+                      grouping == nil || grouping == mark else { break }
+                grouping = mark
+                integer += run
+                lastGroup = 3
+                i = j
+            } else if mark == "," || mark == "." {
+                guard fraction.isEmpty, ambiguous == nil else { break }
+                if let grouping, grouping == mark {
+                    guard run.count == 3 else { break }
+                    integer += run
+                    lastGroup = 3
+                    i = j
+                } else if grouping != nil {
+                    // "45 000,50": after a group mark, this one is the decimal point.
+                    fraction = run
+                    i = j
+                } else if run.count == 3, lastGroup <= 3, integer != "0", integer.first != "0" {
+                    // "1,234" / "1.234": the mark repeated or followed by another mark
+                    // is a grouping; alone, only the locale can say.
+                    let followedByMark = j + 1 < chars.count && (chars[j] == "," || chars[j] == ".") && digit(chars[j + 1]) != nil
+                    if followedByMark {
+                        grouping = mark
+                        integer += run
+                        lastGroup = 3
+                        i = j
+                    } else {
+                        ambiguous = mark
+                        fraction = run
+                        i = j
+                    }
+                } else {
+                    fraction = run
+                    i = j
+                }
+            } else {
+                break
+            }
+        }
+
+        let plain = Decimal(string: integer) ?? 0
+        var value = plain
+        var alternative: Decimal?
+        if !fraction.isEmpty {
+            let withFraction = Decimal(string: integer + "." + fraction) ?? plain
+            if ambiguous != nil {
+                // "1.234" / "1,234": the game's figures are amounts (45,000), whose thousands
+                // marks look exactly like this, and it prints no three-place decimals — so a
+                // lone mark before exactly three digits is a thousands mark. The decimal reading
+                // is kept as the alternative, to be taken only if it is itself a fact.
+                value = Decimal(string: integer + fraction) ?? plain
+                alternative = withFraction
+            } else {
+                value = withFraction
+            }
+        }
+
+        // A vulgar fraction right behind it: "1½".
+        var next = i
+        var look = i
+        if look < chars.count, groupSeparators.contains(chars[look]), look + 1 < chars.count, vulgarFraction(chars[look + 1]) != nil { look += 1 }
+        if look < chars.count, let fractionValue = vulgarFraction(chars[look]) {
+            value += fractionValue
+            alternative = alternative.map { $0 + fractionValue }
+            next = look + 1
+            return (Figure(value, alternative: alternative), next)
+        }
+
+        guard allowTail else { return (Figure(value, alternative: alternative), next) }
+
+        // Japanese quantity words: 680万円, 1億2000万, 3千5百.
+        if next < chars.count, jaUnit(chars[next]) != nil {
+            let (total, end) = japanese(chars, from: next, seed: value)
+            return (Figure(total), end)
+        }
+        // A scale word: 68 thousand, 1,5 Millionen, 4 тис., 68k.
+        if let (multiplier, end) = scaleWord(chars, after: next) {
+            return (Figure(value * multiplier, alternative: alternative.map { $0 * multiplier }), end)
+        }
+        return (Figure(value, alternative: alternative), next)
+    }
+
+    /// "thousand", "million", "k" … directly after a figure (one space allowed).
+    private static func scaleWord(_ chars: [Character], after index: Int) -> (Decimal, Int)? {
+        var start = index
+        if start < chars.count, groupSeparators.contains(chars[start]), chars[start] != "'" { start += 1 }
+        guard start < chars.count, chars[start].isLetter, !isJapaneseDigit(chars[start]) else { return nil }
+        let end = wordEnd(chars, from: start)
+        let word = lowered(chars[start..<end])
+        if start == index, word == "k" { return (1_000, end) }
+        guard let multiplier = scaleWords[word] else { return nil }
+        // "тис." — swallow the abbreviation's point.
+        let next = end < chars.count && chars[end] == "." && word.count <= 3 ? end + 1 : end
+        return (multiplier, next)
+    }
+
+    private static let scaleWords: [String: Decimal] = {
+        var words: [String: Decimal] = [:]
+        for w in ["thousand", "tausend", "mille", "mila", "тисяча", "тисячі", "тисяч", "тис"] { words[w] = 1_000 }
+        for w in ["million", "millions", "millionen", "milione", "milioni", "мільйон", "мільйони", "мільйонів", "млн", "mln"] { words[w] = 1_000_000 }
+        for w in ["billion", "billions", "milliard", "milliards", "milliarde", "milliarden", "miliardo", "miliardi", "мільярд", "мільярди", "мільярдів", "млрд", "mld", "mrd"] { words[w] = 1_000_000_000 }
+        return words
+    }()
+
+    // MARK: Japanese quantities
+
+    private static let japaneseDigits: [Character: Int] = [
+        "〇": 0, "零": 0, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
+    ]
+
+    private static func isJapaneseDigit(_ c: Character) -> Bool { japaneseDigits[c] != nil }
+
+    /// 十 百 千 (small) and 万 億 兆 (large): the multiplier, and whether it closes a group.
+    private static func jaUnit(_ c: Character) -> (value: Decimal, isLarge: Bool)? {
+        switch c {
+        case "十": return (10, false)
+        case "百": return (100, false)
+        case "千": return (1_000, false)
+        case "万", "萬": return (10_000, true)
+        case "億", "亿": return (100_000_000, true)
+        case "兆": return (1_000_000_000_000, true)
+        default: return nil
+        }
+    }
+
+    /// A run of kanji numerals starts a figure at a digit, or at 十 / 百 when a numeral or
+    /// unit follows ("十五", "百万") — never at 千 or a large unit, and not at the 百 of 百貨店
+    /// or the 十 of 十分 ("千葉", "万が一" are not numbers either).
+    private static func isJapaneseStart(_ chars: [Character], _ index: Int) -> Bool {
+        let c = chars[index]
+        if isJapaneseDigit(c) { return true }
+        guard c == "十" || c == "百", index + 1 < chars.count else { return false }
+        let next = chars[index + 1]
+        return isJapaneseDigit(next) || jaUnit(next) != nil
+    }
+
+    /// A number token inside a Japanese quantity: digits (`680`, `1.5`) or kanji numerals
+    /// (`六`, `二〇二五`, written positionally).
+    private static func japaneseNumber(_ chars: [Character], _ index: Int) -> (Decimal, Int)? {
+        guard index < chars.count else { return nil }
+        if digit(chars[index]) != nil {
+            let (figure, end) = arabic(chars, index, allowTail: false)
+            return (figure.value, end)
+        }
+        var i = index
+        var digits = ""
+        while i < chars.count, let d = japaneseDigits[chars[i]] { digits.append(String(d)); i += 1 }
+        return digits.isEmpty ? nil : (Decimal(string: digits) ?? 0, i)
+    }
+
+    /// The quantity written from `start`: 六百八十万 = 6,800,000, 3千5百 = 3,500,
+    /// 1億2000万 = 120,000,000. `seed` is a figure already read (the `680` of `680万`).
+    private static func japanese(_ chars: [Character], from start: Int, seed: Decimal?) -> (Decimal, Int) {
+        var total: Decimal = 0
+        var section: Decimal = 0
+        var pending = seed
+        var i = start
+        if seed == nil, let (value, end) = japaneseNumber(chars, i) {
+            pending = value
+            i = end
+        }
+        while i < chars.count, let unit = jaUnit(chars[i]) {
+            if unit.isLarge {
+                section += pending ?? 0
+                total += (section == 0 ? 1 : section) * unit.value
+                section = 0
+            } else {
+                section += (pending ?? 1) * unit.value
+            }
+            pending = nil
+            i += 1
+            if let (value, end) = japaneseNumber(chars, i) {
+                pending = value
+                i = end
+            }
+        }
+        return (total + section + (pending ?? 0), i)
+    }
+
+    // MARK: Percent words
+
+    private static let percentMarkers = [
+        "%", "percent", "per cent", "per cento", "prozent", "pourcent", "pour cent", "percento", // i18n:ignore percent words in several languages
+        "процент", "відсот", "パーセント", "ぱーせんと", "割",
+    ]
+
+    /// Whether a percent sign or word comes next (after optional spaces).
+    private static func percentFollows(_ chars: [Character], from index: Int) -> Bool {
+        var i = index
+        while i < chars.count, chars[i].isWhitespace || groupSeparators.contains(chars[i]) { i += 1 }
+        guard i < chars.count else { return false }
+        let ahead = lowered(chars[i..<min(chars.count, i + 10)])
+        return percentMarkers.contains { ahead.hasPrefix($0) }
+    }
+
+    // MARK: Spelled-out numbers
+
+    private enum Piece {
+        case unit(Int)            // 1…19
+        case tens(Int)            // 20…90
+        case vingt                // French 20, which is also the 80 of "quatre-vingt"
+        case hundred              // multiplies the unit before it, or is 100: hundred, hundert, cento
+        case hundreds(Int)        // a word of its own: двісті = 200
+        case scale(Int)           // thousand, million, billion
+        case connector            // and, und, et — only meaningful inside a number
+    }
+
+    /// Words that are whole numbers in themselves.
+    private static let wholeWords: [String: Piece] = {
+        var words: [String: Piece] = [:]
+        func add(_ list: [String], from first: Int, step: Int = 1, as make: (Int) -> Piece) {
+            for (offset, word) in list.enumerated() { words[word] = make(first + offset * step) }
+        }
+        // English
+        add(["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
+             "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"], from: 1, as: Piece.unit)
+        add(["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"], from: 20, step: 10, as: Piece.tens)
+        words["hundred"] = .hundred; words["thousand"] = .scale(1_000); words["million"] = .scale(1_000_000); words["billion"] = .scale(1_000_000_000)
+        words["and"] = .connector
+        // German
+        add(["ein", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "dreizehn",
+             "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn"], from: 1, as: Piece.unit)
+        words["eine"] = .unit(1); words["einen"] = .unit(1); words["eins"] = .unit(1)
+        add(["zwanzig", "dreißig", "vierzig", "fünfzig", "sechzig", "siebzig", "achtzig", "neunzig"], from: 20, step: 10, as: Piece.tens)
+        words["dreissig"] = .tens(30)
+        words["hundert"] = .hundred; words["tausend"] = .scale(1_000)
+        words["millionen"] = .scale(1_000_000); words["milliarde"] = .scale(1_000_000_000); words["milliarden"] = .scale(1_000_000_000)
+        words["und"] = .connector
+        // French
+        add(["un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize",
+             "quatorze", "quinze", "seize"], from: 1, as: Piece.unit)
+        words["une"] = .unit(1)
+        words["vingt"] = .vingt; words["vingts"] = .vingt
+        words["trente"] = .tens(30); words["quarante"] = .tens(40); words["cinquante"] = .tens(50); words["soixante"] = .tens(60)
+        words["septante"] = .tens(70); words["huitante"] = .tens(80); words["nonante"] = .tens(90)
+        words["cent"] = .hundred; words["cents"] = .hundred
+        words["mille"] = .scale(1_000); words["millions"] = .scale(1_000_000)
+        words["milliard"] = .scale(1_000_000_000); words["milliards"] = .scale(1_000_000_000)
+        words["et"] = .connector
+        // Italian
+        add(["uno", "due", "tre", "quattro", "cinque", "sei", "sette", "otto", "nove", "dieci", "undici", "dodici", "tredici",
+             "quattordici", "quindici", "sedici", "diciassette", "diciotto", "diciannove"], from: 1, as: Piece.unit)
+        words["una"] = .unit(1); words["tré"] = .unit(3)
+        add(["venti", "trenta", "quaranta", "cinquanta", "sessanta", "settanta", "ottanta", "novanta"], from: 20, step: 10, as: Piece.tens)
+        words["cento"] = .hundred; words["mila"] = .scale(1_000)
+        words["milione"] = .scale(1_000_000); words["milioni"] = .scale(1_000_000)
+        words["miliardo"] = .scale(1_000_000_000); words["miliardi"] = .scale(1_000_000_000)
+        // Ukrainian
+        add(["один", "два", "три", "чотири", "п'ять", "шість", "сім", "вісім", "дев'ять", "десять", "одинадцять", "дванадцять", // i18n:ignore number words
+             "тринадцять", "чотирнадцять", "п'ятнадцять", "шістнадцять", "сімнадцять", "вісімнадцять", "дев'ятнадцять"], from: 1, as: Piece.unit) // i18n:ignore number words
+        words["одна"] = .unit(1); words["одне"] = .unit(1); words["дві"] = .unit(2)
+        add(["двадцять", "тридцять", "сорок", "п'ятдесят", "шістдесят", "сімдесят", "вісімдесят", "дев'яносто"], from: 20, step: 10, as: Piece.tens) // i18n:ignore number words
+        add(["сто", "двісті", "триста", "чотириста", "п'ятсот", "шістсот", "сімсот", "вісімсот", "дев'ятсот"], from: 100, step: 100, as: Piece.hundreds) // i18n:ignore number words
+        for w in ["тисяча", "тисячі", "тисяч"] { words[w] = .scale(1_000) }
+        for w in ["мільйон", "мільйони", "мільйонів"] { words[w] = .scale(1_000_000) }
+        for w in ["мільярд", "мільярди", "мільярдів"] { words[w] = .scale(1_000_000_000) }
+        return words
+    }()
+
+    /// Pieces that German and Italian glue into one word (`achtundsechzigtausend`,
+    /// `sessantottomila`). Elided Italian tens (`sessant`) occur only inside a compound.
+    private static let compoundPieces: [String: Piece] = {
+        var pieces = wholeWords.filter { word, piece in
+            if case .hundreds = piece { return false }
+            return !["and", "et", "un", "une", "cents", "vingt", "vingts"].contains(word)
+        }
+        for (word, value) in ["vent": 20, "trent": 30, "quarant": 40, "cinquant": 50, "sessant": 60, "settant": 70, "ottant": 80, "novant": 90] {
+            pieces[word] = .tens(value)
+        }
+        return pieces
+    }()
+    private static let compoundKeys: [String] = compoundPieces.keys.sorted { $0.count > $1.count }
+
+    /// `word` as number pieces — itself, or a German / Italian compound that is made of
+    /// number words from end to end. nil for any other word.
+    private static func numberPieces(_ word: String) -> [Piece]? {
+        if let piece = wholeWords[word] { return [piece] }
+        guard word.count >= 5, word.count <= 40 else { return nil }
+        func split(_ rest: Substring) -> [Piece]? {
+            if rest.isEmpty { return [] }
+            for key in compoundKeys where rest.hasPrefix(key) {
+                if let tail = split(rest.dropFirst(key.count)), let piece = compoundPieces[key] { return [piece] + tail }
+            }
+            return nil
+        }
+        guard let pieces = split(Substring(word)), pieces.count >= 2 else { return nil }
+        return pieces
+    }
+
+    /// The numbers spelled out from `start`: consecutive number words, joined by
+    /// spaces or hyphens, form one number ("sixty-eight thousand five hundred").
+    /// Only a figure of 20 or more — or any size before a percent word — counts;
+    /// the small ones are ordinary words ("one of these", "two jobs", "un an").
+    private static func spelledRun(_ chars: [Character], from start: Int, previousWord: String) -> ([Decimal], Int) {
+        var builder = SpelledNumber()
+        var numbers: [Int] = []
+        var wordsSeen: [String] = []
+        var i = start
+        var end = start
+
+        func close() {
+            if let value = builder.finish() { numbers.append(value) }
+            builder = SpelledNumber()
+        }
+
+        while i < chars.count, isWordCharacter(chars[i]) {
+            let stop = wordEnd(chars, from: i)
+            let word = lowered(chars[i..<stop])
+            guard let pieces = numberPieces(word) else { break }
+            let isConnector = pieces.allSatisfy { if case .connector = $0 { return true } else { return false } }
+            // An "and" opens nothing, and one left hanging at the end belongs to the words after it.
+            if isConnector && wordsSeen.isEmpty { return ([], stop) }
+            for piece in pieces where !builder.feed(piece) {
+                close()
+                _ = builder.feed(piece)
+            }
+            if !isConnector {
+                wordsSeen.append(word)
+                end = stop
+            }
+            // Another number word may follow after a space or a hyphen.
+            var next = stop
+            while next < chars.count, " -\u{00A0}\u{2010}\u{2011}".contains(chars[next]) { next += 1 }
+            guard next > stop, next < chars.count, isWordCharacter(chars[next]) else { break }
+            i = next
+        }
+        close()
+
+        // "per cent" / "pour cent" / "per cento" and the cents of money are not a hundred.
+        let hundredWords: Set<String> = ["cent", "cents", "cento"]
+        if wordsSeen.allSatisfy({ hundredWords.contains($0) }), wordsSeen.count == 1,
+           wordsSeen[0] != "cento" || previousWord == "per" || previousWord == "pour" { return ([], end) }
+
+        let percent = percentFollows(chars, from: end)
+        let values = numbers.enumerated().compactMap { index, value -> Decimal? in
+            value >= 20 || (index == numbers.count - 1 && percent) ? Decimal(value) : nil
+        }
+        return (values, end)
+    }
+
+    /// The number being assembled from spelled-out pieces.
+    private struct SpelledNumber {
+        private var total = 0
+        private var current = 0
+        private var lastScale = Int.max
+        private var pieces = 0
+        private var connectorSeen = false
+
+        /// Adds a piece; false when it can't continue this number (the caller starts a new one).
+        mutating func feed(_ piece: Piece) -> Bool {
+            let rest = current % 100
+            switch piece {
+            case .connector:
+                connectorSeen = pieces > 0
+                return true
+            case .unit(let v):
+                if rest == 0 {
+                    current += v
+                } else if rest >= 20 && rest % 10 == 0 && (v < 10 || rest == 60 || rest == 80) {
+                    current += v                        // twenty-one; French soixante-douze, quatre-vingt-dix
+                } else if rest == 10 && v < 10 {
+                    current += v                        // French: dix-sept
+                } else {
+                    return false
+                }
+            case .tens(let v):
+                if rest == 0 {
+                    current += v
+                } else if (1...9).contains(rest) && connectorSeen {
+                    current += v                        // German: einundzwanzig
+                } else {
+                    return false
+                }
+            case .vingt:
+                if rest == 4 {
+                    current += 76                       // quatre-vingt: 4 + 76 = 80
+                } else if rest == 0 {
+                    current += 20
+                } else {
+                    return false
+                }
+            case .hundred:
+                if current == 0 {
+                    current = 100
+                } else if current < 10 {
+                    current *= 100
+                } else {
+                    return false
+                }
+            case .hundreds(let v):
+                guard current == 0 else { return false }
+                current = v
+            case .scale(let s):
+                guard s < lastScale, current > 0 || (pieces == 0 && total == 0) else { return false }
+                total += max(current, 1) * s
+                current = 0
+                lastScale = s
+            }
+            pieces += 1
+            connectorSeen = false
+            return true
+        }
+
+        /// The finished number, if any piece was fed.
+        func finish() -> Int? { pieces > 0 ? total + current : nil }
+    }
+}
+
+// MARK: - Roles, in the player's words
+
+/// Finding a role from what the player typed, in the player's language. The coach's
+/// own search reads English titles; this adds the titles as the player reads them
+/// (`Job.displayBaseTitle`), so "Krankenpfleger" or "看護師" finds the nurse. Ids
+/// (`Job.baseTitle`) stay English everywhere; only the matching looks at display names.
+enum AdvisorRoles {
+    /// The role as the player reads it.
+    static func displayName(of family: AdvisorCoach.RoleFamily) -> String {
+        family.entry.displayBaseTitle
+    }
+
+    /// The role with this id, as the player reads it (the id itself when there is no such role).
+    static func displayName(of id: String) -> String {
+        AdvisorCoach.family(id).map(displayName(of:)) ?? id
+    }
+
+    /// Lower-cased, without accents and with full-width letters narrowed, for matching.
+    static func fold(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func words(of text: String) -> [String] {
+        text.split { !$0.isLetter && !$0.isNumber }.map(String.init)
+    }
+
+    /// Whether `text` is nothing but the role's name — its English id or its display name.
+    static func isName(of family: AdvisorCoach.RoleFamily, _ text: String) -> Bool {
+        let typed = fold(text)
+        return typed == fold(family.baseTitle) || typed == fold(displayName(of: family))
+    }
+
+    /// Whether the role is named in `text` — "I want to be a Licensed Practical Nurse".
+    static func isNamed(_ family: AdvisorCoach.RoleFamily, in text: String) -> Bool {
+        let typed = fold(text)
+        return typed.contains(fold(family.baseTitle)) || typed.contains(fold(displayName(of: family)))
+    }
+
+    /// The roles a player's words point at, best match first: the coach's search of the
+    /// English titles, and — when the game isn't in English — the displayed titles too.
+    static func search(_ text: String, limit: Int = 6) -> [AdvisorCoach.RoleFamily] {
+        let english = AdvisorCoach.search(text, limit: limit)
+        guard L10n.language != .english else { return english }
+        let query = fold(text)
+        guard !query.isEmpty else { return english }
+        let queryWords = words(of: query)
+
+        let local = AdvisorCoach.families
+            .compactMap { family -> (family: AdvisorCoach.RoleFamily, score: Int)? in
+                let name = fold(displayName(of: family))
+                // A role whose name is not translated yet is the English search's.
+                guard !name.isEmpty, name != fold(family.baseTitle) else { return nil }
+                var score = 0
+                if name == query {
+                    score = 20
+                } else if query.contains(name) || (query.count >= 3 && name.contains(query)) {
+                    score = 10
+                } else {
+                    let nameWords = words(of: name)
+                    for word in queryWords where word.count >= 2 {
+                        let hit = nameWords.contains { other in
+                            other == word || (other.count >= 4 && word.count >= 4 && (other.hasPrefix(word) || word.hasPrefix(other)))
+                        }
+                        if hit { score += 4 }
+                    }
+                }
+                return score > 0 ? (family, score) : nil
+            }
+            .sorted { ($0.score, $1.family.baseTitle) > ($1.score, $0.family.baseTitle) }
+            .map(\.family)
+
+        var merged = local
+        for family in english where !merged.contains(where: { $0.baseTitle == family.baseTitle }) { merged.append(family) }
+        return Array(merged.prefix(limit))
+    }
+
+    /// Words that carry no information in "I want to become a nurse", per language —
+    /// enough to tell a bare job word from a described wish.
+    private static let fillerWords: Set<String> = [
+        // German
+        "ich", "will", "möchte", "moechte", "werden", "ein", "eine", "einen", "als", "arbeiten", "gern", "gerne", "bin", "wäre",
+        // French
+        "je", "veux", "voudrais", "être", "etre", "devenir", "un", "une", "comme", "travailler", "aimerais",
+        // Italian
+        "vorrei", "voglio", "fare", "diventare", "essere", "come", "lavorare", "il", "lo", "la",
+        // Ukrainian
+        "я", "хочу", "бути", "стати", "працювати", "як", "хотів", "хотіла", "би",
+        // Japanese
+        "なりたい", "したい", "です", "ます", "たい", "という", "として", "の", "仕事",
+    ]
+
+    /// How many words of `text` say something. English uses the coach's own count; other
+    /// languages are split with the system's word tokenizer (Japanese has no spaces).
+    static func contentWordCount(_ text: String) -> Int {
+        guard L10n.language != .english else { return AdvisorCoach.contentWords(text).count }
+        var tokens: [String] = []
+        #if canImport(NaturalLanguage)
+        let tokenizer = NLTokenizer(unit: .word)
+        tokenizer.string = text
+        tokenizer.enumerateTokens(in: text.startIndex..<text.endIndex) { range, _ in
+            tokens.append(String(text[range]))
+            return true
+        }
+        #else
+        tokens = words(of: text)
+        #endif
+        return tokens.map { $0.lowercased() }.filter { $0.count > 1 && !fillerWords.contains($0) }.count
     }
 }
 
@@ -255,7 +908,7 @@ final class AdvisorConversation: ObservableObject {
         case .browse(let category):
             browse(category)
         case .pickRole(let title):
-            await aim(at: title, lead: "Great choice!")
+            await aim(at: title, lead: L("Great choice!"))
         case .bestMoves:
             await presentBestMoves()
             offerFollowUps()
@@ -273,10 +926,10 @@ final class AdvisorConversation: ObservableObject {
         guard !isThinking, let family = AdvisorCoach.family(title) else { return }
         isThinking = true
         defer { isThinking = false }
-        say(player: "I'd like to be \(CareerAdvisor.article(for: family.baseTitle)) \(family.baseTitle)")
+        say(player: L("My goal: \(AdvisorRoles.displayName(of: family))"))
         replies = []
         replyBegins = true
-        await aim(at: title, lead: "Great choice!")
+        await aim(at: title, lead: L("Great choice!"))
     }
 
     /// The player typed something.
@@ -294,7 +947,7 @@ final class AdvisorConversation: ObservableObject {
             return
         }
         guard language.isAvailable else {
-            say(advisor: "I can only take your answers from the buttons right now — pick one below.")
+            say(advisor: L("I can only take your answers from the buttons right now — pick one below."))
             offerFollowUps()
             return
         }
@@ -313,33 +966,50 @@ final class AdvisorConversation: ObservableObject {
     // MARK: Flow
 
     private func askOpeningQuestion(changing: Bool) {
-        say(advisor: changing
-            ? "Sure — let's pick a new direction. Do you have a job in mind now, or would you like to explore again?"
-            : voice == .simple
-                ? "Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine."
-                : "Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine.")
-        replies = [
-            AdvisorReply(label: "🎯 I have a role in mind", kind: .haveRole),
-            AdvisorReply(label: "🤔 I haven't decided yet", kind: .undecided),
+        if changing {
+            say(advisor: L("Sure — let's pick a new direction. Do you have a job in mind now, or would you like to explore again?"))
+        } else if voice == .simple {
+            say(advisor: L("Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine."))
+        } else {
+            say(advisor: L("Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine."))
+        }
+        replies = Self.openingChips
+    }
+
+    /// Chips that open every fresh path. Each label is a whole phrase, emoji included.
+    private static var openingChips: [AdvisorReply] {
+        [
+            AdvisorReply(label: String(localized: "🎯 I have a role in mind", comment: "Advisor chat, quick-reply chip: the player already knows which job they want"),
+                         kind: .haveRole),
+            AdvisorReply(label: String(localized: "🤔 I haven't decided yet", comment: "Advisor chat, quick-reply chip: the player does not know yet what job they want"),
+                         kind: .undecided),
         ]
+    }
+
+    private static var otherFieldsChip: AdvisorReply {
+        AdvisorReply(label: String(localized: "← Other fields", comment: "Advisor chat, quick-reply chip: go back to the list of job fields"),
+                     kind: .backToFields)
+    }
+
+    private static var fieldChips: [AdvisorReply] {
+        AdvisorCoach.fields.map {
+            AdvisorReply(label: "\(JobCategory.icon(for: $0)) \($0.displayName)", kind: .browse($0)) // i18n:ignore icon + display name
+        }
     }
 
     private func askForRole() {
         choosing = true
-        say(advisor: "Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.")
-        replies = AdvisorCoach.fields.map {
-            AdvisorReply(label: "\(JobCategory.icon(for: $0)) \($0.rawValue)", kind: .browse($0))
-        }
+        say(advisor: L("Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse."))
+        replies = Self.fieldChips
     }
 
     private func browse(_ category: JobCategory) {
-        say(advisor: "Here are the \(category.rawValue) jobs. Which one sounds like you?")
-        replies = AdvisorCoach.families(in: category).map(roleChip)
-            + [AdvisorReply(label: "← Other fields", kind: .backToFields)]
+        say(advisor: L("Here are the \(category.displayName) jobs. Which one sounds like you?"))
+        replies = AdvisorCoach.families(in: category).map(roleChip) + [Self.otherFieldsChip]
     }
 
     private func roleChip(_ family: AdvisorCoach.RoleFamily) -> AdvisorReply {
-        AdvisorReply(label: "\(family.icon) \(family.baseTitle)", kind: .pickRole(family.baseTitle))
+        AdvisorReply(label: "\(family.icon) \(AdvisorRoles.displayName(of: family))", kind: .pickRole(family.baseTitle)) // i18n:ignore icon + display name
     }
 
     /// Reads a typed role: the model first when there is one, the plain search
@@ -351,19 +1021,15 @@ final class AdvisorConversation: ObservableObject {
             await settle(on: title, typed: text)
             return
         }
-        let matches = AdvisorCoach.search(text).map(\.baseTitle)
-        let typed = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        if matches.count == 1 || matches.first?.lowercased() == typed, let title = matches.first {
-            await aim(at: title, lead: "Great choice!")
+        let matches = AdvisorRoles.search(text)
+        if let only = matches.first, matches.count == 1 || AdvisorRoles.isName(of: only, text) {
+            await aim(at: only.baseTitle, lead: L("Great choice!"))
         } else if matches.isEmpty {
-            say(advisor: "I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field.")
-            replies = AdvisorCoach.fields.map {
-                AdvisorReply(label: "\(JobCategory.icon(for: $0)) \($0.rawValue)", kind: .browse($0))
-            }
+            say(advisor: L("I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field."))
+            replies = Self.fieldChips
         } else {
-            say(advisor: "A few jobs fit that. Which one do you mean?")
-            replies = matches.compactMap { AdvisorCoach.family($0) }.map(roleChip)
-                + [AdvisorReply(label: "← Other fields", kind: .backToFields)]
+            say(advisor: L("A few jobs fit that. Which one do you mean?"))
+            replies = matches.map(roleChip) + [Self.otherFieldsChip]
         }
     }
 
@@ -372,15 +1038,14 @@ final class AdvisorConversation: ObservableObject {
     /// word or two that fits several jobs — "nurse" fits four — is the
     /// player's to settle, not the model's to guess.
     private func settle(on title: String, typed text: String) async {
-        let candidates = AdvisorCoach.search(text).map(\.baseTitle)
-        let named = text.lowercased().contains(title.lowercased())
-        if AdvisorCoach.contentWords(text).count <= 2, !named, candidates.count > 1, candidates.contains(title) {
-            say(advisor: "A few jobs fit that. Which one do you mean?")
-            replies = candidates.compactMap { AdvisorCoach.family($0) }.map(roleChip)
-                + [AdvisorReply(label: "← Other fields", kind: .backToFields)]
+        let candidates = AdvisorRoles.search(text)
+        let named = AdvisorCoach.family(title).map { AdvisorRoles.isNamed($0, in: text) } ?? false
+        if AdvisorRoles.contentWordCount(text) <= 2, !named, candidates.count > 1, candidates.contains(where: { $0.baseTitle == title }) {
+            say(advisor: L("A few jobs fit that. Which one do you mean?"))
+            replies = candidates.map(roleChip) + [Self.otherFieldsChip]
             choosing = true
         } else {
-            await aim(at: title, lead: "Great choice!")
+            await aim(at: title, lead: L("Great choice!"))
         }
     }
 
@@ -394,34 +1059,39 @@ final class AdvisorConversation: ObservableObject {
     private func beginExploring() async {
         choosing = false
         player.advisorPlan = AdvisorCoach.begin(.exploring, for: player)
-        await presentExploration(lead: "No problem!")
+        await presentExploration(lead: L("No problem!"))
         offerFollowUps()
     }
 
     private func offerFollowUps() {
+        let bestMoves = AdvisorReply(label: String(localized: "💡 Best moves right now", comment: "Advisor chat, quick-reply chip: ask for the most useful next moves"),
+                                     kind: .bestMoves)
+        let haveRole = Self.openingChips[0]
         switch player.advisorPlan.path {
         case .unasked:
-            replies = [
-                AdvisorReply(label: "🎯 I have a role in mind", kind: .haveRole),
-                AdvisorReply(label: "🤔 I haven't decided yet", kind: .undecided),
-            ]
+            replies = Self.openingChips
         case .exploring:
-            replies = [
-                AdvisorReply(label: "🎯 I have a role in mind", kind: .haveRole),
-                AdvisorReply(label: "💡 Best moves right now", kind: .bestMoves),
-            ]
+            replies = [haveRole, bestMoves]
         case .target:
             var chips = [
-                AdvisorReply(label: "🔄 Change my goal", kind: .changeGoal),
-                AdvisorReply(label: "💡 Best moves right now", kind: .bestMoves),
+                AdvisorReply(label: String(localized: "🔄 Change my goal", comment: "Advisor chat, quick-reply chip: pick a different target job"),
+                             kind: .changeGoal),
+                bestMoves,
             ]
             if let guide = currentGuide() {
                 if let path = AdvisorPathway.pathway(for: guide, player: player) {
-                    chips.append(AdvisorReply(label: path.isNarrow ? "🧭 The narrow path" : "🧭 What decides it", kind: .showPath))
+                    chips.append(AdvisorReply(
+                        label: path.isNarrow
+                            ? String(localized: "🧭 The narrow path", comment: "Advisor chat, quick-reply chip and heading: how few people reach a very competitive job")
+                            : String(localized: "🧭 What decides it", comment: "Advisor chat, quick-reply chip: what decides whether the player gets the job"),
+                        kind: .showPath))
                 }
                 if AdvisorRealWorld.note(for: guide.focus, player: player) != nil {
-                    chips.append(AdvisorReply(label: voice == .simple ? "🌍 How it really works" : "🌍 How it works in real life",
-                                              kind: .realWorld))
+                    chips.append(AdvisorReply(
+                        label: voice == .simple
+                            ? String(localized: "🌍 How it really works", comment: "Advisor chat, quick-reply chip, simple wording: how the job works in the real world")
+                            : String(localized: "🌍 How it works in real life", comment: "Advisor chat, quick-reply chip: how the job works in the real world"),
+                        kind: .realWorld))
                 }
             }
             replies = chips
@@ -434,6 +1104,12 @@ final class AdvisorConversation: ObservableObject {
     }
 
     // MARK: Saying things
+
+    /// Whole sentences set one after another: a space between them, except in
+    /// Japanese, which doesn't use one.
+    private static func sentences(_ parts: [String]) -> String {
+        parts.filter { !$0.isEmpty }.joined(separator: L10n.language == .japanese ? "" : " ")
+    }
 
     private func say(player text: String) {
         messages.append(AdvisorMessage(speaker: .player, text: text))
@@ -481,13 +1157,14 @@ final class AdvisorConversation: ObservableObject {
     /// player can call up again with a chip.
     private func presentGuide(_ title: String, lead: String, full: Bool = false) async {
         guard let guide = AdvisorCoach.guide(for: title, player: player) else { return }
-        var plain = "\(lead) \(AdvisorCoach.introduction(guide, player: player))"
+        var parts = [lead, AdvisorCoach.introduction(guide, player: player)]
         if guide.steps.contains(where: { ![.listing, .apply].contains($0.kind) }) {
-            plain += " Here's what would help most:"
+            parts.append(L("Here's what would help most:"))
         }
         let brief = brief(
-            "The player chose \(title) as their goal. Tell them where they stand and point them to the steps listed below your message.",
-            facts: AdvisorCoach.facts(guide, player: player), plain: plain)
+            // i18n:ignore instructions to the model
+            "The player chose \(AdvisorRoles.displayName(of: title)) as their goal. Tell them where they stand and point them to the steps listed below your message.", // i18n:ignore instruction to the model
+            facts: AdvisorCoach.facts(guide, player: player), plain: Self.sentences(parts))
         await say(brief, cards: guide.cards)
         if full {
             await presentPathway(guide, forced: false)
@@ -500,23 +1177,27 @@ final class AdvisorConversation: ObservableObject {
     private func presentPathway(_ guide: AdvisorCoach.RoleGuide, forced: Bool) async {
         guard let path = AdvisorPathway.pathway(for: guide, player: player) else {
             if forced {
-                say(advisor: player.isSimplified
-                    ? "There's no luck to worry about here: once you have the right school and enough years of work, the job is yours."
-                    : "There's nothing to plan on this one yet — just keep going with school, activities and trying new things.")
+                if player.isSimplified {
+                    say(advisor: L("There's no luck to worry about here: once you have the right school and enough years of work, the job is yours."))
+                } else {
+                    say(advisor: L("There's nothing to plan on this one yet — just keep going with school, activities and trying new things."))
+                }
             }
             return
         }
         guard forced || path.isNarrow else { return }
         let brief = brief(
-            "The player's goal is \(path.title). Explain how narrow the path is and what decides it; the gates and the levers are listed below your message.",
+            // i18n:ignore instructions to the model
+            "The player's goal is \(path.title). Explain how narrow the path is and what decides it; the gates and the levers are listed below your message.", // i18n:ignore instruction to the model
             facts: path.facts, plain: path.headline)
-        await say(brief, heading: "🧭 The narrow path", cards: path.gates + path.leverCards)
+        let heading = String(localized: "🧭 The narrow path", comment: "Advisor chat, quick-reply chip and heading: how few people reach a very competitive job")
+        await say(brief, heading: heading, cards: path.gates + path.leverCards)
     }
 
     /// The curated real-world view of the role, beside what the game does with it.
     private func presentRealWorld(_ note: AdvisorRealWorld.Note) {
-        say(advisor: "Here's how this works in real life — and how the game plays it.",
-            heading: "🌍 \(note.title)", cards: note.cards)
+        say(advisor: L("Here's how this works in real life — and how the game plays it."),
+            heading: "🌍 " + note.title, cards: note.cards) // i18n:ignore emoji + the note's own title
     }
 
     private func presentExploration(lead: String) async {
@@ -524,31 +1205,33 @@ final class AdvisorConversation: ObservableObject {
         let moves = plan.moves(for: player)
         let left = max(0, AdvisorCoach.exploreMoves - moves)
         let ideas = AdvisorCoach.activityIdeas(for: player)
-        var plain = "\(lead) The best way to find out what you like is to try different things."
-        var facts = ["The player hasn't chosen a role yet and is exploring."]
+        var parts = [lead, L("The best way to find out what you like is to try different things.")]
+        // The facts are for the model, which writes them up in the player's language.
+        var facts = ["The player hasn't chosen a role yet and is exploring."] // i18n:ignore model fact
         if ideas.isEmpty {
-            plain += " Nothing new is open to you right now — look through the jobs list for something that catches your eye."
+            parts.append(L("Nothing new is open to you right now — look through the jobs list for something that catches your eye."))
         } else {
-            plain += " This year, try one of these:"
-            facts += ideas.map { "\($0.sport.label) builds \(AdvisorCoach.list($0.builds))" }
+            parts.append(L("This year, try one of these:"))
+            facts += ideas.map { "\($0.sport.label) builds \(Fmt.list($0.builds))" } // i18n:ignore model fact
         }
         if moves > 0 {
-            plain += left > 0
-                ? " You're \(moves) move\(moves == 1 ? "" : "s") in — \(left) more and I'll suggest jobs that fit you."
-                : " Once you've tried a couple of different things, I'll suggest jobs that fit you."
-            facts.append("Moves spent exploring so far: \(moves). Moves left before suggestions: \(left).")
+            parts.append(left > 0
+                ? L("You're \(moves) moves in — \(Fmt.number(left)) more and I'll suggest jobs that fit you.")
+                : L("Once you've tried a couple of different things, I'll suggest jobs that fit you."))
+            facts.append("Moves spent exploring so far: \(moves). Moves left before suggestions: \(left).") // i18n:ignore model fact
         } else {
-            plain += " After a few moves, I'll suggest jobs that fit the skills you've built."
-            facts.append("After \(AdvisorCoach.exploreMoves) moves the advisor will suggest jobs that fit the skills gained.")
+            parts.append(L("After a few moves, I'll suggest jobs that fit the skills you've built."))
+            facts.append("After \(AdvisorCoach.exploreMoves) moves the advisor will suggest jobs that fit the skills gained.") // i18n:ignore model fact
         }
         let cards = ideas.map { idea in
             AdvisorCard(icon: idea.sport.pictogram, title: idea.sport.label,
-                        detail: "Builds \(AdvisorCoach.list(idea.builds)).",
-                        actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(idea.sport.kind)))])
+                        detail: L("Builds \(Fmt.list(idea.builds))."),
+                        actions: [AdvisorAction(label: L("Open Activities"), effect: .go(.activities(idea.sport.kind)))])
         }
         let brief = brief(
-            "The player hasn't decided on a role. Encourage them to try different activities; the ideas are listed below your message.",
-            facts: facts, plain: plain)
+            // i18n:ignore instructions to the model
+            "The player hasn't decided on a role. Encourage them to try different activities; the ideas are listed below your message.", // i18n:ignore instruction to the model
+            facts: facts, plain: Self.sentences(parts))
         await say(brief, cards: cards)
     }
 
@@ -556,12 +1239,12 @@ final class AdvisorConversation: ObservableObject {
     private func presentStatus() async {
         switch player.advisorPlan.path {
         case .target(let title):
-            await presentGuide(title, lead: "Here's where you stand.")
+            await presentGuide(title, lead: L("Here's where you stand."))
         case .exploring:
             if let latest = player.advisorPlan.checkIns.last, !latest.suggestions.isEmpty {
                 await present(checkIn: latest)
             } else {
-                await presentExploration(lead: "Still exploring — good.")
+                await presentExploration(lead: L("Still exploring — good."))
             }
         case .unasked:
             break
@@ -574,22 +1257,22 @@ final class AdvisorConversation: ObservableObject {
         for title in checkIn.suggestions {
             if let card = suggestionCard(title) { cards.append(card) }
         }
-        let brief = brief(
-            checkIn.role.map { "The advisor's yearly review of the player's progress toward \($0)." }
-                ?? "The advisor's yearly review of the player's exploring.",
-            facts: AdvisorCoach.facts(checkIn), plain: checkIn.headline)
-        await say(brief, heading: "📅 Check-in · age \(checkIn.age)", cards: cards)
+        // i18n:ignore the topic is an instruction to the model
+        let topic = checkIn.role.map { "The advisor's yearly review of the player's progress toward \(AdvisorRoles.displayName(of: $0))." } // i18n:ignore instruction to the model
+            ?? "The advisor's yearly review of the player's exploring." // i18n:ignore instruction to the model
+        let brief = brief(topic, facts: AdvisorCoach.facts(checkIn), plain: checkIn.headline)
+        await say(brief, heading: L("📅 Check-in · age \(checkIn.age)"), cards: cards)
     }
 
     private func suggestionCard(_ title: String) -> AdvisorCard? {
         guard let suggestion = AdvisorCoach.suggestion(title, player: player) else { return nil }
-        var detail = "Uses your \(AdvisorCoach.list(suggestion.matches)). Pays \(suggestion.pay)."
-        if !suggestion.needs.isEmpty { detail += " It takes \(AdvisorCoach.list(suggestion.needs))." }
-        var actions = [AdvisorAction(label: "Aim for this", effect: .aim(title))]
+        var details = [L("Uses your \(Fmt.list(suggestion.matches)). Pays \(suggestion.pay).")]
+        if !suggestion.needs.isEmpty { details.append(L("It takes \(Fmt.list(suggestion.needs)).")) }
+        var actions = [AdvisorAction(label: L("Aim for this"), effect: .aim(title))]
         if player.availableJobs.contains(where: { $0.baseTitle == title }) {
-            actions.append(AdvisorAction(label: "See job listings", effect: .go(.listing(title))))
+            actions.append(AdvisorAction(label: L("See job listings"), effect: .go(.listing(title))))
         }
-        return AdvisorCard(icon: suggestion.icon, title: title, detail: detail, actions: actions)
+        return AdvisorCard(icon: suggestion.icon, title: AdvisorRoles.displayName(of: title), detail: Self.sentences(details), actions: actions)
     }
 
     /// A review's "🎯 Your chance went from 10% to 20%" line as a card: the
@@ -602,24 +1285,24 @@ final class AdvisorConversation: ObservableObject {
     private func presentBestMoves() async {
         let tips = CareerAdvisor.tips(for: player)
         guard !tips.isEmpty else {
-            say(advisor: "Right now, the best move is to keep going! Keep building your skills and check back next year. 👍")
+            say(advisor: L("Right now, the best move is to keep going! Keep building your skills and check back next year. 👍"))
             return
         }
         let cards = tips.map { tip in
             AdvisorCard(icon: tip.icon, title: tip.title, detail: tip.detail,
                         actions: tip.destination.map { [AdvisorAction(label: $0.buttonLabel, effect: .go($0))] } ?? [])
         }
-        say(advisor: "Here are the moves that pay off most right now, best first:", cards: cards)
+        say(advisor: L("Here are the moves that pay off most right now, best first:"), cards: cards)
     }
 
     private func answer(_ question: String) async {
         let brief = brief(
-            "The player asked: \(question)",
+            "The player asked: \(question)", // i18n:ignore instruction to the model
             facts: AdvisorCoach.playerFacts(player), plain: "")
         if let reply = await withTimeout(Self.answerTimeout, { await self.language.answer(question, brief: brief) }) {
             say(advisor: reply)
         } else {
-            say(advisor: "Hmm, I'm not sure about that one. I can tell you about a job, a skill, or what to do next — try asking it that way.")
+            say(advisor: L("Hmm, I'm not sure about that one. I can tell you about a job, a skill, or what to do next — try asking it that way."))
         }
     }
 }
