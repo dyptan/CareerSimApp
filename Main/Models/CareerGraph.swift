@@ -85,7 +85,7 @@ enum CareerGraph {
         // Simplified mode, for every role (see `Job.educationFactor`).
         if job.educationIsMandatory || player.isSimplified, !job.educationMet(for: player) {
             if player.highestEQF < job.requirements.education.minEQF {
-                gaps.append("Earn \(job.requirements.education.educationLabel())")
+                gaps.append("Earn \(job.requirements.education.educationLabel(in: player.country))")
             } else {
                 let fields = (job.requirements.education.acceptedProfiles ?? [])
                     .map { $0.rawValue.capitalized }

@@ -50,8 +50,12 @@ struct Scenario {
     let policy: String
     let startAge: Int
     var lives: Int
+    var country: Country = .default
 
-    var label: String { "\(difficulty.title) · \(policy) · \(startAge)" }
+    /// US scenarios keep their old labels, so earlier baselines still line up.
+    var label: String {
+        "\(difficulty.title) · \(policy) · \(startAge)" + (country == .default ? "" : " · \(country.title)")
+    }
 }
 
 struct ScenarioResult {
@@ -93,13 +97,17 @@ enum Report {
     static func wealth(_ results: [ScenarioResult]) -> String {
         let rows = results.map { r -> [String] in
             let nw = r.values { $0.finalNetWorth }
+            // A millionaire in US-pay terms: 1M dollars, or the same standing in the
+            // country's own money (see `Country.generalPayScale`), so a yen or hryvnia
+            // row isn't measured against a dollar figure.
+            let millionaire = Int(1_000_000 * r.scenario.country.generalPayScale)
             return [r.label, "\(r.records.count)",
                     money(percentile(nw, 0.10)), money(percentile(nw, 0.50)), money(mean(nw)), money(percentile(nw, 0.90)),
-                    pct(share(r.records.map { $0.finalNetWorth >= 1_000_000 })),
+                    pct(share(r.records.map { $0.finalNetWorth >= millionaire })),
                     pct(share(r.records.map { $0.finalNetWorth <= 0 })),
                     String(format: "%.0f", percentile(r.values { $0.finalScore }, 0.5))]
         }
-        return table(["Scenario", "Lives", "NW p10", "NW median", "NW mean", "NW p90", "≥ $1M", "≤ $0", "Median score"], rows)
+        return table(["Scenario", "Lives", "NW p10", "NW median", "NW mean", "NW p90", "≥ 1M (US-pay equiv.)", "≤ 0", "Median score"], rows)
     }
 
     static func earnings(_ results: [ScenarioResult]) -> String {

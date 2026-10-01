@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "China",
+  "adjective": "Chinese",
+  "currencyName": "yuan (renminbi)",
+  "fxPerUSD": {
+   "value": 6.711,
+   "source": "Federal Reserve H.10, China yuan per US dollar, 25 Sep 2026 (latest in release dated 28 Sep 2026): https://www.federalreserve.gov/releases/h10/current/",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 3.4,
+   "source": "World Bank indicator PA.NUS.PPP (GDP PPP conversion factor, LCU per international $), China 2025 = 3.40 (2024 = 3.53): https://api.worldbank.org/v2/country/CHN/indicator/PA.NUS.PPP?format=json&date=2019:2025. Cross-check: 2025 nominal GDP per head of about CN¥99k against IMF PPP GDP per head of about $29k gives roughly 3.4. This is a provisional recent-year estimate.",
+   "confidence": "medium"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 32880,
+   "source": "Shanghai, the highest provincial tier: CN¥2,740 a month, in force since 1 Jul 2025 (China Briefing: https://www.china-briefing.com/doing-business-guide/china/human-resources-and-payroll/minimum-wage ; same figure on wage.is/china and cbltranslations.com). Beijing is CN¥2,540 a month since 1 Sep 2025; the lowest tiers are about CN¥1,700-1,900. There is no national minimum wage.",
+   "confidence": "medium"
+  },
+  "arithmetic": "CN¥2,740 a month x 12 = CN¥32,880. No legal 13th or 14th month. The figure excludes overtime, allowances and social-insurance contributions. Beijing would be 2,540 x 12 = CN¥30,480.",
+  "note": "The minimum wage (Shanghai, CN¥2,740 a month)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "Wikipedia 'Driving licence in China': minimum age for a C1 (light motor vehicle) licence is 18: https://en.wikipedia.org/wiki/Driving_licence_in_China",
+  "confidence": "high",
+  "note": "A full C1 car licence is issued at 18 after a driving-school course and tests. A 12-month probation follows, during which expressway driving needs an experienced driver (3+ years' licence) alongside. The learner's licence is not used on public roads."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 45000,
+   "source": "Estimate anchored on NBS 2025 private-unit averages (wholesale and retail CN¥69,622; hotels and catering CN¥55,123) and the Shanghai minimum wage of CN¥32,880: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. Frontline cashiers earn well below the sector mean. No direct occupational median found.",
+   "confidence": "low"
+  },
+  "electrician": {
+   "value": 80000,
+   "source": "Estimate of roughly CN¥6,500-7,000 a month for a mid-career electrician. Anchored on NBS 2025 averages for private construction (CN¥66,275) and private manufacturing (CN¥76,055): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct occupational median found.",
+   "confidence": "low"
+  },
+  "policeOfficer": {
+   "value": 110000,
+   "source": "Estimate of about 0.9 x the NBS 2025 average for public management and social security (non-private units), CN¥119,465, since rank-and-file police earn below the sector mean: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct police pay scale found.",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 130000,
+   "source": "Estimate of about CN¥10-12k a month plus bonus mid-career. Anchored on NBS 2025 non-private manufacturing (CN¥113,594) and scientific research and technical services (CN¥182,064): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "confidence": "low"
+  },
+  "lawyer": {
+   "value": 100000,
+   "source": "Estimate for an early-career lawyer. Anchored on NBS 2025 leasing and business services, which includes legal services (non-private CN¥110,162; private CN¥68,919): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. Top-tier firm associates earn far more, and small-city juniors earn less.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 600000,
+   "source": "Estimate of about CN¥35-50k base a month x 12-14 plus bonus at a large company. No reliable published median found. NBS 2025 sector averages (https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html) cover all staff, not executives.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 90000,
+   "source": "Estimate of about CN¥7,500 a month for a public-hospital resident physician. Anchored on the NBS 2025 health and social services average (non-private CN¥146,266, private CN¥75,631): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct survey retrieved.",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 200000,
+   "source": "Estimate for an attending or associate-chief physician in a public hospital, about 1.4 x the NBS 2025 health and social services non-private average of CN¥146,266: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct survey retrieved.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 80000,
+   "source": "Estimate of about CN¥6,500 a month plus bonus. Anchored on the NBS 2025 health and social services averages (non-private CN¥146,266 including doctors; private CN¥75,631): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct nurse pay scale found.",
+   "confidence": "low"
+  },
+  "secondaryTeacher": {
+   "value": 100000,
+   "source": "Estimate of about CN¥8,000-8,500 a month for a mid-scale public secondary teacher. The NBS 2025 education average for non-private units is CN¥133,539 but includes universities: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct teacher pay scale found.",
+   "confidence": "low"
+  },
+  "airlineFirstOfficer": {
+   "value": 500000,
+   "source": "Estimate for the national carriers (Air China, China Eastern, China Southern) after the 2022-25 pay cuts. No reliable published figure retrieved. China has a large airline sector, so the estimate is for a real pay band.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 1000000,
+   "source": "Estimate for captains at the national carriers after the 2022-25 pay cuts (roughly CN¥0.8-1.3 million). No reliable published figure retrieved.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 2500000,
+   "source": "Estimate for the CEO or general manager of a large listed company. State-owned firms pay well below CN¥1 million under pay caps; large private and listed firms pay several million. No published median retrieved.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 150000,
+   "source": "Estimate for a public-hospital or clinic dentist, about 1.0 x the NBS 2025 health and social services non-private average of CN¥146,266: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No direct survey retrieved.",
+   "confidence": "low"
+  },
+  "pharmacist": {
+   "value": 85000,
+   "source": "Estimate of about CN¥7,000 a month for a hospital pharmacist. Retail pharmacists earn less. Anchored on the NBS 2025 health and social services averages: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "confidence": "low"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 110000,
+   "source": "Estimate of about CN¥9,000 a month base plus bonus for a graduate developer. Anchored on the NBS 2025 IT sector averages (non-private CN¥248,752; private CN¥128,166): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. Tier-1 big-tech pay is much higher.",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 210000,
+   "source": "Estimate of about CN¥17-18k a month for a developer with 3-6 years' experience. Between the NBS 2025 private IT average (CN¥128,166) and the non-private average (CN¥248,752): https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "confidence": "low"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 70000,
+   "source": "Estimate. NBS publishes only means, not medians: 2025 urban non-private units CN¥129,441 and private units CN¥71,590 (https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html). Assuming roughly 1:2 employment weights gives a mean of about CN¥91k, and a median of about 0.78 x mean is about CN¥70k. Migrant-worker pay of about CN¥5,000 a month (about CN¥60k a year) points the same way. Covers formal urban employees, not all workers.",
+   "confidence": "low"
+  },
+  "p90FullTime": {
+   "value": 170000,
+   "source": "Estimate of about 2.4 x the estimated median (lognormal spread, sigma about 0.68). Consistent with NBS 2025 averages of CN¥211k for finance and CN¥249k for IT in non-private units: https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html. No published percentile found.",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 55000,
+  "source": "Own estimate for a typical tier-2 city, not a published figure. The Shanghai minimum wage of CN¥32,880 (China Briefing: https://www.china-briefing.com/doing-business-guide/china/human-resources-and-payroll/minimum-wage) is well below this.",
+  "confidence": "low",
+  "basis": "Single adult in a typical tier-2 city: shared flat or small studio about CN¥1,600 a month, food about 1,700, transport about 300, utilities, phone and internet about 400. That is about CN¥4,000 a month, or CN¥48,000 a year net. Grossed up for about 10.5% employee social insurance, with no income tax below the CN¥5,000 a month threshold, this is about CN¥54k, rounded to CN¥55,000. Tier-1 cities (Beijing, Shanghai, Shenzhen) cost far more."
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 5000,
+    "source": "Estimate for public higher vocational colleges (高职专科), typically CN¥4,000-6,000 a year. No fee-schedule URL retrieved because the search budget ran out.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 5500,
+    "source": "Estimate for provincial public vocational and applied programmes, including vocational-undergraduate places. No fee-schedule URL retrieved.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 6500,
+    "source": "Estimate for top public vocational colleges. Private vocational colleges charge CN¥12,000-25,000. No fee-schedule URL retrieved.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 5000,
+    "source": "Public higher vocational colleges (高职专科) charge about CN¥4,000-6,000 a year. Recalled from public fee schedules. No URL retrieved.",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 5500,
+    "source": "Provincial public universities charge state-regulated tuition of about CN¥4,000-6,500 a year for most majors, with arts and some majors higher. Recalled from public fee schedules. No URL retrieved.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 5000,
+    "source": "Tsinghua and Peking University regular undergraduate tuition is about CN¥5,000 a year (some majors CN¥6,000+). Tuition is regulated, so elite public universities do not charge a premium. Recalled from university fee schedules. No URL retrieved.",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 8000,
+    "source": "Academic master's at non-elite public universities is about CN¥8,000 a year. Professional master's degrees cost more. Recalled from public fee schedules. No URL retrieved.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 10000,
+    "source": "Typical public master's is about CN¥8,000-10,000 a year for academic degrees. Professional degrees such as MPAcc run higher. Estimate.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 12000,
+    "source": "Academic master's at top universities is about CN¥10,000-12,000 a year. Professional programmes and MBAs at Tsinghua and Peking University cost far more. Estimate.",
+    "confidence": "low"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 10000,
+    "source": "Public doctoral tuition is about CN¥10,000 a year. PhD students usually also receive a stipend that exceeds the fee. Estimate.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 10000,
+    "source": "Public doctoral tuition is about CN¥10,000 a year, often covered by the stipend. Estimate.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 12000,
+    "source": "Top-university doctoral tuition is about CN¥10,000-15,000 a year, largely offset by stipends. Estimate.",
+    "confidence": "low"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 6000,
+    "source": "Estimate for medical and nursing programmes at higher vocational and junior medical colleges. No URL retrieved.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 7000,
+    "source": "Public 5-year clinical medicine is about CN¥6,000-8,000 a year, above regular majors. Estimate.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 8000,
+    "source": "Estimate for eight-year MD programmes at Peking Union Medical College, Peking University and Tsinghua, about CN¥7,000-10,000 a year. No URL retrieved.",
+    "confidence": "low"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 5000,
+    "source": "Estimate for law programmes at lower-tier institutions, at the standard public rate.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 5500,
+    "source": "In China law is a 4-year bachelor's degree (LLB) at the standard public rate of about CN¥5,000-6,000 a year. Estimate.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 5500,
+    "source": "Estimate for LLB programmes at China University of Political Science and Law, Peking University and Tsinghua. The non-law-graduate Juris Master costs much more.",
+    "confidence": "low"
+   }
+  },
+  "notes": "Public tuition in China is state-regulated and low: about CN¥4,000-6,500 a year for most public bachelor's degrees. Elite public universities charge the same or slightly less than provincial ones; the premium exists only in private institutions (CN¥15,000-40,000) and Sino-foreign campuses such as Duke Kunshan or NYU Shanghai (CN¥100,000+). Academic PhD students are usually paid a stipend. All tuition figures are estimates from recalled fee schedules because the web-search budget ran out; none has a verified URL."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0.029,
+   "source": "National Student Loan rate = over-5-year Loan Prime Rate minus 0.6 percentage point (China Daily, 2023 reform: https://www.chinadaily.com.cn/a/202309/26/WS65122d05a310d2dce4bb7c94.html). The over-5-year LPR is 3.5%, unchanged through Sep 2026 (PBoC, 22 Dec 2025: https://www.pbc.gov.cn/en/3688229/3688335/3730276/3883798/2025122515153095570/index.html; Trading Economics), so 3.5% - 0.6% = 2.9%. China Daily does not say which LPR; if it were the 1-year LPR (3.0%), the rate would be 2.4%.",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 0.009,
+   "source": "NBS: CPI up 0.8% year on year in Aug 2026 and 0.9% on average for Jan-Aug 2026: https://www.stats.gov.cn/english/PressRelease/202609/t20260910_1965275.html. The 2025 full-year CPI was flat at 0.0% (https://english.www.gov.cn/news/202601/09/content_WS6960b0f4c6d00ca5f9a0880e.html).",
+   "confidence": "high"
+  },
+  "description": "National Student Loan (国家助学贷款), state-backed and run through China Development Bank and the student's home county. Caps are CN¥12,000 a year for undergraduates and CN¥16,000 for postgraduates (raised in 2023). The rate is the LPR minus 0.6 percentage point. The state covers interest while the student is studying. Recent graduates can defer repayment for a year, and repayment runs over a long term after graduation. Real rate about 2.9% - 0.9% = 2.0%."
+ },
+ "schooling": {
+  "primarySchool": "小学 (xiǎoxué, primary school): 6 years, ages 6-12, free and compulsory. Some provinces such as Shanghai use a 5+4 split instead of 6+3.",
+  "middleSchool": "初中 (chūzhōng, junior middle school): 3 years, ages 12-15, free and compulsory (the 9-year compulsory education ends here). At about 15, students sit the 中考 (zhōngkǎo, senior-high entrance exam), which sorts them into 普通高中 (general academic high school) or 中职 (secondary vocational school). Roughly a half to two-thirds of students enter general high school.",
+  "schoolLeaving": "高中 (gāozhōng, senior high school), 3 years, ages 15-18, ends with 高考 (gāokǎo, the national college entrance exam). The gaokao doubles as the school-leaving result and the only route into university. Alongside it is a pass/fail 学业水平考试 (academic proficiency test). 13.35 million people registered for the 2025 gaokao.",
+  "vocational": "中等职业学校 / 中职 (secondary vocational school, 3 years from age 15) and 技校 (technical school). After that come 高职专科 (higher vocational college, 3-year diploma, ages 18-21) and 职业本科 (vocational bachelor's, 4 years). Some vocational students enter university through a separate 'vocational college entrance' exam.",
+  "tierCommunity": "公办高职院校 (public higher vocational and technical colleges): open admission at the 专科 (short-cycle) score line, a 3-year diploma.",
+  "tierState": "省属公办本科 (provincial public universities, for example Zhengzhou University or a provincial normal university): admitted at the 本科线 (undergraduate line) or the first-batch line, a 4-year bachelor's degree.",
+  "tierElite": "双一流 / 985 universities (Double First-Class; for example 清华大学 Tsinghua, 北京大学 Peking University, 复旦大学 Fudan): admitted only from roughly the top 0.1-1% of gaokao scores in each province.",
+  "gradeName": "高考分数 (gāokǎo score, out of 750)",
+  "gradeSource": "Wikipedia 'Gaokao': https://en.wikipedia.org/wiki/Gaokao (750-point standard, 660 in Shanghai, 900 in Hainan). Typical cut-off lines are approximate, from memory.",
+  "gradeSystem": "Higher is better. Most provinces use 750 points: Chinese, mathematics and a foreign language at 150 each (450), one of physics or history at 100, and two of chemistry, biology, politics and geography at 100 each under the '3+1+2' model. Shanghai uses 660 and Hainan 900. There is no single pass mark. Each province sets cut-off lines by batch: the 专科线 (vocational line, roughly 200-300), the 本科线 (undergraduate line, roughly 400-480) and the 特殊类型招生控制线 (special control line for top-tier universities, roughly 500-540), all varying by province and year. A typical test-taker scores around 400-500, about 600 reaches good provincial universities, and 680-700+ is needed for Tsinghua or Peking University. The cut-off values are approximate and unverified.",
+  "startingAges": "Primary from age 6 (ends 12); junior middle 12-15; zhongkao at about 15 splits general high school (15-18) from secondary vocational (15-18); gaokao at about 18; university bachelor's 4 years (vocational college 3 years). 9 years of free compulsory education."
+ },
+ "highlights": [
+  "In 2025 urban non-private employers averaged CN¥129,441 a year and private ones CN¥71,590; IT paid CN¥248,752 against CN¥62,461 in hotels and catering (NBS).",
+  "University entry hinges on one exam, the 750-point gaokao (13.35 million registered in 2025), and minimum wages are set province by province, topping out at CN¥2,740 a month in Shanghai."
+ ],
+ "caveats": "The session's WebSearch budget (200 of 200) ran out after four searches, so I could not verify most occupational pay and all tuition figures. The rest of the research used WebFetch on known pages only.\n\nVerified: NBS 2025 wages by industry and the CPI figures; PBoC LPR rates; Fed yuan rate; World Bank PPP; gaokao scale; driving age; the student-loan formula and caps (China Daily); the Shanghai minimum wage (three secondary sources agree).\n\nEstimates (low confidence) with no direct source:\n- Every payForGameJobs value and every nationalScales value, including airline pilots and CEO pay. They are anchored on NBS industry means.\n- The software-engineer pay levels.\n- The median and P90 wages. NBS publishes only means, so these are derived from assumed employment weights and a lognormal spread.\n- The living cost.\n- All tuition figures, recalled from fee schedules, with no URLs. Bachelor's fees (state and elite) are the most reliable.\n- The gaokao cut-off lines.\n\nOther points:\n- NBS averages cover urban unit employees only. They exclude rural, informal and migrant workers, so the national median is probably lower than my estimate.\n- China has no national minimum wage. I used Shanghai (CN¥2,740 a month, the highest tier) as the representative floor. Beijing is CN¥2,540, and the lowest tiers are about CN¥1,700-1,900. Secondary sources conflict on dates and on Shenzhen, Guangzhou and other provinces, so I did not use them.\n- Student-loan rate: the LPR reference (over-5-year, giving 2.9%) is from memory of the 2023 policy. China Daily does not say which LPR. A search summary used the 1-year LPR, which would give 2.4%.\n- The FX rate (6.711) is for 25 Sep 2026, not the exact 30 Sep 2026 rate.\n- The PPP factor of 3.40 is the World Bank's latest figure, which may be revised.\""
+}

@@ -23,7 +23,7 @@ struct TrainingRow: View {
         let stage = LifeStage.forAge(player.age)
         return Training.allCases
             .filter { $0.stages.contains(stage) }
-            .filter { player.age >= $0.minAge }
+            .filter { player.age >= $0.minAge(in: player.country) }
             .sorted { $0.friendlyName < $1.friendlyName }
     }
 
@@ -55,7 +55,7 @@ struct TrainingRow: View {
             var lines: [String] = []
             if training.minEQF > 0 {
                 let met = highestEQF >= training.minEQF
-                lines.append("\(met ? "✅" : "❌") 🎓 \(Education.Requirements(minEQF: training.minEQF).educationLabel())")
+                lines.append("\(met ? "✅" : "❌") 🎓 \(Education.Requirements(minEQF: training.minEQF).educationLabel(in: player.country))")
             }
             for prereq in training.prerequisites {
                 let met = player.hardSkills.trainings.contains(prereq)

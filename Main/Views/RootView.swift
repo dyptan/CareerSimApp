@@ -196,17 +196,17 @@ struct RootView: View {
             case 10:
                 let degree = Education(Level.Stage.PrimarySchool)
                 player.degrees.append(degree)
-                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+                player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
                 player.currentEducation = Education(Level.Stage.MiddleSchool)
             case 14:
                 let degree = Education(Level.Stage.MiddleSchool)
                 player.degrees.append(degree)
-                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+                player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
                 player.currentEducation = Education(Level.Stage.HighSchool)
             case 18:
                 let degree = Education(Level.Stage.HighSchool)
                 player.degrees.append(degree)
-                player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+                player.recordStatus("🎓", player.graduationStatus(for: degree))
                 player.graduationMessage = player.graduationMessage(for: degree)
                 player.showGraduationAlert = true
                 player.currentEducation = nil
@@ -299,6 +299,7 @@ struct ModeSelectionView: View {
     /// Chosen avatar and starting age (7–18), set before a difficulty is picked.
     @State private var avatar: String = Player.avatarOptions[0]
     @State private var startAge: Int = GameConstants.startingAge
+    @State private var country: Country = .default
 
     var body: some View {
         ScrollView {
@@ -309,6 +310,7 @@ struct ModeSelectionView: View {
 
                 avatarChooser
                 ageChooser
+                countryChooser
                 difficultyChooser
             }
             .padding()
@@ -364,6 +366,31 @@ struct ModeSelectionView: View {
         }
     }
 
+    /// Where the player grows up: the money the game is priced in. What each
+    /// country changes is behind its ⓘ.
+    private var countryChooser: some View {
+        // A menu with its own label rather than a menu-style picker, so the row
+        // lines up with the age row above it instead of the picker's inset.
+        HStack(spacing: 6) {
+            Menu {
+                Picker("Country", selection: $country) {
+                    ForEach(Country.allCases) { option in
+                        Text("\(option.flag) \(option.title)").tag(option)
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text("\(country.flag) \(country.title)")
+                        .font(.headline)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption.weight(.semibold))
+                }
+            }
+            InfoHint(title: "\(country.flag) \(country.title)", message: country.details)
+            Spacer()
+        }
+    }
+
     private var ageDetails: String {
         var lines = [startingEducationNote]
         if let skipped = skippedYearsNote { lines.append(skipped) }
@@ -382,11 +409,12 @@ struct ModeSelectionView: View {
 
     /// Tells the player which school stage they'll begin in for the chosen age.
     private var startingEducationNote: String {
+        let school = country.schooling
         switch startAge {
-        case ..<10:   return "🎒 You'll start in primary school."
-        case 10..<14: return "🎒 You'll start in middle school (primary school done)."
-        case 14..<18: return "🎒 You'll start in high school (middle school done)."
-        default:      return "🎓 You'll start having just finished high school — time to choose your next step."
+        case ..<10:   return "🎒 You'll start in \(school.primarySchool)."
+        case 10..<14: return "🎒 You'll start in \(school.middleSchool) (\(school.primarySchool) done)."
+        case 14..<18: return "🎒 You'll start in your last years of school (\(school.middleSchool) done)."
+        default:      return "🎓 You'll start having just finished \(school.schoolLeaving) — time to choose your next step."
         }
     }
 
@@ -428,7 +456,7 @@ struct ModeSelectionView: View {
                     }
                     .buttonStyle(.plain)
 
-                    InfoHint(title: "\(difficulty.icon) \(difficulty.title)", message: difficulty.details)
+                    InfoHint(title: "\(difficulty.icon) \(difficulty.title)", message: difficulty.details(in: country))
                         .padding(14)
                 }
             }
@@ -439,6 +467,7 @@ struct ModeSelectionView: View {
     /// chosen difficulty, then starts the game.
     private func start(_ difficulty: Difficulty) {
         player.difficulty = difficulty
+        player.country = country
         player.avatar = avatar
         player.configureStart(age: startAge)
         player.regenerateAvailableJobs()

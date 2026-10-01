@@ -54,11 +54,12 @@ enum AdvisorCoach {
         var entry: Job { rungs[0] }
     }
 
-    /// Every role in the game, by title. Built once: a rung's requirements and
-    /// catalogue pay are fixed (only the employer's sector varies from year to
-    /// year, and `guide` reads that off this year's postings).
-    static let families: [RoleFamily] = {
-        let jobs = JobCatalog.allJobs().filter { !$0.isEntrepreneurial }
+    /// Every role in the game, by title, priced in `country`'s money. Built
+    /// once per country: a rung's requirements and catalogue pay are fixed (only
+    /// the employer's sector varies from year to year, and `guide` reads that
+    /// off this year's postings).
+    private static func buildFamilies(in country: Country) -> [RoleFamily] {
+        let jobs = JobCatalog.allJobs(in: country).filter { !$0.isEntrepreneurial }
         return Dictionary(grouping: jobs, by: \.baseTitle)
             .map { title, rungs -> RoleFamily in
                 let ordered = rungs.sorted { $0.rung < $1.rung }.map { $0.atBaseSalary() }
@@ -66,12 +67,23 @@ enum AdvisorCoach {
                                   category: ordered[0].category, rungs: ordered)
             }
             .sorted { $0.baseTitle < $1.baseTitle }
-    }()
+    }
 
-    private static let familiesByTitle: [String: RoleFamily] =
-        Dictionary(uniqueKeysWithValues: families.map { ($0.baseTitle, $0) })
+    private static let familiesByCountry: [Country: [String: RoleFamily]] =
+        Dictionary(uniqueKeysWithValues: Country.allCases.map { country in
+            (country, Dictionary(uniqueKeysWithValues: buildFamilies(in: country).map { ($0.baseTitle, $0) }))
+        })
 
-    static func family(_ baseTitle: String) -> RoleFamily? { familiesByTitle[baseTitle] }
+    /// Every role, in the reference (US) pricing. The roles, rungs and
+    /// requirements are the same in every country, so this is the list for
+    /// anything about *which* roles exist — search, the fields, the model's
+    /// choices. Anything that quotes pay reads `family(_:in:)`.
+    static let families: [RoleFamily] = buildFamilies(in: .default)
+
+    /// A role, priced in `country`'s money.
+    static func family(_ baseTitle: String, in country: Country = .default) -> RoleFamily? {
+        familiesByCountry[country]?[baseTitle]
+    }
 
     /// The fields that have roles to pick from, in alphabetical order.
     static let fields: [JobCategory] =
@@ -250,15 +262,17 @@ enum AdvisorCoach {
 
     /// The suggestion for one role, if the skills gained point at it at all.
     static func suggestion(_ baseTitle: String, player: Player) -> RoleSuggestion? {
-        guard let family = family(baseTitle),
+        guard let family = family(baseTitle, in: player.country),
               let candidate = SkillReading(player).candidate(family, player: player) else { return nil }
         return suggestion(from: candidate, player: player)
     }
 
     private static func suggestion(from candidate: SkillReading.Candidate, player: Player) -> RoleSuggestion {
-        RoleSuggestion(
+        // Picked from the reference list; priced in the player's country.
+        let family = Self.family(candidate.family.baseTitle, in: player.country) ?? candidate.family
+        return RoleSuggestion(
             baseTitle: candidate.family.baseTitle, icon: candidate.family.icon, category: candidate.family.category,
-            matches: candidate.matches, pay: CareerAdvisor.payStory(candidate.family.entry, player),
+            matches: candidate.matches, pay: CareerAdvisor.payStory(family.entry, player),
             needs: guide(for: candidate.family.baseTitle, player: player)?.needs ?? [], score: candidate.score)
     }
 
@@ -419,7 +433,7 @@ enum AdvisorCoach {
     /// What the advisor tells a player who has picked `baseTitle`. Nil for a
     /// title that isn't a role.
     static func guide(for baseTitle: String, player: Player) -> RoleGuide? {
-        guard let family = family(baseTitle) else { return nil }
+        guard let family = family(baseTitle, in: player.country) else { return nil }
         let (rung, onLadder, atTop) = focusRung(of: family, player: player)
         let posting = player.availableJobs.first { $0.id == rung.id && !$0.isEntrepreneurial }
         let focus = (posting ?? rung).atBaseSalary()
@@ -468,7 +482,7 @@ enum AdvisorCoach {
             if let studying = player.currentEducation, studying.profile != nil,
                studying.eqf >= edu.minEQF,
                (edu.acceptedProfiles ?? []).isEmpty || studying.profile.map({ (edu.acceptedProfiles ?? []).contains($0) }) == true {
-                add(.education, "🎓", "Keep studying — your \(studying.degreeName) is what this job asks for.")
+                add(.education, "🎓", "Keep studying — your \(studying.degreeName(in: player.country)) is what this job asks for.")
             } else if CareerAdvisor.canOpenEducation(player) {
                 add(.education, "🎓", "Get \(phrase). It's the longest step, so start early.",
                     [AdvisorAction(label: "Open Education", effect: .go(.education))])
@@ -697,7 +711,7 @@ enum AdvisorCoach {
             }
             if now.educationLevel > before.educationLevel, let degree = player.degrees.last {
                 moved = true
-                progress.append("🎓 You earned your \(degree.degreeName).")
+                progress.append("🎓 You earned your \(degree.degreeName(in: player.country)).")
             }
             let earned = now.licences.subtracting(before.licences)
             if !earned.isEmpty {
@@ -839,11 +853,11 @@ enum AdvisorCoach {
             facts.append("They are playing the Simplified mode: getting hired only takes the right school, enough years of work and being old enough. There are no odds, luck, fame or seats to worry about.")
         }
         if let job = player.currentOccupation {
-            facts.append("They work as \(job.id), earning \(CareerAdvisor.money(job.annualIncome)) a year.")
+            facts.append("They work as \(job.id), earning \(CareerAdvisor.money(job.annualIncome, player)) a year.")
         } else {
             facts.append("They have no job right now.")
         }
-        facts.append("Their best qualification: \(player.degrees.max { $0.eqf < $1.eqf }?.degreeName ?? "none yet").")
+        facts.append("Their best qualification: \(player.degrees.max { $0.eqf < $1.eqf }?.degreeName(in: player.country) ?? "none yet").")
         let strongest = SoftSkills.allAxes
             .map { (label: $0.label, value: player.softSkills[keyPath: $0.keyPath]) }
             .filter { $0.value > 0 }

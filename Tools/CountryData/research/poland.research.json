@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Poland",
+  "adjective": "Polish",
+  "currencyName": "zloty",
+  "fxPerUSD": {
+   "value": 3.8449,
+   "source": "https://api.nbp.pl/api/exchangerates/rates/a/usd/last/5/?format=json (National Bank of Poland mid rate, 30 Sep 2026)",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 1.97,
+   "source": "https://api.worldbank.org/v2/country/POL/indicator/PA.NUS.PPP?format=json&date=2020:2025 (World Bank PPP conversion factor, GDP, LCU per international $, 2025 = 1.9696; the household-consumption PPP, indicator PA.NUS.PRVT.PP, is 2.063)",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 57672,
+   "source": "https://www.wnp.pl/rynki/4806-zl-co-miesiac-dla-kazdego-wyplaty-rusza-1-stycznia-2026-r,984303.html (4,806 zł a month and 31.40 zł an hour from 1 Jan 2026, published in Dziennik Ustaw on 15 Sep 2025); GUS also quotes 4,806 zł as the current minimum in https://stat.gov.pl/obszary-tematyczne/rynek-pracy/pracujacy-zatrudnieni-wynagrodzenia-koszty-pracy/rozklad-wynagrodzen-w-gospodarce-narodowej-w-marcu-2026-r-,32,27.html",
+   "confidence": "high"
+  },
+  "arithmetic": "4,806 zł a month x 12 = 57,672 zł. Hourly rate 31.40 zł. Poland has no legal 13th or 14th month for private-sector employees, so none is added.",
+  "note": "The minimum wage (4,806 zł a month)"
+ },
+ "drivingAge": {
+  "value": 17,
+  "source": "https://www.gov.pl/web/gov/kategorie-prawa-jazdy (Ministry of Infrastructure, updated 09.07.2026: category B = 17 years)",
+  "confidence": "high",
+  "note": "Category B (car) opens at 17; until 18 the licence is valid only inside Poland. Course and exam can start up to 3 months earlier. The page mentions no supervision requirement (AM moped is 14, A1 motorcycle 16, A2 18)."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 67500,
+   "source": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5474/4/12/1/tablice_struktura_wynagrodzen_wedlug_zawodow_za_pazdziernik_2024_v01.xlsx (Tabl. 13, group 523 cashiers and ticket clerks, median 5,063.87 zł a month, Oct 2024) x1.13 growth x12 = 68,700; cross-check https://forsal.pl/praca/wynagrodzenia/artykuly/11318694,ile-zarabia-kasjer-w-sklepie-biedronka-ile-placa-w-lidlu-zarobki-w-dyskontach.html (Biedronka cashier 5,300-5,900 zł brutto in 2026, about 5,600 x 12 = 67,200)",
+   "confidence": "high"
+  },
+  "electrician": {
+   "value": 107500,
+   "source": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5474/4/12/1/tablice_struktura_wynagrodzen_wedlug_zawodow_za_pazdziernik_2024_v01.xlsx (Tabl. 13, group 741 electrical equipment installers and repairers, median 7,932.81 zł a month, Oct 2024) x1.13 x12 = 107,570",
+   "confidence": "medium"
+  },
+  "policeOfficer": {
+   "value": 120000,
+   "source": "https://praca.policja.pl/rdp/zarobki (official: basic pay of a constable after training 6,966.50 zł gross a month, 8,178.10 with Warsaw allowance and riot-unit supplement); https://polskieradio24.pl/pieniadze/ilu-jest-policjantow-w-polsce-zarobki-wakaty-i-emerytury-mundurowe (average police pay in 2026 estimated at about 9,880 zł a month). Typical about 9,200 x 12 x 1.085 (annual extra pay of about 8.5%) = 119,800",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 136000,
+   "source": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5474/4/12/1/tablice_struktura_wynagrodzen_wedlug_zawodow_za_pazdziernik_2024_v01.xlsx (Tabl. 13, group 214 engineers excl. electrotechnology: median 9,728.22 all, 10,399.70 men, Oct 2024) x1.13 x12 = 131,900 (all) to 141,000 (men); midpoint used for a mid-career mechanical engineer",
+   "confidence": "medium"
+  },
+  "lawyer": {
+   "value": 114000,
+   "source": "https://forsal.pl/praca/aktualnosci/artykuly/11263933,prawnicy-na-rynku-pracy-2026-start-od-7-10-tys-zl-a-potem-szybki-sk.html (junior lawyers 7-10k zł gross a month in 2026, specialists 11-18k); GUS Oct 2024 Tabl. 13 group 261 legal professionals, 2nd and 3rd decile 8,669 and 10,249 zł a month x1.13 x12 = 117,600 to 139,000. About 9,500 x 12 = 114,000",
+   "confidence": "medium"
+  },
+  "salesDirector": {
+   "value": 432000,
+   "source": "https://www.dlahandlu.pl/raporty-i-analizy/na-takim-stanowisku-zarabiaja-30-tys-za-miesiac-pracy-mozna-kupic-samochod,172574.html (Goldman Recruitment Salary Survey 2026: sales director median 42,000 zł gross a month in FMCG, 30,000 in retail). Average 36,000 x 12 = 432,000",
+   "confidence": "medium"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 139857,
+   "source": "https://www.medexpress.pl/zawody-medyczne/wynagrodzenia-rezydentow-nowe-stawki-od-1-lipca-2026-r/ (from 1 Jul 2026 basic pay of residents: 11,654.76 zł in the first two years of a priority specialty, 12,714.29 after; 10,595.24 to 10,913.10 in other specialties); final rules reported by https://www.rp.pl/ochrona-zdrowia/art44725451-nowe-stawki-dla-lekarzy-rezydentow-od-1-lipca-opublikowano-rozporzadzenie. 11,654.76 x 12 = 139,857, before on-call duty pay",
+   "confidence": "high"
+  },
+  "specialistPhysician": {
+   "value": 288500,
+   "source": "https://pracamedyka.pl/aktualnosci/aotmit-srednie-place-etatowych-lekarzy-i-pielegniarek-wyzsze-niz-ustawowe-minima (AOTMiT data from 538 hospitals, Feb 2026: employed specialist doctors average 24,044.76 zł gross a month, including on-call duty and overtime) x 12 = 288,537. Legal minimum base pay from 1 Jul 2026 is 12,910.16 zł a month (1.45 x 8,903.56), i.e. 154,922 a year: https://www.rynekzdrowia.pl/Finanse-i-zarzadzanie/Od-dzis-12-910-zl-zl-dla-lekarzy-11-485-zl-dla-pielegniarek-1-lipca-podwyzki-medykow,286085,1.html",
+   "confidence": "medium"
+  },
+  "registeredNurse": {
+   "value": 138000,
+   "source": "https://www.gazetaprawna.pl/praca/wynagrodzenia/artykuly/11252645,ile-zarabia-pielegniarka-2026-nowe-stawki-ochrona-zdrowia.html (AOTMiT, Feb 2026: nurses without a master's or specialisation, group 6, about 11,000 zł gross a month; with master's and specialisation 15,300) and legal minima from 1 Jul 2026 of 8,369 (group 6) to 11,486 zł (master's plus specialisation) in the Rynek Zdrowia article above; GUS Oct 2024 nursing professionals median 10,650.90 zł a month. About 11,500 x 12 = 138,000",
+   "confidence": "medium"
+  },
+  "secondaryTeacher": {
+   "value": 121000,
+   "source": "https://oko.press/nauczyciele-znowu-traca-do-sredniej-broniarz-zazada-od-nowackiej-drugiej-podwyzki-2026 (Teachers' Charter average pay 2026 incl. allowances: appointed teacher 8,061 zł, chartered teacher 10,300 zł a month; chartered teachers are 54.9% of staff); (8,061 + 10,300) / 2 x 12 x 1.085 (13th salary) = 119,500; GUS Oct 2024 group 233 secondary teachers median 9,447.48 zł x 1.0815 (2025 and 2026 pay rises) x 12 = 122,600",
+   "confidence": "medium"
+  },
+  "airlineFirstOfficer": {
+   "value": 174000,
+   "source": "https://www.biznesinfo.pl/tyle-zarabia-pilot-pll-lot-kwota-zaskakuje-w-gre-wchodza-kosmiczne-pieniadze-jb-wks-280426 (PLL LOT first officer starts at 12-13k zł gross a month); https://www.fakt.pl/hobby/turystyka/ile-zarabia-pilot-linii-lotniczych-roznice-miedzy-lot-wizz-air-i-ryanair/3th2cw1 (experienced Polish first officers 15-18k gross). About 14,500 x 12 = 174,000",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 384000,
+   "source": "https://www.fakt.pl/hobby/turystyka/ile-zarabia-pilot-linii-lotniczych-roznice-miedzy-lot-wizz-air-i-ryanair/3th2cw1 (captain in Polish airlines 20-25k zł net a month on average, best-paid 40-50k gross); https://www.biznesinfo.pl/tyle-zarabia-pilot-pll-lot-kwota-zaskakuje-w-gre-wchodza-kosmiczne-pieniadze-jb-wks-280426 (LOT Dreamliner captain 40-50k gross). About 32,000 x 12 = 384,000",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 3560000,
+   "source": "https://www.dlahandlu.pl/raporty-i-analizy/tyle-zarabiaja-zarzady-spolek-gieldowych-raport-o-wynagrodzeniach,175574.html (PAP on the Sedlak & Sedlak report, 23 Sep 2026: median annual pay of WIG20 company CEOs in 2025 was 3.56 million zł; 4.41 million in 2024; average board member of any listed company 1.36 million). GUS Oct 2024 group 112 managing directors: median 18,230 zł a month",
+   "confidence": "medium"
+  },
+  "dentist": {
+   "value": 140000,
+   "source": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5474/4/12/1/tablice_struktura_wynagrodzen_wedlug_zawodow_za_pazdziernik_2024_v01.xlsx (Tabl. 13, group 226 dentists, median 10,354.71 zł a month, mean 13,831, Oct 2024) x1.13 x12 = 140,400 (mean version 187,600); cross-check https://pkb24.pl/ile-zarabia-dentysta-w-2025-roku-aktualne-stawki-i-realne-zarobki-stomatologow/ (median about 9,310 zł gross a month in 2025, private practices 10-20k+)",
+   "confidence": "medium"
+  },
+  "pharmacist": {
+   "value": 132000,
+   "source": "https://stat.gov.pl/download/gfx/portalinformacyjny/pl/defaultaktualnosci/5474/4/12/1/tablice_struktura_wynagrodzen_wedlug_zawodow_za_pazdziernik_2024_v01.xlsx (Tabl. 13, group 228 pharmacists, median 9,756.80 zł a month, Oct 2024) x1.13 x12 = 132,300",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 102000,
+   "source": "https://businessinsider.com.pl/praca/wynagrodzenia/ile-zarabia-programista-i-pracownicy-it-konkretne-kwoty/qlkljye (Bulldogjob 2025 survey, employment contract: junior backend median 6,000 zł net a month, junior frontend 5,500; converted to gross by the 2026 tax and social-insurance rules about 8,300 and 7,600); GUS Oct 2024 group 251 developers 2nd decile 8,705 zł. About 8,500 x 12 = 102,000",
+   "confidence": "medium"
+  },
+  "midLevel": {
+   "value": 180000,
+   "source": "https://forsal.pl/praca/artykuly/11264502,praca-w-polsce-2026-gdzie-jest-robota-i-ile-mozna-zarobic-nawet-26-0.html (Kraków IT Market 2026: mid-level developer median about 17,000 zł gross a month, nominal pay flat); Bulldogjob 2025 via the Business Insider link above (backend developer with experience 9,416 zł net, about 13,800 gross); GUS Oct 2024 group 251 median 13,900 zł. About 15,000 x 12 = 180,000",
+   "confidence": "medium"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 93000,
+   "source": "https://stat.gov.pl/obszary-tematyczne/rynek-pracy/pracujacy-zatrudnieni-wynagrodzenia-koszty-pracy/rozklad-wynagrodzen-w-gospodarce-narodowej-w-marcu-2026-r-,32,27.html (GUS, from ZUS data: median monthly gross 7,530.45 zł in Mar 2026, +7.6% on a year). Sum of the twelve monthly medians of 2025 = 86,956 zł; x1.07 for 2026 growth = 93,000",
+   "confidence": "medium"
+  },
+  "p90FullTime": {
+   "value": 185000,
+   "source": "Same GUS workbook (Tabl. 15 deciles) and the earlier monthly releases, e.g. https://stat.gov.pl/obszary-tematyczne/rynek-pracy/pracujacy-zatrudnieni-wynagrodzenia-koszty-pracy/rozklad-wynagrodzen-w-gospodarce-narodowej-we-wrzesniu-2025-r-,32,21.html. Ninth decile: Mar 2026 15,424.85 zł a month; sum of the twelve 2025 monthly ninth deciles = 172,644; x1.07 = 184,700. Cross-check: GUS Oct 2024 earnings-structure survey ninth decile 14,350.89 x1.13 x12 = 194,600",
+   "confidence": "medium"
+  }
+ },
+ "livingCost": {
+  "value": 68000,
+  "basis": "A single adult renting a studio in a typical large non-capital city: rent about 2,100 zł (Otodom Analytics, May 2026, studios up to 40 m2: Kraków 2,445, Wrocław 2,386, Poznań 2,100, Łódź 1,828, Katowice 1,825; Warsaw 2,957) + utilities and internet 450 + food about 1,200 + transport 130 + phone and basics 300 = about 4,180 zł net a month (about 50,200 a year). Under 2026 employment-contract tax and social-insurance rules that needs about 68,000 zł gross a year. A minimum-wage worker (57,672 gross, about 3,600 net a month) cannot afford this alone and usually shares a flat.",
+  "source": "https://www.bankier.pl/wiadomosc/Ceny-ofertowe-wynajmu-mieszkan-czerwiec-2026-Raport-Bankier-pl-9154152.html ; https://www.bankier.pl/smart/ile-kosztuje-zycie-singla-vs-rodziny-w-2025-budzety-ktore-otwieraja-oczy (single in a 35 m2 flat in a big city: rent 2,400 + bills 450 + insurance 60). Food, transport and basics are my estimates.",
+  "confidence": "medium"
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 0,
+    "source": "https://www.constituteproject.org/constitution/Poland_2009 (Art. 70: education in public schools is free); public post-secondary vocational schools charge no fee",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.constituteproject.org/constitution/Poland_2009 (Art. 70)",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.constituteproject.org/constitution/Poland_2009 (Art. 70)",
+    "confidence": "medium"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding (public higher education institutions charge no tuition in full-time first-, second- and long-cycle programmes)",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding (the most selective universities, Warsaw, Jagiellonian, Warsaw University of Technology, SGH, are public)",
+    "confidence": "high"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding (full-time doctoral programmes are free)",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding (long-cycle programmes, including medicine, are free when full-time at public universities)",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/poland/higher-education-funding",
+    "confidence": "high"
+   }
+  },
+  "notes": "Poland has no community colleges, and the most selective universities are public, so every cell is 0 for a full-time student at a public institution (Eurydice). Fees that remain: admission fee 85 zł per application, student ID 22 zł once. Fees are charged for part-time study, repeated courses, programmes taught in a foreign language and non-degree postgraduate courses. Private universities charge fees, which the game's tiers do not model: the press reports 2026/27 private medicine at 372,000-494,000 zł for the six years (about 60,000-92,000 a year), and part-time medicine at a public university at 26,000 zł a semester (https://biznes.o2.pl/biznes/prywatne-studia-lekarskie-czesne-siega-nawet-prawie-500-tys-zl-7307661715277824a). Private bachelor fees of a few thousand to tens of thousands of zł a year are my general knowledge, not sourced."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0.019,
+   "source": "https://www.gov.pl/web/nauka/kredyty-studenckie (Ministry of Science: interest is half of the NBP bill rediscount rate); rediscount rate 3.80% per https://student360.pl/blog/kredyt-studencki-warunki-zasady-i-czy-warto-2026-27 (5 Mar 2026), NBP reference rate still 3.75% in Sep 2026 per https://tradingeconomics.com/poland/interest-rate. Half of 3.80% = 1.90%",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 0.04,
+   "source": "https://tradingeconomics.com/poland/inflation-cpi (GUS flash estimate: CPI 4.0% year on year in Sep 2026, up from 3.4% in Aug)",
+   "confidence": "medium"
+  },
+  "description": "Kredyt studencki: a bank loan guaranteed and subsidised by the state, paid out as 400-1,000 zł a month to full-time students for up to six years (Student360/Pekao). The state pays the interest during study and a two-year grace period. After that the graduate repays over twice the borrowing time, at interest of half the NBP rediscount rate (1.9% now). Some bank pages describe the rate as 1.2 x rediscount + margin with the student paying half, which gives about 2.3-3.3%. The top 10% of graduates can have up to 50% cancelled. At 4.0% inflation the real rate is about -2%."
+ },
+ "schooling": {
+  "primarySchool": "Szkoła podstawowa, an 8-year single-structure primary school for ages 7-15 (klasy 1-3 early school education, klasy 4-8 subject teaching), after one compulsory pre-school year (zerówka) at age 6; ends with the external egzamin ósmoklasisty",
+  "middleSchool": "There is no separate lower-secondary school: klasy 4-8 (ages 10-15) of the szkoła podstawowa are that stage, after the 2017 reform replaced the 3-year gimnazjum",
+  "schoolLeaving": "Matura (egzamin maturalny, świadectwo dojrzałości) at the end of liceum ogólnokształcące (4 years, ages 15-19) or technikum (5 years, ages 15-20)",
+  "vocational": "Branżowa szkoła I stopnia (3-year sectoral vocational school, ages 15-18, then an optional 2-year branżowa szkoła II stopnia leading to the matura); technikum (5 years, vocational diploma plus matura); szkoła policealna (post-secondary vocational school, 1-2.5 years)",
+  "tierCommunity": "Państwowa uczelnia zawodowa / Akademia Nauk Stosowanych (public university of applied sciences) or szkoła policealna: free when full-time",
+  "tierState": "Uniwersytet or politechnika (public university), for example Uniwersytet Łódzki: free when full-time",
+  "tierElite": "Uniwersytet Warszawski, Uniwersytet Jagielloński, Politechnika Warszawska, SGH (Szkoła Główna Handlowa): public and free, the most selective by matura points (my general knowledge of the rankings)",
+  "gradeName": "Matura (egzamin maturalny), each subject scored as a percentage",
+  "gradeSource": "https://wydarzenia.interia.pl/matura/news-matury-2026-cke-podala-wyniki-egzaminow,nId,23511103 ; https://tvn24.pl/polska/wyniki-matur-2026-sa-dane-z-cke-st9132409 (CKE results, 8 Jul 2026); structure from https://eurydice.eacea.ec.europa.eu/national-education-systems/poland/overview",
+  "gradeSystem": "There is no single overall mark: every exam gets its own score from 0 to 100% and higher is better. To pass you need at least 30% in each mandatory exam (written Polish, mathematics and a modern language at basic level, plus oral Polish and oral language); the extended-level subjects have no pass mark, and you must take at least one. Typical 2026 results: basic Polish 59%, basic mathematics 59%, basic English 78%, extended mathematics 37%; 81.1% passed in the May session (85.9% of liceum and 71.3% of technikum graduates), and those who failed one exam can retake it in August. A top result is 90-100% (317 of 321,314 candidates scored 90-100% in every exam they took). There are no named bands on the certificate; universities turn the percentages, mainly extended subjects, into admission points. In class, pupils are graded 1-6 (6 best, 2 is a pass, 1 a fail).",
+  "startingAges": "Compulsory pre-school year at 6; primary school 7-15 (grades 1-8); track split at about 15 after the grade-8 exam: liceum 4 years (15-19), technikum 5 years (15-20), branżowa szkoła I stopnia 3 years (15-18); compulsory education runs to 18. Higher education from about 19: licencjat or inżynier 3-4 years, magister 1.5-2 years, long-cycle master's (medicine 6, law 5) and 4-year doctoral school (my general knowledge for the cycle lengths)."
+ },
+ "highlights": [
+  "Full-time study at public universities is free, even medicine and law, and the state student loan charges about 1.9% a year, less than the 4.0% inflation rate.",
+  "The minimum wage is 4,806 zł a month and the median worker earns about 7,500 zł; a specialist doctor's legal minimum is 12,910 zł and hospital specialists average about 24,000 zł."
+ ],
+ "caveats": "Method. The web search tool ran out of budget, so I searched Google News RSS, fetched official GUS workbooks and read press pages; every URL above was opened. Most occupational pay comes from the GUS October 2024 earnings-structure survey (employers with 10 or more staff, part-time converted to full-time, pro-rated annual bonuses and the public-sector 13th salary included, so monthly x 12 is an annual figure). I lifted those medians to the 2026 level with a factor of 1.13, from the GUS monthly median series (2026 annual average of medians 7,754 zł against 6,857 in Oct 2024). Teachers use 1.0815 (the 2025 and 2026 pay-scale rises) and doctors and nurses use 2026 pay data directly. The survey leaves out firms under 10 staff, self-employed people and B2B contractors, and GUS has no figure for police, so police pay is from official police pages plus a press estimate of the 2026 average (low confidence). Specialist doctors on B2B contracts earn more than the AOTMiT average, and IT and pilot pay is often B2B too. Estimates, not sourced figures: the 1.13 uplift, food, transport and basics in the living-cost basket (net to gross done with 2026 rules: 13.71% social insurance, 9% health, 12% tax, 30,000 zł tax-free amount), the net to gross conversion of the Bulldogjob IT pay, pilots (low-quality press summaries), law, mechanical engineer and sales director (single survey or judgement). The inflation rate is a flash estimate relayed by Trading Economics, and the NBP rate is 3.75%. The student-loan formula differs between the ministry page (half the rediscount rate) and banks (1.2 x rediscount + margin, student pays half). The 2026 median and ninth decile are projections of actual 2025 data (86,956 and 172,644 zł), and the national figures come from ZUS data that may include some part-time earnings. The driving age of 17 comes from a gov.pl page updated in July 2026 and differs from the usual 18, so it is worth a second look."
+}

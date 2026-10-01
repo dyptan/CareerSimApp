@@ -1,0 +1,124 @@
+{
+ "checks": [
+  {
+   "item": "1. Minimum wage and annual arithmetic",
+   "researched": "MX$315.04/day from 1 Jan 2026; annual full-time MX$119,715 = 315.04 x 365 (114,990) + 15-day aguinaldo (4,726)",
+   "verified": "General minimum wage MX$315.04/day from 1 Jan 2026 (Northern Border zone MX$440.87). 2025 was MX$278.80, and 278.80 x 1.13 = 315.04, which matches the 13% rise. 315.04 x 365 = 114,989.60. Aguinaldo of at least 15 days of pay is confirmed (Ley Federal del Trabajo art. 87, paid before 20 Dec). 315.04 x 15 = 4,725.60, so the total is 119,715.20 (rounded 119,715). Monthly equivalent 9,582.47.",
+   "verdict": "correct",
+   "source": "https://es.wikipedia.org/wiki/Salario_m%C3%ADnimo_en_M%C3%A9xico ; https://www.littler.com/news-analysis/asap/mexico-aumenta-el-salario-minimo-para-el-2026 ; https://tradingeconomics.com/mexico/wages (315.04 as of Aug 2026) ; https://es.wikipedia.org/wiki/Aguinaldo",
+   "note": "Arithmetic and legal floor both check out. Including the aguinaldo is a modelling choice, stated by the colleague. Without it the figure is 114,990."
+  },
+  {
+   "item": "2. Driving licence age",
+   "researched": "18 (restricted permits from 15 to 17 exist in some states)",
+   "verified": "18 for a full licence. Minors aged 15 and over can get a limited-validity permit (1 to 6 months, up to 1 year depending on jurisdiction), often with speed, curfew or plate restrictions. Licensing is set by each state.",
+   "verdict": "correct",
+   "source": "https://en.wikipedia.org/wiki/Driving_licence_in_Mexico",
+   "note": "Wikipedia is a secondary source, but it is consistent with the colleague's own note."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition (domestic student), 'state' tier",
+   "researched": "MX$2,000 a year (state); community MX$6,000 a year",
+   "verified": "The two public schedules I could retrieve bracket the colleague's figure without matching either. UANL (large state autonomous university) charges Mexican students MX$2,981 per semester on first enrolment and MX$2,692 on re-enrolment, about MX$5,400 to 5,970 a year. The table is uniform across licenciaturas (inscripción 774 to 1,063, cuota escolar 620, servicios para la enseñanza 1,200, bono deportivo 98). UNAM charges MX$200 a year. The community tier (MX$6,000, Tecnológicos and Universidades Tecnológicas) was not verified.",
+   "verdict": "off",
+   "source": "https://www.uanl.mx/tramites/costos-de-cuotas-escolares-licenciatura/ ; https://www.abogadogeneral.unam.mx:8443/legislacion/view/52 (UNAM Reglamento General de Pagos, art. 1 I)",
+   "note": "2,000 is about 65% below UANL (about 5,700) and 10x above UNAM (200). A defensible single figure for a mainstream state university is about MX$5,000 to 6,000 a year. The most selective public universities (UNAM) are about MX$200. Only two public schedules were checked, so the state-wide typical value is not established."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university",
+   "researched": "MX$3,000 a year (state); community MX$3,000 (mirrors state)",
+   "verified": "UNAM: Medicina is in the MX$200 a year licenciatura class, the same as Ciencias, Derecho and Ingeniería (Reglamento General de Pagos art. 1 I). UANL publishes one undergraduate fee table with no separate Medicina line, which gives about MX$5,400 to 5,970 a year. Foreign students at UNAM pay MX$5,000 a year for licenciatura.",
+   "verdict": "off",
+   "source": "https://www.abogadogeneral.unam.mx:8443/legislacion/view/52 ; https://www.uanl.mx/tramites/costos-de-cuotas-escolares-licenciatura/",
+   "note": "As with 3a, 3,000 lies between the two verified public figures (200 and about 5,700) and matches neither. Medicine is not priced above other degrees at public universities. The colleague's claim that medicine is offered only at state or elite institutions is unchecked."
+  },
+  {
+   "item": "3c. UNAM licenciatura fee quoted from memory",
+   "researched": "Symbolic MX$0.20 a year, not verified",
+   "verified": "The current Reglamento General de Pagos sets MX$200.00 a year for Ciencias, Derecho, Medicina, Ingeniería and others. The amount was changed by the University Council on 21 Mar and 5 Dec 2014 and is MX$150 for the Escuela Nacional Preparatoria and MX$105 for Enfermería. The old 20-centavo figure is outdated.",
+   "verdict": "off",
+   "source": "https://www.abogadogeneral.unam.mx:8443/legislacion/view/52",
+   "note": "Low practical impact, since MX$200 a year is still effectively free. The caveats text should be corrected from 0.20 to 200."
+  },
+  {
+   "item": "4a. Registered nurse annual gross pay",
+   "researched": "MX$170,000 (about 13,600 a month x 12.5)",
+   "verified": "Indeed Mexico average MX$12,352 a month (9,600 reports, range 8,438 to 18,082, updated 21 Sep 2026); x 12.5 = about MX$154,400 (range about 105,000 to 226,000). Higher in Tijuana (15,465) and Monterrey (14,144). Talent.com shows a median of only MX$72,000 a year, which is below the statutory minimum wage of about 115,000 and not credible. A public-sector (IMSS or Salud) tabulator was not retrievable.",
+   "verdict": "correct",
+   "source": "https://mx.indeed.com/career/enfermera/salaries ; https://mx.talent.com/salary?job=enfermera",
+   "note": "170,000 is about 10% above the Indeed-derived figure, within tolerance. Confidence is low: advert-based data and no official scale."
+  },
+  {
+   "item": "4b. Secondary teacher annual gross pay",
+   "researched": "MX$200,000 (public SEP full-time, about 16,000 a month x 12.5)",
+   "verified": "No source for public SEP full-time secondary-teacher pay could be retrieved (SEP and USICAMM pages returned 404 or had no figures). Generic evidence for teachers: Indeed Mexico 'Profesor/a' average MX$9,801 a month (6,000 reports, range 5,712 to 16,818, updated 20 Sep 2026); x 12.5 = about MX$122,500 (top of range about 210,000). Talent.com median MX$108,000 a year (range 96,000 to 257,760). Both include private and part-time posts.",
+   "verdict": "unverifiable",
+   "source": "https://mx.indeed.com/career/docente/salaries ; https://mx.talent.com/salary?job=profesor+de+secundaria",
+   "note": "The figure sits at the top of the Indeed range and is 65% to 85% above the generic averages. It might be right for a public full-time post, but nothing retrieved confirms it. Treat 200,000 as an upper bound; a lower value of about 150,000 would sit between the evidence and the estimate."
+  },
+  {
+   "item": "4c. Resident physician annual gross pay",
+   "researched": "MX$270,000 (about 21,600 a month x 12.5)",
+   "verified": "Talent.com median for 'médico residente' MX$240,000 a year (range 132,000 to 323,520; MX$123 an hour; 10,000 records). Indeed shows no resident-specific page. It falls back to general physicians at MX$16,689 a month (about 208,600 at x 12.5) and, separately, general practitioners at MX$15,045 a month (about 188,000). No official public-sector resident tabulator was retrieved.",
+   "verdict": "correct",
+   "source": "https://mx.talent.com/salary?job=m%C3%A9dico+residente ; https://mx.indeed.com/career/medico-residente/salaries ; https://mx.indeed.com/career/medico-general/salaries",
+   "note": "270,000 is about 12.5% above the Talent.com median, inside the 15% band and inside its range. Confidence is low: advert-based, and public residents are paid through a beca or salary that was not sourced."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "MX$135,000 a year (about 10,800 a month x 12.5); formal-sector median about 170,000",
+   "verified": "No published full-time median was found, so I derived a range. INEGI ENOE Q2 2026 (25 Aug 2026, bulletin 503/26): of 60.04M employed, 46.5% earn up to one minimum wage, 31.6% earn 1 to 2, 5.8% earn 2 to 3, 2.3% earn 3 to 5, 0.7% earn over 5, 4.5% have no income and 8.7% did not specify. Cumulatively 51% of all employed (including those with no income) earn at most one minimum wage (MX$9,582 a month), and about 53.5% of those with reported positive income. The median is therefore at or just above one minimum wage, and full-time only is somewhat higher. Mean real labour income was MX$8,110.67 a month (Q1 2026, INEGI via udavinci). The IMSS mean contribution wage (formal workers only) is MX$663.5 a day, about MX$242,000 a year. Derived full-time median is about MX$9,600 to 11,000 a month, or about MX$120,000 to 137,000 a year at x 12.5 (central about 125,000).",
+   "verdict": "correct",
+   "source": "https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/enoe/enoe2026_08.pdf ; https://www.udavinci.edu.mx/blog-educativo/compartiendo-conocimiento/mercado-laboral-mexico-2026-inegi ; https://mvsnoticias.com/nacional/2026/4/28/historico-mexico-alcanza-cifra-record-de-empleos-cae-la-desocupacion-730655.html",
+   "note": "135,000 is about 8% above my central 125,000 and inside the derived range, but at the upper edge. The 'up to one minimum wage' band includes part-timers, so it is not strictly full-time. The formal-sector median of about 170,000 was not verified."
+  },
+  {
+   "item": "6. School-leaving qualification and scoring",
+   "researched": "Bachillerato or preparatoria certificate (3 years, ages 15 to 18) with a school-awarded 'promedio general' on a 5.0 to 10.0 scale, 6.0 the pass, higher is better. There is no national leaving exam. Media superior has been compulsory since 2019.",
+   "verified": "Marks are numbers with decimals from 5.0 (minimum) to 10.0 (maximum), with 6.0 the minimum passing mark, so higher is better. A May 2019 constitutional reform made education compulsory from preschool through upper secondary. Upper secondary (preparatoria or bachillerato) lasts about 3 years, ages about 15 to 18. No source mentions a national exit exam. COMIPEMS (1995 to Feb 2025) was a regional placement exam only, replaced by ECOEMS for UNAM prepas and IPN CECyTs.",
+   "verdict": "correct",
+   "source": "https://es.wikipedia.org/wiki/Educaci%C3%B3n_en_M%C3%A9xico ; https://en.wikipedia.org/wiki/Education_in_Mexico ; https://es.wikipedia.org/wiki/Comipems",
+   "note": "The typical graduate average of 8 to 8.5 is unsourced in both the research and this check. Wikipedia is the only source retrieved; no official SEP page was reachable."
+  },
+  {
+   "item": "7a. Exchange rate to USD",
+   "researched": "MX$18.071 per USD (Banxico FIX, 30 Sep 2026)",
+   "verified": "DOF indicators page for 30/09/2026 shows 18.0710. El Financiero reports the FIX close of 18.0635 on 29 Sep 2026. The World Bank 2025 period average is 19.2375, so the peso has strengthened over the past year.",
+   "verdict": "correct",
+   "source": "https://dof.gob.mx/indicadores.php ; https://www.elfinanciero.com.mx/mercados/2026/09/29/peso-dolar-precio-hoy-29-de-septiembre-de-2026/ ; https://api.worldbank.org/v2/country/MEX/indicator/PA.NUS.FCRF?format=json",
+   "note": "Exact match to the official FIX."
+  },
+  {
+   "item": "7b. PPP conversion factor (LCU per international $)",
+   "researched": "10.328951 (World Bank PA.NUS.PPP, 2025)",
+   "verified": "World Bank API, PPP conversion factor GDP (LCU per international $): 2025 = 10.328951; 2024 = 9.916562; 2023 = 9.751268; 2022 = 9.92278; 2021 = 10.060857; 2020 = 9.814966. 2025 is the latest year available.",
+   "verdict": "correct",
+   "source": "https://api.worldbank.org/v2/country/MEX/indicator/PA.NUS.PPP?format=json&date=2020:2025",
+   "note": "Exact match. The 2025 value may be provisional or revised. The colleague flagged this too."
+  },
+  {
+   "item": "8a. Student-loan interest rate (Tec de Monterrey loan)",
+   "researched": "8.5% fixed (0.085), with a 3-month grace period and repayment up to 1.5x the study period",
+   "verified": "Préstamo Educativo Tec: annual rate 8.5% (CAT) for the life of the loan, 3 months of initial payment as grace period, repayment term up to 1.5 times the study period funded by the loan, fixed or rising instalments, no early-payment penalty, plus a 'cultura de pago' contribution of MX$500 per 5% of loan each semester added to the total. The 28-day TIIE was 6.8162% on 30/09/2026.",
+   "verdict": "correct",
+   "source": "https://tec.mx/es/profesional/becas ; https://dof.gob.mx/indicadores.php",
+   "note": "The rate is exact for that one private-university loan, which is not a national scheme."
+  },
+  {
+   "item": "8b. 'No national public student-loan scheme' claim",
+   "researched": "Mexico has no major national public student-loan scheme in the sources checked",
+   "verified": "No source was found for a national scheme (Wikipedia's Student loan article does not list Mexico, and the gob.mx, CONDUSEF and Educafin pages retrieved gave nothing). That is an absence of evidence, not proof. The search tool was out of budget, so I could not search for bank or federal credit programmes.",
+   "verdict": "unverifiable",
+   "source": "https://en.wikipedia.org/wiki/Student_loan (no Mexico entry) ; https://www.gob.mx/condusef (no student-loan content)",
+   "note": "The description is worded cautiously ('in the sources checked'), which is appropriate."
+  },
+  {
+   "item": "8c. Inflation and implied real rate",
+   "researched": "Inflation 3.26% (Aug 2026), so the real rate is about 5.1% on an 8.5% loan",
+   "verified": "INEGI annual headline inflation for August 2026 was 3.26% (core 3.88%, non-core 1.13%), inside Banxico's 3% plus or minus 1 point band. The real rate is 1.085 / 1.0326 - 1 = 5.07%.",
+   "verdict": "correct",
+   "source": "https://www.excelsior.com.mx/finanzas/acelera-inflacion-anual-consumidor-ubica-3-26-agosto-2026",
+   "note": "Arithmetic confirmed."
+  }
+ ]
+}

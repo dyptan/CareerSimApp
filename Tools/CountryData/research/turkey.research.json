@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Turkey",
+  "adjective": "Turkish",
+  "currencyName": "Turkish lira",
+  "fxPerUSD": {
+   "value": 48.97,
+   "source": "Central Bank of the Republic of Türkiye daily bulletin 2026-09-30 (USD forex buying 48.9303, selling 49.0184; midpoint 48.97): https://www.tcmb.gov.tr/kurlar/today.xml",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 20.5,
+   "source": "World Bank PA.NUS.PPP (GDP PPP conversion factor, LCU per international $): 2024 = 11.5545, 2025 = 16.2036 (https://api.worldbank.org/v2/country/TUR/indicator/PA.NUS.PPP?format=json&date=2019:2026). No 2026 value is published yet, so this is the 2025 value projected to 2026 by Turkey's ~31.5% CPI versus ~3% US inflation plus some continued real lira appreciation (price level PPP/FX was 0.35 in 2024, 0.41 in 2025): 16.20 x ~1.27 = ~20.5. Use 16.20 if you want the last published figure.",
+   "confidence": "medium"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 396360,
+   "source": "Ministry of Labour (ÇSGB) 2026 minimum wage, in force 1 Jan-31 Dec 2026: gross ₺33,030.00/month, net ₺28,075.50 (https://www.csgb.gov.tr/poco-pages/asgari-ucret/); ILOSTAT statutory nominal gross monthly minimum wage for Türkiye 2026 = 33,030 (https://rplumber.ilo.org/data/indicator/?id=EAR_INEE_NOC_NB_A&ref_area=TUR&timefrom=2024&format=.csv)",
+   "confidence": "high"
+  },
+  "arithmetic": "₺33,030 gross per month x 12 months = ₺396,360 a year (net ₺28,075.50 a month). There is no legally mandated 13th/14th month, so nothing is added.",
+  "note": "The minimum wage (₺33,030 a month)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "A class B (car) licence requires age 18 in Türkiye; no supervised/learner licence below 18 is described: https://en.wikipedia.org/wiki/Driving_licence_in_Turkey",
+  "confidence": "high",
+  "note": "Class B car licence at 18. The 'unrestricted by supervision' licence and the first licence coincide; there is no accompanied-driving scheme from 17."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 430000,
+   "source": "ILOSTAT (TÜİK household labour-force survey) median monthly NET earnings of employees, ISCO-08 group 5 service & sales workers, 2025 = ₺23,263.9 vs 2025 net minimum wage ₺22,104.67 (ratio 1.052): https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv . Applied to the 2026 net minimum ₺28,075.5 gives ~₺29,550 net = ~₺36,100 gross/month x 12 = ₺433,000, rounded to 430,000. (Indeed Turkey shows ₺22,018/month from 118 stale/partial reports, below the legal minimum, so it was not used: https://tr.indeed.com/career/kasiyer/salaries)",
+   "confidence": "medium"
+  },
+  "electrician": {
+   "value": 540000,
+   "source": "ILOSTAT median net monthly earnings, ISCO-08 group 7 craft & related trades, 2025 = ₺26,671 (ratio 1.21 to the net minimum wage): https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv . Scaled to 2026 = ~₺33,900 net = ~₺42,900 gross/month; ~5% mid-career premium gives ~₺45,000 x 12 = ₺540,000. Estimate, not a direct electrician survey (Indeed's ₺13,020 from 8 reports was rejected as stale and below the minimum wage).",
+   "confidence": "low"
+  },
+  "policeOfficer": {
+   "value": 1000000,
+   "source": "Estimate from civil-service pay: police are civil servants paid on the 657 scale; coefficients from 1 Jul 2026 (monthly coefficient 1.389861, base coefficient 22.823931, per the 2026-27 arbitration award summarised at https://www.memurlar.net/haber/1144576/ ) plus risk/overtime allowances. Anchored on the OECD teacher statutory pay (https://sdmx.oecd.org/public/rest/data/OECD.EDU.IMEP,DSD_EAG_SAL_STA@DF_TCH,/TUR.........?startPeriod=2023 ) and ILOSTAT public-administration median net ₺55,000 in 2025 (https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_ECO_NB_A&ref_area=TUR&timefrom=2025&format=.csv ): ~₺83,000 gross/month x 12 = ₺1.0M. No direct police pay table was retrievable.",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 1050000,
+   "source": "Estimate: ILOSTAT median net earnings of professionals (ISCO 2) 2025 = ₺60,000 and of manufacturing employees ₺28,722 (https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv ), scaled ~1.27x to 2026; Indeed Turkey shows ₺34,960/month average for mechanical engineers from 11 reports over 36 months (stale, all experience levels; https://tr.indeed.com/career/makine-m%C3%BChendisi/salaries ). Mid-career ~₺87,500 gross/month x 12 = ₺1.05M.",
+   "confidence": "low"
+  },
+  "lawyer": {
+   "value": 840000,
+   "source": "Estimate: Indeed Turkey average lawyer ₺38,997/month from 8 reports over 36 months (https://tr.indeed.com/career/avukat/salaries ), inflated for staleness (~1.5x) and treated as net, plus ILOSTAT professionals median net ₺60,000 in 2025 (https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv ); early-career ~₺70,000 gross/month x 12 = ₺840,000. Big Istanbul firms pay well above this; trainees far below.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 2400000,
+   "source": "Estimate: ILOSTAT median net earnings of managers (ISCO 1) 2025 = ₺60,000, all firm sizes (https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv ); a director at a large company assumed ~2.5x that after scaling to 2026: ~₺200,000 gross/month x 12 = ₺2.4M. No direct survey found.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 1500000,
+   "source": "Estimate, no retrievable official table: residents (asistan hekim) are civil-service doctors on the 657 scale plus duty (nöbet) pay; ~₺125,000 gross/month (~₺86,000 net) in Sep 2026 x 12 = ₺1.5M. Civil-service coefficients: https://www.memurlar.net/haber/1144576/ ; ILOSTAT human-health sector median net ₺36,500 (2025, all health staff): https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_ECO_NB_A&ref_area=TUR&timefrom=2025&format=.csv",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 3000000,
+   "source": "Estimate, no retrievable official table: public-hospital specialist on the civil-service scale plus performance (ek ödeme) and duty pay, ~₺250,000 gross/month (~₺155,000 net) x 12 = ₺3.0M; private hospitals can pay more. See https://www.memurlar.net/haber/1144576/ for the pay coefficients.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 780000,
+   "source": "Estimate: public-hospital nurse on the civil-service scale plus performance/duty pay ~₺65,000 gross/month x 12 = ₺780,000 (public sector, https://www.memurlar.net/haber/1144576/ ); private-sector nurses earn less: Indeed Turkey average ₺30,999/month from 148 reports over 36 months (https://tr.indeed.com/career/hem%C5%9Fire/salaries ).",
+   "confidence": "low"
+  },
+  "secondaryTeacher": {
+   "value": 930000,
+   "source": "OECD Education at a Glance statutory teacher salary for Türkiye, public schools, reference year 2025, gross annual: starting ₺626,524; after 10 years ₺672,331; after 15 years ₺703,084; top ₺805,001 (same for lower and upper secondary): https://sdmx.oecd.org/public/rest/data/OECD.EDU.IMEP,DSD_EAG_SAL_STA@DF_TCH,/TUR.........?startPeriod=2023 . Mid-scale (10-15 years) ~₺690,000 x ~1.35 public-pay growth from the 2025 average to Sep 2026 (civil-service coefficient 1.389861 from 1 Jul 2026, https://www.memurlar.net/haber/1144576/ ) = ~₺930,000.",
+   "confidence": "medium"
+  },
+  "airlineFirstOfficer": {
+   "value": 3300000,
+   "source": "Estimate, no source retrieved: Turkish carriers (Turkish Airlines, Pegasus, SunExpress) pay pilots largely in USD/EUR; first officer ~US$5,600/month x 12 x 48.97 = ~₺3.3M. Türkiye has a large airline sector, so this is a real but unsourced figure.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 6600000,
+   "source": "Estimate, no source retrieved: captain at a national carrier ~US$11,200/month (USD/EUR-linked pay) x 12 x 48.97 = ~₺6.6M.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 12000000,
+   "source": "Estimate, no source retrieved: CEO of a large Turkish company ~₺1M/month total cash (~US$245k a year). Listed-group top executives can earn far more.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 1700000,
+   "source": "Estimate, no source retrieved: employed or public-sector dentist ~₺140,000 gross/month x 12 = ₺1.7M (public dentists are paid like general practitioners minus some allowances; private clinics pay by commission). Civil-service coefficients: https://www.memurlar.net/haber/1144576/",
+   "confidence": "low"
+  },
+  "pharmacist": {
+   "value": 1200000,
+   "source": "Estimate, no source retrieved: employed or hospital pharmacist ~₺100,000 gross/month x 12 = ₺1.2M; pharmacy owners earn much more. ILOSTAT tertiary-educated median net ₺51,000 (2025) as a cross-check: https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_EDU_NB_A&ref_area=TUR&format=.csv",
+   "confidence": "low"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 780000,
+   "source": "Estimate: ~₺65,000 gross/month x 12 = ₺780,000. Cross-checks: Indeed Turkey average software engineer ₺62,865/month (5 reports, range ₺33,407-118,299; https://tr.indeed.com/career/yaz%C4%B1l%C4%B1m-m%C3%BChendisi/salaries ); Levels.fyi 25th percentile total compensation ₺1.1M across all levels (https://www.levels.fyi/t/software-engineer/locations/turkey ).",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 1350000,
+   "source": "Levels.fyi Turkey software engineers: median total compensation ₺1,555,518 (367 submissions, Sep 2026, all levels, skewed to large firms), 25th percentile ₺1.1M, 75th ₺2.19M: https://www.levels.fyi/t/software-engineer/locations/turkey . Mid-level median taken below the all-level median: ~₺112,500 gross/month x 12 = ₺1.35M.",
+   "confidence": "low"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 660000,
+   "source": "Two official series bracket this, so it is a judgement. (1) ILOSTAT/TÜİK household labour-force survey median monthly NET earnings of employees 2025 = ₺30,000 (https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_NB_A&ref_area=TUR&format=.csv ): ≈ ₺39,000 gross in 2025; x1.27 (minimum-wage rise) ≈ ₺50,000 gross/month in 2026 = ₺600,000 a year. (2) OECD minimum relative to median full-time wage = 47.2% for 2025 (https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@MIN2AVE,/TUR......?startPeriod=2019 ): median FT gross 2025 = 26,005.5/0.472 = ₺55,100/month; x1.27 ≈ ₺70,000/month in 2026 = ₺840,000 a year (covers firms with 10+ staff, excludes small and informal work). Chosen between them, nearer the household survey: ₺55,000 x 12 = ₺660,000.",
+   "confidence": "low"
+  },
+  "p90FullTime": {
+   "value": 1600000,
+   "source": "Estimate: OECD decile ratios for Türkiye are blank for 2022-23, so p90 was taken as ~2.4x the median (typical of Turkey's wide dispersion; ILOSTAT median net pay of managers and professionals is ₺60,000 in 2025 against ₺30,000 overall: https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv ): ~₺133,000 gross/month x 12 = ₺1.6M.",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 600000,
+  "basis": "Single adult, typical big-city (Ankara/İzmir/Bursa tier), Sep 2026: modest one-bedroom outside the centre ~₺19,000 (Numbeo national average ₺21,182; Ankara ₺27,139) + groceries ~₺12,500 + transport ~₺1,800 + utilities, phone and internet ~₺4,000 = ~₺37,300 net a month. Net ₺38,200 corresponds to ₺50,000 gross/month under 2026 rules (15% social security/unemployment deduction, income tax with the minimum-wage exemption, stamp duty; approximate 2026 tax brackets), so ₺50,000 x 12 = ₺600,000. A minimum-wage earner (net ₺28,075) cannot cover this alone.",
+  "source": "Numbeo country and Ankara pages (Sep 2026): https://www.numbeo.com/cost-of-living/country_result.jsp?country=Turkey and https://www.numbeo.com/cost-of-living/in/Ankara ; net-to-gross arithmetic is my own.",
+  "confidence": "low"
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 0,
+    "source": "State two-year vocational colleges (MYO): universities do not charge tuition for formal (day) programmes; only evening programmes pay: https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "Same Eurydice page: no tuition for formal (day) programmes at public universities.",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 500000,
+    "source": "Estimate, no source found for private vocational colleges: priced at roughly 40% of Bilkent's degree fee (₺1,295,000, https://w3.bilkent.edu.tr/bilkent/tuition-fees/ ).",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 0,
+    "source": "No separate community tier for degrees; state programmes are free (Eurydice). Anadolu University's open-education (AÖF) fee exists but the amount could not be retrieved (https://www.anadolu.edu.tr/acikogretim/nasil-ogrenci-olabilirim/ogretim-giderleri ).",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 1295000,
+    "source": "Bilkent University 2026-27 annual tuition for Turkish citizens admitted via YKS in 2026: ₺1,295,000 (₺1,245,000 if paid in full in September), 10% VAT included: https://w3.bilkent.edu.tr/bilkent/tuition-fees/ . About 44% of Bilkent students hold scholarships: https://w3.bilkent.edu.tr/bilkent/scholarships/",
+    "confidence": "high"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 0,
+    "source": "No community tier for master's; thesis master's at public universities are free (Eurydice). Non-thesis and evening master's pay university-set fees (not researched).",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding (thesis-based formal programmes; evening and non-thesis programmes pay)",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 1295000,
+    "source": "Bilkent 2026-27 thesis-based master's fee for 2026 entrants: ₺1,295,000 annually (non-thesis: ₺129,500 per 3-credit course): https://w3.bilkent.edu.tr/bilkent/graduate-students-fees/",
+    "confidence": "high"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 0,
+    "source": "Public universities charge no tuition for formal programmes: https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 1295000,
+    "source": "Bilkent 2026-27 list fee for thesis-based PhD, 2026 entrants: ₺1,295,000 a year (most PhD students are on funded places, so the typical amount actually paid is lower): https://w3.bilkent.edu.tr/bilkent/graduate-students-fees/",
+    "confidence": "medium"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 0,
+    "source": "No community tier; state medical schools are free (Eurydice): https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 2000000,
+    "source": "Estimate: Bilkent has no medical school and private-university medicine fee pages (Acıbadem, Koç) could not be retrieved; private medicine assumed ~1.5x Bilkent's general fee of ₺1,295,000 (https://w3.bilkent.edu.tr/bilkent/tuition-fees/ ).",
+    "confidence": "low"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 0,
+    "source": "No community tier; state law faculties are free for day programmes (Eurydice): https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 1295000,
+    "source": "Bilkent (has a law faculty) publishes one 2026-27 fee for all programmes of Turkish YKS entrants, ₺1,295,000: https://w3.bilkent.edu.tr/bilkent/tuition-fees/",
+    "confidence": "medium"
+   }
+  },
+  "notes": "Day (formal) programmes at state universities charge no tuition, including the very selective Boğaziçi, ODTÜ and İTÜ; evening (ikinci öğretim), non-thesis master's and second-degree students pay fees each university sets (amounts not found). The 'elite' column is priced as the top private (vakıf) universities, using Bilkent's published 2026-27 fee; if the game's elite tier means top state universities, use 0. Private medicine (₺2.0M) and private vocational (₺500k) are estimates. Community tier = state two-year MYO colleges, which are free."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0,
+   "source": "KYK (Kredi ve Yurtlar Genel Müdürlüğü) öğrenim kredisi is interest-free: the official FAQ states the debt equals the amount of credit actually given; repayment starts two years after the standard study period ends, in monthly instalments for as long as the loan was taken; deferral is free for the first year, then the lesser of 10% or CPI of the amount borrowed is added per deferred year: https://kygm.gsb.gov.tr/Sayfalar/2446/3200/sikca-sorulan-sorular-kredi-burs.aspx . Units: percent per year.",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 31.51,
+   "source": "TÜİK consumer price index, annual change August 2026 = 31.51% (July 31.75%, Dec 2025 30.89%), via the central bank table: https://www.tcmb.gov.tr/wps/wcm/connect/EN/TCMB+EN/Main+Menu/Statistics/Inflation+Data/Consumer+Prices . Units: percent per year. (Domestic PPI annual change Aug 2026 = 27.95%: https://www.tcmb.gov.tr/wps/wcm/connect/EN/TCMB+EN/Main+Menu/Statistics/Inflation+Data/Producer+Prices )",
+   "confidence": "high"
+  },
+  "description": "KYK state student loan: 0% interest on the amount borrowed (debt = amount given), repaid monthly starting two years after the standard study period ends. At 31.5% inflation the real rate is about -24% (a large subsidy). I could not retrieve the regulation text, so whether any indexation applies to late payments or repayment is unconfirmed; the official FAQ mentions none for normal repayment."
+ },
+ "schooling": {
+  "primarySchool": "İlkokul (primary school, grades 1-4)",
+  "middleSchool": "Ortaokul (lower secondary school, grades 5-8)",
+  "schoolLeaving": "Lise diploması (high-school diploma) plus the YKS university entrance exam",
+  "vocational": "Önlisans diploması (two-year vocational associate degree from a MYO)",
+  "tierCommunity": "MYO - Meslek Yüksekokulu (two-year vocational college)",
+  "tierState": "Devlet üniversitesi (state university; free day programmes)",
+  "tierElite": "Top vakıf (private) university - Bilkent, Koç, Sabancı",
+  "gradeName": "Diploma notu (high-school diploma grade)",
+  "gradeSource": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/assessment-general-upper-secondary-education ; YKS structure: https://tr.wikipedia.org/wiki/Y%C3%BCksek%C3%B6%C4%9Fretim_Kurumlar%C4%B1_S%C4%B1nav%C4%B1 ; LGS: https://tr.wikipedia.org/wiki/Liselere_Ge%C3%A7i%C5%9F_Sistemi",
+  "gradeSystem": "School result: diploma grade out of 100, higher is better, pass mark 50 (progression needs a yearly average of 50, or a second-semester grade of at least 70). Bands: 85-100 pekiyi (excellent), 70-84.99 iyi (good), 60-69.99 orta (fair), 50-59.99 geçer (pass), below 50 geçmez (fail). Typical graduate roughly 70-80 and top 95-100 (my estimate, no national average found). University entry uses the separate YKS exam: TYT (120 questions) plus AYT (160 questions) or YDT (80), scored 100-500, higher is better, with no minimum cut-off since 2022. The diploma grade x5 (OBP, 250-500) is added at 12% weight (18% for vocational-school graduates entering a matching field). Entry to selective high schools is by the LGS exam at the end of grade 8 (90 questions, 100-500 scale).",
+  "startingAges": "Compulsory schooling is 12 years in three 4-year stages (4+4+4): primary from age 6 to 10 (grades 1-4), lower secondary 10-14 (grades 5-8), upper secondary 14-18 (grades 9-12). Pupils are sorted at 14, largely by LGS score, into Fen (science), Anadolu, Sosyal Bilimler, Mesleki ve Teknik Anadolu (vocational) or İmam Hatip high schools. University starts around 18; associate degrees are two years, bachelor's four (six for medicine)."
+ },
+ "highlights": [
+  "The minimum wage is ₺33,030 a month gross (₺28,075.50 net), while consumer prices rose 31.51% in the year to August 2026.",
+  "Day programmes at state universities charge no tuition, while a top private university such as Bilkent charges about ₺1.3 million a year; places go by the national YKS exam score."
+ ],
+ "caveats": "The WebSearch tool hit its 200-call session budget before I started, so I did not search the open web. I used WebFetch and direct API calls (ILOSTAT, OECD SDMX, World Bank, TCMB) plus official pages instead. Every URL cited was actually fetched.\n\nWell sourced (high or medium):\n- Minimum wage (ÇSGB and ILOSTAT).\n- Inflation (TCMB).\n- USD/TRY rate (TCMB).\n- Driving age.\n- State tuition of 0 (Eurydice).\n- Bilkent fees.\n- The KYK loan terms from the official FAQ. I could not fetch the loan regulation itself.\n- The OECD statutory teacher pay.\n\nAll units are TRY, annual, gross, unless stated. Student-loan rate and inflation are in percent per year (31.51 means 31.51%).\n\nKey judgement calls and weaker figures:\n1. National median full-time pay is uncertain. The household labour-force survey (net median ₺30,000 a month in 2025) implies about ₺600k gross a year for 2026. OECD's minimum-to-median ratio of 47% implies about ₺840k. I chose ₺660k and marked it low confidence. p90 is ₺1.6M, derived from an assumed 2.4x dispersion, because OECD decile ratios are blank.\n2. The ILOSTAT earnings series is net of tax (the elementary-occupation median equals the net minimum wage). I converted net to gross with the 2026 rules: 15% social security and unemployment deduction, income tax with the minimum-wage exemption, and stamp duty. I recalled the 2026 income-tax brackets (₺190k/400k/1.5M/5.3M) from memory and did not verify them.\n3. Cashier, electrician, engineer and software figures are scaled from ILOSTAT 2025 occupation medians, Indeed, and Levels.fyi, projected to 2026 with about 1.27x to 1.35x. Indeed's Turkey averages are thin, stale 36-month pools and some sit below the legal minimum, so they served only as cross-checks.\n4. Public-sector pay (police, nurse, resident, specialist, dentist, pharmacist) is unsourced estimation, only partly anchored on the OECD teacher table and the 2026 civil-service coefficients. Airline pilots and CEOs have no source at all. These are the least reliable numbers.\n5. The PPP factor of 20.5 is a 2026 projection; the last published World Bank value (2025) is 16.20.\n6. Elite tuition is priced as the top private universities (Bilkent list price). Boğaziçi, ODTÜ and İTÜ are as selective but free, so use 0 if elite should mean top state. Private medicine (₺2.0M) and private vocational (₺500k) are estimates. Evening, non-thesis master's and open-education (AÖF) fees were not found.\n7. Average diploma-grade results are my estimate. The YKS structure was confirmed only on Turkish Wikipedia."
+}

@@ -15,6 +15,11 @@ import Foundation
 /// they describe patterns, not rules. The in-game half is built from the
 /// constants themselves, so it can't drift from the game.
 ///
+/// Those sources are American, so a point that only holds there says so: it
+/// carries a `tail` that is added for that country alone, or is limited to the
+/// countries it is true in (`only`). Everyone else gets the general claim, and
+/// a note left with nothing true to say for a country isn't shown to it.
+///
 /// Each point is written up to three ways, and `note(for:difficulty:voice:)`
 /// picks the telling that is true for the player and pitched at their reading:
 ///
@@ -34,12 +39,23 @@ enum AdvisorRealWorld {
         var simple: String?
         /// What the Simplified tutorial does about it; nil says nothing.
         var tutorial: String?
+        /// The countries this is true in; nil means everywhere.
+        var only: Set<Country>?
+        /// A sentence added to `real` for one country — the local figure behind
+        /// a general claim ("In the US, about 73% of new CEOs are inside hires").
+        var tail: [Country: String]
+        /// The same for the simple telling, in a beginner's words.
+        var simpleTail: [Country: String]
 
-        init(real: String, game: String?, simple: String? = nil, tutorial: String? = nil) {
+        init(real: String, game: String?, simple: String? = nil, tutorial: String? = nil,
+             only: Set<Country>? = nil, tail: [Country: String] = [:], simpleTail: [Country: String] = [:]) {
             self.real = real
             self.game = game
             self.simple = simple
             self.tutorial = tutorial
+            self.only = only
+            self.tail = tail
+            self.simpleTail = simpleTail
         }
     }
 
@@ -50,14 +66,18 @@ enum AdvisorRealWorld {
         /// This note as it is told to one player: the points in the reader's
         /// words, each beside what *their* mode does about it. A Simplified
         /// player never hears about seats, fame or luck the game doesn't have.
-        func told(in difficulty: Difficulty, voice: AdvisorVoice) -> Note {
+        func told(in difficulty: Difficulty, voice: AdvisorVoice, country: Country = .default) -> Note {
             let told = points.compactMap { point -> Point? in
-                let real: String
+                if let only = point.only, !only.contains(country) { return nil }
+                var real: String
                 switch voice {
-                case .standard: real = point.real
+                case .standard:
+                    real = point.real
+                    if let tail = point.tail[country] { real += " " + tail }
                 case .simple:
                     guard let simple = point.simple else { return nil }
                     real = simple
+                    if let tail = point.simpleTail[country] { real += " " + tail }
                 }
                 return Point(real: real, game: difficulty.isSimplified ? point.tutorial : point.game)
             }
@@ -82,22 +102,36 @@ enum AdvisorRealWorld {
     /// The note for `job`'s role, told to this player — if it's one of the
     /// hard-to-reach careers.
     static func note(for job: Job, player: Player) -> Note? {
-        note(for: job, difficulty: player.difficulty, voice: AdvisorVoice(player))
+        note(for: job, difficulty: player.difficulty, voice: AdvisorVoice(player), country: player.country)
     }
 
-    static func note(for job: Job, difficulty: Difficulty, voice: AdvisorVoice) -> Note? {
-        fullNote(for: job)?.told(in: difficulty, voice: voice)
+    static func note(for job: Job, difficulty: Difficulty, voice: AdvisorVoice,
+                     country: Country = .default) -> Note? {
+        guard let told = fullNote(for: job, in: country)?.told(in: difficulty, voice: voice, country: country),
+              !told.points.isEmpty else { return nil }
+        return told
     }
+
+    /// Countries where university costs little, so "often on loans" isn't the
+    /// story: public universities there charge a few hundred to a couple of
+    /// thousand a year (see `Country.annualTuition`).
+    private static let lowTuition: Set<Country> = [.germany, .france, .italy]
+    private static let highTuition = Set(Country.allCases).subtracting(lowTuition)
+
+    /// Countries whose judges are chosen from experienced lawyers (common law).
+    /// In the civil-law countries a judge is a career of its own, entered straight
+    /// after the state exam, so the note has nothing true to say there.
+    private static let commonLaw: Set<Country> = [.unitedStates, .canada, .unitedKingdom]
 
     /// Every telling of the role's note, before it is told to anyone.
-    private static func fullNote(for job: Job) -> Note? {
+    private static func fullNote(for job: Job, in country: Country) -> Note? {
         switch job.baseTitle {
-        case "Chief Executive Officer": return ceo(job)
+        case "Chief Executive Officer": return ceo(job, country)
         case "Chief Technology Officer": return cto(job)
         case "Chief Medical Officer": return chiefMedicalOfficer(job)
         case "Marketing Director", "Sales Director": return director(job)
         case "Managing Partner": return managingPartner(job)
-        case "Physician", "Surgeon", "Anesthesiologist", "Dentist", "Veterinarian", "Pharmacist": return doctor(job)
+        case "Physician", "Surgeon", "Anesthesiologist", "Dentist", "Veterinarian", "Pharmacist": return doctor(job, country)
         case "Judge": return judge(job)
         case "Research Scientist": return scientist(job)
         case "Airline Pilot": return pilot(job)
@@ -127,25 +161,28 @@ enum AdvisorRealWorld {
 
     // MARK: - The notes
 
-    private static func ceo(_ job: Job) -> Note {
+    private static func ceo(_ job: Job, _ country: Country) -> Note {
         let wanted = job.requirements.minYearsExperience
         let door = job.minimumQualifyingYears(simplified: false)
         return Note(title: "Becoming a CEO", points: [
-            Point(real: "There are only a few hundred CEO jobs at the biggest companies: the 1,500 largest US public companies name roughly 170 new CEOs a year, and a board's search can run for a year.",
+            Point(real: "There are only a few hundred CEO jobs at the biggest companies, and a board's search can run for a year.",
                   game: "That's the seat. Only \(pct(GameConstants.cSuiteSeatChance)) of otherwise-ideal applicants get a C-suite job in any year.",
                   simple: "A CEO is the boss of a whole company. There are only a few hundred CEO jobs at the biggest companies, so many good people never get one.",
-                  tutorial: basics(job)),
-            Point(real: "Most new CEOs come from inside the company — about 73% of them. They typically spent years running a division with its own profit and loss, or served as COO or CFO, while the board watched.",
+                  tutorial: basics(job),
+                  tail: [.unitedStates: "In the US, the 1,500 largest public companies name roughly 170 new CEOs a year."]),
+            Point(real: "Most new CEOs come from inside the company. They typically spent years running a division with its own profit and loss, or served as COO or CFO, while the board watched.",
                   game: "Years open the door: \(wanted) years in Business, and nothing under about \(door). Any Business job counts, and so do years running your own company.",
-                  simple: "Most new CEOs already worked at the company for years, running a big part of it while the bosses watched."),
+                  simple: "Most new CEOs already worked at the company for years, running a big part of it while the bosses watched.",
+                  tail: [.unitedStates: "In the US, about 73% of new CEOs are inside hires."]),
             Point(real: "Boards hire results — growth delivered, turnarounds, deals — and the ability to speak for the company to investors, staff and the press. A public reputation and friends on other boards help, but only on top of a record.",
                   game: "Business fame and your network add to your chance (up to +\(pct(Player.fameHireCap(topPosition: true))) and +\(pct(Player.networkHireCap))) — until your application is already at the cap, when more changes nothing."),
-            Point(real: "The other door is to build a company yourself. A founder doesn't wait to be picked, though most start-ups fail. Boards like people who have run a business, even one that failed — yet about 84% of new big-company CEOs had never been a CEO before.",
+            Point(real: "The other door is to build a company yourself. A founder doesn't wait to be picked, though most start-ups fail. Boards like people who have run a business, even one that failed — yet most new big-company CEOs had never been a CEO before.",
                   game: "That's the founder track record: it lifts the seat from \(pct(GameConstants.cSuiteSeatChance)) to at most \(pct(GameConstants.cSuiteSeatChance + GameConstants.executiveTrackRecordCap)). It eases the odds; it never decides them.",
                   simple: "Some people start their own company instead. Most new companies fail, but people who tried still learn a lot — and bosses notice.",
-                  tutorial: noCompanies),
+                  tutorial: noCompanies,
+                  tail: [.unitedStates: "In the US, about 84% of new big-company CEOs had not."]),
             Point(real: "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.",
-                  game: "An elite university adds +\(pct(Job.prestigeBonus(forPrestige: 3))) to your chance, a state one +\(pct(Job.prestigeBonus(forPrestige: 2))) — small next to the seat."),
+                  game: "\(country.tierName(.elite)) adds +\(pct(Job.prestigeBonus(forPrestige: 3))) to your chance, \(country.tierName(.state)) +\(pct(Job.prestigeBonus(forPrestige: 2))) — small next to the seat."),
             Point(real: "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.",
                   game: "Each year's job market multiplies your chance: a slump hurts, a boom helps."),
         ])
@@ -168,7 +205,7 @@ enum AdvisorRealWorld {
 
     private static func chiefMedicalOfficer(_ job: Job) -> Note {
         Note(title: "Becoming a Chief Medical Officer", points: [
-            Point(real: "CMOs are senior physicians who took on management: department chief, then medical director, then the hospital system's top doctor-executive. Medicine comes first — years of medical school, residency and practice.",
+            Point(real: "CMOs are senior physicians who took on management: department chief, then medical director, then the hospital system's top doctor-executive. Medicine comes first — years of medical school, hospital training and practice.",
                   game: "You need the medical licence and board certification, \(job.requirements.minYearsExperience) years in Health, and a \(pct(GameConstants.cSuiteSeatChance)) seat.",
                   simple: "A Chief Medical Officer is a doctor who became the boss of a hospital's doctors. Medicine comes first: many years of school and work as a doctor.",
                   tutorial: basics(job)),
@@ -205,22 +242,29 @@ enum AdvisorRealWorld {
         ])
     }
 
-    private static func doctor(_ job: Job) -> Note {
-        Note(title: "Becoming a health specialist", points: [
-            Point(real: "The road is long and every step is selective: a bachelor's degree, then a professional or doctoral programme that admits well under half of its applicants, then — for doctors — a residency of three to seven years before you practise alone.",
+    private static func doctor(_ job: Job, _ country: Country) -> Note {
+        let fee = country.money(country.annualTuition(tier: .state, level: .Bachelor, profile: .health))
+        return Note(title: "Becoming a health specialist", points: [
+            Point(real: "The road is long and every step is selective: a bachelor's degree, then a professional or doctoral programme that admits well under half of its applicants, then — for doctors — three to seven years of supervised hospital training before you practise alone.",
                   game: "Each step is a gate: the degree, then the licence, then years of experience.",
                   simple: "Becoming a doctor takes many years: a bachelor's degree, then medical school, then years of training in a hospital. Each step takes only some of the people who apply.",
                   tutorial: "In Simplified mode you still need the right school and years of work — but there's no licence to earn and no school bill."),
-            Point(real: "Grades, entrance-exam scores, volunteering or research experience and interviews decide admission — a record built over years, not one good year.",
+            Point(real: "Grades and entrance results decide admission — in some countries volunteering or research experience and interviews too — a record built over years, not one good year.",
                   game: "Your school grades, skills and awards set your chance of admission.",
                   simple: "Schools look at your grades, your skills and your prizes over many years, not just one good year.",
                   tutorial: "Your grades, skills and prizes decide if a school takes you — in Simplified mode too."),
-            Point(real: "Competitive specialties such as surgery and anaesthesia are a second competition: residency places go to the top-ranked candidates.",
+            Point(real: "Competitive specialties such as surgery and anaesthesia are a second competition: training places go to the top-ranked candidates.",
                   game: "These jobs ask for more of skills like Fixer, Detective and Zen than most."),
             Point(real: "The cost is high, too: years of tuition, often on loans, before a first full salary.",
                   game: "The game charges tuition and you may owe a student loan — then the pay is among the highest.",
                   simple: "It costs a lot, too: many people borrow money to pay for school.",
-                  tutorial: "Simplified mode has no school bills, so nobody has to borrow."),
+                  tutorial: "Simplified mode has no school bills, so nobody has to borrow.",
+                  only: highTuition),
+            Point(real: "Study itself costs little here — public universities charge only modest fees — but the long road means years of study before a first full salary.",
+                  game: "The game charges only about \(fee) a year at a public university, so few students borrow — then the pay is among the highest.",
+                  simple: "School costs little here, but it takes many years before the first full salary.",
+                  tutorial: "Simplified mode has no school bills, so nobody has to borrow.",
+                  only: lowTuition),
         ])
     }
 
@@ -229,17 +273,19 @@ enum AdvisorRealWorld {
             Point(real: "Judges are appointed or elected, usually after ten to twenty years as lawyers or prosecutors. There are few openings, and they rarely come up.",
                   game: "Very few jobs open: the game's demand for judges is \(pct(job.hiringDemand)) of a normal job's.",
                   simple: "Judges are chosen after ten to twenty years as lawyers. There are very few jobs, and they open up rarely.",
-                  tutorial: basics(job)),
+                  tutorial: basics(job),
+                  only: commonLaw),
             Point(real: "Reputation in the legal community — and often politics — decides who is chosen.",
-                  game: "You need a law doctorate, the bar and years practising."),
+                  game: "You need a law doctorate, the bar and years practising.",
+                  only: commonLaw),
         ])
     }
 
     private static func scientist(_ job: Job) -> Note {
         Note(title: "Becoming a research scientist", points: [
-            Point(real: "A scientist needs a PhD — five to seven years of research — often followed by one or more short postdoctoral posts. There are far fewer permanent research jobs than PhD graduates, so many move to industry.",
+            Point(real: "A scientist needs a PhD — three to seven years of research — often followed by one or more short postdoctoral posts. There are far fewer permanent research jobs than PhD graduates, so many move to industry.",
                   game: "A doctorate is required, and the ladder climbs one rung at a time.",
-                  simple: "A scientist usually needs a PhD, which is five to seven years of research. There are fewer research jobs than people with PhDs, so many scientists work in companies instead.",
+                  simple: "A scientist usually needs a PhD, which is three to seven years of research. There are fewer research jobs than people with PhDs, so many scientists work in companies instead.",
                   tutorial: basics(job)),
             Point(real: "Careers are made by publications and by winning research funding: a record of results, and other scientists who cite your work.",
                   game: "Your fame in Science and your network in it add to your chance."),
@@ -249,10 +295,12 @@ enum AdvisorRealWorld {
     private static func pilot(_ job: Job) -> Note {
         let years = (AdvisorCoach.family(job.baseTitle)?.rungs ?? []).map { "\($0.requirements.minYearsExperience)" }
         return Note(title: "Becoming an airline pilot", points: [
-            Point(real: "In the US an airline pilot needs an Airline Transport Pilot licence, which normally takes 1,500 flight hours (fewer through some approved flight schools). Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.",
+            Point(real: "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.",
                   game: "Flight school and its licence are the gate; years of experience open each rung.",
-                  simple: "Airline pilots need a special licence and about 1,500 hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.",
-                  tutorial: "Simplified mode skips the licence: years of work open each step up (\(AdvisorCoach.list(years)))."),
+                  simple: "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.",
+                  tutorial: "Simplified mode skips the licence: years of work open each step up (\(AdvisorCoach.list(years))).",
+                  tail: [.unitedStates: "In the US that normally means 1,500 flight hours (fewer through some approved flight schools)."],
+                  simpleTail: [.unitedStates: "In the US that is about 1,500 hours."]),
             Point(real: "At airlines, seniority decides who flies the bigger aircraft and who becomes a captain — years of service count for more than talent.",
                   game: "Each rung asks for more years (\(AdvisorCoach.list(years))) and pays far more.",
                   simple: "The longer a pilot has worked for an airline, the bigger the plane they get to fly.",
@@ -262,10 +310,12 @@ enum AdvisorRealWorld {
 
     private static func athlete(_ job: Job) -> Note {
         Note(title: "Becoming a professional athlete", points: [
-            Point(real: "Very few young players turn professional — in US college sport roughly 1–5% are drafted — and most of those were noticed as teenagers.",
+            Point(real: "Very few young players turn professional, and most of those were noticed as teenagers.",
                   game: "The Junior Champion title opens the door, and even then only \(pct(GameConstants.proRosterChance)) of title-holders make a roster.",
-                  simple: "Very few young players become professionals: in college sport only about 1 to 5 in every 100 get picked, and most were noticed as teenagers.",
-                  tutorial: "The Junior Champion title opens the door — and in Simplified mode, once you have it, a team spot is yours."),
+                  simple: "Very few young players become professionals, and most were noticed as teenagers.",
+                  tutorial: "The Junior Champion title opens the door — and in Simplified mode, once you have it, a team spot is yours.",
+                  tail: [.unitedStates: "In US college sport roughly 1–5% are drafted."],
+                  simpleTail: [.unitedStates: "In US college sport only about 1 to 5 in every 100 get picked."]),
             Point(real: "Careers are short and an injury can end one without warning, so most athletes need a second career.",
                   game: "Careers end early in the game too.",
                   simple: "A sports career can end suddenly with an injury, so most athletes need a second job.",
@@ -276,7 +326,7 @@ enum AdvisorRealWorld {
     private static func eliteFirm(_ job: Job) -> Note {
         Note(title: "Getting into an elite firm", points: [
             Point(real: "These firms recruit mostly from a short list of universities, through campus events and internships. At the biggest banks, well under 1% of applicants for analyst jobs are hired.",
-                  game: "An elite university adds +\(pct(Job.prestigeBonus(forPrestige: 3))) to your chance, and demand for the job is only \(pct(job.hiringDemand)) of a normal one's.",
+                  game: "A top-tier university adds +\(pct(Job.prestigeBonus(forPrestige: 3))) to your chance, and demand for the job is only \(pct(job.hiringDemand)) of a normal one's.",
                   simple: "Big banks and consulting firms mostly hire from a short list of universities, and fewer than 1 in 100 people who apply for a first job there get it.",
                   tutorial: basics(job)),
             Point(real: "Analysts are hired in yearly classes and expected to work very long hours. Many leave after a couple of years for other industries; the rest face “up or out” promotions.",

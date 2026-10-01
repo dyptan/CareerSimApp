@@ -78,7 +78,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 
     /// Everything the picker card leaves out — who it's for, the goal and the
     /// assumptions behind the numbers — for the card's ⓘ.
-    var details: String {
+    func details(in country: Country) -> String {
         switch self {
         case .simplified:
             return """
@@ -98,7 +98,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
                 🎯 Goal: \(goalHeadline) — your net worth divided by your age when the career ends at \(GameConstants.retirementAge).
 
                 • Hiring is a roll: skills, fame, network, school prestige and the job market all count.
-                • 💵 A typical household: the first \(livingCostFloor.formatted(.number)) $ of pay goes on living costs, and you save \(Int(savingsRate * 100))% of the rest. Your family pays \(Int(familyTuitionShare * 100))% of tuition; you borrow the rest.
+                • 💵 A typical household: the first \(country.money(livingCostFloor(in: country))) of pay goes on living costs, and you save \(Int(savingsRate * 100))% of the rest. Your family pays \(Int(familyTuitionShare * 100))% of tuition; you borrow the rest.
                 • 📉 About a \(Int(turmoilChance * 100))% chance each calm year that a recession starts, and layoffs that hit some industries harder than others.
                 • Scores go to the Game Center leaderboard.
                 """
@@ -139,12 +139,10 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     }
 
     /// A year's basic living costs (rent, food, transport) — nothing is saved
-    /// below it. None in Simplified.
-    var livingCostFloor: Int {
-        switch self {
-        case .simplified:  return 0
-        case .middleClass: return 32_000
-        }
+    /// below it. None in Simplified; in Real Life, the country's
+    /// (`Country.livingCostFloor`).
+    func livingCostFloor(in country: Country) -> Int {
+        isSimplified ? 0 : country.livingCostFloor
     }
 
     /// Share of tuition the student's family pays. Real Life: a typical

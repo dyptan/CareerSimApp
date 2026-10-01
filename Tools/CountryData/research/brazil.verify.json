@@ -1,0 +1,128 @@
+{
+ "checks": [
+  {
+   "item": "1. Annual full-time minimum wage and arithmetic",
+   "researched": "R$21,073 a year = R$1,621 a month x 13 (13th salary counted; 1/3 holiday bonus excluded; R$7.37 an hour at 220 h)",
+   "verified": "R$1,621 a month from 1 Jan 2026 confirmed. CNN Brasil says the president formalised it on 24 Dec 2025, a 6.79% rise from R$1,518. BCB series 1619 also returns 1621.00. 1,621 x 13 = 21,073 is exact. The 13th salary is a statutory right of CLT employees (Lei 4.090/1962, pt.wikipedia). 1,621 / 220 = R$7.37. Some sites, such as Portal Salario, annualise x12 (R$19,452), so the x13 choice needs to be applied consistently across all pay figures.",
+   "source": "https://www.cnnbrasil.com.br/economia/financas/governo-oficializa-salario-minimo-de-r-1-621-em-2026/ ; https://api.bcb.gov.br/dados/serie/bcdata.sgs.1619/dados/ultimos/3?formato=json ; https://pt.wikipedia.org/wiki/D%C3%A9cimo_terceiro_sal%C3%A1rio",
+   "verdict": "correct",
+   "note": "Arithmetic is exact. Decree number 12.797/2025 was not independently confirmed, but the value and date are."
+  },
+  {
+   "item": "2. Driving licence age",
+   "researched": "18 (CNH; no learner or supervised licence for under-18s)",
+   "verified": "18 confirmed. pt.wikipedia's CNH article says candidates must be penally accountable (imputavel), which means 18. en.wikipedia says categories A and B require at least 18, and even the first 1-year provisional licence (PPD) is issued only from 18. The Planalto text of CTB art. 140 could not be fetched (ECONNRESET), so this rests on Wikipedia.",
+   "source": "https://pt.wikipedia.org/wiki/Carteira_Nacional_de_Habilita%C3%A7%C3%A3o ; https://en.wikipedia.org/wiki/Driving_licence_in_Brazil",
+   "verdict": "correct"
+  },
+  {
+   "item": "3a. Public-university bachelor tuition (domestic student)",
+   "researched": "R$0 (federal and state universities are free; Constitution art. 206 IV)",
+   "verified": "R$0 confirmed. pt.wikipedia: at public institutions undergraduate and stricto sensu postgraduate education is free by constitutional mandate. Only lato sensu specialisation courses may charge fees, which the STF allowed in 2017.",
+   "source": "https://pt.wikipedia.org/wiki/Ensino_superior_no_Brasil",
+   "verdict": "correct",
+   "note": "The free-tuition rule is confirmed from a secondary source. I did not fetch the constitutional text (the Wikisource and Planalto fetches failed)."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university",
+   "researched": "R$0 (free but extremely competitive)",
+   "verified": "R$0. The constitutional free-tuition rule covers all public undergraduate courses, medicine included, and no exception was found. I found no source that lists public medical schools by name.",
+   "source": "https://pt.wikipedia.org/wiki/Ensino_superior_no_Brasil",
+   "verdict": "correct"
+  },
+  {
+   "item": "3c. Private tuition estimates (community R$9,600, elite bachelor R$70,000, medicine R$96,000 to R$190,000, etc.)",
+   "researched": "Unverified estimates in the research JSON",
+   "verified": "Could not check. No fetchable page gave private-college or medicine fees; the pt.wikipedia higher-education page gives no R$ figures. The figures are neither confirmed nor contradicted.",
+   "source": "none found",
+   "verdict": "unverifiable",
+   "note": "The JSON itself flags all paid tuition as low-confidence estimates. The task did not require these, but they should stay marked as estimates."
+  },
+  {
+   "item": "4a. Registered nurse (enfermeiro) annual gross pay",
+   "researched": "R$58,500 (R$4,500 x 13)",
+   "verified": "Portal Salario (CAGED, Aug 2025 to Jul 2026, n=178,501, 38 h a week): median R$4,164, average R$4,491.35, Q1 R$3,402, Q3 R$5,000. Median x 13 = R$54,132; average x 13 = R$58,386. The colleague's figure is 8% above the median-based value and matches the average-based one.",
+   "source": "https://www.salario.com.br/profissao/enfermeiro-cbo-223505/",
+   "verdict": "correct",
+   "note": "CAGED covers hires in the formal CLT sector only. The figure is not a public-sector scale, and the R$4,750 federal nursing floor was not re-checked."
+  },
+  {
+   "item": "4b. Secondary-school teacher annual gross pay",
+   "researched": "R$71,500 (R$5,500 x 13), an unverified estimate anchored on a recalled piso of about R$5,130",
+   "verified": "The 2026 national teacher pay floor is confirmed: R$5,130.63 for a 40-hour week, up 5.4% from R$4,867.77 in 2025, effective Jan 2026 (Agencia Brasil, two articles). Piso x 13 = R$66,698, so the colleague's figure is 7% above the floor. Cross-check from CAGED private-sector secondary teachers: math median R$3,227 for 24 h and geography median R$3,231 for 23 h, which scale to about R$5,400 to R$5,600 a month at 40 h, or about R$70,000 to R$73,000 x 13. The two methods bracket R$67,000 to R$73,000.",
+   "source": "https://agenciabrasil.ebc.com.br/educacao/noticia/2026-05/senado-aprova-mp-que-estabelece-piso-de-r-5130-para-professores ; https://agenciabrasil.ebc.com.br/educacao/noticia/2026-06/governo-fixa-em-r-51-mil-novo-piso-nacional-do-magisterio ; https://www.salario.com.br/profissao/professor-de-matematica-no-ensino-medio-cbo-232155/",
+   "verdict": "correct",
+   "note": "The estimate's low confidence was justified, but it lands within about 7% of the verified floor. The piso is a minimum for 40 h, and the 13-month multiplier assumes public-sector 13th pay."
+  },
+  {
+   "item": "4c. Resident physician annual gross pay",
+   "researched": "R$49,273 (R$4,106.09 x 12, no 13th month)",
+   "verified": "R$4,106.09 a month as the resident bolsa is confirmed. pt.wikipedia quotes the figure and cites an interministerial portaria of 13 Oct 2021. I found no newer value: Agencia Brasil's 2026 residency coverage (rules of 13 Aug 2026, the Feb 2026 announcement of 3,000 places, the Feb 2026 enrolment calendar) gives no stipend figure, so the figure may or may not be current. 4,106.09 x 12 = R$49,273.08.",
+   "source": "https://pt.wikipedia.org/wiki/Resid%C3%AAncia_m%C3%A9dica",
+   "verdict": "correct",
+   "note": "Only a 2021 source was found, so I could not rule out a raise since. The stipend is gross, and residency works about 60 h a week. The CAGED pages for clinical doctors (median R$9,000 a month for 24 h) are not comparable."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "R$39,000 (R$3,000 a month x 13), an estimate derived from the IBGE mean",
+   "verified": "No median was found. IBGE publishes means only in the sources reachable here. SIDRA table 5436, Q2 2026: mean usual income from all jobs R$3,738 (main job R$3,621). Agencia Brasil: Q1 2026 mean R$3,722, a record. CAGED average admission wage, June 2026: R$2,404.34. A full-time median of about R$3,000 a month is plausible against these figures but cannot be confirmed from them.",
+   "source": "https://apisidra.ibge.gov.br/values/t/5436/n1/all/v/all/p/last%201?formato=json ; https://agenciabrasil.ebc.com.br/economia/noticia/2026-05/distrito-federal-e-15-estados-tem-rendimento-do-trabalhador-recorde ; https://agenciabrasil.ebc.com.br/economia/noticia/2026-07/brasil-fecha-o-mes-de-junho-com-saldo-positivo-de-145161-empregos",
+   "verdict": "unverifiable",
+   "note": "The mean of about R$3,738 is verified. The median and its full-time qualifier are not. If the median is 0.7 to 0.8 of the mean with a small full-time uplift, the R$2,700 to R$3,000 a month range gives R$35,000 to R$39,000 a year, so the figure is unlikely to be badly off."
+  },
+  {
+   "item": "6. School-leaving result: scale, range, pass mark, direction, and qualification name",
+   "researched": "Ensino Medio diploma; admissions via ENEM (four areas plus essay, TRI scoring, roughly 0 to 1000, higher is better, no pass mark; ProUni needs an average of at least 450 and a non-zero essay); grade label 'Nota do ENEM'",
+   "verified": "pt.wikipedia's ENEM article: 0 to 1000 scale (varies slightly by area) using Item Response Theory (TRI); the essay is the mean of two graders, with a third grader if they diverge; there is no official pass mark, and each programme sets its own threshold. The ProUni article confirms a minimum 450 average and a non-zero essay. The Fies call notice confirms the same 450 and non-zero-essay rule. Qualification name: Diploma or Certificado de Conclusao do Ensino Medio. Since 2017 ENEM no longer certifies school completion (Encceja does), so ENEM is an entrance exam, not the leaving qualification itself. The '522.8 national average' in the research appears in my source as the 2018 average essay score, not an overall average. The report-card claim of 0 to 10 with a pass mark of 5 to 7 was not checked.",
+   "source": "https://pt.wikipedia.org/wiki/Exame_Nacional_do_Ensino_M%C3%A9dio ; https://pt.wikipedia.org/wiki/Programa_Universidade_para_Todos ; https://pt.wikipedia.org/wiki/Educa%C3%A7%C3%A3o_no_Brasil ; https://agenciabrasil.ebc.com.br/educacao/noticia/2026-08/fies-comeca-convocar-nesta-sexta-estudantes-em-lista-de-espera",
+   "verdict": "correct",
+   "note": "Scale, direction and no-pass-mark are right. The wording should call ENEM the university-entrance score and name the Ensino Medio diploma as the leaving qualification. Drop or relabel the 522.8 figure."
+  },
+  {
+   "item": "7a. Exchange rate BRL per USD",
+   "researched": "5.1809 (BCB SGS series 1, 30 Sep 2026)",
+   "verified": "BCB SGS series 1 returns 28/09/2026 5.2132, 29/09/2026 5.2204 and 30/09/2026 5.1809, matching the research exactly. For comparison, the World Bank official annual average for 2025 is 5.5873 (2024: 5.3889).",
+   "source": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/3?formato=json ; https://api.worldbank.org/v2/country/BRA/indicator/PA.NUS.FCRF?format=json&date=2022:2025",
+   "verdict": "correct",
+   "note": "This is a spot rate. The latest annual average (2025) is about 8% weaker for the real. State which one the app uses."
+  },
+  {
+   "item": "7b. PPP conversion factor (BRL per international dollar)",
+   "researched": "2.55 (World Bank PA.NUS.PPP, 2025; 2024 was 2.48)",
+   "verified": "World Bank PA.NUS.PPP for Brazil: 2025 = 2.5544, 2024 = 2.4837, 2023 = 2.4456, 2022 = 2.4117, 2021 = 2.3793, with no nulls (source updated 13 Jul 2026). The latest year available is 2025 at 2.554, which rounds to 2.55.",
+   "source": "https://api.worldbank.org/v2/country/BRA/indicator/PA.NUS.PPP?format=json&date=2019:2025",
+   "verdict": "correct"
+  },
+  {
+   "item": "8. Student-loan scheme description and interest rate",
+   "researched": "Fies, 3% a year for the modality-2 tier (0.5 to 1 minimum wage per capita), Fies Social at 0%, P-Fies capped at 6.5%, up to 18 years to repay, about R$150 a quarter during study; IPCA indexation unknown",
+   "verified": "Fies exists and is a federal fund financing tuition at private institutions (confirmed). Fies Social is confirmed for per-capita family income up to half a minimum wage, with CadUnico registration, and can finance up to 100% of tuition. Borrowers in general need an ENEM score of at least 450, a non-zero essay, and family income up to 3 minimum wages per capita. Student interest rates were not confirmed in any fetchable source. The only rate found: the Fies Empreendedor business product may reach 11.19% a year (CMN rule, July 2026), which is not the student scheme. pt.wikipedia's 3.4% a year is an old 2010 rate. The 3% tier, the 6.5% P-Fies cap, the 18-year term and the R$150 quarterly payment are all unconfirmed.",
+   "source": "https://agenciabrasil.ebc.com.br/educacao/noticia/2026-08/fies-2026-estudantes-devem-completar-informacoes-ate-esta-terca ; https://agenciabrasil.ebc.com.br/educacao/noticia/2026-08/fies-comeca-convocar-nesta-sexta-estudantes-em-lista-de-espera ; https://agenciabrasil.ebc.com.br/economia/noticia/2026-07/cmn-regulamenta-fies-empreendedor-e-desenrola-adimplentes",
+   "verdict": "unverifiable",
+   "note": "The official MEC, Planalto, Caixa and BB pages returned CAPTCHA, 403 or ECONNRESET. Until the student rate is confirmed, the app should describe Fies as subsidised but not quote a precise rate. Fies Social eligibility is the only tier that is confirmed."
+  },
+  {
+   "item": "Extra: IPCA 12-month inflation",
+   "researched": "4.22% for the 12 months to Aug 2026",
+   "verified": "BCB SGS series 13522 shows 4.64 (Jun 2026), 4.44 (Jul) and 4.22 (Aug 2026).",
+   "source": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.13522/dados/ultimos/3?formato=json",
+   "verdict": "correct"
+  },
+  {
+   "item": "Extra: Portal Salario (CAGED) medians behind the non-required jobs",
+   "researched": "Cashier median R$1,812; mechanical engineer R$12,100; lawyer R$4,240; systems analyst R$7,500; electrician R$2,846; pharmacist R$4,653",
+   "verified": "All six medians match the live pages (Aug 2025 to Jul 2026). Details: cashier average R$1,892, 43 h; mechanical engineer average R$11,793, n=6,655; lawyer quartiles R$2,832 and R$6,678; systems analyst average R$8,432, n=136,804; electrician average R$3,052; pharmacist average R$4,597. The site's own 'annual' figures use x12 (for example the cashier's R$22,704), while the research uses x13.",
+   "source": "https://www.salario.com.br/profissao/operador-de-caixa-cbo-421125/ ; https://www.salario.com.br/profissao/engenheiro-mecanico-cbo-214405/ ; https://www.salario.com.br/profissao/advogado-cbo-241005/ ; https://www.salario.com.br/profissao/analista-de-desenvolvimento-de-sistemas-cbo-212405/ ; https://www.salario.com.br/profissao/eletricista-de-manutencao-eletroeletronica-cbo-951105/ ; https://www.salario.com.br/profissao/farmaceutico-cbo-223405/",
+   "verdict": "correct",
+   "note": "The estimates not checked: police officer, sales director, airline pilots, CEO, specialist physician scaling, electrician mid-career uplift, junior software engineer proxy, living cost, p90. The DIEESE figure of R$7,565.86 for Aug 2026 was confirmed, but it is a four-person-family measure."
+  },
+  {
+   "item": "Process note",
+   "researched": "n/a",
+   "verified": "The WebSearch budget (200 of 200) was already exhausted in my session, so every search call was refused. All verification used WebFetch on direct pages and APIs (BCB SGS, World Bank, IBGE SIDRA, Agencia Brasil tag pages, Portal Salario, Wikipedia). IBGE news, Planalto, gov.br/MEC, Caixa and BB pages returned 403, CAPTCHA or ECONNRESET.",
+   "source": "n/a",
+   "verdict": "unverifiable",
+   "note": "Items marked unverifiable are gaps in reachable sources, not evidence the figures are wrong."
+  }
+ ]
+}

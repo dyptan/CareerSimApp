@@ -221,6 +221,12 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// Minimum age required to attempt this training.
     var minAge: Int { rules.minAge }
 
+    /// The youngest age this can be taken at in `country`: the driving licence
+    /// follows the country's driving age, everything else is the same everywhere.
+    func minAge(in country: Country) -> Int {
+        self == .drivers ? country.drivingAge : rules.minAge
+    }
+
     /// Minimum EQF (education) level required before attempting this training.
     /// Only credentials that *genuinely* require a university degree carry a
     /// tertiary gate (Bar, Board, CPA, Teaching, Nurse, PE, Architect). Trade
@@ -489,15 +495,15 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// education (EQF), and — for senior credentials — work experience. Meet them
     /// and the credential is earned; there's no exam roll.
     func requirements(_ player: Player) -> TrainingRequirementResult {
-        if player.age < minAge {
-            return .blocked(reason: "Requires age \(minAge)+")
+        if player.age < minAge(in: player.country) {
+            return .blocked(reason: "Requires age \(minAge(in: player.country))+")
         }
         for prereq in prerequisites where !player.hardSkills.trainings.contains(prereq) {
             return .blocked(reason: "Requires \(prereq.friendlyName) first")
         }
         let highestEQF = player.degrees.map(\.eqf).max() ?? 0
         if highestEQF < minEQF {
-            let label = Education.Requirements(minEQF: minEQF).educationLabel()
+            let label = Education.Requirements(minEQF: minEQF).educationLabel(in: player.country)
             return .blocked(reason: "Requires \(label)")
         }
         if minYearsExperience > 0 {

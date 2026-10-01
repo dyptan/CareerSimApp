@@ -290,7 +290,7 @@ struct EntrepreneurshipView: View {
         let firstYear = Int((Player.ventureRamp(year: 1) * 100).rounded())
         player.reportApplicationOutcome(
             title: "🎉 Venture launched!",
-            message: "You put in \(capital.formatted(.number)) $ and opened your business! In the first year it pays about \(firstYear)% of the full amount while you find customers."
+            message: "You put in \(player.money(capital)) and opened your business! In the first year it pays about \(firstYear)% of the full amount while you find customers."
         )
         onCommit()
     }
@@ -318,7 +318,7 @@ private struct VentureRow: View {
         if years > 0 {
             parts.append("🧭 \(years) yr exp expected")
         }
-        parts.append("💰 Target \((job.targetCapital ?? 0).formatted(.number)) $")
+        parts.append("💰 Target \(player.money((job.targetCapital ?? 0)))")
         return parts.joined(separator: "  ·  ")
     }
 
@@ -351,13 +351,13 @@ private struct VentureRow: View {
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 } else {
-                    Text("🛡️ \(Int((survival * 100).rounded()))% survive year 1 · stake \(stake.formatted(.number)) $")
+                    Text("🛡️ \(Int((survival * 100).rounded()))% survive year 1 · stake \(player.money(stake))")
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(Color.forOdds(survival))
                     // Borrowing is the part a player can regret, so it stays on
                     // the row — as a flag, with the terms in the hint.
                     if borrowed > 0 {
-                        Text("🏦 \(borrowed.formatted(.number)) $ of it borrowed")
+                        Text("🏦 \(player.money(borrowed)) of it borrowed")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.orange)
                     }
@@ -390,18 +390,18 @@ private struct VentureRow: View {
             ]).joined(separator: "\n\n")
         }
 
-        let target = (job.targetCapital ?? 0).formatted(.number)
-        var funding = "💰 You'd put in \(stake.formatted(.number)) $ of the \(target) $ it needs, from your savings first."
+        let target = player.money(job.targetCapital ?? 0)
+        var funding = "💰 You'd put in \(player.money(stake)) of the \(target) it needs, from your savings first."
         if borrowed > 0 {
-            funding += " \(borrowed.formatted(.number)) $ would be a loan that grows \(Int((GameConstants.ventureLoanAnnualInterest * 100).rounded()))% a year — you pay it back even if the business closes."
+            funding += " \(player.money(borrowed)) would be a loan that grows \(Int((GameConstants.ventureLoanAnnualInterest * 100).rounded()))% a year — you pay it back even if the business closes."
         }
-        let full = job.annualIncome.formatted(.number)
+        let full = player.money(job.annualIncome)
         let ramp = GameConstants.ventureIncomeRamp.map { "\(Int(($0 * 100).rounded()))%" }.joined(separator: ", then ")
 
         var lines = header + [
             funding,
             "🚀 It always opens. It has a \(Int((survival * 100).rounded()))% chance to make it through the first year. What helps: your \(player.industryExperience(for: job.category)) years in \(job.category.rawValue) (\(job.requirements.minYearsExperience) is good), the skills it needs, 🔭 Visionary, 💬 Persuader, and the money you put in. Each year it lasts, it gets safer — but a bad economy makes it riskier.",
-            "💵 It pays \(ramp) of its \(full) $ in the first two years, then the full amount — more in good years, less in bad ones.",
+            "💵 It pays \(ramp) of its \(full) in the first two years, then the full amount — more in good years, less in bad ones.",
             "📉 If it closes, you get back \(Int(GameConstants.ventureFoldRecovery * 100))% of the money you put in.",
             "🌟 Every year in business, every investment you win and every sale makes you better known in 💼 Business — so your next business is more likely to last.",
         ]

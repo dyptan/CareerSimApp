@@ -1129,9 +1129,9 @@ final class CareerGraphTests: XCTestCase {
         XCTAssertFalse(Difficulty.simplified.keepsScore)
         // …and the two runs really do earn incomparable numbers.
         XCTAssertEqual(Difficulty.simplified.savingsRate, 1.0)
-        XCTAssertEqual(Difficulty.simplified.livingCostFloor, 0)
+        XCTAssertEqual(Difficulty.simplified.livingCostFloor(in: .unitedStates), 0)
         XCTAssertLessThan(Difficulty.middleClass.savingsRate, 0.5)
-        XCTAssertGreaterThan(Difficulty.middleClass.livingCostFloor, 0)
+        XCTAssertGreaterThan(Difficulty.middleClass.livingCostFloor(in: .unitedStates), 0)
     }
 
     /// Tennis and gymnastics are Real Life sports; the Simplified tutorial

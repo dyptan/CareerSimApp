@@ -1,0 +1,132 @@
+{
+ "checks": [
+  {
+   "item": "1. Annual full-time minimum wage and arithmetic",
+   "researched": "EUR 17,094 a year = EUR 1,221 x 14 payments (EUR 40.70/day)",
+   "verified": "EUR 17,094. BOE Art. 1 sets EUR 40.70/day or EUR 1,221/month. Art. 3 says the annual amount cannot be considered below EUR 17,094. Art. 4 refers to two extra payments. 1,221 x 14 = 17,094, and 1,221 x 12 = 14,652 would be wrong as an annual figure.",
+   "source": "https://www.boe.es/eli/es/rd/2026/02/18/126/con",
+   "verdict": "correct",
+   "note": "The BOE text itself never says '14 payments'. It gives the EUR 17,094 annual floor and two 'gratificaciones extraordinarias', which together imply 14."
+  },
+  {
+   "item": "2. Driving licence age (car)",
+   "researched": "18 (class B)",
+   "verified": "18. The Reglamento General de Conductores Art. 4 table lists class B (cars up to 3,500 kg) at 18, with no under-18 exception for cars.",
+   "source": "https://www.boe.es/eli/es/rd/2009/05/08/818/con",
+   "verdict": "correct",
+   "note": "Read through a summarising fetch tool. I did not re-read the table myself."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition, domestic student (national average)",
+   "researched": "EUR 922 a year (EUR 15.37 per credit x 60)",
+   "verified": "EUR 922. The Ministry CSV gives first-enrolment mean price 2024-25 of 15.37 per credit, so 15.37 x 60 = 922. The same CSV gives Galicia at 11.95 (EUR 717, the lowest total) and Madrid at 18.55 (EUR 1,113). Eurydice independently gives a bachelor average of EUR 15.40 per credit, range 8.60 to 22.70.",
+   "source": "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_Tot.csv_bdsc ; https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc ; https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+   "verdict": "correct",
+   "note": "2024-25 is the latest year in the CSV. The price-per-credit and credit-count derivation is exact. The Ministry's weighted-mean columns are blank ('.') for 2023-24 and 2024-25, so the colleague's 'not student-weighted' caveat stands."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university",
+   "researched": "EUR 997 a year (health-sciences branch mean EUR 16.62 per credit x 60); Galicia EUR 836, Madrid EUR 1,196",
+   "verified": "About EUR 1,000 a year. The Ministry CSV gives health-sciences mean 16.62 per credit nationally (x60 = 997), Galicia 13.93 (836), Madrid 19.93 (1,196). Regional health-sciences means run from 12.62 (Andalucía, EUR 757) to 22.68 (La Rioja, EUR 1,361).",
+   "source": "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+   "verdict": "correct",
+   "note": "This is the health-sciences branch mean, not medicine alone. I could not retrieve a medicine-specific price. The university pages I tried returned 404. The typical range of EUR 750 to 1,360 makes 997 a fair central value."
+  },
+  {
+   "item": "4a. Registered nurse typical annual gross pay",
+   "researched": "EUR 31,000",
+   "verified": "About EUR 29,500 to 30,000. Indeed Spain 'enfermero/a' is EUR 29,274 (1.1k salaries, updated 21 Sep 2026, range 22,218 to 38,570). Payscale RN is EUR 35,608 (15 profiles, median 36,000). Talent.com is EUR 24,000 (4,146 salaries). The three average about 29,600.",
+   "source": "https://es.indeed.com/career/enfermero/salaries ; https://www.payscale.com/research/ES/Job=Registered_Nurse_(RN)/Salary ; https://es.talent.com/salary?job=enfermero",
+   "verdict": "correct",
+   "note": "31,000 is about 5% above the Indeed figure and inside the range of sources. The sources are self-reported or ad-based, not an official pay table."
+  },
+  {
+   "item": "4b. Secondary teacher typical annual gross pay",
+   "researched": "EUR 40,000",
+   "verified": "About EUR 36,000 to 38,000 for a mid-career public-school teacher. Eurydice's 2024 State Budget table for group A1 gives basic EUR 1,333.53 + post supplement EUR 835.43 a month x 12, plus two extra pays of EUR 822.84. That is about EUR 27.7k a year state-common before regional specific complements, trienios and sexenios. Adding roughly EUR 8 to 9k for those and about 4% of pay growth since 2024 gives roughly EUR 37k. Payscale's median is EUR 31k (32 profiles, includes private and temporary staff). INE's 2024 mean for health and teaching professionals is EUR 40,555, which is an upper bound because it includes physicians and university staff.",
+   "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/spain/conditions-service-teachers-working-early-childhood-and-school-education ; https://www.payscale.com/research/ES/Job=Secondary_School_Teacher/Salary ; https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1",
+   "verdict": "correct",
+   "note": "40,000 is about 8 to 11% above my derived value, so it is at the high end of the tolerance. It fits an experienced public teacher, not a new entrant (about EUR 31 to 33k). The Talent.com figure of EUR 13,700 is a generic default and should be ignored. I found no official 2026 regional pay table."
+  },
+  {
+   "item": "4c. Resident physician (MIR) typical annual gross pay",
+   "researched": "EUR 31,000",
+   "verified": "About EUR 27,000 to 31,000. Talent.com 'médico residente' is EUR 31,000 (2,987 salaries, entry 27,720). Indeed 'médico/a interno/a' is EUR 22,088 (16 salaries, range 14,652 to 43,910, updated 11 Aug 2026). I could not retrieve an official MIR pay table. My working value is about EUR 28,000, leaning on the larger Talent sample.",
+   "source": "https://es.talent.com/salary?job=m%C3%A9dico%20residente ; https://es.indeed.com/career/medico-interno-residente/salaries",
+   "verdict": "correct",
+   "note": "Weakest of the three pay checks. 31,000 is the top of the sourced range and about 11% above my working value, but about 17% above the simple midpoint of the two sources. If a stricter rule is wanted, treat it as borderline and consider about 28,000. Redaccion Medica, BOE and Glassdoor could not be used."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "EUR 28,500 (2024, interpolated)",
+   "verified": "About EUR 28,000 for 2024, or about EUR 29.5 to 30k if uprated to 2026. INE 2024 gives all-employee median 24,497, mean 29,540 and full-time mean 33,827. I re-derived the full-time median from INE's share of full-time workers by multiples of the 2024 minimum wage (EUR 15,876): 4.42% below 1x and 54.46% in the 1x to 2x band. Linear interpolation gives 29,164. Log interpolation gives 28,355. Calibrating against the known all-employee median (linear overshoots 7%, log 1.8%) gives about 27.9k.",
+   "source": "https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28191?nult=1 ; https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28187?nult=1 ; https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28182?nult=1",
+   "verdict": "correct",
+   "note": "INE does not publish a full-time median directly, so both the colleague's figure and mine are derived. The colleague's stated 3% overshoot does not reproduce with linear interpolation, which overshoots by about 7%, but the final 28,500 is still within 2% of my figure. The 2024 data is not uprated to 2026."
+  },
+  {
+   "item": "6a. School-leaving result: scale, range, pass mark, direction",
+   "researched": "Nota de admisión (Bachillerato + PAU): higher is better. Bachillerato average and PAU are 0 to 10, pass 5 (PAU minimum 4). Access mark = 0.6 x Bachillerato + 0.4 x PAU general phase. Admission mark adds up to two subjects at 0.1 or 0.2, so the range is 0 to 14.",
+   "verified": "Mostly right, with two caveats. BOE RD 243/2022: Bachillerato marks are 0 to 10 without decimals, below 5 fails, and the nota media is the arithmetic mean rounded to hundredths. RD 534/2024 Art. 14 to 15: the PAU score is the mean of the exercises on 0 to 10 with three decimals and must be at least 4. Access mark = 60% Bachillerato average + 40% PAU, and must be at least 5. Art. 22: the admission mark = access mark + weighted subject marks that each university chooses (at least two subjects), with no 0.1 or 0.2 figures and no 14 cap in the decree. Universities still publish weights and cut-offs on the 0 to 14 basis, per Wikipedia's PAU article. Higher is better.",
+   "source": "https://www.boe.es/eli/es/rd/2024/06/11/534/con ; https://www.boe.es/eli/es/rd/2022/04/05/243/con ; https://es.wikipedia.org/wiki/Prueba_de_Acceso_a_la_Universidad",
+   "verdict": "correct",
+   "note": "Caveat 1: 'fase general' is pre-2025 wording. Under RD 534/2024 (first applied in June 2025) the PAU is one 0 to 10 mark. Caveat 2: 0 to 14 is de facto university practice, not law. The decree leaves weights to each university. The named bands (Suspenso, Aprobado, Notable, Sobresaliente) and the 'typical 6.5 to 7.5' claim were not checked."
+  },
+  {
+   "item": "6b. Name of the school-leaving qualification",
+   "researched": "Bachillerato (ages 16 to 18) plus the PAU entrance exam (EBAU, EvAU, PEvAU or selectividad regionally)",
+   "verified": "The qualification is the 'Título de Bachiller' (RD 243/2022). The entrance exam is the Prueba de Acceso a la Universidad (PAU). A new structure was first applied in June 2025, replacing the regional names EBAU and EvAU.",
+   "source": "https://www.boe.es/eli/es/rd/2022/04/05/243/con ; https://es.wikipedia.org/wiki/Prueba_de_Acceso_a_la_Universidad",
+   "verdict": "correct",
+   "note": "In-game, 'PAU' is the current official name. The older regional names are now historical."
+  },
+  {
+   "item": "7a. Exchange rate to USD",
+   "researched": "1 USD = 0.8807 EUR (ECB 2026-09-30: 1 EUR = 1.1355 USD)",
+   "verified": "ECB API returns 1.1355 USD per EUR for both 2026-09-29 and 2026-09-30 (1.1378 on 2026-09-28). 1 / 1.1355 = 0.8807 EUR per USD.",
+   "source": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?lastNObservations=3&format=csvdata",
+   "verdict": "correct",
+   "note": "Fetched with curl because the WebFetch tool got a 503 from the ECB host."
+  },
+  {
+   "item": "7b. PPP conversion factor (LCU per international dollar), latest year",
+   "researched": "0.571 (World Bank PA.NUS.PPP, Spain 2025 = 0.570991)",
+   "verified": "0.570991 for 2025. Earlier years: 2024 0.562107, 2023 0.556506, 2022 0.55926, 2021 0.58847, 2020 0.606275. 2025 is the latest year returned.",
+   "source": "https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PPP?format=json&mrv=6",
+   "verdict": "correct",
+   "note": "This is the GDP-based series. The colleague's separate note that consumption PPP is about 0.608 was not checked."
+  },
+  {
+   "item": "8a. Student-loan scheme description",
+   "researched": "No national student-loan scheme. State help is means-tested grants (becas). Borrowers use commercial consumer loans at about 7%.",
+   "verified": "Consistent with what I found, but only as an absence. The Eurydice higher-education funding page has no mention of loan, credit, ICO, préstamo or repay (I searched the page text), and covers only grants, fee waivers and tax deductions. The ICO site shows no current student-loan product such as the former Renta Universidad line. Grants are confirmed: 584,588 bachelor and master students received them in 2023-24.",
+   "source": "https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding ; https://www.ico.es/web/ico/ico-renta-universidad",
+   "verdict": "correct",
+   "note": "Absence of evidence, not a positive statement from an official source. The Eurydice comparative loans report URL returned 404. A regional or ICO pilot loan could exist without showing up on these pages."
+  },
+  {
+   "item": "8b. Student-loan interest rate (proxy)",
+   "researched": "6.96% (ECB new-business rate on Spanish consumer loans excl. revolving credit, July 2026); inflation 4.9%",
+   "verified": "ECB MIR series M.ES.B.A2B.A.R.A.2250.EUR.N: June 2026 6.83%, July 2026 6.96%. INE CPI annual change for the latest three months is 3.6% (Jul), 4.3% (Aug), 4.9% (Sep).",
+   "source": "https://data-api.ecb.europa.eu/service/data/MIR/M.ES.B.A2B.A.R.A.2250.EUR.N?lastNObservations=4&format=csvdata ; https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/76134?nult=3",
+   "verdict": "correct",
+   "note": "6.96% is a commercial consumer-loan rate used as a stand-in, not a student-loan rate. INE's 4.9% for September is the latest value in the table, and I did not check whether it is a flash estimate."
+  },
+  {
+   "item": "Extra: bachelor 'community' and 'elite' tier tuition",
+   "researched": "Community EUR 717 (Galicia, 11.95 per credit); elite EUR 1,113 (Madrid, 18.55 per credit)",
+   "verified": "Both reproduce exactly from the Ministry per-credit CSV: Galicia 11.95 x 60 = 717 and Madrid 18.55 x 60 = 1,113. Galicia is the lowest total-mean region. Andalucía is 12.62, Canarias 12.50 and Asturias 12.34.",
+   "source": "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+   "verdict": "correct",
+   "note": "Navarra is actually the dearest region (19.29, EUR 1,157), and the colleague already gives it as the top of the range. Madrid is a reasonable stand-in for 'elite'."
+  },
+  {
+   "item": "Verification method note",
+   "researched": "The colleague said the 200-call WebSearch cap was exhausted and that they fetched pages directly.",
+   "verified": "WebSearch was also at 200 of 200 when I started, so every check below comes from direct fetches of primary sources (BOE, INE API, ECB API, World Bank API, Ministry CSVs, Eurydice, Indeed, Talent.com, Payscale). I did not use a search engine through WebFetch to get around the cap. Two Ministry CSV hosts had an unverifiable certificate, so I pulled them with curl -k and read only public statistics. Some BOE and Eurydice text passed through a summarising fetch tool. The key formulas (RD 534/2024 Art. 15 and 22, the Ministry price CSVs, the INE tables, ECB series) I read as raw text.",
+   "source": "n/a",
+   "verdict": "unverifiable",
+   "note": "Not a data check. Items I could not source beyond sites that show self-reported pay: resident-physician pay (no official table) and medicine-specific tuition."
+  }
+ ]
+}

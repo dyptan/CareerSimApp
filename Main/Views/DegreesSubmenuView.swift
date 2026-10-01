@@ -47,10 +47,10 @@ struct DegreesSubmenuView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 6) {
-                                    Text(education.degreeName)
+                                    Text(education.degreeName(in: player.country))
                                         .font(.headline)
                                     InfoHint(
-                                        title: "\(education.pictogram) \(education.degreeName)",
+                                        title: "\(education.pictogram) \(education.degreeName(in: player.country))",
                                         message: degreeHintBody(for: education)
                                     )
                                 }

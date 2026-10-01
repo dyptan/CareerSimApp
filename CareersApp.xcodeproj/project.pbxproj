@@ -43,6 +43,7 @@
 		AA00000000000000000000C4 /* InstitutionTiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* InstitutionTiersView.swift */; };
 		AA00000000000000000000C8 /* SeniorityOffersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C7 /* SeniorityOffersView.swift */; };
 		AA00000000000000000000D2 /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D1 /* Difficulty.swift */; };
+		C0C0C0C0C0C0C0C0C0C0C002 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0C0C0C0C0C0C0C0C0C001 /* Country.swift */; };
 		AA00000000000000000000E2 /* SideHustle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E1 /* SideHustle.swift */; };
 		AA00000000000000000000E4 /* SideHustlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E3 /* SideHustlesView.swift */; };
 		AA00000000000000000000E6 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000E5 /* Event.swift */; };
@@ -59,6 +60,7 @@
 		AA0000000000000000000134 /* AdvisorPathway.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000133 /* AdvisorPathway.swift */; };
 		AA0000000000000000000136 /* AdvisorRealWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000135 /* AdvisorRealWorld.swift */; };
 		AA0000000000000000000138 /* AdvisorPathwayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000137 /* AdvisorPathwayTests.swift */; };
+		C0C0C0C0C0C0C0C0C0C0C004 /* CountryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0C0C0C0C0C0C0C0C0C003 /* CountryTests.swift */; };
 		AA000000000000000000012D /* FoundationModelsLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012C /* FoundationModelsLanguage.swift */; };
 		AA0000000000000000000130 /* AdvisorCoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000012F /* AdvisorCoachTests.swift */; };
 		AA0000000000000000000132 /* AdvisorConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000131 /* AdvisorConversationTests.swift */; };
@@ -133,6 +135,7 @@
 		AA00000000000000000000C3 /* InstitutionTiersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstitutionTiersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C7 /* SeniorityOffersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeniorityOffersView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000D1 /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
+		C0C0C0C0C0C0C0C0C0C0C001 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E1 /* SideHustle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustle.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E3 /* SideHustlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideHustlesView.swift; sourceTree = "<group>"; };
 		AA00000000000000000000E5 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -147,6 +150,7 @@
 		AA0000000000000000000133 /* AdvisorPathway.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorPathway.swift; sourceTree = "<group>"; };
 		AA0000000000000000000135 /* AdvisorRealWorld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorRealWorld.swift; sourceTree = "<group>"; };
 		AA0000000000000000000137 /* AdvisorPathwayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorPathwayTests.swift; sourceTree = "<group>"; };
+		C0C0C0C0C0C0C0C0C0C0C003 /* CountryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryTests.swift; sourceTree = "<group>"; };
 		AA000000000000000000012C /* FoundationModelsLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsLanguage.swift; sourceTree = "<group>"; };
 		AA000000000000000000012F /* AdvisorCoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorCoachTests.swift; sourceTree = "<group>"; };
 		AA0000000000000000000131 /* AdvisorConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorConversationTests.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 				AA000000000000000000012F /* AdvisorCoachTests.swift */,
 				AA0000000000000000000131 /* AdvisorConversationTests.swift */,
 				AA0000000000000000000137 /* AdvisorPathwayTests.swift */,
+				C0C0C0C0C0C0C0C0C0C0C003 /* CountryTests.swift */,
 				AA000000000000000000020D /* VentureLaunchTests.swift */,
 			);
 			path = CareersAppTests;
@@ -247,6 +252,7 @@
 				AA00000000000000000000B3 /* EducationProfile.swift */,
 				AA00000000000000000000C1 /* EducationTier.swift */,
 				AA00000000000000000000D1 /* Difficulty.swift */,
+				C0C0C0C0C0C0C0C0C0C0C001 /* Country.swift */,
 				AA00000000000000000000E1 /* SideHustle.swift */,
 				AA0000000000000000000110 /* ExecutiveDecision.swift */,
 				AA00000000000000000000E5 /* Event.swift */,
@@ -433,6 +439,7 @@
 				AA0000000000000000000130 /* AdvisorCoachTests.swift in Sources */,
 				AA0000000000000000000132 /* AdvisorConversationTests.swift in Sources */,
 				AA0000000000000000000138 /* AdvisorPathwayTests.swift in Sources */,
+				C0C0C0C0C0C0C0C0C0C0C004 /* CountryTests.swift in Sources */,
 				AA000000000000000000020E /* VentureLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +491,7 @@
 				555CC10B2FF130CB00426E7E /* StatusBarView.swift in Sources */,
 				AA00000000000000000000C2 /* EducationTier.swift in Sources */,
 				AA00000000000000000000D2 /* Difficulty.swift in Sources */,
+				C0C0C0C0C0C0C0C0C0C0C002 /* Country.swift in Sources */,
 				AA00000000000000000000E2 /* SideHustle.swift in Sources */,
 				AA0000000000000000000111 /* ExecutiveDecision.swift in Sources */,
 				AA0000000000000000000113 /* ExecutiveDecisionsView.swift in Sources */,

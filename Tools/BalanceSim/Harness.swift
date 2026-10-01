@@ -88,8 +88,9 @@ final class Game {
     var rec = LifeRecord()
 
     /// ModeSelectionView.start(_:)
-    init(difficulty: Difficulty, startAge: Int) {
+    init(difficulty: Difficulty, startAge: Int, country: Country = .default) {
         player.difficulty = difficulty
+        player.country = country
         // (avatar is cosmetic)
         player.configureStart(age: startAge)
         player.regenerateAvailableJobs()
@@ -143,7 +144,7 @@ final class Game {
         let stage = LifeStage.forAge(player.age)
         return Training.allCases
             .filter { $0.stages.contains(stage) }
-            .filter { player.age >= $0.minAge }
+            .filter { player.age >= $0.minAge(in: player.country) }
             .sorted { $0.friendlyName < $1.friendlyName }
     }
 
@@ -373,17 +374,17 @@ final class Game {
         case 10:
             let degree = Education(Level.Stage.PrimarySchool)
             player.degrees.append(degree)
-            player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+            player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
             player.currentEducation = Education(Level.Stage.MiddleSchool)
         case 14:
             let degree = Education(Level.Stage.MiddleSchool)
             player.degrees.append(degree)
-            player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+            player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
             player.currentEducation = Education(Level.Stage.HighSchool)
         case 18:
             let degree = Education(Level.Stage.HighSchool)
             player.degrees.append(degree)
-            player.recordStatus("🎓", "Graduated — \(degree.degreeName)")
+            player.recordStatus("🎓", player.graduationStatus(for: degree))
             player.graduationMessage = player.graduationMessage(for: degree)
             player.showGraduationAlert = true
             player.currentEducation = nil

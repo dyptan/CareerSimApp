@@ -1,0 +1,116 @@
+{
+ "checks": [
+  {
+   "item": "1. Annual full-time minimum wage and arithmetic",
+   "researched": "TRY 396,360 a year (33,030 gross x 12; net 28,075.50 a month; no 13th/14th month)",
+   "verified": "TRY 396,360 a year. The Ministry of Labour page gives gross 33,030.00 and net 28,075.50 a month for 1 Jan-31 Dec 2026. Employee deductions are 4,954.50 (SGK 14% + unemployment 1% = 15%). 33,030 x 0.85 = 28,075.50, and 33,030 x 12 = 396,360. WageIndicator shows the same figures (28,075.14 net / 33,029.59 gross, rounding).",
+   "source": "https://www.csgb.gov.tr/poco-pages/asgari-ucret/ ; https://wageindicator.org/salary/minimum-wage/turkey",
+   "verdict": "correct",
+   "note": "Income tax and stamp duty are exempt at the minimum wage, so net = gross less 15%. Not checked here: that no 13th/14th month is mandated. Method: WebSearch was at its 200/200 session budget, so every check below uses WebFetch on direct primary or data pages only. I tried one search engine via WebFetch (DuckDuckGo), it returned a CAPTCHA, and I did not pursue it."
+  },
+  {
+   "item": "2. Driving licence age",
+   "researched": "18 (class B car; no accompanied scheme from 17)",
+   "verified": "18. English and Turkish Wikipedia both say 18 for a car and 16 for a motorcycle. Neither describes a learner or accompanied-driving scheme below 18. Law 2918 art. 41 sets the age by regulation, so the statute text does not state the number.",
+   "source": "https://en.wikipedia.org/wiki/Driving_licence_in_Turkey ; https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_s%C3%BCr%C3%BCc%C3%BC_belgesi ; https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2918.pdf",
+   "verdict": "correct",
+   "note": "I did not retrieve the licence regulation text itself, so this rests on two Wikipedia pages (secondary sources)."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition paid by a domestic student",
+   "researched": "TRY 0 (formal/day programmes at state universities)",
+   "verified": "TRY 0. Eurydice: 'Universities do not charge tuition fees to students attending formal education programs'. Evening programmes do charge fees.",
+   "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+   "verdict": "correct",
+   "note": "Evening (ikinci ogretim) and non-thesis master's students pay fees that each university sets. Amounts not found."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university",
+   "researched": "TRY 0",
+   "verified": "TRY 0 by the general rule for formal programmes at state universities. The Eurydice page does not mention medicine separately, so this is inferred from the general rule.",
+   "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding",
+   "verdict": "correct",
+   "note": "The colleague's private-tier figures were not required here. Bilkent's general 2026-27 fee for Turkish YKS entrants is confirmed at TRY 1,295,000 (1,245,000 if paid in full in September): https://w3.bilkent.edu.tr/bilkent/tuition-fees/ . Private medicine (TRY 2.0M) and private vocational (TRY 500k) remain unsourced estimates."
+  },
+  {
+   "item": "4a. Registered nurse typical gross annual pay",
+   "researched": "TRY 780,000 (about 65,000 gross a month)",
+   "verified": "About TRY 750,000, derived indirectly from three rough anchors (range about 580k to 860k). (a) ILOSTAT/TUIK household survey, median monthly net pay in human health and social work 2025 = 36,500. Scaled by 1.27 (2026 minimum-wage rise) and grossed up with 2026 social-security and income-tax rules, that is about 62,000 gross a month, or about 747k a year. (b) Indeed Turkey nurse average 30,999 a month (148 reports, 36-month pool, updated 16 Sep 2026; range 20,192-47,590). Aged to 2026, that is about 580k. (c) Public-hospital parity with the teacher scale is about 860k.",
+   "source": "https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_ECO_NB_A&ref_area=TUR&timefrom=2024&format=.csv ; https://tr.indeed.com/career/hem%C5%9Fire/salaries",
+   "verdict": "correct",
+   "note": "Low confidence. I found no direct nurse pay table (payscale, talent.com and memurlar.net pages were unusable, 404 or calculator-only). 780k is about 4% above the survey-based figure and inside the plausible range. The health-sector median covers all health staff, including aides and private clinics. Public-hospital nurses with duty and performance pay probably earn more."
+  },
+  {
+   "item": "4b. Secondary teacher typical gross annual pay",
+   "researched": "TRY 930,000",
+   "verified": "About TRY 860,000. OECD statutory salary, public schools, reference year 2025, same for lower and upper secondary: start 626,523.90; after 10 years 672,330.68; after 15 years 703,084.12; top 805,001.22 (max-qualification scale is about 14k higher). Mid-scale is about 690k. Civil-service coefficients from the 2025/1 arbitration award: 1.298935 (Jan-Jun 2026) and 1.389861 (Jul-Dec 2026), up 11% then 7%. Growth from the 2025 average to Sep 2026 is about 1.25, which gives about 860k. The range is about 820k (if OECD 2025 means the H2-2025 level) to about 910k (if H1-2025). The household-survey median net for the whole education sector is 54,000 a month in 2025, which points higher, to about 1.0M+.",
+   "source": "https://sdmx.oecd.org/public/rest/data/OECD.EDU.IMEP,DSD_EAG_SAL_STA@DF_TCH,/TUR.........?startPeriod=2023 ; https://www.memurlar.net/haber/1144576/ ; https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_ECO_NB_A&ref_area=TUR&timefrom=2024&format=.csv",
+   "verdict": "correct",
+   "note": "930k is about 8% above the central estimate and inside the 820k-1.1M spread. The colleague's 1.35x growth factor looks a little high. The civil-service coefficients imply about 1.25x from the 2025 average. I did not verify the exact 2025 coefficients, so the 2025 step rises are assumed."
+  },
+  {
+   "item": "4c. Resident physician typical gross annual pay",
+   "researched": "TRY 1,500,000 (about 125,000 gross a month)",
+   "verified": "No source found. Indeed Turkey has only 2 reports (32,404 a month), which is useless. Residents are civil servants on the 657 scale plus performance and duty pay, and no pay table was retrievable. The only anchor is the public-sector median net of 50,000 a month in 2025 (household survey), which scales to about TRY 1.0M a year gross for 2026. 1.5M is about 1.45x that, which is plausible for a resident with duty pay but not checkable.",
+   "source": "https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_ECO_NB_A&ref_area=TUR&timefrom=2024&format=.csv ; https://tr.indeed.com/career/asistan-doktor/salaries",
+   "verdict": "unverifiable",
+   "note": "The memurlar.net calculators show no amounts in static HTML. Retrieving the July 2026 resident pay table or duty (nobet) rates would settle it."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "TRY 660,000 a year (55,000 a month), low confidence",
+   "verified": "About TRY 720,000, the midpoint of two official derivations. (1) Household survey: median monthly net pay of employees 2025 = 30,000 (ILOSTAT). Scaled by 1.27 and grossed up, that is about 49,000 gross a month, or about 590k a year, for 2026. The survey includes part-time and informal work. (2) OECD minimum wage as a share of median full-time earnings = 47.22% for 2025. 2025 gross minimum is 26,005.50, so median full-time gross is about 55,070 a month, or about 661k a year, for 2025. Scaled by 1.27 that is about 840k for 2026, and by about 1.35 (CPI) it is about 890k. Numbeo's crowd-sourced average net salary is 52,307 a month (Sep 2026), a mean that skews high.",
+   "source": "https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_NB_A&ref_area=TUR&format=.csv ; https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@MIN2AVE,/TUR......?startPeriod=2019 ; https://www.numbeo.com/cost-of-living/country_result.jsp?country=Turkey",
+   "verdict": "correct",
+   "note": "660k is about 8% below the 720k midpoint and sits inside the 590k-890k bracket. The spread is wide, about 1.5x. The colleague's 660k equals the unscaled OECD 2025 figure, so if the game wants the formal-sector median, 800k+ is defensible. The OECD series is partly extrapolated (min/median ratio 70.97% in 2019 down to 47.22% in 2025). The p90 figure of 1.6M was not checked."
+  },
+  {
+   "item": "6. School-leaving qualification and how the result is scored",
+   "researched": "Lise diplomasi (high-school diploma); diploma grade (diploma notu) out of 100, higher is better, pass mark 50. Bands: 85-100 pekiyi, 70-84.99 iyi, 60-69.99 orta, 50-59.99 gecer, below 50 gecmez. University entry is a separate YKS exam scored 100-500, plus diploma grade x5 (OBP, 250-500) at 12% weight.",
+   "verified": "Confirmed. Eurydice gives the 100-point scale with bands 85-100 excellent, 70-84.99 good, 60-69.99 moderate, 50-59.99 pass, below 50 fail. Pass mark is 50 (year-end score of at least 50, or semester average of 50, or second semester of at least 70). Graduates get a Ministry of National Education diploma. Turkish Wikipedia confirms YKS placement score = exam score + (diploma grade x 5) x 0.12, OBP converted to 250-500, TYT 120 questions, AYT 160, YDT 80. The 150/180 minimum cut-off scores were abolished in 2022. English Wikipedia confirms the lise diploma.",
+   "source": "https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/assessment-general-upper-secondary-education ; https://tr.wikipedia.org/wiki/Y%C3%BCksek%C3%B6%C4%9Fretim_Kurumlar%C4%B1_S%C4%B1nav%C4%B1 ; https://en.wikipedia.org/wiki/Education_in_Turkey",
+   "verdict": "correct",
+   "note": "Not verified: the 100-500 range of the YKS exam score itself (the 250-500 OBP range is confirmed), the 18% vocational OBP weight, the LGS specifics, and the 'typical graduate 70-80' estimate, which the colleague labelled as an estimate."
+  },
+  {
+   "item": "7a. USD exchange rate",
+   "researched": "TRY 48.97 per USD (central bank midpoint, 2026-09-30)",
+   "verified": "48.97. The CBRT bulletin dated 30 Sep 2026 shows buying 48.9303 and selling 49.0184, midpoint 48.974. The World Bank official annual average was 39.45 in 2025 (32.81 in 2024).",
+   "source": "https://www.tcmb.gov.tr/kurlar/today.xml ; https://api.worldbank.org/v2/country/TUR/indicator/PA.NUS.FCRF?format=json&date=2023:2026",
+   "verdict": "correct",
+   "note": "Spot rate, not a year average. The lira has lost about 24% against the 2025 average."
+  },
+  {
+   "item": "7b. PPP conversion factor (LCU per international dollar), latest year available",
+   "researched": "20.5 (a 2026 projection; the colleague also offered 16.20 as the last published value)",
+   "verified": "16.2036 for 2025, the latest published value. The World Bank series runs 1.8371 (2019), 2.1111, 2.7516, 4.5178, 7.3503, 11.5545 (2024), 16.2036 (2025), and the 2026 entry is null. The colleague's 20.5 is 26.5% above the last published figure.",
+   "source": "https://api.worldbank.org/v2/country/TUR/indicator/PA.NUS.PPP?format=json&date=2019:2026",
+   "verdict": "off",
+   "note": "Off against 'latest year available'. The projection is arithmetically coherent, because 16.20 x (1.315 CPI / 1.03 US) is about 20.7, and it keeps the PPP/FX ratio at about 0.42, as in 2025. If the game mixes the 2026 spot rate with this factor, 20.5 is defensible but should be labelled a projection. Otherwise use 16.20. I could not retrieve an IMF WEO projection for Turkey; that response was truncated."
+  },
+  {
+   "item": "8. Student-loan scheme and interest rate",
+   "researched": "KYK state loan: 0% interest (debt equals the amount given), repaid monthly starting two years after the standard study period ends for as long as the loan was taken. Deferral is free for year 1, then 10% (or CPI if lower) of the amount is added per deferred year. Inflation 31.51%.",
+   "verified": "Confirmed from the official KYK FAQ, which has no interest on the loan: debt equals the amount given. The borrower repays 'starting two years after the normal study period ends, for as long as the loan was taken, in monthly instalments'. Deferral (unemployed borrowers, max 3 times): no addition in the first year, then 10% of the amount added per later year (CPI if lower). New fact: late instalments incur a late-payment surcharge (gecikme zammi) under Law 6183 art. 51 from the due date. Eurydice agrees on the repayment timing and no compulsory service obligation. CPI is confirmed: Aug 2026 31.51%, Jul 31.75%, Dec 2025 30.89% (CBRT/TUIK).",
+   "source": "https://kygm.gsb.gov.tr/Sayfalar/2446/3200/sikca-sorulan-sorular-kredi-burs.aspx ; https://eurydice.eacea.ec.europa.eu/eurypedia/turkiye/higher-education-funding ; https://www.tcmb.gov.tr/wps/wcm/connect/EN/TCMB+EN/Main+Menu/Statistics/Inflation+Data/Consumer+Prices",
+   "verdict": "correct",
+   "note": "The rate of 0 holds for on-time repayment. Mention the gecikme zammi penalty for late payment and the capped deferral uplift. I did not read the underlying regulation text, only the FAQ."
+  },
+  {
+   "item": "Extra: cashier pay (cross-check of the colleague's method)",
+   "researched": "TRY 430,000 a year",
+   "verified": "About TRY 426,000. ILOSTAT household-survey median net pay of service and sales workers is 23,263.93 a month in 2025, 1.052x the 2025 net minimum wage of 22,104.67. Applied to 2026 net minimum 28,075.50 that is about 29,550 net, about 35,500 gross a month, about 426k a year.",
+   "source": "https://rplumber.ilo.org/data/indicator/?id=EAR_EMTM_SEX_OCU_NB_A&ref_area=TUR&format=.csv",
+   "verdict": "correct",
+   "note": "Shown only as a spot-check of the derivation. I did not audit the other occupation rows."
+  },
+  {
+   "item": "Extra: Levels.fyi software-engineer compensation",
+   "researched": "Median total compensation TRY 1,555,518 (367 submissions); mid-level set at TRY 1.35M",
+   "verified": "Confirmed on the page: median 1,555,518 from 367 submissions as of 30 Sep 2026. 25th percentile 1.1M, 75th 2.19M, 90th 2.75M. Top employers Trendyol 2.22M, EPAM 1.96M, Aselsan 1.63M. It covers all experience levels.",
+   "source": "https://www.levels.fyi/t/software-engineer/locations/turkey",
+   "verdict": "correct",
+   "note": "The 1.35M mid-level figure is the colleague's judgement, below the all-level median, and I did not test it further. The junior figure of 780k was not verified."
+  }
+ ]
+}

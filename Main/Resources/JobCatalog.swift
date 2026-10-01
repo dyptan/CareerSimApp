@@ -1050,10 +1050,13 @@ enum JobCatalog {
 
     /// Builds one job, applying the category defaults and the per-title
     /// overrides. The single place a row becomes a `Job`.
+    /// `income` and `targetCapital` are the US reference figures; `country`
+    /// prices the job in its own money (`Country.localPay`), keeping the
+    /// reference on the job for rules that are about the role, not the money.
     static func job(title: String, category: JobCategory, income: Int, icon: String,
                     summary: String, minEQF: Int, minYears: Int?, targetCapital: Int?,
                     baseTitle: String, rung: Int, rungLabel: String,
-                    isTopRung: Bool, industry: Industry) -> Job {
+                    isTopRung: Bool, industry: Industry, country: Country = .default) -> Job {
         let hard = credentials(forTitle: title, baseTitle: baseTitle)
         // A role can't sensibly demand a license or certification the player
         // couldn't have earned at its listed education level. Raise the floor to
@@ -1079,9 +1082,11 @@ enum JobCatalog {
             hardSkills: hard,
             minYearsExperience: minYears ?? minYearsByTitle[title] ?? 0
         )
-        return Job(id: title, category: category, income: income,
+        return Job(id: title, category: category,
+                   income: country.localPay(title: title, category: category, reference: income),
                    summary: summary, icon: icon, requirements: requirements,
-                   targetCapital: targetCapital,
+                   targetCapital: targetCapital.map(country.localCapital),
+                   referenceIncome: income,
                    baseTitle: baseTitle, rung: rung, rungLabel: rungLabel,
                    workSetting: workSettingByBaseTitle[baseTitle]
                        ?? defaultWorkSetting(for: category),
@@ -1089,12 +1094,13 @@ enum JobCatalog {
     }
 
     /// A role with no ladder: its own base title, sitting at rung 0.
-    static func job(from spec: JobSpec) -> Job {
+    static func job(from spec: JobSpec, in country: Country = .default) -> Job {
         job(title: spec.title, category: spec.category, income: spec.income, icon: spec.icon,
             summary: spec.summary, minEQF: spec.minEQF, minYears: spec.minYears,
             targetCapital: spec.targetCapital,
             baseTitle: spec.title, rung: 0, rungLabel: "", isTopRung: true,
-            industry: industries(forBaseTitle: spec.title, category: spec.category).randomElement()!)
+            industry: industries(forBaseTitle: spec.title, category: spec.category).randomElement()!,
+            country: country)
     }
 
     /// Every rung of a ladder, in declared order — the index is `Job.rung`.
@@ -1102,7 +1108,7 @@ enum JobCatalog {
     /// The sector is drawn **once per ladder**, not per rung: a ladder is one
     /// employer's, and a promotion moves the player to `rung + 1` off this same
     /// list — so per-rung draws would teleport them between markets on a raise.
-    static func jobs(for ladder: LadderSpec) -> [Job] {
+    static func jobs(for ladder: LadderSpec, in country: Country = .default) -> [Job] {
         let sector = industries(forBaseTitle: ladder.name, category: ladder.category).randomElement()!
         return ladder.rungs.enumerated().map { index, rung in
             job(title: ladder.title(for: rung), category: ladder.category, income: rung.income,
@@ -1110,7 +1116,7 @@ enum JobCatalog {
                 minYears: rung.minYears, targetCapital: nil,
                 baseTitle: ladder.name, rung: index, rungLabel: rung.label,
                 isTopRung: index == ladder.rungs.count - 1,
-                industry: sector)
+                industry: sector, country: country)
         }
     }
 
@@ -1593,10 +1599,14 @@ enum JobCatalog {
     /// sector from the markets that role can sit in, so re-reading the catalogue
     /// is a fresh year's listings rather than the same ones again. `Player`
     /// re-reads it every year (see `regenerateAvailableJobs`).
-    static func allJobs() -> [Job] {
-        standaloneRoles.map(job(from:))
-            + ladders.flatMap(jobs(for:))
-            + ventures.map(job(from:))
+    ///
+    /// Priced in `country`'s money (`Country.localPay`). With no country it is
+    /// the US reference catalogue — what the structure-only readers (the career
+    /// graph, the advisor's list of roles, the tests) use.
+    static func allJobs(in country: Country = .default) -> [Job] {
+        standaloneRoles.map { job(from: $0, in: country) }
+            + ladders.flatMap { jobs(for: $0, in: country) }
+            + ventures.map { job(from: $0, in: country) }
     }
 
     /// Every ladder's rungs in order, keyed by ladder name — the unfiltered
@@ -1604,14 +1614,17 @@ enum JobCatalog {
     /// postings hold (a slump withdraws postings; it doesn't abolish the rung
     /// above the player's own). Built once: a rung's requirements and
     /// catalogue pay are fixed, and a promotion keeps the employer's sector.
-    static let rungsByLadder: [String: [Job]] = Dictionary(
-        uniqueKeysWithValues: ladders.map { ($0.name, jobs(for: $0)) }
+    /// Priced per country.
+    static let rungsByLadder: [Country: [String: [Job]]] = Dictionary(
+        uniqueKeysWithValues: Country.allCases.map { country in
+            (country, Dictionary(uniqueKeysWithValues: ladders.map { ($0.name, jobs(for: $0, in: country)) }))
+        }
     )
 
-    /// The rung above `job` on its ladder, or nil at the top of a ladder and
-    /// for a role with no ladder.
-    static func rung(above job: Job) -> Job? {
-        guard let rungs = rungsByLadder[job.baseTitle], job.rung + 1 < rungs.count else { return nil }
+    /// The rung above `job` on its ladder, priced in `country`'s money, or nil
+    /// at the top of a ladder and for a role with no ladder.
+    static func rung(above job: Job, in country: Country = .default) -> Job? {
+        guard let rungs = rungsByLadder[country]?[job.baseTitle], job.rung + 1 < rungs.count else { return nil }
         return rungs[job.rung + 1].atBaseSalary()
     }
 

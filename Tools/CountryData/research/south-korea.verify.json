@@ -1,0 +1,284 @@
+{
+ "checks": [
+  {
+   "item": "Minimum wage 2026 - hourly rate (minimumWage.note)",
+   "researched": "10,320 won an hour, applied from 1 Jan 2026 (+2.9%); 2027 already fixed at 10,700",
+   "verified": "10,320 won an hour for 2026, +290 won / +2.9% on 10,030 (2025). The Minimum Wage Commission table lists 2024 = 9,860, 2025 = 10,030, 2026 = 10,320, 2027 = 10,700. One national rate, no sector or regional split.",
+   "verdict": "correct",
+   "source": "https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144 (Ministry of Employment and Labor: 2026 rate raised 290 won, 2.9%, to 10,320 an hour); https://www.minimumwage.go.kr/minWage/policy/decisionMain.do (Minimum Wage Commission table 2024-2027); https://ko.wikipedia.org/wiki/최저임금 (same table)",
+   "note": "Legal figure, exactly right. Checked against primary sources, not the colleague's KDI summary. The note string 'The minimum wage (₩10,320 an hour)' is 34 characters, well inside the ~70 limit. Confidence: high."
+  },
+  {
+   "item": "Minimum wage 2026 - annual full-time figure and its arithmetic, 209-hour month including weekly-holiday pay (minimumWage.annualFullTime)",
+   "researched": "25,882,560 won a year = 10,320 x 209 hours x 12 (2,156,880 a month); nothing added for a 13th month",
+   "verified": "Official monthly equivalent 2,156,880 won 'on a 40-hours-a-week, 209-hours-a-month basis'; x 12 = 25,882,560. 209 = 174 ordinary hours + 35 paid weekly-holiday hours, i.e. (40 + 8) x 365 / 7 / 12 = 208.6, rounded to 209. Check of the colleague's 2027 line: 10,700 x 209 = 2,236,300 a month, x 12 = 26,835,600 (matches the Commission table).",
+   "verdict": "correct",
+   "source": "https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144 (2,156,880 won a month, 주 40시간 월 209시간 기준); https://www.minimumwage.go.kr/minWage/policy/decisionMain.do (table header 월급 209시간 기준; 2026 = 2,156,880, 2027 = 2,236,300); https://ko.wikipedia.org/wiki/최저임금 (formula: minimum wage x 209 = 174 working hours + 35 paid weekly-holiday hours)",
+   "note": "Yes, this is the standard, official way: the Ministry and the Commission both publish the monthly floor as hourly x 209, and the 209 includes the paid weekly rest day (주휴) that Korean law gives staff working 15+ hours a week. Plain 2,080-hour arithmetic (10,320 x 2,080 = 21,465,600) would understate the legal monthly floor by about 17%. Korea has no statutory 13th or 14th month; severance accrual and employer social insurance are not part of the minimum wage. Confidence: high."
+  },
+  {
+   "item": "Driving licence age, car licence without supervising driver (drivingAge)",
+   "researched": "18 (Class 1 and Class 2 ordinary); motorised bicycle 16; Class 1 large/special 19 plus a year of experience",
+   "verified": "18. Ministry of Government Legislation guide: 제1종 보통, 제2종 보통, 제2종 소형 = 18세 이상; 제1종 대형 and 특수 = 19세 이상 and at least 1 year after obtaining a Class 1 or 2 ordinary licence; 원동기장치자전거 = 16세 이상. No exception for under-18s driving a car.",
+   "verdict": "correct",
+   "source": "https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=668&ccfNo=2&cciNo=1&cnpClsNo=1",
+   "note": "Legal figure, exactly right. I could not open the Road Traffic Act text itself (the law.go.kr / elaw.klri.re.kr fetches did not return Article 82), so the wording rests on the easylaw guide run by the Ministry of Government Legislation. Confidence: high."
+  },
+  {
+   "item": "Bachelor tuition at a PUBLIC university, national vs private (tuition.bachelor.state)",
+   "researched": "7,273,000 won a year = average of all 192 four-year universities (national and private together)",
+   "verified": "2026 averages (Ministry of Education / KCUE disclosure): national and public universities 4,250,000 (+0.3%); private universities 8,231,500 (+2.8%); all 192 four-year universities 7,273,000 (+2.1%); capital region 8,270,000, non-capital 6,619,600. Flagship Seoul National University (a national university corporation) 3,045,908 a semester = about 6.09M a year.",
+   "verdict": "off",
+   "source": "https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153 ; https://www.veritas-a.com/news/articleView.html?idxno=611573",
+   "note": "The researched number reproduces its source exactly (it is the all-university average), so this is a definitional gap, not an arithmetic error: it is 71% above the national/public figure (4,250,000) and 12% below private (8,231,500). Read literally ('state = mainstream public universities') the cell would be 4,250,000, but then the junior-college cell (6.65M) would cost more than state and break a community < state < elite ordering; the colleague chose the all-university average on purpose and recorded 4.25M in the source text. Caller's call. The claim that most students attend private universities was not re-checked. Confidence on the figures: high."
+  },
+  {
+   "item": "Junior-college (전문대학) tuition (tuition.vocational.community, tuition.bachelor.community)",
+   "researched": "6,653,100 won a year",
+   "verified": "6,653,100 won: 2026 average of the 125 junior colleges (+2.7%); private 6,686,600; public 2,231,200.",
+   "verdict": "correct",
+   "source": "https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153",
+   "note": "Re-fetched the colleague's cited article; the figure matches exactly. Almost all junior-college students are in private colleges (colleague's claim, not re-checked). Confidence: high."
+  },
+  {
+   "item": "Bachelor tuition at the most selective universities, SKY (tuition.bachelor.elite)",
+   "researched": "8,380,000 won a year (mean of Seoul National, Korea, Yonsei)",
+   "verified": "2026 per-semester averages: Seoul National 3,045,908; Korea University 4,545,715; Yonsei 4,978,903. x 2 = 6,091,816 / 9,091,430 / 9,957,806 a year; mean 8,380,351.",
+   "verdict": "correct",
+   "source": "https://www.veritas-a.com/news/articleView.html?idxno=611573",
+   "note": "Arithmetic and source both confirmed. Seoul National is public and cheapest of the three; the two private SKY schools are 9.1-10.0M. Confidence: high."
+  },
+  {
+   "item": "Medicine tuition at a PUBLIC university, national vs private (tuition.medicine.state)",
+   "researched": "10,086,000 won a year = average of all 39 medical schools (5,043,077 a semester x 2)",
+   "verified": "2026, per semester: all 39 schools 5,043,077 (10,086,154 a year); 29 private schools 5,724,138 (11,448,276 a year); 10 national/public schools 3,043,250 (6,086,500 a year). Seoul National 3,072,000 a semester = 6.14M a year.",
+   "verdict": "off",
+   "source": "https://www.veritas-a.com/news/articleView.html?idxno=611272 (per-semester figures); https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153 (annual medicine field average 10,325,900)",
+   "note": "Same definitional issue as the bachelor cell: the researched number is the all-39 average and matches the source exactly, but it is 66% above the public-school figure (6,086,500) and 12% below private (11,448,276). The article's numbers are per SEMESTER: the Seoul Shinmun annual field average for medicine, 10,325,900, agrees with 2 x 5.04M. Use 6,086,500 if the cell must mean a public medical school; keep 10,086,000 if it should mean the typical student (29 of 39 schools are private). Confidence on the figures: high."
+  },
+  {
+   "item": "Medicine tuition at the most selective schools (tuition.medicine.elite)",
+   "researched": "11,000,000 won a year (mean of Seoul National, Korea, Yonsei)",
+   "verified": "2026 per semester: Seoul National 3,072,000; Korea University 6,812,500; Yonsei 6,615,500. x 2 = 6,144,000 / 13,625,000 / 13,231,000; mean 11,000,000.",
+   "verdict": "correct",
+   "source": "https://www.veritas-a.com/news/articleView.html?idxno=611272",
+   "note": "Arithmetic and source confirmed. Seoul National is the only public school of the three; the two private SKY schools charge 13.2-13.6M. Confidence: high."
+  },
+  {
+   "item": "Law school tuition, state tier (tuition.law.state) - all schools vs public vs private",
+   "researched": "14,950,000 won a year = average of the 25 law schools",
+   "verified": "2025, annual tuition excluding the entrance fee: all 25 schools 14,952,946; 15 private schools 17,548,858; 10 national/public schools 11,059,079. (The 8,332,049 figure in the same article is the one-off entrance-registration charge, entrance fee plus first semester, not annual tuition.)",
+   "verdict": "off",
+   "source": "https://www.veritas-a.com/news/articleView.html?idxno=552295 ; https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=02420646632528016 (November 2022 article: 14.25M overall, private 16.79M, public 10.44M, all annual)",
+   "note": "Extra check beyond the required list, same definitional point as bachelor and medicine: the researched number is the exact all-school average (so a defensible 'typical' cell) but it is 35% above the public-school average (11,059,079). I label it off only for consistency with the public-university reading used for the bachelor and medicine cells. Confidence on the figures: high."
+  },
+  {
+   "item": "Registered nurse annual gross pay (nationalScales.registeredNurse)",
+   "researched": "55,000,000 won (51.95M in 2023 lifted 7.4% to 2025)",
+   "verified": "Ministry of Health and Welfare 2nd Health and Medical Workforce Survey, 2023 pay: nurses about 52M (51.95M), owners and employees combined, residents excluded. 1st survey, 2020 pay: nurses 47,448,594. OECD average annual wage for Korea 50,184,136 (2023) to 53,915,741 (2025) = +7.4%, so 51.95M x 1.074 = 55.8M for 2025 and about 57M by 2026.",
+   "verdict": "correct",
+   "source": "https://www.medipana.com/news/articleView.html?idxno=418417 ; https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&tag=&act=view&list_no=372084&cg_code= ; https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@AV_AN_WAGE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels",
+   "note": "55M is within 2% of the 2025 extrapolation and 4% below a 2026 one. The survey average includes small clinics and nursing hospitals, so a hospital nurse is likely a little higher. No second independent nurse-pay source was reachable once the search budget was gone. Confidence: medium."
+  },
+  {
+   "item": "Secondary-school teacher, mid-scale (nationalScales.secondaryTeacher)",
+   "researched": "60,000,000 won (OECD statutory salary after 15 years converted and uplifted; pay table build-up 53-56M)",
+   "verified": "About 55-61M, central about 57M. (a) 2026 civil-service teacher pay table: base pay 2,041,500 a month at step 1, 2,889,700 at step 15, 4,826,800 at step 30; step 15 x 12 = 34.7M, and with long-service allowance, holiday bonuses, a performance bonus, meal 160,000, teaching 250,000 and homeroom 200,000 a month my own build-up is about 52-55M (the bonus and long-service rules are from memory, not fetched). (b) OECD Education at a Glance 2024 as reported by the Korea Herald: statutory salary 36,639 starting and 64,699 USD PPP after 15 years; at about 865 won per USD PPP that is about 56M in 2023 prices and about 61M after the 2024-26 civil-service raises.",
+   "verdict": "correct",
+   "source": "https://mnt.kr/2026-%EA%B5%90%EC%82%AC-%ED%98%B8%EB%B4%89%ED%91%9C-%EC%99%84%EC%A0%84%EC%A0%95%EB%A6%AC%EF%BD%9C%EC%B4%88%EB%93%B1%C2%B7%EC%A4%91%EB%93%B1%C2%B7%EA%B8%B0%EA%B0%84%EC%A0%9C-%EA%B5%90%EC%82%AC/ ; https://www.koreaherald.com/article/3472092",
+   "note": "60M sits at the upper-middle of the 55-61M range (about 5% above the centre). The 2025-edition OECD figures (37,773 and 65,765) quoted by the colleague could not be re-fetched; the 2024-edition numbers give almost the same 2026 result. Confidence: medium."
+  },
+  {
+   "item": "Resident physician annual gross pay (nationalScales.residentPhysician)",
+   "researched": "80,000,000 won (72.8M x 1.10)",
+   "verified": "Residents 72.8M and interns 68.82M a year (KIHASA analysis of the 1st Health and Medical Workforce Survey; physician average 230.69M in the same article equals the Ministry's 230,699,494 for pay year 2020, so the pay year is 2020). 72.8M + 10% = 80.1M; at the pay growth seen in the surveys (nurses +9.5% 2020-2023, OECD average wage +7.4% 2023-2025) the 2026 level would be about 85-87M.",
+   "verdict": "correct",
+   "source": "https://www.newsis.com/view/NISX20241107_0002950965 ; https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&tag=&act=view&list_no=372084&cg_code= (reference year 2020; the Ministry release itself has no resident row)",
+   "note": "80M is 8% below the higher extrapolation, inside the 15% band. Weak evidence: one source on a 6-year-old base and no 2025-26 resident pay data was reachable; I would treat 80-87M as the plausible range and keep confidence low. The newsis page labels the survey 2022 (the survey year); the figures are 2020 pay. Excludes the extra 1M won a month for essential-care specialties from 2025."
+  },
+  {
+   "item": "Specialist physician annual gross pay (nationalScales.specialistPhysician)",
+   "researched": "260,000,000 won",
+   "verified": "2023 pay, 2nd Health and Medical Workforce Survey (residents excluded): all physicians 285.2M; university hospitals 199.76M; general hospitals 500+ beds 251.45M; general hospitals 100-299 beds 354.27M; clinics 325.99M.",
+   "verdict": "correct",
+   "source": "https://www.medipana.com/news/articleView.html?idxno=418417",
+   "note": "260M is 9% below the all-physician average and 3% above the large-hospital figure. The colleague's OECD 264M snippet was not re-checked. Confidence: medium."
+  },
+  {
+   "item": "Dentist annual gross pay (nationalScales.dentist)",
+   "researched": "210,000,000 won (202.77M in 2023 lifted about 4%)",
+   "verified": "2023: dentists about 203M (owners and employees combined); 2020: 194.9M (clinic owners 211.5M, employed 121.5M).",
+   "verdict": "correct",
+   "source": "https://www.medipana.com/news/articleView.html?idxno=418417 ; https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&tag=&act=view&list_no=372084&cg_code=",
+   "note": "210M is 3% above the 2023 average, consistent with about 4% pay growth since. The average mixes owners and much lower-paid employed dentists. Confidence: medium."
+  },
+  {
+   "item": "Pharmacist annual gross pay (nationalScales.pharmacist)",
+   "researched": "80,000,000 won",
+   "verified": "2023: pharmacists about 84M (84.26M per colleague; owners and employees combined); 2020: 84,161,035.",
+   "verdict": "correct",
+   "source": "https://www.medipana.com/news/articleView.html?idxno=418417 ; https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&tag=&act=view&list_no=372084&cg_code=",
+   "note": "80M is 5% below the survey average, which the colleague deliberately trimmed because owners lift the mean. Confidence: medium."
+  },
+  {
+   "item": "National median full-time annual gross wage (wageLevels.medianFullTime)",
+   "researched": "42,500,000 won (derived from OECD ratios)",
+   "verified": "OECD 2025: the minimum wage is 59.57% of the median full-time wage (47.21% of the mean). Route 1: 2025 minimum 10,030 x 209 x 12 = 25,155,240 / 0.5957 = 42.2M. Route 2: OECD average annual wage 53,915,741 (2025) x 47.21 / 59.57 = 42.7M. KOSTAT, Dec 2024: median monthly pay of ALL wage jobs including part-time 2.88M (34.6M a year), mean 3.75M, consistent with a higher full-time median. A 2026 level would be about 3.5% higher (43.7-44.2M).",
+   "verdict": "correct",
+   "source": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@MIN2AVE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels ; https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@AV_AN_WAGE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels ; https://mods.go.kr/board.es?act=view&bid=11113&list_no=443648&mid=a10301030500",
+   "note": "42.5M is within 1% of both OECD routes (a 2025 level). Korea publishes no simple national full-time median, so this stays a derived number, not a directly published one. Confidence: medium."
+  },
+  {
+   "item": "90th-percentile full-time annual gross wage (wageLevels.p90FullTime)",
+   "researched": "94,000,000 won (D9/D5 2.2212 x 42.5M)",
+   "verified": "OECD decile ratio D9/D5 of gross full-time earnings: 2.2557 (2023), 2.2206 (2024), 2.2212 (2025). 2.2212 x 42.2-42.7M = 93.8-94.9M; x 42.5M = 94.4M. Using a 2026-level median (43.7M) gives about 97M.",
+   "verdict": "correct",
+   "source": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@DEC_I,1.0/KOR......_T?startPeriod=2018&format=csvfilewithlabels",
+   "note": "Ratio confirmed exactly. The colleague's KOSTAT cross-check (86.4% of wage jobs below 6.5M a month, 92.0% below 8.0M) could not be re-checked because the tables are in PDFs the fetch did not return. Confidence: medium."
+  },
+  {
+   "item": "CSAT (대학수학능력시험, suneung) scoring: scale, direction, grade shares, absolute subjects, standard scores, pass mark (schooling.gradeSystem)",
+   "researched": "Grade 1 (best) to 9 (worst) per subject, lower is better; Korean/maths/inquiry relative with shares 4/7/12/17/20/17/12/7/4%; English (90+ = grade 1) and Korean History absolute; standard scores mean 100 SD 20 (Korean, maths) and mean 50 SD 10 (inquiry); no national pass mark",
+   "verified": "Confirmed. Nine grades, 1 = best. Relative subjects: grade 1 = top 4%, then 7, 12, 17, 20, 17, 12, 7, 4% (cumulative 4, 11, 23, 40, 60, 77, 89, 96, 100). Absolute: English 90+ raw points = grade 1 then one grade per 10 points; Korean History 40+ = grade 1 then 5-point steps. Standard score S = z x SD + mean: Korean and mathematics mean 100, SD 20; other areas mean 50, SD 10. Grade 5 = 40th-60th percentile band.",
+   "verdict": "correct",
+   "source": "https://suneung.org/ ; https://ko.wikipedia.org/wiki/대학수학능력시험 ; https://en.wikipedia.org/wiki/College_Scholastic_Ability_Test",
+   "note": "Two independent pages agree on the grade table and on absolute English and Korean History. No source states a pass mark (they report grades and standard scores only), consistent with the colleague's 'no national pass mark'. The 0-200 standard-score range was not re-checked. Confidence: high."
+  },
+  {
+   "item": "CSAT 2026 results quoted by the colleague (schooling.gradeSystem)",
+   "researched": "Only 3.11% reached English grade 1 in the 2026 test; 5 perfect scorers; top Korean standard score 147",
+   "verified": "2026 CSAT: English grade 1 = 3.11% (15,154 candidates), lowest since 2018; Korean History grade 1 = 15.23%; 5 perfect scorers (4 current students, 1 graduate) against 11 the year before; highest standard score Korean 147, mathematics 139.",
+   "verdict": "correct",
+   "source": "https://www.kyeonggi.com/article/20251204580108",
+   "note": "All three numbers match. Confidence: high."
+  },
+  {
+   "item": "CSAT typical vs top-university average (schooling.gradeSystem, tierElite)",
+   "researched": "Typical result = grade 5 (median candidate); top = grade 1; SKY regular-route cut lines 97-99.7 average percentile",
+   "verified": "Typical: grade 5 is by construction the median band (40th-60th percentile), so a median candidate averages about 5.0 over the main subjects. Top: grade 1 = top 4% (percentile 96+). 2026 regular-route cut lines as average percentile: Seoul National business 98.5 / medicine 99.7; Yonsei business 97.5 / medicine 99.6; Korea business 97 / medicine 99.5 (about all grade 1, average 1.0-1.1); upper Seoul privates 91-95 (Sungkyunkwan and Hanyang 94-95, Chung-Ang 93-94, Kyung Hee 92.5-93.5, Ewha 92-93, HUFS 91-92) = roughly 1.5-2; mid Seoul privates 88-91 (Konkuk 91, Dongguk 90, Hongik 90, Soongsil 88.5, Sejong 88, Kookmin 88) = roughly 2-2.5.",
+   "verdict": "correct",
+   "source": "https://schoolm.co.kr/guide/jeongsi-pass-cut-2026 ; https://suneung.org/",
+   "note": "The 97-99.7 range is accurate for the business and medicine programmes the page lists; less selective SKY majors will cut lower, so it is a top-of-range statement. The percentile-to-grade conversion is my own arithmetic from the grade shares. Confidence: medium."
+  },
+  {
+   "item": "State-tier universities admit roughly CSAT grade 2-5 (schooling.tierState)",
+   "researched": "Mainstream four-year universities admit roughly CSAT grade 2-5 (colleague's own rough estimate)",
+   "verified": "Only the upper end is supported: 2026 cut lines for Seoul mid-tier privates are 88-91 average percentile, about grade 2-2.5. I found no cut-line source for the regional flagship national universities (Pusan, Kyungpook, Chonnam, Chungnam) or for non-selective regional privates, so the grade 4-5 end of the range is not sourced.",
+   "verdict": "unverifiable",
+   "source": "https://schoolm.co.kr/guide/jeongsi-pass-cut-2026 (Seoul universities only; the page does not list regional national universities)",
+   "note": "Plausible but unsourced for the lower end, and the colleague labelled it a rough estimate. Confidence: low."
+  },
+  {
+   "item": "Naeshin school-record grade under the existing system (schooling.gradeSystem)",
+   "researched": "Each course gets a rank grade on the same 1-9 scale (1 = top 4% of the course within the school), averaged; relative within one school, not comparable across schools; 79.9% of 2026 places filled via the rolling route, 20.1% via the regular route (92% CSAT)",
+   "verified": "Confirmed: high-school course results are reported as nine rank grades (9개 등급) by percentile rank within the school. 2026 admissions: rolling route 79.9% (275,848 places), regular route 20.1% (69,331 places), and 92.2% of regular places are decided by CSAT-based selection.",
+   "verdict": "correct",
+   "source": "https://ko.wikipedia.org/wiki/학교생활기록부 ; https://news.unn.net/news/articleView.html?idxno=562697",
+   "note": "That the school-record shares equal the CSAT shares (4/7/12/17/20/17/12/7/4) is from my own background knowledge; the Wikipedia page only says nine rank grades by percentile. Confidence: high on the structure, medium on the exact shares."
+  },
+  {
+   "item": "Naeshin 5-level reform: levels and percentage shares (schooling.gradeSystem)",
+   "researched": "From the cohort entering high school in 2025 (2028 admissions) the school record becomes 5 levels (1-5, about 10/24/32/24/10%) and the CSAT becomes an integrated exam but keeps 9 grades",
+   "verified": "Confirmed in part: the Ministry plan converts the 9-level school record to a 5-level system, first for students who were in middle-school year 2 in 2023 (i.e. entering high school in 2025, 2028 admissions); the CSAT moves to an integrated format with no choice subjects and no change to its grade reporting is announced. The percentage shares of the five levels are NOT stated on the page and I could not reach another source (namu.wiki returned 403; the Wikipedia pages carry no shares).",
+   "verdict": "unverifiable",
+   "source": "https://www.korea.kr/news/policyNewsView.do?newsId=148924193",
+   "note": "Only the 10/24/32/24/10 shares are unverified; they match my recollection of the Ministry's 2023 plan, but that is memory, not a fetched source. Design note: for any player who reaches high school from 2025 on, the school record is 1-5, so the 9-point CSAT grade is the only grade scale stable across all cohorts."
+  },
+  {
+   "item": "Name of the school-leaving qualification, exam date and entrants (schooling.schoolLeaving)",
+   "researched": "대학수학능력시험 (College Scholastic Ability Test, CSAT, 수능/suneung); 19 Nov 2026 for entry in 2027; 551,864 registered, 31.5% graduates; the high-school diploma itself is not graded",
+   "verified": "Confirmed: 2027 CSAT on 19 Nov 2026 (rule: the Thursday before the third Saturday of November); 551,864 applicants of whom 173,706 (31.5%) are graduates and repeaters; 355,391 current high-school students.",
+   "verdict": "correct",
+   "source": "https://www.newspim.com/news/view/20260908000096 ; https://suneung.org/ ; https://ko.wikipedia.org/wiki/대학수학능력시험",
+   "note": "The statement that the diploma is ungraded is not separately sourced; it is consistent with every source seen (places depend on CSAT and school record). Confidence: high."
+  },
+  {
+   "item": "Exchange rate won per US dollar (identity.fxPerUSD)",
+   "researched": "1,355.4 (ECB reference rate for 30 Sep 2026)",
+   "verified": "1,355.4 won per USD (Frankfurter / ECB reference, dated 2026-09-30); 1,355.84 (open.er-api.com, updated 1 Oct 2026 00:02 UTC). For context the World Bank 2025 annual average official rate is 1,422.44 (2024: 1,363.38).",
+   "verdict": "correct",
+   "source": "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW ; https://open.er-api.com/v6/latest/USD ; https://api.worldbank.org/v2/country/KOR/indicator/PA.NUS.FCRF?format=json&date=2022:2025",
+   "note": "Exact match with two sources. The 2026 spot needs 4.7% fewer won per dollar than the 2025 average, so USD-converted comparisons depend on which year is meant. Confidence: high."
+  },
+  {
+   "item": "PPP conversion factor, won per international dollar (identity.pppPerUSD)",
+   "researched": "816.33 (World Bank GDP PPP, 2025)",
+   "verified": "816.329274 for 2025 (World Bank PA.NUS.PPP; 2024 809.26722; 2023 811.048042; 2022 810.157015). IMF implied PPP conversion rate for 2025 is 787.9 (3.5% lower; 2026 787.2).",
+   "verdict": "correct",
+   "source": "https://api.worldbank.org/v2/country/KOR/indicator/PA.NUS.PPP?format=json&date=2020:2025 ; https://www.imf.org/external/datamapper/api/v1/PPPEX/KOR",
+   "note": "GDP-based PPP is the standard measure and the colleague's value matches the World Bank API exactly; the IMF series is within 4%. The colleague's alternative household-consumption PPP (880.13 for 2025) was not re-fetched. Confidence: high."
+  },
+  {
+   "item": "Student-loan nominal rate, Korea Student Aid Foundation (studentLoan.nominalRate)",
+   "researched": "0.017 (1.7% a year, frozen)",
+   "verified": "1.7% a year for the 2026 second semester, frozen (unchanged from the first semester); the same 1.7% is quoted for both income-contingent (취업 후 상환) and general-repayment loans; described as frozen for six consecutive years.",
+   "verdict": "correct",
+   "source": "https://news.unn.net/news/articleView.html?idxno=594088 ; https://www.banksalad.com/articles/%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%9D%B4%EC%9E%90-%EA%B1%B1%EC%A0%95%EC%9D%B4%EB%9D%BC%EB%A9%B4-%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%B7%A8%EC%97%85-%ED%9B%84-%EC%83%81%ED%99%98",
+   "note": "Two news/consumer sources agree; the KOSAF homepage fetch did not display the rate, so there is no first-party confirmation. Banksalad adds that income-contingent loans carry a variable rate (reset each half-year) while general-repayment loans are fixed at origination, both currently 1.7%. Confidence: high."
+  },
+  {
+   "item": "Income-contingent repayment threshold and loan terms (studentLoan.description)",
+   "researched": "Threshold 28.51M gross pay for 2025 income, about 30.4M for 2026; above it 20% of the excess is withheld; living-cost loan up to 2M won a semester",
+   "verified": "KOSAF page: 2025 repayment-threshold income 18.98M = 28.51M gross pay. Banksalad: 2026 threshold 30.37M a year; living-cost loan up to 2M won a semester with tuition covered in full.",
+   "verdict": "correct",
+   "source": "https://www.kosaf.go.kr/ko/tuition.do?pg=tuition05_01_03 ; https://www.banksalad.com/articles/%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%9D%B4%EC%9E%90-%EA%B1%B1%EC%A0%95%EC%9D%B4%EB%9D%BC%EB%A9%B4-%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%B7%A8%EC%97%85-%ED%9B%84-%EC%83%81%ED%99%98",
+   "note": "Not re-checked: the 20% withholding share, the lifetime living-cost caps (24M / 32M / 36M), the age limits and the minimum-grade rule. Confidence: medium."
+  },
+  {
+   "item": "Inflation used to compute the real loan rate (studentLoan.inflation)",
+   "researched": "0.031 (3.1% y/y, August 2026)",
+   "verified": "South Korea consumer prices +3.1% y/y in August 2026 (released 1 Sep 2026), up from 2.8% in July. Real loan rate 1.7% - 3.1% = -1.4%.",
+   "verdict": "correct",
+   "source": "https://tradingeconomics.com/south-korea/inflation-cpi",
+   "note": "September 2026 CPI is not out on 1 Oct 2026, so August is the latest reading, as the colleague says. Aggregator source, not KOSTAT itself. Confidence: medium."
+  },
+  {
+   "item": "Cost of living for a single adult, gross (livingCost)",
+   "researched": "24,000,000 won a year (net need 1.8M a month, grossed up for about 9.5% employee insurance)",
+   "verified": "Inputs re-checked: Seoul average one-room (33 m2 or less) rent 625,000 a month on a 10M deposit plus 84,000 management fee (Aug 2026; Seoul National University area 533,000); 2025 household survey: one-person households spend 20.26M a year (about 1.69M a month). 20.26M / 0.905 = 22.4M gross at the colleague's own gross-up; my own rough estimate for a Seoul-rent basket is 25-26M.",
+   "verdict": "correct",
+   "source": "https://view.asiae.co.kr/article/2026081108373998499 ; https://www.news1.kr/economy/trend/6002484",
+   "note": "24M is 7% above the national one-person average and about 8% below a Seoul-rent version, inside the 15% band. Not re-checked: the 9.5% social-insurance rate, the Busan rent (430,000) and the basket split. Confidence: medium."
+  },
+  {
+   "item": "Police officer annual gross pay (payForGameJobs.policeOfficer)",
+   "researched": "48,000,000 won (sergeant, step 10 table pay 49.3M; Worknet 2021 median 39.0M uplifted)",
+   "verified": "2026 pay table via a calculator page: sergeant (경사) step 10 base pay 3,276,600 a month; 4,110,785 a month including position allowance, long-service pay and holiday bonus, excluding overtime, performance bonus and welfare points. 4,110,785 x 12 = 49,329,420.",
+   "verdict": "correct",
+   "source": "https://silsu.kr/gov/police/sergeant/10",
+   "note": "Extra check. 48M is 3% below the table figure; overtime and bonuses would lift a mid-career officer further (my own estimate: roughly 52-56M), still within 15%. The calculator is a private site, not the official pay table. Confidence: medium."
+  },
+  {
+   "item": "Large-company CEO pay (nationalScales.ceoLargeCompany) - the statistic only",
+   "researched": "2,180,000,000 won (average of the highest-paid executive at 211 of the 500 largest firms, FY2025)",
+   "verified": "Confirmed: FY2025 highest-paid executive averaged 2.18 billion won (+7.6%); employees at the same firms averaged 102.8 million (+5.2%); pay ratio 21.2x. Top individual pay includes owner-chairmen (Hanwha 2.484 billion).",
+   "verdict": "correct",
+   "source": "https://www.newspim.com/news/view/20260325000301",
+   "note": "Extra check. The verdict covers the statistic only. It is a mean of top earners that includes owner-chairmen, so a hired CEO of a large company is probably well below it; the colleague's ERRI figure (about 1.21 billion for hired professional managers) could not be opened. Treat 2.18 billion as an upper bound. Confidence: low as a measure of a typical CEO."
+  },
+  {
+   "item": "Highlight 1: minimum wage is about 60% of the full-time median (highlights[0])",
+   "researched": "Minimum wage of 10,320 an hour (about 25.9M a year) equals roughly 60% of the full-time median of about 42M (OECD 2025: 59.6%)",
+   "verified": "OECD 2025 ratio 59.57% confirmed; 25.88M / 42.5M = 60.9%; hourly rate and annual figure confirmed above. It is 157 characters, under the 200 limit.",
+   "verdict": "correct",
+   "source": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@MIN2AVE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels ; https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144",
+   "note": "Mixes a 2026 minimum wage with a 2025-level median, but 'roughly 60%' holds either way. Confidence: high."
+  },
+  {
+   "item": "Highlight 2: CSAT and school-record grades both ranked 1 (best) to 9; tuition 7.27M; loan 1.7% vs 3.1% inflation (highlights[1])",
+   "researched": "University entry rests on the November CSAT exam and school-record grades, both ranked 1 (best) to 9; four-year tuition averages 7.27 million and the state loan charges 1.7%, below 3.1% inflation",
+   "verified": "CSAT grades 1 (best) to 9, four-year average tuition 7,273,000, loan 1.7% and inflation 3.1% are all confirmed. But the school record is 1-9 only for students who entered high school before 2025; from the 2025 entrants (the 2028 admissions cohort) it is a 5-level scale, so today only the final-year class is on 1-9. The sentence is 197 characters, just under the 200 limit.",
+   "verdict": "off",
+   "source": "https://www.korea.kr/news/policyNewsView.do?newsId=148924193 ; https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153 ; https://news.unn.net/news/articleView.html?idxno=594088",
+   "note": "Minor wording issue, not a data error: true for the 2027 entry cycle, wrong for the cohorts a new game character would belong to. Suggest 'CSAT grades ranked 1 (best) to 9' without claiming the same for the school record. Also note 7.27M is the all-university average, see the bachelor-tuition check. Confidence: high."
+  },
+  {
+   "item": "Items NOT independently checked, and method limits of this verification",
+   "researched": "payForGameJobs cashier, electrician, mechanicalEngineer, lawyer, salesDirector; nationalScales airlineFirstOfficer and airlineCaptain; softwareEngineer junior and midLevel; tuition master and doctorate cells and vocational state/elite; school-stage ages",
+   "verified": "Not checked. The shared WebSearch budget (200 of 200) was already used up when I started, so no new search queries were possible; every figure above was checked by direct WebFetch of official or primary pages (World Bank, IMF, OECD SDMX, ECB via Frankfurter, Ministry of Employment and Labor, Minimum Wage Commission, KOSAF, easylaw) or by re-fetching the colleague's cited news pages, plus local arithmetic. I also could not render the construction-wage PDF behind the electrician figure (no PDF tools installed); the 217.2 working days a year for construction workers was confirmed (2024 Construction Workers' Mutual Aid Association survey via Newsis), the 273,676 won daily wage was not.",
+   "verdict": "unverifiable",
+   "source": "none consulted for these items",
+   "note": "Those items were outside the required list and the colleague already marks most of them low confidence (estimates built from small surveys and aviation write-ups). Treat them as unreviewed, not as confirmed or refuted."
+  }
+ ]
+}

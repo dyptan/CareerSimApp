@@ -47,6 +47,14 @@ final class Player: ObservableObject {
     /// Convenience: true when only the basic (degree + experience) rules apply.
     var isSimplified: Bool { difficulty.isSimplified }
 
+    /// Where the player grows up: the currency, pay, school costs and living
+    /// costs the game is priced in (see `Country`). Set from the launch picker,
+    /// before the first postings are built.
+    @Published var country: Country = .default
+
+    /// An amount in the player's currency: "45.000 €".
+    func money(_ amount: Int) -> String { country.money(amount) }
+
     /// The player's chosen avatar emoji, picked on the launch screen. Shown in
     /// the header. Purely cosmetic.
     @Published var avatar: String = Player.avatarOptions[0]
@@ -285,16 +293,26 @@ final class Player: ObservableObject {
     /// just marks the moment.
     func graduationMessage(for degree: Education) -> String {
         if degree.level == .HighSchool {
-            let gpa = highSchoolGPA
-            return "Congratulations! You graduated from High School with a \(Player.formatGPA(gpa)) GPA (\(Player.letterGrade(gpa)))."
+            return "Congratulations! You finished \(degree.degreeName(in: country)) — \(country.schooling.gradeName): \(country.gradeLabel(highSchoolGPA))."
         }
-        return "Congratulations! You completed your \(degree.degreeName)."
+        return "Congratulations! You completed your \(degree.degreeName(in: country))."
+    }
+
+    /// The status-log line for finishing `degree`. Leaving school is the one
+    /// moment the grade is reported: "Graduated — Abitur · Abitur grade 1.6 (good)".
+    func graduationStatus(for degree: Education) -> String {
+        var line = "Graduated — \(degree.degreeName(in: country))"
+        if degree.level == .HighSchool {
+            line += " · \(country.schooling.gradeName) \(country.gradeLabel(highSchoolGPA))"
+        }
+        return line
     }
 
     // MARK: - School grades
 
     /// The grade earned in each high-school year completed, on the US 4.0
-    /// scale. Recorded by `advanceYear`; averaged into `highSchoolGPA`, which
+    /// scale — the game's internal scale in every country; players see it as
+    /// their own (`Country.gradeLabel`). Recorded by `advanceYear`; averaged into `highSchoolGPA`, which
     /// universities weigh at admission (see `Education.admissionProbability`).
     @Published var highSchoolGrades: [Double] = []
 
@@ -457,7 +475,8 @@ final class Player: ObservableObject {
         let fame = famePoints(for: .entertainment)
         guard fame >= GameConstants.endorsementFameThreshold else { return 0 }
         let pay = GameConstants.endorsementBase * pow(fame, GameConstants.endorsementFameExponent)
-        return min(GameConstants.endorsementMax, Int(pay.rounded()))
+            * country.generalPayScale
+        return min(Int(Double(GameConstants.endorsementMax) * country.generalPayScale), Int(pay.rounded()))
     }
 
     /// Gross pay last year from endorsements — shown in Finances next to the
@@ -599,7 +618,9 @@ final class Player: ObservableObject {
     static func annualLoanPayment(balance: Int, rate: Double) -> Int {
         guard balance > 0 else { return 0 }
         let n = Double(GameConstants.loanTermYears)
-        let payment = Double(balance) * rate / (1 - pow(1 + rate, -n))
+        // An interest-free loan (German student support) is repaid in equal
+        // parts; the amortising formula would divide zero by zero.
+        let payment = rate > 0 ? Double(balance) * rate / (1 - pow(1 + rate, -n)) : Double(balance) / n
         // Rounded up, so the loan is cleared within its term rather than
         // leaving a dollar of rounding behind.
         return Int(payment.rounded(.up))
@@ -668,13 +689,17 @@ final class Player: ObservableObject {
     func annualSaving(gross: Int, atAge livedAge: Int) -> Int {
         guard gross > 0 else { return 0 }
         if isSimplified { return gross }
-        let floor = livedAge < GameConstants.adultRoleAge ? 0 : difficulty.livingCostFloor
-        let threshold = GameConstants.highEarnerThreshold
+        let floor = livedAge < GameConstants.adultRoleAge ? 0 : livingCostFloor
+        let threshold = country.highEarnerThreshold
         let base = max(0, min(gross, threshold) - floor)
         let top = max(0, gross - threshold)
         return Int((Double(base) * difficulty.savingsRate
                     + Double(top) * GameConstants.highEarnerSavingsRate).rounded())
     }
+
+    /// A year's basic living costs in this mode and country — nothing is saved
+    /// below it (`Difficulty.livingCostFloor(in:)`).
+    var livingCostFloor: Int { difficulty.livingCostFloor(in: country) }
 
     /// The player's running score, recalculated from current state (so it's
     /// always up to date each year): "wealth velocity" — net worth (savings minus
@@ -807,7 +832,7 @@ final class Player: ObservableObject {
         self.currentEducation = Education(Level.Stage.PrimarySchool)
         self.savings = savings
         self.lockedTrainings = lockedTrainings
-        self.availableJobs = JobCatalog.allJobs().shuffled()
+        self.availableJobs = JobCatalog.allJobs(in: .default).shuffled()
         // Seed a calm, mildly uneven starting economy rather than a flat one, so
         // the first year the player looks already has industries worth choosing
         // between.
@@ -822,7 +847,7 @@ final class Player: ObservableObject {
     /// Rebuilds and reshuffles `availableJobs`. Call when the game year advances
     /// or the mode is chosen, so the listing feels fresh each year.
     func regenerateAvailableJobs() {
-        availableJobs = JobCatalog.allJobs().shuffled()
+        availableJobs = JobCatalog.allJobs(in: country).shuffled()
     }
 
     /// Sets `age` and seeds the K-12 record to match a chosen starting age
@@ -1090,7 +1115,7 @@ final class Player: ObservableObject {
     /// measured against, not a guarantee they can step into it.
     func nextRung(after job: Job) -> Job? {
         guard !job.isEntrepreneurial else { return nil }
-        return JobCatalog.rung(above: job)
+        return JobCatalog.rung(above: job, in: country)
     }
 
     /// Late-career fade on the promotion odds: 1 up to
@@ -1305,11 +1330,12 @@ final class Player: ObservableObject {
         lastYearSports = competedSports
 
         // The school year's grade — high school only, since that's the record
-        // universities read. A Study activity this year lifts it.
+        // universities read. A Study activity this year lifts it. It is kept
+        // quietly: the log reports the final grade once, at graduation
+        // (`graduationStatus`); the running average is on the Occupation row.
         if wasInHighSchool {
             let grade = yearGrade(studied: competedSports.contains { $0.kind == .study })
             highSchoolGrades.append(grade)
-            recordStatus("📝", "Finished the school year with a \(Player.letterGrade(grade)) (\(Player.formatGPA(grade)))")
         }
         appUIState.selectedSports.removeAll()
 
@@ -1353,14 +1379,14 @@ final class Player: ObservableObject {
             // than a free negative balance.
             // The family covers its share (`familyTuitionShare`); the student
             // finances the rest.
-            let tuition = Int((Double(edu.annualTuition) * (1 - difficulty.familyTuitionShare)).rounded())
+            let tuition = Int((Double(edu.annualTuition(in: country)) * (1 - difficulty.familyTuitionShare)).rounded())
             let fromSavings = min(max(0, savings), tuition)
             savings -= fromSavings
             let borrowed = tuition - fromSavings
             if borrowed > 0 {
                 studentLoan += borrowed
                 studentLoanPayment = Player.annualLoanPayment(
-                    balance: studentLoan, rate: GameConstants.studentLoanAnnualInterest)
+                    balance: studentLoan, rate: country.studentLoanInterest)
             }
         }
 
@@ -1368,7 +1394,7 @@ final class Player: ObservableObject {
         if appUIState.yearsLeftToGraduation == 0 {
             if let currentEducation {
                 degrees.append(currentEducation)
-                recordStatus("🎓", "Graduated — \(currentEducation.degreeName)")
+                recordStatus("🎓", "Graduated — \(currentEducation.degreeName(in: country))")
                 graduationMessage = graduationMessage(for: currentEducation)
                 showGraduationAlert = true
             }
@@ -1469,7 +1495,7 @@ final class Player: ObservableObject {
                 var raised = job
                 raised.annualIncome = meritRaise
                 currentOccupation = raised
-                recordStatus("💵", "Merit raise\(pct > 0 ? " of \(pct)%" : "") — now \(meritRaise.formatted(.number)) $ a year")
+                recordStatus("💵", "Merit raise\(pct > 0 ? " of \(pct)%" : "") — now \(money(meritRaise)) a year")
             }
 
             // A founder's year (realistic mode): the business may fold, may —
@@ -1591,8 +1617,8 @@ final class Player: ObservableObject {
         let livedAge = age - 1
         savings += annualSaving(gross: grossThisYear, atAge: livedAge)
         if !isSimplified, livedAge >= GameConstants.adultRoleAge, !studiedThisYear,
-           grossThisYear < difficulty.livingCostFloor {
-            let draw = Int((Double(difficulty.livingCostFloor - grossThisYear) * GameConstants.unemployedDrawShare).rounded())
+           grossThisYear < livingCostFloor {
+            let draw = Int((Double(livingCostFloor - grossThisYear) * GameConstants.unemployedDrawShare).rounded())
             savings -= min(max(0, savings), draw)
         }
 
@@ -1608,9 +1634,9 @@ final class Player: ObservableObject {
             recordStatus("🏦", "Paid off your venture loan")
         }
         if studiedThisYear, studentLoan > 0 {
-            studentLoan = Int((Double(studentLoan) * (1 + GameConstants.studentLoanAnnualInterest)).rounded())
+            studentLoan = Int((Double(studentLoan) * (1 + country.studentLoanInterest)).rounded())
         } else if serviceLoan(&studentLoan, payment: &studentLoanPayment,
-                              rate: GameConstants.studentLoanAnnualInterest, income: &spendingCut) {
+                              rate: country.studentLoanInterest, income: &spendingCut) {
             recordStatus("🎓", "Paid off your student loan")
         }
 
@@ -1682,7 +1708,7 @@ final class Player: ObservableObject {
             : 0
         celebrateIfLucky(odds.total)
         showPromotionAlert = true
-        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(promoted.annualIncome.formatted(.number)) $ a year."
+        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(money(promoted.annualIncome)) a year."
         recordStatus("⬆️", "Promoted to \(promoted.id) — pay +\(lastPromotionRaisePct)%")
         return true
     }
@@ -1707,10 +1733,11 @@ final class Player: ObservableObject {
         let hired = Double.random(in: 0...1) < probability
         if hired {
             var hiredJob = job
-            hiredJob.annualIncome = requestedSalary
+            // No one is paid under the minimum wage, whatever they asked for.
+            hiredJob.annualIncome = job.isEntrepreneurial ? requestedSalary : max(country.minimumAnnualPay, requestedSalary)
             currentOccupation = hiredJob
             yearsInRole = 0                 // a new position, even under the same title
-            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(requestedSalary.formatted(.number)) $/year")
+            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(money(hiredJob.annualIncome))/year")
         }
         return hired
     }
@@ -1743,7 +1770,7 @@ final class Player: ObservableObject {
             outstandingLoan += borrowed        // the rest is a loan
             ventureLoanPayment = Player.annualLoanPayment(
                 balance: outstandingLoan, rate: GameConstants.ventureLoanAnnualInterest)
-            recordStatus("🏦", "Borrowed \(borrowed.formatted(.number)) $ to fund your venture")
+            recordStatus("🏦", "Borrowed \(money(borrowed)) to fund your venture")
         }
 
         let previous = currentOccupation
@@ -1779,8 +1806,8 @@ final class Player: ObservableObject {
             currentOccupation = nil
             clearVenture()
             showVentureFailureAlert = true
-            ventureFailureMessage = "\(job.baseTitle) had to close this year. Selling what was left got back \(recovered.formatted(.number)) $ — but you still have to pay back any loan."
-            recordStatus("📉", "\(job.baseTitle) folded — recovered \(recovered.formatted(.number)) $")
+            ventureFailureMessage = "\(job.baseTitle) had to close this year. Selling what was left got back \(money(recovered)) — but you still have to pay back any loan."
+            recordStatus("📉", "\(job.baseTitle) folded — recovered \(money(recovered))")
             // A fold costs no reputation — the lessons count for something.
             award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
             return
@@ -1964,7 +1991,7 @@ final class Player: ObservableObject {
             let ask = askPrice ?? shareStakeValue()
             let sold = Double.random(in: 0...1) < shareSaleOdds(askPrice: ask)
             guard sold else {
-                recordStatus("🤝", "No buyer for your \(job.baseTitle) stake at \(ask.formatted(.number)) $ this year")
+                recordStatus("🤝", "No buyer for your \(job.baseTitle) stake at \(money(ask)) this year")
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
             }
             // What reaches the bank: a hired executive's vested shares are taxed
@@ -1981,10 +2008,10 @@ final class Player: ObservableObject {
                 currentOccupation = nil            // clears the venture state too
                 // A successful exit is the strongest founder credential there is.
                 award("Successful Exit", icon: decision.icon, category: .business, weight: GameConstants.founderExitFame)
-                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(ask.formatted(.number)) $ (\(proceeds.formatted(.number)) $ after fees and tax) — exited the venture")
+                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(money(ask)) (\(money(proceeds)) after fees and tax) — exited the venture")
             } else {
                 equityVestedYears = 0
-                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(ask.formatted(.number)) $ (\(proceeds.formatted(.number)) $ after tax)")
+                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(money(ask)) (\(money(proceeds)) after tax)")
             }
             return ExecutiveDecision.Outcome(decision: decision, success: true, cash: proceeds, fameTitle: nil)
         case .investmentRound:
@@ -2021,6 +2048,7 @@ final class Player: ObservableObject {
     func reset() {
         let fresh = Player()
         difficulty = fresh.difficulty
+        country = fresh.country
         avatar = fresh.avatar
         fameAwards = fresh.fameAwards
         lastCompetitionWins = fresh.lastCompetitionWins

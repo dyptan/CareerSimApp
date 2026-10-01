@@ -73,6 +73,9 @@ that performs it in the app (see the header of `Harness.swift`):
 | `dreamer` | Soccer every school year (Junior Championship → pro "Player" ladder). With the junior title, applies up the Player ladder and stays there; otherwise (no title, or between contracts) holds the likeliest day job and spends every year on the Projects sheet chasing a Breakout Role, then starring in films. |
 
 Scenarios: `advisor`, `typical`, `passive`, `striver` at 18 in Real Life;
+`typical` at 18 in Real Life for every other country (labels end in the
+country's name; money columns are then in that currency, though the headers
+say `$`);
 `dreamer` at 18 in Real Life (no junior title possible, so it isolates
 the screen-star route); `advisor`, `typical`, `dreamer` from 7 in Real Life;
 `advisor`, `typical` from 7 in Simplified.

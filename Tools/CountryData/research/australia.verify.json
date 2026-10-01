@@ -1,0 +1,108 @@
+{
+ "checks": [
+  {
+   "item": "1. National minimum wage (full-time annual) and arithmetic",
+   "researched": "A$52,255/yr: A$26.44/h, A$1,004.90/wk x 52 (from 1 Jul 2026, up 5.97%)",
+   "verified": "A$26.44/h and A$1,004.90/wk from 1 Jul 2026 (prev A$24.95 and A$948; +5.97%). A$1,004.90 x 52 = A$52,254.80. The FWC sets the weekly figure and derives the hourly one (1,004.90/38 = 26.44). A$26.44 x 38 x 52 = A$52,245, a negligible gap.",
+   "source": "https://www.abc.net.au/news/2026-06-02/minimum-wage-increase-june-2026-australia/106746542",
+   "verdict": "correct",
+   "note": "Only ABC reporting of the FWC decision could be fetched. The Fair Work Ombudsman and FWC pages timed out or returned 403. The arithmetic is exact. Excludes 12% super. The casual 25% loading is not checked."
+  },
+  {
+   "item": "2. Driving licence age",
+   "researched": "17 (learner at 16, solo provisional P1 at 17 in most states, Victoria 18)",
+   "verified": "Learner permit: 16 in most states (ACT 15y9m). Provisional P1, which allows solo driving: 17 in NSW, QLD, WA, SA, TAS and ACT; 18 in VIC; 16y6m in NT. Unrestricted licence: 20 in most states, 22 in VIC, 19 in WA, 18y6m in NT.",
+   "source": "https://en.wikipedia.org/wiki/Driver%27s_licences_in_Australia",
+   "verdict": "correct",
+   "note": "Every state road-authority page I tried returned 404 or 403, so this rests on Wikipedia. The 'around 20 or 21' for a full licence is slightly off: it is 20 in most states and 22 in Victoria."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition, domestic student (Commonwealth-supported, 2026, per full-time year)",
+   "researched": "A$4,738 (education, nursing, languages), A$9,537 (science, engineering, computing, allied health), A$17,399 (law, commerce, economics, communications, society and culture)",
+   "verified": "UAC 2026 maximum student contributions: A$17,399 for law, accounting, administration, economics, commerce, communications and society and culture. A$9,537 for allied health, other health, built environment, computing, performing arts, science, engineering and surveying. A$4,738 for education, English, maths, statistics, nursing, languages and agriculture. 2027 amounts are A$18,025, A$9,880 and A$4,908.",
+   "source": "https://www.uac.edu.au/future-applicants/fees/university-course-costs (Adelaide page gives the same: https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/)",
+   "verdict": "correct",
+   "note": "All three bands match the colleague's figures exactly. Mapping the bands to community, state and elite tiers is a game design choice, since the fees are set by subject, not by university. Master, vocational and PhD figures were not part of this check."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university (domestic, Commonwealth-supported, 2026)",
+   "researched": "A$13,558 per year",
+   "verified": "A$13,558 for medicine, dentistry and veterinary science in 2026 (A$14,046 in 2027).",
+   "source": "https://www.uac.edu.au/future-applicants/fees/university-course-costs",
+   "verdict": "correct",
+   "note": "The colleague's unverified remark that graduate-entry fee-paying MD courses cost about A$60k a year was not checked and is not needed."
+  },
+  {
+   "item": "4a. Registered nurse typical annual gross pay",
+   "researched": "A$98,000",
+   "verified": "NSW public-health award, in force from 1 Jul 2026 (weekly rates converted to annual at 52.18 weeks): RN year 1 A$1,566.70/wk = A$81.7k, year 4 A$1,828.50 = A$95.4k, year 5 A$1,919.20 = A$100.1k, year 8 A$2,199.60 = A$114.8k. Mid-scale is about A$95k to A$100k. Indeed's full-time job-ad range is A$81.7k to A$114.8k. Talent.com average is A$91.7k.",
+   "source": "https://www.nswnma.asn.au/wp-content/uploads/2026/07/PHS-Wage-Calculator-2026-07-01.pdf ; https://au.indeed.com/career/registered-nurse/salaries ; https://au.talent.com/salary?job=registered+nurse",
+   "verdict": "correct",
+   "note": "Checked against the actual NSW pay scale, a primary source for one state. Base pay only: it excludes penalty rates and allowances."
+  },
+  {
+   "item": "4b. Secondary teacher typical annual gross pay",
+   "researched": "A$105,000",
+   "verified": "Queensland state schools: Teacher level A$86,068 to A$113,957 (mid about A$100k), Senior Teacher A$118,940, Highly Accomplished A$130,770. Indeed high-school teacher average is A$103,371 (range A$77.6k to A$137.6k). Talent.com gives A$123,969 and PayScale A$83,108. The middle of these is about A$100k to A$105k.",
+   "source": "https://teach.qld.gov.au/teach-in-state-schools/pay-and-benefits ; https://au.indeed.com/career/secondary-school-teacher/salaries",
+   "verdict": "correct",
+   "note": "Queensland is the only primary source I could open. The NSW and Victorian pages returned 404 or no data. Third-party averages vary widely, from A$83k to A$124k."
+  },
+  {
+   "item": "4c. Resident physician (resident medical officer) typical annual gross pay",
+   "researched": "A$110,000",
+   "verified": "No primary pay scale could be fetched (NSW Health, Queensland Health and ASMOF pages returned 404, 403 or no rates). Third-party data: PayScale RMO median A$89,051 (10th to 90th percentile A$76k to A$121k, 20 profiles). Talent.com RMO median A$98,349 (entry A$87.3k, experienced A$140.2k). Talent.com 'junior doctor' average A$82,875. The middle of these is about A$93k.",
+   "source": "https://www.payscale.com/research/AU/Job=Resident_Medical_Officer/Salary ; https://au.talent.com/salary?job=resident+medical+officer ; https://au.talent.com/salary?job=junior+doctor",
+   "verdict": "off",
+   "note": "110k is about 12% above the best-matching source (Talent.com RMO, 98k) and 24% above PayScale, so it lands roughly 16 to 18% above the central estimate. That is marginally outside the 15% pay tolerance. A value of about A$95k to A$100k is better supported. My own unsourced recollection is that base pay for a second-year resident is near A$100k and overtime can push total pay higher, so 110k is defensible only if overtime is meant to be included. Treat this as a borderline result with weak data."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "A$98,124 (A$1,887/wk x 52, ABS Employee Earnings and Hours, May 2025)",
+   "verified": "ABS EEH May 2025 (released 23 Jan 2026): median weekly total cash earnings of all full-time persons A$1,887 (males A$1,994, females A$1,758), confirmed in the page's quartile table. A$1,887 x 52 = A$98,124. The ABS Employee Earnings Aug 2025 release gives a main-job full-time median of A$1,741/wk (males A$1,841, females A$1,631), which is A$90,532 a year.",
+   "source": "https://www.abs.gov.au/statistics/labour/earnings-and-working-conditions/employee-earnings-and-hours-australia/latest-release ; https://www.abs.gov.au/statistics/labour/earnings-and-working-conditions/employee-earnings/aug-2025",
+   "verdict": "correct",
+   "note": "The two ABS measures differ by 8%. EEH uses total cash earnings including overtime and bonuses. The main-job measure is slightly lower. Both are within tolerance."
+  },
+  {
+   "item": "6. School-leaving result scoring and qualification name",
+   "researched": "ATAR, 0.00 to 99.95 in steps of 0.05, a percentile rank, higher is better, no pass mark, average about 70. Qualifications: HSC (NSW), VCE, QCE, SACE, WACE, TCE and the ACT Senior Secondary Certificate.",
+   "verified": "UAC: the ATAR runs from 0.00 to 99.95 in 0.05 steps ('there is no ATAR of 100'). It is a rank against the age cohort, so 80.00 means the top 20%. Higher is better. There is no pass mark. Results of 30.00 or below are reported as '30 or less'. The average is about 70. The NSW school-leaving credential is the Higher School Certificate (HSC), and ATAR and HSC marks serve different purposes.",
+   "source": "https://www.uac.edu.au/future-applicants/atar",
+   "verdict": "correct",
+   "note": "The UAC page covers NSW and ACT. The other states' certificate names (VCE, QCE, SACE, WACE, TCE) are from the colleague and my own knowledge, not fetched this run. The '95 to 99+ for medicine' claim was not checked."
+  },
+  {
+   "item": "7a. Exchange rate to USD (local currency per USD)",
+   "researched": "1.4333 AUD per USD (0.6977 USD per AUD, RBA, 30 Sep 2026)",
+   "verified": "RBA table 'Units of Foreign Currencies per Australian Dollar', 30 Sep 2026: A$1 = US$0.6977, so US$1 = A$1.4333. The 30 Sep 2026 column is 0.6977, with the previous two dates at 0.7023 and 0.6987. For reference, the World Bank 2025 annual average is 1.55 AUD per USD.",
+   "source": "https://www.rba.gov.au/statistics/frequency/exchange-rates.html ; https://api.worldbank.org/v2/country/AU/indicator/PA.NUS.FCRF?format=json&date=2022:2026",
+   "verdict": "correct",
+   "note": "The spot rate is about 8% stronger than the 2025 average. Whether to use spot or an annual average is a design choice."
+  },
+  {
+   "item": "7b. PPP conversion factor (AUD per international dollar), latest year",
+   "researched": "1.399 (World Bank 2025 = 1.398943)",
+   "verified": "World Bank PA.NUS.PPP for Australia: 2025 = 1.398943, 2024 = 1.366527, 2023 = 1.337468, 2022 = 1.358727, 2021 = 1.395724, 2020 = 1.431163.",
+   "source": "https://api.worldbank.org/v2/country/AU/indicator/PA.NUS.PPP?format=json&date=2020:2026",
+   "verdict": "correct",
+   "note": "Matches exactly. The colleague's 'medium' confidence is because 2025 may be a provisional figure."
+  },
+  {
+   "item": "8. Student-loan scheme description and interest rate (HELP / HECS-HELP)",
+   "researched": "Interest-free. Debt is indexed each 1 June at the lower of CPI and WPI (2.8% on 1 Jun 2026). Income-contingent repayment starts at about A$69,528 in 2026-27. One-off 20% cut in 2025. Inflation 4.0% to Aug 2026.",
+   "verified": "Two independent secondary sites agree: 1 Jun 2026 indexation was 2.8% (lowest since 2021), at the lower of CPI and WPI under the Universities Accord Act 2024. The debt carries no traditional interest. The 2026-27 nil-repayment threshold is A$69,528 (2025-26: A$67,000). A one-off 20% cut was applied to balances as at 1 Jun 2025. Repayments are now marginal: 15% above A$69,528, plus 17% and 10% in the higher brackets. The ABS CPI release of 30 Sep 2026 confirms 4.0% to August 2026 (3.5% to July).",
+   "source": "https://fairworkmate.com.au/blog/hecs-indexation-june-2026-australia ; https://atotaxcalculator.com.au/hecs-debt-indexation ; https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release",
+   "verdict": "correct",
+   "note": "I could not open a government source: ATO returned 403, and studyassist.gov.au and fairwork.gov.au timed out. The 2.8% and A$69,528 figures rest on secondary sites that agree with each other. The CPI figure is primary (ABS). The 'nominalRate 2.8' is an indexation rate, not interest, and the colleague's wording makes this clear."
+  },
+  {
+   "item": "Tooling limitation",
+   "researched": "n/a",
+   "verified": "The WebSearch budget (200 of 200) was exhausted at the start of this run, so every figure was checked by fetching specific pages, not by fresh searching. Some fetches went through curl in Bash (direct page GETs only). The NSW nurse pay PDF was read via a local PDFKit script.",
+   "source": "n/a",
+   "verdict": "unverifiable",
+   "note": "Applies to the method, not to any single figure. Not re-verified here: the vocational, master, doctorate, CEO, pilot, specialist and sector pay figures, the P90 wage, the living-cost estimate and the game-job pay figures. They were outside the eight requested checks."
+  }
+ ]
+}

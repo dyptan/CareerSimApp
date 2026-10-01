@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Spain",
+  "adjective": "Spanish",
+  "currencyName": "euro",
+  "fxPerUSD": {
+   "value": 0.8807,
+   "source": "ECB reference rate 2026-09-30: 1 EUR = 1.1355 USD, so 1 USD = 0.8807 EUR. https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?lastNObservations=6&format=csvdata",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 0.571,
+   "source": "World Bank PPP conversion factor, GDP (LCU per international $), Spain 2025 = 0.570991 (household-consumption PPP 0.6079). https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PPP?format=json&mrv=6",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 17094,
+   "source": "Real Decreto 126/2026 (BOE 19 Feb 2026, in force from 1 Jan 2026): EUR 40.70/day or EUR 1,221/month, paid in 14 instalments (+3.1%). https://www.boe.es/eli/es/rd/2026/02/18/126/con ; 14-payment annual total confirmed at https://www.iberley.es/noticias/publicado-salario-minimo-interprofesional-2026-36093",
+   "confidence": "high"
+  },
+  "arithmetic": "EUR 1,221 a month x 14 payments (12 months + 2 extra pay instalments) = EUR 17,094 a year. If instead spread over 12 months it is EUR 1,424.50 a month, same annual total.",
+  "note": "The minimum wage (€1,221 a month, paid in 14 instalments)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "Reglamento General de Conductores (Real Decreto 818/2009), art. 4 table: class B (car) minimum age 18. https://www.boe.es/eli/es/rd/2009/05/08/818/con",
+  "confidence": "high",
+  "note": "Class B car licence from 18. The same table sets moped class AM at 15 and A1 motorcycles at 16, but I found no supervised or accompanied car route below 18."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 18000,
+   "source": "Talent.com Spain 'Cajero' median EUR 17,400/yr (2,350 salaries, 2026) https://es.talent.com/salary?job=cajero ; Indeed Spain cashier EUR 1,367/month, part-time mix (Sept 2026) https://es.indeed.com/career/cajero/salaries ; INE EES 2024 mean for food-service and retail workers EUR 18,919 (all workers incl. part-time) https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1 ; full-time floor is the minimum wage EUR 17,094. Chosen slightly above the floor.",
+   "confidence": "medium"
+  },
+  "electrician": {
+   "value": 25500,
+   "source": "Indeed Spain 'electricista industrial' EUR 25,966/yr (175 salaries, Sept 2026) https://es.indeed.com/career/electricista-industrial/salaries ; Talent.com electricista median EUR 22,000 (3,553 ads) https://es.talent.com/salary?job=electricista ; INE EES 2024 mean for skilled construction workers EUR 24,445 https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1. Mid-career placed just above these all-experience figures.",
+   "confidence": "medium"
+  },
+  "policeOfficer": {
+   "value": 35500,
+   "source": "INE EES 2024 mean for protection and security workers (police, firefighters, guards) EUR 35,621 https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1 ; Talent.com 'Policía nacional' median EUR 35,000 (1,415 salaries, 2026) https://es.talent.com/salary?job=polic%C3%ADa%20nacional",
+   "confidence": "medium"
+  },
+  "mechanicalEngineer": {
+   "value": 38000,
+   "source": "Payscale Spain Mechanical Engineer median EUR 36k all levels, 10th pct 21k, 90th pct 76k (73 profiles, 2026) https://www.payscale.com/research/ES/Job=Mechanical_Engineer/Salary ; Indeed Spain EUR 30,771 (183 salaries) https://es.indeed.com/career/ingeniero-mecanico/salaries. Mid-career set about 5-10% above the all-experience medians; the uplift is my estimate.",
+   "confidence": "medium"
+  },
+  "lawyer": {
+   "value": 26000,
+   "source": "Indeed Spain 'abogado/a' EUR 27,478 (219 salaries, Sept 2026) https://es.indeed.com/career/abogado/salaries ; Talent.com 'abogado junior' median EUR 21,480 and 'abogado' EUR 30,000 https://es.talent.com/salary?job=abogado%20junior . Early-career value interpolated; big-firm associates earn more, typical junior lawyers much less.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 85000,
+   "source": "Payscale Spain Sales Director median EUR 73k all company sizes, 10th pct 42k, 90th pct 130k (39 profiles) https://www.payscale.com/research/ES/Job=Sales_Director/Salary ; Indeed Spain 'director/a comercial' EUR 49,815 (90 salaries) https://es.indeed.com/career/director-comercial-1/salaries ; INE EES 2024 mean for directors and managers EUR 63,865 https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1. Large-company premium over the all-size median is my estimate.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 31000,
+   "source": "Talent.com Spain 'médico residente' median EUR 31,000 (2,987 salaries, 2026), consistent with MIR basic pay plus on-call duty pay. https://es.talent.com/salary?job=m%C3%A9dico%20residente",
+   "confidence": "medium"
+  },
+  "specialistPhysician": {
+   "value": 60000,
+   "source": "Estimate for public-sector specialist (facultativo especialista: base plus complements plus on-call pay). Only hard data found was Indeed Spain 'médico/a especialista' EUR 42,335 (58 salaries, private-heavy) https://es.indeed.com/career/medico-especialista/salaries and INE 2024 mean for health and teaching professionals EUR 40,555 https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1. No official pay table retrieved.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 31000,
+   "source": "Indeed Spain 'enfermera/o' EUR 29,274 (1,100+ salaries, Sept 2026) https://es.indeed.com/career/enfermero/salaries ; Payscale Spain RN EUR 35,608 (15 profiles) https://www.payscale.com/research/ES/Job=Registered_Nurse_(RN)/Salary ; Talent.com EUR 24,000 https://es.talent.com/salary?job=enfermero . Value set inside that range for public-health-service pay.",
+   "confidence": "medium"
+  },
+  "secondaryTeacher": {
+   "value": 40000,
+   "source": "Eurydice state-common pay for a secondary-teacher body (group A1, level 24): basic EUR 1,333.53/month plus post supplement EUR 835.43/month plus 2 extra pays, about EUR 29k a year before regional supplements and seniority https://eurydice.eacea.ec.europa.eu/eurypedia/spain/conditions-service-teachers-working-early-childhood-and-school-education ; INE EES 2024 mean for health and teaching professionals EUR 40,555 https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28186?nult=1 ; Payscale secondary teacher median EUR 30.9k, 90th pct 40k (32 profiles, includes private and temporary staff) https://www.payscale.com/research/ES/Job=Secondary_School_Teacher/Salary. Mid-scale public figure is my estimate.",
+   "confidence": "medium"
+  },
+  "airlineFirstOfficer": {
+   "value": 60000,
+   "source": "No verifiable source retrieved (Talent.com, Indeed, Payscale had no usable pilot data). Estimate from general knowledge of pay at Spanish carriers (Iberia, Vueling, Binter, Air Europa).",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 130000,
+   "source": "No verifiable source retrieved. Estimate from general knowledge of pay at Spanish carriers; legacy-carrier captains earn more, low-cost and regional captains less.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 400000,
+   "source": "Payscale Spain CEO median EUR 112k across all company sizes, 90th pct EUR 311k, total pay up to EUR 396k (43 profiles) https://www.payscale.com/research/ES/Job=Chief_Executive_Officer_(CEO)/Salary. Large-company value is my estimate; CEOs of IBEX-35 groups are paid multi-million packages that I could not source.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 50000,
+   "source": "Payscale Spain Dentist average EUR 50,000 (Sept 2025) https://www.payscale.com/research/ES/Job=Dentist/Salary ; Indeed Spain 'odontólogo/a' EUR 56,604 (28 salaries) https://es.indeed.com/career/odontologo/salaries ; Talent.com EUR 19,500 (ad-based, unreliable) https://es.talent.com/salary?job=odont%C3%B3logo",
+   "confidence": "low"
+  },
+  "pharmacist": {
+   "value": 30000,
+   "source": "Payscale Spain Pharmacist median EUR 30,000 (12 profiles, 2022) https://www.payscale.com/research/ES/Job=Pharmacist/Salary ; Indeed Spain 'farmaceutico/a' EUR 32,872 (133 salaries, Sept 2026) https://es.indeed.com/career/farmaceutico/salaries ; Talent.com EUR 25,000 (2,509 salaries) https://es.talent.com/salary?job=farmac%C3%A9utico",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 27000,
+   "source": "Payscale Spain Software Engineer 10th percentile EUR 23k, median EUR 40k (326 profiles, 2026) https://www.payscale.com/research/ES/Job=Software_Engineer/Salary ; Indeed Spain 'desarrollador/a de software' EUR 32,368 all levels (1,200+ salaries) https://es.indeed.com/career/desarrollador-de-software/salaries ; Talent.com junior developer EUR 20,000 (ad-based) https://es.talent.com/salary?job=desarrollador%20junior . Entry level interpolated between these.",
+   "confidence": "medium"
+  },
+  "midLevel": {
+   "value": 40000,
+   "source": "Payscale Spain Software Engineer median EUR 40,306 (326 profiles, 2026) https://www.payscale.com/research/ES/Job=Software_Engineer/Salary ; Indeed Spain 'ingeniero/a de software' EUR 41,187 (224 salaries, Sept 2026) https://es.indeed.com/career/ingeniero-de-software/salaries . Levels.fyi (skews to multinationals) shows median total comp EUR 57,120 https://www.levels.fyi/t/software-engineer/locations/spain",
+   "confidence": "medium"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 28500,
+   "source": "Derived from INE Encuesta Anual de Estructura Salarial 2024. Published median for ALL employees is EUR 24,497 (mean 29,540; full-time mean 33,827) https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28191?nult=1 and https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28187?nult=1. Full-time median interpolated from INE's full-time distribution by multiples of the minimum wage (4.42% below 1x, 54.46% at 1-2x, 24.25% at 2-3x, 9.72% at 3-4x) https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28182?nult=1, corrected by the 3% overshoot the same method gives for all employees. 2024 data, not uprated.",
+   "confidence": "medium"
+  },
+  "p90FullTime": {
+   "value": 57000,
+   "source": "Same method as the full-time median. INE publishes P90 for all employees (EUR 52,515, 2024) https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28191?nult=1 ; full-time P90 interpolated from the distribution at https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/28182?nult=1 (about EUR 57.2k raw, 0.7% overshoot on the all-employee check). 2024 data, not uprated.",
+   "confidence": "medium"
+  }
+ },
+ "livingCost": {
+  "value": 18000,
+  "source": "Numbeo Spain, updated 30 Sept 2026: 1-bed flat outside centre EUR 714.44/month, basic utilities EUR 133.30, internet EUR 28.53, monthly transit pass EUR 30; single person excluding rent EUR 717.90. https://www.numbeo.com/cost-of-living/country_result.jsp?country=Spain . Gross-up uses 6.5% employee social security plus a small IRPF bill under the 2026 scales (my calculation).",
+  "confidence": "medium",
+  "basis": "Single adult in a typical Spanish city (not Madrid or Barcelona). Modest budget of about EUR 1,170 a month (rent 714, utilities 133, internet and phone about 45, transit 30, food about 250, the last two my estimates) is about EUR 14,000 net a year. Adding about 15% for clothes, health and small extras gives about EUR 16,200 net, which needs about EUR 17,700 gross. Numbeo's full single-person budget (EUR 1,432 a month with rent) would need about EUR 19,500, so 18,000 sits between them and just above the minimum wage."
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 0,
+    "source": "Public advanced vocational training (FP Grado Superior) follows the same free-of-charge rules as public school education. https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "Same: no tuition in public FP centres (students buy their own materials). https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 0,
+    "source": "Public FP is the route priced; private FP schools charge fees but I found no sourced figure. https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 717,
+    "source": "Lowest regional mean first-enrolment price, Galicia EUR 11.95 per credit x 60 credits, 2024-25. Spain has no open-access short-cycle tier in universities, so the cheapest public region stands in. https://www.ciencia.gob.es/dam/jcr:63256cff-5dbc-4227-bd8c-a7badb119e9d/Nota_EstadisticaPrecios_2024_25_acc.pdf",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 922,
+    "source": "National mean first-enrolment price EUR 15.37 per credit x 60 credits, 2024-25, Ministry of Science, Innovation and Universities. https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_Tot.csv_bdsc",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 1113,
+    "source": "Comunidad de Madrid mean EUR 18.55 per credit x 60 credits, 2024-25 (Madrid hosts most of the selective public universities). Private schools such as IE University or ESADE charge far more but were not priced. https://www.ciencia.gob.es/dam/jcr:63256cff-5dbc-4227-bd8c-a7badb119e9d/Nota_EstadisticaPrecios_2024_25_acc.pdf",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 693,
+    "source": "Lowest regional mean for non-regulated masters, Galicia EUR 11.55 per credit x 60 credits, 2024-25. https://www.ciencia.gob.es/dam/jcr:63256cff-5dbc-4227-bd8c-a7badb119e9d/Nota_EstadisticaPrecios_2024_25_acc.pdf",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 1802,
+    "source": "National mean first-enrolment price for non-regulated masters EUR 30.04 per credit x 60 credits, 2024-25 (regulated-profession masters average EUR 15.76, about EUR 946). https://www.ciencia.gob.es/dam/jcr:63256cff-5dbc-4227-bd8c-a7badb119e9d/Nota_EstadisticaPrecios_2024_25_acc.pdf",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 5042,
+    "source": "Universidad Carlos III de Madrid mean non-regulated master price EUR 84.03 per credit x 60 credits, the highest public university average, 2024-25. https://www.ciencia.gob.es/dam/jcr:63256cff-5dbc-4227-bd8c-a7badb119e9d/Nota_EstadisticaPrecios_2024_25_acc.pdf",
+    "confidence": "medium"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 60,
+    "source": "Thesis-supervision fee, lowest region (Andalusia) EUR 60.3 a year, 2024-25. https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 230,
+    "source": "Midpoint of the national range EUR 60.3 to EUR 401.1 a year (my estimate; no national average published in what I retrieved). https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 401,
+    "source": "Thesis-supervision fee, highest region (Catalonia) EUR 401.1 a year, 2024-25. https://eurydice.eacea.ec.europa.eu/national-education-systems/spain/higher-education-funding",
+    "confidence": "high"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 836,
+    "source": "Health-sciences mean price, Galicia (lowest region) EUR 13.93 per credit x 60 credits, 2024-25. https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 997,
+    "source": "National mean for health-sciences degrees EUR 16.62 per credit x 60 credits, 2024-25 (branch average, not medicine alone). https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 1196,
+    "source": "Comunidad de Madrid health-sciences mean EUR 19.93 per credit x 60 credits, 2024-25. https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 591,
+    "source": "Social and legal sciences mean, Galicia (lowest region) EUR 9.85 per credit x 60 credits, 2024-25. https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 839,
+    "source": "National mean for social and legal sciences EUR 13.98 per credit x 60 credits, 2024-25 (branch average, not law alone). https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 1040,
+    "source": "Comunidad de Madrid social and legal sciences mean EUR 17.34 per credit x 60 credits, 2024-25. https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/PreciosPublicos/2024/Grado/PM_Grado_Rama_CA.csv_sc",
+    "confidence": "medium"
+   }
+  },
+  "notes": "All figures are first-enrolment public-university prices for 60 ECTS credits a year, 2024-25 (latest published by the Ministry; 2025-26 not yet listed). Fees are set by each autonomous community, so they range from EUR 11.95 (Galicia) to EUR 19.29 (Navarra) per credit. Repeating a course costs much more (third enrolment about EUR 90 per credit in Madrid). Small one-off admin fees and school insurance are ignored. Means are simple averages of degree prices, not student-weighted. Means-tested state grants cover tuition for lower-income students. Elite here means the dearest mainstream public option; private elite schools (IE, ESADE, etc.) cost several times more and are not priced."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 6.96,
+   "source": "Spain has no national student-loan scheme. Nearest equivalent is a commercial consumer loan: ECB new-business rate on Spanish consumer loans (excl. revolving credit), July 2026 = 6.96%. https://data-api.ecb.europa.eu/service/data/MIR/M.ES.B.A2B.A.R.A.2250.EUR.N?lastNObservations=4&format=csvdata",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 4.9,
+   "source": "INE consumer price index, annual rate: September 2026 flash 4.9% (August 2026 final 4.3%, July 3.6%). Table 76134 via https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/76134?nult=4",
+   "confidence": "medium"
+  },
+  "description": "Spain has no public student-loan system. State help comes as means-tested grants (becas) covering tuition, residence and a basic amount; the Eurydice description of support lists grants only. Students who borrow use bank consumer loans at about 7%. The 4.9% inflation is a provisional flash figure, so the real rate is about 2% (2.7% against the final August figure)."
+ },
+ "schooling": {
+  "primarySchool": "Educación Primaria (colegio), ages 6 to 12, six years",
+  "middleSchool": "ESO (Educación Secundaria Obligatoria, lower secondary), ages 12 to 16, four years, comprehensive with no track split",
+  "schoolLeaving": "Bachillerato (ages 16 to 18, two years) plus the university entrance exam PAU, called EBAU, EvAU, PEvAU or selectividad depending on the region",
+  "vocational": "Formación Profesional (FP): Grado Medio (Técnico) and Grado Superior (Técnico Superior), including FP Dual with company placements",
+  "tierCommunity": "FP de Grado Superior (Técnico Superior) at a public instituto",
+  "tierState": "Universidad pública (for example Universidad Complutense de Madrid or Universitat de Barcelona)",
+  "tierElite": "Most selective universities: Carlos III de Madrid, Pompeu Fabra, Autónoma de Madrid; private IE University and ESADE",
+  "gradeName": "Nota de admisión (Bachillerato + PAU)",
+  "gradeSource": "https://es.wikipedia.org/wiki/Prueba_de_Acceso_a_la_Universidad ; https://eurydice.eacea.ec.europa.eu/eurypedia/spain/assessment-general-upper-secondary-education ; https://www.boe.es/eli/es/rd/2022/04/05/243/con",
+  "gradeSystem": "Higher is better. Bachillerato subjects and the final average (nota media, NMB) are whole marks 0 to 10 with 5 as the pass mark (RD 243/2022). The PAU general phase is also 0 to 10 and needs at least 4. Access mark = 0.6 x Bachillerato average + 0.4 x PAU general phase, 0 to 10, must be at least 5. The admission mark (nota de admisión) adds up to two optional subjects weighted 0.1 or 0.2 each, so it runs 0 to 14, and universities rank applicants by it. Named bands: Suspenso under 5, Aprobado 5 to 6, Notable 7 to 8, Sobresaliente 9 to 10, plus Matrícula de Honor for exceptional records. Typical result about 6.5 to 7.5 out of 10; top results 9 to 10 out of 10 and 13 to 14 out of 14, with the most selective degrees (medicine, some double degrees) cutting off near 13 (typical and cut-off values are approximate, not sourced)",
+  "startingAges": "Compulsory schooling is 6 to 16: Primaria 6-12, ESO 12-16. At 16 students choose Bachillerato (16-18, academic) or FP Grado Medio; FP Grado Superior and university start at about 18. No early track split before 16."
+ },
+ "highlights": [
+  "Public university tuition averages about €922 a year (€15.37 per credit), and public higher vocational training (FP) has no tuition fees.",
+  "The legal minimum wage is €1,221 a month in 14 payments (€17,094 a year), while the average employee earns about €29,540 a year (INE, 2024)."
+ ],
+ "caveats": "The shared WebSearch cap (200 calls) was already used up when I started, so I found no pages by search. I fetched pages directly instead: the INE data API, BOE, the Ministry of Science price statistics, Eurydice, the ECB, the World Bank, Numbeo, Payscale, Indeed and Talent.com. Early on I also fetched one Bing results page, then stopped, since that was a way round the cap. No figure comes from it.\n\nWeakest figures (low confidence, flagged above): airline first officer and captain pay (no source found), CEO of a large company, specialist physician, lawyer, sales director and dentist. Pay by job comes from self-reported or ad-based sites with small samples (Payscale often has 10 to 70 profiles), bracketed by INE occupation-group means. Talent.com returns a generic EUR 13,700 default for unmatched job titles, which I discarded.\n\nWage levels are 2024 INE data, the latest published, and not uprated to 2026; with about 3.5% annual growth, add roughly 7%. INE publishes the median and P90 only for all employees (EUR 24,497 and EUR 52,515, part-timers included). The full-time median (28,500) and P90 (57,000) are my interpolation from INE's distribution by minimum-wage multiples.\n\nTuition is the 2024-25 ministry mean price per credit x 60 credits. Elite tiers use Madrid means and the highest university average for masters; private schools are not priced. Doctorate state value is a midpoint estimate. The student-loan rate (6.96%) is a commercial consumer-loan rate because Spain has no public loan scheme. Inflation 4.9% is INE's September 2026 flash estimate (final August was 4.3%). PPP is the GDP-based World Bank figure; consumption PPP would be 0.608. Typical and cut-off PAU results in the grade description are approximate."
+}

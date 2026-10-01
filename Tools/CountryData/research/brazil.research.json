@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Brazil",
+  "adjective": "Brazilian",
+  "currencyName": "real (R$)",
+  "fxPerUSD": {
+   "value": 5.1809,
+   "source": "Banco Central do Brasil SGS series 1 (USD/BRL commercial sell rate), 30 Sep 2026: https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/3?formato=json",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 2.55,
+   "source": "World Bank PPP conversion factor, GDP (LCU per international $), Brazil 2025 (2024 was 2.48): https://api.worldbank.org/v2/country/BRA/indicator/PA.NUS.PPP?format=json&date=2021:2025",
+   "confidence": "medium"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 21073,
+   "source": "National minimum wage R$1,621 a month from 1 Jan 2026 (Decree 12.797/2025): https://www.cnnbrasil.com.br/economia/financas/governo-oficializa-salario-minimo-de-r-1-621-em-2026/ ; BCB series 1619 also shows 1621.00: https://api.bcb.gov.br/dados/serie/bcdata.sgs.1619/dados/ultimos/3?formato=json",
+   "confidence": "high"
+  },
+  "arithmetic": "R$1,621 x 13 = R$21,073. The 13th salary (decimo terceiro, Law 4.090/1962) is a legal part of annual pay for every CLT employee, so 13 months are counted. The one-third holiday bonus (about R$540) is not included. Hourly rate is R$7.37 (R$1,621 / 220 hours).",
+  "note": "The minimum wage (R$1,621 a month, paid 13 times)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "Brazilian traffic code (CTB, Lei 9.503/1997, art. 140) requires candidates to be criminally liable (18). Checked via https://pt.wikipedia.org/wiki/Carteira_Nacional_de_Habilita%C3%A7%C3%A3o ; the Planalto text https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm could not be fetched this session.",
+  "confidence": "high",
+  "note": "No learner or supervised licence exists for under-18s. The CNH (Carteira Nacional de Habilitacao) can first be issued at 18."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 23556,
+   "source": "Portal Salario (CAGED data, formal CLT hires Aug 2025 to Jul 2026) for operador de caixa: median R$1,812 a month (average R$1,892). R$1,812 x 13 = R$23,556. https://www.salario.com.br/profissao/operador-de-caixa-cbo-421125/",
+   "confidence": "medium"
+  },
+  "electrician": {
+   "value": 44200,
+   "source": "Portal Salario CAGED hires, eletricista de manutencao eletroeletronica: median R$2,846, average R$3,052, ceiling R$4,279 (43 h/week). Mid-career estimate R$3,400 a month x 13 = R$44,200. https://www.salario.com.br/profissao/eletricista-de-manutencao-eletroeletronica-cbo-951105/",
+   "confidence": "low"
+  },
+  "policeOfficer": {
+   "value": 65000,
+   "source": "Estimate, not verified online. Typical entry or mid-scale state Policia Militar soldier gross pay of about R$5,000 a month, x 13 = R$65,000. Pay varies a lot by state. Federal and civil police are paid more, municipal guards less. No URL because none was verified.",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 157300,
+   "source": "Portal Salario CAGED hires, engenheiro mecanico: median R$12,100, average R$11,793 (n=6,655, 42 h/week, all seniorities). R$12,100 x 13 = R$157,300. https://www.salario.com.br/profissao/engenheiro-mecanico-cbo-214405/",
+   "confidence": "medium"
+  },
+  "lawyer": {
+   "value": 55120,
+   "source": "Portal Salario CAGED hires, advogado: median R$4,240 a month, 1st quartile R$2,832, 3rd quartile R$6,678 (all seniorities, mostly employed lawyers). Early-career taken as the median: R$4,240 x 13 = R$55,120. https://www.salario.com.br/profissao/advogado-cbo-241005/",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 520000,
+   "source": "Estimate, not verified online. Sales or commercial director at a large company, about R$40,000 a month base x 13 = R$520,000, before bonuses and profit-sharing. Director pay is not covered by the CAGED data: the gerente comercial page shows only a median of R$3,042 (https://www.salario.com.br/profissao/gerente-comercial-cbo-142305/), which is not comparable.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 49273,
+   "source": "National medical-residency stipend (bolsa) R$4,106.09 a month, set by a 2021 portaria, as quoted on https://pt.wikipedia.org/wiki/Resid%C3%AAncia_m%C3%A9dica . R$4,106.09 x 12 = R$49,273. A stipend has no 13th month. It may have been raised since 2021, which could not be checked.",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 208000,
+   "source": "Portal Salario CAGED hires: cardiologist median R$8,479 for 22 h/week (https://www.salario.com.br/profissao/medico-cardiologista-cbo-225120/), anesthesiologist median R$10,117 for 24 h/week (https://www.salario.com.br/profissao/medico-anestesiologista-cbo-225151/). Scaled to 40 h, that is about R$15,400 to R$16,900 a month. R$16,000 x 13 = R$208,000.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 58500,
+   "source": "Portal Salario CAGED hires, enfermeiro: median R$4,164, average R$4,491 (38 h/week). The national nursing floor (Lei 14.434/2022) is R$4,750, though it is disputed and applied unevenly. Using R$4,500 x 13 = R$58,500. https://www.salario.com.br/profissao/enfermeiro-cbo-223505/",
+   "confidence": "medium"
+  },
+  "secondaryTeacher": {
+   "value": 71500,
+   "source": "Estimate, not verified online. Mid-scale public-school teacher, about R$5,500 a month x 13 = R$71,500. It is anchored on the national teacher pay floor (piso do magisterio), which I recall as about R$5,130 a month for 40 h in 2026 but could not confirm. CAGED data excludes statutory public-sector teachers, so no URL is given.",
+   "confidence": "low"
+  },
+  "airlineFirstOfficer": {
+   "value": 234000,
+   "source": "Estimate, not verified online. First officer at LATAM Brasil, Gol or Azul, about R$18,000 a month x 13 = R$234,000, based on general knowledge of the pay scales of the pilots' union (SNA). Brazil has a large airline sector.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 520000,
+   "source": "Estimate, not verified online. Captain at a major Brazilian carrier, about R$40,000 a month x 13 = R$520,000, based on general knowledge of the pilots' union (SNA) pay scales.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 5000000,
+   "source": "Estimate, not verified online. Typical total annual cash pay (base plus bonus) of a CEO of a large listed Brazilian company is a few million reais. The biggest names earn far more. R$5,000,000 is a round mid-range guess.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 70538,
+   "source": "Portal Salario CAGED hires, cirurgiao dentista clinico geral: median R$5,426 a month for 33 h/week (quartiles R$3,600 and R$7,584). R$5,426 x 13 = R$70,538. Many dentists are self-employed and earn more or less. https://www.salario.com.br/profissao/cirurgiao-dentista-clinico-geral-cbo-223208/",
+   "confidence": "medium"
+  },
+  "pharmacist": {
+   "value": 60489,
+   "source": "Portal Salario CAGED hires, farmaceutico: median R$4,653, average R$4,597 (41 h/week). R$4,653 x 13 = R$60,489. https://www.salario.com.br/profissao/farmaceutico-cbo-223405/",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 59033,
+   "source": "Proxy: Portal Salario CAGED hires for programador de sistemas de informacao: median R$4,541 a month, 1st quartile R$2,782. R$4,541 x 13 = R$59,033. The seniority split on the site is behind a paywall. https://www.salario.com.br/profissao/programador-de-sistemas-de-informacao-cbo-317110/",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 97500,
+   "source": "Portal Salario CAGED hires for analista de desenvolvimento de sistemas (all levels): median R$7,500 a month, average R$8,432 (n=136,804). R$7,500 x 13 = R$97,500. Contractors (PJ) often earn more. https://www.salario.com.br/profissao/analista-de-desenvolvimento-de-sistemas-cbo-212405/",
+   "confidence": "medium"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 39000,
+   "source": "Estimate built on IBGE PNAD Continua Q2 2026: mean usual monthly income from all jobs about R$3,738 (https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/2013-agencia-de-noticias/releases/47774-pnad-continua-trimestral-desocupacao-cai-em-13-das-27-ufs-no-2-trimestre-de-2026). No median was found. The median is typically about 0.75 to 0.8 of the mean, and full-time workers earn more than the all-worker median, so about R$3,000 a month. R$3,000 x 13 = R$39,000.",
+   "confidence": "low"
+  },
+  "p90FullTime": {
+   "value": 97500,
+   "source": "Estimate, not sourced. The 90th percentile of full-time monthly pay is taken as about 2.5 times the median, which is about R$7,500 a month. R$7,500 x 13 = R$97,500. Consistent with the PNAD mean of R$3,738, which is pulled up by top earners.",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 42900,
+  "source": "Estimate anchored on DIEESE 'salario minimo necessario' of R$7,565.86 a month for August 2026, which DIEESE computes for a family of four (about R$1,890 per person): https://www.dieese.org.br/analisecestabasica/salarioMinimo.html . A single adult with no shared costs needs more per head.",
+  "confidence": "low",
+  "basis": "Single adult in a typical mid-to-large city: modest one-bedroom or shared flat about R$1,300 to R$1,600, food about R$900, transport about R$350, utilities and phone about R$450, so about R$3,100 to R$3,300 a month spent. Taken as R$3,300 gross a month x 13 = R$42,900. INSS social security is about 9% at this level and income tax is nil under the 2026 exemption. The income-tax exemption is from memory."
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 7200,
+    "source": "Estimate, not verified online. Paid technical course at a private school or the S-system (SENAI/SENAC), about R$600 a month x 12.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Public technical schools (Institutos Federais, state ETECs) charge no tuition. General knowledge, not fetched.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 18000,
+    "source": "Estimate, not verified online. Top paid technical or tecnologo programmes (e.g. SENAI CIMATEC, Senac higher-tier), about R$1,500 a month x 12.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 9600,
+    "source": "Estimate, not verified online. Open-access private college or centro universitario (e.g. Estacio, Unip), on-campus, about R$800 a month x 12. Distance-learning courses cost much less.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Federal and state public universities charge no tuition (Constitution art. 206, IV). General knowledge, not fetched this session.",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 70000,
+    "source": "Estimate, not verified online (Insper fees page returned HTTP 403). Top private universities (Insper, FGV, PUC-Rio) about R$4,500 to R$7,500 a month x 12, midpoint about R$70,000.",
+    "confidence": "low"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 24000,
+    "source": "Estimate, not verified online. Private master's or professional programme about R$2,000 a month x 12.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Stricto sensu master's programmes at public universities are free. General knowledge, not fetched.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 45000,
+    "source": "Estimate, not verified online. Professional master's at FGV, Insper or PUC-Rio.",
+    "confidence": "low"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 30000,
+    "source": "Estimate, not verified online. Private doctorate (e.g. Mackenzie, PUC), about R$2,500 a month x 12. Most doctorates are at public universities.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Public doctorates are free, and funded students get a federal stipend (CAPES/CNPq). General knowledge, not fetched.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 42000,
+    "source": "Estimate, not verified online. Doctorate at a top private university (PUC-Rio), about R$3,500 a month x 12.",
+    "confidence": "low"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 96000,
+    "source": "Estimate, not verified online. Lowest-cost private medical schools, about R$8,000 a month x 12. There is no truly open-access medicine degree.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Public medical schools (USP, UFMG, UFRJ and others) are free but extremely competitive. General knowledge, not fetched.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 190000,
+    "source": "Estimate, not verified online. Top private medical schools (e.g. Albert Einstein, PUC-SP), about R$15,000 to R$16,000 a month x 12.",
+    "confidence": "low"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 10800,
+    "source": "Estimate, not verified online. Open-access private law degree about R$900 a month x 12.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 0,
+    "source": "Public law schools (USP, UFRJ, UFMG and others) are free. General knowledge, not fetched.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 80000,
+    "source": "Estimate, not verified online. FGV Direito, Insper or PUC, about R$6,500 a month x 12.",
+    "confidence": "low"
+   }
+  },
+  "notes": "Public federal and state universities charge no tuition, and this includes the most selective ones (USP, Unicamp, UFRJ). So 'state' is 0. 'Elite' is priced as the top PRIVATE schools (Insper, FGV, PUC-Rio), which players with money can pick instead. 'Community' is priced as open-access private colleges, because most Brazilian students attend private institutions. A player who skips the free public route pays these fees. Every paid tuition figure is an unverified estimate, because fee pages were blocked or unreachable and the web search budget ran out."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0.03,
+   "source": "Fies modality 2 (per-capita family income between 0.5 and 1 minimum wage): 3% a year. Seen only in a search-result summary of https://www.educamaisbrasil.com.br/programas-do-governo/fies . The page itself, the official MEC page (CAPTCHA) and the planalto.gov.br law text could not be fetched.",
+   "confidence": "low"
+  },
+  "inflation": {
+   "value": 0.0422,
+   "source": "IPCA accumulated over 12 months to August 2026 is 4.22%, from the central bank's API: https://api.bcb.gov.br/dados/serie/bcdata.sgs.13522/dados/ultimos/4?formato=json . Calendar-year 2025 IPCA was 4.26% (https://www.brasildefato.com.br/2026/01/09/ipca-vai-a-033-em-dezembro-e-fecha-2025-em-426/).",
+   "confidence": "high"
+  },
+  "description": "Fies (Fundo de Financiamento Estudantil) is the federal loan for tuition at private colleges. Per a secondary source, Fies Social has 0% interest for per-capita family income up to 0.5 minimum wage. Modality 2 is 3% a year for 0.5 to 1 minimum wage. Modality 3 and P-Fies are bank-run, with P-Fies capped at 6.5% a year. Students pay at most about R$150 a quarter while studying, then repay over up to 18 years. The rate used is the 3% tier as a decimal. It is unclear whether balances are also indexed to IPCA, in which case the real rate would be higher than 3% minus inflation (about -1.2%). Public universities are free, so most players will not need it."
+ },
+ "schooling": {
+  "primarySchool": "Ensino Fundamental I (1o a 5o ano), ages 6 to 10 (elementary school). Compulsory schooling starts earlier, with pre-school (pre-escola) at age 4.",
+  "middleSchool": "Ensino Fundamental II (6o a 9o ano), ages 11 to 14 (lower secondary or middle school). Fundamental I and II together are a single nine-year comprehensive stage.",
+  "schoolLeaving": "Ensino Medio (3 years, ages 15 to 17) and its diploma. University entry runs through the national ENEM exam (used by SISU and ProUni), or through a university's own vestibular such as Fuvest or Unicamp.",
+  "vocational": "Curso tecnico (technical course), taken integrated with Ensino Medio at Institutos Federais or ETECs, or after it, including at SENAI and SENAC. Cursos superiores de tecnologia (tecnologo) are 2 to 3 year short degrees.",
+  "tierCommunity": "Faculdade or centro universitario privado de acesso aberto (open-access private college such as Estacio or Unip, plus tecnologo courses)",
+  "tierState": "Universidade publica federal ou estadual (UFMG, UFRJ, USP, Unicamp): free, entry by ENEM/SISU or vestibular",
+  "tierElite": "Top private universities: Insper, FGV, PUC-Rio. The most selective public universities (USP, Unicamp) are free, so they belong to the state tier.",
+  "gradeName": "Nota do ENEM",
+  "gradeSystem": "ENEM (Exame Nacional do Ensino Medio): four areas (languages, humanities, natural sciences, maths) plus a redacao (essay). Each is scored by Item Response Theory (TRI) on roughly a 0 to 1000 scale, and the essay is 0 to 1000 (mean of two graders). Higher is better. There is no pass mark for ENEM itself. ProUni requires an average of at least 450 and an essay above zero. The 2018 national average was 522.8, so typical area scores are about 500 to 550. Competitive courses, especially medicine, need about 800 or more, and 900+ is a top result. A perfect essay of 1000 is rare (53 students in 2019). School report cards use 0 to 10 with a pass mark usually 5 to 7 (not verified).",
+  "gradeSource": "https://pt.wikipedia.org/wiki/Exame_Nacional_do_Ensino_M%C3%A9dio and https://pt.wikipedia.org/wiki/Programa_Universidade_para_Todos",
+  "startingAges": "Pre-escola from age 4 (compulsory 4 to 17). Fundamental I ages 6 to 10, Fundamental II ages 11 to 14 (9 years, one comprehensive school with no track split), Ensino Medio ages 15 to 17 (3 years, with an optional integrated technical track), higher education from 18."
+ },
+ "highlights": [
+  "Brazil's 2026 minimum wage is R$1,621 a month, and the average worker earned about R$3,740 a month in Q2 2026, roughly 2.3 times the minimum.",
+  "Schooling is compulsory from age 4 to 17, and ProUni gives poorer students free private-college places if they score at least 450 on the ENEM exam."
+ ],
+ "caveats": "[\"The shared web search budget (200 calls) ran out after the first four searches. The rest came from direct page and API fetches, and many official sites (IBGE, MEC, Planalto, Insper) returned 403, CAPTCHA or connection resets.\",\"Verified: minimum wage R$1,621 (CNN Brasil, BCB series 1619); 12-month IPCA 4.22% to Aug 2026 and 4.26% for 2025; USD/BRL 5.1809 on 30 Sep 2026 (BCB); PPP 2.55 (World Bank); driving age 18; school stages and compulsory ages 4 to 17 (Wikipedia); ProUni 450 rule (Wikipedia).\",\"The Portal Salario figures come from CAGED, the formal CLT employment register, and cover people hired in the 12 months to July 2026. They exclude public servants (teachers, police), contractors (PJ) and informal workers, and hires often earn less than established staff.\",\"Annual pay is monthly pay x 13, because the 13th salary is legal for CLT employees and matches the minimum-wage figure. Informal workers and doctors paid as contractors do not get it. The 1/3 holiday bonus is not included.\",\"Pure estimates with no verified source (all 'low'): police officer, sales director, airline first officer and captain, CEO, secondary teacher, national median and p90, living cost, all paid tuition figures, junior software engineer (proxy job), and the electrician mid-career uplift.\",\"No national median of full-time pay was found. The IBGE mean was found (R$3,738 habitual in Q2 2026 per a search summary; SIDRA shows R$3,770 effectively received).\",\"Fies rates come only from a search-result summary of a secondary site. Whether balances are also indexed to IPCA is unknown, and the 3% tier may be a real rate on top of inflation.\",\"The resident stipend of R$4,106.09 is from a 2021 portaria and may have been raised since. The teacher pay floor (about R$5,130) was not verified.\",\"Rates are stored as decimals (0.03 is 3%). Currency is BRL, written R$. The plural of real is reais.\"]"
+}

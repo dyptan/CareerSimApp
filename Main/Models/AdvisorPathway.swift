@@ -353,14 +353,16 @@ enum AdvisorPathway {
         let room = c.room.prestige
         let potential = c.gain(room)
         let standing: String
+        let country = c.player.country
+        let elite = country.tierName(.elite), state = country.tierName(.state)
         switch c.b.prestige {
-        case Job.prestigeBonus(forPrestige: 3)...: standing = "an elite university"
-        case Job.prestigeBonus(forPrestige: 2)...: standing = "a state university"
+        case Job.prestigeBonus(forPrestige: 3)...: standing = "a degree from: \(elite)"
+        case Job.prestigeBonus(forPrestige: 2)...: standing = "a degree from: \(state)"
         default: standing = "no ranked school yet"
         }
         return Lever(kind: .prestige, icon: "🏆", title: "School prestige",
                      standing: standing,
-                     mechanics: "A relevant degree from an elite university adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance, a state university +\(percent(Job.prestigeBonus(forPrestige: 2))).",
+                     mechanics: "A relevant degree from a top school (\(elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance, one from a mainstream school (\(state)) +\(percent(Job.prestigeBonus(forPrestige: 2))).",
                      potential: potential, state: c.state(room: room, gain: potential),
                      sources: prestigeCards(c))
     }
@@ -642,7 +644,7 @@ enum AdvisorPathway {
         let state = Education(level, profile: profile, tier: .state)
         return [AdvisorCard(
             icon: "🏆", title: "Get into an elite \(field) programme",
-            detail: "Elite adds +\(percent(Job.prestigeBonus(forPrestige: 3))), a state university +\(percent(Job.prestigeBonus(forPrestige: 2))). Your chance of admission: \(percent(elite.admissionProbability(player: c.player))) at an elite school, \(percent(state.admissionProbability(player: c.player))) at a state one. Elite costs more in tuition.",
+            detail: "\(c.player.country.tierName(.elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))), \(c.player.country.tierName(.state)) +\(percent(Job.prestigeBonus(forPrestige: 2))). Your chance of admission: \(percent(elite.admissionProbability(player: c.player))) at the top school, \(percent(state.admissionProbability(player: c.player))) at the mainstream one. Tuition: \(c.player.money(elite.annualTuition(in: c.player.country))) against \(c.player.money(state.annualTuition(in: c.player.country))) a year.",
             actions: openable(.education, c.player))]
     }
 
