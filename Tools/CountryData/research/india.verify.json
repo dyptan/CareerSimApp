@@ -1,0 +1,116 @@
+{
+ "checks": [
+  {
+   "item": "1a. Representative full-time annual minimum wage (Delhi, unskilled)",
+   "researched": "INR 221,472 a year (INR 18,456/month x 12)",
+   "verified": "INR 221,472 a year. Delhi unskilled rate is INR 18,456/month, INR 710/day on a 26-day month, effective 1 Apr 2025. 18,456 x 12 = 221,472.",
+   "source": "https://www.hono.ai/minimum-wages/delhi ; https://wage.is/india/delhi/ (last verified 8 Jun 2026, still 18,456) ; https://www.india-briefing.com/news/guide-minimum-wage-india-19406.html/",
+   "verdict": "correct",
+   "note": "The arithmetic is right. Daily x 26 is 18,460, so the monthly figure is rounded by INR 4. India has no single national minimum wage. The same India Briefing page gives Maharashtra Zone I 13,921 (from 1 Jan 2026), Uttar Pradesh 11,314 (from 1 Apr 2026) and Karnataka Zone I 23,376 (from 22 May 2026). Delhi is therefore a high-end capital rate, not a typical one. I could not re-check the colleague's claim that a revised Delhi rate from Oct 2025 was forged, or the Rs 178/day floor wage. The colleague's caveat that Delhi sits above a cashier market figure of about 200k is fair."
+  },
+  {
+   "item": "1b. Minimum wage vs state-typical figure",
+   "researched": "State-typical alternative: about INR 13,900/month = INR 167,000/year (Maharashtra Zone I)",
+   "verified": "Maharashtra Zone I unskilled 13,921/month (x12 = 167,052). Uttar Pradesh 11,314 (x12 = 135,768).",
+   "source": "https://www.india-briefing.com/news/guide-minimum-wage-india-19406.html/",
+   "verdict": "correct",
+   "note": "Both the Maharashtra and UP figures match the colleague's."
+  },
+  {
+   "item": "2. Driving licence age",
+   "researched": "18 (car). Learner's licence and gearless mopeds up to 50cc from 16.",
+   "verified": "18 for a car, a geared motorcycle or scooter, and a three-wheeler. 16 for a provisional licence and for a moped or gearless motorcycle. Commercial vehicles need a minimum age of 20 in some states.",
+   "source": "https://en.wikipedia.org/wiki/Driving_licence_in_India",
+   "verdict": "correct",
+   "note": "The Wikipedia page does not itself say 'up to 50cc'. That cap comes from my recall of the Motor Vehicles Act and is not confirmed by the fetched text. It is also not needed for the game's driving age of 18."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition, domestic student",
+   "researched": "INR 20,000 a year (state/central university tier)",
+   "verified": "Delhi University annual fees: BA (Hons) INR 5,000-30,000, BCom (Hons) INR 5,000-40,000, BSc (Hons) INR 6,000-50,000, by college. A midpoint of about 20,000 is reasonable. NIT Trichy (engineering) INR 6,52,100 over 4 years, about INR 162,525 a year.",
+   "source": "https://www.collegedekho.com/colleges/delhi-university-fee-structure ; https://www.collegedekho.com/colleges/nit-trichy-fee-structure",
+   "verdict": "correct",
+   "note": "Fees vary by college, so 20,000 is a judgement inside a published range, not one published number. The community (6,000), vocational and master/doctorate state-tier figures are unsourced estimates and I could not check them."
+  },
+  {
+   "item": "3b. Medicine tuition at a public institution (hardest-to-enter government tier)",
+   "researched": "INR 2,717 a year (MAMC); AIIMS similarly tiny",
+   "verified": "Maulana Azad Medical College MBBS total about INR 12,225 over 4.5 years, which is about INR 2,717 a year. AIIMS Delhi MBBS total about INR 5,856 for the whole programme, about INR 1,300 a year.",
+   "source": "https://www.collegedekho.com/colleges/maulana-azad-medical-college-fee-structure ; https://www.collegedekho.com/mbbs/",
+   "verdict": "correct",
+   "note": "Both numbers match. The state-tier medicine value of INR 60,000 a year is an unsourced estimate. I could not find any state government medical college fee page (several guessed CollegeDekho URLs returned 404). The same CollegeDekho MBBS page lists private colleges at about INR 17.9-22 lakh a year (Saveetha, SRMCRI, SOA), so the colleague's private 1.2 million a year is at the low end of those listings but plausible for fee-regulated private seats."
+  },
+  {
+   "item": "3c. Elite bachelor tuition (IIT)",
+   "researched": "INR 210,000 a year (2 lakh tuition + about 10k fees)",
+   "verified": "IIT B.Tech tuition is INR 1,00,000 per semester, INR 2,00,000 a year, for General/OBC-NCL/EWS with family income above 5 lakh. SC/ST/PwD pay zero tuition. Income under 1 lakh gets full remission and 1-5 lakh gets two-thirds remission. CollegeDekho gives IIT Delhi B.Tech as 8.63 lakh over 4 years, which is about 2.16 lakh a year and matches.",
+   "source": "https://cracku.in/iit-fee-structure-2026/ ; https://www.collegedekho.com/colleges/iit-delhi-fee-structure",
+   "verdict": "correct",
+   "note": "The CollegeDekho summary line 'INR 1,00,000 per year' is wrong. It is the per-semester figure, and its own 4-year total agrees with 2 lakh a year. Separate flag: the colleague said the IIT M.Tech alternative is about INR 80,000 a year. CollegeDekho lists IIT Delhi M.Tech at 3.81 lakh over 2 years (1.9-2.1 lakh a year), so that remark looks wrong. It does not change the master/elite value, which is the IIM Bangalore MBA at INR 13 lakh a year (26 lakh total) and was confirmed at https://www.collegedekho.com/colleges/iim-bangalore-fee-structure."
+  },
+  {
+   "item": "4a. Registered nurse, typical annual gross",
+   "researched": "INR 250,000",
+   "verified": "About INR 250,000-280,000. Indeed 'nurse' INR 20,731/month = 248,772 a year (232 salaries, May 2026). Indeed 'registered nurse' INR 16,458/month = 197,496 (841 salaries, Jul 2026). PayScale RN average and median INR 309,000 (219 profiles, Jun 2026). Talent.com RN INR 325,000 (1,178 submissions).",
+   "source": "https://in.indeed.com/career/nurse/salaries ; https://in.indeed.com/career/registered-nurse/salaries ; https://www.payscale.com/research/IN/Job=Registered_Nurse_(RN)/Salary ; https://in.talent.com/salary?job=registered+nurse",
+   "verdict": "correct",
+   "note": "250,000 sits within about 10% of the four-source average of about 270,000. Government nursing posts pay far more. Indeed lists AIIMS at INR 9,82,500 a year for registered nurses, and South Central Railway at INR 7,13,268 for nurses. That public/private gap is unresolved in the game number."
+  },
+  {
+   "item": "4b. Secondary teacher, typical annual gross",
+   "researched": "INR 500,000 (an estimate between private and government pay)",
+   "verified": "About INR 330,000-375,000 on the job sites. PayScale secondary school teacher average and median INR 329,000 (166 profiles, Mar 2026). PayScale high-school teacher INR 364,776 (328 profiles, May 2026). Talent.com secondary school teacher INR 375,000 (6,417 reports). Indeed high-school teacher INR 25,104/month = 301,248 (76 salaries). Indeed 'teacher' INR 20,058/month = 240,696 (1.2k salaries).",
+   "source": "https://www.payscale.com/research/IN/Job=Secondary_School_Teacher/Salary ; https://www.payscale.com/research/IN/Job=High_School_Teacher/Salary ; https://in.talent.com/salary?job=secondary+school+teacher ; https://in.indeed.com/career/high-school-teacher/salaries ; https://in.indeed.com/career/tgt-teacher/salaries",
+   "verdict": "off",
+   "note": "500,000 is about 33-50% above every published figure I found. I verified about 370,000 as the private/mixed-market value. The colleague's claim that government TGT/PGT teachers earn INR 9-12 lakh (7th Pay Commission Level 7-8 with 60% dearness allowance) is unverified. I could not find a government pay-matrix page (Wikipedia pay-commission pages returned 404). If the game should reflect government teachers, 500,000 is a defensible compromise, but it is not supported by survey data."
+  },
+  {
+   "item": "4c. Resident physician, typical annual gross",
+   "researched": "INR 1,000,000",
+   "verified": "About INR 780,000-1,130,000. PayScale resident physician average and median INR 830,000 (28 profiles). Talent.com resident doctor INR 780,000 (1,639 reports, range 362,500-1,240,000). Indeed lists AIIMS junior resident at INR 11,25,927 a year.",
+   "source": "https://www.payscale.com/research/IN/Job=Resident_Physician/Salary ; https://in.talent.com/salary?job=resident+doctor ; https://in.indeed.com/career/junior-resident-doctor/salaries",
+   "verdict": "correct",
+   "note": "1.0 million sits inside the range and within 15% of the midpoint of about 950,000. The PayScale page says it was last updated 16 Nov 2022 with 28 profiles, not 2026 as the colleague implied, so it is thin and old. Indeed's generic 'physician' figure (INR 36,716/month, 523 salaries) is for all physicians, not residents, and was correctly not used. I did not verify the government 7th Pay Commission Level 10-11 figures of 1.0-1.3 lakh a month."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "INR 210,000 a year (an estimate: 0.82 x PLFS mean of INR 21,285/month x 12)",
+   "verified": "I could not verify a median. The mean is confirmed: PLFS calendar-2025 average for regular wage/salaried workers is INR 21,285/month (men 24,217, women 18,353), which is about INR 255,420 a year. Data for India also puts the salaried mean at about INR 21,000/month in 2024. Numbeo's crowd-sourced 'average net salary' of INR 42,163/month is not comparable.",
+   "source": "https://en.wikipedia.org/wiki/Income_in_India ; https://www.dataforindia.com/salaried-jobs/ ; https://www.numbeo.com/cost-of-living/country_result.jsp?country=India",
+   "verdict": "unverifiable",
+   "note": "No published median or percentile was reachable. The MoSPI press-note PDF returned no extractable text, so the men/women split was not re-checked against it, and pdftotext and pypdf were not available locally. Salaried workers are only about 23% of the workforce, so this figure describes the formal minority, not the typical worker. The 0.82 median-to-mean ratio is an assumption, though 210,000 is plausible. The 90th-percentile value of 600,000 was not checked either."
+  },
+  {
+   "item": "6. School-leaving result scoring and qualification name",
+   "researched": "Class 12 board exam (CBSE AISSCE or state boards). Each subject marked out of 100, quoted as an overall percentage. Higher is better. Pass mark is 33% per subject, and 33% in theory and practical separately where both apply. Letter grades A1-E are assigned by rank among passers. 2026 CBSE pass rate 85.20%.",
+   "verified": "Confirmed. The qualification is the All India Senior School Certificate Examination (AISSCE). The pass mark is 33% overall and 33% in theory and practical separately where both apply. Letter grades are positional: A1 is the top eighth of passers through D2, and E is fail. 2026 CBSE Class 12: 1,768,968 appeared and 1,507,109 passed, a pass rate of 85.20% (88.39% in 2025).",
+   "source": "https://en.wikipedia.org/wiki/Central_Board_of_Secondary_Education ; https://gulfnews.com/world/asia/india/cbse-class-12-results-released-8520-students-pass-1.500538948 ; https://en.wikipedia.org/wiki/Education_in_India",
+   "verdict": "correct",
+   "note": "I found no source for the colleague's 'typical passing result is roughly 70-80%', which they already labelled as their estimate. The tie between the percentage and university entry is also correct: IIT, NEET, CUET and CLAT admission runs on separate entrance exams."
+  },
+  {
+   "item": "7a. Exchange rate, INR per USD",
+   "researched": "96.095 (30 Sep 2026)",
+   "verified": "96.095 per tradingeconomics on 30 Sep 2026, with the rupee down 8.36% over 12 months. open.er-api gives 96.063 (updated 30 Sep 2026 00:02 UTC). World Bank annual period-average official rate: 2025 = 87.16, 2024 = 83.67.",
+   "source": "https://tradingeconomics.com/india/currency ; https://open.er-api.com/v6/latest/USD ; https://api.worldbank.org/v2/country/IN/indicator/PA.NUS.FCRF?format=json&date=2020:2025",
+   "verdict": "correct",
+   "note": "The spot rate is about 10% above the 2025 World Bank annual average (87.16). Anyone mixing spot FX with annual PPP data should know about that gap. The rupee's all-time high against the dollar (weakest) was 99.82 in Mar 2026."
+  },
+  {
+   "item": "7b. PPP conversion factor, INR per international dollar",
+   "researched": "20.09 (2025); 2024 = 20.45",
+   "verified": "World Bank PA.NUS.PPP (GDP, LCU per international $): 2025 = 20.0886, 2024 = 20.4522, 2023 = 20.4553, 2022 = 20.4927, 2021 = 20.7279.",
+   "source": "https://api.worldbank.org/v2/country/IN/indicator/PA.NUS.PPP?format=json&date=2020:2025",
+   "verdict": "correct",
+   "note": "Both the 2025 and 2024 values match."
+  },
+  {
+   "item": "8. Student-loan scheme description and interest rate",
+   "researched": "No income-contingent scheme. Borrowing from public-sector banks at floating rates. Nominal rate 9.3%. SBI student loan 9.4-9.9%. PM-Vidyalaxmi 6.90-8.40%. Inflation 4.82%.",
+   "verified": "SBI rates from 9 Jun 2026: Student Loan 9.40% with collateral (above INR 7.5 lakh) and 9.90% without collateral (up to INR 7.5 lakh), with a 0.50% concession for girl students. PM-Vidyalaxmi tiers Utkarsh 6.90%, Uttam 7.20%, Uday 8.40%. Premier institutions (IITs, IIMs, BITS and others) get 6.75%. The External Benchmark Rate is 7.90%, which is repo plus 2.65% spread, and rates are floating. RBI repo is 5.25% on 30 Sep 2026. August 2026 CPI is 4.82% (July 4.45%).",
+   "source": "https://sbi.bank.in/web/interest-rates/interest-rates/loan-schemes-interest-rates/education-loan-scheme ; https://www.rbi.org.in/ ; https://indiainflation.com/ ; https://pmvidyalaxmi.co.in/",
+   "verdict": "correct",
+   "note": "A nominal rate of 9.3% is within about 0.6 points of SBI's headline 9.40% and 9.90% rates. I could not confirm the colleague's 'mean rate 9.31% in Q1 FY27' line. I could not confirm the PM-Vidyalaxmi details (collateral-free, government guarantee, roughly 860-966 eligible institutions), because the portal page only lists institutions. The colleague already marked the count as from memory. Interest subvention for lower-income families is also unchecked. Only the SBI rate tiers are verified, and the description is otherwise plausible."
+  }
+ ]
+}

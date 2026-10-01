@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Sweden",
+  "adjective": "Swedish",
+  "currencyName": "Swedish krona (SEK, written kr)",
+  "fxPerUSD": {
+   "value": 9.97886,
+   "source": "Riksbank daily SEK/USD fixing for 2026-09-30 (series SEKUSDPMI): https://api.riksbank.se/swea/v1/Observations/SEKUSDPMI/2026-09-20/2026-09-30 (9.81 to 9.98 over the prior 8 trading days)",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 8.548493,
+   "source": "World Bank PA.NUS.PPP, GDP PPP conversion factor for Sweden, 2025 (last updated 2026-07-13): https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PPP?format=json&date=2019:2026 (the household-consumption PPP, PA.NUS.PRVT.PP, is 8.889 for 2025)",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 319512,
+   "source": "Sweden has no statutory minimum wage (Medlingsinstitutet https://www.mi.se/forhandling-avtal/lagstaloner/ : 'Det finns inga lagstiftade lägstalöner i Sverige'; ETUI/Medlingsinstitutet https://www.etui.org/sites/default/files/2025-06/Sweden_Collective%20bargaining%20and%20minimum%20wage%20regime_2025.pdf). Floor used is the retail agreement (Svensk Handel and Handelsanställdas förbund, Detaljhandelsavtal, runs to 2027-03-31), lowest wage for an 18-year-old from 2026-04-01 = 26,626 kr/month, from Medlingsinstitutet's sample of lowest wages in collective agreements (updated Nov 2025): https://www.mi.se/app/uploads/Urval-av-lagstaloner-i-kollektivavtal-november-2025.xlsx",
+   "confidence": "high"
+  },
+  "arithmetic": "26,626 kr per month x 12 = 319,512 kr per year. No 13th or 14th month is legally part of Swedish pay. For comparison, other 2026 agreement floors in the same file: Kommunal/SKR 23,638 kr/month (25,798 with vocational training), Hotel and restaurant (Visita) 19,992 kr/month at age 18 and 26,580 for skilled workers, Byggavtalet 35,322 kr/month for skilled workers, Gemensamma Metallavtalet 25,122 kr/month at age 18.",
+  "note": "The retail pay floor (26,626 kr a month, no legal minimum)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "Transportstyrelsen, driving licence categories (category B, passenger car: 18 years): https://www.transportstyrelsen.se/en/road/driving-licences/im-going-to-take-my-driving-licence/driving-licence-categories/",
+  "confidence": "high",
+  "note": "Supervised practice driving in a car is allowed from 16 with a learner's permit and an approved accompanying driver (https://www.transportstyrelsen.se/en/road/driving-licences/learning-how-to-drive/). The car driving test needs a completed risk course."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 351600,
+   "source": "SCB Lönestrukturstatistik 2025, SSYK 5230 Kassapersonal m.fl., all sectors, median monthly pay (full-time equivalent) 29,300 kr x 12 = 351,600 (mean 30,400; P10 23,000; P90 38,400): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN . SCB states all wages are converted to full-time positions (https://www.scb.se/lonestatistik/Sjukskoterska/)",
+   "confidence": "high"
+  },
+  "electrician": {
+   "value": 502800,
+   "source": "SCB 2025, SSYK 7411 Installations- och serviceelektriker, age 35-44 mean monthly pay 41,900 kr x 12 = 502,800 (https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN). All-ages median is 40,000 kr and mean 39,600, so mean is about equal to median for this job; 35-44 used as mid-career.",
+   "confidence": "high"
+  },
+  "policeOfficer": {
+   "value": 519600,
+   "source": "SCB 2025, SSYK 3360 Poliser, all sectors, median monthly pay 43,300 kr x 12 = 519,600 (mean 43,900; P10 34,600; P90 54,000): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "high"
+  },
+  "mechanicalEngineer": {
+   "value": 634200,
+   "source": "SCB 2025, SSYK 2144 Civilingenjörsyrken inom maskinteknik. Age 35-44 mean monthly pay 55,400 kr (LonYrkeAlder4AN). Median is not published by age, so mean scaled by the all-ages median/mean ratio 51,800/54,300 = 0.954: 55,400 x 0.954 = 52,850 kr/month x 12 = 634,200. Tables: https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN and .../LoneSpridSektYrk4AN",
+   "confidence": "medium"
+  },
+  "lawyer": {
+   "value": 620800,
+   "source": "SCB 2025, SSYK 2614 Affärs- och företagsjurister (business and in-house lawyers), age 25-34 mean monthly pay 55,700 kr (n about 3,100). Scaled by the all-ages median/mean ratio 67,800/73,000 = 0.929: 51,730 kr/month x 12 = 620,800. Lawyers with the protected title advokat (2611) aged 25-34 average 67,500 kr but those are mostly already-qualified advokater. Tables: https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN and .../LoneSpridSektYrk4AN",
+   "confidence": "medium"
+  },
+  "salesDirector": {
+   "value": 852000,
+   "source": "SCB 2025, SSYK 1251 Försäljnings- och marknadschefer, nivå 1 (managers with managers reporting to them, typical of larger organisations), median monthly pay 71,000 kr x 12 = 852,000 (mean 76,900; P90 116,700): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "medium"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 675600,
+   "source": "SCB 2025, SSYK 2212 ST-läkare (specialist-training doctors), median monthly pay 56,300 kr x 12 = 675,600 (AT-läkare/interns earn a median 39,700 kr/month; note the old AT internship was replaced by BT for newer cohorts): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "high"
+  },
+  "specialistPhysician": {
+   "value": 1161600,
+   "source": "SCB 2025, SSYK 2211 Specialistläkare, median monthly pay 96,800 kr x 12 = 1,161,600 (mean 98,000; P10 78,500; P90 118,400): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "high"
+  },
+  "registeredNurse": {
+   "value": 514800,
+   "source": "SCB 2025, SSYK 2221 Grundutbildade sjuksköterskor, all sectors, median monthly pay 42,900 kr x 12 = 514,800 (mean 44,000): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN and https://www.scb.se/lonestatistik/Sjukskoterska/",
+   "confidence": "high"
+  },
+  "secondaryTeacher": {
+   "value": 530400,
+   "source": "SCB 2025, SSYK 2330 Gymnasielärare, median monthly pay 44,200 kr x 12 = 530,400 (mean 44,200; age 35-44 mean 43,400): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "high"
+  },
+  "airlineFirstOfficer": {
+   "value": 694800,
+   "source": "SCB 2025, SSYK 3153 Piloter m.fl., age 25-34 mean monthly pay 57,900 kr x 12 = 694,800 (n about 260, all pilot types, not only airline); https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN . Sweden's main carriers (SAS, Norwegian, etc.) publish no public scales, so this is a proxy.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 1099600,
+   "source": "SCB 2025, SSYK 3153 Piloter m.fl., employee-weighted mean of age 45-54 (85,700 kr, n 340) and 55-64 (99,100 kr, n 270): (85,700 x 340 + 99,100 x 270) / 610 = 91,631 kr/month x 12 = 1,099,600. Pilot group overall P75 is 101,400 and P90 115,400 kr/month (https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN). Proxy, small sample.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 12000000,
+   "source": "NO PRIMARY SOURCE RETRIEVED. Estimate only. SCB SSYK 1120 Verkställande direktörer m.fl. (all company sizes, dominated by small firms) 2025: median 68,400, mean 91,800, P90 155,400 kr/month = 1,864,800 kr/year at P90 (https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN). Large listed-company CEO pay is several times higher, so 12,000,000 kr (fixed salary plus annual bonus) is an unverified estimate from general knowledge.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 643200,
+   "source": "SCB 2025, SSYK 2260 Tandläkare, all sectors, median monthly pay 53,600 kr x 12 = 643,200 (mean 57,500; age 25-34 mean 44,400, age 55-64 mean 67,700): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "high"
+  },
+  "pharmacist": {
+   "value": 576000,
+   "source": "SCB 2025, SSYK 2281 Apotekare. The all-sector mean and median are suppressed by SCB, so estimated: public-sector median 46,900 kr (mean 48,300), all-sector P25 44,900 (public P25 43,600), which points to an all-sector median of about 48,000 kr/month x 12 = 576,000. All-sector P10 41,500, P90 96,200. Receptarier (3-year pharmacists, SSYK 3213) have a median of 45,200. https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 512400,
+   "source": "SCB 2025, SSYK 2512 Mjukvaru- och systemutvecklare m.fl. No median by experience is published, so junior is taken as the midpoint of the age 18-24 mean (36,100 kr/month) and age 25-34 mean (49,300 kr/month) = 42,700 x 12 = 512,400. Cross-check: all-ages P10 is 39,600 and P25 46,200 kr/month. https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN and .../LoneSpridSektYrk4AN",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 654700,
+   "source": "SCB 2025, SSYK 2512, age 35-44 mean monthly pay 56,600 kr (n about 36,000) scaled by the all-ages median/mean ratio 53,500/55,500 = 0.964: 54,560 x 12 = 654,700 (all-ages median 53,500 kr/month = 642,000/year; P90 72,600). https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LonYrkeAlder4AN and .../LoneSpridSektYrk4AN",
+   "confidence": "medium"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 459600,
+   "source": "SCB Lönestrukturstatistik 2025, all occupations, all sectors: median monthly pay 38,300 kr (full-time equivalent) x 12 = 459,600 (mean 42,900 kr/month): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN (SSYK 0000) and https://www.ekonomifakta.se/sakomraden/arbetsmarknad/loner/medianlon-och-genomsnittslon-i-sverige_1210924.html",
+   "confidence": "high"
+  },
+  "p90FullTime": {
+   "value": 740400,
+   "source": "SCB Lönestrukturstatistik 2025, all occupations, all sectors: 90th percentile monthly pay 61,700 kr x 12 = 740,400 (P10 28,000; P25 32,000; P75 48,000 kr/month): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN (SSYK 0000)",
+   "confidence": "high"
+  }
+ },
+ "livingCost": {
+  "value": 242400,
+  "basis": "Single adult aged 25-50 in a medium-sized city, 2026, net need 16,850 kr/month. Konsumentverket 2026 (https://stpubshop.blob.core.windows.net/publikationer/kostnadsberakningar-hushallskostnader-2026-sv-kov_tga_32d.pdf): food cooked at home 2,730 + clothes/leisure/phone/hygiene 2,140 + one-person household costs 3,530 (consumables 200, home equipment 920, internet and mobile 1,000, other media 640, electricity 400, water 220, home insurance 150) = 8,400. Rent 7,450 (Konsumentverket's 2026 medium-city flat assumption, https://www.konsumentverket.se/ekonomi/flytta-eller-bo-hemma-kostnad/). Local transport about 1,000 (my estimate, no source retrieved). 8,400 + 7,450 + 1,000 = 16,850 net. Gross found with Skatteverket's 2026 tax table 32 (https://skatteverket.entryscape.net/rowstore/dataset/88320397-5c32-4c16-ae79-d36d95b17b95): 20,200 kr/month gross less 3,337 tax = 16,863 net, so 20,200 x 12 = 242,400 gross a year.",
+  "source": "Konsumentverket Hushållskostnader 2026 and Skatteverket skattetabell 32 for 2026, arithmetic shown in basis",
+  "confidence": "medium"
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 0,
+    "source": "Yrkeshögskola (YH, higher vocational education) is free with a few exceptions and qualifies for CSN: https://www.yrkeshogskolan.se/studiemedel-och-studieavgifter . Gymnasium vocational programmes and komvux are also free for residents (compulsory upper secondary is tax-funded).",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.yrkeshogskolan.se/studiemedel-och-studieavgifter ('på i stort sett alla utbildningar är det kostnadsfritt att studera'; students buy their own course books)",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.yrkeshogskolan.se/studiemedel-och-studieavgifter (only a few YH programmes charge a fee, so the typical fee is 0)",
+    "confidence": "medium"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 0,
+    "source": "Studera.nu: citizens of Sweden, an EU/EEA country or Switzerland pay neither application nor tuition fees: https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (the rule applies to all higher education for Swedish/EU students, including KTH, Karolinska Institutet, Lund, Uppsala and Stockholm School of Economics; not checked on each school's own page)",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (same rule; not checked per school)",
+    "confidence": "medium"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 0,
+    "source": "Doctoral students in Sweden are paid employees, not fee payers (SCB lists SSYK 2314 Doktorander with a 2025 median pay of 34,000 kr/month): https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN (SSYK 2314 Doktorander, median 34,000 kr/month, mean 34,500)",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN (SSYK 2314 Doktorander)",
+    "confidence": "high"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (no separate fee for medicine; there is no community-tier medical degree in practice)",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (läkarprogrammet is free for Swedish/EU students; programme length is about 5.5 years)",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (Karolinska Institutet etc. charge Swedish/EU students nothing)",
+    "confidence": "medium"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (no separate fee for law)",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (juristprogrammet is free for Swedish/EU students)",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 0,
+    "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/ (Uppsala, Lund and Stockholm law programmes are free for Swedish/EU students)",
+    "confidence": "medium"
+   }
+  },
+  "notes": "Tuition is zero at every level for Swedish, EU/EEA and Swiss citizens and for people with permanent residence or a non-study residence permit (studera.nu); people who must pay face a 900 kr application fee. Students pay for their own books and living costs, and CSN study support covers living costs (see studentLoan). No per-school fee pages were fetched for the elite tier, so those entries rely on the national rule."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 2.135,
+   "source": "CSN: 'Räntan på studielånet är 2,135 procent år 2026' (percent, fixed for the calendar year): https://www.csn.se/bidrag-och-lan/studiemedel.html",
+   "confidence": "high"
+  },
+  "inflation": {
+   "value": 0.3,
+   "source": "SCB: CPI (KPI) annual inflation 0.3 percent in August 2026 (0.2 in July), latest final figure as of 2026-09-30: https://www.scb.se/en/finding-statistics/statistics-by-subject-area/prices-and-economic-trends/price-statistics/consumer-price-index-cpi/pong/statistical-news/consumer-price-index-cpi-august-2026/ . The Riksbank's target measure CPIF was 0.7 percent, which does not move with mortgage rates, so the real rate would be 1.4 instead of 1.8 percent.",
+   "confidence": "high"
+  },
+  "description": "Both values are in percent. CSN studiemedel (public study support) has a grant and a loan part; for full-time study in 2026 it is 3,398 kr a week (grant 1,030 + loan 2,368), or 13,592 kr per 4-week payment. The loan accrues interest from the first payout; repayment starts at the earliest six months after study support ends, and always after a year-end. Real rate = 2.135 - 0.3 = about 1.8 percent on headline CPI (about 1.4 percent on CPIF 0.7). Sources: https://www.csn.se/bidrag-och-lan/studiemedel.html"
+ },
+ "schooling": {
+  "primarySchool": "Grundskola (compulsory comprehensive school) starts with förskoleklass (preschool class, the year a child turns 6) and årskurs 1-6 (lågstadiet and mellanstadiet), ages 7-12. From autumn 2028 it becomes a 10-year grundskola and 6-year-olds start årskurs 1 directly (Skolverket: https://www.skolverket.se/forandringar-inom-skolomradet/en-skola-i-forandring/tioarig-grundskola).",
+  "middleSchool": "Högstadiet (lower secondary), årskurs 7-9, ages 13-15/16, ends compulsory school with the slutbetyg. To enter a gymnasium yrkesprogram you need pass grades (A-E) in Swedish, English, maths and five other subjects; for a högskoleförberedande program, passes in 12 subjects. In spring 2026, 83.5 percent of 9th graders were eligible (Skolverket press release 2026-09-24: https://www.skolverket.se/om-skolverket/nyheter-och-pressmeddelanden/pressmeddelanden/pressmeddelanden/2026-09-24-forsta-gangen-storre-andel-pojkar-an-flickor-ar-behoriga-till-gymnasieskolan).",
+  "schoolLeaving": "Gymnasieskola (upper secondary), 3 years, ages 16-19, with 18 national programmes: 6 högskoleförberedande (Ekonomi-, Estetiska, Humanistiska, Naturvetenskaps-, Samhällsvetenskaps-, Teknikprogrammet) and 12 yrkesprogram. Ends in a gymnasieexamen (SeQF level 4) with slutbetyg; from autumn 2025 new students study 'ämnen' with subject grades (Gy25: https://www.skolverket.se/forandringar-inom-skolomradet/en-skola-i-forandring/gy25----amnesbetyg-pa-gymnasial-niva). University entry uses the grade-based jämförelsetal and/or the optional Högskoleprovet (0.00-2.00; at least one third of places are allocated on it, UHR: https://www.uhr.se/studier-och-antagning/tilltrade-till-hogskolan/Urval-till-grundniva/Urval-med-hogskoleprov/).",
+  "vocational": "Yrkesprogram in gymnasieskolan (e.g. El- och energiprogrammet, Bygg- och anläggningsprogrammet, Vård- och omsorgsprogrammet, Fordons- och transportprogrammet), then optionally Yrkeshögskola (YH): programmes are usually 1-2 years (200-400 YH points), with yrkeshögskoleexamen (SeQF level 5) or kvalificerad yrkeshögskoleexamen (level 6), at least a quarter spent on LIA (learning at work), mostly free and CSN-eligible (https://www.yrkeshogskolan.se/langd-poang-och-examen). Adults can use komvux (municipal adult education) and folkhögskola.",
+  "tierCommunity": "Yrkeshögskola (YH) programmes plus folkhögskola and komvux: 1-2 year vocational or bridging study, free, CSN-eligible.",
+  "tierState": "Regional universities and högskolor such as Örebro universitet, Karlstads universitet, Högskolan i Borås, Umeå universitet: kandidatexamen (180 hp, 3 years), master (1-2 years), most professional degrees 3-5.5 years; free for Swedish/EU students.",
+  "tierElite": "The most selective institutions: Karolinska institutet (medicine), KTH and Chalmers (engineering), Lunds universitet, Uppsala universitet, Handelshögskolan i Stockholm. Same zero fees for Swedish/EU students; selection is by grades and Högskoleprovet, not price.",
+  "gradeName": "Betyg A-F (merit value / meritvärde, jämförelsetal)",
+  "gradeSource": "https://www.skolverket.se/prov-och-bedomning/betyg/betygsskalan and https://www.skolverket.se/om-skolverket/nyheter-och-pressmeddelanden/pressmeddelanden/pressmeddelanden/2026-09-24-forsta-gangen-storre-andel-pojkar-an-flickor-ar-behoriga-till-gymnasieskolan",
+  "gradeSystem": "Six-step scale A, B, C, D, E, F: higher is better, A-E are passes, E is the lowest pass and F is a fail; a dash means no grade (Skolverket). Criteria are written at E, C and A; B and D sit between. Grades are set from årskurs 6. In grundskolan the merit value (meritvärde) is the sum of grade points A=20, B=17.5, C=15, D=12.5, E=10, F=0 over 17 subjects (max 340); the national average for spring 2026 was 230.9 of 340, about 13.6 per subject, between D and C (Skolverket). The grade-point values and the 16-subject/320 variant come from background knowledge, but the 340 maximum is confirmed by Skolverket and the 20-point top by UHR (merit value 19 or more on the Swedish scale earns the maximum 2.5 merit-point compensation). Gymnasium leaving grades are credit-weighted averages on the same 0-20 scale (jämförelsetal, max 20.00, plus up to 2.5 merit points); a pass (E or better) in courses/subjects totalling 2,250 of 2,500 credits is normally needed for gymnasieexamen (background knowledge, not fetched). Reform: a 10-step scale (1-10) with no pass mark and centrally marked national final tests is planned from autumn 2028, first new merit values for school leavers in 2031 (Skolverket: https://www.skolverket.se/forandringar-inom-skolomradet/en-skola-i-forandring/nytt-betygssystem).",
+  "startingAges": "Förskoleklass at 6 (compulsory, the year a child turns 6), årskurs 1 at 7, årskurs 9 ends at 15-16, so compulsory schooling is ages 6/7-16. No track split before gymnasium: at 16 students choose a högskoleförberedande program or a yrkesprogram (3 years to age 19). Higher education from 19+: bachelor 3 years (kandidatexamen 180 hp), master 1-2 years, degrees like nurse 3 years (180 hp), teacher, engineer and doctor longer (studera.nu: https://www.studera.nu/att-valja-utbildning/vagar/utbildningsnivaer-och-examina/)."
+ },
+ "highlights": [
+  "Sweden has no legal minimum wage; union agreements set the floor, e.g. 26,626 kr a month in retail from April 2026 (about $2,670).",
+  "University is free for Swedish citizens, and 2026 full-time study support is 3,398 kr a week (1,030 grant, 2,368 loan at 2.135% interest)."
+ ],
+ "caveats": "The session's WebSearch budget ran out partway through the task, so later figures came straight from official APIs and pages (SCB PxWeb API, Medlingsinstitutet xlsx, Skatteverket open tax tables, Riksbank, World Bank) rather than from search.\n\nAll pay figures are SCB 2025 full-time-equivalent monthly pay x 12, which does not include the 2026 collective-agreement raises (probably +2 to 3 percent), and SCB monthly pay is not the same as total annual cash pay (holiday supplement, year-end bonuses).\n\nMedians are used where SCB publishes them. Where only age-group means exist (mechanical engineer mid-career, lawyer early-career, software mid-level) I scaled the mean by the occupation's all-ages median/mean ratio; software junior is a midpoint estimate (low confidence).\n\nLOW-CONFIDENCE: ceoLargeCompany (12,000,000 kr is an unverified estimate; no source found), the airline first officer and captain figures (SCB 'Piloter m.fl.' with small samples, about 260 to 340 employees per age group, includes non-airline pilots), and the local-transport line (about 1,000 kr a month) in livingCost. Pharmacist (apotekare) mean and median are suppressed by SCB, so it is estimated from the public-sector median and the all-sector quartiles.\n\nMinimum wage: Sweden has none by law, so I used the Svensk Handel and Handels retail agreement floor for age 18 (from 2026-04-01). Other floors are lower (Kommunal/SKR 23,638; Visita age 18 19,992) or higher (Byggavtalet skilled 35,322), so the representative figure is a judgement call. The 26,626 kr is the lowest retail tier at age 18, and adults with a year of retail experience get 27,530 kr.\n\nStudent-loan rates are given in percent (2.135 and 0.3), not fractions. I used headline CPI (0.3 percent, August 2026) as inflation; CPIF was 0.7 percent.\n\nThe grade-point values (A=20 ... E=10), the 16-subject/320 variant, the 2,250-of-2,500-credit rule for gymnasieexamen and the fact that grades start in årskurs 6 come from background knowledge and were not confirmed on a fetched page; the 340 maximum, the 230.9 average, the A-F scale, the 2028 reform and the merit-point cap are sourced. No typical jämförelsetal for gymnasium leavers was found. The elite-tier tuition entries rely on the national rule (studera.nu), not each university's own fee page. Table 32 of Skatteverket's 2026 tax tables was assumed to match the roughly 32 percent average municipal plus regional tax rate without checking the table-to-rate mapping."
+}

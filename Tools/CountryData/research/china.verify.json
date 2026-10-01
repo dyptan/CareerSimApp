@@ -1,0 +1,260 @@
+{
+ "checks": [
+  {
+   "item": "Minimum wage, full-time annual gross (China has no national minimum; Shanghai used as the floor)",
+   "researched": "CN¥32,880 a year = Shanghai CN¥2,740 a month x 12 (Beijing 2,540 x 12 = 30,480 also given); no legal 13th month; excludes overtime, allowances and employee social insurance",
+   "verified": "CN¥32,880 is exactly right for Shanghai. Shanghai HRSS notice 沪人社规〔2025〕10号 raised the monthly floor from 2,690 to 2,740 from 1 Jul 2025 (hourly 25 for part-timers; employee social insurance and housing fund not included). It is still the current standard: the Shanghai HRSS wages page lists no 2026 minimum-wage notice (its newest item, dated 15 Jul 2026, is the wage-payment measures), the MOHRSS list as of 1 Jan 2026 has Shanghai first at 2,740, and China Briefing (updated Aug 2026) still shows 2,740. Beijing: 2,540 a month since 1 Sep 2025 (Beijing HRSS notice) = CN¥30,480. Spread across the 31 provincial-level regions (top tier, 1 Jan 2026): 2,070 (Xinjiang) to 2,740 (Shanghai); median 2,320 (CN¥27,840 a year), mean 2,328; lowest sub-tiers about 1,750-2,250.",
+   "verdict": "correct",
+   "source": "https://rsj.sh.gov.cn/tgzfl_17732/20250714/t0035_1434097.html ; https://rsj.sh.gov.cn/tgzfl_17732/index.html ; https://rsj.beijing.gov.cn/xxgk/2024zcwj/202507/t20250725_4158456.html ; https://www.china-briefing.com/doing-business-guide/china/human-resources-and-payroll/minimum-wage ; https://leglobal.law/2026/02/25/china-ministry-of-human-resources-and-social-security-released-the-minimum-wage-standards-across-all-provinces-autonomous-regions-and-municipalities-as-of-1-january-2026/ ; http://nj.bendibao.com/live/2026119/178521.shtm (full 1 Jan 2026 table, third-party copy of the MOHRSS list)",
+   "note": "Representativeness decision: Shanghai is the highest legal floor in the country, not the typical one. Beijing (30,480) is closer to a typical big-city floor and the median provincial top-tier floor is about 27,840, so Shanghai sits about 18% above the median province and about 37-57% above the lowest sub-tiers (2,000-1,750). Using Shanghai is defensible (largest city, the most-quoted figure, and the legal arithmetic is exact) but if the game wants a typical floor use Beijing 30,480 or about 28,000. Do not use claims of newer floors: one HR site says Shanghai 2,850 and Beijing 2,600 from 1 Jul 2026 (with outdated baselines of 2,690 and 2,420) and a Baidu answer says Beijing 2,680 from 1 Jan 2026; none has an official notice behind it."
+  },
+  {
+   "item": "Driving licence age (car, no supervising driver)",
+   "researched": "18 (C1 car licence); 12-month probation, expressway driving needs an experienced driver (3+ years) alongside",
+   "verified": "18. Ministry of Public Security Order No. 172 (Provisions on Application and Use of Motor Vehicle Driving Licences, in force 1 Jan 2025): applicants for small cars and small automatic cars must be 18 or older; applicants over 70 may apply if they pass memory, judgement and reaction tests. Wikipedia confirms the 12-month new-driver period with a passenger of 3+ years' driving experience required on expressways.",
+   "verdict": "correct",
+   "source": "https://jtgl.beijing.gov.cn/jgj/jgxx/flfg/gabgz/543498902/index.html ; https://en.wikipedia.org/wiki/Driving_license_in_China",
+   "note": "Age and probation facts hold; see the next item for a wrong sentence in the researcher's note."
+  },
+  {
+   "item": "Driving note: 'The learner's licence is not used on public roads'",
+   "researched": "The learner's licence is not used on public roads.",
+   "verified": "Not accurate. Under Orders 162/172 a learner holds a 学习驾驶证明 (learning driving certificate, valid 3 years) and practises on public roads in a marked training car with a driving-school instructor or, under the self-study-direct-test scheme, in a marked private car with an accompanying guide, on routes and at times set by the traffic police.",
+   "verdict": "off",
+   "source": "https://www.mps.gov.cn/n6557558/c8281680/content.html ; https://baike.baidu.com/item/%E8%87%AA%E5%AD%A6%E7%9B%B4%E8%80%83/19518506",
+   "note": "Suggested wording: from 18 a car licence is obtained after driving-school or supervised self-study training and tests; learners practise on designated public roads with an instructor or guide. Does not change the 18 figure."
+  },
+  {
+   "item": "Public-university bachelor tuition a domestic student pays",
+   "researched": "State CN¥5,500; elite 5,000; community (public higher vocational) 5,000 a year, recalled with no URLs",
+   "verified": "Base fees are set province by province and are low and rising: Henan 4,400 humanities / 5,000 science-engineering / 5,500 medicine (Zhengzhou University 2025 charter: 4,400 / 5,000-5,700 / 6,300); Shandong 4,000 / 5,000 / 6,000 with up to +20% for Double First-Class (notice 鲁发改价格〔2026〕290号, 2026-28 intakes); Gansu from autumn 2026 science 5,200, engineering 5,600, medicine 5,800; Sichuan (2023) 4,800 / 5,200 / 5,800; Shanghai 6,500-7,400 (2023 cap), Fudan 2025 charter 6,500-8,140. Elite: Tsinghua 5,000 (arts and design 10,000), Peking University main campus 2025 5,000-5,300. So the typical band is about 4,400-6,000 with 5,000 the mode.",
+   "verdict": "correct",
+   "source": "https://henan.eol.cn/hengd/202505/t20250522_2670164.shtml ; https://gaokao.eol.cn/bei_jing/dongtai/202507/t20250708_2679721.shtml ; https://xxgk.fudan.edu.cn/2e/4b/c5195a732747/page.htm ; http://fgw.shandong.gov.cn/art/2026/4/20/art_333896_80157.html (could not be fetched, figures from search extract) ; https://www.thepaper.cn/newsDetail_forward_24112823 ; https://www.epochtimes.com/gb/26/7/3/n14802109.htm (secondary, Gansu/Henan/Xinjiang 2026)",
+   "note": "5,500 for the state tier is mid-band. The elite value 5,000 matches Tsinghua and Peking University but Shanghai's top universities (Fudan, Jiao Tong) charge 6,500-8,140, so elite is better described as 5,000-8,000 with a median near 6,000; still within 25%. Fees rise from autumn 2026 in several provinces."
+  },
+  {
+   "item": "Medicine tuition at a public university (domestic student)",
+   "researched": "State CN¥7,000 (public 5-year clinical medicine); elite 8,000; community (vocational medical) 6,000 a year",
+   "verified": "Public medicine fees: Henan base 5,500 (Zhengzhou University 6,300-6,325 with the Double First-Class float); Shandong 6,000 (Shandong University about 7,200); Gansu 5,800; Xinjiang draft 5,200; Sichuan 5,800; Jiangsu 6,800; Harbin Medical University 4,800; Kunming Medical University 5,500; Peking Union Medical College clinical medicine 5,000; Peking University Health Science Center 6,000; Shanghai Fudan and Jiao Tong medicine 7,400, rising to 8,140. Typical about 5,500-6,500, top universities 6,000-8,140.",
+   "verdict": "correct",
+   "source": "https://finance.sina.com.cn/wm/2026-05-31/doc-inhzuvrm5916583.shtml ; https://www.huxiu.com/article/4863115.html ; https://www.dxsbb.com/news/52181.html ; https://gaokao.eol.cn/bei_jing/dongtai/202507/t20250710_2680261.shtml (Peking University Health Science Center 6,000) ; https://henan.eol.cn/hengd/202505/t20250522_2670164.shtml (Zhengzhou University 6,300)",
+   "note": "7,000 is about 8-27% above the typical 5,500-6,500, inside the 25% fee tolerance; 6,000 would be the better central value. Elite 8,000 matches Shanghai (8,140) but Peking Union and Peking University medicine are 5,000-6,000."
+  },
+  {
+   "item": "Higher vocational (short-cycle) college tuition at public institutions",
+   "researched": "Community 5,000; state 5,500; elite 6,500 a year (no URLs)",
+   "verified": "Public higher vocational fees: Jiangxi 2025 standards 4,800 / 5,200 / 6,000; Tianjin medical college 5,000-5,500; Guangdong public colleges 5,250-6,410; Chongqing 5,000-7,300; Shangluo 6,500 (Shaanxi). Typical 4,800-6,000.",
+   "verdict": "correct",
+   "source": "https://m.jxnews.com.cn/jx/system/2025/03/28/020825797.shtml ; https://www.dxsbb.com/news/57421.html ; https://www.dxsbb.com/news/59677.html",
+   "note": "All three tiers sit inside the 4,800-6,500 band; elite 6,500 is at the top. Software and arts programmes cost more (about 9,000)."
+  },
+  {
+   "item": "Master's and doctoral tuition at public universities",
+   "researched": "Master: community 8,000, state 10,000, elite 12,000; doctorate: 10,000 / 10,000 / 12,000 a year",
+   "verified": "National cap for full-time academic master's is 8,000 a year and for doctorates 10,000 (NDRC, MOF, MOE notice of 2013, 'at the present stage'); Tsinghua 2025 charges 8,000 for academic master's and 10,000 for academic doctorates. Professional master's fees are set by each university and run roughly 8,000-20,000 or more (Tsinghua's range across programmes is 8,000 to about 209,000).",
+   "verdict": "correct",
+   "source": "https://zfxxgk.ndrc.gov.cn/web/iteminfo.jsp?id=19851 ; https://yzbm.tsinghua.edu.cn/publish/s03/s0302/detail/c7228280-c4a6-4602-b950-64da15505415 ; https://www.gaodun.com/kaoyan/1660857.html",
+   "note": "Doctorate 10,000 and master community 8,000 are exact. State master's 10,000 is +25% over the academic cap and elite 12,000 is +50% over Tsinghua's academic fee; both are only reasonable as a blend with professional master's. PhD students usually receive a stipend."
+  },
+  {
+   "item": "Law tuition (LLB at public universities)",
+   "researched": "Community 5,000; state 5,500; elite 5,500 a year",
+   "verified": "Law sits in the humanities fee group: Shandong 4,000; Henan 4,400; Zhengzhou University law 4,400; higher in Shanghai (Fudan humanities 7,150 in 2026 per press, charter range 6,500-8,140 for 2025) and Jiangsu. Tsinghua and Peking University 5,000-5,300. Typical about 4,400-5,000.",
+   "verdict": "correct",
+   "source": "https://henan.eol.cn/hengd/202505/t20250522_2670164.shtml ; https://xxgk.fudan.edu.cn/2e/4b/c5195a732747/page.htm ; https://www.epochtimes.com/gb/26/7/3/n14802109.htm",
+   "note": "5,500 is about 10-25% above the typical humanities rate: acceptable but at the high end."
+  },
+  {
+   "item": "Registered nurse typical annual gross pay",
+   "researched": "CN¥80,000 (estimate of about 6,500 a month plus bonus, anchored on NBS health-sector averages; no direct source)",
+   "verified": "About CN¥75,000 (plausible band 65,000-90,000). Anchors: NBS 2025 health and social work average, non-private units 146,266 nationally, Henan 99,230 (2024), Sichuan 139,130 (2025); pay-reform cities set nurse pay at about 70% of a doctor at the same level (Sanming standard, Anyang cap) and resident-level doctors earn about 100,000; a 2025 portal summary puts ordinary nurses at 5,000-7,500 a month in county hospitals, 6,000-9,000 in tier-2/3 city tertiary hospitals and 8,000-12,000 in tier-1 tertiary hospitals; the 2016 national nurse survey found 76.5% earned under 5,000 a month. MOHRSS enterprise-survey health professionals (mostly private facilities) P50 58,500 in 2022 and 62,653 in Chongqing in 2024.",
+   "verdict": "correct",
+   "source": "https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html ; https://tjj.henan.gov.cn/2025/06-25/3173720.html ; https://tjj.sc.gov.cn/scstjj/c112117/2026/6/29/9e10a2f10ae7461faea46201a60a67d8.shtml ; https://news.qq.com/rain/a/20260109A06TO700 ; https://www.vbdata.cn/36301 ; https://shanshicn.com/zhengce/info.aspx?itemid=7326 ; https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html",
+   "note": "No official nurse-specific median exists, so this is triangulated and the confidence is low-medium. 80,000 is about 7% above the central estimate. Many public hospitals have cut pay in 2025-26 (reports of base pay cuts in Zhejiang and Jiangsu), which argues against going higher."
+  },
+  {
+   "item": "Secondary-school teacher (mid-scale, public) annual gross pay",
+   "researched": "CN¥100,000 (estimate of 8,000-8,500 a month; NBS education average 133,539 noted as including universities)",
+   "verified": "About CN¥110,000 (plausible band 90,000-125,000). Anchors: NBS 2025 education sector, non-private units (mostly public schools), 133,539 nationally, Sichuan 118,458, Heilongjiang 123,872, Henan 85,964 (2024); compulsory-education teacher pay must not fall below the local civil-servant average (public administration average 119,465). Provincial gaps are wide: Beijing and Shanghai far above 150,000 (2020 education averages 196,511 and 173,073), inland provinces roughly 85,000-125,000.",
+   "verdict": "correct",
+   "source": "https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html ; https://tjj.sc.gov.cn/scstjj/c112117/2026/6/29/9e10a2f10ae7461faea46201a60a67d8.shtml ; https://tjj.hlj.gov.cn/tjj/c106736/202606/c00_31949564.shtml ; https://tjj.henan.gov.cn/2025/06-25/3173720.html",
+   "note": "No national secondary-teacher median is published. 100,000 is about 9% below the triangulated centre, so it is in tolerance but on the low side; 110,000 would be a safer central value."
+  },
+  {
+   "item": "Resident physician (junior doctor) annual gross pay",
+   "researched": "CN¥90,000 (estimate of about 7,500 a month; no direct survey retrieved)",
+   "verified": "About CN¥100,000 (plausible band 85,000-120,000). Anchors: West China Hospital 2025 resident-training pay 92,000-122,000 (bachelor's, years 1-3); Guangdong Provincial People's Hospital 2026 trainees 6,400-8,400 a month (bachelor's, 76,800-100,800 a year) and 7,100-9,100 (master's); Zhaoqing First People's Hospital 72,000-96,000; Shanghai Putuo Central Hospital at least 130,000; national study of tertiary-hospital physicians in 2015 gave residents 57,857, about 118,000 in 2025 terms; a physician survey found 83% of residents under 100,000 of clinical income; non-tier-1-city doctors of all ranks generally under 150,000.",
+   "verdict": "correct",
+   "source": "https://www.wchscu.cn/public/notice/recruit/84263.html ; https://www.gdghospital.org.cn/Noticenotice/info_itemid_67064.html ; https://pmc.ncbi.nlm.nih.gov/articles/PMC6109324/ ; https://www.cn-healthcare.com/articlewm/20241121/wap-content-1642231.html ; https://news.qq.com/rain/a/20240509A00Q8200",
+   "note": "Tier-1 and top tertiary hospitals pay 120,000-145,000; county hospitals 70,000-90,000. 90,000 is about 10% under the central estimate: in tolerance. Sanming-style reform standards give resident doctors a basic 150,000 but that is a high-pay reform city."
+  },
+  {
+   "item": "National median full-time wage",
+   "researched": "CN¥70,000 (estimate; NBS publishes only means; derived from assumed 1:2 weights and 0.78 median/mean)",
+   "verified": "About CN¥64,000 for 2025 (band 62,000-66,000). The MOHRSS enterprise pay survey gives a 2024 national employee median of CN¥5,150 a month (CN¥61,800 a year; P12 3,000, P91 10,000), scaled about +3% to 2025; Chongqing's official 2024 pay-survey table shows an all-employee median of 62,308; NBS 2025 migrant-worker mean income is 5,075 a month (60,900 a year). NBS itself publishes only means: 129,441 (non-private units) and 71,590 (private units).",
+   "verdict": "correct",
+   "source": "https://zhuanlan.zhihu.com/p/2015685656777609855 (secondary synthesis of the MOHRSS survey; page returned 403, figures seen only in a search extract) ; https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html ; https://www.stats.gov.cn/sj/zxfb/202604/t20260430_1963472.html ; https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "note": "70,000 is about 9% above the triangulated figure, inside the 15% tolerance, but this is derived not published, so treat as medium-low confidence. A Sohu article claiming 2025 H1 urban medians of 7,142 / 8,348 / 5,935 a month cites a report I could not find and contradicts NBS means, so it was ignored."
+  },
+  {
+   "item": "90th-percentile full-time wage",
+   "researched": "CN¥170,000 (estimate: 2.4 x the estimated median, lognormal sigma 0.68)",
+   "verified": "About CN¥130,000 for 2025 (band 124,000-140,000). Chongqing's official 2024 pay-survey table has an all-employee P90 of 131,637 against a P50 of 62,308 (ratio 2.1); the national enterprise survey puts about 7-9% of employees above 10,000 a month, i.e. P91 of about 120,000 in 2024. The real P90/P50 ratio is about 2.0-2.1, not 2.4.",
+   "verdict": "off",
+   "source": "https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html ; https://zhuanlan.zhihu.com/p/2015685656777609855 (secondary, search extract only)",
+   "note": "170,000 is roughly 30% too high. Use about 130,000 (or 2.0 x the median)."
+  },
+  {
+   "item": "School-leaving result: name, scale, range, pass mark, direction",
+   "researched": "Gaokao (高考), total out of 750 in most provinces (Chinese, maths, foreign language 150 each; one of physics or history 100; two of the other four 100 each); Shanghai 660, Hainan 900; higher is better; no single pass mark, provincial batch cut-off lines; 13.35 million registered in 2025; alongside a pass/fail academic proficiency test",
+   "verified": "All confirmed. Official name 普通高等学校招生全国统一考试. In the 3+1+2 model: Chinese, maths and foreign language 150 each (450), first-choice subject physics or history 100 on raw score, two re-selected subjects 100 each on converted grades = 750. In the 3+3 model: 750 (Beijing, Tianjin, Shandong, Zhejiang), 660 in Shanghai (electives 40-70 each), 900 in Hainan (standard scores). Higher is better; each province publishes batch control lines, no national pass mark. Registrants: 13.35 million in 2025 and 12.9 million in 2026 (MOE, 3 Jun 2026).",
+   "verdict": "correct",
+   "source": "https://en.wikipedia.org/wiki/Gaokao ; https://www.gk100.com/read_7294117.htm ; http://www.moe.gov.cn/jyb_xwfb/xw_zt/moe_357/2026/2026_zt08/mtbd/202606/t20260604_1438763.html ; https://www.chinanews.com.cn/edu/2025/06-25/10437571.shtml",
+   "note": "The researcher's 13.35 million is the 2025 figure; the latest is 12.9 million for 2026. The statement that typical test-takers score 400-500 and that 680-700+ is needed for Tsinghua or Peking is plausible but not sourced."
+  },
+  {
+   "item": "Gaokao undergraduate and special-control cut-off lines (approximate ranges)",
+   "researched": "本科线 roughly 400-480; 特殊类型招生控制线 roughly 500-540, flagged as approximate and unverified",
+   "verified": "2025 lines out of 750: undergraduate lines 340-490 (most provinces 400-480, e.g. Henan 427 physics / 471 history, Jiangsu 463 / 482, Shandong 441, Beijing 430, Guangdong 436 / 464, Shanghai 402 of 660); special-control lines 441-592 (most 495-560, e.g. Henan 535 / 552, Jiangsu 519 / 537, Shandong 521, Tianjin 562, Zhejiang 592).",
+   "verdict": "correct",
+   "source": "https://www.chinanews.com.cn/edu/2025/06-25/10437571.shtml",
+   "note": "Both ranges are close to the typical values (undergraduate about 430, special control about 520); the special-control upper end could be stated as 560."
+  },
+  {
+   "item": "Gaokao vocational (专科) cut-off line",
+   "researched": "专科线 roughly 200-300",
+   "verified": "2025 vocational lines where published: Shandong 150, Sichuan 150, Ningxia 150, Inner Mongolia and Heilongjiang 160, Gansu 160-180, Chongqing 180, Yunnan 180, Henan 185, Guangxi 200, Anhui 200, Fujian 235, Jiangxi 240-290, Zhejiang 268. Range 140-290, most provinces 150-240, typical about 180.",
+   "verdict": "off",
+   "source": "https://www.chinanews.com.cn/edu/2025/06-25/10437571.shtml",
+   "note": "The researcher's range is about 25-30% too high at the low end. Suggest 'roughly 150-250 (typically about 180)'."
+  },
+  {
+   "item": "School stages and ages",
+   "researched": "Primary 6 years (ages 6-12), junior middle 3 years (12-15), both free and compulsory; some provinces such as Shanghai use 5+4; zhongkao at about 15 sorts students into general high school or secondary vocational school, roughly half to two-thirds entering general high school; senior high 15-18; gaokao at about 18; 9 years of compulsory education",
+   "verified": "Compulsory Education Law: nine years, entry at age 6 (7 where conditions are not met), 6+3 or 5+4 structures both used; after the zhongkao students go to general high school or secondary vocational school. 2025 MOE bulletin: 10.75 million entered general high school and 3.70 million secondary vocational school (74% / 26% of upper-secondary entrants), gross upper-secondary enrolment 92%, so roughly two-thirds of the age group enters general high school (my derivation, 0.74 x 0.92).",
+   "verdict": "correct",
+   "source": "http://www.moe.gov.cn/jyb_sjzl/sjzl_zcfg/zcfg_jyfl/202110/t20211029_575949.html ; https://hr.edu.cn/yaowen/202607/t20260707_2753419.shtml",
+   "note": "Fine as written; 'about two-thirds' is the better phrasing than 'a half to two-thirds'."
+  },
+  {
+   "item": "Exchange rate to USD",
+   "researched": "CN¥6.711 per US$ (Federal Reserve H.10, 25 Sep 2026)",
+   "verified": "6.7110 yuan per US dollar on 25 Sep 2026 in the H.10 release dated 28 Sep 2026 (daily values 6.69-6.71 during 21-25 Sep). World Bank period average 2025 was 7.19, so the yuan has strengthened about 7% since the 2025 average.",
+   "verdict": "correct",
+   "source": "https://www.federalreserve.gov/releases/h10/current/ ; https://api.worldbank.org/v2/country/CHN/indicator/PA.NUS.FCRF?format=json&date=2023:2026",
+   "note": "Exact match."
+  },
+  {
+   "item": "PPP conversion factor (local currency per international dollar)",
+   "researched": "CN¥3.40 per international dollar (World Bank 2025)",
+   "verified": "World Bank PA.NUS.PPP: 3.40 for 2025 (3.53 for 2024, 3.64 for 2023). IMF WEO implied PPP rate: 3.399 for 2025 and 3.293 projected for 2026.",
+   "verdict": "correct",
+   "source": "https://api.worldbank.org/v2/country/CHN/indicator/PA.NUS.PPP?format=json&date=2019:2026 ; https://www.imf.org/external/datamapper/api/v1/PPPEX/CHN",
+   "note": "Exact match; the 2025 value is a provisional extrapolation by the World Bank."
+  },
+  {
+   "item": "Student-loan scheme, rate and caps",
+   "researched": "National Student Loan (国家助学贷款); rate = over-5-year LPR minus 0.6 pp = 2.9% (3.5% - 0.6%); caps CN¥12,000 undergraduate and 16,000 postgraduate; state pays interest while studying",
+   "verified": "Scheme name and in-school interest subsidy are right, but the formula and caps are out of date. Since autumn 2024 (notice 财教〔2024〕188号 of MOF, MOE, PBoC and NFRA) the rate is the same-term LPR minus 70 basis points (it was minus 60 before), and caps are CN¥20,000 a year for undergraduate and vocational students and CN¥25,000 for postgraduates. Those replaced 16,000 and 20,000, which had themselves been raised in autumn 2023 from the 12,000 and 16,000 the researcher quotes as the 2023 level. With the over-5-year LPR at 3.5% (unchanged since May 2025; 20 Sep 2026 fixing 1-year 3.0%, 5-year 3.5%) the rate is 2.8%, not 2.9%.",
+   "verdict": "off",
+   "source": "https://www.gov.cn/lianbo/bumen/202411/content_6988303.htm ; https://www.cdb.com.cn/xwzx/zcfb/202309/t20230912_11105.html ; https://www.sohu.com/a/1072988867_122939078 ; https://www.chinanews.com.cn/cj/2026/09-20/10699777.shtml ; https://www.pbc.gov.cn/en/3688229/3688335/3730276/3883798/2025122515153095570/index.html",
+   "note": "Use nominalRate 0.028 and caps 20,000 / 25,000; real rate about 2.8% - 0.9% = 1.9%. In 2025 interest due in the year was waived and principal could be deferred a year for borrowers who had graduated (MOF notice); secondary sources say the waiver continues in 2026 but I could not confirm that on an official page."
+  },
+  {
+   "item": "Current inflation (for the real student-loan rate)",
+   "researched": "0.9% (CPI Jan-Aug 2026 average; Aug 2026 +0.8%; 2025 flat)",
+   "verified": "NBS: CPI +0.8% year on year in August 2026 and +0.9% on average for January-August 2026.",
+   "verdict": "correct",
+   "source": "https://www.stats.gov.cn/english/PressRelease/202609/t20260910_1965275.html",
+   "note": "Exact match."
+  },
+  {
+   "item": "Cashier typical annual gross pay (extra check)",
+   "researched": "CN¥45,000 (estimate, no occupational median)",
+   "verified": "About CN¥48,000 (band 43,000-58,000), derived: MOHRSS 2022 enterprise survey for wholesale and retail service staff gives P25 38,600 and P50 52,400, about 42,500 and 58,000 in 2025 terms; Chongqing 2024 P25 45,238 and P50 56,164. Cashiers sit below the sector median. The Shanghai minimum wage is 32,880.",
+   "verdict": "correct",
+   "source": "https://shanshicn.com/zhengce/info.aspx?itemid=7326 ; https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html",
+   "note": "No cashier-only figure exists; the verdict rests on the sector band."
+  },
+  {
+   "item": "Electrician mid-career typical annual gross pay (extra check)",
+   "researched": "CN¥80,000 (estimate of 6,500-7,000 a month)",
+   "verified": "About CN¥78,000-85,000, derived: MOHRSS 2022 skill-grade medians for enterprise employees were 54,900 (junior), 68,000 (intermediate) and 80,400 (senior and above), about 61,000 / 75,000 / 89,000 in 2025 terms; repair and fabrication service staff P50 60,900 (2022) and utilities staff P50 70,700 (2022).",
+   "verdict": "correct",
+   "source": "https://shanshicn.com/zhengce/info.aspx?itemid=7326",
+   "note": "A mid-career electrician with an intermediate or senior certificate lands in the 75,000-89,000 band; no electrician-only figure exists."
+  },
+  {
+   "item": "Software engineer, junior and mid-level median (extra check)",
+   "researched": "Junior CN¥110,000; mid-level 210,000",
+   "verified": "No experience-specific median found. MOHRSS 2022 enterprise survey for IT personnel (all levels) gave P25 55,400, P50 87,200, P75 137,900, P90 216,400, about 61,000 / 97,000 / 153,000 / 240,000 in 2025 terms; Chongqing 2024 IT P50 65,580 and P75 83,253; NBS 2025 IT averages 248,752 (non-private) and 128,166 (private). Job-board and salary-aggregator sites quote 180,000-420,000 but are skewed to big-city and foreign-company roles.",
+   "verdict": "unverifiable",
+   "source": "https://shanshicn.com/zhengce/info.aspx?itemid=7326 ; https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html ; https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "note": "Mid-level 210,000 is near the 85th percentile of all IT staff, so it is probably high for a national median (about 140,000-180,000 is more likely); junior 110,000 is above the all-IT median and likely high too."
+  },
+  {
+   "item": "Mechanical engineer mid-career (extra check)",
+   "researched": "CN¥130,000",
+   "verified": "No occupation-specific median. MOHRSS 2022 engineering and technical staff: P50 72,500, P75 112,200, P90 174,300, about 80,000 / 124,000 / 195,000 in 2025 terms; Chongqing 2024 engineers P50 69,647, P75 97,320.",
+   "verdict": "unverifiable",
+   "source": "https://shanshicn.com/zhengce/info.aspx?itemid=7326 ; https://rlsbj.cq.gov.cn/zwxx_182/tzgg/202508/t20250801_14865923.html",
+   "note": "A mid-career mechanical engineer plausibly earns 100,000-125,000, so 130,000 is at or just above the top of that band."
+  },
+  {
+   "item": "Lawyer early-career (extra check)",
+   "researched": "CN¥100,000",
+   "verified": "No lawyer-specific figure. MOHRSS 2022 enterprise survey for legal, social and religious professionals: P25 49,800, P50 75,500, P75 134,000 (about 55,000 / 83,000 / 148,000 in 2025 terms).",
+   "verdict": "unverifiable",
+   "source": "https://shanshicn.com/zhengce/info.aspx?itemid=7326",
+   "note": "Early-career lawyers outside top firms plausibly earn 60,000-95,000; 100,000 looks slightly high."
+  },
+  {
+   "item": "Police officer (extra check)",
+   "researched": "CN¥110,000 (0.9 x NBS public administration average 119,465)",
+   "verified": "The NBS 2025 average for public management, social security and social organisations (non-private units) is 119,465, confirmed; no police pay scale or police median found.",
+   "verdict": "unverifiable",
+   "source": "https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "note": "Plausible but unsourced."
+  },
+  {
+   "item": "Specialist physician (extra check)",
+   "researched": "CN¥200,000 (about 1.4 x NBS health average)",
+   "verified": "No official figure. Hospital pay surveys quoted in the press put attending doctors at about 174,000-195,000 and associate chiefs at 218,000-242,000 in tertiary hospitals; the 2024 hospital HR survey says tier-1 tertiary senior doctors average 246,000 while doctors elsewhere are generally under 150,000.",
+   "verdict": "unverifiable",
+   "source": "https://news.qq.com/rain/a/20240509A00Q8200 ; https://www.cn-healthcare.com/articlewm/20241121/wap-content-1642231.html",
+   "note": "200,000 sits inside the plausible 150,000-245,000 range."
+  },
+  {
+   "item": "Airline first officer and captain (extra check)",
+   "researched": "First officer CN¥500,000; captain CN¥1,000,000",
+   "verified": "No official or reputable survey found. Portal articles for 2025 say big-three captains earn 800,000-1.2 million, junior first officers 100,000-300,000 and senior first officers 300,000-650,000; regional and private carriers pay captains more.",
+   "verdict": "unverifiable",
+   "source": "https://www.163.com/dy/article/KB97CR9U0511CCIF.html (low-grade portal)",
+   "note": "Captain 1.0 million is plausible; a typical first officer is more likely 300,000-400,000, so 500,000 looks high."
+  },
+  {
+   "item": "CEO of a large company (extra check)",
+   "researched": "CN¥2,500,000",
+   "verified": "A 2025 A-share survey reports average pay of 1.42 million for chairmen and 1.51 million for general managers across all listed firms, 2.09 million average top pay on the STAR market, and a top earner at 39.98 million; no median for large-company CEOs.",
+   "verdict": "unverifiable",
+   "source": "https://www.21jingji.com/article/20260530/herald/538899f052b2ae869573173a8a0a2940.html ; https://www.sohu.com/a/1029507498_161795",
+   "note": "Plausible for a large listed firm but unsourced as a median."
+  },
+  {
+   "item": "Living cost for a single adult (extra check)",
+   "researched": "CN¥55,000 gross (about 4,000 a month net in a tier-2 city)",
+   "verified": "No published benchmark. Cross-check: NBS 2025 urban per-capita consumption spending is 35,869 a year (about 2,990 a month, spread over children and retirees too).",
+   "verdict": "unverifiable",
+   "source": "https://www.stats.gov.cn/sj/zxfb/202601/t20260119_1962321.html",
+   "note": "A single adult in a tier-2 city spending 3,500-4,000 a month is plausible, but 55,000 gross is about 86% of the estimated median wage, so 45,000-50,000 may be a better 'basic living' figure."
+  },
+  {
+   "item": "Sales director, dentist, pharmacist (extra check)",
+   "researched": "Sales director CN¥600,000; dentist 150,000; pharmacist 85,000",
+   "verified": "No source found for any of the three; only the NBS health-sector averages the researcher used (146,266 non-private, 75,631 private) were confirmed.",
+   "verdict": "unverifiable",
+   "source": "https://www.stats.gov.cn/english/PressRelease/202605/t20260518_1963740.html",
+   "note": "Plausible magnitudes, no independent confirmation."
+  }
+ ]
+}

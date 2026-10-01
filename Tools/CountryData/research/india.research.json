@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "India",
+  "adjective": "Indian",
+  "currencyName": "rupee",
+  "fxPerUSD": {
+   "value": 96.095,
+   "source": "https://tradingeconomics.com/india/currency (USD/INR 96.095 on 2026-09-30; rupee down about 8.4% over 12 months)",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 20.09,
+   "source": "https://api.worldbank.org/v2/country/IN/indicator/PA.NUS.PPP?format=json&date=2020:2025 (World Bank PPP conversion factor, GDP, LCU per international dollar, 2025 = 20.09; 2024 = 20.45)",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 221472,
+   "source": "https://www.hono.ai/minimum-wages/delhi and https://wage.is/india/delhi/ (Delhi Labour Department notification, effective 1 April 2025, unskilled rate including variable dearness allowance). State unskilled comparison from https://www.india-briefing.com/news/guide-minimum-wage-india-19406.html/",
+   "confidence": "medium"
+  },
+  "arithmetic": "Delhi unskilled minimum wage Rs 18,456 a month (Rs 710 a day on a 26-day month) x 12 = Rs 221,472 a year. No 13th or 14th month is legally part of minimum pay.",
+  "note": "The Delhi minimum wage (₹18,456 a month)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "https://en.wikipedia.org/wiki/Driving_licence_in_India (Motor Vehicles Act 1988: car licence at 18; learner's licence and gearless mopeds up to 50cc from 16)",
+  "confidence": "high",
+  "note": "Learner's licence from 16 for mopeds up to 50cc only. A car licence needs a learner's licence first and is granted at 18. Supervision is required only while holding the learner's licence."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 200000,
+   "source": "Indeed India cashier Rs 15,401/month = Rs 184,812 a year (https://in.indeed.com/career/cashier/salaries, Jul 2026); Talent.com median Rs 216,000 (https://in.talent.com/salary?job=cashier); PayScale average Rs 248,411 (https://www.payscale.com/research/IN/Job=Cashier/Salary). Rounded between the Indeed and Talent.com figures.",
+   "confidence": "medium"
+  },
+  "electrician": {
+   "value": 280000,
+   "source": "Indeed India average Rs 17,748/month = Rs 212,976 a year, senior electrician Rs 29,491/month = Rs 353,892 (https://in.indeed.com/career/electrician/salaries, Aug 2026); Talent.com median Rs 250,000 (https://in.talent.com/salary?job=electrician); PayScale average Rs 292,373 (https://www.payscale.com/research/IN/Job=Electrician/Salary). Mid-career set slightly above the all-experience average.",
+   "confidence": "medium"
+  },
+  "policeOfficer": {
+   "value": 500000,
+   "source": "Indeed India Rs 44,354/month = Rs 532,248 a year, only 7 salaries (https://in.indeed.com/career/police-officer/salaries); PayScale average Rs 450,000, mid-career Rs 400,000 (https://www.payscale.com/research/IN/Job=Police_Officer/Salary). Cross-check: a constable on 7th Pay Commission Level 3 starts at Rs 21,700 basic; with 60% dearness allowance (https://en.wikipedia.org/wiki/Dearness_allowance) plus housing and transport allowances that is about Rs 40,000 a month gross. Mid-career constable to sub-inspector estimated at about Rs 500,000.",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 520000,
+   "source": "PayScale early career Rs 401,542, mid-career (5-10 yrs) 29% higher = about Rs 518,000 (https://www.payscale.com/research/IN/Job=Mechanical_Engineer/Salary, Jun 2026); Talent.com median Rs 550,000 (https://in.talent.com/salary?job=mechanical+engineer); Indeed average Rs 23,222/month = Rs 278,664, which skews junior (https://in.indeed.com/career/mechanical-engineer/salaries).",
+   "confidence": "medium"
+  },
+  "lawyer": {
+   "value": 600000,
+   "source": "PayScale early-career attorney/lawyer total pay Rs 610,419, 10th-90th percentile Rs 97,000-2,000,000 (https://www.payscale.com/research/IN/Job=Attorney_%2F_Lawyer/Salary, 2026). Talent.com shows Rs 1,350,000 median, skewed to corporate firms (https://in.talent.com/salary?job=lawyer). Indeed junior lawyer only Rs 14,600/month = Rs 175,200 (https://in.indeed.com/career/lawyer/salaries). Pay is very uneven: court advocates earn a few lakh, top firm associates Rs 15 lakh or more. No reliable median found.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 3300000,
+   "source": "PayScale Director of Sales average Rs 3,296,970 (10th-90th pct Rs 805,000-6,000,000) (https://www.payscale.com/research/IN/Job=Director_of_Sales/Salary, Feb 2026); PayScale Sales Director average Rs 2,696,031 (https://www.payscale.com/research/IN/Job=Sales_Director/Salary); Indeed Rs 1,603,996 from 2 salaries only (https://in.indeed.com/career/sales-director/salaries). Taken at the upper PayScale figure for a large company.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 1000000,
+   "source": "PayScale resident physician average Rs 830,000, 10th-90th pct Rs 306,000-3,000,000 (https://www.payscale.com/research/IN/Job=Resident_Physician/Salary, 2026). Government junior and senior residents (central institutes such as AIIMS, 7th Pay Commission Level 10-11) are in the region of Rs 1.0-1.3 lakh a month; state stipends vary widely. That range is not verified here. Set at about Rs 1.0 million a year, between PayScale and the government range.",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 2400000,
+   "source": "Estimate, not verified. A public-sector specialist (7th Pay Commission Level 12, about Rs 79,000 basic at entry, plus 60% dearness allowance and non-practising allowance) is about Rs 1.8-2.0 lakh a month, roughly Rs 2.2-2.4 million a year. Private consultants range from about Rs 1.5 to 4 million. Indeed physician average Rs 36,716/month = Rs 440,592 covers all physicians and is too low for specialists (https://in.indeed.com/career/resident-doctor/salaries). Dearness allowance rate: https://en.wikipedia.org/wiki/Dearness_allowance",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 250000,
+   "source": "Indeed India registered nurse Rs 16,458/month = Rs 197,496 a year, 841 salaries (https://in.indeed.com/career/registered-nurse/salaries, Jul 2026); PayScale average Rs 309,067 (https://www.payscale.com/research/IN/Job=Registered_Nurse_(RN)/Salary). Average of the two, rounded. Government nursing officers (Level 7) earn several times this.",
+   "confidence": "medium"
+  },
+  "secondaryTeacher": {
+   "value": 500000,
+   "source": "Private and mixed-sector figures: PayScale high-school teacher average Rs 364,776, mid-career near the average (https://www.payscale.com/research/IN/Job=High_School_Teacher/Salary); Indeed Rs 25,104/month = Rs 301,248 (https://in.indeed.com/career/high-school-teacher/salaries). Government TGT/PGT teachers on 7th Pay Commission Level 7-8 mid-scale earn roughly Rs 9-12 lakh with 60% dearness allowance. That range is not verified here. Rs 500,000 is an estimate between the private and government levels.",
+   "confidence": "low"
+  },
+  "airlineFirstOfficer": {
+   "value": 3600000,
+   "source": "Estimate, not verified: about half the captain figure, roughly Rs 3 lakh a month for a first officer at a large Indian carrier such as IndiGo or Air India. Indeed's Indian first officer and pilot pages rest on 6-7 salaries and are unusable (https://in.indeed.com/career/first-officer/salaries). Captain anchor: https://www.payscale.com/research/IN/Job=Airline_Captain/Salary",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 7100000,
+   "source": "PayScale airline captain in India: average Rs 7,098,592, median Rs 7 million, 10th-90th percentile Rs 5-8 million, only 8 profiles, last updated Jan 2025 (https://www.payscale.com/research/IN/Job=Airline_Captain/Salary)",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 100000000,
+   "source": "Estimate, not verified: about Rs 10 crore, a typical annual-report total for the CEO of a large listed company (total pay with variable pay and stock options, range about Rs 5-30 crore). PayScale CEO average Rs 2,875,021, 90th percentile Rs 10 million, covers companies of all sizes and is far too low for a large company (https://www.payscale.com/research/IN/Job=Chief_Executive_Officer_(CEO)/Salary). Talent.com Rs 1,440,000 (https://in.talent.com/salary?job=ceo).",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 350000,
+   "source": "Indeed India dentist Rs 25,383/month = Rs 304,596 a year, 180 salaries (https://in.indeed.com/career/dentist/salaries, Mar 2026); PayScale average Rs 400,000, 10th-90th pct Rs 123,000-2,000,000 (https://www.payscale.com/research/IN/Job=Dentist/Salary). Average of the two. Clinic owners in big cities earn far more.",
+   "confidence": "medium"
+  },
+  "pharmacist": {
+   "value": 250000,
+   "source": "Indeed India pharmacist Rs 15,717/month = Rs 188,604 a year, 595 salaries (https://in.indeed.com/career/pharmacist/salaries, Sep 2026); PayScale median Rs 300,000, average Rs 300,140 (https://www.payscale.com/research/IN/Job=Pharmacist/Salary). Average of the two, rounded.",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 500000,
+   "source": "Indeed India software engineer: entry level Rs 406,290, junior Rs 508,682 a year (https://in.indeed.com/career/software-engineer/salaries, Sep 2026, 11,600 salaries); Talent.com entry-level Rs 350,000 (https://in.talent.com/salary?job=software+engineer); PayScale early career Rs 753,561 (https://www.payscale.com/research/IN/Job=Software_Engineer/Salary). Large IT-services firms pay freshers about Rs 3.5-4 lakh; product firms far more. Set at Rs 500,000.",
+   "confidence": "medium"
+  },
+  "midLevel": {
+   "value": 1100000,
+   "source": "Indeed India general software engineer average Rs 892,949, senior Rs 1,309,559 (https://in.indeed.com/career/software-engineer/salaries); PayScale mid-career (5-9 yrs) about Rs 1.33 million, 10th-90th pct Rs 350,000-2,000,000 (https://www.payscale.com/research/IN/Job=Software_Engineer/Salary). Median set below the PayScale mean because pay is right-skewed.",
+   "confidence": "medium"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 210000,
+   "source": "Estimate. The PLFS average for regular wage or salaried workers in calendar 2025 is Rs 21,285 a month (https://en.wikipedia.org/wiki/Income_in_India; men Rs 24,217, women Rs 18,353 per the MoSPI PLFS Annual Report 2025 press note, https://www.mospi.gov.in/uploads/latestReleases/latest_release_1774607827733_3e8964a9-268b-4cc9-ad65-cfc8a9e32f08_Press_note_AR_PLFS_2025_23032025_V2.1_26032026_final.pdf). Mean is Rs 21,285 x 12 = Rs 255,420 a year. The median is not published in what I could reach; assumed about 0.82 x the mean, roughly Rs 17,500 a month x 12 = Rs 210,000. Casual workers have a median near Rs 9,000 a month (https://www.dataforindia.com/salaried-jobs/).",
+   "confidence": "low"
+  },
+  "p90FullTime": {
+   "value": 600000,
+   "source": "Estimate, not verified. The 90th percentile of regular wage or salaried pay is assumed to be about 2.3 x the PLFS mean of Rs 21,285 a month, roughly Rs 50,000 a month x 12 = Rs 600,000. No published PLFS percentile figure was reachable. Consistent with mid-level software engineers (about Rs 1.1 million) being above the 90th percentile and mid-career mechanical engineers (about Rs 520,000) being near it.",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 300000,
+  "source": "Numbeo India (30 Sep 2026): one-bedroom flat outside the city centre Rs 8,721/month, utilities Rs 3,604, monthly transport pass Rs 800, single-person costs excluding rent Rs 27,576 at mid-range spending (https://numbeo.com/cost-of-living/country_result.jsp?country=India). A modest budget of about Rs 22,000/month net (rent Rs 8,700, food and utilities about Rs 10,000, transport and phone about Rs 3,000) is Rs 264,000 a year; grossed up by about 12% for provident fund and minimal tax gives about Rs 300,000.",
+  "confidence": "low",
+  "basis": "Single adult in a typical (tier-2 or outer-metro) city: shared or modest one-room rent outside the centre, home-cooked food, bus or metro, about Rs 22,000 a month net, grossed up for 12% provident fund."
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 3000,
+    "source": "Estimate, not verified: government Industrial Training Institutes (ITI) charge nominal fees of roughly Rs 1,000-6,000 a year. No fee page was reachable.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 15000,
+    "source": "Estimate, not verified: a three-year diploma at a government polytechnic costs roughly Rs 10,000-20,000 a year, varying by state.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 60000,
+    "source": "Estimate, not verified: private or centrally funded polytechnics and specialist diploma institutes charge roughly Rs 40,000-90,000 a year.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 6000,
+    "source": "Estimate, not verified: IGNOU (open university) and state government degree colleges charge a few thousand rupees a year for BA or BCom.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 20000,
+    "source": "Delhi University annual fees: BA (Hons) Rs 5,000-30,000, BCom (Hons) Rs 5,000-40,000, BSc (Hons) Rs 6,000-50,000 by college (https://www.collegedekho.com/colleges/delhi-university-fee-structure). Mid-range about Rs 20,000. State engineering colleges cost more: NIT Trichy about Rs 163,000 a year all-in excluding hostel (https://www.collegedekho.com/colleges/nit-trichy-fee-structure).",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 210000,
+    "source": "IIT B.Tech tuition Rs 2,00,000 a year (Rs 1,00,000 per semester) for General, OBC-NCL and EWS students with family income above Rs 5 lakh; SC/ST/PwD pay zero tuition (https://cracku.in/iit-fee-structure-2026/, https://supertutor.in/resources/finance/iit-fees-total-cost/). Compulsory registration, exam, medical and student fees add roughly Rs 10,000 a year; hostel and mess are extra. CollegeDekho lists IIT Delhi tuition at only Rs 1,00,000 a year (https://www.collegedekho.com/colleges/iit-delhi-fee-structure), which conflicts with the other sources.",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 8000,
+    "source": "Estimate, not verified: IGNOU or government-college MA and MCom cost a few thousand rupees a year.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 30000,
+    "source": "Estimate, not verified: MA, MSc or MCom at state and central universities cost roughly Rs 10,000-50,000 a year.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 1300000,
+    "source": "IIM Bangalore two-year MBA (PGP) total Rs 26,00,000, so Rs 13,00,000 a year (https://www.collegedekho.com/colleges/iim-bangalore-fee-structure). The IIT M.Tech alternative is far cheaper: IIT Delhi Rs 17,000 tuition plus Rs 22,400 other charges per semester, about Rs 80,000 a year (https://www.collegedekho.com/colleges/iit-delhi-fee-structure).",
+    "confidence": "medium"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 10000,
+    "source": "Estimate, not verified: PhD fees at open or smaller state universities are roughly Rs 5,000-20,000 a year, and many scholars receive UGC fellowships.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 15000,
+    "source": "Estimate, not verified: PhD fees at public universities are about Rs 10,000-25,000 a year.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 20850,
+    "source": "IIT Delhi PhD (Indian nationals) Rs 62,550 over the minimum three years, about Rs 20,850 a year (https://www.collegedekho.com/colleges/iit-delhi-fee-structure). Most IIT scholars also receive a monthly fellowship.",
+    "confidence": "medium"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 1200000,
+    "source": "Estimate, not verified: private medical colleges (easiest to enter but most expensive) charge roughly Rs 8-25 lakh a year for MBBS; fee-regulated seats are cheaper and management seats dearer. Wikipedia notes illegal capitation payments of Rs 50 lakh to 2.25 crore (https://en.wikipedia.org/wiki/Medical_education_in_India).",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 60000,
+    "source": "Estimate, not verified: state government medical colleges charge anywhere from about Rs 10,000 to Rs 1.5 lakh a year for MBBS, depending on the state. Taken at about Rs 60,000.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 2717,
+    "source": "Maulana Azad Medical College (government, Delhi): MBBS total about Rs 12,225 over 4.5 years, about Rs 2,717 a year (https://www.collegedekho.com/colleges/maulana-azad-medical-college-fee-structure). AIIMS fees are similarly tiny.",
+    "confidence": "medium"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 25000,
+    "source": "Estimate, not verified: affiliated government and state-university law colleges (three-year LLB or five-year BA LLB) charge roughly Rs 10,000-40,000 a year.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 50000,
+    "source": "Estimate, not verified: state university law departments and better state law colleges charge roughly Rs 30,000-80,000 a year.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 147000,
+    "source": "NLU Delhi BA LLB (Hons) Rs 1,47,000 a year (https://www.collegedekho.com/colleges/nlu-delhi-fee-structure). Other top National Law Universities (NLSIU Bangalore, NALSAR) likely charge more, about Rs 2.5-3.5 lakh a year, which I could not verify.",
+    "confidence": "medium"
+   }
+  },
+  "notes": "All amounts are annual fees for a typical domestic student in rupees, tuition plus compulsory institute fees, excluding hostel and mess. India has no community colleges, so community means open or low-cost institutions (government degree colleges, IGNOU, ITIs). State means mainstream public universities (state and central universities, government colleges). Elite means Institutes of National Importance and top National Law Universities (IIT, IIM, AIIMS, NLU). Medicine is mapped by selectivity, not cost: the hardest-to-enter government colleges (AIIMS, MAMC) are cheapest, and private colleges are the most expensive. IIT fees are waived fully for SC/ST/PwD and cut by two-thirds for family income Rs 1-5 lakh. Loans at elite colleges are common."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 9.3,
+   "source": "SBI education loan schemes, rates from 9 June 2026 (https://sbi.bank.in/web/interest-rates/interest-rates/loan-schemes-interest-rates/education-loan-scheme): Student Loan 9.40% with collateral over Rs 7.5 lakh and 9.90% without collateral up to Rs 7.5 lakh; mean rate of interest Q1 FY27 9.31%; PM-Vidyalaxmi schemes 6.90% / 7.20% / 8.40%; premier-institute concession 6.75%. Value is percent per year, floating, linked to an external benchmark of 7.90% (repo 5.25% + 2.65% spread).",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 4.82,
+   "source": "MoSPI headline CPI inflation, August 2026 = 4.82% (July 4.45%) (https://indiainflation.com/, https://www.finnovate.in/learn/blog/india-cpi-inflation-august-2026). Value is percent per year.",
+   "confidence": "high"
+  },
+  "description": "There is no income-contingent scheme. Students borrow from public-sector banks such as SBI at floating rates. The PM-Vidyalaxmi scheme (collateral-free and guarantee-backed for students admitted to about 860-966 selected institutions; SBI rates 6.90-8.40%) is the main public scheme; the standard SBI Student Loan is 9.4-9.9%. Girl students get a 0.50% concession. Real rate is about 9.3 - 4.82 = 4.5% a year at the typical rate. Both rate values here are percent, not fractions."
+ },
+ "schooling": {
+  "primarySchool": "Prathamik Vidyalaya (प्राथमिक विद्यालय), primary school, Classes 1-5, ages 6-11 (under NEP 2020 the 'Foundational' stage also covers ages 3-8 with pre-school)",
+  "middleSchool": "Uchch Prathamik (upper primary, Classes 6-8, ages 11-14), then Madhyamik Vidyalaya (माध्यमिक विद्यालय, secondary, Classes 9-10, ages 14-16), ending with the Class 10 board exam (CBSE AISSE or state 'Matric'/SSC)",
+  "schoolLeaving": "Senior Secondary Certificate, the Class 12 board exam (CBSE AISSCE or state boards, 'Bārahvīṃ'), taken at about 17-18; university entry mostly by separate entrance exams (JEE for IITs, NEET for medicine, CUET for central universities, CLAT for law)",
+  "vocational": "ITI (Industrial Training Institute, आईटीआई), 1-2 year trade courses after Class 8 or 10; Polytechnic diploma, 3 years after Class 10 (lateral entry into engineering degrees)",
+  "tierCommunity": "Government degree college or open university (IGNOU)",
+  "tierState": "State or central university (for example Delhi University, University of Mumbai)",
+  "tierElite": "IIT, IIM, AIIMS, NLU (Institutes of National Importance and National Law Universities)",
+  "gradeName": "Class 12 board percentage",
+  "gradeSource": "https://en.wikipedia.org/wiki/Central_Board_of_Secondary_Education (grading and pass rules); https://gulfnews.com/world/asia/india/cbse-class-12-results-released-8520-students-pass-1.500538948 (2026 results)",
+  "gradeSystem": "Each subject is marked out of 100 and the overall result is quoted as a percentage. Higher is better. The pass mark is 33% in each subject, and 33% separately in theory and practical where both apply. Subjects also get letter grades A1 to E by rank among those who passed: A1 is the top 1/8, D2 the bottom 1/8, E means fail. In 2026 the CBSE Class 12 pass rate was 85.20% (88.39% in 2025); 1,507,109 of 1,768,968 candidates passed. A typical passing result is roughly 70-80% (my estimate, not verified), 90% and above is a top result, and 95-100% is exceptional. Elite programmes (IIT, AIIMS, NLU) also require a high rank in a separate entrance exam, so the board percentage alone does not get a place.",
+  "startingAges": "Primary starts at 6 (Class 1) and ends at 11; lower secondary (Classes 6-10) runs 11-16 with the Class 10 board exam at about 15-16; upper secondary (Classes 11-12) runs 16-18. Students choose a stream (Science, Commerce or Arts) at Class 11, so the main track split is at about 16. The 2020 education policy restructures school as 5+3+3+4, starting at age 3. Bachelor's degrees start at about 18 (3-4 years; 4 for engineering, 5.5 for MBBS)."
+ },
+ "highlights": [
+  "There is no single national minimum wage: Delhi's unskilled rate is ₹18,456 a month, Uttar Pradesh's is ₹11,314, and a regular salaried worker averages ₹21,285 a month.",
+  "IIT tuition is ₹2 lakh a year, but a seat at a government medical college such as Maulana Azad costs only about ₹2,700 a year (₹12,225 for the whole degree)."
+ ],
+ "caveats": "WebSearch hit its session cap (200 of 200) after 6 of my searches, so the rest came from direct page fetches with no search-engine discovery. Many salary figures are therefore from Indeed, PayScale and Talent.com, which skew to private-sector, urban, self-reported pay and sometimes rest on very few salaries (Indeed pilot, first officer, sales director, police). Figures marked low are my estimates or blends and should be reviewed. Every rupee figure is annual gross in Rs. Both the student-loan rate and inflation are given in percent (9.3 and 4.82), not as fractions. Specific weak spots. (1) National median and 90th percentile are my estimates derived from the PLFS mean of Rs 21,285 a month (calendar 2025, Wikipedia quoting PLFS; men and women figures confirmed in the MoSPI press note); I found no published median or percentile. Informal and casual workers (about half the workforce) are far below that. (2) Minimum wage: India has no single binding national figure (floor wage is Rs 178 a day and non-binding). I used Delhi (Rs 18,456/month from April 2025; an October 2025 revision circulating online was denounced as forged, and April 2026 was still awaited) as a capital-city level. Other states are much lower: Uttar Pradesh Rs 11,314, Bihar Rs 11,336, Maharashtra Zone I Rs 13,921, West Bengal Rs 10,383 (https://www.india-briefing.com/news/guide-minimum-wage-india-19406.html/), so Rs 221,472 sits above my Rs 200,000 cashier median. If the game floors offers at the minimum, use a state-typical figure (about Rs 13,900 a month = Rs 167,000 a year) to avoid lifting cashier pay above the market. One labourcodecalc.in page lists Delhi at Rs 783 a day (Rs 20,358 a month), which I could not confirm and did not use. (3) Public versus private pay gap: government posts (teachers, nurses, doctors, police on 7th Pay Commission scales with 60% dearness allowance from January 2026) pay several times the private-market figures from the job sites. The 8th Pay Commission is pending. My teacher, nurse, doctor and police numbers are blends. Government scales would suggest secondary teacher Rs 9-12 lakh, specialist doctor about Rs 22-24 lakh. (4) IIT fees: most sources say Rs 2 lakh a year tuition; CollegeDekho lists IIT Delhi at Rs 1 lakh a year. Elite fee remissions by family income exist. (5) Medicine tier mapping: I mapped by selectivity, so community = private colleges (about Rs 12 lakh a year), state = state government colleges (about Rs 60,000), elite = AIIMS/MAMC (about Rs 2,700). This is the reverse of the fee ordering used for bachelors, so check how the game reads tiers. (6) Tuition for vocational, community and state master and doctorate, state medicine and community and state law are unverified estimates. (7) Airline captain rests on 8 PayScale profiles (Jan 2025); first officer is about half of that by my estimate; CEO pay is a large-cap estimate of Rs 10 crore with no sourced figure. (8) FX is 96.095 per USD on 30 Sep 2026 and the rupee lost about 8.4% in 12 months, so USD conversions of local pay have shifted since 2025 while the PPP factor (20.09) did not. (9) Student loan: rates are for SBI; other public banks are similar. The claim about the PM-Vidyalaxmi institution count is from memory, not fetched. No government interest subsidy is reflected in the rate (the scheme's subvention for lower-income families was not verified). (10) Grade-scale 'typical 70-80%' is my estimate."
+}

@@ -202,10 +202,12 @@ final class CountryTests: XCTestCase {
 
     private var abroad: [Country] { Country.allCases.filter { $0 != .unitedStates } }
 
-    func testTheG7AndUkraineAreAllOnOffer() {
-        XCTAssertEqual(Set(Country.allCases.map(\.title)),
-                       ["United States", "Canada", "France", "Germany", "Italy", "Japan", "United Kingdom", "Ukraine"])
-        XCTAssertEqual(Country.allCases.first, .default, "The US leads the picker.")
+    func testEveryCountryIsOnOffer() {
+        let expected = ["United States", "Australia", "Brazil", "Canada", "China", "France", "Germany", "India", "Italy", "Japan",
+                        "Mexico", "Poland", "South Korea", "Spain", "Sweden", "Turkey", "Ukraine", "United Kingdom"]
+        XCTAssertEqual(Set(Country.allCases.map(\.title)), Set(expected))
+        XCTAssertEqual(Country.allCases.map(\.title), expected, "The US leads the picker, then A to Z.")
+        XCTAssertEqual(Country.allCases.first, .default)
     }
 
     func testEveryCountryPricesEveryJobAtLeastAtItsMinimumWage() {
@@ -255,17 +257,22 @@ final class CountryTests: XCTestCase {
         }
     }
 
-    /// Pay is compressed everywhere outside the US: a professional earns
-    /// fewer times a cashier's pay than in America — except Ukraine's IT, which
-    /// is paid far above the country's other work.
+    /// Pay is compressed in most countries: a professional earns fewer times a
+    /// cashier's pay than in America. Brazil is the exception the data shows —
+    /// its pay is more unequal than the US's — and Ukraine's IT is paid far
+    /// above the country's other work.
     func testProfessionalPayIsCompressedOutsideTheUS() {
         func ratio(_ country: Country, _ high: String, _ low: String) -> Double {
             let jobs = catalogue(country)
             return Double(jobs[high]!.income) / Double(jobs[low]!.income)
         }
         let usLawyer = ratio(.unitedStates, "Lawyer", "Cashier")
-        for country in abroad {
+        let moreUnequal: Set<Country> = [.brazil]
+        for country in abroad where !moreUnequal.contains(country) {
             XCTAssertLessThan(ratio(country, "Lawyer", "Cashier"), usLawyer, country.title)
+        }
+        for country in moreUnequal {
+            XCTAssertGreaterThan(ratio(country, "Lawyer", "Cashier"), usLawyer, "\(country.title) is more unequal than the US.")
         }
         XCTAssertGreaterThan(ratio(.ukraine, "Software Engineer", "Cashier"), ratio(.unitedStates, "Software Engineer", "Cashier"),
                              "Ukrainian IT pays several times what other work does — more so than IT in the US.")
@@ -345,12 +352,11 @@ final class CountryTests: XCTestCase {
     func testEveryGradeScaleOrdersGradesTheSameWay() {
         func rank(_ country: Country, _ label: String) -> Double {
             let digits = label.prefix { $0.isNumber || $0 == "." }
-            switch country.schooling.scale {
-            case .abitur: return -Double(digits)!
-            case .aLevels:
+            if case .aLevels = country.schooling.scale {
                 return label.reduce(0) { $0 + ($1 == "*" ? 1 : $1 == "A" ? 0.5 : $1 == "B" ? 0 : $1 == "C" ? -0.5 : -1) }
-            default: return Double(digits)!
             }
+            // Higher is better, except where the scale runs the other way (Abitur, a rank out of 9).
+            return (country.schooling.scale.isInverted ? -1 : 1) * Double(digits)!
         }
         for country in Country.allCases {
             var last = -Double.infinity
@@ -426,8 +432,9 @@ final class CountryTests: XCTestCase {
     }
 
     func testTheDrivingLicenceOpensAtTheCountrysDrivingAge() {
-        let ages: [Country: Int] = [.unitedStates: 16, .canada: 16, .unitedKingdom: 17, .france: 17,
-                                    .germany: 18, .italy: 18, .japan: 18, .ukraine: 18]
+        let ages: [Country: Int] = [.unitedStates: 16, .canada: 16, .unitedKingdom: 17, .france: 17, .australia: 17,
+                                    .germany: 18, .italy: 18, .japan: 18, .ukraine: 18, .brazil: 18, .china: 18, .india: 18,
+                                    .mexico: 18, .poland: 18, .southKorea: 18, .spain: 18, .sweden: 18, .turkey: 18]
         for country in Country.allCases { XCTAssertEqual(country.drivingAge, ages[country], country.title) }
 
         func blockedReason(_ country: Country) -> String? {
@@ -600,6 +607,42 @@ final class CountryTests: XCTestCase {
             last = player.studentLoan
         }
         XCTAssertEqual(player.studentLoan, 0, "…and is repaid within the loan term.")
+    }
+
+    // MARK: More countries
+
+    /// Each new country writes the school-leaving grade the way its own system does, from its pass mark to its top.
+    func testTheNewCountriesWriteTheirGradeScalesFromPassToTop() {
+        let ends: [Country: (String, String)] = [
+            .australia: ("30.0", "99.9"), .mexico: ("6.0", "10.0"), .india: ("40%", "98%"), .china: ("300/750", "720/750"),
+            .brazil: ("400", "900"), .spain: ("5.00/14", "14.00/14"), .sweden: ("10.0/20", "20.0/20"),
+            .poland: ("30%", "98%"), .turkey: ("50/100", "100/100"), .southKorea: ("9.0 (1 = best)", "1.0 (1 = best)"),
+        ]
+        for (country, (bottom, top)) in ends {
+            XCTAssertEqual(country.gradeLabel(0), bottom, country.title)
+            XCTAssertEqual(country.gradeLabel(4), top, country.title)
+        }
+    }
+
+    /// Money-sized steps suit the currency: a salary slider in yen or won can't move in 500s.
+    func testTheMoneyStepSuitsTheCurrency() {
+        for country in Country.allCases {
+            XCTAssertGreaterThanOrEqual(country.minimumAnnualPay / country.moneyStep, 20,
+                                        "\(country.title): a step this big would make the minimum wage a handful of notches.")
+        }
+        XCTAssertGreaterThan(Country.japan.moneyStep, Country.germany.moneyStep)
+    }
+
+    /// The executives follow each country's pay curve rather than top-company total pay (found by the
+    /// research: 3x–36x the curve), so a CEO is paid like a senior professional there, not like a founder.
+    func testExecutivesAreNotPricedOnTotalRemuneration() {
+        for country in abroad where country.statedPay["Chief Executive Officer"] == nil {
+            let jobs = catalogue(country)
+            let ceo = Double(jobs["Chief Executive Officer"]!.income)
+            let median = Double(jobs["Cashier"]!.income)
+            // The US is 12x; unequal Brazil 26x. Top-company total pay would be in the hundreds.
+            XCTAssertLessThan(ceo / median, 40, "\(country.title): a CEO at \(Int(ceo / median)) cashiers' pay.")
+        }
     }
 }
 

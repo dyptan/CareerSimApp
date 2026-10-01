@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Mexico",
+  "adjective": "Mexican",
+  "currencyName": "Mexican peso",
+  "fxPerUSD": {
+   "value": 18.071,
+   "source": "Banxico FIX rate as published by the Diario Oficial (DOF) indicators page for 30/09/2026 https://dof.gob.mx/indicadores.php (18.0710); El Financiero gives 18.0635 for 29/09/2026 https://www.elfinanciero.com.mx/mercados/2026/09/29/peso-dolar-precio-hoy-29-de-septiembre-de-2026/ . World Bank 2025 period average was 19.24 (https://api.worldbank.org/v2/country/MEX/indicator/PA.NUS.FCRF?format=json), so the peso has strengthened over the past year.",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 10.328951,
+   "source": "World Bank indicator PA.NUS.PPP, PPP conversion factor GDP (LCU per international $), 2025 value, https://api.worldbank.org/v2/country/MEX/indicator/PA.NUS.PPP?format=json&date=2020:2025 (2024 = 9.9166, 2023 = 9.7513). The 2025 value may be provisional.",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 119715,
+   "source": "CONASAMI decision of 3 Dec 2025: general minimum wage MX$315.04 per day from 1 Jan 2026 (13% rise), MX$440.87 in the Northern Border Free Zone, per https://www.littler.com/news-analysis/asap/mexico-aumenta-el-salario-minimo-para-el-2026 and https://es.wikipedia.org/wiki/Salario_m%C3%ADnimo_en_M%C3%A9xico . The statutory aguinaldo of at least 15 days of pay (Ley Federal del Trabajo art. 87) is taken from https://es.wikipedia.org/wiki/Aguinaldo .",
+   "confidence": "high"
+  },
+  "arithmetic": "315.04 x 365 days = 114,989.60 (equals 9,582.47 a month x 12). Add the legally mandatory aguinaldo of 15 days: 315.04 x 15 = 4,725.60. Total 119,715.20, rounded to 119,715. Without aguinaldo the figure is 114,990. For reference, the Northern Border zone (440.87 a day) gives 440.87 x 365 = 160,917.55 + 6,613.05 = 167,530.60.",
+  "note": "The minimum wage (MX$315.04 a day)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "https://en.wikipedia.org/wiki/Driving_licence_in_Mexico : a full licence without restrictions is available at 18; licensing is set by each state.",
+  "confidence": "medium",
+  "note": "Minors aged 15 to 17 can get a restricted, time-limited permit in places such as Mexico City (for example speed limits or curfew), but the ordinary unrestricted car licence starts at 18."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 125000,
+   "source": "Indeed Mexico average MX$9,182 a month (42,000 reports, range 6,546 to 12,881, updated 21 Sep 2026) https://mx.indeed.com/career/cajero/salaries ; the legal floor is MX$9,582 a month (https://www.littler.com/news-analysis/asap/mexico-aumenta-el-salario-minimo-para-el-2026). Estimate: about MX$10,000 a month for a full-time formal cashier x 12.5 months (12 months plus the 15-day aguinaldo) = 125,000.",
+   "confidence": "medium"
+  },
+  "electrician": {
+   "value": 175000,
+   "source": "Indeed Mexico average MX$12,190 a month across all experience (3,100 reports, range 7,910 to 18,785, updated 21 Sep 2026) https://mx.indeed.com/career/electricista/salaries . Mid-career estimate about MX$14,000 a month x 12.5 = 175,000. Talent.com shows 120,000 a year (https://mx.talent.com/salary?job=electricista), but it is advert-based and looks low.",
+   "confidence": "low"
+  },
+  "policeOfficer": {
+   "value": 190000,
+   "source": "Indeed Mexico average MX$15,196 a month (211 reports, range 9,816 to 23,525, updated 20 Sep 2026) https://mx.indeed.com/career/policia/salaries ; x 12.5 = 189,950, rounded to 190,000. Pay varies widely by municipality, state and the Guardia Nacional. Talent.com lists 153,648 (https://mx.talent.com/salary?job=policia).",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 300000,
+   "source": "Indeed Mexico all-experience average MX$13,986 a month, range 8,763 to 22,320 (582 reports, updated 20 Sep 2026) https://mx.indeed.com/career/ingeniero-mecanico/salaries ; PayScale Mexico shows early-career about MX$288,000 and mid-career about MX$532,000 a year (34 profiles, updated Apr 2024) https://www.payscale.com/research/MX/Job=Mechanical_Engineer/Salary . Estimate for mid-career: about MX$24,000 a month x 12.5 = 300,000, between the two sources.",
+   "confidence": "low"
+  },
+  "lawyer": {
+   "value": 170000,
+   "source": "Indeed Mexico average MX$14,608 a month overall, junior lawyers MX$13,832, senior MX$19,525 (3,600 reports, updated 21 Sep 2026) https://mx.indeed.com/career/abogado/salaries ; early-career estimate about MX$13,600 a month x 12.5 = 170,000.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 1400000,
+   "source": "No reliable public source found. PayScale Mexico (6 profiles, updated Jun 2025) https://www.payscale.com/research/MX/Job=Sales_Director/Salary and Indeed (25 reports) https://mx.indeed.com/career/director-de-ventas/salaries reflect small employers and are far too low for a large company. This is an estimate of about MX$112,000 a month total cash at a large company x 12.5 = 1,400,000.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 270000,
+   "source": "Estimate, not sourced directly. Public-sector residents (Secretaria de Salud, IMSS, ISSSTE) are believed to earn about MX$20,000 to 23,000 a month with compensations; about MX$21,600 x 12.5 = 270,000. Indeed Mexico shows MX$16,689 a month for physicians in general (3,700 reports) https://mx.indeed.com/career/medico-residente/salaries",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 480000,
+   "source": "Estimate, not sourced directly. Public-sector specialists (IMSS, ISSSTE) are believed to earn about MX$35,000 to 42,000 a month; about MX$38,400 x 12.5 = 480,000. Indeed Mexico shows only MX$17,669 a month (242 reports, job-posting bias, mostly private clinics) https://mx.indeed.com/career/medico-especialista/salaries ; private specialists can earn far more.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 170000,
+   "source": "Indeed Mexico average MX$12,352 a month (9,600 reports, range 8,438 to 18,082, updated 21 Sep 2026) https://mx.indeed.com/career/enfermera/salaries ; licensed-nurse estimate about MX$13,600 a month x 12.5 = 170,000.",
+   "confidence": "low"
+  },
+  "secondaryTeacher": {
+   "value": 200000,
+   "source": "Estimate for a public (SEP) secondary teacher on a full-time post, about MX$16,000 a month x 12.5 = 200,000. Indeed Mexico shows MX$9,801 a month for teachers overall (6,000 reports, includes private and part-time) https://mx.indeed.com/career/profesor-de-secundaria/salaries ; the 2026 SEP scale was not retrieved.",
+   "confidence": "low"
+  },
+  "airlineFirstOfficer": {
+   "value": 1050000,
+   "source": "Estimate, not sourced. Low-cost and national carriers (Volaris, Viva Aerobus, Aeromexico) are believed to pay first officers about MX$70,000 to 100,000 a month; about MX$84,000 x 12.5 = 1,050,000. The Indeed page for pilots returned 404 and Talent.com only shows 120,000 a year from 65 adverts (https://mx.talent.com/salary?job=piloto+aviador), which is not credible for airline pilots.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 2400000,
+   "source": "Estimate, not sourced. National carrier captains are believed to earn about MX$150,000 to 250,000 a month; about MX$192,000 x 12.5 = 2,400,000.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 10000000,
+   "source": "Estimate, not sourced. PayScale Mexico median for CEOs is only MX$450,000 (21 profiles, mostly small firms) https://www.payscale.com/research/MX/Job=Chief_Executive_Officer_(CEO)/Salary ; Indeed shows MX$203,174 for director general (70 reports) https://mx.indeed.com/career/director-general/salaries . Neither reflects large companies. The estimate is about MX$10 million a year total cash for a CEO of a large (1,000+ staff) company; CEOs of the biggest listed groups earn several times more.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 200000,
+   "source": "Indeed Mexico average MX$12,908 a month (238 reports, range 8,082 to 20,614, updated 18 Sep 2026) https://mx.indeed.com/career/dentista/salaries ; estimate of about MX$16,000 a month for a qualified employed dentist x 12.5 = 200,000.",
+   "confidence": "low"
+  },
+  "pharmacist": {
+   "value": 175000,
+   "source": "Indeed Mexico average MX$119,651 a year, about MX$9,971 a month, range 71,775 to 199,462 (1,200 reports, updated 19 Sep 2026) https://mx.indeed.com/career/farmaceutico/salaries ; estimate of about MX$14,000 a month for a qualified pharmacist x 12.5 = 175,000.",
+   "confidence": "low"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 260000,
+   "source": "Indeed Mexico junior developer average MX$15,345 a month (98 reports, updated 9 Sep 2026) https://mx.indeed.com/career/desarrollador-junior/salaries ; Levels.fyi entry-level median total compensation MX$577,453 (49 submissions, skewed to multinationals) https://www.levels.fyi/t/software-engineer/levels/entry-level/locations/mexico . Estimate about MX$20,800 a month x 12.5 = 260,000.",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 450000,
+   "source": "Indeed Mexico software engineer average MX$16,604 a month and senior developer MX$21,962 (https://mx.indeed.com/career/ingeniero-de-software/salaries, https://mx.indeed.com/career/desarrollador-de-software/salaries); Levels.fyi all-level median total compensation MX$853,122 (554 submissions, skewed to multinationals and remote roles) https://www.levels.fyi/t/software-engineer/locations/mexico . Estimate for a mid-level engineer about MX$36,000 a month x 12.5 = 450,000.",
+   "confidence": "low"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 135000,
+   "source": "Estimate built from INEGI ENOE Q2 2026 (https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/enoe/enoe2026_08.pdf): 46.5% of the employed earn up to one minimum wage (MX$9,582 a month) and 31.6% earn one to two, so the median is around one minimum wage. The average real labour income of the employed was MX$8,110.67 a month in Q1 2026 (https://udavinci.edu.mx/blog-educativo/compartiendo-conocimiento/mercado-laboral-mexico-2026-inegi). The IMSS average contribution wage is MX$663.5 a day, formal workers only (https://mvsnoticias.com/nacional/2026/4/28/historico-mexico-alcanza-cifra-record-de-empleos-cae-la-desocupacion-730655.html). Estimate of about MX$10,800 a month for a full-time worker, informal and formal together, x 12.5 = 135,000. Formal-sector median is nearer MX$170,000.",
+   "confidence": "low"
+  },
+  "p90FullTime": {
+   "value": 340000,
+   "source": "Estimate. ENOE Q2 2026 (https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/enoe/enoe2026_08.pdf) shows about 90% of the employed who report income earn up to two minimum wages, about MX$19,200 a month, and ENOE under-captures top incomes. The IMSS mean contribution wage of MX$663.5 a day is about MX$242,000 a year (https://mvsnoticias.com/nacional/2026/4/28/historico-mexico-alcanza-cifra-record-de-empleos-cae-la-desocupacion-730655.html). Estimate of about MX$27,200 a month x 12.5 = 340,000.",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 155000,
+  "basis": "Single adult in a typical mid-sized city (not Mexico City): modest rent for a small flat or room about MX$6,000, groceries about MX$3,800, transport about MX$800, utilities, phone and internet about MX$1,300, which is about MX$11,900 net a month. Gross is about MX$12,400 a month after IMSS and a little income tax; x 12.5 = 155,000.",
+  "source": "Numbeo Guadalajara (Sep 2026): 1-bedroom outside centre MX$8,940, single person costs excluding rent MX$12,412, transit pass MX$560, utilities MX$908 https://www.numbeo.com/cost-of-living/in/Guadalajara ; Numbeo Mexico 1-bedroom outside centre MX$8,509 https://www.numbeo.com/cost-of-living/country_result.jsp?country=Mexico ; INEGI basic basket about MX$4,843 per person a month in urban areas, as cited in https://www.elimparcial.com/mexico/2026/04/11/el-salario-promedio-en-mexico-es-de-7-674-pesos-pero-el-inegi-advierte-que-una-familia-necesita-casi-20-mil-al-mes-para-cubrir-lo-basico/ . The budget is an estimate, cheaper than the Numbeo one-bedroom figures.",
+  "confidence": "low"
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 6000,
+    "source": "Estimate for a 2-year Técnico Superior Universitario (TSU) at a public Universidad Tecnológica or Politécnica, about MX$1,500 to 3,000 per four-month term, three terms a year. Not verified against a fee page.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 6000,
+    "source": "Estimate for public technical institutes (TecNM) and polytechnic universities. Not verified against a fee page.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 90000,
+    "source": "Estimate for private professional or technical programmes at well-known private schools. Fee pages are dynamic simulators and were not retrievable.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 6000,
+    "source": "Estimate for public Universidades Tecnológicas and Institutos Tecnológicos (TecNM), about MX$5,000 to 7,000 a year.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 2000,
+    "source": "Estimate for mainstream public universities. UNAM, IPN and UAM charge almost nothing (UNAM is described as public and free at https://en.wikipedia.org/wiki/National_Autonomous_University_of_Mexico ; the UNAM licenciatura fee is believed to be a symbolic MX$0.20 a year under its payments regulation, not verified). State autonomous universities typically charge about MX$1,000 to 5,000 a year.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 300000,
+    "source": "Estimate for the most selective private universities (Tec de Monterrey, ITAM, Universidad Iberoamericana, Anáhuac), about MX$130,000 to 160,000 per semester. Tec lists costs only through a simulator (https://tec.mx/es/profesional/costos-de-colegiatura) and ITAM through its site, neither with numbers retrievable. The most selective public universities (UNAM, IPN) are effectively free.",
+    "confidence": "low"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 10000,
+    "source": "Estimate for master's programmes at public technological institutes. Not verified.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 12000,
+    "source": "Estimate for master's programmes at public universities; many PNPC programmes carry stipends and waive fees. Not verified.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 300000,
+    "source": "Estimate for master's programmes at elite private schools (Tec, ITAM, IPADE, Ibero). Not verified.",
+    "confidence": "low"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 3000,
+    "source": "Estimate. Community institutions rarely offer doctorates, so this mirrors the public-university figure.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 3000,
+    "source": "Estimate. Doctorates in national-quality (PNPC) public programmes are typically covered by a federal scholarship, leaving small registration fees.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 200000,
+    "source": "Estimate for private doctorates. Not verified.",
+    "confidence": "low"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 3000,
+    "source": "Estimate. Open-access or short-cycle institutions do not offer medicine, so this mirrors the public-university figure.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 3000,
+    "source": "Estimate for public medical schools (UNAM, UdeG, UANL and others), which charge low fees. Not verified.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 420000,
+    "source": "Estimate for private medicine at Tec de Monterrey, Anáhuac and Universidad Panamericana, about MX$350,000 to 450,000 a year. Not verified.",
+    "confidence": "low"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 2000,
+    "source": "Estimate. Mirrors the public-university figure because community institutions do not offer law.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 2000,
+    "source": "Estimate for public law faculties. Not verified.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 260000,
+    "source": "Estimate for law at ITAM, Ibero, Tec and Anáhuac. Not verified.",
+    "confidence": "low"
+   }
+  },
+  "notes": "Fee pages of private universities are dynamic simulators, so the private and elite figures are estimates. Elite means the most selective private universities, because the most selective public ones (UNAM, IPN, UAM) are almost free. Community means public technological universities and institutes, and state means mainstream public universities. Medicine and law are not offered in community institutions, so those values mirror the state value."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0.085,
+   "source": "Préstamo Educativo Tec (Tec de Monterrey's own loan): fixed 8.5% annual CAT for the life of the loan, 3-month grace period after graduation, repayment up to 1.5 times the study period, https://tec.mx/es/profesional/becas . Mexico has no national public student-loan scheme in the sources checked. For comparison, the 28-day TIIE interbank rate was 6.8162% on 30/09/2026 (https://dof.gob.mx/indicadores.php). The value is a decimal fraction (0.085 = 8.5%).",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 0.0326,
+   "source": "INEGI annual headline CPI inflation for August 2026 was 3.26% (core 3.88%), inside Banxico's 3% plus or minus 1 point target band, https://www.excelsior.com.mx/finanzas/acelera-inflacion-anual-consumidor-ubica-3-26-agosto-2026 . The value is a decimal fraction (0.0326 = 3.26%).",
+   "confidence": "high"
+  },
+  "description": "Mexico has no major national public student-loan scheme in the sources checked; most students rely on family funds, scholarships or free or cheap public universities. The nearest equivalent is a university loan such as Tec de Monterrey's Préstamo Educativo Tec, at a fixed 8.5% a year. That implies a real rate of about 5.1% (1.085 / 1.0326 - 1) at current inflation of 3.26%. Rates are decimal fractions."
+ },
+ "schooling": {
+  "primarySchool": "Primaria: 6 grades (1° a 6°), ages about 6 to 12. Preschool (preescolar, 3 grades from age 3) is also compulsory.",
+  "middleSchool": "Secundaria: 3 grades (1° a 3°), ages about 12 to 15, in general, técnica or telesecundaria form. It ends basic education.",
+  "schoolLeaving": "Educación media superior (bachillerato or preparatoria): 3 years, ages about 15 to 18, compulsory since 2019. There is no national leaving exam; the certificate carries a school-awarded promedio general on the 6 to 10 scale. Entry to public upper-secondary schools in Mexico City and the surrounding area is by a placement exam (formerly COMIPEMS, about 128 questions, cut-offs such as 112 correct answers at ENP 6 and 103 at CECyT 9). University entry is a separate exam or a pase reglamentado (automatic pass) for UNAM prepa graduates.",
+  "vocational": "Profesional Técnico Bachiller (CONALEP, 3 years) at upper-secondary level; Técnico Superior Universitario (TSU), 2-year programmes at Universidades Tecnológicas and Politécnicas, which can be continued to a licenciatura.",
+  "tierCommunity": "Universidades Tecnológicas and Politécnicas (TSU) and Institutos Tecnológicos (TecNM): short-cycle or open-access public institutions with low fees.",
+  "tierState": "Public universities: state autonomous universities (for example UANL, UdeG, BUAP) plus the large federal ones UNAM, IPN and UAM, which charge almost nothing.",
+  "tierElite": "Most selective private universities: Tec de Monterrey, ITAM, Universidad Iberoamericana, Anáhuac and Universidad Panamericana. UNAM and IPN are the most selective public options but charge almost nothing.",
+  "gradeName": "Promedio general (bachillerato average)",
+  "gradeSource": "https://es.wikipedia.org/wiki/Educaci%C3%B3n_en_M%C3%A9xico (marks run from 5.0 to 10.0; minimum pass 6.0); cut-off examples from https://es.wikipedia.org/wiki/Comipems",
+  "gradeSystem": "Marks run from 5.0 (the minimum recorded, a fail) to 10.0 (the maximum), with 6.0 the minimum passing mark. Higher is better. A typical graduate averages roughly 8 to 8.5 (estimate, not sourced); 9 to 10 is excellent and 10 is the top. There are no official national named bands on the 6 to 10 scale; competitive programmes select by entrance-exam correct answers (aciertos) rather than by the school average alone.",
+  "startingAges": "Preescolar from age 3 (3 years), primaria about 6 to 12, secundaria about 12 to 15, media superior about 15 to 18. Compulsory from preschool through upper secondary since 2019. Tracks split at about 15 into general bachillerato, technological bachillerato or professional-technical (CONALEP). Higher education starts at about 18: licenciatura usually 4 to 5 years, TSU 2 years."
+ },
+ "highlights": [
+  "The 2026 minimum wage is MX$315.04 a day, up 13%, yet 46.5% of workers still earn at most one minimum wage (INEGI, Q2 2026).",
+  "School is compulsory from preschool to upper secondary since 2019, marks run 5 to 10 with 6 as the pass, and UNAM, Latin America's largest university, is public and free."
+ ],
+ "caveats": "WEB SEARCH WAS UNAVAILABLE: the session hit its WebSearch budget (200 of 200) early, so only direct WebFetch of known pages was possible. Sourced with high confidence: FX (DOF/Banxico), PPP (World Bank), minimum wage (CONASAMI, via Littler and Wikipedia), inflation (INEGI via Excelsior), the ENOE income-band distribution, the grade scale and the Tec loan rate. Most salary, tuition and living-cost figures are LOW-confidence estimates. Indeed, PayScale and Levels.fyi are crowd or advert-based, skew low for senior and public-sector roles and skew high for tech multinationals, and Talent.com returned generic fallback numbers for many jobs so it was mostly ignored. The CEO, sales director, airline pilot, resident and specialist physician and secondary teacher figures are estimates from general knowledge, not retrieved sources. Private university fee pages (Tec, ITAM, Ibero) are JavaScript simulators, so elite tuition is an estimate; the UNAM licenciatura fee of about MX$0.20 a year is from memory and was not verified. CONVENTION: employee pay figures are monthly pay x 12.5, meaning 12 months plus the statutory minimum 15-day aguinaldo (Ley Federal del Trabajo art. 87). The minimum wage includes the aguinaldo for the same reason, so the two are comparable. To strip the aguinaldo, multiply pay figures by 12/12.5 = 0.96, or use MX$114,990 for the minimum wage. Many employers pay 30 days or more of aguinaldo, so the true annual total is often higher. Median and p90 combine formal and informal workers, about 55% of the employed being informal. The formal-sector median is nearer MX$170,000, and the IMSS mean contribution wage (MX$663.5 a day, about MX$242,000 a year) covers formal workers only. The basic living cost (MX$155,000) is higher than the estimated national median (MX$135,000), which reflects the wide use of informal work and shared housing in Mexico. The student-loan rate and inflation are decimal fractions (0.085 and 0.0326). The border-zone minimum wage (MX$440.87 a day) applies only to 43 northern border municipalities, so the general rate is used. The ECOEMS placement exam replaced COMIPEMS in 2025, per Wikipedia, which is not an official source."
+}

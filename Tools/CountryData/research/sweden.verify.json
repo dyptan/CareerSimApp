@@ -1,0 +1,108 @@
+{
+ "checks": [
+  {
+   "item": "1. Minimum wage and arithmetic (representative full-time annual floor)",
+   "researched": "319,512 kr/yr = 26,626 kr/month x 12 (Svensk Handel / Handels retail agreement, age 18, from 2026-04-01); Sweden has no statutory minimum wage",
+   "verified": "319,512 kr/yr. I downloaded Medlingsinstitutets xlsx of agreement floors: Svensk Handel + Handelsanställdas förbund Detaljhandelsavtal, 2026 age 18 = 26,626 kr/mån from 2026-04-01 (19 år 26,946; 1 yr experience 27,530). 26,626 x 12 = 319,512 exactly. MI confirms: 'Det finns inga lagstiftade lägstalöner i Sverige'.",
+   "verdict": "correct",
+   "source": "https://www.mi.se/app/uploads/Urval-av-lagstaloner-i-kollektivavtal-november-2025.xlsx ; https://www.mi.se/forhandling-avtal/lagstaloner/",
+   "note": "Arithmetic is exact. The choice of retail as the 'representative' floor is a judgement call: the same file shows lower floors (e.g. Unionen retail white-collar 22,355 kr/mån from 2026-05-01) and higher ones. 319,512 is a sensible mid-range blue-collar floor and the figure should be labelled a collective-agreement floor, not a legal minimum."
+  },
+  {
+   "item": "2. Driving licence age (category B)",
+   "researched": "18 (supervised practice from 16)",
+   "verified": "18 years for category B (passenger car or light lorry up to 3.5 t).",
+   "verdict": "correct",
+   "source": "https://www.transportstyrelsen.se/en/road/driving-licences/im-going-to-take-my-driving-licence/driving-licence-categories/",
+   "note": "I confirmed the licence age of 18 on the Transportstyrelsen categories page. I did not re-check the 16-year learner's-permit claim."
+  },
+  {
+   "item": "3a. Public-university bachelor tuition for a domestic student",
+   "researched": "0 kr (free for Swedish/EU/EEA/Swiss citizens)",
+   "verified": "0 kr. UHR: 'Den som är medborgare i Sverige, ett EU/EES-land eller Schweiz behöver inte betala vare sig anmälnings- eller studieavgifter.' Fees apply only at first- and second-cycle level for those who must pay (application fee 900 kr).",
+   "verdict": "correct",
+   "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+   "note": "Students still pay for books, copying and student-union fees."
+  },
+  {
+   "item": "3b. Medicine tuition at a public university (domestic student)",
+   "researched": "0 kr (läkarprogrammet free for Swedish/EU students)",
+   "verified": "0 kr. The national rule on studera.nu lists no programme-specific exceptions for domestic/EU students. I could not load a university page that names the medical programme (KI, Uppsala, Lund and KTH URLs returned 404 or certificate errors), so the zero rests on the general rule.",
+   "verdict": "correct",
+   "source": "https://www.studera.nu/sa-kommer-du-in/anmalan-och-antagning/avgifter/",
+   "note": "Side finding: studera.nu's degree-levels page gives läkarprogrammet as 6 years (360 hp, läkarexamen), while the colleague's note says about 5.5 years. This does not affect tuition but the duration should be checked if the game uses it."
+  },
+  {
+   "item": "4a. Registered nurse typical annual gross pay",
+   "researched": "514,800 kr (SCB SSYK 2221 median 42,900 kr/month x 12)",
+   "verified": "514,800 kr. I queried the SCB PxWeb table LoneSpridSektYrk4AN for 2025, all sectors, both sexes: SSYK 2221 median 42,900, mean 44,000, P10 35,200, P90 54,400. SCB states 'Alla löner är omräknade till heltidstjänster'.",
+   "verdict": "correct",
+   "source": "https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN ; https://www.scb.se/lonestatistik/Sjukskoterska/",
+   "note": "Monthly pay x 12 excludes holiday supplement and bonuses."
+  },
+  {
+   "item": "4b. Secondary teacher typical annual gross pay",
+   "researched": "530,400 kr (SCB SSYK 2330 Gymnasielärare median 44,200 x 12)",
+   "verified": "530,400 kr. SCB 2025, SSYK 2330: median 44,200, mean 44,200, P10 37,400, P90 51,200 kr/month.",
+   "verdict": "correct",
+   "source": "https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "note": "SSYK 2330 is upper-secondary (gymnasium) teachers only. I did not check lower-secondary teachers."
+  },
+  {
+   "item": "4c. Resident physician annual gross pay",
+   "researched": "675,600 kr (SCB SSYK 2212 ST-läkare median 56,300 x 12)",
+   "verified": "675,600 kr. SCB 2025, SSYK 2212: median 56,300, mean 58,900, P10 51,000, P90 70,400 kr/month. Specialist physicians (2211): median 96,800 -> 1,161,600.",
+   "verdict": "correct",
+   "source": "https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "note": "I did not re-check the AT-läkare median (39,700) the colleague cites."
+  },
+  {
+   "item": "5. National median full-time wage",
+   "researched": "459,600 kr (SCB 2025 median 38,300 kr/month x 12)",
+   "verified": "459,600 kr. SCB 2025, all occupations and sectors, both sexes: median 38,300, mean 42,900, P10 28,000, P90 61,700. Ekonomifakta independently: 'År 2025 uppgick medianlönen i Sverige till 38 300 kronor'.",
+   "verdict": "correct",
+   "source": "https://www.ekonomifakta.se/sakomraden/arbetsmarknad/loner/medianlon-och-genomsnittslon-i-sverige_1210924.html ; https://api.scb.se/OV0104/v1/doris/sv/ssd/AM/AM0110/AM0110A/LoneSpridSektYrk4AN",
+   "note": "The P90 figure 740,400 (61,700 x 12) also matches the SCB table."
+  },
+  {
+   "item": "6. School-leaving qualification and how the result is scored",
+   "researched": "Gymnasieexamen (with slutbetyg), 3-year gymnasium. Letter grades A-F, A highest, E lowest pass, F fail; merit points A=20, B=17.5, C=15, D=12.5, E=10. Gymnasium jämförelsetal is a credit-weighted average, max 20.00, plus up to 2.5 merit points. A pass in 2,250 of 2,500 credits is needed. A 1-10 scale with no pass mark starts in 2028.",
+   "verified": "Confirmed by fetches. Skolverket: six grades A-F, A-E pass, F fail. Wikipedia (Academic grading in Sweden): A 20, B 17.5, C 15, D 12.5, E 10, F below 10; highest average 20.0. Swedish Wikipedia (Gymnasieexamen): at least 2,250 gymnasiepoäng, including Swedish and maths. Skolverket: a 1-10 scale with no pass mark takes effect 2028-07-01, with new merit values from 2031. Skolverket press release 2026-09-24: grade 9 merit value 230.9 of 340 over 17 subjects, 83.5% eligible for gymnasium. UHR: merit value of 19 or more on the Swedish scale gets 2.5 merit-point compensation.",
+   "verdict": "correct",
+   "source": "https://www.skolverket.se/prov-och-bedomning/betyg/betygsskalan ; https://en.wikipedia.org/wiki/Academic_grading_in_Sweden ; https://sv.wikipedia.org/wiki/Gymnasieexamen ; https://www.skolverket.se/forandringar-inom-skolomradet/en-skola-i-forandring/nytt-betygssystem ; https://www.skolverket.se/om-skolverket/nyheter-och-pressmeddelanden/pressmeddelanden/pressmeddelanden/2026-09-24-forsta-gangen-storre-andel-pojkar-an-flickor-ar-behoriga-till-gymnasieskolan",
+   "note": "The 20/17.5/15/12.5/10 points and the 2,250-credit rule come from Wikipedia. UHR and antagning.se pages that would be the primary source returned 404 or no detail. The 0-20 scale and 2.5 merit-point cap are standard. The grade 9 merit scale (max 340, 17 subjects) is primary-sourced."
+  },
+  {
+   "item": "7a. Exchange rate SEK per USD",
+   "researched": "9.97886 (Riksbank fixing 2026-09-30)",
+   "verified": "9.97886. I queried the Riksbank API series SEKUSDPMI: 2026-09-30 = 9.97886 (range 9.81 to 9.98 over 2026-09-21 to 2026-09-30). World Bank period-average 2025 = 9.8207.",
+   "verdict": "correct",
+   "source": "https://api.riksbank.se/swea/v1/Observations/SEKUSDPMI/2026-09-20/2026-09-30 ; https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.FCRF?format=json&date=2019:2026",
+   "note": "Exact match."
+  },
+  {
+   "item": "7b. PPP conversion factor (SEK per international dollar), latest year",
+   "researched": "8.548493 (World Bank PA.NUS.PPP, 2025)",
+   "verified": "8.548493 for 2025, the latest year available (source last updated 2026-07-13). 2024 = 8.490485. The household-consumption PPP (PA.NUS.PRVT.PP) for 2025 = 8.889005, as the colleague notes.",
+   "verdict": "correct",
+   "source": "https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PPP?format=json&date=2019:2026",
+   "note": "Exact match. The GDP PPP is the standard series."
+  },
+  {
+   "item": "8a. Student-loan interest rate",
+   "researched": "2.135% for 2026 (CSN studielån)",
+   "verified": "2.135%. The CSN page says 'Räntan på studielånet är 2,135 procent år 2026' and 'Under 2026 är räntan på lånet 2,135 procent'.",
+   "verdict": "correct",
+   "source": "https://www.csn.se/bidrag-och-lan/studiemedel.html",
+   "note": "Exact match."
+  },
+  {
+   "item": "8b. Student-loan scheme description (amounts, repayment)",
+   "researched": "CSN studiemedel is a grant plus a loan; full-time 2026 is 3,398 kr/week (grant 1,030 + loan 2,368), or 13,592 kr per 4 weeks. Repayment starts at the earliest six months after study support ends, and always after a year-end. Interest accrues from first payout.",
+   "verified": "CSN table 2026, full-time: grant 1,030, loan 2,368, total 3,398 kr per week; 4 weeks = 4,120 + 9,472 = 13,592 kr. The raw page says 'Du börjar betala tillbaka lånet tidigast sex månader efter att du hade studiemedel. Återbetalningen startar alltid efter ett årsskifte.' Repayment size depends on amount borrowed, interest rate and age. SCB CPI for August 2026 was 0.3% (July 0.2%, CPIF 0.7%), so the colleague's real-rate arithmetic is right.",
+   "verdict": "correct",
+   "source": "https://www.csn.se/bidrag-och-lan/studiemedel.html ; https://www.scb.se/en/finding-statistics/statistics-by-subject-area/prices-and-economic-trends/price-statistics/consumer-price-index-cpi/pong/statistical-news/consumer-price-index-cpi-august-2026/",
+   "note": "One sub-claim is not backed by the page I read: 'the loan accrues interest from the first payout'. The CSN page does not say when interest starts, and an intermediate WebFetch summary that claimed the opposite was not supported by the raw page text. Treat that sentence as unverified and soften or drop it."
+  }
+ ]
+}

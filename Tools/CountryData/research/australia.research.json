@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "Australia",
+  "adjective": "Australian",
+  "currencyName": "Australian dollar (A$)",
+  "fxPerUSD": {
+   "value": 1.4333,
+   "source": "RBA exchange rates, 30 Sep 2026: 0.6977 USD per AUD, so 1/0.6977 = 1.4333 AUD per USD. https://www.rba.gov.au/statistics/frequency/exchange-rates.html",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 1.399,
+   "source": "World Bank, PPP conversion factor GDP (LCU per international $), Australia 2025 = 1.398943 (2024 = 1.366527). https://api.worldbank.org/v2/country/AU/indicator/PA.NUS.PPP?format=json&date=2020:2026",
+   "confidence": "medium"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 52255,
+   "source": "Fair Work Commission Annual Wage Review 2026, reported by ABC: national minimum wage A$26.44/h and A$1,004.90/week (38-hour week) from 1 Jul 2026, up 5.97% from A$24.95/A$948. https://www.abc.net.au/news/2026-06-02/minimum-wage-increase-june-2026-australia/106746542 (the FWC decision PDF and the DEWR ministerial release appeared in search results but were not opened)",
+   "confidence": "high"
+  },
+  "arithmetic": "A$1,004.90 per week x 52 weeks = A$52,254.80 (A$26.44 x 38 h = A$1,004.72; FWC publishes A$1,004.90). Excludes 12% employer super. Casual workers get a 25% loading on top (A$33.05/h).",
+  "note": "The minimum wage (A$26.44 an hour)"
+ },
+ "drivingAge": {
+  "value": 17,
+  "source": "State road authorities (for example Transport for NSW, VicRoads). My own knowledge: learner permit at 16, then a provisional (P1) licence that allows driving without a supervisor from 17 in NSW, Qld, SA, WA, Tas, ACT and NT. Not re-verified in this run because the nsw.gov.au page returned 404.",
+  "confidence": "medium",
+  "note": "Learner at 16 (ACT 15y9m) needs a supervising driver. A provisional P1 licence lets you drive alone from 17 in most states, with limits on passengers, speed and alcohol. Victoria's first solo (probationary) licence is at 18. Fully unrestricted licences come later, around 20 or 21."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 56000,
+   "source": "Estimate from the General Retail Industry Award level 2 to 3 adult rate (about A$27 to 28/h at 38 h/week, 2026-27) plus weekend penalties, about A$54k to 58k. Cross-checks: Indeed AU A$32.99/h (casual-loaded, so overstated) https://au.indeed.com/career/cashier/salaries ; SEEK retail cashier ads A$43,690 (includes part-time) https://au.seek.com/career-advice/role/cashier/salary . Award table page timed out.",
+   "confidence": "low"
+  },
+  "electrician": {
+   "value": 98000,
+   "source": "Triangulated estimate: Indeed AU average A$54.70/h (about A$108k at 38 h, skewed by mining) https://au.indeed.com/career/electrician/salaries ; PayScale median A$37.16/h (old, about A$73k) https://www.payscale.com/research/AU/Job=Electrician/Salary ; my recollection of Job Outlook median near A$91k in 2024, grown to 2026.",
+   "confidence": "low"
+  },
+  "policeOfficer": {
+   "value": 108000,
+   "source": "Estimate for a mid-career constable or senior constable. Indeed AU average A$97,866 (17 reports, Victoria Police A$104,969) https://au.indeed.com/career/police-officer/salaries ; my recollection of state police enterprise agreements (senior constable about A$105k to 120k). Police pay pages returned 403 or had no figures.",
+   "confidence": "low"
+  },
+  "mechanicalEngineer": {
+   "value": 110000,
+   "source": "Estimate for mid-career. Indeed AU average A$88,050 (mixed levels, senior A$137,942) https://au.indeed.com/career/mechanical-engineer/salaries ; PayScale AU$83,648 average, mid-career +17% https://www.payscale.com/research/AU/Job=Mechanical_Engineer/Salary ; my recollection of Job Outlook median near A$100k to 104k.",
+   "confidence": "low"
+  },
+  "lawyer": {
+   "value": 90000,
+   "source": "Estimate for 1 to 3 years post-admission. Indeed AU junior lawyer A$78,362, senior A$123,357, all lawyers A$116,293 https://au.indeed.com/career/lawyer/salaries ; my recollection that top-tier firm graduates start near A$95 to 110k and the wider market lower.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 230000,
+   "source": "Estimate for a large company (base plus typical bonus). Indeed AU average A$148,266 (range A$95,893 to 229,244, dominated by small firms) https://au.indeed.com/career/sales-director/salaries ; my recollection of recruiter guides at A$200k to 300k for large employers.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 110000,
+   "source": "Estimate for a PGY2 resident medical officer in a public hospital: base about A$100k, more with overtime. PayScale AU$89,051 median (20 profiles, stale) https://www.payscale.com/research/AU/Job=Resident_Medical_Officer/Salary ; my recollection of NSW, Victorian and Queensland junior doctor agreements.",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 320000,
+   "source": "Estimate for a public staff specialist or typical consultant. Indeed AU 'medical officer' average A$290,915 (range A$213,871 to 300,000) https://au.indeed.com/career/resident-medical-officer/salaries ; my recollection that specialists average well above A$300k.",
+   "confidence": "low"
+  },
+  "registeredNurse": {
+   "value": 98000,
+   "source": "Estimate for a mid-scale full-time RN in a public system (scales about A$80k to 105k in 2026). Indeed AU A$51.70/h, which assumes 40 h and includes agency work, so overstated https://au.indeed.com/career/registered-nurse/salaries ; my recollection of Job Outlook medians near A$93k.",
+   "confidence": "low"
+  },
+  "secondaryTeacher": {
+   "value": 105000,
+   "source": "Estimate for mid-scale in a state school (starting about A$85k, top of scale about A$120k to 130k). Indeed AU high school teacher average A$103,371 https://au.indeed.com/career/secondary-school-teacher/salaries . The NSW and Victorian salary pages returned 404.",
+   "confidence": "low"
+  },
+  "airlineFirstOfficer": {
+   "value": 135000,
+   "source": "Estimate for a national-carrier first officer (regional carriers about A$90k to 115k). Indeed AU first officer average A$90,723 (mostly regional; Virgin Australia A$164,219) https://au.indeed.com/career/first-officer/salaries ; all pilots A$127,397 (Qantas A$154,132) https://au.indeed.com/career/airline-pilot/salaries",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 260000,
+   "source": "Estimate. Mainline Qantas and Virgin captains are about A$250k to 330k, regional captains about A$150k to 200k. No captain-specific figure was found; Indeed gives only blended pilot pay https://au.indeed.com/career/airline-pilot/salaries",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 3500000,
+   "source": "Estimate from my recollection of ACSI and AGSM studies: ASX200 CEO total realised pay about A$3m to 4m. No source was retrieved. Indeed's A$153,131 CEO average reflects small organisations and was not used.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 160000,
+   "source": "Indeed AU dentist average A$160,769 (778 reports, range A$100,613 to 256,890). https://au.indeed.com/career/dentist/salaries",
+   "confidence": "low"
+  },
+  "pharmacist": {
+   "value": 100000,
+   "source": "Estimate. Indeed AU A$60.17/h, about A$119k at 38 h (includes locums, so overstated) https://au.indeed.com/career/pharmacist/salaries ; Pharmacy Industry Award and Job Outlook medians as I recall are about A$90k to 100k.",
+   "confidence": "low"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 85000,
+   "source": "Indeed AU junior software engineer A$84,588 (entry level A$60,374) https://au.indeed.com/career/software-engineer/salaries",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 120000,
+   "source": "Indeed AU mid-level A$106,774 https://au.indeed.com/career/software-engineer/salaries ; SEEK ICT-industry advertised average A$128,060 https://au.indeed.com/career/software-engineer/salaries is not the source for that figure; SEEK figure is from https://au.seek.com/career-advice/role/software-engineer/salary . Estimate set between the two.",
+   "confidence": "low"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 98124,
+   "source": "ABS Employee Earnings and Hours, May 2025 (released 23 Jan 2026): median weekly earnings of all full-time persons A$1,887 (males A$1,994, females A$1,758). A$1,887 x 52 = A$98,124. https://www.abs.gov.au/statistics/labour/earnings-and-working-conditions/employee-earnings-and-hours-australia/latest-release",
+   "confidence": "high"
+  },
+  "p90FullTime": {
+   "value": 171600,
+   "source": "Estimate. ABS Employee Earnings, Aug 2025: for ALL employees the 90th percentile of weekly main-job earnings is A$3,000 (A$156,000 a year); median A$1,425. Full-time-only P90 is higher because part-timers pull the all-employee figure down, so I used about A$3,300 a week x 52 = A$171,600. https://www.abs.gov.au/statistics/labour/earnings-and-working-conditions/employee-earnings/aug-2025",
+   "confidence": "low"
+  }
+ },
+ "livingCost": {
+  "value": 55000,
+  "basis": "Single adult in a typical mid-sized capital. Net need about A$46.6k: 1-bed rent outside the city centre A$1,774 a month (A$21.3k a year) plus A$1,600 a month for food, utilities, phone, internet and a transport pass (A$19.2k a year) gives A$40.5k, plus about 15% for health cover and clothing. Gross A$55,000 leaves about A$46.6k after 2025-26 resident income tax (A$8,388 including 2% Medicare levy). This is just above the A$52,255 minimum wage.",
+  "source": "Numbeo Australia, Sep 2026 (crowd-sourced) https://www.numbeo.com/cost-of-living/country_result.jsp?country=Australia ; tax arithmetic is mine from the 2025-26 resident rates as I recall them.",
+  "confidence": "low"
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 1500,
+    "source": "Estimate for TAFE and other subsidised courses, blending Fee-Free TAFE priority courses (A$0) with paid courses. The TAFE NSW fees page gives no amounts because fees are set per course https://www.tafensw.edu.au/enrol/fees",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 3500,
+    "source": "Estimate for non-priority TAFE or dual-sector diplomas. No source retrieved.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 10000,
+    "source": "Estimate for premium private vocational colleges using VET Student Loans. No source retrieved.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 4738,
+    "source": "2026 student contribution for the lowest band (education, nursing, languages, English, clinical psychology): A$4,738 per full-time year. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/ ; https://uac.edu.au/future-applicants/fees/university-course-costs",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 9537,
+    "source": "2026 student contribution for the science, engineering, computing, allied health and built environment band: A$9,537. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/ ; https://uac.edu.au/future-applicants/fees/university-course-costs",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 17399,
+    "source": "2026 student contribution for the law, accounting, administration, economics, commerce, communications and society-and-culture band: A$17,399 per full-time year (the highest Commonwealth-supported band). https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 22000,
+    "source": "Estimate. Most domestic coursework masters are full-fee; regional universities charge about A$20k to 28k a year. Sydney and Monash fee pages showed no amounts or returned 403.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 32000,
+    "source": "Estimate for mainstream public universities (about A$28k to 38k a year). No source retrieved.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 46000,
+    "source": "Estimate for Group of Eight coursework masters (about A$40k to 55k a year). No source retrieved.",
+    "confidence": "low"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 0,
+    "source": "Domestic PhD students get a Research Training Program fee offset, so no tuition (recollection of the Department of Education RTP scheme; the page timed out in this run).",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 0,
+    "source": "Same RTP fee offset as above.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 0,
+    "source": "Same RTP fee offset as above.",
+    "confidence": "medium"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 13558,
+    "source": "2026 student contribution for medicine, dentistry and veterinary science: A$13,558 per year. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/ ; https://uac.edu.au/future-applicants/fees/university-course-costs",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 13558,
+    "source": "Same Commonwealth-supported medicine band, A$13,558. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 13558,
+    "source": "Same band applies at Group of Eight schools with Commonwealth-supported medicine places. Graduate-entry fee-paying medical doctorates at Melbourne and Sydney cost far more (I recall about A$60k a year) but were not verified. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/",
+    "confidence": "low"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 17399,
+    "source": "2026 Commonwealth-supported law band, A$17,399 per year. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/ ; https://uac.edu.au/future-applicants/fees/university-course-costs",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 17399,
+    "source": "Same law band, A$17,399. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 17399,
+    "source": "Same LLB band at Group of Eight universities. The postgraduate Juris Doctor at Melbourne and Sydney is full-fee (I recall A$45k to 55k a year) but was not verified. https://adelaide.edu.au/students/student-services/finances/commonwealth-supported-students/",
+    "confidence": "low"
+   }
+  },
+  "notes": "Commonwealth-supported fees are set nationally by discipline band, not by university, so the community/state/elite tiers for bachelor, medicine and law are mapped to bands rather than institutions. The 2026 bands per 1.0 EFTSL (48 units) are A$4,738 (education, nursing, languages, English, clinical psychology), A$9,537 (science, engineering, computing, allied health), A$13,558 (medicine, dentistry, veterinary) and A$17,399 (law, accounting, administration, economics, commerce, communications, society and culture). Students who started before 2021 pay lower grandfathered rates. HECS-HELP lets students defer the whole amount. Master, vocational and TAFE figures are estimates."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 2.8,
+   "source": "HELP/HECS-HELP has no interest charge. Debts are indexed each 1 June to the lower of CPI and the Wage Price Index, and the June 2026 indexation was 2.8% (percent, not a fraction). Taken from secondary sites because the ATO page returned 403 and the Department of Education page timed out. https://fairworkmate.com.au/blog/hecs-indexation-june-2026-australia ; also listed in search: https://atotaxcalculator.com.au/hecs-debt-indexation",
+   "confidence": "medium"
+  },
+  "inflation": {
+   "value": 4,
+   "source": "ABS monthly Consumer Price Index: 4.0% in the 12 months to August 2026 (3.5% to July 2026), released 30 Sep 2026. Percent, not a fraction. https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release",
+   "confidence": "high"
+  },
+  "description": "HELP (HECS-HELP) is interest-free but indexed every 1 June to the lower of CPI and the Wage Price Index (2.8% in June 2026). Rates in this entry are percentages. Real rate is about -1.2% (2.8 minus 4.0 inflation). Repayment is income-contingent through the tax system, starting at about A$69,528 of income in 2026-27 (secondary source). A one-off 20% cut to HELP debts was applied in 2025 (from my recollection, not verified in this run)."
+ },
+ "schooling": {
+  "primarySchool": "Primary school (Foundation, Prep or Kindergarten to Year 6). Compulsory schooling starts at about age 5 to 6, depending on the state.",
+  "middleSchool": "Junior secondary or high school, Years 7 to 10 (ages about 12 to 16). Year 7 is in secondary school in every state, including Queensland since 2015 and South Australia since 2022.",
+  "schoolLeaving": "Senior secondary certificate in Years 11 and 12, awarded by each state: HSC (NSW), VCE (Victoria), QCE (Queensland), SACE (South Australia), WACE (Western Australia), TCE (Tasmania), ACT Senior Secondary Certificate. Students needing a university place receive an ATAR.",
+  "vocational": "TAFE (Technical and Further Education) and other registered training organisations: Certificates I to IV, Diplomas, and apprenticeships or traineeships. VET subjects can also be taken inside Years 11 to 12.",
+  "tierCommunity": "TAFE and other vocational colleges, and regional or dual-sector institutions (TAFE NSW, Victoria University, regional campuses)",
+  "tierState": "Mainstream public universities (for example Deakin, University of Newcastle, Griffith)",
+  "tierElite": "Group of Eight research universities (Melbourne, Sydney, ANU, UNSW, Monash, Queensland, Adelaide, Western Australia)",
+  "gradeName": "ATAR (Australian Tertiary Admission Rank)",
+  "gradeSource": "https://www.uac.edu.au/future-applicants/atar",
+  "gradeSystem": "ATAR runs from 0.00 to 99.95 in steps of 0.05 (there is no 100). It is a percentile rank against the whole age group, not a mark, so an ATAR of 80 means the top 20%. Higher is better and there is no pass mark. The usual average is about 70; the top possible result is 99.95. NSW and ACT report anything below 30 as '30 or less'. Every state produces comparable ATARs. Competitive courses such as medicine or top law often ask for 95 to 99+ (my recollection).",
+  "startingAges": "Compulsory schooling starts at 5 to 6 with Foundation or Prep. Primary runs to about age 12 (Year 6). Lower secondary is Years 7 to 10 (about 12 to 16). Upper secondary is Years 11 to 12 (about 16 to 18). Most states require schooling or training until 16 or 17. There is no early track split; vocational options sit alongside academic ones."
+ },
+ "highlights": [
+  "Australia has a national minimum wage of A$26.44 an hour, about A$52,000 a year full-time, and the typical full-time worker earns about A$98,000.",
+  "University fees are set by subject, A$4,738 to A$17,399 a year, and HECS-HELP loans carry no interest but are indexed yearly (2.8% in June 2026, below 4.0% inflation)."
+ ],
+ "caveats": "The session's WebSearch budget ran out after four searches, so most of this was gathered with WebFetch and my own knowledge. Verified to a primary or reputable page: minimum wage (ABC reporting the Fair Work Commission ruling), ABS median full-time earnings (May 2025), ABS CPI (4.0% to Aug 2026), RBA exchange rate, World Bank PPP, the 2026 student-contribution bands (two university pages) and the ATAR definition (UAC). The ATO, Department of Education, Job Outlook, NSW Police and most state pay pages returned 403, 404, DNS errors or timeouts. The HECS indexation of 2.8% rests on secondary sites. Every occupation pay figure except the ABS medians is a low-confidence estimate. Indeed and SEEK figures mix levels, casual loading and sometimes 40-hour assumptions, so I anchored on award-style logic and my recollection of Job Outlook medians, rounded. The P90 is an estimate scaled from ABS all-employee data. Vocational, master and CEO figures, the specialist and pilot scales, and the driving age were not sourced this run. Figures are gross and exclude the 12% employer super. Annualising uses 52 weeks and a 38-hour week. The 2026 minimum wage applies from 1 July 2026; pay figures for other jobs are roughly 2025-26 levels unless noted."
+}

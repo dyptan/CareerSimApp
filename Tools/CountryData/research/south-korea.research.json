@@ -1,0 +1,277 @@
+{
+ "identity": {
+  "titleInSentence": "South Korea",
+  "adjective": "South Korean",
+  "currencyName": "won",
+  "fxPerUSD": {
+   "value": 1355.4,
+   "source": "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW (ECB reference rate for 30 Sep 2026: 1,355.4 won per US dollar); cross-check https://open.er-api.com/v6/latest/USD gave 1,355.84 on 1 Oct 2026",
+   "confidence": "high"
+  },
+  "pppPerUSD": {
+   "value": 816.33,
+   "source": "https://api.worldbank.org/v2/country/KOR/indicator/PA.NUS.PPP?format=json&date=2018:2025 (World Bank PPP conversion factor, GDP, won per international dollar: 2025 = 816.329, 2024 = 809.267). The household-consumption PPP (https://api.worldbank.org/v2/country/KOR/indicator/PA.NUS.PRVT.PP?format=json&date=2020:2025) is 880.13 for 2025",
+   "confidence": "high"
+  }
+ },
+ "minimumWage": {
+  "annualFullTime": {
+   "value": 25882560,
+   "source": "https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144 (Ministry of Employment and Labor: 10,320 won an hour from 1 Jan 2026, 2,156,880 won a month on a 209-hour basis, +2.9%, one rate for every workplace and industry); same figures in the KDI summary https://eiec.kdi.re.kr/policy/materialView.do?num=268630",
+   "confidence": "high"
+  },
+  "arithmetic": "10,320 won an hour x 209 paid hours a month (40 working hours a week plus the paid weekly rest day, averaged over a month) = 2,156,880 won a month; x 12 = 25,882,560 won a year. South Korea has no legal 13th or 14th month, so nothing is added. The 2027 rate is already set at 10,700 won an hour (2,236,300 a month, 26,835,600 a year) from 1 Jan 2027 (https://eiec.kdi.re.kr/policy/materialView.do?num=284266&pg=&pp=20&topic=P).",
+  "note": "The minimum wage (₩10,320 an hour)"
+ },
+ "drivingAge": {
+  "value": 18,
+  "source": "https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=668&ccfNo=2&cciNo=1&cnpClsNo=1 (Ministry of Government Legislation guide: the Class 1 ordinary and Class 2 ordinary licences are open to people aged 18 or over); Road Traffic Act Article 82 as quoted in search results for https://casenote.kr/%EB%B2%95%EB%A0%B9/%EB%8F%84%EB%A1%9C%EA%B5%90%ED%86%B5%EB%B2%95/%EC%A0%9C82%EC%A1%B0 (under 18, or under 16 for a motorised bicycle, cannot hold a licence; that page itself did not load)",
+  "confidence": "high",
+  "note": "Class 1 and Class 2 ordinary (car) licences from 18; motorised bicycles (원동기장치자전거) from 16; a Class 1 large or special licence needs age 19 plus a year of driving experience (search summary of Article 82). I found no scheme that lets under-18s drive a car, supervised or not."
+ },
+ "payForGameJobs": {
+  "cashier": {
+   "value": 28000000,
+   "source": "Estimate. The legal floor for a full-time worker is 25,882,560 a year (https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=18144). Job ads in 2026 for full-time supermarket cashiers list about 2.25-2.7 million won a month (for example 2.45 million regular, 2.25 million contract; martjob.co.kr and karrotmarket.com listings seen only in search results). 2.35 million x 12 = 28.2 million, rounded to 28 million. No official cashier median was reachable and most Korean cashiers work part-time.",
+   "confidence": "low"
+  },
+  "electrician": {
+   "value": 55000000,
+   "source": "Construction Association of Korea 2026 first-half market wage report (survey of Sept 2025 at 2,000 sites, per 8-hour day; PDF text read directly): internal-wiring electrician (내선전공) 273,676 won a day, average of all 132 trades 279,988 (https://www.kmcca.or.kr/images/pegs/down_file/2026%EB%85%84%20%EC%83%81%EB%B0%98%EA%B8%B0%EC%A0%81%EC%9A%A9%20%EA%B1%B4%EC%84%A4%EC%97%85%20%EC%9E%84%EA%B8%88%EC%8B%A4%ED%83%9C%EC%A1%B0%EC%82%AC%20%EB%B3%B4%EA%B3%A0%EC%84%9C.pdf). Construction workers work 217.2 days a year (Ministry of Employment and Labor survey 2024, https://www.newsis.com/view/NISX20240830_0002870103). 273,676 x 217.2 = 59.4 million at full days; x 200 days = 54.7 million; 55 million used for a typical mid-career electrician.",
+   "confidence": "medium"
+  },
+  "policeOfficer": {
+   "value": 48000000,
+   "source": "2026 civil-service pay table (+3.5%): a sergeant (경사) at step 10 has base pay 3,276,600 won a month and 4,110,785 with allowances before tax, i.e. 49.3 million a year without overtime or performance bonus (https://silsu.kr/gov/police/sergeant/10, a pay calculator); constable (순경) step 1 is 2,133,000 and senior constable (경장) step 1 is 2,215,300 (search summary). Worknet job survey 2021: median police officer 39.0 million (25th percentile 33.15, 75th 46.62; https://www.adiga.kr/jbp/jnf/jobInfoDetail.do?menuId=PCJBPJNF2000&searchCrSeClsfCd=240&searchCrCd=240101) x about 1.13 for pay-table rises since 2021 = 44 million. A typical mid-career officer: 48 million.",
+   "confidence": "medium"
+  },
+  "mechanicalEngineer": {
+   "value": 62000000,
+   "source": "Estimate from Worknet job surveys of about 30 incumbents per job: construction-machinery engineers 2021 median 51.0 million (25th percentile 42.24, 75th 61.58; https://www.adiga.kr/jbp/jnf/jobInfoDetail.do?menuId=PCJBPJNF2000&searchCrSeClsfCd=151&searchCrCd=151101), plant mechanical engineers 2021 median 48.67 million (https://www.adiga.kr/jbp/jnf/jobInfoDetail.do?menuId=PCJBPJNF2000&searchCrSeClsfCd=151&searchCrCd=151102), mechanical engineers 2019 median 48.35 million (search summary). Lifted about 15% to 2026 = 56-59 million for all experience levels; mid-career about 10% higher = 62 million. Cross-check: OECD average full-time pay 53.9 million in 2025.",
+   "confidence": "low"
+  },
+  "lawyer": {
+   "value": 85000000,
+   "source": "Korean Bar Association survey of 860 lawyers (2023-24), as reported in https://www.lawwave.kr/feel/670: juniors at the large firms earn over 100 million (starting pay up to 170 million), small and mid-sized firms 50-100 million, in-house counsel 80-150 million. JobKorea job dictionary median for lawyers 81.9 million (25th percentile 61.3, 75th 99.3; about 30 respondents, published Jan 2021; https://www.jobkorea.co.kr/goodjob/tip/view?News_No=18604). Weighting the three groups gives about 85 million for an early-career lawyer.",
+   "confidence": "low"
+  },
+  "salesDirector": {
+   "value": 250000000,
+   "source": "Estimate. Employees at 211 of the 500 largest companies averaged 102.8 million won in 2025 (https://www.newspim.com/news/view/20260325000301); Linkareer, summarising disclosure filings, puts a senior executive (전무) at 400-800 million (https://community.linkareer.com/employment_data/5302662). A sales director at a large company sits at director or managing-director level (이사/상무), roughly 2.5 times the company average, about 250 million. No published survey of sales directors was found.",
+   "confidence": "low"
+  }
+ },
+ "nationalScales": {
+  "residentPhysician": {
+   "value": 80000000,
+   "source": "Korea Institute for Health and Social Affairs workforce survey (pay for 2020, reported in https://www.newsis.com/view/NISX20241107_0002950965): residents 72.8 million a year, interns 68.82 million. x 1.10 for pay growth since 2020 = 80 million. Survey income most likely includes on-call duty pay (an assumption); the extra 1 million won a month for essential-care specialties from 2025 is not added.",
+   "confidence": "low"
+  },
+  "specialistPhysician": {
+   "value": 260000000,
+   "source": "Ministry of Health and Welfare 2nd Health and Medical Workforce Survey, 2023 pay from health-insurance records, residents excluded (https://www.medipana.com/news/articleView.html?idxno=418417): all physicians 285.2 million; university hospitals 199.8, large general hospitals 251.5, general hospitals of 100-299 beds 354.3, clinics 326.0 million. 1st survey (2020): hospital-employed doctors 185.4 million vs clinic owners 294.3 million (https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&tag=&act=view&list_no=372084&cg_code=). A search snippet quotes an OECD figure of 264 million for salaried specialists (https://www.newsmp.com/news/articleView.html?idxno=250387). 260 million used.",
+   "confidence": "medium"
+  },
+  "registeredNurse": {
+   "value": 55000000,
+   "source": "Ministry of Health and Welfare 2nd Health and Medical Workforce Survey: nurses averaged 51.95 million won in 2023 (https://www.medipana.com/news/articleView.html?idxno=418417). OECD average annual wage series: 50,184,136 (2023) to 53,915,741 (2025), +7.4% (https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@AV_AN_WAGE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels). 51.95 x 1.074 = 55.8 million; 55 million used.",
+   "confidence": "medium"
+  },
+  "secondaryTeacher": {
+   "value": 60000000,
+   "source": "OECD Education at a Glance 2025 (statutory salary, upper secondary, USD PPP, from a search summary because the OECD page returned 403): 37,773 starting and 65,765 after 15 years. 65,765 x 872.47 (2024 household-consumption PPP, World Bank) = 57.4 million; plus the 2025 (+3.0%) and 2026 (+3.5%) civil-service raises = 61.2 million. 2026 pay table for step 15: base 2,889,700 a month plus allowances and bonuses is about 53-56 million (https://mnt.kr/2026-%EA%B5%90%EC%82%AC-%ED%98%B8%EB%B4%89%ED%91%9C-%EC%99%84%EC%A0%84%EC%A0%95%EB%A6%AC%EF%BD%9C%EC%B4%88%EB%93%B1%C2%B7%EC%A4%91%EB%93%B1%C2%B7%EA%B8%B0%EA%B0%84%EC%A0%9C-%EA%B5%90%EC%82%AC/). Korea Herald on the 2024 edition: 64,699 USD PPP after 15 years (https://www.koreaherald.com/article/3472092). 60 million used.",
+   "confidence": "medium"
+  },
+  "airlineFirstOfficer": {
+   "value": 100000000,
+   "source": "No official source found. Aviation write-ups put Korean Air first officers at 82-97 million base and 100-125 million total with flight pay in 2026 (https://aviationa2z.com/index.php/2026/04/11/korean-air-pilot-salary-2026/, which cites no source), new first officers at 70-80 million, and low-cost-carrier new first officers at 45-60 million (search summaries of https://airtravelinfo.kr/air_sense_board/1331866 and https://v.daum.net/v/QQ6eLz2m0m). About 100 million for a typical first officer across carriers.",
+   "confidence": "low"
+  },
+  "airlineCaptain": {
+   "value": 200000000,
+   "source": "No official source found. The same write-ups give Korean Air captains 162-192 million base and 210-240 million total (https://aviationa2z.com/index.php/2026/04/11/korean-air-pilot-salary-2026/), Korean Air captains with 10+ years at 140-250 million and Asiana captains at 130-280 million (search summaries). A typical captain across carriers: about 200 million.",
+   "confidence": "low"
+  },
+  "ceoLargeCompany": {
+   "value": 2180000000,
+   "source": "Leaders Index analysis of 211 of the 500 largest companies' FY2025 reports: the highest-paid executive (usually the CEO or the owner-chairman) averaged 2.18 billion won, up 7.6% (https://www.newspim.com/news/view/20260325000301). The mean is lifted by owner-chairmen (Hanwha 24.8 billion); a search snippet citing an ERRI report (page blocked by a captcha) puts hired professional-manager directors paid over 500 million at about 1.21 billion in 2024, so a hired CEO earns less than the figure used.",
+   "confidence": "low"
+  },
+  "dentist": {
+   "value": 210000000,
+   "source": "Ministry of Health and Welfare 2nd Health and Medical Workforce Survey: dentists averaged 202.77 million won in 2023 (employed dentists and clinic owners together; https://www.medipana.com/news/articleView.html?idxno=418417), lifted by about 4% to 2025-26 and rounded to 210 million. 1st survey (2020): 194.9 million.",
+   "confidence": "medium"
+  },
+  "pharmacist": {
+   "value": 80000000,
+   "source": "Ministry of Health and Welfare 2nd Health and Medical Workforce Survey: pharmacists averaged 84.26 million won in 2023 (owners and employees together; https://www.medipana.com/news/articleView.html?idxno=418417), 84.16 million in 2020. The average is above the median because owners earn more, so about 80 million is used for a typical pharmacist after wage growth.",
+   "confidence": "medium"
+  }
+ },
+ "softwareEngineer": {
+  "junior": {
+   "value": 42000000,
+   "source": "Estimate from several partial sources. Employers' federation new-graduate starting pay 2023: 36.75 million all firms, 33.28 million under 300 staff, 53.02 million at 300+ (https://m.segye.com/view/20250429507005, from search results); Naver about 48 million and Kakao about 46 million starting (https://community.linkareer.com/employment_data/5092525 snippet); crowd-sourced first-year software developer 34.9 million (https://groupby.careers/%EC%A7%81%EB%AC%B4%EB%B3%84-%EC%84%B8%EB%B6%80-%EC%97%B0%EB%B4%89-%EB%B6%84%EC%84%9D-1%ED%83%84-2025-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EC%97%B0%EB%B4%89-%ED%98%84%EC%8B%A4-%EC%97%B0%EC%B0%A8%EB%B3%84/). Industry survey (KOSA, 2026 rates) junior-grade labour cost about 6.28 million a month including employer insurance and severance accrual: x 12 / 1.187 = 63 million cash pay (https://www.sw.or.kr/site/sw/ex/board/View.do?cbIdx=304&bcIdx=64717&searchExt1=; grade figures from the ZDNet Korea summary https://zdnet.co.kr/view/?no=20251223102338). The national median new developer sits between these: 42 million.",
+   "confidence": "low"
+  },
+  "midLevel": {
+   "value": 58000000,
+   "source": "Estimate. Industry survey (KOSA, 2026 rates) mid-grade labour cost about 6.98 million a month: x 12 / 1.187 = 70.5 million cash pay; crowd-sourced fifth-year software developer 47.9 million (groupby.careers page above); application-software developers in the KOSA survey average 7.75 million a month in labour cost. The median mid-level developer (about 5-8 years) is placed at 58 million.",
+   "confidence": "low"
+  }
+ },
+ "wageLevels": {
+  "medianFullTime": {
+   "value": 42500000,
+   "source": "Derived from OECD data, 2025: the minimum wage is 59.57% of the median full-time wage (https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@MIN2AVE,1.0/all?startPeriod=2022&c[REF_AREA]=KOR&format=csvfilewithlabels). 2025 minimum 10,030 x 209 x 12 = 25,155,240; / 0.5957 = 42.2 million. Cross-check: OECD average annual wage 53,915,741 (2025) / (59.57 / 47.21 = 1.262 mean-to-median) = 42.7 million. For all wage jobs including part-time, KOSTAT reports a December 2024 median of 2.88 million a month and a mean of 3.75 million (https://mods.go.kr/board.es?act=view&bid=11113&list_no=443648&mid=a10301030500). 2026 pay is about 3.5% higher.",
+   "confidence": "medium"
+  },
+  "p90FullTime": {
+   "value": 94000000,
+   "source": "OECD decile ratio D9/D5 of full-time gross earnings = 2.2212 in 2025 (https://sdmx.oecd.org/public/rest/data/OECD.ELS.SAE,DSD_EARNINGS@DEC_I,1.0/KOR......_T?startPeriod=2018&format=csvfilewithlabels) x 42.5 million = 94.4 million. Cross-check from the KOSTAT 2024 distribution of monthly pay across all wage jobs (86.4% earn under 6.5 million, 92.0% under 8.0 million): the 90th percentile is about 7.5 million a month = 89 million a year.",
+   "confidence": "medium"
+  }
+ },
+ "livingCost": {
+  "value": 24000000,
+  "source": "Own build-up from https://view.asiae.co.kr/article/2026081108373998499 (Seoul one-room average rent 625,000 won a month in Aug 2026 with a 10 million deposit, management fee 84,000), the 2025 household survey (1-person households spend about 1.7 million a month, 20.26 million a year; https://www.news1.kr/economy/trend/6002484) and food and transport shares from the Q3 2025 survey summary. Net-to-gross uses about 9.5% employee social insurance.",
+  "confidence": "medium",
+  "basis": "Single adult renting a studio in a typical large city, net need about 1.8 million won a month (21.6 million a year): rent about 480,000 (Seoul average 625,000; a regional city such as Busan about 430,000 near a university) + maintenance fee and utilities 140,000 + food 700,000 (1-person households spend about 420,000-450,000 on groceries and 290,000-310,000 eating out) + transport 70,000 + phone and internet 70,000 + health, clothing and other basics 340,000 = 1.8 million. Grossing up for about 9.5% employee social insurance (pension, health, long-term care, employment) with almost no income tax at this level gives 21.6 / 0.905 = 23.9 million, rounded to 24 million. A minimum-wage worker (25.88 million gross, about 1.95 million net a month) just covers it. The 2026 basic-livelihood benefit for a single person is only 820,556 a month."
+ },
+ "tuition": {
+  "vocational": {
+   "community": {
+    "value": 6653100,
+    "source": "2026 average tuition of the 125 junior colleges (전문대학): 6,653,100 won a year; private 6,686,600; public 2,231,200 (Ministry of Education and KCUE April 2026 disclosure, https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153). Almost all junior-college students are in private colleges.",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 6653100,
+    "source": "Same junior-college average: there is no separate mainstream-university tier for vocational programmes. Cheaper state options exist but are small: public junior colleges 2,231,200 a year and Korea Polytechnic degree courses about 1.2 million a semester (a study-guide summary, https://lifelearn.kr/blog/0108-korea-polytechnic-university-complete-guide/ as returned by search).",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 7000000,
+    "source": "Estimate: junior-college field averages in 2026 are arts 7,229,300, engineering 6,788,600, natural science 6,718,700 and humanities and social science 5,924,200 (https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153 and the Kyosu article https://www.kyosu.net/news/articleView.html?idxno=205119). 7.0 million stands in for the most selective vocational colleges.",
+    "confidence": "low"
+   }
+  },
+  "bachelor": {
+   "community": {
+    "value": 6653100,
+    "source": "Junior-college average (see vocational); junior colleges mostly award 2-3 year diplomas, with a few 4-year advanced courses at similar fees.",
+    "confidence": "high"
+   },
+   "state": {
+    "value": 7273000,
+    "source": "https://www.seoul.co.kr/news/society/education-news/2026/04/29/20260429500153 (Ministry of Education and KCUE, 2026): average tuition of the 192 four-year universities is 7,273,000 won a year (+2.1%); national and public universities 4,250,000; private 8,231,500; non-capital region 6,619,600; capital region 8,270,000. By field: humanities and social science 6,433,700, natural science 7,323,300, engineering 7,677,400, arts 8,338,100, medicine 10,325,900. The all-university average is used because most students attend private universities; use 4.25 million for national universities only.",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 8380000,
+    "source": "Average annual tuition per student in 2026 (per-semester figures x 2) from https://www.veritas-a.com/news/articleView.html?idxno=611573: Seoul National 3,045,908 x 2 = 6.09 million; Korea University 4,545,715 x 2 = 9.09 million; Yonsei 4,978,903 x 2 = 9.96 million. Mean of the three = 8.38 million (a simple average, not weighted by student numbers).",
+    "confidence": "medium"
+   }
+  },
+  "master": {
+   "community": {
+    "value": 7500000,
+    "source": "Junior colleges and open-access institutions do not offer master's degrees, so this mirrors the state value.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 7500000,
+    "source": "Estimate for general graduate schools (two semesters): national universities about 4.3-6 million (Pusan National humanities 2.4 million a semester per a search snippet of https://onestop.pusan.ac.kr/page?menuCD=000000000000078; Seoul National 3.1-3.8 million a semester; a search snippet of the Higher Education Research Institute gives averages of 4,284,000 national and 7,994,000 private, units unclear) and private universities about 8-12 million (Sogang 5.4-7.1 million a semester, https://gradsch.sogang.ac.kr/front/cmsboardview.do?siteId=gradsch&bbsConfigFK=402&pkid=917447). Weighted guess 7.5 million. A one-off admission fee (Seoul National 169,000; Yonsei 1,028,000; Korea University 1,142,000) is extra.",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 10800000,
+    "source": "Two semesters of general graduate tuition, mean of humanities, natural science and engineering, per university: Seoul National 6.2 / 7.6 / 7.7 million (admission guide PDF https://admission.snu.ac.kr/webdata/admission/files/2026_graduate_spring.pdf, 2025 basis) = 7.16 million; Yonsei 2026 per semester 5,217,000 / 6,298,000 / 7,342,000 (https://www.yonsei.ac.kr/sites/sc/down/2026_fee2.pdf, from search results) = 12.57 million; Korea University per semester 5,237,000 / 6,339,000 / 7,392,000 plus 37,500 fees (https://www.korea.ac.kr/ko/582/subview.do, from search results) = 12.72 million. Mean of the three universities = 10.8 million.",
+    "confidence": "medium"
+   }
+  },
+  "doctorate": {
+   "community": {
+    "value": 7500000,
+    "source": "Open-access institutions do not offer doctorates, so this mirrors the state value.",
+    "confidence": "low"
+   },
+   "state": {
+    "value": 7500000,
+    "source": "Master's and doctoral students pay the same per-semester schedule at Seoul National, Yonsei and Korea University, so the master's figure is used. Many doctoral students in science and engineering have tuition covered by research projects or stipends (my general knowledge).",
+    "confidence": "low"
+   },
+   "elite": {
+    "value": 10800000,
+    "source": "Same schedule as the master's figure above (Seoul National, Yonsei and Korea University charge master's and doctoral students the same).",
+    "confidence": "medium"
+   }
+  },
+  "medicine": {
+   "community": {
+    "value": 10086000,
+    "source": "Junior colleges do not offer medicine, so this mirrors the state value.",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 10086000,
+    "source": "2026 tuition of the 39 medical schools: average 5,043,077 won a semester x 2 = 10,086,154 a year; 29 private schools average 5,724,138 a semester (11.45 million a year); national and public schools average 3,043,250 a semester (6.09 million a year) (https://www.veritas-a.com/news/articleView.html?idxno=611272). The Seoul Shinmun field average for medicine is 10,325,900.",
+    "confidence": "high"
+   },
+   "elite": {
+    "value": 11000000,
+    "source": "2026 per semester x 2 from https://www.veritas-a.com/news/articleView.html?idxno=611272: Seoul National 3,072,000 = 6.14 million; Korea University 6,812,500 = 13.63 million; Yonsei 6,615,500 = 13.23 million. Mean of the three = 11.0 million.",
+    "confidence": "medium"
+   }
+  },
+  "law": {
+   "community": {
+    "value": 14950000,
+    "source": "Junior colleges do not offer law degrees (law school is a graduate programme), so this mirrors the state value.",
+    "confidence": "medium"
+   },
+   "state": {
+    "value": 14950000,
+    "source": "Average annual tuition of the 25 law schools (법학전문대학원): 14,952,946 won in 2025 per a search summary of https://www.veritas-a.com/news/articleView.html?idxno=552295; earlier figure 14.25 million with private schools 16.79 million and national or public schools 10.44 million (https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=02420646632528016, 24 of 25 schools froze fees). Law school is a graduate programme, so the figure applies after a bachelor's degree.",
+    "confidence": "medium"
+   },
+   "elite": {
+    "value": 17700000,
+    "source": "Annual tuition: Seoul National 2 x 6,649,000 = 13.3 million (admission guide PDF https://admission.snu.ac.kr/webdata/admission/files/2026_graduate_spring.pdf); Korea University 19.5 million (Edaily link above); Yonsei 20.378 million in 2025 (https://www.veritas-a.com/news/articleView.html?idxno=552295). Mean of the three = 17.7 million.",
+    "confidence": "medium"
+   }
+  },
+  "notes": "All figures are annual (two semesters) tuition for a domestic student, in won, 2026 school year unless stated. The tiers follow the brief for South Korea: community = junior colleges, state = regional and mainstream four-year universities, elite = the SKY universities (Seoul National, Korea, Yonsei). For 'state' the average of all 192 four-year universities is used (7.27 million) because most Korean four-year students are in private universities (my general knowledge, roughly three-quarters); national and public universities charge only 4.25 million, private ones 8.23 million. Korean fees are compressed: a year at a SKY university costs only about 15% more than the average university, and Seoul National (a national university corporation) is cheaper than the junior-college average. Community-tier medicine, law, master's and doctorate cells mirror the state value because such institutions do not offer them. Fees have been capped by government for years (the 2026 legal ceiling on increases was 3.19%; 130 of 192 universities raised fees). Not included: one-off graduate admission fees, national scholarships (which cover part or all of tuition for lower-income students) and doctoral stipends, so many students pay less than the sticker price. Medical figures cover the 6-year undergraduate medical degree. Master's, doctorate and vocational cells are estimates."
+ },
+ "studentLoan": {
+  "nominalRate": {
+   "value": 0.017,
+   "source": "https://news.unn.net/news/articleView.html?idxno=594088 (the 2026 second-semester Korea Student Aid Foundation loan rate is frozen at 1.7%); https://www.banksalad.com/articles/%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%9D%B4%EC%9E%90-%EA%B1%B1%EC%A0%95%EC%9D%B4%EB%9D%BC%EB%A9%B4-%ED%95%99%EC%9E%90%EA%B8%88%EB%8C%80%EC%B6%9C-%EC%B7%A8%EC%97%85-%ED%9B%84-%EC%83%81%ED%99%98 (1.7% a year, frozen for the sixth consecutive year)",
+   "confidence": "high"
+  },
+  "inflation": {
+   "value": 0.031,
+   "source": "https://tradingeconomics.com/south-korea/inflation-cpi (consumer prices +3.1% year on year in August 2026, released 1 Sep 2026; the September reading was not yet published on 1 Oct 2026)",
+   "confidence": "medium"
+  },
+  "description": "Korea Student Aid Foundation (KOSAF, 한국장학재단) loans come in two forms: the income-contingent 취업 후 상환 학자금대출 (ICL) and an ordinary fixed-repayment loan, both at 1.7% a year (rates in this entry are decimal fractions, 0.017 = 1.7%). A loan covers the full tuition plus up to 2 million won a semester for living costs (lifetime living-cost cap 24 million for a bachelor's degree, 32 million for general graduate schools, 36 million for professional schools such as medicine); borrowers must be under 35 (undergraduates) or 40 (graduate students) and keep a minimum grade (C, 70 of 100). Under the income-contingent loan nothing is repaid until annual income passes a threshold (28.51 million gross pay for 2025 income per the KOSAF page https://www.kosaf.go.kr/ko/tuition.do?pg=tuition05_01_03, about 30.4 million for 2026 per a secondary source); above it 20% of the excess is withheld through the tax system. Interest waivers apply to lower-income income bands (widened to band 6 in 2026). With inflation at 3.1% the real rate is about -1.4%."
+ },
+ "schooling": {
+  "primarySchool": "초등학교 (chodeung hakgyo, elementary school): 6 years, grades 1-6, ages about 6/7 to 12, free and compulsory. The school year starts on 1 March and children enter in the March after the calendar year in which they turn 6 (so at 6 or 7 years old).",
+  "middleSchool": "중학교 (junghakgyo, middle school): 3 years, grades 7-9, ages about 12/13 to 15, free and compulsory. Compulsory education (grades 1-9) ends here; high school is not compulsory.",
+  "schoolLeaving": "고등학교 (godeung hakgyo, high school): 3 years, grades 10-12, ages about 15/16 to 18. The diploma (졸업장) comes from completing the credits and is not graded. University places depend on two results: the 대학수학능력시험 (College Scholastic Ability Test, CSAT, 수능/suneung), one national exam sat in mid-November of the last year (19 Nov 2026 for entry in 2027; 551,864 registered, 31.5% of them graduates), and the 학교생활기록부 school record (내신/naeshin) built over the three years.",
+  "vocational": "특성화고 (specialised vocational high schools) and 마이스터고 (Meister high schools), 3 years from age 15/16; after school, 전문대학 (junior colleges, 2-3 year 전문학사 diplomas) and 한국폴리텍대학 (Korea Polytechnic Colleges, public vocational colleges with 2-year degree courses and shorter programmes).",
+  "tierCommunity": "전문대학 (junior colleges): 125 institutions, almost all private, 2-3 year diploma programmes, average tuition 6.65 million won; admission is open or by school record and interview. Korea Polytechnic Colleges also sit here.",
+  "tierState": "Mainstream four-year universities (192 institutions, average tuition 7.27 million won): the regional flagship national universities such as 부산대 (Pusan National), 경북대 (Kyungpook National), 전남대 (Chonnam National) and 충남대 (Chungnam National), plus the many private universities in and outside Seoul. By my rough estimate these admit roughly CSAT grade 2-5 students.",
+  "tierElite": "SKY: 서울대학교 (Seoul National University, public), 고려대학교 (Korea University) and 연세대학교 (Yonsei University), the last two private; KAIST and POSTECH are similar for science and engineering. Regular-route cut lines in 2026 were average percentiles of 97-99.7 (https://schoolm.co.kr/guide/jeongsi-pass-cut-2026).",
+  "gradeName": "수능 등급 (CSAT grade), 1 (best) to 9 (worst), lower is better",
+  "gradeSystem": "Recommended 'school grade' for the game: the CSAT (suneung) grade 등급, an integer from 1 (best) to 9 (worst) per subject, so LOWER IS BETTER; show the average of the main subjects (Korean, mathematics, English, inquiry), for example 2.3. Why the CSAT: it is the one national school-leaving exam, comparable across all schools, and it sets the tiers. For Korean, mathematics and inquiry (탐구) the grade is relative to all test takers (graduates and repeaters included): 1 = top 4%, 2 = next 7% (cumulative 11%), 3 = next 12% (23%), 4 = next 17% (40%), 5 = next 20% (60%, the middle band), 6 = next 17% (77%), 7 = next 12% (89%), 8 = next 7% (96%), 9 = bottom 4%. English and Korean History are absolute: English 90-100 raw points = grade 1 ... 0-19 = grade 9, and only 3.11% reached grade 1 in the 2026 test. The report also gives standard scores (Korean and mathematics mean 100, SD 20, range 0-200; inquiry mean 50, SD 10) and percentiles (0-100, higher is better). There is no national pass mark; universities set their own minimum grades. Typical result = grade 5 (the median candidate); top = grade 1 (the 2026 test had 5 perfect scorers and a top Korean standard score of 147). Second measure, the school record (내신, naeshin): each course gets a rank grade on the same 1-9 scale (1 = top 4% of the course within that school) and the grades are averaged, so it is relative within one school and not comparable across schools. In the 2026 admissions cycle 79.9% of places were filled through the rolling route (mostly school record) and 20.1% through the regular route (92% CSAT), and the SKY regular-route cut lines were 97-99.7 average percentile. From the cohort that entered high school in 2025 (admissions 2028) the school record becomes 5 levels (1-5, about 10/24/32/24/10%) and the CSAT becomes an integrated exam but keeps 9 grades.",
+  "gradeSource": "https://suneung.org/ (official CSAT guide: standard scores, 9 relative grades of 4/7/12/17/20/17/12/7/4%, absolute English and Korean History, 2027 CSAT on 19 Nov 2026); https://www.korea.kr/news/policyNewsView.do?newsId=148924193 (2028 reform: 5-level school record, CSAT keeps 9 grades); https://www.kyeonggi.com/article/20251204580108 (2026 CSAT results, search result); https://news.unn.net/news/articleView.html?idxno=562697 (2026 admissions shares, search result); https://www.newspim.com/news/view/20260908000096 (2027 CSAT applicants, search result); https://schoolm.co.kr/guide/jeongsi-pass-cut-2026 (SKY cut lines)",
+  "startingAges": "School year starts 1 March. Elementary 6 years from age 6-7 (grades 1-6); middle school 3 years from 12-13 (grades 7-9), where compulsory education ends at about 15; high school 3 years from 15-16 (grades 10-12), with the CSAT sat at 18-19 in November; special-purpose high schools (science, foreign language, arts) and vocational high schools split off at 15. Junior colleges take 2-3 years and universities 4 years; medicine, dentistry and oriental medicine take 6 years and law school is a 3-year graduate programme (durations are my general knowledge; https://en.wikipedia.org/wiki/Education_in_South_Korea gives the same stages)."
+ },
+ "highlights": [
+  "The 2026 minimum wage of ₩10,320 an hour (about ₩25.9 million a year) equals roughly 60% of the full-time median pay of about ₩42 million (OECD 2025: 59.6%).",
+  "University entry rests on the November CSAT exam and school-record grades, both ranked 1 (best) to 9; four-year tuition averages ₩7.27 million and the state loan charges 1.7%, below 3.1% inflation."
+ ],
+ "caveats": "Method and limits. About 70 web searches and a similar number of page and data fetches were used (more than the 25 suggested, because Korean pay data is scattered); the shared web-search budget (200) ran out before the last checks, so some items rest on search-result summaries. Official PDFs (KOSTAT earnings release, the Seoul National admission guide, the construction wage report) were read by extracting their text locally. Not reachable or not readable: the OECD Education at a Glance 2025 teacher-pay page (403; the 37,773 and 65,765 USD PPP figures come from a search summary and were converted at the 2024 household-consumption PPP of 872.47), the Workpedia wage portal, the Korea Engineering and Consulting Association tables, the Higher Education Research Institute graduate-fee page (certificate error), the ERRI executive-pay page (captcha) and Korea University and Yonsei fee pages (only search snippets). Years: figures are 2025 or 2026 unless stated; doctors, dentists, pharmacists and nurses come from the 2023 reference year of the Ministry of Health and Welfare survey (published Sept 2026) and were lifted a few percent where stated; residents come from a survey of 2020 pay lifted 10%. South Korea publishes no simple full-time median, so the median (42.5 million) and 90th percentile (94 million) are derived from OECD ratios (minimum wage 59.57% of the full-time median; D9/D5 = 2.22) and cross-checked against KOSTAT and Ministry of Labor data (all-worker mean 25,839 won an hour x 146.3 hours = 45.4 million a year). Occupation pay: the Worknet and JobKorea figures are small surveys (about 30 people per job, 2019-2021) and were uplifted; police, electrician, mechanical engineer, lawyer, sales director, pilots and software engineers are my estimates built from the sources named. The software-industry survey (KOSA) counts employer insurance and severance accrual, which I removed by dividing by 1.187 (about 10.4% insurance plus 8.33% severance). Pilot pay comes from aviation write-ups that cite no source. CEO pay is an average of top earners including owner-chairmen, so a hired CEO earns less. Tuition: 'state' is the average of all four-year universities (national 4.25 million, private 8.23 million); the cells for vocational state and elite, master's and doctorate are estimates; medicine and law were converted from per-semester figures. The CPI for September 2026 was not published when I checked, so inflation is the August reading. The teacher figure blends the OECD statutory salary with the 2026 civil-service pay table. Living cost is my own basket; the net-to-gross rate (about 9.5% employee insurance) is approximate."
+}
