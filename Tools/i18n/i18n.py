@@ -86,7 +86,7 @@ def specs(text):
     for m in SPEC.finditer(text):
         if m.group(0) == "%%":
             continue
-        conv = m.group(3)
+        conv = m.group(2)
         cls = "obj" if conv in "@sS" else "float" if conv in "fF" else "int"
         out.append((int(m.group(1)) if m.group(1) else None, cls))
     return out
