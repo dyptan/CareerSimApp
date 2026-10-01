@@ -7,6 +7,7 @@
                                     yet, as a JSON file to fill in
     i18n.py chunks LANG NL NC OUTDIR  split what LANG still lacks into NL Localizable and NC Catalogue work files,
                                     each ready to fill in: "strings" values are "" and "_context" explains
+    i18n.py pairs FILE.json...      print each key beside its translation (English | translation), for review
     i18n.py lint FILE.json... [--chunk WORK.json]
                                     validate translation file(s) as a translator would: every key filled, placeholders and
                                     plural forms right for the language (from the folder or file name); with --chunk, also
@@ -454,6 +455,24 @@ def cmd_lint(args):
     sys.exit(1 if errors else 0)
 
 
+def cmd_pairs(args):
+    merged = merged_translations([])
+    for path in args:
+        with open(path, encoding="utf-8") as fh:
+            doc = json.load(fh)
+        table = doc.get("table", "Localizable")
+        print(f"# {path}  ({table}, {len(doc.get('strings', {}))} keys)")
+        for i, (key, value) in enumerate(doc.get("strings", {}).items(), 1):
+            en = merged.get(table, {}).get(key, {}).get("en")
+            source = en if table == "Catalogue" and isinstance(en, str) else key
+            print(f"[{i}] {key!r}" if table == "Catalogue" else f"[{i}] {source}")
+            if table == "Catalogue":
+                print(f"    EN: {source}")
+            if isinstance(en, dict):
+                print(f"    EN forms: {json.dumps(en, ensure_ascii=False)}")
+            print(f"    -> {json.dumps(value, ensure_ascii=False) if isinstance(value, dict) else value}")
+
+
 def cmd_check(args):
     errors = []
     merged = merged_translations(errors)
@@ -761,6 +780,7 @@ def main():
         "skeleton": cmd_skeleton,
         "check": cmd_check,
         "lint": cmd_lint,
+        "pairs": cmd_pairs,
         "chunks": cmd_chunks,
         "apply": cmd_apply,
         "verify": cmd_verify,
