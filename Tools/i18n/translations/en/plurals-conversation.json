@@ -1,0 +1,9 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "You're %lld moves in — %@ more and I'll suggest jobs that fit you.": {
+      "one": "You're %1$lld move in — %2$@ more and I'll suggest jobs that fit you.",
+      "other": "You're %1$lld moves in — %2$@ more and I'll suggest jobs that fit you."
+    }
+  }
+}
