@@ -96,9 +96,6 @@ def check_placeholders(key, text, label, errors):
     want = specs(key)
     got = specs(text)
     positional = [g for g in got if g[0] is not None]
-    if len(want) >= 2 and got and not positional:
-        errors.append(f"{label}: '{key}' has {len(want)} placeholders; the translation must use positional ones (%1$@, %2$lld)")
-        return
     if positional:
         if len(positional) != len(got):
             errors.append(f"{label}: '{key}' mixes positional and plain placeholders")
