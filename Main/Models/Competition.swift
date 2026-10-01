@@ -10,12 +10,21 @@ import Foundation
 /// `Sport.fameCategory` and `Player.fameHireBonus(for:)`).
 struct Competition: Identifiable, Hashable {
     let id: String
-    let name: String
+    private let nameResource: LocalizedStringResource
+    /// The contest's name, in the player's language.
+    var name: String { String(localized: nameResource) }
     let icon: String
-    let blurb: String
+    private let blurbResource: LocalizedStringResource
+    /// What the contest is, in a sentence.
+    var blurb: String { String(localized: blurbResource) }
     let discipline: Discipline
-    /// The titled trophy granted on a win, banked as a `Player.FameAward`.
-    let achievement: String
+    private let achievementResource: LocalizedStringResource
+    /// The titled trophy granted on a win, in the player's language. Banked as a
+    /// `Player.FameAward`, whose stable id is `fameKey` — never this text.
+    var achievement: String { String(localized: achievementResource) }
+    /// The trophy's English title: the id of the `FameAward` a win banks (and what
+    /// `Job.breakthroughFame` names). Never shown.
+    var fameKey: String { achievementResource.key }
     /// Reputation weight this trophy carries when totalled into the player's
     /// fame score (see `Player.fameScore`). A flat 1.0 is "one local win"; the
     /// marquee titles (Olympics, world finals) are tuned higher so a single
@@ -44,6 +53,26 @@ struct Competition: Identifiable, Hashable {
     /// Championship: it is the scouting gate into professional sport, contested
     /// by every serious youth player, so a title is a genuine long shot.
     var maxWinChance: Double? = nil
+
+    /// The catalogue rows pass their text as literals (`name: "Hackathon"`), which the compiler
+    /// extracts into the String Catalog; `name`, `blurb` and `achievement` read it back.
+    init(id: String, name: LocalizedStringResource, icon: String, blurb: LocalizedStringResource,
+         discipline: Discipline, achievement: LocalizedStringResource, fameWeight: Double = 1.0,
+         skills: [WritableKeyPath<SoftSkills, Int>], sports: Set<Sport>?, stages: Set<LifeStage>,
+         minSportYears: Int = 0, maxWinChance: Double? = nil) {
+        self.id = id
+        self.nameResource = name
+        self.icon = icon
+        self.blurbResource = blurb
+        self.discipline = discipline
+        self.achievementResource = achievement
+        self.fameWeight = fameWeight
+        self.skills = skills
+        self.sports = sports
+        self.stages = stages
+        self.minSportYears = minSportYears
+        self.maxWinChance = maxWinChance
+    }
 
     enum Discipline: String { case athletic = "Athletic", esports = "E-Sports", creative = "Creative", mind = "Mind", academic = "Academic" }
 
@@ -897,9 +926,10 @@ enum CompetitionCatalog {
     static let byId: [String: Competition] =
         Dictionary(uniqueKeysWithValues: all.map { ($0.id, $0) })
 
-    /// Every trophy title a competition can grant — how the UI tells a sports
-    /// title apart from the other accolades on the fame shelf.
-    static let achievementTitles: Set<String> = Set(all.map(\.achievement))
+    /// The id (`fameKey`, the English title) of every trophy a competition can grant — how the UI
+    /// tells a sports title apart from the other accolades on the fame shelf. Compare it with a
+    /// `FameAward`'s key, not with its displayed title.
+    static let achievementTitles: Set<String> = Set(all.map(\.fameKey))
 
     /// The top competition a player training `sport` currently qualifies for:
     /// stage-eligible, explicitly tagged for that sport, and within `years` of

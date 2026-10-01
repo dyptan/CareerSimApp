@@ -30,12 +30,28 @@ struct ExecutiveDecision: Identifiable, Hashable {
 
     let id: String
     let kind: Kind
-    let label: String
+    private let labelResource: LocalizedStringResource
+    /// The decision's name, in the player's language.
+    var label: String { String(localized: labelResource) }
     let icon: String
-    let blurb: String
+    private let blurbResource: LocalizedStringResource
+    /// The play's pitch, in the player's language.
+    var blurb: String { String(localized: blurbResource) }
     /// Soft-skill axes the decision leans on. Drives the odds for a gamble
     /// (`investmentRound`); shown as context for the guaranteed `sellShares`.
     let talents: [WritableKeyPath<SoftSkills, Int>]
+
+    /// The catalogue rows pass their text as literals, which the compiler extracts into the
+    /// String Catalog; `label` and `blurb` read it back.
+    init(id: String, kind: Kind, label: LocalizedStringResource, icon: String,
+         blurb: LocalizedStringResource, talents: [WritableKeyPath<SoftSkills, Int>]) {
+        self.id = id
+        self.kind = kind
+        self.labelResource = label
+        self.icon = icon
+        self.blurbResource = blurb
+        self.talents = talents
+    }
 
     static func == (lhs: ExecutiveDecision, rhs: ExecutiveDecision) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }

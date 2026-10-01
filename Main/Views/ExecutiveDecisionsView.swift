@@ -19,8 +19,10 @@ struct ExecutiveDecisionsView: View {
     /// in dollars. `nil` until they touch it, so the slider seeds at fair value.
     @State private var askPrice: Double?
 
-    private var roleName: String {
-        player.currentOccupation.map { "\($0.icon) \($0.displayTitle)" } ?? "your seat"
+    /// "Leading as 💼 Chief Executive Officer" — a whole sentence per case.
+    private var leadingLine: String {
+        guard let job = player.currentOccupation else { return L("Leading as your seat") }
+        return L("Leading as \(job.icon) \(job.displayTitle)")
     }
 
     var body: some View {
@@ -44,23 +46,23 @@ struct ExecutiveDecisionsView: View {
                 .padding()
             }
         }
-        .gameSheetClose($showSheet, title: "Boardroom")
+        .gameSheetClose($showSheet, title: String(localized: "Boardroom", comment: "Title of the sheet with the senior-leadership plays (investment round, selling your stake)"))  // i18n:ignore translator comment
     }
 
     private var header: some View {
         VStack(spacing: 4) {
             Text("🏛️ Boardroom")
                 .font(.title2.bold())
-            Text("Leading as \(roleName)")
+            Text(leadingLine)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             HStack(spacing: 6) {
-                Text("💰 Savings: \(player.money(player.savings))")
+                Text(L("💰 Savings: \(player.money(player.savings))"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 InfoHint(
                     title: "🏛️ Boardroom",
-                    message: "Big moves for the company you lead. You can make each one once a year, and making one uses up your year."
+                    message: L("Big moves for the company you lead. You can make each one once a year, and making one uses up your year.")
                 )
             }
         }
@@ -93,7 +95,7 @@ struct ExecutiveDecisionsView: View {
                     ? player.resolveExecutiveDecision(decision, askPrice: currentAsk)
                     : player.resolveExecutiveDecision(decision)
                 player.reportApplicationOutcome(
-                    title: result.success ? "\(decision.icon) It worked!" : "\(decision.icon) Not this time",
+                    title: result.success ? L("\(decision.icon) It worked!") : L("\(decision.icon) Not this time"),
                     message: resultLine(for: result)
                 )
                 onCommit()
@@ -128,7 +130,7 @@ struct ExecutiveDecisionsView: View {
             HStack {
                 Text("Asking price")
                 Spacer()
-                Text("\(player.money(currentAsk))").monospacedDigit()
+                Text(verbatim: player.money(currentAsk)).monospacedDigit()
             }
             .font(.caption.bold())
 
@@ -142,7 +144,7 @@ struct ExecutiveDecisionsView: View {
                 )
             }
 
-            Text("🏷️ Worth about \(player.money(bounds.fair)) · 🎲 ~\(Int((odds * 100).rounded()))% chance someone buys\(player.economyInRecession ? " · 📉 bad economy" : "")")
+            Text(askingSummary(fair: bounds.fair, odds: odds))
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
@@ -150,22 +152,26 @@ struct ExecutiveDecisionsView: View {
 
     // MARK: - Copy helpers
 
+    /// "Worth about $X · 🎲 ~12% chance someone buys" — with the economy's mark when it is bad.
+    private func askingSummary(fair: Int, odds: Double) -> String {
+        player.economyInRecession
+            ? L("🏷️ Worth about \(player.money(fair)) · 🎲 ~\(Fmt.percent(odds)) chance someone buys · 📉 bad economy")
+            : L("🏷️ Worth about \(player.money(fair)) · 🎲 ~\(Fmt.percent(odds)) chance someone buys")
+    }
+
     private func actionLabel(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
-        case .investmentRound: return "Announce the round"
-        case .sellShares:      return "Offer for sale at \(player.money(currentAsk))"
+        case .investmentRound: return L("Announce the round")
+        case .sellShares:      return L("Offer for sale at \(player.money(currentAsk))")
         }
     }
 
     private func previewLine(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound:
-            let odds = Int((player.investmentRoundOdds() * 100).rounded())
-            let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
-            return "🎲 ~\(odds)% chance (💼 fame +\(famePts)%) · 📈 your share ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)), pay +\(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))%"
+            return L("🎲 ~\(Fmt.percent(player.investmentRoundOdds())) chance (💼 fame +\(Fmt.percent(player.investmentRoundFameBonus()))) · 📈 your share ×\(Fmt.decimal(GameConstants.investmentRoundValueGrowth)), pay +\(Fmt.percent(GameConstants.investmentRoundIncomeGrowth - 1))")
         case .sellShares:
-            let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
-            return "🎲 ~\(odds)% chance someone buys · 💰 \(player.money(currentAsk))"
+            return L("🎲 ~\(Fmt.percent(player.shareSaleOdds(askPrice: currentAsk))) chance someone buys · 💰 \(player.money(currentAsk))")
         }
     }
 
@@ -173,12 +179,12 @@ struct ExecutiveDecisionsView: View {
         switch outcome.decision.kind {
         case .investmentRound:
             return outcome.success
-                ? "🎉 Investors said yes! The company is worth more, it can pay you more, and you earned the “\(outcome.fameTitle ?? "")” title."
-                : "🚫 Investors said no this time. Grow your reputation and try again next year."
+                ? L("🎉 Investors said yes! The company is worth more, it can pay you more, and you earned the “\(outcome.fameTitle ?? "")” title.")
+                : L("🚫 Investors said no this time. Grow your reputation and try again next year.")
         case .sellShares:
             return outcome.success
-                ? "💸 Sold! \(player.money(outcome.cash)) went into your savings."
-                : "🤝 Nobody bought at that price this year. Ask for less, or try again next year."
+                ? L("💸 Sold! \(player.money(outcome.cash)) went into your savings.")
+                : L("🤝 Nobody bought at that price this year. Ask for less, or try again next year.")
         }
     }
 
@@ -187,33 +193,38 @@ struct ExecutiveDecisionsView: View {
         decision.blurb + "\n\n" + infoDetails(for: decision)
     }
 
+    /// The numbers behind a play, one paragraph per key.
     private func infoDetails(for decision: ExecutiveDecision) -> String {
         switch decision.kind {
         case .investmentRound:
-            let odds = Int((player.investmentRoundOdds() * 100).rounded())
-            let famePts = Int((player.investmentRoundFameBonus() * 100).rounded())
-            return """
-            A gamble: about a \(odds)% chance investors say yes this year.
-
-            What helps:
-            • Your pitch — 💬 Persuader most of all, then vision, talking and leading (+\(Int((player.investmentRoundSkillFit() * 40).rounded()))% now, up to +40%)
-            • People you know
-            • Your 💼 Business fame — investors back founders they've heard of (+\(famePts)% now, up to +25%)
-
-            A company can raise money at most \(GameConstants.maxInvestmentRounds) times, and investors want to see a year in business first.
-
-            The money goes into the company, not your pocket. Your share of the company becomes worth ×\(String(format: "%.1f", GameConstants.investmentRoundValueGrowth)), the business can pay you \(Int(((GameConstants.investmentRoundIncomeGrowth - 1) * 100).rounded()))% more, and you get more famous in business. To turn it into money, sell your share. If investors say no, you only lose the year.
-            """
+            let rounds = GameConstants.maxInvestmentRounds
+            let helps = [
+                L("What helps:"),
+                L("• Your pitch — 💬 Persuader most of all, then vision, talking and leading (+\(Fmt.percent(player.investmentRoundSkillFit() * 0.4)) now, up to +40%)"),
+                L("• People you know"),
+                L("• Your 💼 Business fame — investors back founders they've heard of (+\(Fmt.percent(player.investmentRoundFameBonus())) now, up to +25%)"),
+            ].joined(separator: "\n")
+            return [
+                L("A gamble: about a \(Fmt.percent(player.investmentRoundOdds())) chance investors say yes this year."),
+                helps,
+                L("A company can raise money at most \(rounds) times, and investors want to see a year in business first."),
+                L("The money goes into the company, not your pocket. Your share of the company becomes worth ×\(Fmt.decimal(GameConstants.investmentRoundValueGrowth)), the business can pay you \(Fmt.percent(GameConstants.investmentRoundIncomeGrowth - 1)) more, and you get more famous in business. To turn it into money, sell your share. If investors say no, you only lose the year."),
+            ].joined(separator: "\n\n")
         case .sellShares:
-            let bounds = player.shareAskingBounds()
-            let odds = Int((player.shareSaleOdds(askPrice: currentAsk) * 100).rounded())
-            return """
-            Sell your share of the company for a price you choose. It's worth about \(player.money(bounds.fair)) right now — \(player.currentOccupation?.isEntrepreneurial == true ? "what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors" : "the company shares you've earned since you last sold (part of your pay each year, up to twice your pay)").
-
-            The more you ask, the fewer buyers: at \(player.money(currentAsk)) there's about a \(odds)% chance someone buys this year\(player.economyInRecession ? " — fewer buyers than usual, because the economy is doing badly" : "").
-
-            \(player.currentOccupation?.isEntrepreneurial == true ? "If it sells, you leave the business — it isn't yours any more, and you're free to start something new. Fees and taxes take \(Int((GameConstants.founderExitCostRate * 100).rounded()))% of the price." : "If it sells, you keep your job. Taxes take \(Int((GameConstants.equitySaleTaxRate * 100).rounded()))% of the price, and you start earning new shares from zero.")
-            """
+            let fair = player.money(player.shareAskingBounds().fair)
+            let ask = player.money(currentAsk)
+            let odds = Fmt.percent(player.shareSaleOdds(askPrice: currentAsk))
+            let founder = player.currentOccupation?.isEntrepreneurial == true
+            let worth = founder
+                ? L("Sell your share of the company for a price you choose. It's worth about \(fair) right now — what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors.")
+                : L("Sell your share of the company for a price you choose. It's worth about \(fair) right now — the company shares you've earned since you last sold (part of your pay each year, up to twice your pay).")
+            let buyers = player.economyInRecession
+                ? L("The more you ask, the fewer buyers: at \(ask) there's about a \(odds) chance someone buys this year — fewer buyers than usual, because the economy is doing badly.")
+                : L("The more you ask, the fewer buyers: at \(ask) there's about a \(odds) chance someone buys this year.")
+            let aftermath = founder
+                ? L("If it sells, you leave the business — it isn't yours any more, and you're free to start something new. Fees and taxes take \(Fmt.percent(GameConstants.founderExitCostRate)) of the price.")
+                : L("If it sells, you keep your job. Taxes take \(Fmt.percent(GameConstants.equitySaleTaxRate)) of the price, and you start earning new shares from zero.")
+            return [worth, buyers, aftermath].joined(separator: "\n\n")
         }
     }
 }

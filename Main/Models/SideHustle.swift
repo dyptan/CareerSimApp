@@ -13,9 +13,13 @@ import Foundation
 /// talent or career for and you are rolling against essentially nothing.
 struct SideHustle: Identifiable, Hashable {
     let id: String
-    let label: String
+    private let labelResource: LocalizedStringResource
+    /// The project's name, in the player's language.
+    var label: String { String(localized: labelResource) }
     let icon: String
-    let blurb: String
+    private let blurbResource: LocalizedStringResource
+    /// What the project is, in a sentence or two.
+    var blurb: String { String(localized: blurbResource) }
     /// The soft-skill axes this venture draws on. The player's levels in these
     /// talents drive the success odds.
     let talents: [WritableKeyPath<SoftSkills, Int>]
@@ -29,9 +33,15 @@ struct SideHustle: Identifiable, Hashable {
     /// capped at 10 in `advanceYear`) — the craft axes drawn on plus a
     /// founder-cluster bump. Only the fame award turns on the roll.
     var growth: [WeightedAbility] = []
-    /// Title of the fame award banked on a successful year. Defaults to `label`
-    /// when nil.
-    var fameTitle: String? = nil
+    private var fameTitleResource: LocalizedStringResource? = nil
+    /// The bespoke title of the fame award banked on a successful year, in the player's
+    /// language; nil when the award is named after the project (see `awardTitle`).
+    var fameTitle: String? { fameTitleResource.map { String(localized: $0) } }
+    /// The title of the fame award a successful year banks, in the player's language.
+    var awardTitle: String { fameTitle ?? label }
+    /// The English title of that award: its stable id (`FameAward` key, `requiresAward`,
+    /// `Job.breakthroughFame`). Never shown.
+    var fameKey: String { fameTitleResource?.key ?? labelResource.key }
     /// The industry a committed year of this venture credits as *work
     /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
     /// so years spent building a startup, pitching, or crowdfunding accumulate
@@ -48,8 +58,37 @@ struct SideHustle: Identifiable, Hashable {
     /// within the cap, so building an audience matters most where it's lowest.
     var successCeiling: Double = 0.9
     /// A fame award the player must hold to take this project on — the big-
-    /// break titles that open the star projects. `nil` for open projects.
+    /// break titles that open the star projects. `nil` for open projects. The
+    /// award's English title, i.e. its id (compare with `fameKey`); show it with
+    /// `requiredAwardTitle`.
     var requiresAward: String? = nil
+
+    /// The required award's title in the player's language, for the lock line.
+    var requiredAwardTitle: String? {
+        guard let requiresAward else { return nil }
+        return SideHustleCatalog.all.first { $0.fameKey == requiresAward }?.awardTitle ?? requiresAward
+    }
+
+    /// Row literals pass the text as literals (`label: "Host a Podcast"`), which the compiler
+    /// extracts into the String Catalog; `label`, `blurb` and `fameTitle` read it back.
+    init(id: String, label: LocalizedStringResource, icon: String, blurb: LocalizedStringResource,
+         talents: [WritableKeyPath<SoftSkills, Int>], fameCategory: FameCategory, fameWeight: Double,
+         stages: Set<LifeStage>, growth: [WeightedAbility] = [], fameTitle: LocalizedStringResource? = nil,
+         experienceCategory: JobCategory? = nil, successCeiling: Double = 0.9, requiresAward: String? = nil) {
+        self.id = id
+        self.labelResource = label
+        self.icon = icon
+        self.blurbResource = blurb
+        self.talents = talents
+        self.fameCategory = fameCategory
+        self.fameWeight = fameWeight
+        self.stages = stages
+        self.growth = growth
+        self.fameTitleResource = fameTitle
+        self.experienceCategory = experienceCategory
+        self.successCeiling = successCeiling
+        self.requiresAward = requiresAward
+    }
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -163,13 +202,16 @@ struct SideHustle: Identifiable, Hashable {
         // event — the banked reputation is scaled up from the raw catalogue
         // weight (see GameConstants.accomplishmentFameMultiplier).
         let banked = fameWeight * GameConstants.accomplishmentFameMultiplier
-        let grant = FameGrant(title: fameTitle ?? label, category: fameCategory, weight: banked)
+        let grant = FameGrant(title: awardTitle, key: fameKey, category: fameCategory, weight: banked)
         return Outcome(hustle: self, success: true, odds: odds, grantedFame: grant)
     }
 
     /// The fame award banked by a successful year.
     struct FameGrant {
+        /// The award's title, in the player's language.
         let title: String
+        /// The award's English title: its stable id. Never shown.
+        let key: String
         let category: FameCategory
         let weight: Double
     }
