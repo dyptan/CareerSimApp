@@ -8,23 +8,48 @@ struct RetirementView: View {
     /// just a progress check there (`Difficulty.keepsScore`).
     private var keepsScore: Bool { player.difficulty.keepsScore }
 
+    /// The sheet's headline. Opened from the header's Score button any time, and
+    /// on its own at the end of a career — so it reads as a progress check until
+    /// the run is actually over.
+    private var heading: String {
+        if player.hasRetired { return L("Game Over") }
+        return keepsScore ? L("Your score") : L("Your progress")
+    }
+
+    /// One whole sentence per state (retired or not, scored or not).
+    private var summary: String {
+        switch (player.hasRetired, keepsScore) {
+        case (true, true):
+            return L("You reached \(GameConstants.retirementAge) — your career is over and this score is final.")
+        case (true, false):
+            return L("You reached \(GameConstants.retirementAge) — your career is over.")
+        case (false, true):
+            return L("You're \(player.age). Here's how your life is going so far — keep playing to grow your score, or start over.")
+        case (false, false):
+            return L("You're \(player.age). Here's how your life is going so far — keep playing, or start over.")
+        }
+    }
+
+    private var savingsLine: String {
+        player.isSimplified
+            ? L("Money earned: \(player.money(player.savings))")
+            : L("Savings: \(player.money(player.savings))")
+    }
+
     var body: some View {
         VStack(spacing: 16) {
-            // Opened from the header's Score button any time, and on its own at
-            // the end of a career — so it reads as a progress check until the
-            // run is actually over.
-            Text(player.hasRetired ? "Game Over" : (keepsScore ? "Your score" : "Your progress"))
+            Text(heading)
                 .font(.largeTitle.bold())
+                .multilineTextAlignment(.center)
                 .padding(.top)
 
-            Text(player.hasRetired
-                 ? "You reached \(GameConstants.retirementAge) — your career is over\(keepsScore ? " and this score is final." : ".")"
-                 : "You're \(player.age). Here's how your life is going so far — keep playing\(keepsScore ? " to grow your score" : ""), or start over.")
+            Text(summary)
                 .font(.body)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal)
 
-            Text("\(player.isSimplified ? "Money earned" : "Savings"): \(player.money(player.savings))")
+            Text(savingsLine)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -46,12 +71,12 @@ struct RetirementView: View {
             // caption says net worth and not savings.
             if keepsScore {
                 HStack(spacing: 6) {
-                    Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(player.leaderboardScore.formatted(.number))")
+                    Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(Fmt.number(player.leaderboardScore))")
                         .font(.subheadline.bold())
                         .foregroundStyle(.secondary)
                     InfoHint(
-                        title: "🏅 Score",
-                        message: "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score."
+                        title: L("🏅 Score"),
+                        message: L("What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.")
                     )
                 }
             }
@@ -122,8 +147,10 @@ struct GoalView: View {
     @ObservedObject var appUIState: AppUIState
 
     private var achievementText: String {
-        let role = player.currentOccupation?.displayTitle ?? "a top leadership role"
-        return "You climbed all the way to the top — you're now \(role)! 👔"
+        guard let role = player.currentOccupation?.displayTitle else {
+            return L("You climbed all the way to the top — you're now in a top leadership role! 👔")
+        }
+        return L("You climbed all the way to the top — you're now \(role)! 👔")
     }
 
     var body: some View {
@@ -139,6 +166,7 @@ struct GoalView: View {
             Text(achievementText)
                 .font(.body)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal)
 
             Text("Reached at age \(player.age).")

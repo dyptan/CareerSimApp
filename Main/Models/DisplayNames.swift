@@ -54,3 +54,9 @@ extension Competition.Discipline { var displayName: String { rawValue } }
 
 // MARK: - Requests from other sections
 // Add `extension Type { var displayName: String { … } } // wanted by <section>` here; the owner takes it over.
+
+extension Job {
+    /// `displayBaseTitle` for a role known only by its `baseTitle` id — a venture's name in the
+    /// "Founder of …" fame-award title. Same lookup as the instance member. // wanted by player model (FameAward)
+    static func displayBaseTitle(forBaseTitle baseTitle: String) -> String { baseTitle }
+}

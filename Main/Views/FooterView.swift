@@ -136,22 +136,22 @@ struct FooterView: View {
     private var activityButtons: some View {
         FooterButtonRow {
             if hasActivities {
-                Button("Activities") { appUIState.showActivitiesSheet = true }
+                Button(String(localized: "Activities", comment: "Footer button: opens the sports, study and hobby activities")) { appUIState.showActivitiesSheet = true }  // i18n:ignore translator comment
             }
 
             // Adults only; open calls mean there's always something to enter.
             if EventCatalog.all.contains(where: player.canJoinEvent) {
-                Button("Events") { appUIState.showEventsSheet = true }
+                Button(String(localized: "Events", comment: "Footer button: opens professional events such as conferences and festivals")) { appUIState.showEventsSheet = true }  // i18n:ignore translator comment
             }
 
             // Jobs open up once the player reaches legal working age; before
             // that they're in school and nothing in the list is applicable.
             if player.age >= GameConstants.minimumWorkingAge {
-                Button("Jobs") { appUIState.showCareersSheet.toggle() }
+                Button(String(localized: "Jobs", comment: "Footer button: opens the job listings")) { appUIState.showCareersSheet.toggle() }  // i18n:ignore translator comment
             }
 
             if hasSideHustles {
-                Button("Projects") { appUIState.showSideHustlesSheet = true }
+                Button(String(localized: "Projects", comment: "Footer button: opens spare-time projects that build skills and fame")) { appUIState.showSideHustlesSheet = true }  // i18n:ignore translator comment
             }
 
             // The founder path is a realistic-mode adult play, and only one
@@ -160,13 +160,13 @@ struct FooterView: View {
             if !player.isSimplified,
                player.age >= GameConstants.minimumEntrepreneurAge,
                player.currentOccupation?.isEntrepreneurial != true {
-                Button("Ventures") { appUIState.showEntrepreneurshipSheet = true }
+                Button(String(localized: "Ventures", comment: "Footer button: opens starting your own business")) { appUIState.showEntrepreneurshipSheet = true }  // i18n:ignore translator comment
             }
 
             // Boardroom: senior-leadership strategy plays, shown only once the
             // player holds an executive seat (CEO, director, partner, founder).
             if player.canMakeExecutiveDecisions {
-                Button("Boardroom") { appUIState.showExecutiveSheet = true }
+                Button(String(localized: "Boardroom", comment: "Footer button: opens the executive decisions (sell shares, raise money)")) { appUIState.showExecutiveSheet = true }  // i18n:ignore translator comment
             }
 
             // Education stays hidden until the player has graduated: through
@@ -175,7 +175,7 @@ struct FooterView: View {
             // done.
             if player.currentEducation == nil,
                player.age >= GameConstants.minimumTertiaryAge {
-                Button("Education") { appUIState.showTertiarySheet.toggle() }
+                Button(String(localized: "Education", comment: "Footer button: opens degrees and trainings")) { appUIState.showTertiarySheet.toggle() }  // i18n:ignore translator comment
             }
         }
     }

@@ -196,12 +196,12 @@ struct RootView: View {
             case 10:
                 let degree = Education(Level.Stage.PrimarySchool)
                 player.degrees.append(degree)
-                player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
+                player.recordStatus("🎓", L("Graduated — \(degree.degreeName(in: player.country))"))
                 player.currentEducation = Education(Level.Stage.MiddleSchool)
             case 14:
                 let degree = Education(Level.Stage.MiddleSchool)
                 player.degrees.append(degree)
-                player.recordStatus("🎓", "Graduated — \(degree.degreeName(in: player.country))")
+                player.recordStatus("🎓", L("Graduated — \(degree.degreeName(in: player.country))"))
                 player.currentEducation = Education(Level.Stage.HighSchool)
             case 18:
                 let degree = Education(Level.Stage.HighSchool)
@@ -360,7 +360,7 @@ struct ModeSelectionView: View {
             HStack(spacing: 6) {
                 Text("Age \(startAge)")
                     .font(.headline.monospacedDigit())
-                InfoHint(title: "Starting age", message: ageDetails)
+                InfoHint(title: L("Starting age"), message: ageDetails)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -375,12 +375,12 @@ struct ModeSelectionView: View {
             Menu {
                 Picker("Country", selection: $country) {
                     ForEach(Country.allCases) { option in
-                        Text("\(option.flag) \(option.title)").tag(option)
+                        Text(verbatim: "\(option.flag) \(option.title)").tag(option)
                     }
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Text("\(country.flag) \(country.title)")
+                    Text(verbatim: "\(country.flag) \(country.title)")
                         .font(.headline)
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.caption.weight(.semibold))
@@ -394,7 +394,7 @@ struct ModeSelectionView: View {
     private var ageDetails: String {
         var lines = [startingEducationNote]
         if let skipped = skippedYearsNote { lines.append(skipped) }
-        lines.append("Starting at \(GameConstants.startingAge) lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.")
+        lines.append(L("Starting at \(GameConstants.startingAge) lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on."))
         return lines.joined(separator: "\n\n")
     }
 
@@ -404,17 +404,19 @@ struct ModeSelectionView: View {
         let years = min(startAge, GameConstants.skippedYearsFullValueBelowAge) - GameConstants.startingAge
         guard years > 0 else { return nil }
         let points = years * GameConstants.skippedYearSkillPoints
-        return "🎲 Skipping \(years) year\(years == 1 ? "" : "s") of childhood gives you \(points) random skill point\(points == 1 ? "" : "s"). Playing those years yourself builds far more."
+        // One count drives both nouns' plural forms: a skipped year leaves
+        // `skippedYearSkillPoints` (1) point, so `points` equals `years`.
+        return L("🎲 Skipping \(years) years of childhood gives you \(Fmt.number(points)) random skill points. Playing those years yourself builds far more.")
     }
 
     /// Tells the player which school stage they'll begin in for the chosen age.
     private var startingEducationNote: String {
         let school = country.schooling
         switch startAge {
-        case ..<10:   return "🎒 You'll start in \(school.primarySchool)."
-        case 10..<14: return "🎒 You'll start in \(school.middleSchool) (\(school.primarySchool) done)."
-        case 14..<18: return "🎒 You'll start in your last years of school (\(school.middleSchool) done)."
-        default:      return "🎓 You'll start having just finished \(school.schoolLeaving) — time to choose your next step."
+        case ..<10:   return L("🎒 You'll start in \(school.primarySchool).")
+        case 10..<14: return L("🎒 You'll start in \(school.middleSchool) (\(school.primarySchool) done).")
+        case 14..<18: return L("🎒 You'll start in your last years of school (\(school.middleSchool) done).")
+        default:      return L("🎓 You'll start having just finished \(school.schoolLeaving) — time to choose your next step.")
         }
     }
 
@@ -431,11 +433,13 @@ struct ModeSelectionView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 8) {
-                                Text("\(difficulty.icon)  \(difficulty.title)")
+                                Text(verbatim: "\(difficulty.icon)  \(difficulty.title)")
                                     .font(.title2.bold())
+                                    .lineLimit(2)
                                 if difficulty.isRecommendedForNewPlayers {
                                     Text("Start here")
                                         .font(.caption2.bold())
+                                        .fixedSize()
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 3)
                                         .background(Capsule().fill(Color.accentColor))
@@ -481,7 +485,7 @@ struct ModeSelectionView: View {
     RootView()
 }
 
-#Preview("Mode selection") {
+#Preview("Mode selection") {  // i18n:ignore preview name
     ModeSelectionView(player: Player(), appUIState: AppUIState())
 }
 
@@ -499,7 +503,9 @@ struct ModeSelectionView: View {
 /// Ventures, Boardroom) don't use this wrapper — they apply `gameSheetClose`
 /// directly to their root content — so the chrome ends up identical either way.
 struct GameSheet<Content: View>: View {
-    let title: String
+    /// A `LocalizedStringResource`, so a literal at the call site is extracted
+    /// into the String Catalog and shown in the player's language.
+    let title: LocalizedStringResource
     /// Optional ⓘ beside the title — where a sheet explains itself, instead of
     /// a caption taking space above its content.
     var hint: String? = nil
@@ -543,7 +549,17 @@ extension View {
     /// bottom button bar holding **Close**. Used by `GameSheet` for plain content
     /// and directly by the dialogs that own their navigation stack, so every
     /// sheet is dismissed the same way, from the same place.
+    func gameSheetClose(_ isPresented: Binding<Bool>, title: LocalizedStringResource, hint: String? = nil) -> some View {
+        gameSheetClose(isPresented, verbatimTitle: String(localized: title), hint: hint)
+    }
+
+    /// For a title that is already localized text (a `String` computed at run time).
+    @_disfavoredOverload
     func gameSheetClose(_ isPresented: Binding<Bool>, title: String, hint: String? = nil) -> some View {
+        gameSheetClose(isPresented, verbatimTitle: title, hint: hint)
+    }
+
+    private func gameSheetClose(_ isPresented: Binding<Bool>, verbatimTitle title: String, hint: String?) -> some View {
         self
             .navigationTitle(title)
             #if os(iOS)
@@ -580,21 +596,21 @@ struct CoachView: View {
         let icon: String
         let title: String
         let body: String
-        var id: String { title }
+        var id: String { icon }
     }
 
     private var tips: [Tip] {
         [
-            Tip(icon: "🎂", title: "One turn = one year",
-                body: "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top."),
-            Tip(icon: "🎒", title: "Build your life from the buttons",
-                body: "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become."),
-            Tip(icon: "📈", title: "Watch yourself grow",
-                body: "The middle of the screen tracks the skills, titles, and money you pile up over the years."),
-            Tip(icon: difficulty.goalIcon, title: "Your goal",
-                body: "\(difficulty.goalHeadline). Tap the ⓘ next to your age at any time to check how you're doing."),
-            Tip(icon: "💡", title: "Stuck? Look for ⓘ",
-                body: "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition."),
+            Tip(icon: "🎂", title: L("One turn = one year"),
+                body: L("Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.")),
+            Tip(icon: "🎒", title: L("Build your life from the buttons"),
+                body: L("The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.")),
+            Tip(icon: "📈", title: L("Watch yourself grow"),
+                body: L("The middle of the screen tracks the skills, titles, and money you pile up over the years.")),
+            Tip(icon: difficulty.goalIcon, title: L("Your goal"),
+                body: L("\(difficulty.goalHeadline). Tap the ⓘ next to your age at any time to check how you're doing.")),
+            Tip(icon: "💡", title: L("Stuck? Look for ⓘ"),
+                body: L("Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.")),
         ]
     }
 

@@ -1,0 +1,9 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more.": {
+      "one": "🎲 Skipping %1$lld year of childhood gives you %2$@ random skill point. Playing those years yourself builds far more.",
+      "other": "🎲 Skipping %1$lld years of childhood gives you %2$@ random skill points. Playing those years yourself builds far more."
+    }
+  }
+}
