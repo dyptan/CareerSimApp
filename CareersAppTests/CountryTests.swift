@@ -650,3 +650,47 @@ final class CountryTests: XCTestCase {
     }
 }
 
+
+/// The game writes numbers and lists for its language (`Fmt`), and every language that ships has a name.
+final class FormattingTests: XCTestCase {
+    override func tearDown() {
+        L10n.languageOverride = nil
+        super.tearDown()
+    }
+
+    func testEnglishListsKeepTheirOldShape() {
+        L10n.languageOverride = .english
+        XCTAssertEqual(Fmt.list(["a", "b", "c"]), "a, b and c")
+        XCTAssertEqual(Fmt.list(["a", "b"], .or), "a or b")
+        XCTAssertEqual(Fmt.list(["a"]), "a")
+        XCTAssertEqual(Fmt.list([]), "")
+    }
+
+    func testListsUseEachLanguagesOwnConjunction() {
+        let words: [L10n.Language: String] = [.german: "und", .french: "et", .italian: "e", .japanese: "、", .ukrainian: "і"]
+        for (language, word) in words {
+            L10n.languageOverride = language
+            let text = Fmt.list(["A", "B", "C"])
+            XCTAssertTrue(text.contains(word), "\(language): \(text)")
+            XCTAssertTrue(text.hasPrefix("A") && text.hasSuffix("C"), "\(language): \(text)")
+        }
+    }
+
+    func testPercentRoundsAndCarriesTheSign() {
+        for language in L10n.Language.allCases {
+            L10n.languageOverride = language
+            let text = Fmt.percent(0.734)
+            XCTAssertTrue(text.contains("73") && text.contains("%"), "\(language): \(text)")
+            XCTAssertTrue(Fmt.signedPercent(0.2).contains("+"), "\(language): \(Fmt.signedPercent(0.2))")
+        }
+    }
+
+    func testEveryLanguageHasNamesAndPluralForms() {
+        for language in L10n.Language.allCases {
+            XCTAssertFalse(language.englishName.isEmpty)
+            XCTAssertFalse(language.nativeName.isEmpty)
+            XCTAssertTrue(language.pluralCategories.contains("other"))
+        }
+        XCTAssertEqual(Set(L10n.Language.ukrainian.pluralCategories), ["one", "few", "many", "other"])
+    }
+}
