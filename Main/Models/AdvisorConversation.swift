@@ -354,9 +354,9 @@ enum AdvisorGuard {
 
     private static let scaleWords: [String: Decimal] = {
         var words: [String: Decimal] = [:]
-        for w in ["thousand", "tausend", "mille", "mila", "тисяча", "тисячі", "тисяч", "тис"] { words[w] = 1_000 }
-        for w in ["million", "millions", "millionen", "milione", "milioni", "мільйон", "мільйони", "мільйонів", "млн", "mln"] { words[w] = 1_000_000 }
-        for w in ["billion", "billions", "milliard", "milliards", "milliarde", "milliarden", "miliardo", "miliardi", "мільярд", "мільярди", "мільярдів", "млрд", "mld", "mrd"] { words[w] = 1_000_000_000 }
+        for w in ["thousand", "tausend", "mille", "mila", "тисяча", "тисячі", "тисяч", "тис"] { words[w] = 1_000 } // i18n:ignore lexicon data, never shown
+        for w in ["million", "millions", "millionen", "milione", "milioni", "мільйон", "мільйони", "мільйонів", "млн", "mln"] { words[w] = 1_000_000 } // i18n:ignore lexicon data, never shown
+        for w in ["billion", "billions", "milliard", "milliards", "milliarde", "milliarden", "miliardo", "miliardi", "мільярд", "мільярди", "мільярдів", "млрд", "mld", "mrd"] { words[w] = 1_000_000_000 } // i18n:ignore lexicon data, never shown
         return words
     }()
 
@@ -470,39 +470,39 @@ enum AdvisorGuard {
             for (offset, word) in list.enumerated() { words[word] = make(first + offset * step) }
         }
         // English
-        add(["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
-             "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"], from: 1, as: Piece.unit)
-        add(["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"], from: 20, step: 10, as: Piece.tens)
-        words["hundred"] = .hundred; words["thousand"] = .scale(1_000); words["million"] = .scale(1_000_000); words["billion"] = .scale(1_000_000_000)
+        add(["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", // i18n:ignore lexicon data, never shown
+             "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"], from: 1, as: Piece.unit) // i18n:ignore lexicon data, never shown
+        add(["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"], from: 20, step: 10, as: Piece.tens) // i18n:ignore lexicon data, never shown
+        words["hundred"] = .hundred; words["thousand"] = .scale(1_000); words["million"] = .scale(1_000_000); words["billion"] = .scale(1_000_000_000) // i18n:ignore lexicon data, never shown
         words["and"] = .connector
         // German
-        add(["ein", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "dreizehn",
-             "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn"], from: 1, as: Piece.unit)
-        words["eine"] = .unit(1); words["einen"] = .unit(1); words["eins"] = .unit(1)
-        add(["zwanzig", "dreißig", "vierzig", "fünfzig", "sechzig", "siebzig", "achtzig", "neunzig"], from: 20, step: 10, as: Piece.tens)
-        words["dreissig"] = .tens(30)
-        words["hundert"] = .hundred; words["tausend"] = .scale(1_000)
-        words["millionen"] = .scale(1_000_000); words["milliarde"] = .scale(1_000_000_000); words["milliarden"] = .scale(1_000_000_000)
+        add(["ein", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "dreizehn", // i18n:ignore lexicon data, never shown
+             "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn"], from: 1, as: Piece.unit) // i18n:ignore lexicon data, never shown
+        words["eine"] = .unit(1); words["einen"] = .unit(1); words["eins"] = .unit(1) // i18n:ignore lexicon data, never shown
+        add(["zwanzig", "dreißig", "vierzig", "fünfzig", "sechzig", "siebzig", "achtzig", "neunzig"], from: 20, step: 10, as: Piece.tens) // i18n:ignore lexicon data, never shown
+        words["dreissig"] = .tens(30) // i18n:ignore lexicon data, never shown
+        words["hundert"] = .hundred; words["tausend"] = .scale(1_000) // i18n:ignore lexicon data, never shown
+        words["millionen"] = .scale(1_000_000); words["milliarde"] = .scale(1_000_000_000); words["milliarden"] = .scale(1_000_000_000) // i18n:ignore lexicon data, never shown
         words["und"] = .connector
         // French
-        add(["un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize",
-             "quatorze", "quinze", "seize"], from: 1, as: Piece.unit)
+        add(["un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "onze", "douze", "treize", // i18n:ignore lexicon data, never shown
+             "quatorze", "quinze", "seize"], from: 1, as: Piece.unit) // i18n:ignore lexicon data, never shown
         words["une"] = .unit(1)
-        words["vingt"] = .vingt; words["vingts"] = .vingt
-        words["trente"] = .tens(30); words["quarante"] = .tens(40); words["cinquante"] = .tens(50); words["soixante"] = .tens(60)
-        words["septante"] = .tens(70); words["huitante"] = .tens(80); words["nonante"] = .tens(90)
-        words["cent"] = .hundred; words["cents"] = .hundred
-        words["mille"] = .scale(1_000); words["millions"] = .scale(1_000_000)
-        words["milliard"] = .scale(1_000_000_000); words["milliards"] = .scale(1_000_000_000)
+        words["vingt"] = .vingt; words["vingts"] = .vingt // i18n:ignore lexicon data, never shown
+        words["trente"] = .tens(30); words["quarante"] = .tens(40); words["cinquante"] = .tens(50); words["soixante"] = .tens(60) // i18n:ignore lexicon data, never shown
+        words["septante"] = .tens(70); words["huitante"] = .tens(80); words["nonante"] = .tens(90) // i18n:ignore lexicon data, never shown
+        words["cent"] = .hundred; words["cents"] = .hundred // i18n:ignore lexicon data, never shown
+        words["mille"] = .scale(1_000); words["millions"] = .scale(1_000_000) // i18n:ignore lexicon data, never shown
+        words["milliard"] = .scale(1_000_000_000); words["milliards"] = .scale(1_000_000_000) // i18n:ignore lexicon data, never shown
         words["et"] = .connector
         // Italian
-        add(["uno", "due", "tre", "quattro", "cinque", "sei", "sette", "otto", "nove", "dieci", "undici", "dodici", "tredici",
-             "quattordici", "quindici", "sedici", "diciassette", "diciotto", "diciannove"], from: 1, as: Piece.unit)
+        add(["uno", "due", "tre", "quattro", "cinque", "sei", "sette", "otto", "nove", "dieci", "undici", "dodici", "tredici", // i18n:ignore lexicon data, never shown
+             "quattordici", "quindici", "sedici", "diciassette", "diciotto", "diciannove"], from: 1, as: Piece.unit) // i18n:ignore lexicon data, never shown
         words["una"] = .unit(1); words["tré"] = .unit(3)
-        add(["venti", "trenta", "quaranta", "cinquanta", "sessanta", "settanta", "ottanta", "novanta"], from: 20, step: 10, as: Piece.tens)
-        words["cento"] = .hundred; words["mila"] = .scale(1_000)
-        words["milione"] = .scale(1_000_000); words["milioni"] = .scale(1_000_000)
-        words["miliardo"] = .scale(1_000_000_000); words["miliardi"] = .scale(1_000_000_000)
+        add(["venti", "trenta", "quaranta", "cinquanta", "sessanta", "settanta", "ottanta", "novanta"], from: 20, step: 10, as: Piece.tens) // i18n:ignore lexicon data, never shown
+        words["cento"] = .hundred; words["mila"] = .scale(1_000) // i18n:ignore lexicon data, never shown
+        words["milione"] = .scale(1_000_000); words["milioni"] = .scale(1_000_000) // i18n:ignore lexicon data, never shown
+        words["miliardo"] = .scale(1_000_000_000); words["miliardi"] = .scale(1_000_000_000) // i18n:ignore lexicon data, never shown
         // Ukrainian
         add(["один", "два", "три", "чотири", "п'ять", "шість", "сім", "вісім", "дев'ять", "десять", "одинадцять", "дванадцять", // i18n:ignore number words
              "тринадцять", "чотирнадцять", "п'ятнадцять", "шістнадцять", "сімнадцять", "вісімнадцять", "дев'ятнадцять"], from: 1, as: Piece.unit) // i18n:ignore number words
@@ -520,9 +520,9 @@ enum AdvisorGuard {
     private static let compoundPieces: [String: Piece] = {
         var pieces = wholeWords.filter { word, piece in
             if case .hundreds = piece { return false }
-            return !["and", "et", "un", "une", "cents", "vingt", "vingts"].contains(word)
+            return !["and", "et", "un", "une", "cents", "vingt", "vingts"].contains(word) // i18n:ignore lexicon data, never shown
         }
-        for (word, value) in ["vent": 20, "trent": 30, "quarant": 40, "cinquant": 50, "sessant": 60, "settant": 70, "ottant": 80, "novant": 90] {
+        for (word, value) in ["vent": 20, "trent": 30, "quarant": 40, "cinquant": 50, "sessant": 60, "settant": 70, "ottant": 80, "novant": 90] { // i18n:ignore lexicon data, never shown
             pieces[word] = .tens(value)
         }
         return pieces
@@ -585,9 +585,9 @@ enum AdvisorGuard {
         close()
 
         // "per cent" / "pour cent" / "per cento" and the cents of money are not a hundred.
-        let hundredWords: Set<String> = ["cent", "cents", "cento"]
+        let hundredWords: Set<String> = ["cent", "cents", "cento"] // i18n:ignore lexicon data, never shown
         if wordsSeen.allSatisfy({ hundredWords.contains($0) }), wordsSeen.count == 1,
-           wordsSeen[0] != "cento" || previousWord == "per" || previousWord == "pour" { return ([], end) }
+           wordsSeen[0] != "cento" || previousWord == "per" || previousWord == "pour" { return ([], end) } // i18n:ignore lexicon data, never shown
 
         let percent = percentFollows(chars, from: end)
         let values = numbers.enumerated().compactMap { index, value -> Decimal? in
@@ -745,11 +745,11 @@ enum AdvisorRoles {
     /// enough to tell a bare job word from a described wish.
     private static let fillerWords: Set<String> = [
         // German
-        "ich", "will", "möchte", "moechte", "werden", "ein", "eine", "einen", "als", "arbeiten", "gern", "gerne", "bin", "wäre",
+        "ich", "will", "möchte", "moechte", "werden", "ein", "eine", "einen", "als", "arbeiten", "gern", "gerne", "bin", "wäre", // i18n:ignore lexicon data, never shown
         // French
-        "je", "veux", "voudrais", "être", "etre", "devenir", "un", "une", "comme", "travailler", "aimerais",
+        "je", "veux", "voudrais", "être", "etre", "devenir", "un", "une", "comme", "travailler", "aimerais", // i18n:ignore lexicon data, never shown
         // Italian
-        "vorrei", "voglio", "fare", "diventare", "essere", "come", "lavorare", "il", "lo", "la",
+        "vorrei", "voglio", "fare", "diventare", "essere", "come", "lavorare", "il", "lo", "la", // i18n:ignore lexicon data, never shown
         // Ukrainian
         "я", "хочу", "бути", "стати", "працювати", "як", "хотів", "хотіла", "би",
         // Japanese

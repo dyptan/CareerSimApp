@@ -497,7 +497,8 @@ final class AdvisorConversationTests: XCTestCase {
     }
 
     func testAWordCountThatSeesThroughFillerWordsInEveryLanguage() {
-        defer { L10n.languageOverride = nil }
+        let before = L10n.languageOverride
+        defer { L10n.languageOverride = before }
         XCTAssertEqual(AdvisorRoles.contentWordCount("I want to be a nurse"), 1)
         L10n.languageOverride = .german
         XCTAssertEqual(AdvisorRoles.contentWordCount("Ich will Lehrer werden"), 1)

@@ -80,7 +80,7 @@ struct AdvisorView: View {
         .task { await chat.start() }
     }
 
-    private static let bottom = "advisor-bottom"
+    private static let bottom = "advisor-bottom" // i18n:ignore scroll anchor id
 
     // MARK: Messages
 
