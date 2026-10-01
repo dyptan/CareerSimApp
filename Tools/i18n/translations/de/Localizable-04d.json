@@ -39,7 +39,7 @@
   "Money you borrowed to start a business. It grows by %@ a year until it's paid back.": "Geld, das du dir geliehen hast, um ein Unternehmen zu gründen. Es wächst um %@ pro Jahr, bis es zurückgezahlt ist.",
   "Payments come out of your savings and pay each year.": "Die Zahlungen kommen jedes Jahr aus deinen Ersparnissen und deinem Gehalt.",
   "Student loan owed": "Offener Studienkredit",
-  "Money you borrowed for school. It grows by %@ a year.": "Geld, das du dir für deine Ausbildung geliehen hast. Es wächst um %@ pro Jahr.",
+  "Money you borrowed for school. It grows by %@ a year.": "Geld, das du dir für dein Studium geliehen hast. Es wächst um %@ pro Jahr.",
   "You don't pay it back while you're studying — after that, payments come out of your savings and pay each year.": "Solange du studierst, zahlst du nichts zurück – danach kommen die Zahlungen jedes Jahr aus deinen Ersparnissen und deinem Gehalt.",
   "Net worth": "Nettovermögen",
   "What you own minus what you owe: your savings (and any business you own) minus your loans.": "Das, was du besitzt, minus das, was du schuldest: deine Ersparnisse (und ein Unternehmen, das dir gehört) minus deine Kredite.",
@@ -80,7 +80,7 @@
   "There's no higher job to be promoted to from here. Your pay still goes up a little each year, up to a limit. To earn more, apply for a bigger job.": "Von hier aus gibt es keinen höheren Job mehr, zu dem du befördert werden kannst. Dein Gehalt steigt trotzdem jedes Jahr ein wenig, bis zu einer Grenze. Um mehr zu verdienen, bewirb dich auf einen größeren Job.",
   "What counts:": "Das zählt:",
   "• How well you do your job: %@": "• Wie gut du deinen Job machst: %@",
-  "• How ready you are for %@: %@": "• Wie bereit du für %1$@ bist: %2$@",
+  "• How ready you are for %@: %@": "• Wie bereit du für den Job als %1$@ bist: %2$@",
   "• Years in this job: %lld (full credit at %lld)": "• Jahre in diesem Job: %1$lld (volle Wertung bei %2$lld)",
   "• Your fame in %@: %@": "• Dein Ruhm in %1$@: %2$@",
   "• Your schooling for this job: %@": "• Deine Schulbildung für diesen Job: %@",
@@ -97,7 +97,7 @@
   "Your money: what you earn, what you save and what you owe.": "Dein Geld: was du verdienst, was du sparst und was du schuldest.",
   "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it.": "Die Zahl rechts ist das, was du besitzt, minus das, was du schuldest. Teile sie durch dein Alter, dann hast du deine Punktzahl – tippe oben auf „Punktzahl“, um sie zu sehen.",
   "How well known you are in each field.": "Wie bekannt du in jedem Bereich bist.",
-  "You get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers.": "Du wirst berühmt durch gewonnene Wettbewerbe, Auftritte bei Events, Projekte, die klappen, und ein eigenes Unternehmen. Ruhm macht es leichter, in diesem Bereich eingestellt und befördert zu werden – und Marken bezahlen sehr berühmte Entertainer.",
+  "You get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers.": "Du wirst berühmt durch gewonnene Wettbewerbe, Vorträge bei Events, Projekte, die klappen, und ein eigenes Unternehmen. Ruhm macht es leichter, in diesem Bereich eingestellt und befördert zu werden – und Marken bezahlen sehr berühmte Entertainer.",
   "Titles you've won in contests.": "Titel, die du in Wettbewerben gewonnen hast.",
   "Every year you practise an activity, you're entered in its biggest contest. Trophies make you more famous, and top colleges like them.": "Jedes Jahr, in dem du eine Aktivität übst, trittst du in ihrem größten Wettbewerb an. Trophäen machen dich berühmter, und Spitzenhochschulen mögen sie.",
   "Everything you've earned and keep: school diplomas and degrees.": "Alles, was du dir erarbeitet hast und behältst: Schulabschlüsse und Studienabschlüsse.",
@@ -107,22 +107,22 @@
   "How the economy is doing this year — overall, and in each industry.": "Wie die Konjunktur in diesem Jahr läuft – insgesamt und in jeder Branche.",
   "In a good year it's easier to get hired and promoted. In a bad year it's harder, and more people lose their jobs. Your own industry is shown in bold.": "In einem guten Jahr ist es leichter, eingestellt und befördert zu werden. In einem schlechten ist es schwerer, und mehr Leute verlieren ihren Job. Deine eigene Branche ist fett gedruckt.",
   "How many years you've worked in each job.": "Wie viele Jahre du in jedem Job gearbeitet hast.",
-  "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": "Viele Jobs verlangen Jahre an Erfahrung, bevor sie dich einstellen, und Jahre in derselben Art von Arbeit helfen dir beim Aufstieg.",
+  "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": "Viele Jobs verlangen Jahre Erfahrung, bevor sie dich einstellen, und Jahre in derselben Art von Arbeit helfen dir beim Aufstieg.",
   "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.": "Die großen Momente deines bisherigen Lebens – etwa der Schulabschluss, ein Job, eine Gehaltserhöhung oder eine Trophäe.",
   "The newest one is shown here. Open it to see them all, newest first.": "Der neueste wird hier gezeigt. Öffne ihn, um alle zu sehen, den neuesten zuerst.",
   "Age %lld — %@": "Alter %1$lld – %2$@",
   "Your story": "Deine Geschichte",
   "%lld yrs in %@": {
-   "one": "%1$lld J. in %2$@",
-   "other": "%1$lld J. in %2$@"
+   "one": "%1$lld J. in %2$@",
+   "other": "%1$lld J. in %2$@"
   },
   "%lld yrs work experience": {
-   "one": "%lld J. Berufserfahrung",
-   "other": "%lld J. Berufserfahrung"
+   "one": "%lld J. Berufserfahrung",
+   "other": "%lld J. Berufserfahrung"
   },
   "Requirements:": "Voraussetzungen:",
   "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "🎯 Ein Vorteil bei Jobs und Gründungen in: %@ – und es zählt als eine Stufe der Schulbildung, die Positionen dort erwarten.",
-  "Completing this course builds:": "Dieser Kurs stärkt:",
+  "Completing this course builds:": "Wenn du diesen Kurs abschließt, stärkt er:",
   "licence": "Lizenz",
   "✓ Earned": "✓ Erreicht"
  }
