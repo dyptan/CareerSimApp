@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C0C0C0C0C0C0C0C0C0C0C010 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0C0C0C0C0C0C0C0C0C0C011 /* Localizable.xcstrings */; };
 		550618422ED2245900C56E99 /* Training.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550618412ED2245900C56E99 /* Training.swift */; };
 		550C55032EAE6C1200887B96 /* Skills.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C55022EAE6C1200887B96 /* Skills.swift */; };
 		550C550F2EB02BDE00887B96 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550C550E2EB02BDE00887B96 /* HeaderView.swift */; };
@@ -98,6 +99,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C0C0C0C0C0C0C0C0C0C0C011 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		550618412ED2245900C56E99 /* Training.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Training.swift; sourceTree = "<group>"; };
 		550C55022EAE6C1200887B96 /* Skills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skills.swift; sourceTree = "<group>"; };
 		550C550E2EB02BDE00887B96 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				84F851C42E9E8D710066C41A /* AppIcon.icon */,
+				C0C0C0C0C0C0C0C0C0C0C011 /* Localizable.xcstrings */,
 				553578DD2EE39324003C8BD2 /* JobCatalog.swift */,
 			);
 			path = Resources;
@@ -394,6 +397,11 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
+				fr,
+				it,
+				ja,
+				uk,
 			);
 			mainGroup = C20D77E124B665D7002E7AEA;
 			packageReferences = (
@@ -424,6 +432,7 @@
 				C20D77F524B665D8002E7AEA /* Preview Assets.xcassets in Resources */,
 				84F851C52E9E8D710066C41A /* AppIcon.icon in Resources */,
 				C20D77F224B665D8002E7AEA /* Assets.xcassets in Resources */,
+				C0C0C0C0C0C0C0C0C0C0C010 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,6 +620,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -674,6 +684,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -731,6 +742,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -781,6 +793,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
