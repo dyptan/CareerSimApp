@@ -254,7 +254,7 @@ enum CareerAdvisor {
     /// course or degree is worth recommending toward them.
     static func lacksBreakthrough(_ job: Job, _ player: Player) -> Bool {
         guard let award = job.breakthroughFame else { return false }
-        return !player.fameAwards.contains { $0.title == award }
+        return !player.fameAwards.contains { $0.key == award }
     }
 
     // MARK: - Tips
@@ -635,14 +635,6 @@ enum CareerAdvisor {
     /// Mirrors the footer's gate on the **Education** button.
     static func canOpenEducation(_ player: Player) -> Bool {
         player.currentEducation == nil && player.age >= GameConstants.minimumTertiaryAge
-    }
-
-    /// "a" or "an" for an *English* job title, by its first letter. English-only grammar, kept so
-    /// `AdvisorConversation` still compiles: nothing here uses it any more, and a translated
-    /// sentence must not (reword it so it needs no article). Delete once its last caller is gone.
-    static func article(for title: String) -> String {
-        guard let first = title.lowercased().first else { return "a" }
-        return "aeiou".contains(first) ? "an" : "a" // i18n:ignore English-only grammar kept for AdvisorConversation
     }
 
     /// An amount in the player's currency (`Country.money`).

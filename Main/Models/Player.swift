@@ -26,19 +26,17 @@ struct StatusEvent: Identifiable, Hashable {
 /// **Identity vs display.** `key` is the accolade's stable English name — the id
 /// the game merges repeats on, looks up requirements by (`SideHustle.requiresAward`,
 /// the job gates) and keeps in a save; it never changes. `title` is what the
-/// player reads, looked up in the `Catalogue` string table as `fame.award.<key>`
-/// (see `FameAward.title(forKey:)`). Compare awards by `key`, never by `title`.
+/// player reads, stored when the award is banked so it is in the language the
+/// game is played in (see `FameAward.title(forKey:)` for a key alone). Compare awards by `key`, never by `title`.
 struct FameAward: Identifiable, Hashable {
     let key: String
+    let title: String
     let icon: String
     let category: FameCategory?
     let weight: Double
     var count: Int = 1
 
     var id: String { key }
-
-    /// What the player reads for this accolade, in their language.
-    var title: String { FameAward.title(forKey: key) }
 
     /// The key prefix of the per-venture accolade a founder banks each year
     /// ("Founder of Specialty Coffee Roastery").
@@ -58,7 +56,9 @@ struct FameAward: Identifiable, Hashable {
             let venture = Job.displayBaseTitle(forBaseTitle: String(key.dropFirst(founderKeyPrefix.count)))
             return L("Founder of \(venture)")
         }
-        return L10n.catalogue("fame.award.\(key)", english: key)  // i18n:ignore catalogue key
+        // The key is the English title, which is also the catalog key its literal was extracted under
+        // (a trophy, a project's title, an event's fame title), so the one translation serves both.
+        return Bundle.main.localizedString(forKey: key, value: key, table: nil)
     }
 
     /// Total reputation this shelf entry contributes: per-instance `weight`
@@ -107,11 +107,12 @@ final class Player: ObservableObject {
     /// Banks an accolade on the fame shelf, levelling an existing
     /// entry of the same title rather than adding a duplicate row.
     /// `key` is the accolade's English name (see `FameAward.key`), not its display text.
-    func award(_ key: String, icon: String, category: FameCategory?, weight: Double) {
+    /// `title` is what the player reads (defaults to the key's own translation).
+    func award(_ key: String, title: String? = nil, icon: String, category: FameCategory?, weight: Double) {
         if let i = fameAwards.firstIndex(where: { $0.key == key }) {
             fameAwards[i].count += 1
         } else {
-            fameAwards.append(FameAward(key: key, icon: icon, category: category, weight: weight))
+            fameAwards.append(FameAward(key: key, title: title ?? FameAward.title(forKey: key), icon: icon, category: category, weight: weight))
         }
     }
 
@@ -522,15 +523,7 @@ final class Player: ObservableObject {
     /// The status-log line for taking `event`'s stage: one whole sentence per
     /// stage role (the event's button verb), since the verb changes the grammar.
     private func presenterStatusLine(for event: CareerEvent) -> String {
-        switch event.presenterActionLabel {
-        case "Present": return L("Presented at \(event.name)")
-        case "Perform": return L("Performed at \(event.name)")
-        case "Appear":  return L("Appeared at \(event.name)")
-        case "Speak":   return L("Spoke at \(event.name)")
-        case "Compete": return L("Competed at \(event.name)")
-        case "Demo":    return L("Demoed at \(event.name)")
-        default:        return L("Took the stage at \(event.name)")
-        }
+        event.presenterStatusLine
     }
 
     /// Raises the result pop-up for a resolved spare-time project. Every project
@@ -543,7 +536,7 @@ final class Player: ObservableObject {
         if outcome.success {
             projectOutcomeTitle = "\(hustle.icon) " + L("It landed!")
             if let grant = outcome.grantedFame {
-                projectOutcomeMessage = L("\(hustle.label) worked out! You earned the “\(FameAward.title(forKey: grant.title))” title.")
+                projectOutcomeMessage = L("\(hustle.label) worked out! You earned the “\(grant.title)” title.")
             } else {
                 projectOutcomeMessage = L("\(hustle.label) worked out!")
             }
@@ -1399,7 +1392,7 @@ final class Player: ObservableObject {
             guard let event = EventCatalog.byId[id] else { continue }
             if Double.random(in: 0...1) < presentOdds(event) {
                 networkByCategory[event.category, default: 0] += GameConstants.presenterNetworkBonus
-                award(event.presenterFameTitle, icon: event.icon,
+                award(event.presenterFameKey, title: event.presenterFameTitle, icon: event.icon,
                       category: event.category.fameCategory, weight: event.presenterFameWeight)
                 recordStatus("🎤", presenterStatusLine(for: event))
             } else {
@@ -1618,7 +1611,7 @@ final class Player: ObservableObject {
             }
             if outcome.success {
                 if let grant = outcome.grantedFame {
-                    award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
+                    award(grant.key, title: grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
                     recordStatus("🌟", L("\(hustle.label) earned fame in \(grant.category.displayName)"))
                 }
                 // A landed project is worth the confetti whatever the odds were —
@@ -1650,11 +1643,11 @@ final class Player: ObservableObject {
             ) else { continue }
             let odds = competition.winProbability(for: softSkills, years: years)
             if Double.random(in: 0...1) < odds {
-                award(competition.achievement, icon: competition.icon,
+                award(competition.fameKey, title: competition.achievement, icon: competition.icon,
                       category: sport.fameCategory, weight: competition.fameWeight)
                 competitionWins += 1
                 celebrateIfLucky(odds)
-                let achievement = FameAward.title(forKey: competition.achievement)
+                let achievement = competition.achievement
                 recordStatus("🏆", L("Won \(achievement)"))
                 competitionWinMessage = L("You won the \(competition.name) and earned the “\(achievement)” title!")
                 showCompetitionWinAlert = true

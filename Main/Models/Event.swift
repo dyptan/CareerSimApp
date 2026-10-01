@@ -76,6 +76,18 @@ struct CareerEvent: Identifiable {
             }
         }
 
+        /// The title of an advisor card inviting the player to take the stage ("Present at Tech Summit").
+        func cardTitle(at event: String) -> String {
+            switch self {
+            case .present: return L("Present at \(event)")
+            case .perform: return L("Perform at \(event)")
+            case .appear:  return L("Appear at \(event)")
+            case .speak:   return L("Speak at \(event)")
+            case .compete: return L("Compete at \(event)")
+            case .demo:    return L("Demo at \(event)")
+            }
+        }
+
         /// The status-log line for a stage taken at `event` ("Presented at Tech Summit").
         func statusLine(at event: String) -> String {
             switch self {

@@ -2041,7 +2041,7 @@ final class FamePaysTests: XCTestCase {
             ui.selectedSideHustles = [gigs.id]
             player.advanceYear(appUIState: ui)
             XCTAssertEqual(player.savings, 0, "A project year adds no money.")
-            if player.fameAwards.contains(where: { $0.title == (gigs.fameTitle ?? gigs.label) }) { return }
+            if player.fameAwards.contains(where: { $0.key == gigs.fameKey }) { return }
         }
         XCTFail("A near-certain project should land at least once in 50 tries.")
     }

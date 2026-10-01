@@ -405,7 +405,7 @@ struct JobDetail: View {
             // (e.g. a junior-competition win for Professional Player). Applies in
             // every mode, so it's shown regardless of simplified/realistic.
             if let key = job.breakthroughFame {
-                let held = player.fameAwards.contains { $0.title == key }
+                let held = player.fameAwards.contains { $0.key == key }
                 Text("Breakthrough:")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -669,7 +669,7 @@ struct JobDetail: View {
         // pins odds at the hiring floor — by far the likeliest reason for a
         // "no", so call it out first.
         if let key = job.breakthroughFame,
-           !player.fameAwards.contains(where: { $0.title == key }) {
+           !player.fameAwards.contains(where: { $0.key == key }) {
             return L("Teams here want the “\(FameAward.displayTitle(forId: key))” title — win it first to open this career.")
         }
 

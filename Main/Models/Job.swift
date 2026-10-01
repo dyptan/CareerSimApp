@@ -811,7 +811,7 @@ extension Job {
         // odds sit at the floor no matter how skilled the applicant, in every
         // mode. Holding it opens the door and is the dominant term.
         let hasBreakthrough = breakthroughFame.map { key in
-            player.fameAwards.contains { $0.title == key }
+            player.fameAwards.contains { $0.key == key }
         }
         let skillFit = softSkillFit(for: player)
         let offer = Double(offeredSalary(for: player))

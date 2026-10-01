@@ -332,20 +332,22 @@ extension Sport {
 extension Job {
     /// `displayBaseTitle` for a role known only by its `baseTitle` id — a venture's name in the
     /// "Founder of …" fame-award title. Same lookup as the instance member. // wanted by player model (FameAward)
-    static func displayBaseTitle(forBaseTitle baseTitle: String) -> String { baseTitle }
+    static func displayBaseTitle(forBaseTitle baseTitle: String) -> String {
+        L10n.catalogue("job.base.\(baseTitle)", english: baseTitle)  // i18n:ignore catalogue key
+    }
 }
 
 // wanted by jobs & skills screens (owner: jobs & catalogue): a role known only by its `baseTitle` id —
 // the experience list, the role list's sort — shown in the player's language.
 extension JobCatalog {
-    static func displayBaseTitle(for baseTitle: String) -> String { baseTitle }
+    static func displayBaseTitle(for baseTitle: String) -> String { Job.displayBaseTitle(forBaseTitle: baseTitle) }
 }
 
 // wanted by jobs & skills screens (owner: activities, which awards them): a fame award known by its English
 // title id (`FameAward.key`, `Job.breakthroughFame`), shown in the player's language.
 extension FameAward {
-    static func displayTitle(forId id: String) -> String { id }
-    var displayTitle: String { Self.displayTitle(forId: key) }
+    static func displayTitle(forId id: String) -> String { title(forKey: id) }
+    var displayTitle: String { title }
 }
 
-extension Job { var displayBreakthroughFame: String? { breakthroughFame } } // wanted by advisor: the signature title (an award id such as "Junior Champion") that opens a career, in the player's language
+extension Job { var displayBreakthroughFame: String? { breakthroughFame.map { FameAward.title(forKey: $0) } } } // the signature title (an award id such as "Junior Champion") that opens a career, in the player's language

@@ -583,7 +583,7 @@ enum AdvisorPathway {
                 if !accepted.isEmpty { sentences.append(L("If they do: \(AdvisorCoach.list(accepted)).")) }
                 if builds { sentences.append(L("Just going adds +\(event.networkWeight) network.")) }
                 return AdvisorCard(icon: event.icon,
-                                   title: String(localized: "\(event.presenterActionLabel) at \(event.name)", comment: "Title of an advisor card. The first argument is a verb such as Present, Demo, Perform or Speak; the second is the name of an industry event"),
+                                   title: event.presenterAction.cardTitle(at: event.name),
                                    detail: sentences.joinedAsSentences(), actions: openable(.events, c.player))
             }
     }
@@ -848,7 +848,7 @@ enum AdvisorPathway {
         let awardName = c.job.displayBreakthroughFame ?? award
         var sources: [AdvisorCard] = []
         let stage = LifeStage.forAge(c.player.age)
-        if let contest = CompetitionCatalog.all.first(where: { $0.achievement == award }) {
+        if let contest = CompetitionCatalog.all.first(where: { $0.fameKey == award }) {
             let sports = (contest.sports ?? []).sorted { $0.rawValue < $1.rawValue }
             let practised = sports.max { c.player.sportYears[$0, default: 0] < c.player.sportYears[$1, default: 0] }
             let years = practised.map { c.player.sportYears[$0, default: 0] } ?? 0

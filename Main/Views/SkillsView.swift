@@ -482,7 +482,7 @@ struct SkillsView: View {
 
     /// The fame-shelf entries that came from winning a competition.
     private var trophies: [FameAward] {
-        player.fameAwards.filter { CompetitionCatalog.achievementTitles.contains($0.title) }
+        player.fameAwards.filter { CompetitionCatalog.achievementTitles.contains($0.key) }
     }
 
     /// Every competition title won, repeat wins shown as a count. The same
