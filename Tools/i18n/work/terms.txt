@@ -1,0 +1,270 @@
+# Frequent words (count)
+year 177
+school 140
+years 117
+job 105
+one 76
+chance 74
+pay 71
+jobs 69
+get 62
+work 62
+people 60
+most 57
+skills 56
+license 54
+every 48
+first 47
+science 45
+own 44
+business 42
+build 41
+national 40
+company 38
+apply 37
+you're 37
+now 36
+fame 35
+after 35
+costs 32
+open 32
+degree 32
+experience 31
+like 30
+then 30
+top 30
+earned 29
+many 29
+title 28
+there 28
+need 28
+master 28
+hired 27
+new 27
+university 27
+minimum 27
+wage 27
+best 26
+start 26
+next 26
+keep 26
+you've 26
+exam 26
+game 25
+schools 24
+money 24
+few 23
+bachelor 23
+music 23
+time 22
+it's 22
+champion 22
+adds 21
+student 21
+pays 21
+counts 21
+winner 21
+field 20
+record 20
+try 20
+show 20
+yet 20
+arts 20
+law 20
+prices 20
+worth 19
+help 19
+helps 19
+off 19
+things 19
+medical 19
+doctor 19
+design 19
+career 19
+engineering 19
+ask 19
+some 19
+public 19
+asks 19
+earn 19
+state 19
+leaderboard 19
+seat 18
+still 18
+under 18
+big 18
+certificate 18
+college 18
+learn 18
+scores 18
+count 17
+study 17
+training 17
+good 17
+research 17
+works 17
+required 17
+sports 17
+step 17
+board 17
+here 17
+over 17
+junior 17
+contests 17
+needs 16
+very 16
+right 16
+diploma 16
+licence 16
+you'll 16
+run 16
+score 16
+take 16
+win 16
+grades 15
+loan 15
+age 15
+builds 15
+less 15
+real 15
+before 15
+getting 15
+part 15
+professional 15
+universities 15
+economy 15
+back 14
+see 14
+course 14
+makes 14
+working 14
+far 14
+share 14
+education 14
+running 14
+becoming 14
+grow 14
+make 14
+care 14
+chess 14
+degrees 14
+promoted 14
+small 13
+savings 13
+practice 13
+projects 13
+track 13
+full 13
+biggest 13
+opens 13
+name 13
+investors 13
+pick 13
+senior 13
+program 13
+way 13
+something 13
+long 13
+contest 13
+health 13
+coding 13
+paid 13
+practise 13
+worked 12
+technology 12
+venture 12
+well 12
+gets 12
+art 12
+world 12
+competition 12
+there's 12
+life 12
+championship 12
+dance 12
+skill 12
+growing 11
+hit 11
+while 11
+already 11
+events 11
+takes 11
+again 11
+ceo 11
+grade 11
+writing 11
+hours 11
+round 11
+service 11
+too 11
+cooking 11
+mode 11
+high 11
+meet 11
+simplified 11
+look 11
+youth 11
+stake 10
+network 10
+nothing 10
+door 10
+grows 10
+doing 10
+enough 10
+doctors 10
+team 10
+ladder 10
+also 10
+fewer 10
+move 10
+promotions 10
+admission 10
+
+# Frequent word pairs
+minimum wage 24
+school costs 19
+pay prices 18
+scores go 18
+every year 16
+earned after 15
+track record 12
+state license 11
+simplified mode 10
+student loan 9
+next year 9
+many years 9
+show off 9
+right now 9
+job asks 9
+again next 8
+board exam 8
+public universities 8
+high school 8
+investment round 7
+grades skills 6
+try again 6
+get hired 6
+science fair 6
+living costs 6
+student council 6
+wage month 6
+very best 5
+work experience 5
+reading writing 5
+apple intelligence 5
+you'll get 5
+standard advice 5
+drawing painting 5
+electrician license 5
+doctors nurses 5
+few people 5
+years you've 5
+olympiad medalist 5
+own company 5
+history geography 5
+job like 5
+next step 5
+getting hired 5
+chance someone 5
+someone buys 5
+schools technology 5

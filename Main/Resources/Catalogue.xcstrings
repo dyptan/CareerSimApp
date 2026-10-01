@@ -1,7 +1,7178 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-
+    "job.base.3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3D Artist"
+          }
+        }
+      }
+    },
+    "job.base.Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accountant"
+          }
+        }
+      }
+    },
+    "job.base.Administrative Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administrative Assistant"
+          }
+        }
+      }
+    },
+    "job.base.Aerospace Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerospace Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Aircraft Maintenance Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aircraft Maintenance Technician"
+          }
+        }
+      }
+    },
+    "job.base.Airline Pilot" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airline Pilot"
+          }
+        }
+      }
+    },
+    "job.base.Anesthesiologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anesthesiologist"
+          }
+        }
+      }
+    },
+    "job.base.Animator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animator"
+          }
+        }
+      }
+    },
+    "job.base.Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Architect"
+          }
+        }
+      }
+    },
+    "job.base.Art Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Art Director"
+          }
+        }
+      }
+    },
+    "job.base.Assembler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assembler"
+          }
+        }
+      }
+    },
+    "job.base.Baker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baker"
+          }
+        }
+      }
+    },
+    "job.base.Bank Teller" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank Teller"
+          }
+        }
+      }
+    },
+    "job.base.Bartender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bartender"
+          }
+        }
+      }
+    },
+    "job.base.Beautician/Cosmetologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beautician/Cosmetologist"
+          }
+        }
+      }
+    },
+    "job.base.Bookkeeping Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookkeeping Clerk"
+          }
+        }
+      }
+    },
+    "job.base.Boutique Fitness Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boutique Fitness Studio"
+          }
+        }
+      }
+    },
+    "job.base.Bus Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bus Driver"
+          }
+        }
+      }
+    },
+    "job.base.Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Business Analyst"
+          }
+        }
+      }
+    },
+    "job.base.Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpenter"
+          }
+        }
+      }
+    },
+    "job.base.Cashier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cashier"
+          }
+        }
+      }
+    },
+    "job.base.Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chef"
+          }
+        }
+      }
+    },
+    "job.base.Chemical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chemical Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Chief Executive Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Executive Officer"
+          }
+        }
+      }
+    },
+    "job.base.Chief Medical Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Medical Officer"
+          }
+        }
+      }
+    },
+    "job.base.Chief Technology Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Technology Officer"
+          }
+        }
+      }
+    },
+    "job.base.Childcare Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Childcare Worker"
+          }
+        }
+      }
+    },
+    "job.base.Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Civil Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Cloud Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud Architect"
+          }
+        }
+      }
+    },
+    "job.base.Construction Laborer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construction Laborer"
+          }
+        }
+      }
+    },
+    "job.base.Content Writer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content Writer"
+          }
+        }
+      }
+    },
+    "job.base.Cook" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cook"
+          }
+        }
+      }
+    },
+    "job.base.Customer Service Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customer Service Representative"
+          }
+        }
+      }
+    },
+    "job.base.Cybersecurity Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cybersecurity Analyst"
+          }
+        }
+      }
+    },
+    "job.base.Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Analyst"
+          }
+        }
+      }
+    },
+    "job.base.Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Scientist"
+          }
+        }
+      }
+    },
+    "job.base.Delivery Courier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delivery Courier"
+          }
+        }
+      }
+    },
+    "job.base.Dental Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dental Assistant"
+          }
+        }
+      }
+    },
+    "job.base.Dentist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dentist"
+          }
+        }
+      }
+    },
+    "job.base.Dishwasher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dishwasher"
+          }
+        }
+      }
+    },
+    "job.base.Dispatcher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispatcher"
+          }
+        }
+      }
+    },
+    "job.base.Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrical Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrician"
+          }
+        }
+      }
+    },
+    "job.base.Event Planner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event Planner"
+          }
+        }
+      }
+    },
+    "job.base.Factory Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Factory Worker"
+          }
+        }
+      }
+    },
+    "job.base.Farm-to-Table Restaurant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farm-to-Table Restaurant"
+          }
+        }
+      }
+    },
+    "job.base.Farmer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farmer"
+          }
+        }
+      }
+    },
+    "job.base.Farmhand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farmhand"
+          }
+        }
+      }
+    },
+    "job.base.Fashion Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fashion Designer"
+          }
+        }
+      }
+    },
+    "job.base.Fast Food Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast Food Worker"
+          }
+        }
+      }
+    },
+    "job.base.Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Financial Analyst"
+          }
+        }
+      }
+    },
+    "job.base.Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefighter"
+          }
+        }
+      }
+    },
+    "job.base.Fitness Instructor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness Instructor"
+          }
+        }
+      }
+    },
+    "job.base.Flight Attendant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flight Attendant"
+          }
+        }
+      }
+    },
+    "job.base.Food Preparation Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food Preparation Worker"
+          }
+        }
+      }
+    },
+    "job.base.Forklift Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forklift Operator"
+          }
+        }
+      }
+    },
+    "job.base.Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Designer"
+          }
+        }
+      }
+    },
+    "job.base.Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphic Artist"
+          }
+        }
+      }
+    },
+    "job.base.Groundskeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groundskeeper"
+          }
+        }
+      }
+    },
+    "job.base.HVAC Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HVAC Technician"
+          }
+        }
+      }
+    },
+    "job.base.Hairdresser/Barber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hairdresser/Barber"
+          }
+        }
+      }
+    },
+    "job.base.Heavy Equipment Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavy Equipment Operator"
+          }
+        }
+      }
+    },
+    "job.base.Hotel Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hotel Manager"
+          }
+        }
+      }
+    },
+    "job.base.Housekeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Housekeeper"
+          }
+        }
+      }
+    },
+    "job.base.Human Resources Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Human Resources Specialist"
+          }
+        }
+      }
+    },
+    "job.base.IT Support Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IT Support Specialist"
+          }
+        }
+      }
+    },
+    "job.base.Indie Game Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indie Game Studio"
+          }
+        }
+      }
+    },
+    "job.base.Insurance Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insurance Agent"
+          }
+        }
+      }
+    },
+    "job.base.Interior Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interior Designer"
+          }
+        }
+      }
+    },
+    "job.base.Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Investment Banker"
+          }
+        }
+      }
+    },
+    "job.base.Janitor/Cleaner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Janitor/Cleaner"
+          }
+        }
+      }
+    },
+    "job.base.Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journalist"
+          }
+        }
+      }
+    },
+    "job.base.Judge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Judge"
+          }
+        }
+      }
+    },
+    "job.base.Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lab Technician"
+          }
+        }
+      }
+    },
+    "job.base.Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lawyer"
+          }
+        }
+      }
+    },
+    "job.base.Level Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level Designer"
+          }
+        }
+      }
+    },
+    "job.base.Licensed Practical Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licensed Practical Nurse"
+          }
+        }
+      }
+    },
+    "job.base.Light Truck Delivery Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Truck Delivery Driver"
+          }
+        }
+      }
+    },
+    "job.base.Logistics Coordinator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logistics Coordinator"
+          }
+        }
+      }
+    },
+    "job.base.Machine Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machine Operator"
+          }
+        }
+      }
+    },
+    "job.base.Machinist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machinist"
+          }
+        }
+      }
+    },
+    "job.base.Maintenance & Repair Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance & Repair Worker"
+          }
+        }
+      }
+    },
+    "job.base.Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Management Consultant"
+          }
+        }
+      }
+    },
+    "job.base.Managing Partner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Managing Partner"
+          }
+        }
+      }
+    },
+    "job.base.Marketing Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marketing Director"
+          }
+        }
+      }
+    },
+    "job.base.Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marketing Specialist"
+          }
+        }
+      }
+    },
+    "job.base.Mechanic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mechanic"
+          }
+        }
+      }
+    },
+    "job.base.Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mechanical Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Medical Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medical Assistant"
+          }
+        }
+      }
+    },
+    "job.base.Mover" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover"
+          }
+        }
+      }
+    },
+    "job.base.Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Municipal Worker"
+          }
+        }
+      }
+    },
+    "job.base.Narrative Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrative Designer"
+          }
+        }
+      }
+    },
+    "job.base.Nurse Practitioner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nurse Practitioner"
+          }
+        }
+      }
+    },
+    "job.base.Nursing Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nursing Aide"
+          }
+        }
+      }
+    },
+    "job.base.Office Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Office Clerk"
+          }
+        }
+      }
+    },
+    "job.base.Office Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Office Manager"
+          }
+        }
+      }
+    },
+    "job.base.Operations Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operations Manager"
+          }
+        }
+      }
+    },
+    "job.base.Painter (Construction)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Painter (Construction)"
+          }
+        }
+      }
+    },
+    "job.base.Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paralegal"
+          }
+        }
+      }
+    },
+    "job.base.Paramedic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paramedic"
+          }
+        }
+      }
+    },
+    "job.base.Payroll Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Payroll Specialist"
+          }
+        }
+      }
+    },
+    "job.base.Personal Care Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Care Aide"
+          }
+        }
+      }
+    },
+    "job.base.Pharmacist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacist"
+          }
+        }
+      }
+    },
+    "job.base.Pharmacy Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacy Technician"
+          }
+        }
+      }
+    },
+    "job.base.Photographer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photographer"
+          }
+        }
+      }
+    },
+    "job.base.Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Physician"
+          }
+        }
+      }
+    },
+    "job.base.Physiotherapist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Physiotherapist"
+          }
+        }
+      }
+    },
+    "job.base.Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player"
+          }
+        }
+      }
+    },
+    "job.base.Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plumber"
+          }
+        }
+      }
+    },
+    "job.base.Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Police Officer"
+          }
+        }
+      }
+    },
+    "job.base.Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Manager"
+          }
+        }
+      }
+    },
+    "job.base.Property Development Firm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Property Development Firm"
+          }
+        }
+      }
+    },
+    "job.base.Psychologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist"
+          }
+        }
+      }
+    },
+    "job.base.Quality Control Inspector" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality Control Inspector"
+          }
+        }
+      }
+    },
+    "job.base.Real Estate Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real Estate Agent"
+          }
+        }
+      }
+    },
+    "job.base.Receptionist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receptionist"
+          }
+        }
+      }
+    },
+    "job.base.Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registered Nurse"
+          }
+        }
+      }
+    },
+    "job.base.Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Research Scientist"
+          }
+        }
+      }
+    },
+    "job.base.Retail Salesperson" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retail Salesperson"
+          }
+        }
+      }
+    },
+    "job.base.Roofer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roofer"
+          }
+        }
+      }
+    },
+    "job.base.SaaS App Startup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SaaS App Startup"
+          }
+        }
+      }
+    },
+    "job.base.Sales Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Director"
+          }
+        }
+      }
+    },
+    "job.base.Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Manager"
+          }
+        }
+      }
+    },
+    "job.base.Sales Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Representative"
+          }
+        }
+      }
+    },
+    "job.base.Security Guard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Security Guard"
+          }
+        }
+      }
+    },
+    "job.base.Social Media Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Social Media Manager"
+          }
+        }
+      }
+    },
+    "job.base.Social Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Social Worker"
+          }
+        }
+      }
+    },
+    "job.base.Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software Engineer"
+          }
+        }
+      }
+    },
+    "job.base.Software Tester/QA" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software Tester/QA"
+          }
+        }
+      }
+    },
+    "job.base.Specialty Coffee Roastery" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Specialty Coffee Roastery"
+          }
+        }
+      }
+    },
+    "job.base.Stocker/Order Filler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stocker/Order Filler"
+          }
+        }
+      }
+    },
+    "job.base.Store Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Store Manager"
+          }
+        }
+      }
+    },
+    "job.base.Surgeon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surgeon"
+          }
+        }
+      }
+    },
+    "job.base.Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systems Administrator"
+          }
+        }
+      }
+    },
+    "job.base.TV Presenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TV Presenter"
+          }
+        }
+      }
+    },
+    "job.base.Taxi Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taxi Driver"
+          }
+        }
+      }
+    },
+    "job.base.Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teacher"
+          }
+        }
+      }
+    },
+    "job.base.Teaching Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teaching Assistant"
+          }
+        }
+      }
+    },
+    "job.base.Translator/Interpreter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translator/Interpreter"
+          }
+        }
+      }
+    },
+    "job.base.Truck Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Truck Driver"
+          }
+        }
+      }
+    },
+    "job.base.Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutor"
+          }
+        }
+      }
+    },
+    "job.base.UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.base.Veterinarian" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veterinarian"
+          }
+        }
+      }
+    },
+    "job.base.Video Editor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video Editor"
+          }
+        }
+      }
+    },
+    "job.base.Waiter/Waitress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiter/Waitress"
+          }
+        }
+      }
+    },
+    "job.base.Warehouse Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warehouse Worker"
+          }
+        }
+      }
+    },
+    "job.base.Welder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welder"
+          }
+        }
+      }
+    },
+    "job.ladder.3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3D Artist"
+          }
+        }
+      }
+    },
+    "job.ladder.Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accountant"
+          }
+        }
+      }
+    },
+    "job.ladder.Airline Pilot" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airline Pilot"
+          }
+        }
+      }
+    },
+    "job.ladder.Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Business Analyst"
+          }
+        }
+      }
+    },
+    "job.ladder.Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpenter"
+          }
+        }
+      }
+    },
+    "job.ladder.Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chef"
+          }
+        }
+      }
+    },
+    "job.ladder.Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Civil Engineer"
+          }
+        }
+      }
+    },
+    "job.ladder.Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Analyst"
+          }
+        }
+      }
+    },
+    "job.ladder.Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Scientist"
+          }
+        }
+      }
+    },
+    "job.ladder.Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrical Engineer"
+          }
+        }
+      }
+    },
+    "job.ladder.Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrician"
+          }
+        }
+      }
+    },
+    "job.ladder.Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Financial Analyst"
+          }
+        }
+      }
+    },
+    "job.ladder.Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefighter"
+          }
+        }
+      }
+    },
+    "job.ladder.Fitness Instructor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness Instructor"
+          }
+        }
+      }
+    },
+    "job.ladder.Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Designer"
+          }
+        }
+      }
+    },
+    "job.ladder.Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphic Artist"
+          }
+        }
+      }
+    },
+    "job.ladder.Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Investment Banker"
+          }
+        }
+      }
+    },
+    "job.ladder.Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journalist"
+          }
+        }
+      }
+    },
+    "job.ladder.Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lab Technician"
+          }
+        }
+      }
+    },
+    "job.ladder.Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lawyer"
+          }
+        }
+      }
+    },
+    "job.ladder.Logistics Coordinator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logistics Coordinator"
+          }
+        }
+      }
+    },
+    "job.ladder.Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Management Consultant"
+          }
+        }
+      }
+    },
+    "job.ladder.Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marketing Specialist"
+          }
+        }
+      }
+    },
+    "job.ladder.Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mechanical Engineer"
+          }
+        }
+      }
+    },
+    "job.ladder.Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Municipal Worker"
+          }
+        }
+      }
+    },
+    "job.ladder.Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paralegal"
+          }
+        }
+      }
+    },
+    "job.ladder.Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Physician"
+          }
+        }
+      }
+    },
+    "job.ladder.Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player"
+          }
+        }
+      }
+    },
+    "job.ladder.Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plumber"
+          }
+        }
+      }
+    },
+    "job.ladder.Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Police Officer"
+          }
+        }
+      }
+    },
+    "job.ladder.Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Manager"
+          }
+        }
+      }
+    },
+    "job.ladder.Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registered Nurse"
+          }
+        }
+      }
+    },
+    "job.ladder.Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Research Scientist"
+          }
+        }
+      }
+    },
+    "job.ladder.Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Manager"
+          }
+        }
+      }
+    },
+    "job.ladder.Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software Engineer"
+          }
+        }
+      }
+    },
+    "job.ladder.Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systems Administrator"
+          }
+        }
+      }
+    },
+    "job.ladder.TV Presenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TV Presenter"
+          }
+        }
+      }
+    },
+    "job.ladder.Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teacher"
+          }
+        }
+      }
+    },
+    "job.ladder.Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutor"
+          }
+        }
+      }
+    },
+    "job.ladder.UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.rung.Amateur" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur"
+          }
+        }
+      }
+    },
+    "job.rung.Apprentice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprentice"
+          }
+        }
+      }
+    },
+    "job.rung.Charge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charge"
+          }
+        }
+      }
+    },
+    "job.rung.Elite" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elite"
+          }
+        }
+      }
+    },
+    "job.rung.Executive" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Executive"
+          }
+        }
+      }
+    },
+    "job.rung.Head" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head"
+          }
+        }
+      }
+    },
+    "job.rung.Junior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior"
+          }
+        }
+      }
+    },
+    "job.rung.Lead" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead"
+          }
+        }
+      }
+    },
+    "job.rung.Master" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master"
+          }
+        }
+      }
+    },
+    "job.rung.Principal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principal"
+          }
+        }
+      }
+    },
+    "job.rung.Professional" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional"
+          }
+        }
+      }
+    },
+    "job.rung.Resident" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resident"
+          }
+        }
+      }
+    },
+    "job.rung.Senior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior"
+          }
+        }
+      }
+    },
+    "job.rung.Sous" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sous"
+          }
+        }
+      }
+    },
+    "job.rung.Staff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staff"
+          }
+        }
+      }
+    },
+    "job.summary.3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates textured, lit 3D art for games and film."
+          }
+        }
+      }
+    },
+    "job.summary.Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepares financial records and statements."
+          }
+        }
+      }
+    },
+    "job.summary.Administrative Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports a team with scheduling, mail, and records."
+          }
+        }
+      }
+    },
+    "job.summary.Aerospace Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs aircraft, spacecraft, and propulsion systems."
+          }
+        }
+      }
+    },
+    "job.summary.Aircraft Maintenance Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspects, services, and repairs aircraft."
+          }
+        }
+      }
+    },
+    "job.summary.Airline Captain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commands the flight deck of commercial airliners."
+          }
+        }
+      }
+    },
+    "job.summary.Amateur Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signed to a club's development squad after a standout junior career."
+          }
+        }
+      }
+    },
+    "job.summary.Anesthesiologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manages anesthesia and patient vitals during surgery."
+          }
+        }
+      }
+    },
+    "job.summary.Animator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animates characters and motion for film, advertising, and games."
+          }
+        }
+      }
+    },
+    "job.summary.Apprentice Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learns carpentry on site under a master carpenter."
+          }
+        }
+      }
+    },
+    "job.summary.Apprentice Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trains on the job toward a journeyman electrician license."
+          }
+        }
+      }
+    },
+    "job.summary.Apprentice Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learns the plumbing trade under a licensed plumber."
+          }
+        }
+      }
+    },
+    "job.summary.Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs building plans and structures."
+          }
+        }
+      }
+    },
+    "job.summary.Art Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets the visual direction for campaigns, films, publications, or a game."
+          }
+        }
+      }
+    },
+    "job.summary.Assembler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assembles parts and products to spec."
+          }
+        }
+      }
+    },
+    "job.summary.Baker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bakes bread, pastries, and other goods."
+          }
+        }
+      }
+    },
+    "job.summary.Bank Teller" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handles deposits, withdrawals, and everyday branch banking."
+          }
+        }
+      }
+    },
+    "job.summary.Bartender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixes and serves drinks at a bar."
+          }
+        }
+      }
+    },
+    "job.summary.Beautician/Cosmetologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides beauty treatments and services."
+          }
+        }
+      }
+    },
+    "job.summary.Bookkeeping Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps the ledgers, invoices, and payments straight."
+          }
+        }
+      }
+    },
+    "job.summary.Boutique Fitness Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run your own small-group training studio and build a member community."
+          }
+        }
+      }
+    },
+    "job.summary.Bus Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operates passenger buses on scheduled routes."
+          }
+        }
+      }
+    },
+    "job.summary.Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzes business needs and recommends solutions."
+          }
+        }
+      }
+    },
+    "job.summary.Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds and repairs wooden structures."
+          }
+        }
+      }
+    },
+    "job.summary.Cashier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handles customer payments and transactions."
+          }
+        }
+      }
+    },
+    "job.summary.Charge Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordinates the nursing shift and triages escalations — the top of the floor-nursing ladder."
+          }
+        }
+      }
+    },
+    "job.summary.Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder."
+          }
+        }
+      }
+    },
+    "job.summary.Chemical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applies chemistry to industrial processes."
+          }
+        }
+      }
+    },
+    "job.summary.Chief Executive Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads the entire company and answers to the board."
+          }
+        }
+      }
+    },
+    "job.summary.Chief Medical Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets clinical strategy and quality across a health system."
+          }
+        }
+      }
+    },
+    "job.summary.Chief Technology Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns technology strategy for the whole organization."
+          }
+        }
+      }
+    },
+    "job.summary.Childcare Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cares for young children in nurseries and homes."
+          }
+        }
+      }
+    },
+    "job.summary.Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs infrastructure and public works."
+          }
+        }
+      }
+    },
+    "job.summary.Cloud Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs and runs large-scale cloud infrastructure."
+          }
+        }
+      }
+    },
+    "job.summary.Construction Laborer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performs physical tasks on construction sites."
+          }
+        }
+      }
+    },
+    "job.summary.Content Writer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates written content for various channels."
+          }
+        }
+      }
+    },
+    "job.summary.Cook" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cooks to order on the line in restaurants and canteens."
+          }
+        }
+      }
+    },
+    "job.summary.Customer Service Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answers customer questions and resolves complaints."
+          }
+        }
+      }
+    },
+    "job.summary.Cybersecurity Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Defends systems and networks against attacks."
+          }
+        }
+      }
+    },
+    "job.summary.Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzes data to inform decisions."
+          }
+        }
+      }
+    },
+    "job.summary.Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds models and extracts insight from large datasets."
+          }
+        }
+      }
+    },
+    "job.summary.Delivery Courier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delivers parcels and food by bike, scooter, or on foot."
+          }
+        }
+      }
+    },
+    "job.summary.Dental Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports dental professionals during procedures."
+          }
+        }
+      }
+    },
+    "job.summary.Dentist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnoses and treats dental conditions."
+          }
+        }
+      }
+    },
+    "job.summary.Dishwasher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cleans dishes and kitchenware in food-service settings."
+          }
+        }
+      }
+    },
+    "job.summary.Dispatcher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes drivers and crews and tracks deliveries."
+          }
+        }
+      }
+    },
+    "job.summary.Editor-in-Chief" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads a publication's editorial vision and newsroom."
+          }
+        }
+      }
+    },
+    "job.summary.Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs electrical systems and circuits."
+          }
+        }
+      }
+    },
+    "job.summary.Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installs and repairs electrical systems."
+          }
+        }
+      }
+    },
+    "job.summary.Elite Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A marquee starter with major contracts and sponsorships."
+          }
+        }
+      }
+    },
+    "job.summary.Event Planner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizes events and logistics."
+          }
+        }
+      }
+    },
+    "job.summary.Executive Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oversees multiple kitchens and culinary brand."
+          }
+        }
+      }
+    },
+    "job.summary.Factory Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operates production-line equipment and assembles goods."
+          }
+        }
+      }
+    },
+    "job.summary.Farm-to-Table Restaurant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a seasonal restaurant sourcing straight from local growers."
+          }
+        }
+      }
+    },
+    "job.summary.Farmer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operates agricultural production and livestock."
+          }
+        }
+      }
+    },
+    "job.summary.Farmhand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plants, harvests, and tends crops and livestock."
+          }
+        }
+      }
+    },
+    "job.summary.Fashion Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs clothing collections and sells to buyers."
+          }
+        }
+      }
+    },
+    "job.summary.Fast Food Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takes orders and prepares food at quick-service counters."
+          }
+        }
+      }
+    },
+    "job.summary.Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzes financial performance and forecasts."
+          }
+        }
+      }
+    },
+    "job.summary.Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responds to fires, accidents, and rescue emergencies."
+          }
+        }
+      }
+    },
+    "job.summary.First Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co-pilots commercial flights alongside the captain."
+          }
+        }
+      }
+    },
+    "job.summary.Fitness Instructor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads group exercise and gym classes."
+          }
+        }
+      }
+    },
+    "job.summary.Flight Attendant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensures passenger safety and comfort."
+          }
+        }
+      }
+    },
+    "job.summary.Food Preparation Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepares ingredients and supports kitchen staff."
+          }
+        }
+      }
+    },
+    "job.summary.Forklift Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operates forklifts to move goods."
+          }
+        }
+      }
+    },
+    "job.summary.Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs mechanics, systems, and the player experience."
+          }
+        }
+      }
+    },
+    "job.summary.Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates visual artwork for media."
+          }
+        }
+      }
+    },
+    "job.summary.Groundskeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintains lawns, parks, and grounds."
+          }
+        }
+      }
+    },
+    "job.summary.HVAC Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installs and services heating and cooling systems."
+          }
+        }
+      }
+    },
+    "job.summary.Hairdresser/Barber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuts and styles hair for clients."
+          }
+        }
+      }
+    },
+    "job.summary.Head Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns menu, sourcing, and kitchen leadership."
+          }
+        }
+      }
+    },
+    "job.summary.Heavy Equipment Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs excavators, loaders, and bulldozers on site."
+          }
+        }
+      }
+    },
+    "job.summary.Hotel Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oversees hotel operations and staff."
+          }
+        }
+      }
+    },
+    "job.summary.Housekeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cleans and tidies rooms in hotels and facilities."
+          }
+        }
+      }
+    },
+    "job.summary.Human Resources Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manages hiring and employee relations."
+          }
+        }
+      }
+    },
+    "job.summary.IT Support Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides technical help desk support."
+          }
+        }
+      }
+    },
+    "job.summary.Indie Game Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bootstrap a small studio and ship an original game to players."
+          }
+        }
+      }
+    },
+    "job.summary.Insurance Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sells and services insurance policies."
+          }
+        }
+      }
+    },
+    "job.summary.Interior Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs and styles indoor spaces for clients."
+          }
+        }
+      }
+    },
+    "job.summary.Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Structures deals, raises capital, and advises on M&A."
+          }
+        }
+      }
+    },
+    "job.summary.Janitor/Cleaner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintains cleanliness of buildings and facilities."
+          }
+        }
+      }
+    },
+    "job.summary.Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reports news and stories for media outlets."
+          }
+        }
+      }
+    },
+    "job.summary.Judge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presides over court proceedings and rulings."
+          }
+        }
+      }
+    },
+    "job.summary.Junior 3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sculpts characters, props, and environments as 3D assets."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books transactions and supports month-end close."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gathers requirements and documents processes."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drafts plans and supports senior engineers on site."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds basic dashboards and runs ad-hoc queries under supervision."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds and validates models under senior data-science guidance."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports design and testing of electrical systems."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds forecasting models with senior oversight."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produces assets to spec under art-director review."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyst building models and pitch decks on live deals under senior bankers."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs analysis workstreams on client engagements under a lead consultant."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Executes campaigns under direction from senior marketers."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assists in design and analysis of mechanical components."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files documents and supports research for senior staff."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Early-career scientist running experiments under a senior lead."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entry-level developer learning the codebase and shipping small features."
+          }
+        }
+      }
+    },
+    "job.summary.Junior Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintains servers and accounts under senior guidance."
+          }
+        }
+      }
+    },
+    "job.summary.Junior UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Produces wireframes and visual assets under senior direction."
+          }
+        }
+      }
+    },
+    "job.summary.Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs lab tests, preps samples, and records results."
+          }
+        }
+      }
+    },
+    "job.summary.Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides legal advice and represents clients."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commands a fire station and emergency operations."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets the design vision for the entire title."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs the lab's daily operations, safety, and quality."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supervises municipal crews, budgets, and city services."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commands a precinct and sets policing strategy."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heads the PMO and the organization's most critical programs."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heads the school's academics and leads the teaching staff."
+          }
+        }
+      }
+    },
+    "job.summary.Lead Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs a tutoring center's staff, curriculum, and clients."
+          }
+        }
+      }
+    },
+    "job.summary.Lead UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets design vision and mentors the design team."
+          }
+        }
+      }
+    },
+    "job.summary.Level Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds and balances the game's levels and pacing."
+          }
+        }
+      }
+    },
+    "job.summary.Licensed Practical Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gives basic nursing care under an RN or physician."
+          }
+        }
+      }
+    },
+    "job.summary.Light Truck Delivery Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delivers goods locally using vans or small trucks."
+          }
+        }
+      }
+    },
+    "job.summary.Logistics Coordinator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedules shipments and keeps freight moving to plan."
+          }
+        }
+      }
+    },
+    "job.summary.Machine Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs and monitors manufacturing machinery."
+          }
+        }
+      }
+    },
+    "job.summary.Machinist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machines precision metal parts from blueprints."
+          }
+        }
+      }
+    },
+    "job.summary.Maintenance & Repair Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps buildings and equipment working — the general fixer."
+          }
+        }
+      }
+    },
+    "job.summary.Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advises companies on strategy and operations."
+          }
+        }
+      }
+    },
+    "job.summary.Managing Partner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equity partner driving client relationships and firm strategy — the top of the law track."
+          }
+        }
+      }
+    },
+    "job.summary.Marketing Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads the marketing function and brand strategy."
+          }
+        }
+      }
+    },
+    "job.summary.Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creates and runs marketing campaigns."
+          }
+        }
+      }
+    },
+    "job.summary.Master Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master tradesperson on bespoke and large-scale builds."
+          }
+        }
+      }
+    },
+    "job.summary.Master Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licensed master responsible for jobs and apprentices."
+          }
+        }
+      }
+    },
+    "job.summary.Master Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licensed master plumber leading complex installations."
+          }
+        }
+      }
+    },
+    "job.summary.Mechanic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repairs vehicles and machinery."
+          }
+        }
+      }
+    },
+    "job.summary.Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs mechanical systems and machinery."
+          }
+        }
+      }
+    },
+    "job.summary.Medical Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports clinical staff with patient care."
+          }
+        }
+      }
+    },
+    "job.summary.Mover" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loads, hauls, and unloads household and office goods."
+          }
+        }
+      }
+    },
+    "job.summary.Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps the city running — sanitation, parks, roads, and facilities."
+          }
+        }
+      }
+    },
+    "job.summary.Narrative Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writes the story, characters, and branching dialogue."
+          }
+        }
+      }
+    },
+    "job.summary.News Anchor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anchors television news broadcasts."
+          }
+        }
+      }
+    },
+    "job.summary.Nurse Practitioner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy."
+          }
+        }
+      }
+    },
+    "job.summary.Nursing Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assists patients with daily living tasks."
+          }
+        }
+      }
+    },
+    "job.summary.Office Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handles filing, data entry, and general office tasks."
+          }
+        }
+      }
+    },
+    "job.summary.Office Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs day-to-day office operations and admin staff."
+          }
+        }
+      }
+    },
+    "job.summary.Operations Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs the day-to-day of a site, branch, or department."
+          }
+        }
+      }
+    },
+    "job.summary.Painter (Construction)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paints buildings and interior spaces."
+          }
+        }
+      }
+    },
+    "job.summary.Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assists lawyers with research and documentation."
+          }
+        }
+      }
+    },
+    "job.summary.Paramedic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides emergency medical care."
+          }
+        }
+      }
+    },
+    "job.summary.Payroll Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processes payroll and employee benefits."
+          }
+        }
+      }
+    },
+    "job.summary.Personal Care Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helps elderly and disabled clients with daily living at home."
+          }
+        }
+      }
+    },
+    "job.summary.Personal Trainer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coaches clients one-on-one toward their goals."
+          }
+        }
+      }
+    },
+    "job.summary.Pharmacist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispenses medications and advises patients."
+          }
+        }
+      }
+    },
+    "job.summary.Pharmacy Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepares prescriptions under a pharmacist's supervision."
+          }
+        }
+      }
+    },
+    "job.summary.Photographer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takes photos for commercial and personal use."
+          }
+        }
+      }
+    },
+    "job.summary.Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnoses and treats illnesses as an attending physician."
+          }
+        }
+      }
+    },
+    "job.summary.Physiotherapist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides rehabilitation and physical therapy."
+          }
+        }
+      }
+    },
+    "job.summary.Pilot" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operates aircraft for passenger or cargo flights."
+          }
+        }
+      }
+    },
+    "job.summary.Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installs and repairs plumbing systems."
+          }
+        }
+      }
+    },
+    "job.summary.Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enforces laws and protects the public on patrol."
+          }
+        }
+      }
+    },
+    "job.summary.Principal Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets research agenda for the lab and supervises projects."
+          }
+        }
+      }
+    },
+    "job.summary.Principal Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-of-ladder IC; defines architecture for the whole organization."
+          }
+        }
+      }
+    },
+    "job.summary.Professional Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earns a living on a professional team's roster."
+          }
+        }
+      }
+    },
+    "job.summary.Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plans and oversees projects to completion."
+          }
+        }
+      }
+    },
+    "job.summary.Property Development Firm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buy, build, and sell property — financing projects and managing crews."
+          }
+        }
+      }
+    },
+    "job.summary.Psychologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Studies behavior and provides therapy."
+          }
+        }
+      }
+    },
+    "job.summary.Quality Control Inspector" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checks products against quality standards."
+          }
+        }
+      }
+    },
+    "job.summary.Real Estate Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lists, shows, and sells property on commission."
+          }
+        }
+      }
+    },
+    "job.summary.Receptionist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Greets visitors and manages front-desk tasks."
+          }
+        }
+      }
+    },
+    "job.summary.Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides patient care, administers medication, and coordinates with medical teams."
+          }
+        }
+      }
+    },
+    "job.summary.Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs and runs experiments to answer scientific questions."
+          }
+        }
+      }
+    },
+    "job.summary.Resident Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trains under supervision in a hospital residency."
+          }
+        }
+      }
+    },
+    "job.summary.Retail Salesperson" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sells products directly to customers."
+          }
+        }
+      }
+    },
+    "job.summary.Roofer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installs and repairs roofs in all weather."
+          }
+        }
+      }
+    },
+    "job.summary.SaaS App Startup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build a subscription software product and grow it toward a real raise."
+          }
+        }
+      }
+    },
+    "job.summary.Sales Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns the entire sales organization and revenue strategy."
+          }
+        }
+      }
+    },
+    "job.summary.Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads sales teams and strategies."
+          }
+        }
+      }
+    },
+    "job.summary.Sales Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sells products and services to businesses."
+          }
+        }
+      }
+    },
+    "job.summary.Security Guard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protects property and ensures public safety."
+          }
+        }
+      }
+    },
+    "job.summary.Senior 3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns key art and sets the visual bar for the team."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns ledger areas and supervises junior accountants."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads cross-functional analysis and drives recommendations."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads infrastructure projects and signs off on designs."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns analytical workstreams and partners with leadership on decisions."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads electrical-system architecture for complex products."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partners with executives on capital planning and strategy."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experienced firefighter leading a crew on emergency calls."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns major game systems and mentors designers."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns visual identity work and directs junior artists."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs a beat and breaks the stories others follow."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads lab testing and trains junior technicians."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior associate leading cases and mentoring junior lawyers."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns marketing programs and reports on impact."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns mechanical design projects end-to-end."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seasoned public-works hand running crews and equipment."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manages caseload research and trains junior paralegals."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior attending supervising residents and complex cases."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veteran officer leading patrols and mentoring recruits."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manages portfolios of projects and senior stakeholders."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experienced floor nurse mentoring newer staff."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads research programs and publishes original work."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs regional sales orgs and hits aggressive targets."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns major systems, mentors peers, and drives technical direction."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Architects infrastructure and leads incident response."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veteran teacher mentoring staff and leading a department."
+          }
+        }
+      }
+    },
+    "job.summary.Senior Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experienced tutor running group sessions and mentoring tutors."
+          }
+        }
+      }
+    },
+    "job.summary.Senior UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leads end-to-end design of major product surfaces."
+          }
+        }
+      }
+    },
+    "job.summary.Social Media Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs brand presence and campaigns across social platforms."
+          }
+        }
+      }
+    },
+    "job.summary.Social Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports vulnerable individuals and families."
+          }
+        }
+      }
+    },
+    "job.summary.Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs and implements software systems."
+          }
+        }
+      }
+    },
+    "job.summary.Software Tester/QA" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tests software for defects and quality."
+          }
+        }
+      }
+    },
+    "job.summary.Sous Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second-in-command in the kitchen, runs daily service."
+          }
+        }
+      }
+    },
+    "job.summary.Specialty Coffee Roastery" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source, roast, and sell your own beans through a café and online."
+          }
+        }
+      }
+    },
+    "job.summary.Staff Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets engineering strategy across teams and unblocks complex initiatives."
+          }
+        }
+      }
+    },
+    "job.summary.Stocker/Order Filler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps shelves filled and picks orders in stores and warehouses."
+          }
+        }
+      }
+    },
+    "job.summary.Store Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs a shop floor — staffing, stock, and takings."
+          }
+        }
+      }
+    },
+    "job.summary.Supply Chain Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owns the end-to-end supply chain and its suppliers."
+          }
+        }
+      }
+    },
+    "job.summary.Surgeon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performs operations to treat injuries and disease."
+          }
+        }
+      }
+    },
+    "job.summary.Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintains IT infrastructure."
+          }
+        }
+      }
+    },
+    "job.summary.TV Presenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presents television programs and live segments."
+          }
+        }
+      }
+    },
+    "job.summary.Taxi Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provides on-demand passenger transport."
+          }
+        }
+      }
+    },
+    "job.summary.Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teaches a class of students their core subjects."
+          }
+        }
+      }
+    },
+    "job.summary.Teaching Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supports a classroom teacher and works with pupils in small groups."
+          }
+        }
+      }
+    },
+    "job.summary.Translator/Interpreter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Converts text between languages and provides live interpretation."
+          }
+        }
+      }
+    },
+    "job.summary.Truck Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transports goods over long distances."
+          }
+        }
+      }
+    },
+    "job.summary.Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coaches students one-on-one in specific subjects."
+          }
+        }
+      }
+    },
+    "job.summary.UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Designs user interfaces and experiences."
+          }
+        }
+      }
+    },
+    "job.summary.Veterinarian" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cares for animal health and treatments."
+          }
+        }
+      }
+    },
+    "job.summary.Video Editor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuts and assembles footage for film, TV, and online."
+          }
+        }
+      }
+    },
+    "job.summary.Waiter/Waitress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serves food and beverages to customers."
+          }
+        }
+      }
+    },
+    "job.summary.Warehouse Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runs a distribution site — racking, shifts, and throughput."
+          }
+        }
+      }
+    },
+    "job.summary.Warehouse Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Picks, packs, and moves warehouse inventory."
+          }
+        }
+      }
+    },
+    "job.summary.Welder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joins metal parts for fabrication and repair."
+          }
+        }
+      }
+    },
+    "job.title.3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3D Artist"
+          }
+        }
+      }
+    },
+    "job.title.Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accountant"
+          }
+        }
+      }
+    },
+    "job.title.Administrative Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administrative Assistant"
+          }
+        }
+      }
+    },
+    "job.title.Aerospace Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aerospace Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Aircraft Maintenance Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aircraft Maintenance Technician"
+          }
+        }
+      }
+    },
+    "job.title.Airline Captain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Airline Captain"
+          }
+        }
+      }
+    },
+    "job.title.Amateur Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amateur Player"
+          }
+        }
+      }
+    },
+    "job.title.Anesthesiologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anesthesiologist"
+          }
+        }
+      }
+    },
+    "job.title.Animator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animator"
+          }
+        }
+      }
+    },
+    "job.title.Apprentice Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprentice Carpenter"
+          }
+        }
+      }
+    },
+    "job.title.Apprentice Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprentice Electrician"
+          }
+        }
+      }
+    },
+    "job.title.Apprentice Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprentice Plumber"
+          }
+        }
+      }
+    },
+    "job.title.Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Architect"
+          }
+        }
+      }
+    },
+    "job.title.Art Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Art Director"
+          }
+        }
+      }
+    },
+    "job.title.Assembler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assembler"
+          }
+        }
+      }
+    },
+    "job.title.Baker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baker"
+          }
+        }
+      }
+    },
+    "job.title.Bank Teller" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank Teller"
+          }
+        }
+      }
+    },
+    "job.title.Bartender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bartender"
+          }
+        }
+      }
+    },
+    "job.title.Beautician/Cosmetologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beautician/Cosmetologist"
+          }
+        }
+      }
+    },
+    "job.title.Bookkeeping Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookkeeping Clerk"
+          }
+        }
+      }
+    },
+    "job.title.Boutique Fitness Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Boutique Fitness Studio"
+          }
+        }
+      }
+    },
+    "job.title.Bus Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bus Driver"
+          }
+        }
+      }
+    },
+    "job.title.Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Business Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpenter"
+          }
+        }
+      }
+    },
+    "job.title.Cashier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cashier"
+          }
+        }
+      }
+    },
+    "job.title.Charge Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charge Registered Nurse"
+          }
+        }
+      }
+    },
+    "job.title.Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chef"
+          }
+        }
+      }
+    },
+    "job.title.Chemical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chemical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Chief Executive Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Executive Officer"
+          }
+        }
+      }
+    },
+    "job.title.Chief Medical Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Medical Officer"
+          }
+        }
+      }
+    },
+    "job.title.Chief Technology Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chief Technology Officer"
+          }
+        }
+      }
+    },
+    "job.title.Childcare Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Childcare Worker"
+          }
+        }
+      }
+    },
+    "job.title.Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Civil Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Cloud Architect" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud Architect"
+          }
+        }
+      }
+    },
+    "job.title.Construction Laborer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construction Laborer"
+          }
+        }
+      }
+    },
+    "job.title.Content Writer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content Writer"
+          }
+        }
+      }
+    },
+    "job.title.Cook" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cook"
+          }
+        }
+      }
+    },
+    "job.title.Customer Service Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customer Service Representative"
+          }
+        }
+      }
+    },
+    "job.title.Cybersecurity Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cybersecurity Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Delivery Courier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delivery Courier"
+          }
+        }
+      }
+    },
+    "job.title.Dental Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dental Assistant"
+          }
+        }
+      }
+    },
+    "job.title.Dentist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dentist"
+          }
+        }
+      }
+    },
+    "job.title.Dishwasher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dishwasher"
+          }
+        }
+      }
+    },
+    "job.title.Dispatcher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispatcher"
+          }
+        }
+      }
+    },
+    "job.title.Editor-in-Chief" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editor-in-Chief"
+          }
+        }
+      }
+    },
+    "job.title.Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrician"
+          }
+        }
+      }
+    },
+    "job.title.Elite Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elite Player"
+          }
+        }
+      }
+    },
+    "job.title.Event Planner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event Planner"
+          }
+        }
+      }
+    },
+    "job.title.Executive Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Executive Chef"
+          }
+        }
+      }
+    },
+    "job.title.Factory Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Factory Worker"
+          }
+        }
+      }
+    },
+    "job.title.Farm-to-Table Restaurant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farm-to-Table Restaurant"
+          }
+        }
+      }
+    },
+    "job.title.Farmer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farmer"
+          }
+        }
+      }
+    },
+    "job.title.Farmhand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farmhand"
+          }
+        }
+      }
+    },
+    "job.title.Fashion Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fashion Designer"
+          }
+        }
+      }
+    },
+    "job.title.Fast Food Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast Food Worker"
+          }
+        }
+      }
+    },
+    "job.title.Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Financial Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefighter"
+          }
+        }
+      }
+    },
+    "job.title.First Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Officer"
+          }
+        }
+      }
+    },
+    "job.title.Fitness Instructor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fitness Instructor"
+          }
+        }
+      }
+    },
+    "job.title.Flight Attendant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flight Attendant"
+          }
+        }
+      }
+    },
+    "job.title.Food Preparation Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food Preparation Worker"
+          }
+        }
+      }
+    },
+    "job.title.Forklift Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forklift Operator"
+          }
+        }
+      }
+    },
+    "job.title.Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Designer"
+          }
+        }
+      }
+    },
+    "job.title.Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphic Artist"
+          }
+        }
+      }
+    },
+    "job.title.Groundskeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groundskeeper"
+          }
+        }
+      }
+    },
+    "job.title.HVAC Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HVAC Technician"
+          }
+        }
+      }
+    },
+    "job.title.Hairdresser/Barber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hairdresser/Barber"
+          }
+        }
+      }
+    },
+    "job.title.Head Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head Chef"
+          }
+        }
+      }
+    },
+    "job.title.Heavy Equipment Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heavy Equipment Operator"
+          }
+        }
+      }
+    },
+    "job.title.Hotel Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hotel Manager"
+          }
+        }
+      }
+    },
+    "job.title.Housekeeper" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Housekeeper"
+          }
+        }
+      }
+    },
+    "job.title.Human Resources Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Human Resources Specialist"
+          }
+        }
+      }
+    },
+    "job.title.IT Support Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IT Support Specialist"
+          }
+        }
+      }
+    },
+    "job.title.Indie Game Studio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indie Game Studio"
+          }
+        }
+      }
+    },
+    "job.title.Insurance Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insurance Agent"
+          }
+        }
+      }
+    },
+    "job.title.Interior Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interior Designer"
+          }
+        }
+      }
+    },
+    "job.title.Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Investment Banker"
+          }
+        }
+      }
+    },
+    "job.title.Janitor/Cleaner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Janitor/Cleaner"
+          }
+        }
+      }
+    },
+    "job.title.Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journalist"
+          }
+        }
+      }
+    },
+    "job.title.Judge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Judge"
+          }
+        }
+      }
+    },
+    "job.title.Junior 3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior 3D Artist"
+          }
+        }
+      }
+    },
+    "job.title.Junior Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Accountant"
+          }
+        }
+      }
+    },
+    "job.title.Junior Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Business Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Junior Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Civil Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Junior Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Data Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Junior Data Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Data Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Junior Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Electrical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Junior Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Financial Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Junior Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Graphic Artist"
+          }
+        }
+      }
+    },
+    "job.title.Junior Investment Banker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Investment Banker"
+          }
+        }
+      }
+    },
+    "job.title.Junior Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Management Consultant"
+          }
+        }
+      }
+    },
+    "job.title.Junior Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Marketing Specialist"
+          }
+        }
+      }
+    },
+    "job.title.Junior Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Mechanical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Junior Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Paralegal"
+          }
+        }
+      }
+    },
+    "job.title.Junior Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Research Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Junior Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Software Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Junior Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior Systems Administrator"
+          }
+        }
+      }
+    },
+    "job.title.Junior UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Junior UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.title.Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lab Technician"
+          }
+        }
+      }
+    },
+    "job.title.Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lawyer"
+          }
+        }
+      }
+    },
+    "job.title.Lead Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Firefighter"
+          }
+        }
+      }
+    },
+    "job.title.Lead Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Game Designer"
+          }
+        }
+      }
+    },
+    "job.title.Lead Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Lab Technician"
+          }
+        }
+      }
+    },
+    "job.title.Lead Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Municipal Worker"
+          }
+        }
+      }
+    },
+    "job.title.Lead Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Police Officer"
+          }
+        }
+      }
+    },
+    "job.title.Lead Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Project Manager"
+          }
+        }
+      }
+    },
+    "job.title.Lead Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Teacher"
+          }
+        }
+      }
+    },
+    "job.title.Lead Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead Tutor"
+          }
+        }
+      }
+    },
+    "job.title.Lead UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lead UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.title.Level Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level Designer"
+          }
+        }
+      }
+    },
+    "job.title.Licensed Practical Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Licensed Practical Nurse"
+          }
+        }
+      }
+    },
+    "job.title.Light Truck Delivery Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light Truck Delivery Driver"
+          }
+        }
+      }
+    },
+    "job.title.Logistics Coordinator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logistics Coordinator"
+          }
+        }
+      }
+    },
+    "job.title.Machine Operator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machine Operator"
+          }
+        }
+      }
+    },
+    "job.title.Machinist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Machinist"
+          }
+        }
+      }
+    },
+    "job.title.Maintenance & Repair Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance & Repair Worker"
+          }
+        }
+      }
+    },
+    "job.title.Management Consultant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Management Consultant"
+          }
+        }
+      }
+    },
+    "job.title.Managing Partner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Managing Partner"
+          }
+        }
+      }
+    },
+    "job.title.Marketing Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marketing Director"
+          }
+        }
+      }
+    },
+    "job.title.Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marketing Specialist"
+          }
+        }
+      }
+    },
+    "job.title.Master Carpenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master Carpenter"
+          }
+        }
+      }
+    },
+    "job.title.Master Electrician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master Electrician"
+          }
+        }
+      }
+    },
+    "job.title.Master Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master Plumber"
+          }
+        }
+      }
+    },
+    "job.title.Mechanic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mechanic"
+          }
+        }
+      }
+    },
+    "job.title.Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mechanical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Medical Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medical Assistant"
+          }
+        }
+      }
+    },
+    "job.title.Mover" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover"
+          }
+        }
+      }
+    },
+    "job.title.Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Municipal Worker"
+          }
+        }
+      }
+    },
+    "job.title.Narrative Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrative Designer"
+          }
+        }
+      }
+    },
+    "job.title.News Anchor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "News Anchor"
+          }
+        }
+      }
+    },
+    "job.title.Nurse Practitioner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nurse Practitioner"
+          }
+        }
+      }
+    },
+    "job.title.Nursing Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nursing Aide"
+          }
+        }
+      }
+    },
+    "job.title.Office Clerk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Office Clerk"
+          }
+        }
+      }
+    },
+    "job.title.Office Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Office Manager"
+          }
+        }
+      }
+    },
+    "job.title.Operations Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operations Manager"
+          }
+        }
+      }
+    },
+    "job.title.Painter (Construction)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Painter (Construction)"
+          }
+        }
+      }
+    },
+    "job.title.Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paralegal"
+          }
+        }
+      }
+    },
+    "job.title.Paramedic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paramedic"
+          }
+        }
+      }
+    },
+    "job.title.Payroll Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Payroll Specialist"
+          }
+        }
+      }
+    },
+    "job.title.Personal Care Aide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Care Aide"
+          }
+        }
+      }
+    },
+    "job.title.Personal Trainer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personal Trainer"
+          }
+        }
+      }
+    },
+    "job.title.Pharmacist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacist"
+          }
+        }
+      }
+    },
+    "job.title.Pharmacy Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pharmacy Technician"
+          }
+        }
+      }
+    },
+    "job.title.Photographer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photographer"
+          }
+        }
+      }
+    },
+    "job.title.Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Physician"
+          }
+        }
+      }
+    },
+    "job.title.Physiotherapist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Physiotherapist"
+          }
+        }
+      }
+    },
+    "job.title.Pilot" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pilot"
+          }
+        }
+      }
+    },
+    "job.title.Plumber" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plumber"
+          }
+        }
+      }
+    },
+    "job.title.Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Police Officer"
+          }
+        }
+      }
+    },
+    "job.title.Principal Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principal Research Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Principal Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principal Software Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Professional Player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional Player"
+          }
+        }
+      }
+    },
+    "job.title.Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project Manager"
+          }
+        }
+      }
+    },
+    "job.title.Property Development Firm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Property Development Firm"
+          }
+        }
+      }
+    },
+    "job.title.Psychologist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist"
+          }
+        }
+      }
+    },
+    "job.title.Quality Control Inspector" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality Control Inspector"
+          }
+        }
+      }
+    },
+    "job.title.Real Estate Agent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real Estate Agent"
+          }
+        }
+      }
+    },
+    "job.title.Receptionist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receptionist"
+          }
+        }
+      }
+    },
+    "job.title.Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registered Nurse"
+          }
+        }
+      }
+    },
+    "job.title.Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Research Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Resident Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resident Physician"
+          }
+        }
+      }
+    },
+    "job.title.Retail Salesperson" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retail Salesperson"
+          }
+        }
+      }
+    },
+    "job.title.Roofer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roofer"
+          }
+        }
+      }
+    },
+    "job.title.SaaS App Startup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SaaS App Startup"
+          }
+        }
+      }
+    },
+    "job.title.Sales Director" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Director"
+          }
+        }
+      }
+    },
+    "job.title.Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Manager"
+          }
+        }
+      }
+    },
+    "job.title.Sales Representative" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sales Representative"
+          }
+        }
+      }
+    },
+    "job.title.Security Guard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Security Guard"
+          }
+        }
+      }
+    },
+    "job.title.Senior 3D Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior 3D Artist"
+          }
+        }
+      }
+    },
+    "job.title.Senior Accountant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Accountant"
+          }
+        }
+      }
+    },
+    "job.title.Senior Business Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Business Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Senior Civil Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Civil Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Data Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Data Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Senior Electrical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Electrical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Financial Analyst" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Financial Analyst"
+          }
+        }
+      }
+    },
+    "job.title.Senior Firefighter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Firefighter"
+          }
+        }
+      }
+    },
+    "job.title.Senior Game Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Game Designer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Graphic Artist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Graphic Artist"
+          }
+        }
+      }
+    },
+    "job.title.Senior Journalist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Journalist"
+          }
+        }
+      }
+    },
+    "job.title.Senior Lab Technician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Lab Technician"
+          }
+        }
+      }
+    },
+    "job.title.Senior Lawyer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Lawyer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Marketing Specialist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Marketing Specialist"
+          }
+        }
+      }
+    },
+    "job.title.Senior Mechanical Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Mechanical Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Municipal Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Municipal Worker"
+          }
+        }
+      }
+    },
+    "job.title.Senior Paralegal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Paralegal"
+          }
+        }
+      }
+    },
+    "job.title.Senior Physician" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Physician"
+          }
+        }
+      }
+    },
+    "job.title.Senior Police Officer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Police Officer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Project Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Project Manager"
+          }
+        }
+      }
+    },
+    "job.title.Senior Registered Nurse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Registered Nurse"
+          }
+        }
+      }
+    },
+    "job.title.Senior Research Scientist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Research Scientist"
+          }
+        }
+      }
+    },
+    "job.title.Senior Sales Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Sales Manager"
+          }
+        }
+      }
+    },
+    "job.title.Senior Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Software Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Senior Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Systems Administrator"
+          }
+        }
+      }
+    },
+    "job.title.Senior Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Teacher"
+          }
+        }
+      }
+    },
+    "job.title.Senior Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior Tutor"
+          }
+        }
+      }
+    },
+    "job.title.Senior UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senior UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.title.Social Media Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Social Media Manager"
+          }
+        }
+      }
+    },
+    "job.title.Social Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Social Worker"
+          }
+        }
+      }
+    },
+    "job.title.Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Software Tester/QA" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Software Tester/QA"
+          }
+        }
+      }
+    },
+    "job.title.Sous Chef" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sous Chef"
+          }
+        }
+      }
+    },
+    "job.title.Specialty Coffee Roastery" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Specialty Coffee Roastery"
+          }
+        }
+      }
+    },
+    "job.title.Staff Software Engineer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staff Software Engineer"
+          }
+        }
+      }
+    },
+    "job.title.Stocker/Order Filler" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stocker/Order Filler"
+          }
+        }
+      }
+    },
+    "job.title.Store Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Store Manager"
+          }
+        }
+      }
+    },
+    "job.title.Supply Chain Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supply Chain Manager"
+          }
+        }
+      }
+    },
+    "job.title.Surgeon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surgeon"
+          }
+        }
+      }
+    },
+    "job.title.Systems Administrator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systems Administrator"
+          }
+        }
+      }
+    },
+    "job.title.TV Presenter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TV Presenter"
+          }
+        }
+      }
+    },
+    "job.title.Taxi Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taxi Driver"
+          }
+        }
+      }
+    },
+    "job.title.Teacher" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teacher"
+          }
+        }
+      }
+    },
+    "job.title.Teaching Assistant" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teaching Assistant"
+          }
+        }
+      }
+    },
+    "job.title.Translator/Interpreter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translator/Interpreter"
+          }
+        }
+      }
+    },
+    "job.title.Truck Driver" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Truck Driver"
+          }
+        }
+      }
+    },
+    "job.title.Tutor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutor"
+          }
+        }
+      }
+    },
+    "job.title.UX/UI Designer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UX/UI Designer"
+          }
+        }
+      }
+    },
+    "job.title.Veterinarian" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veterinarian"
+          }
+        }
+      }
+    },
+    "job.title.Video Editor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video Editor"
+          }
+        }
+      }
+    },
+    "job.title.Waiter/Waitress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiter/Waitress"
+          }
+        }
+      }
+    },
+    "job.title.Warehouse Manager" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warehouse Manager"
+          }
+        }
+      }
+    },
+    "job.title.Warehouse Worker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warehouse Worker"
+          }
+        }
+      }
+    },
+    "job.title.Welder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welder"
+          }
+        }
+      }
+    }
   },
   "version" : "1.0"
 }

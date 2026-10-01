@@ -5,6 +5,8 @@
     i18n.py skeleton LANG [FILE.swift ...] -o OUT.json
                                     the catalog keys (of those files, or all) that have no LANG translation
                                     yet, as a JSON file to fill in
+    i18n.py chunks LANG NL NC OUTDIR  split what LANG still lacks into NL Localizable and NC Catalogue work files,
+                                    each ready to fill in: "strings" values are "" and "_context" explains
     i18n.py check [-v]              validate every translations/**/*.json; after `extract`, report coverage
     i18n.py verify                  the shipped catalogs themselves: every live string has all five translations
                                     with matching placeholders and plural forms (fast, no compile; used by CI)
@@ -334,6 +336,53 @@ def cmd_skeleton(args):
     print(f"{len(strings)} keys without a '{lang}' translation written to {out}")
 
 
+def cmd_chunks(args):
+    lang, nl, nc, outdir = args[0], int(args[1]), int(args[2]), args[3]
+    if lang not in LANGS:
+        sys.exit("LANG must be one of " + " ".join(LANGS))
+    d = scratch_dir()
+    data = read_stringsdata(d)
+    errors = []
+    merged = merged_translations(errors)
+    catalog = load_catalog(CATALOGS["Localizable"])
+    items = []  # (sortkey, table, key, value, context)
+    for key, places in data.get("Localizable", {}).items():
+        if not needs_translation("Localizable", key, catalog):
+            continue
+        langs = merged.get("Localizable", {}).get(key, {})
+        if lang in langs:
+            continue
+        plural = langs.get("en") if isinstance(langs.get("en"), dict) else None
+        first = min(places, key=lambda p: (p[0], p[1]))
+        ctx = {"where": ", ".join(sorted({"%s:%s" % (os.path.basename(p[0]), p[1]) for p in places}))}
+        comments = sorted({p[2] for p in places if p[2]})
+        if comments:
+            ctx["comment"] = " | ".join(comments)
+        if plural:
+            ctx["english"] = plural
+        value = {c: "" for c in sorted(PLURAL_REQUIRED[lang])} if plural else ""
+        items.append(((0, first[0], first[1]), "Localizable", key, value, ctx))
+    for key, langs in merged.get("Catalogue", {}).items():
+        if lang in langs:
+            continue
+        items.append(((1, key, 0), "Catalogue", key, "", {"english": langs.get("en", "")}))
+    items.sort(key=lambda it: it[0])
+    os.makedirs(outdir, exist_ok=True)
+    for table, n in (("Localizable", nl), ("Catalogue", nc)):
+        rows_all = [it for it in items if it[1] == table]
+        per = -(-len(rows_all) // n) if n else 0
+        for i in range(n):
+            rows = rows_all[i * per:(i + 1) * per]
+            if not rows:
+                continue
+            doc = {"table": table, "strings": {it[2]: it[3] for it in rows}, "_context": {it[2]: it[4] for it in rows}}
+            path = os.path.join(outdir, f"{lang}-{table}-{i + 1:02d}.json")
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(doc, fh, ensure_ascii=False, indent=1)
+                fh.write("\n")
+            print(path, len(rows), "keys")
+
+
 def cmd_check(args):
     errors = []
     merged = merged_translations(errors)
@@ -640,6 +689,7 @@ def main():
         "extract": cmd_extract,
         "skeleton": cmd_skeleton,
         "check": cmd_check,
+        "chunks": cmd_chunks,
         "apply": cmd_apply,
         "verify": cmd_verify,
         "build": cmd_build,
