@@ -1,0 +1,11 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "%lld yr as %@": { "one": "%lld yr as %@", "other": "%lld yr as %@" },
+    "%lld yr in %@": { "one": "%lld yr in %@", "other": "%lld yr in %@" },
+    "%lld yr as %@ (role expects %@ yr)": { "one": "%lld yr as %@ (role expects %@ yr)", "other": "%lld yr as %@ (role expects %@ yr)" },
+    "%lld yr in %@ (role expects %@ yr)": { "one": "%lld yr in %@ (role expects %@ yr)", "other": "%lld yr in %@ (role expects %@ yr)" },
+    "%lld yr as %@ (you have %@)": { "one": "%lld yr as %@ (you have %@)", "other": "%lld yr as %@ (you have %@)" },
+    "%lld yr in %@ (you have %@)": { "one": "%lld yr in %@ (you have %@)", "other": "%lld yr in %@ (you have %@)" }
+  }
+}

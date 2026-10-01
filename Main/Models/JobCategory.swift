@@ -59,9 +59,9 @@ enum WorkSetting: String, CaseIterable, Identifiable, Codable {
     /// One-line explanation for the filter's info hint.
     var blurb: String {
         switch self {
-        case .office: return "Desk work — planning, analysing, designing, writing."
-        case .field: return "Hands-on work — building, fixing, driving, growing, cooking."
-        case .peopleFacing: return "Working directly with people — serving, teaching, caring, performing."
+        case .office: return L("Desk work — planning, analysing, designing, writing.")
+        case .field: return L("Hands-on work — building, fixing, driving, growing, cooking.")
+        case .peopleFacing: return L("Working directly with people — serving, teaching, caring, performing.")
         }
     }
 }
@@ -221,43 +221,43 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     var description: String {
         switch self {
         case .publicServices:
-            return "Keeping your town safe and running: police, firefighters, city services, security, and support for families."
+            return L("Keeping your town safe and running: police, firefighters, city services, security, and support for families.")
         case .education:
-            return "Teaching and learning with students, making school fun and helping minds grow."
+            return L("Teaching and learning with students, making school fun and helping minds grow.")
         case .health:
-            return "Keeping people healthy and safe: doctors, nurses, dentists, and helpers at clinics and hospitals."
+            return L("Keeping people healthy and safe: doctors, nurses, dentists, and helpers at clinics and hospitals.")
         case .engineering:
-            return "Designing and building things like bridges, machines, and robots. Lots of problem solving!"
+            return L("Designing and building things like bridges, machines, and robots. Lots of problem solving!")
         case .technology:
-            return "Making apps, games, and computers work. Code, test, and create cool digital tools."
+            return L("Making apps, games, and computers work. Code, test, and create cool digital tools.")
         case .showBusiness:
-            return "Lights, camera, action! Performing, creating, and competing in the spotlight — acting, music, dance, film, TV, social media, and pro sports."
+            return L("Lights, camera, action! Performing, creating, and competing in the spotlight — acting, music, dance, film, TV, social media, and pro sports.")
         case .agriculture:
-            return "Farming, growing food, and taking care of animals. It's all about nurturing life."
+            return L("Farming, growing food, and taking care of animals. It's all about nurturing life.")
         case .design:
-            return "Make things look great and work well — logos, apps, clothes, rooms, and the worlds and characters in video games."
+            return L("Make things look great and work well — logos, apps, clothes, rooms, and the worlds and characters in video games.")
         case .law:
-            return "Protect rights and follow rules: lawyers, judges, and helpers who know the law."
+            return L("Protect rights and follow rules: lawyers, judges, and helpers who know the law.")
         case .business:
-            return "Manage money, sell products, advise companies, and lead teams to succeed."
+            return L("Manage money, sell products, advise companies, and lead teams to succeed.")
         case .construction:
-            return "Build homes, roads, and cities with tools, machines, and teamwork."
+            return L("Build homes, roads, and cities with tools, machines, and teamwork.")
         case .retail:
-            return "Help customers find what they need in stores and online."
+            return L("Help customers find what they need in stores and online.")
         case .science:
-            return "Discover how the world works: labs, experiments, and new inventions."
+            return L("Discover how the world works: labs, experiments, and new inventions.")
         case .hospitality:
-            return "Welcome and care for guests in hotels, restaurants, flights, and events to make their day great."
+            return L("Welcome and care for guests in hotels, restaurants, flights, and events to make their day great.")
         case .service:
-            return "Personal grooming and beauty services that help people look and feel their best."
+            return L("Personal grooming and beauty services that help people look and feel their best.")
         case .manufacturing:
-            return "Make products from raw materials: factories, workshops, and artisans."
+            return L("Make products from raw materials: factories, workshops, and artisans.")
         case .entrepreneurship:
-            return "Start your own business! Take a risk, build something new, and be your own boss."
+            return L("Start your own business! Take a risk, build something new, and be your own boss.")
         case .transportation:
-            return "Move people and goods by road and air: drive, fly, operate, keep vehicles running safely, and plan the routes and warehouses behind it."
+            return L("Move people and goods by road and air: drive, fly, operate, keep vehicles running safely, and plan the routes and warehouses behind it.")
         case .administration:
-            return "The back office every company needs: accounting, payroll, hiring, and keeping the place organized."
+            return L("The back office every company needs: accounting, payroll, hiring, and keeping the place organized.")
         }
     }
 }
@@ -385,15 +385,15 @@ enum Industry: String, CaseIterable, Identifiable, Codable {
     var promotionCultureBlurb: String {
         let c = promotionCulture
         if c.seniority >= 0.45 {
-            return "In \(rawValue), the years you've worked there count the most."
+            return L("In \(displayName), the years you've worked there count the most.")
         }
         if c.readiness >= 0.45 {
-            return "In \(rawValue), being ready for the next job counts the most."
+            return L("In \(displayName), being ready for the next job counts the most.")
         }
         if c.performance >= 0.45 {
-            return "In \(rawValue), doing your current job well counts the most."
+            return L("In \(displayName), doing your current job well counts the most.")
         }
-        return "In \(rawValue), doing well, being ready and years worked all count about the same."
+        return L("In \(displayName), doing well, being ready and years worked all count about the same.")
     }
 
     /// How much of the national cycle this sector transmits — its beta. 1.0 moves
@@ -562,11 +562,11 @@ enum IndustryClimate: String, CaseIterable, Identifiable, Codable {
     /// One line for the Macroeconomics panel.
     var blurb: String {
         switch self {
-        case .boom:     return "Business is great! Lots of hiring — a great year to apply for a job."
-        case .growth:   return "Growing. It's easier than usual to find a job."
-        case .steady:   return "Steady — not growing or shrinking. Chances are normal."
-        case .slowdown: return "Slowing down. Fewer jobs and promotions, and more people losing their jobs."
-        case .slump:    return "Having a hard time. Some jobs disappear, pay stops growing, and more people lose their jobs."
+        case .boom:     return L("Business is great! Lots of hiring — a great year to apply for a job.")
+        case .growth:   return L("Growing. It's easier than usual to find a job.")
+        case .steady:   return L("Steady — not growing or shrinking. Chances are normal.")
+        case .slowdown: return L("Slowing down. Fewer jobs and promotions, and more people losing their jobs.")
+        case .slump:    return L("Having a hard time. Some jobs disappear, pay stops growing, and more people lose their jobs.")
         }
     }
 }
