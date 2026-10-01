@@ -6,6 +6,8 @@
                                     the catalog keys (of those files, or all) that have no LANG translation
                                     yet, as a JSON file to fill in
     i18n.py check [-v]              validate every translations/**/*.json; after `extract`, report coverage
+    i18n.py verify                  the shipped catalogs themselves: every live string has all five translations
+                                    with matching placeholders and plural forms (fast, no compile; used by CI)
     i18n.py build                   extract + sync Localizable.xcstrings + apply the translations
     i18n.py apply                   apply the translations to the catalogs without re-extracting
     i18n.py audit [--words] [FILE.swift ...]
@@ -367,6 +369,46 @@ def cmd_check(args):
     sys.exit(1 if errors else 0)
 
 
+def cmd_verify(args):
+    """The catalogs as they ship: complete in every language, placeholders and plurals intact."""
+    errors = []
+    checked = 0
+    for table, path in CATALOGS.items():
+        catalog = load_catalog(path)
+        for key, entry in catalog["strings"].items():
+            if entry.get("shouldTranslate") is False or entry.get("extractionState") == "stale":
+                continue
+            checked += 1
+            locs = entry.get("localizations", {})
+            en = locs.get("en", {})
+            plural_en = "variations" in en and "plural" in en.get("variations", {})
+            for lang in LANGS:
+                loc = locs.get(lang)
+                if not loc:
+                    errors.append(f"{table}: '{key}' has no '{lang}' translation")
+                    continue
+                if "variations" in loc:
+                    forms = {c: u["stringUnit"]["value"] for c, u in loc["variations"].get("plural", {}).items()}
+                    if not PLURAL_REQUIRED[lang] <= set(forms):
+                        errors.append(f"{table}: '{key}' [{lang}] plural forms {sorted(forms)}; need {sorted(PLURAL_REQUIRED[lang])}")
+                    for cat, text in forms.items():
+                        check_placeholders(key, text, f"{table}: '{key}' [{lang}.{cat}] plural", errors)
+                else:
+                    if plural_en:
+                        errors.append(f"{table}: '{key}' [{lang}] must vary by plural like the English")
+                    text = loc.get("stringUnit", {}).get("value", "")
+                    if not text.strip():
+                        errors.append(f"{table}: '{key}' [{lang}] is empty")
+                    elif table == "Localizable":
+                        check_placeholders(key, text, f"{table}: '{key}' [{lang}]", errors)
+    for e in errors[:300]:
+        print("ERROR", e)
+    if len(errors) > 300:
+        print(f"... and {len(errors) - 300} more")
+    print(f"{checked} live strings checked, {len(errors)} problems")
+    sys.exit(1 if errors else 0)
+
+
 def cmd_apply(args):
     errors = []
     changed = apply_translations(errors)
@@ -525,7 +567,7 @@ def skeleton_key(key):
 
 
 NON_UI_BEFORE = re.compile(
-    r"(print|assert|assertionFailure|precondition|preconditionFailure|fatalError|NSLog|Logger|logger|os_log|"
+    r"(comment:|print|assert|assertionFailure|precondition|preconditionFailure|fatalError|NSLog|Logger|logger|os_log|"
     r"systemName:|systemImage:|Image\(|named:|Color\(|\.font\(|\.fontWeight\(|import |@available|#if|#available|"
     r"\.contains\(|\.hasPrefix\(|\.hasSuffix\(|\.firstIndex|\.split\(|separator:|\.replacingOccurrences|"
     r"\bid:|\.id\s*==|rawValue|forKey:|\.sheet|identifier:|UserDefaults|\.accessibilityIdentifier|dispatchPrecondition|"
@@ -599,6 +641,7 @@ def main():
         "skeleton": cmd_skeleton,
         "check": cmd_check,
         "apply": cmd_apply,
+        "verify": cmd_verify,
         "build": cmd_build,
         "audit": cmd_audit,
     }.get(cmd, lambda a: sys.exit(__doc__))(args)
