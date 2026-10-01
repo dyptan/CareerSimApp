@@ -18,24 +18,160 @@ import Foundation
 
 // MARK: - World: jobs, categories, industries (owner: jobs & catalogue)
 
-extension FameCategory { var displayName: String { rawValue } }
-extension WorkSetting { var displayName: String { rawValue } }
-extension JobCategory { var displayName: String { rawValue } }
-extension Industry { var displayName: String { rawValue } }
-extension IndustryClimate { var displayName: String { rawValue } }
+extension FameCategory {
+    var displayName: String {
+        switch self {
+        case .entertainment:
+            return String(localized: "Entertainment", comment: "A field of fame and of work: film, TV, music, performing and sport. Shown on the fame shelf and in job and industry lists.")  // i18n:ignore translator comment
+        case .technology:
+            return String(localized: "Technology", comment: "A field of work and fame: computing, software and gadgets (not engineering). Also an industry and a degree field.")  // i18n:ignore translator comment
+        case .arts:
+            return String(localized: "Arts", comment: "A field of fame: the creative arts - painting, design, writing, language. Plural noun, not the school subject.")  // i18n:ignore translator comment
+        case .business:
+            return String(localized: "Business", comment: "A field of work and fame: commerce, management and finance. Also a degree field.")  // i18n:ignore translator comment
+        case .science:
+            return String(localized: "Science", comment: "A field of work and fame: research, labs and discovery. Also a degree field.")  // i18n:ignore translator comment
+        }
+    }
+}
+
+extension WorkSetting {
+    var displayName: String {
+        switch self {
+        case .office:
+            return String(localized: "Office", comment: "Where a job is done: at a desk, on a screen. A filter on the jobs list, next to Field and People-facing.")  // i18n:ignore translator comment
+        case .field:
+            return String(localized: "Field", comment: "Where a job is done: hands-on and on your feet - building sites, kitchens, farms, vehicles. A filter on the jobs list; not a sports field or a field of study.")  // i18n:ignore translator comment
+        case .peopleFacing:
+            return String(localized: "People-facing", comment: "Where a job is done: dealing with people face to face - serving, teaching, caring, selling. A filter on the jobs list, next to Office and Field.")  // i18n:ignore translator comment
+        }
+    }
+}
+
+extension JobCategory {
+    var displayName: String {
+        switch self {
+        case .engineering:
+            return String(localized: "Engineering", comment: "A field of work (job category): designing and building machines, structures and systems. Also a degree field.")  // i18n:ignore translator comment
+        case .showBusiness:
+            return String(localized: "Show Business", comment: "A field of work (job category): acting, music, film, TV, creators and professional sport.")  // i18n:ignore translator comment
+        case .publicServices:
+            return String(localized: "Public Services", comment: "A field of work (job category): police, fire brigade, city services - work for the community.")  // i18n:ignore translator comment
+        case .health:
+            return String(localized: "Health", comment: "A field of work (job category): doctors, nurses and other health-care jobs. Also a degree field.")  // i18n:ignore translator comment
+        case .technology:
+            return String(localized: "Technology", comment: "A field of work and fame: computing, software and gadgets (not engineering). Also an industry and a degree field.")  // i18n:ignore translator comment
+        case .education:
+            return String(localized: "Education", comment: "A field of work and an industry: teaching and schools. Also a degree field.")  // i18n:ignore translator comment
+        case .agriculture:
+            return String(localized: "Agriculture", comment: "A field of work (job category): farming and growing food.")  // i18n:ignore translator comment
+        case .design:
+            return String(localized: "Design", comment: "A field of work (job category): graphic, product, fashion and game design. Also a degree field.")  // i18n:ignore translator comment
+        case .law:
+            return String(localized: "Law", comment: "A field of work (job category): lawyers, judges and legal work. Also a degree field.")  // i18n:ignore translator comment
+        case .business:
+            return String(localized: "Business", comment: "A field of work and fame: commerce, management and finance. Also a degree field.")  // i18n:ignore translator comment
+        case .construction:
+            return String(localized: "Construction", comment: "A field of work (job category): building homes, roads and cities.")  // i18n:ignore translator comment
+        case .retail:
+            return String(localized: "Retail", comment: "A field of work (job category): selling goods to customers in shops and online.")  // i18n:ignore translator comment
+        case .science:
+            return String(localized: "Science", comment: "A field of work and fame: research, labs and discovery. Also a degree field.")  // i18n:ignore translator comment
+        case .hospitality:
+            return String(localized: "Hospitality", comment: "A field of work (job category): hotels, restaurants, travel and events - looking after guests.")  // i18n:ignore translator comment
+        case .service:
+            return String(localized: "Personal Services", comment: "A field of work (job category): personal grooming and beauty services such as hairdressing - not public services.")  // i18n:ignore translator comment
+        case .manufacturing:
+            return String(localized: "Manufacturing", comment: "A field of work (job category): making products in factories and workshops.")  // i18n:ignore translator comment
+        case .entrepreneurship:
+            return String(localized: "Entrepreneurship", comment: "A field of work (job category): starting and running your own business.")  // i18n:ignore translator comment
+        case .transportation:
+            return String(localized: "Transportation", comment: "A field of work (job category): moving people and goods by road, air and rail.")  // i18n:ignore translator comment
+        case .administration:
+            return String(localized: "Administration", comment: "A field of work (job category): office back-room work - accounting, payroll, HR, keeping things organised.")  // i18n:ignore translator comment
+        }
+    }
+}
+
+extension Industry {
+    var displayName: String {
+        switch self {
+        case .software:
+            return String(localized: "Software & Internet", comment: "An industry (sector of the economy, what the employer sells): software and online services.")  // i18n:ignore translator comment
+        case .hardware:
+            return String(localized: "Computing Hardware", comment: "An industry (sector of the economy): computers, chips and electronic devices.")  // i18n:ignore translator comment
+        case .telecom:
+            return String(localized: "Telecoms", comment: "An industry (sector of the economy): phone and network companies.")  // i18n:ignore translator comment
+        case .automotive:
+            return String(localized: "Automotive", comment: "An industry (sector of the economy): carmakers and their suppliers.")  // i18n:ignore translator comment
+        case .aerospaceDefense:
+            return String(localized: "Aerospace & Defence", comment: "An industry (sector of the economy): aircraft, space and the military.")  // i18n:ignore translator comment
+        case .energy:
+            return String(localized: "Energy & Utilities", comment: "An industry (sector of the economy): power, oil and gas, water.")  // i18n:ignore translator comment
+        case .finance:
+            return String(localized: "Banking & Finance", comment: "An industry (sector of the economy): banks, insurers and investment firms.")  // i18n:ignore translator comment
+        case .healthcare:
+            return String(localized: "Healthcare", comment: "An industry (sector of the economy): hospitals, clinics and care services.")  // i18n:ignore translator comment
+        case .pharmaBiotech:
+            return String(localized: "Pharma & Biotech", comment: "An industry (sector of the economy): medicines and biotechnology.")  // i18n:ignore translator comment
+        case .education:
+            return String(localized: "Education", comment: "A field of work and an industry: teaching and schools. Also a degree field.")  // i18n:ignore translator comment
+        case .government:
+            return String(localized: "Government & Public Sector", comment: "An industry (sector of the economy): government and publicly funded bodies.")  // i18n:ignore translator comment
+        case .retailTrade:
+            return String(localized: "Retail & Consumer", comment: "An industry (sector of the economy): shops and consumer goods.")  // i18n:ignore translator comment
+        case .hospitalityTourism:
+            return String(localized: "Hospitality & Tourism", comment: "An industry (sector of the economy): hotels, restaurants and travel.")  // i18n:ignore translator comment
+        case .mediaEntertainment:
+            return String(localized: "Media & Entertainment", comment: "An industry (sector of the economy): publishing, broadcasting, film, music and games - media as in news media.")  // i18n:ignore translator comment
+        case .construction:
+            return String(localized: "Construction & Property", comment: "An industry (sector of the economy): builders and property developers.")  // i18n:ignore translator comment
+        case .agriFood:
+            return String(localized: "Agriculture & Food", comment: "An industry (sector of the economy): farming and food production.")  // i18n:ignore translator comment
+        case .logistics:
+            return String(localized: "Transport & Logistics", comment: "An industry (sector of the economy): freight, delivery, warehouses and airlines.")  // i18n:ignore translator comment
+        case .manufacturing:
+            return String(localized: "Industrial Manufacturing", comment: "An industry (sector of the economy): factories making machinery and equipment.")  // i18n:ignore translator comment
+        case .professionalServices:
+            return String(localized: "Professional Services", comment: "An industry (sector of the economy): consultancies, law and accounting firms, agencies - firms that sell expertise.")  // i18n:ignore translator comment
+        }
+    }
+}
+
+extension IndustryClimate {
+    /// How an industry is doing this year: "Booming" … "Slump".
+    var displayName: String {
+        switch self {
+        case .boom:
+            return String(localized: "Booming", comment: "How an industry is doing this year: the best state, lots of hiring. Next to Growing, Steady, Slowing, Slump.")  // i18n:ignore translator comment
+        case .growth:
+            return String(localized: "Growing", comment: "How an industry is doing this year: expanding. Next to Booming, Steady, Slowing, Slump.")  // i18n:ignore translator comment
+        case .steady:
+            return String(localized: "Steady", comment: "How an industry is doing this year: neither growing nor shrinking. Next to Booming, Growing, Slowing, Slump.")  // i18n:ignore translator comment
+        case .slowdown:
+            return String(localized: "Slowing", comment: "How an industry is doing this year: shrinking a little. Next to Booming, Growing, Steady, Slump.")  // i18n:ignore translator comment
+        case .slump:
+            return String(localized: "Slump", comment: "How an industry is doing this year: the worst state, with job losses. A noun, as in an economic slump.")  // i18n:ignore translator comment
+        }
+    }
+}
 
 extension Job {
     /// The job's own title, in the player's language (`id` is the English title). Not the same as
     /// `displayTitle` (Job.swift), which is how an *occupation* reads — "CEO, <venture>" for a venture.
-    var catalogueTitle: String { id }
+    var catalogueTitle: String { L10n.catalogue("job.title.\(id)", english: id) }  // i18n:ignore catalogue key
     /// The role without its seniority ("Software Engineer"), in the player's language.
-    var displayBaseTitle: String { baseTitle }
+    var displayBaseTitle: String { L10n.catalogue("job.base.\(baseTitle)", english: baseTitle) }  // i18n:ignore catalogue key
     /// The seniority word ("Senior", "Lead") alone — empty for the bare role.
-    var displayRungLabel: String { rungLabel }
+    var displayRungLabel: String {
+        rungLabel.isEmpty ? "" : L10n.catalogue("job.rung.\(rungLabel)", english: rungLabel)  // i18n:ignore catalogue key
+    }
     /// What the job is, in a sentence or two.
-    var displaySummary: String { summary }
+    var displaySummary: String { L10n.catalogue("job.summary.\(id)", english: summary) }  // i18n:ignore catalogue key
     /// The career ladder named in prose ("as a Teacher"), in the player's language; nil when none.
-    var displayExperienceLadder: String? { experienceLadder }
+    var displayExperienceLadder: String? {
+        experienceLadder.map { L10n.catalogue("job.ladder.\($0)", english: $0) }  // i18n:ignore catalogue key
+    }
 }
 
 

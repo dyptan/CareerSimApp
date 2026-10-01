@@ -130,15 +130,15 @@ struct Job: Identifiable, Codable, Hashable {
 
             func educationLabel() -> String {
                 switch minEQF {
-                case ..<1: return "Primary school"
-                case 1: return "Primary school"
-                case 2: return "Middle school"
-                case 3: return "High school"
-                case 4: return "College / Vocational"
-                case 5: return "University — Bachelor's"
-                case 6: return "University — Master's"
-                case 7: return "Doctorate"
-                default: return "Doctorate+"
+                case ..<1: return L("Primary school")
+                case 1: return L("Primary school")
+                case 2: return L("Middle school")
+                case 3: return L("High school")
+                case 4: return L("College / Vocational")
+                case 5: return L("University — Bachelor's")
+                case 6: return L("University — Master's")
+                case 7: return L("Doctorate")
+                default: return L("Doctorate+")
                 }
             }
         }
@@ -164,7 +164,7 @@ extension Job {
         // Sports: the pro-athlete track opens on a junior-competition win. (The
         // screen and music big breaks open star *projects* instead — see
         // `SideHustle.requiresAward`.)
-        "Player": "Junior Champion",
+        "Player": "Junior Champion",  // i18n:ignore ids, never shown
     ]
 
     /// The breakthrough fame award this role requires, or nil for ordinary
@@ -389,7 +389,7 @@ extension Job {
         // Professional sport signs its players young: a first pro contract
         // after the mid-twenties is vanishingly rare. A player already on the
         // ladder can still step up it.
-        if baseTitle == "Player", rung >= 1, player.currentOccupation?.baseTitle != "Player",
+        if baseTitle == "Player", rung >= 1, player.currentOccupation?.baseTitle != "Player",  // i18n:ignore ids, never shown
            player.age > GameConstants.latestProSigningAge {
             return false
         }
@@ -771,7 +771,7 @@ extension Job {
         if id.contains("Chief") { return GameConstants.cSuiteSeatChance }
         // A professional roster has a few dozen places per club and hundreds of
         // title-holding juniors chasing them.
-        if baseTitle == "Player", rung >= 1 { return GameConstants.proRosterChance }
+        if baseTitle == "Player", rung >= 1 { return GameConstants.proRosterChance }  // i18n:ignore ids, never shown
         if id.contains("Director") || id.contains("Partner") { return GameConstants.directorSeatChance }
         return nil
     }
@@ -925,10 +925,10 @@ extension Job {
     }
 
     /// Apex rung labels that lead work rather than a company (see `isExecutive`).
-    private static let individualContributorApexLabels: Set<String> = ["Staff", "Principal", "Lead"]
+    private static let individualContributorApexLabels: Set<String> = ["Staff", "Principal", "Lead"]  // i18n:ignore ids, never shown
 
     /// Top-leadership capstones that are middle management, not executive seats.
-    private static let nonExecutiveCapstones: Set<String> = ["Operations Manager"]
+    private static let nonExecutiveCapstones: Set<String> = ["Operations Manager"]  // i18n:ignore ids, never shown
 
     /// Whether pay for this role is something the player argues for, rather than
     /// a posted rate they take or leave.
@@ -954,7 +954,7 @@ extension Job {
     /// candidate argues their way onto a different step of it. Keyed by
     /// `baseTitle`, so one entry covers every rung of a ladder.
     static let publicPayScaleTitles: Set<String> = [
-        "Judge",
+        "Judge",  // i18n:ignore ids, never shown
     ]
 
     /// Whether this is unskilled work — a role requiring no post-secondary
@@ -1109,7 +1109,9 @@ extension Job {
     /// Player-facing label for this seniority level. "Standard" for the rung
     /// that carries the bare role name.
     var seniorityLabel: String {
-        rungLabel.isEmpty ? "Standard" : rungLabel
+        rungLabel.isEmpty
+            ? String(localized: "Standard", comment: "The seniority of a job that is the plain role with no Senior, Lead or Junior in front. Next to labels like Senior and Lead.")  // i18n:ignore translator comment
+            : displayRungLabel
     }
 
     /// Player-facing occupation title. Founding a venture makes the player its
@@ -1117,12 +1119,12 @@ extension Job {
     /// the bare venture name (`baseTitle` stays the venture for experience and
     /// catalogue lookups).
     var displayTitle: String {
-        isEntrepreneurial ? "CEO, \(id)" : id
+        isEntrepreneurial ? L("CEO, \(catalogueTitle)") : catalogueTitle
     }
 
     /// Apex seniority prefixes that represent the top rung of a career ladder.
     private static let leadershipPrefixes: Set<String> = [
-        "Lead", "Principal", "Staff", "Head", "Executive", "Master", "Charge", "Chief"
+        "Lead", "Principal", "Staff", "Head", "Executive", "Master", "Charge", "Chief"  // i18n:ignore ids, never shown
     ]
 
     /// Title keywords that mark a top leadership role even without a seniority
@@ -1130,14 +1132,14 @@ extension Job {
     /// top out with a `Lead`/`Head`/`Principal` prefix instead are covered by
     /// `leadershipPrefixes`; this list catches the keyword-only apexes.
     private static let leadershipKeywords: [String] = [
-        "Director", "Partner", "Chief"
+        "Director", "Partner", "Chief"  // i18n:ignore ids, never shown
     ]
 
     /// Track apexes listed explicitly because their titles carry no leadership
     /// prefix/keyword — and to avoid sweeping in their mid-level rungs (e.g.
     /// Hotel/Sales/Project Manager, or Startup Founder below Serial Entrepreneur).
     private static let capstoneTitles: Set<String> = [
-        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"
+        "Store Manager", "Operations Manager", "Farm Manager", "Serial Entrepreneur"  // i18n:ignore ids, never shown
     ]
 
     /// True for the top management role of a career track — the win condition
