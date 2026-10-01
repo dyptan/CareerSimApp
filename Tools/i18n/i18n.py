@@ -567,7 +567,7 @@ def skeleton_key(key):
 
 
 NON_UI_BEFORE = re.compile(
-    r"(print|assert|assertionFailure|precondition|preconditionFailure|fatalError|NSLog|Logger|logger|os_log|"
+    r"(comment:|print|assert|assertionFailure|precondition|preconditionFailure|fatalError|NSLog|Logger|logger|os_log|"
     r"systemName:|systemImage:|Image\(|named:|Color\(|\.font\(|\.fontWeight\(|import |@available|#if|#available|"
     r"\.contains\(|\.hasPrefix\(|\.hasSuffix\(|\.firstIndex|\.split\(|separator:|\.replacingOccurrences|"
     r"\bid:|\.id\s*==|rawValue|forKey:|\.sheet|identifier:|UserDefaults|\.accessibilityIdentifier|dispatchPrecondition|"
