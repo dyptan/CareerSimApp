@@ -403,10 +403,9 @@ struct ModeSelectionView: View {
     private var skippedYearsNote: String? {
         let years = min(startAge, GameConstants.skippedYearsFullValueBelowAge) - GameConstants.startingAge
         guard years > 0 else { return nil }
-        let points = years * GameConstants.skippedYearSkillPoints
-        // One count drives both nouns' plural forms: a skipped year leaves
-        // `skippedYearSkillPoints` (1) point, so `points` equals `years`.
-        return L("🎲 Skipping \(years) years of childhood gives you \(Fmt.number(points)) random skill points. Playing those years yourself builds far more.")
+        // A skipped year leaves `skippedYearSkillPoints` (1) point, so the sentence says "one for each".
+        assert(GameConstants.skippedYearSkillPoints == 1)
+        return L("🎲 Skipping \(years) years of childhood gives you one random skill point for each. Playing those years yourself builds far more.")
     }
 
     /// Tells the player which school stage they'll begin in for the chosen age.

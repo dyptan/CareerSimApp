@@ -1,0 +1,15 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier.": {
+      "other": "確率は、下のスキルと、これまでの仕事の経験%1$lld年、すでに持っている%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
+    },
+    "Your %lld years in %@ count double.": {
+      "other": "%2$@での%1$lld年は2倍に数えられます。"
+    },
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
+      "other": "🎲 子ども時代の%lld年分を飛ばすと、1年につきランダムなスキルポイントが1つもらえます。その年月を自分でプレーすると、もっとたくさん身につきます。"
+    },
+    "%@ This field is in a slump this year: %@.": "%1$@ この分野は今年、不況です：%2$@。"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier.": {
+      "one": "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld an, et la renommée en %2$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine.",
+      "other": "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld ans, et la renommée en %2$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine."
+    },
+    "Your %lld years in %@ count double.": {
+      "one": "Tes %1$lld an en %2$@ comptent double.",
+      "other": "Tes %1$lld ans en %2$@ comptent double."
+    },
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
+      "one": "🎲 Sauter %lld an d’enfance te donne un point de compétence aléatoire. Jouer cette année toi-même en développe bien plus.",
+      "other": "🎲 Sauter %lld ans d’enfance te donne un point de compétence aléatoire par année. Jouer ces années toi-même en développe bien plus."
+    },
+    "%@ This field is in a slump this year: %@.": "%1$@ Ce domaine est en berne cette année : %2$@."
+  }
+}

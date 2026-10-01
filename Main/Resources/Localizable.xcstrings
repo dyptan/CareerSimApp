@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     " (your %lld years in %@ count double)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -775,6 +776,46 @@
         }
       }
     },
+    "%@ This field is in a slump this year: %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Dieser Bereich steckt dieses Jahr in der Krise: %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ This field is in a slump this year: %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Ce domaine est en berne cette année : %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Questo settore è in crisi quest’anno: %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ この分野は今年、不況です：%2$@。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Цього року ця сфера у спаді: %2$@."
+          }
+        }
+      }
+    },
     "%@ This field is slowing this year: %@." : {
       "localizations" : {
         "de" : {
@@ -816,6 +857,7 @@
       }
     },
     "%@ This field is slump this year: %@." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -60886,6 +60928,124 @@
         }
       }
     },
+    "Your %lld years in %@ count double." : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dein Jahr in %2$@ zählt doppelt."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deine %1$lld Jahre in %2$@ zählen doppelt."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your %1$lld year in %2$@ counts double."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your %1$lld years in %2$@ count double."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tes %1$lld an en %2$@ comptent double."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tes %1$lld ans en %2$@ comptent double."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Il tuo anno nel settore %2$@ conta il doppio."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "I tuoi %1$lld anni nel settore %2$@ contano il doppio."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%2$@での%1$lld年は2倍に数えられます。"
+                }
+              }
+            }
+          }
+        },
+        "uk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твої %1$lld роки у сфері «%2$@» враховуються вдвічі."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твої %1$lld років у сфері «%2$@» враховуються вдвічі."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твій %1$lld рік у сфері «%2$@» враховується вдвічі."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твої %1$lld років у сфері «%2$@» враховуються вдвічі."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Your application is already as strong as the game counts — the chance is capped at %@. More polish changes nothing; what's left is the seat." : {
       "localizations" : {
         "de" : {
@@ -61210,6 +61370,7 @@
       }
     },
     "Your chance goes up with the skills below, your %lld years of work%@, and the %@ fame you already have — being known in a field makes the next project there easier." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -61320,6 +61481,124 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Твій шанс підвищують навички нижче, твої %1$lld років роботи%2$@ і твоя слава (%3$@), яку ти вже маєш. Якщо тебе знають у сфері, наступний проєкт у ній вдається легше."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier." : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deine Chance steigt mit den Fähigkeiten unten, deinem einen Jahr Arbeit und dem Ruhm in %2$@, den du schon hast – wer in einem Bereich bekannt ist, hat es beim nächsten Projekt dort leichter."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deine Chance steigt mit den Fähigkeiten unten, deinen %1$lld Jahren Arbeit und dem Ruhm in %2$@, den du schon hast – wer in einem Bereich bekannt ist, hat es beim nächsten Projekt dort leichter."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your chance goes up with the skills below, your %1$lld year of work, and the %2$@ fame you already have — being known in a field makes the next project there easier."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your chance goes up with the skills below, your %1$lld years of work, and the %2$@ fame you already have — being known in a field makes the next project there easier."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld an, et la renommée en %2$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld ans, et la renommée en %2$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La tua probabilità sale con le competenze qui sotto, il tuo anno di lavoro e la fama nel settore %2$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La tua probabilità sale con le competenze qui sotto, i tuoi %1$lld anni di lavoro e la fama nel settore %2$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "確率は、下のスキルと、これまでの仕事の経験%1$lld年、すでに持っている%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
+                }
+              }
+            }
+          }
+        },
+        "uk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твій шанс підвищують навички нижче, твої %1$lld роки роботи і твоя слава (%2$@), яку ти вже маєш. Якщо тебе знають у сфері, наступний проєкт у ній вдається легше."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твій шанс підвищують навички нижче, твої %1$lld років роботи і твоя слава (%2$@), яку ти вже маєш. Якщо тебе знають у сфері, наступний проєкт у ній вдається легше."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твій шанс підвищують навички нижче, твій %1$lld рік роботи і твоя слава (%2$@), яку ти вже маєш. Якщо тебе знають у сфері, наступний проєкт у ній вдається легше."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Твій шанс підвищують навички нижче, твої %1$lld років роботи і твоя слава (%2$@), яку ти вже маєш. Якщо тебе знають у сфері, наступний проєкт у ній вдається легше."
                 }
               }
             }
@@ -69537,6 +69816,7 @@
       }
     },
     "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -69647,6 +69927,124 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "🎲 Пропуск %1$lld років дитинства дає випадкові бали навичок: %2$@. Якщо зіграти ці роки в грі, навичок буде набагато більше."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more." : {
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Wenn du %lld Jahr Kindheit überspringst, bekommst du einen zufälligen Fähigkeitspunkt. Dieses Jahr selbst zu spielen bringt viel mehr."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Wenn du %lld Jahre Kindheit überspringst, bekommst du für jedes Jahr einen zufälligen Fähigkeitspunkt. Diese Jahre selbst zu spielen bringt viel mehr."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Skipping %lld year of childhood gives you one random skill point. Playing that year yourself builds far more."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Sauter %lld an d’enfance te donne un point de compétence aléatoire. Jouer cette année toi-même en développe bien plus."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Sauter %lld ans d’enfance te donne un point de compétence aléatoire par année. Jouer ces années toi-même en développe bien plus."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Saltare %lld anno di infanzia ti regala un punto competenza casuale. Giocare quell’anno di persona ne fa guadagnare molti di più."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Saltare %lld anni di infanzia ti regala un punto competenza casuale per ogni anno. Giocare quegli anni di persona ne fa guadagnare molti di più."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 子ども時代の%lld年分を飛ばすと、1年につきランダムなスキルポイントが1つもらえます。その年月を自分でプレーすると、もっとたくさん身につきます。"
+                }
+              }
+            }
+          }
+        },
+        "uk" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Пропуск %lld років дитинства дає по одному випадковому балу навичок за кожен рік. Якщо зіграти ці роки в грі, навичок буде набагато більше."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Пропуск %lld років дитинства дає по одному випадковому балу навичок за кожен рік. Якщо зіграти ці роки в грі, навичок буде набагато більше."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Пропуск %lld року дитинства дає один випадковий бал навичок. Якщо зіграти цей рік у грі, навичок буде набагато більше."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "🎲 Пропуск %lld років дитинства дає по одному випадковому балу навичок за кожен рік. Якщо зіграти ці роки в грі, навичок буде набагато більше."
                 }
               }
             }

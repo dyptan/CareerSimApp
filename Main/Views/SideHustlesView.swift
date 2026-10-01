@@ -122,17 +122,15 @@ struct SideHustleRow: View {
         return L("🔒 Opens once you hold the “\(award)” title — chase it under Projects.")
     }
 
-    /// The "your chance goes up with …" line. The aside about double-counting years is its own
-    /// clause (a whole parenthesis, with its own count), so each part carries one plural.
+    /// The "your chance goes up with …" line. The note about double-counting years is a sentence of
+    /// its own (with its own count), so each sentence carries one plural and none is glued from fragments.
     private func oddsLine(for hustle: SideHustle, fame: String) -> String {
         let years = player.totalExperienceYears
-        var aside = ""
-        if let cat = hustle.experienceCategory {
-            let fieldYears = player.industryExperience(for: cat)
-            let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
-            aside = L(" (your \(fieldYears) years in \(field) count double)")
-        }
-        return L("Your chance goes up with the skills below, your \(years) years of work\(aside), and the \(fame) fame you already have — being known in a field makes the next project there easier.")
+        let main = L("Your chance goes up with the skills below, your \(years) years of work, and the \(fame) fame you already have — being known in a field makes the next project there easier.")
+        guard let cat = hustle.experienceCategory else { return main }
+        let fieldYears = player.industryExperience(for: cat)
+        let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
+        return main + " " + L("Your \(fieldYears) years in \(field) count double.")
     }
 
     /// What a flop costs: only the fame — the skill gains and the banked experience land either way.
@@ -157,7 +155,7 @@ struct SideHustleRow: View {
         case .boom:     return L("\(climate.icon) This field is booming this year: \(effect).")
         case .growth:   return L("\(climate.icon) This field is growing this year: \(effect).")
         case .slowdown: return L("\(climate.icon) This field is slowing this year: \(effect).")
-        case .slump:    return L("\(climate.icon) This field is slump this year: \(effect).")
+        case .slump:    return L("\(climate.icon) This field is in a slump this year: \(effect).")
         }
     }
 
