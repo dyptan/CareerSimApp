@@ -329,23 +329,24 @@ final class CountryTests: XCTestCase {
 
     /// The US reads exactly as before: "3.4 (B+)" as a GPA, a High School diploma.
     func testTheUSKeepsItsGPAAndSchoolNames() {
-        XCTAssertEqual(Country.unitedStates.gradeLabel(3.4), "\(Player.formatGPA(3.4)) (\(Player.letterGrade(3.4)))")
+        XCTAssertEqual(Country.unitedStates.gradeLabel(3.4), "\(Fmt.decimal(3.4)) (\(Player.letterGrade(3.4)))")
         XCTAssertEqual(Country.unitedStates.schooling.gradeName, "GPA")
         XCTAssertEqual(Education(.HighSchool).degreeName(in: .unitedStates), "High School")
         XCTAssertEqual(Country.unitedStates.tierName(.elite), EducationTier.elite.friendlyName)
     }
 
     func testEachCountryWritesTheGradeItsOwnWay() {
-        XCTAssertEqual(Country.germany.gradeLabel(4.0), "1.0 (very good)", "The Abitur runs 1.0 (best) to 4.0.")
-        XCTAssertEqual(Country.germany.gradeLabel(3.0), "2.0 (good)")
+        // Numbers are written in the game's locale (a decimal comma in many), so expectations go through `Fmt`.
+        XCTAssertEqual(Country.germany.gradeLabel(4.0), "\(Fmt.decimal(1.0)) (very good)", "The Abitur runs 1.0 (best) to 4.0.")
+        XCTAssertEqual(Country.germany.gradeLabel(3.0), "\(Fmt.decimal(2.0)) (good)")
         XCTAssertEqual(Country.unitedKingdom.gradeLabel(4.0), "A*A*A")
         XCTAssertEqual(Country.unitedKingdom.gradeLabel(3.2), "AAB")
         XCTAssertTrue(Country.france.gradeLabel(3.0).hasSuffix("/20 (très bien)"), Country.france.gradeLabel(3.0))
         XCTAssertEqual(Country.italy.gradeLabel(4.0), "100/100")
         XCTAssertEqual(Country.italy.gradeLabel(0), "60/100", "A pass is 60.")
-        XCTAssertEqual(Country.japan.gradeLabel(4.0), "5.0 of 5")
+        XCTAssertEqual(Country.japan.gradeLabel(4.0), "\(Fmt.decimal(5.0)) of 5")
         XCTAssertEqual(Country.ukraine.gradeLabel(4.0), "200/200")
-        XCTAssertEqual(Country.canada.gradeLabel(4.0), "95%")
+        XCTAssertEqual(Country.canada.gradeLabel(4.0), Fmt.percent(0.95))
     }
 
     /// A better grade always reads better — whichever way the scale runs.
@@ -390,7 +391,7 @@ final class CountryTests: XCTestCase {
         player.highSchoolGrades = [3.0, 3.0]
         let message = player.graduationMessage(for: Education(.HighSchool))
         XCTAssertTrue(message.contains("Abitur"), message)
-        XCTAssertTrue(message.contains("2.0 (good)"), message)
+        XCTAssertTrue(message.contains("\(Fmt.decimal(2.0)) (good)"), message)
         XCTAssertFalse(message.contains("GPA"), message)
     }
 
@@ -527,11 +528,11 @@ final class CountryTests: XCTestCase {
         for step in 0...4000 {
             let gpa = Double(step) / 1000
             let label = Country.france.gradeLabel(gpa)
-            let shown = Double(label.prefix { $0.isNumber || $0 == "." })!
+            let shown = Double(label.prefix { $0.isNumber || $0 == "." || $0 == "," }.replacingOccurrences(of: ",", with: "."))!
             let expected = shown >= 16 ? "très bien" : shown >= 14 ? "bien" : shown >= 12 ? "assez bien" : "passable"
             XCTAssertTrue(label.hasSuffix("(\(expected))"), "\(label) at \(gpa)")
         }
-        XCTAssertEqual(Country.france.gradeLabel(2.9), "16.0/20 (très bien)")
+        XCTAssertEqual(Country.france.gradeLabel(2.9), "\(Fmt.decimal(16.0))/20 (très bien)")
     }
 
     /// An American sees the requirement labels the game always used.
@@ -613,10 +614,13 @@ final class CountryTests: XCTestCase {
 
     /// Each new country writes the school-leaving grade the way its own system does, from its pass mark to its top.
     func testTheNewCountriesWriteTheirGradeScalesFromPassToTop() {
+        let d = { (value: Double, digits: Int) in Fmt.decimal(value, digits: digits) }   // locale-aware, like the labels
         let ends: [Country: (String, String)] = [
-            .australia: ("30.0", "99.9"), .mexico: ("6.0", "10.0"), .india: ("40%", "98%"), .china: ("300/750", "720/750"),
-            .brazil: ("400", "900"), .spain: ("5.00/14", "14.00/14"), .sweden: ("10.0/20", "20.0/20"),
-            .poland: ("30%", "98%"), .turkey: ("50/100", "100/100"), .southKorea: ("9.0 (1 = best)", "1.0 (1 = best)"),
+            .australia: (d(30, 1), d(99.9, 1)), .mexico: (d(6, 1), d(10, 1)),
+            .india: (Fmt.percent(0.40), Fmt.percent(0.98)), .china: ("300/750", "720/750"),
+            .brazil: ("400", "900"), .spain: ("\(d(5, 2))/14", "\(d(14, 2))/14"), .sweden: ("\(d(10, 1))/20", "\(d(20, 1))/20"),
+            .poland: (Fmt.percent(0.30), Fmt.percent(0.98)), .turkey: ("50/100", "100/100"),
+            .southKorea: ("\(d(9, 1)) (1 = best)", "\(d(1, 1)) (1 = best)"),
         ]
         for (country, (bottom, top)) in ends {
             XCTAssertEqual(country.gradeLabel(0), bottom, country.title)

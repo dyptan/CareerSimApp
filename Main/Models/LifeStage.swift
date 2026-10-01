@@ -25,10 +25,10 @@ enum LifeStage: String, CaseIterable, Hashable {
 
     var displayName: String {
         switch self {
-        case .child: return "Childhood"
-        case .teen: return "Teen Years"
-        case .youngAdult: return "Young Adult"
-        case .adult: return "Working Life"
+        case .child: return String(localized: "Childhood", comment: "Life stage, ages 7–10: primary school years.")
+        case .teen: return String(localized: "Teen Years", comment: "Life stage, ages 11–17: middle and high school years.")
+        case .youngAdult: return String(localized: "Young Adult", comment: "Life stage, ages 18–24: college and early career.")
+        case .adult: return String(localized: "Working Life", comment: "Life stage, age 25 and over: the working years.")
         }
     }
 }
