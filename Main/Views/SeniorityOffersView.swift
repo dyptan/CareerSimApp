@@ -10,7 +10,7 @@ struct SeniorityOffersView: View {
     @Binding var showCareersSheet: Bool
     var onCommit: () -> Void = {}
 
-    private var baseTitle: String { variants.first?.baseTitle ?? "" }
+    private var baseTitle: String { variants.first?.displayBaseTitle ?? "" }
 
     private var navTitle: String { baseTitle }
 
@@ -42,6 +42,13 @@ struct SeniorityOffersView: View {
         .navigationTitle(navTitle)
     }
 
+    /// The rung's name ("Senior", "Lead"), or "Standard" for the bare role.
+    private func seniorityName(of offer: Job) -> String {
+        offer.displayRungLabel.isEmpty
+            ? String(localized: "Standard", comment: "Seniority level of the plain version of a job, with no Junior/Senior/Lead prefix") // i18n:ignore translator comment
+            : offer.displayRungLabel
+    }
+
     @ViewBuilder
     private func seniorityCard(for offer: Job) -> some View {
         let prob = offer.hireProbability(for: player, requestedSalary: Double(offer.offeredSalary(for: player)))
@@ -53,35 +60,40 @@ struct SeniorityOffersView: View {
 
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(offer.seniorityLabel)
+                Text(seniorityName(of: offer))
                     .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.tertiary)
             }
 
-            Text(offer.id)
+            Text(offer.catalogueTitle)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
+            // Wraps onto a second line rather than clipping when the labels run long.
             HStack(spacing: 14) {
-                Label("\(player.money(offer.annualIncome))/yr", systemImage: "banknote")
+                Label(L("\(player.money(offer.annualIncome))/yr"), systemImage: "banknote")
                     .font(.subheadline)
                 if yearsExpected > 0 {
                     Label(
-                        "\(yearsExpected) yr exp.",
+                        L("\(yearsExpected) yr exp."),
                         systemImage: "calendar"
                     )
                     .font(.caption)
                     .foregroundStyle(yearsColor)
                 }
             }
+            .fixedSize(horizontal: false, vertical: true)
 
             if player.isSimplified {
                 HStack {
-                    Text(qualifies ? "✓ You can apply" : "🔒 Not yet")
+                    Text(qualifies ? L("✓ You can apply") : L("🔒 Not yet"))
                         .font(.caption.bold())
                         .foregroundStyle(qualifies ? Color.green : Color.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     Spacer()
                 }
             } else {
@@ -89,8 +101,9 @@ struct SeniorityOffersView: View {
                     Text("Chance to get hired:")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                     Spacer()
-                    Text("\(Int(prob * 100)) %")
+                    Text(HintFmt.oddsPercent(prob))
                         .font(.caption.bold())
                         .foregroundStyle(probColor)
                 }
