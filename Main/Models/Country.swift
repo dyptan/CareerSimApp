@@ -57,9 +57,20 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     var currencySymbol: String { profile.currencySymbol }
 
     /// An amount the way the game writes money: "68,000 $", "45.000 €",
-    /// "4,380,000 ¥". The grouping follows the game's language and locale.
+    /// "4,380,000 ¥". The grouping follows the game's language and locale, and Japanese
+    /// writes "4,380,000円" and "$68,000".
     func money(_ amount: Int) -> String {
-        "\(Fmt.number(amount)) \(currencySymbol)"
+        let number = Fmt.number(amount)
+        switch L10n.language {
+        case .english:
+            return "\(number) \(currencySymbol)"
+        case .japanese:
+            // 円 follows the number; every other currency leads with its sign: "4,380,000円", "$68,000".
+            return self == .japan ? "\(number)円" : "\(currencySymbol)\(number)"
+        default:
+            // A no-break space, so the sign never wraps onto the next line alone.
+            return "\(number)\u{00A0}\(currencySymbol)"
+        }
     }
 
     /// The smallest step money moves in on a slider — 500 in most currencies,

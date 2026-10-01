@@ -1,0 +1,1311 @@
+{
+ "table": "Catalogue",
+ "strings": {
+  "job.summary.Master Electrician": "",
+  "job.summary.Master Plumber": "",
+  "job.summary.Mechanic": "",
+  "job.summary.Mechanical Engineer": "",
+  "job.summary.Medical Assistant": "",
+  "job.summary.Mover": "",
+  "job.summary.Municipal Worker": "",
+  "job.summary.Narrative Designer": "",
+  "job.summary.News Anchor": "",
+  "job.summary.Nurse Practitioner": "",
+  "job.summary.Nursing Aide": "",
+  "job.summary.Office Clerk": "",
+  "job.summary.Office Manager": "",
+  "job.summary.Operations Manager": "",
+  "job.summary.Painter (Construction)": "",
+  "job.summary.Paralegal": "",
+  "job.summary.Paramedic": "",
+  "job.summary.Payroll Specialist": "",
+  "job.summary.Personal Care Aide": "",
+  "job.summary.Personal Trainer": "",
+  "job.summary.Pharmacist": "",
+  "job.summary.Pharmacy Technician": "",
+  "job.summary.Photographer": "",
+  "job.summary.Physician": "",
+  "job.summary.Physiotherapist": "",
+  "job.summary.Pilot": "",
+  "job.summary.Plumber": "",
+  "job.summary.Police Officer": "",
+  "job.summary.Principal Research Scientist": "",
+  "job.summary.Principal Software Engineer": "",
+  "job.summary.Professional Player": "",
+  "job.summary.Project Manager": "",
+  "job.summary.Property Development Firm": "",
+  "job.summary.Psychologist": "",
+  "job.summary.Quality Control Inspector": "",
+  "job.summary.Real Estate Agent": "",
+  "job.summary.Receptionist": "",
+  "job.summary.Registered Nurse": "",
+  "job.summary.Research Scientist": "",
+  "job.summary.Resident Physician": "",
+  "job.summary.Retail Salesperson": "",
+  "job.summary.Roofer": "",
+  "job.summary.SaaS App Startup": "",
+  "job.summary.Sales Director": "",
+  "job.summary.Sales Manager": "",
+  "job.summary.Sales Representative": "",
+  "job.summary.Security Guard": "",
+  "job.summary.Senior 3D Artist": "",
+  "job.summary.Senior Accountant": "",
+  "job.summary.Senior Business Analyst": "",
+  "job.summary.Senior Civil Engineer": "",
+  "job.summary.Senior Data Analyst": "",
+  "job.summary.Senior Electrical Engineer": "",
+  "job.summary.Senior Financial Analyst": "",
+  "job.summary.Senior Firefighter": "",
+  "job.summary.Senior Game Designer": "",
+  "job.summary.Senior Graphic Artist": "",
+  "job.summary.Senior Journalist": "",
+  "job.summary.Senior Lab Technician": "",
+  "job.summary.Senior Lawyer": "",
+  "job.summary.Senior Marketing Specialist": "",
+  "job.summary.Senior Mechanical Engineer": "",
+  "job.summary.Senior Municipal Worker": "",
+  "job.summary.Senior Paralegal": "",
+  "job.summary.Senior Physician": "",
+  "job.summary.Senior Police Officer": "",
+  "job.summary.Senior Project Manager": "",
+  "job.summary.Senior Registered Nurse": "",
+  "job.summary.Senior Research Scientist": "",
+  "job.summary.Senior Sales Manager": "",
+  "job.summary.Senior Software Engineer": "",
+  "job.summary.Senior Systems Administrator": "",
+  "job.summary.Senior Teacher": "",
+  "job.summary.Senior Tutor": "",
+  "job.summary.Senior UX/UI Designer": "",
+  "job.summary.Social Media Manager": "",
+  "job.summary.Social Worker": "",
+  "job.summary.Software Engineer": "",
+  "job.summary.Software Tester/QA": "",
+  "job.summary.Sous Chef": "",
+  "job.summary.Specialty Coffee Roastery": "",
+  "job.summary.Staff Software Engineer": "",
+  "job.summary.Stocker/Order Filler": "",
+  "job.summary.Store Manager": "",
+  "job.summary.Supply Chain Manager": "",
+  "job.summary.Surgeon": "",
+  "job.summary.Systems Administrator": "",
+  "job.summary.TV Presenter": "",
+  "job.summary.Taxi Driver": "",
+  "job.summary.Teacher": "",
+  "job.summary.Teaching Assistant": "",
+  "job.summary.Translator/Interpreter": "",
+  "job.summary.Truck Driver": "",
+  "job.summary.Tutor": "",
+  "job.summary.UX/UI Designer": "",
+  "job.summary.Veterinarian": "",
+  "job.summary.Video Editor": "",
+  "job.summary.Waiter/Waitress": "",
+  "job.summary.Warehouse Manager": "",
+  "job.summary.Warehouse Worker": "",
+  "job.summary.Welder": "",
+  "job.title.3D Artist": "",
+  "job.title.Accountant": "",
+  "job.title.Administrative Assistant": "",
+  "job.title.Aerospace Engineer": "",
+  "job.title.Aircraft Maintenance Technician": "",
+  "job.title.Airline Captain": "",
+  "job.title.Amateur Player": "",
+  "job.title.Anesthesiologist": "",
+  "job.title.Animator": "",
+  "job.title.Apprentice Carpenter": "",
+  "job.title.Apprentice Electrician": "",
+  "job.title.Apprentice Plumber": "",
+  "job.title.Architect": "",
+  "job.title.Art Director": "",
+  "job.title.Assembler": "",
+  "job.title.Baker": "",
+  "job.title.Bank Teller": "",
+  "job.title.Bartender": "",
+  "job.title.Beautician/Cosmetologist": "",
+  "job.title.Bookkeeping Clerk": "",
+  "job.title.Boutique Fitness Studio": "",
+  "job.title.Bus Driver": "",
+  "job.title.Business Analyst": "",
+  "job.title.Carpenter": "",
+  "job.title.Cashier": "",
+  "job.title.Charge Registered Nurse": "",
+  "job.title.Chef": "",
+  "job.title.Chemical Engineer": "",
+  "job.title.Chief Executive Officer": "",
+  "job.title.Chief Medical Officer": "",
+  "job.title.Chief Technology Officer": "",
+  "job.title.Childcare Worker": "",
+  "job.title.Civil Engineer": "",
+  "job.title.Cloud Architect": "",
+  "job.title.Construction Laborer": "",
+  "job.title.Content Writer": "",
+  "job.title.Cook": "",
+  "job.title.Customer Service Representative": "",
+  "job.title.Cybersecurity Analyst": "",
+  "job.title.Data Analyst": "",
+  "job.title.Data Scientist": "",
+  "job.title.Delivery Courier": "",
+  "job.title.Dental Assistant": "",
+  "job.title.Dentist": "",
+  "job.title.Dishwasher": "",
+  "job.title.Dispatcher": "",
+  "job.title.Editor-in-Chief": "",
+  "job.title.Electrical Engineer": "",
+  "job.title.Electrician": "",
+  "job.title.Elite Player": "",
+  "job.title.Event Planner": "",
+  "job.title.Executive Chef": "",
+  "job.title.Factory Worker": "",
+  "job.title.Farm-to-Table Restaurant": "",
+  "job.title.Farmer": "",
+  "job.title.Farmhand": "",
+  "job.title.Fashion Designer": "",
+  "job.title.Fast Food Worker": "",
+  "job.title.Financial Analyst": "",
+  "job.title.Firefighter": "",
+  "job.title.First Officer": "",
+  "job.title.Fitness Instructor": "",
+  "job.title.Flight Attendant": "",
+  "job.title.Food Preparation Worker": "",
+  "job.title.Forklift Operator": "",
+  "job.title.Game Designer": "",
+  "job.title.Graphic Artist": "",
+  "job.title.Groundskeeper": "",
+  "job.title.HVAC Technician": "",
+  "job.title.Hairdresser/Barber": "",
+  "job.title.Head Chef": "",
+  "job.title.Heavy Equipment Operator": "",
+  "job.title.Hotel Manager": "",
+  "job.title.Housekeeper": "",
+  "job.title.Human Resources Specialist": "",
+  "job.title.IT Support Specialist": "",
+  "job.title.Indie Game Studio": "",
+  "job.title.Insurance Agent": "",
+  "job.title.Interior Designer": "",
+  "job.title.Investment Banker": "",
+  "job.title.Janitor/Cleaner": "",
+  "job.title.Journalist": "",
+  "job.title.Judge": "",
+  "job.title.Junior 3D Artist": "",
+  "job.title.Junior Accountant": "",
+  "job.title.Junior Business Analyst": "",
+  "job.title.Junior Civil Engineer": "",
+  "job.title.Junior Data Analyst": "",
+  "job.title.Junior Data Scientist": "",
+  "job.title.Junior Electrical Engineer": "",
+  "job.title.Junior Financial Analyst": "",
+  "job.title.Junior Graphic Artist": "",
+  "job.title.Junior Investment Banker": "",
+  "job.title.Junior Management Consultant": "",
+  "job.title.Junior Marketing Specialist": "",
+  "job.title.Junior Mechanical Engineer": "",
+  "job.title.Junior Paralegal": "",
+  "job.title.Junior Research Scientist": "",
+  "job.title.Junior Software Engineer": "",
+  "job.title.Junior Systems Administrator": "",
+  "job.title.Junior UX/UI Designer": "",
+  "job.title.Lab Technician": "",
+  "job.title.Lawyer": "",
+  "job.title.Lead Firefighter": "",
+  "job.title.Lead Game Designer": "",
+  "job.title.Lead Lab Technician": "",
+  "job.title.Lead Municipal Worker": "",
+  "job.title.Lead Police Officer": "",
+  "job.title.Lead Project Manager": "",
+  "job.title.Lead Teacher": "",
+  "job.title.Lead Tutor": "",
+  "job.title.Lead UX/UI Designer": "",
+  "job.title.Level Designer": "",
+  "job.title.Licensed Practical Nurse": "",
+  "job.title.Light Truck Delivery Driver": "",
+  "job.title.Logistics Coordinator": "",
+  "job.title.Machine Operator": "",
+  "job.title.Machinist": "",
+  "job.title.Maintenance & Repair Worker": "",
+  "job.title.Management Consultant": "",
+  "job.title.Managing Partner": "",
+  "job.title.Marketing Director": "",
+  "job.title.Marketing Specialist": "",
+  "job.title.Master Carpenter": "",
+  "job.title.Master Electrician": "",
+  "job.title.Master Plumber": "",
+  "job.title.Mechanic": "",
+  "job.title.Mechanical Engineer": "",
+  "job.title.Medical Assistant": "",
+  "job.title.Mover": "",
+  "job.title.Municipal Worker": "",
+  "job.title.Narrative Designer": "",
+  "job.title.News Anchor": "",
+  "job.title.Nurse Practitioner": "",
+  "job.title.Nursing Aide": "",
+  "job.title.Office Clerk": "",
+  "job.title.Office Manager": "",
+  "job.title.Operations Manager": "",
+  "job.title.Painter (Construction)": "",
+  "job.title.Paralegal": "",
+  "job.title.Paramedic": "",
+  "job.title.Payroll Specialist": "",
+  "job.title.Personal Care Aide": "",
+  "job.title.Personal Trainer": "",
+  "job.title.Pharmacist": "",
+  "job.title.Pharmacy Technician": "",
+  "job.title.Photographer": "",
+  "job.title.Physician": "",
+  "job.title.Physiotherapist": "",
+  "job.title.Pilot": "",
+  "job.title.Plumber": "",
+  "job.title.Police Officer": "",
+  "job.title.Principal Research Scientist": "",
+  "job.title.Principal Software Engineer": "",
+  "job.title.Professional Player": "",
+  "job.title.Project Manager": "",
+  "job.title.Property Development Firm": "",
+  "job.title.Psychologist": "",
+  "job.title.Quality Control Inspector": "",
+  "job.title.Real Estate Agent": "",
+  "job.title.Receptionist": "",
+  "job.title.Registered Nurse": "",
+  "job.title.Research Scientist": "",
+  "job.title.Resident Physician": "",
+  "job.title.Retail Salesperson": "",
+  "job.title.Roofer": "",
+  "job.title.SaaS App Startup": "",
+  "job.title.Sales Director": "",
+  "job.title.Sales Manager": "",
+  "job.title.Sales Representative": "",
+  "job.title.Security Guard": "",
+  "job.title.Senior 3D Artist": "",
+  "job.title.Senior Accountant": "",
+  "job.title.Senior Business Analyst": "",
+  "job.title.Senior Civil Engineer": "",
+  "job.title.Senior Data Analyst": "",
+  "job.title.Senior Electrical Engineer": "",
+  "job.title.Senior Financial Analyst": "",
+  "job.title.Senior Firefighter": "",
+  "job.title.Senior Game Designer": "",
+  "job.title.Senior Graphic Artist": "",
+  "job.title.Senior Journalist": "",
+  "job.title.Senior Lab Technician": "",
+  "job.title.Senior Lawyer": "",
+  "job.title.Senior Marketing Specialist": "",
+  "job.title.Senior Mechanical Engineer": "",
+  "job.title.Senior Municipal Worker": "",
+  "job.title.Senior Paralegal": "",
+  "job.title.Senior Physician": "",
+  "job.title.Senior Police Officer": "",
+  "job.title.Senior Project Manager": "",
+  "job.title.Senior Registered Nurse": "",
+  "job.title.Senior Research Scientist": "",
+  "job.title.Senior Sales Manager": "",
+  "job.title.Senior Software Engineer": "",
+  "job.title.Senior Systems Administrator": "",
+  "job.title.Senior Teacher": "",
+  "job.title.Senior Tutor": "",
+  "job.title.Senior UX/UI Designer": "",
+  "job.title.Social Media Manager": "",
+  "job.title.Social Worker": "",
+  "job.title.Software Engineer": "",
+  "job.title.Software Tester/QA": "",
+  "job.title.Sous Chef": "",
+  "job.title.Specialty Coffee Roastery": "",
+  "job.title.Staff Software Engineer": "",
+  "job.title.Stocker/Order Filler": "",
+  "job.title.Store Manager": "",
+  "job.title.Supply Chain Manager": "",
+  "job.title.Surgeon": "",
+  "job.title.Systems Administrator": "",
+  "job.title.TV Presenter": "",
+  "job.title.Taxi Driver": "",
+  "job.title.Teacher": "",
+  "job.title.Teaching Assistant": "",
+  "job.title.Translator/Interpreter": "",
+  "job.title.Truck Driver": "",
+  "job.title.Tutor": "",
+  "job.title.UX/UI Designer": "",
+  "job.title.Veterinarian": "",
+  "job.title.Video Editor": "",
+  "job.title.Waiter/Waitress": "",
+  "job.title.Warehouse Manager": "",
+  "job.title.Warehouse Worker": "",
+  "job.title.Welder": ""
+ },
+ "_context": {
+  "job.summary.Master Electrician": {
+   "english": "Licensed master responsible for jobs and apprentices."
+  },
+  "job.summary.Master Plumber": {
+   "english": "Licensed master plumber leading complex installations."
+  },
+  "job.summary.Mechanic": {
+   "english": "Repairs vehicles and machinery."
+  },
+  "job.summary.Mechanical Engineer": {
+   "english": "Designs mechanical systems and machinery."
+  },
+  "job.summary.Medical Assistant": {
+   "english": "Supports clinical staff with patient care."
+  },
+  "job.summary.Mover": {
+   "english": "Loads, hauls, and unloads household and office goods."
+  },
+  "job.summary.Municipal Worker": {
+   "english": "Keeps the city running — sanitation, parks, roads, and facilities."
+  },
+  "job.summary.Narrative Designer": {
+   "english": "Writes the story, characters, and branching dialogue."
+  },
+  "job.summary.News Anchor": {
+   "english": "Anchors television news broadcasts."
+  },
+  "job.summary.Nurse Practitioner": {
+   "english": "Advanced-practice nurse who diagnoses, treats, and prescribes with autonomy."
+  },
+  "job.summary.Nursing Aide": {
+   "english": "Assists patients with daily living tasks."
+  },
+  "job.summary.Office Clerk": {
+   "english": "Handles filing, data entry, and general office tasks."
+  },
+  "job.summary.Office Manager": {
+   "english": "Runs day-to-day office operations and admin staff."
+  },
+  "job.summary.Operations Manager": {
+   "english": "Runs the day-to-day of a site, branch, or department."
+  },
+  "job.summary.Painter (Construction)": {
+   "english": "Paints buildings and interior spaces."
+  },
+  "job.summary.Paralegal": {
+   "english": "Assists lawyers with research and documentation."
+  },
+  "job.summary.Paramedic": {
+   "english": "Provides emergency medical care."
+  },
+  "job.summary.Payroll Specialist": {
+   "english": "Processes payroll and employee benefits."
+  },
+  "job.summary.Personal Care Aide": {
+   "english": "Helps elderly and disabled clients with daily living at home."
+  },
+  "job.summary.Personal Trainer": {
+   "english": "Coaches clients one-on-one toward their goals."
+  },
+  "job.summary.Pharmacist": {
+   "english": "Dispenses medications and advises patients."
+  },
+  "job.summary.Pharmacy Technician": {
+   "english": "Prepares prescriptions under a pharmacist's supervision."
+  },
+  "job.summary.Photographer": {
+   "english": "Takes photos for commercial and personal use."
+  },
+  "job.summary.Physician": {
+   "english": "Diagnoses and treats illnesses as an attending physician."
+  },
+  "job.summary.Physiotherapist": {
+   "english": "Provides rehabilitation and physical therapy."
+  },
+  "job.summary.Pilot": {
+   "english": "Operates aircraft for passenger or cargo flights."
+  },
+  "job.summary.Plumber": {
+   "english": "Installs and repairs plumbing systems."
+  },
+  "job.summary.Police Officer": {
+   "english": "Enforces laws and protects the public on patrol."
+  },
+  "job.summary.Principal Research Scientist": {
+   "english": "Sets research agenda for the lab and supervises projects."
+  },
+  "job.summary.Principal Software Engineer": {
+   "english": "Top-of-ladder IC; defines architecture for the whole organization."
+  },
+  "job.summary.Professional Player": {
+   "english": "Earns a living on a professional team's roster."
+  },
+  "job.summary.Project Manager": {
+   "english": "Plans and oversees projects to completion."
+  },
+  "job.summary.Property Development Firm": {
+   "english": "Buy, build, and sell property — financing projects and managing crews."
+  },
+  "job.summary.Psychologist": {
+   "english": "Studies behavior and provides therapy."
+  },
+  "job.summary.Quality Control Inspector": {
+   "english": "Checks products against quality standards."
+  },
+  "job.summary.Real Estate Agent": {
+   "english": "Lists, shows, and sells property on commission."
+  },
+  "job.summary.Receptionist": {
+   "english": "Greets visitors and manages front-desk tasks."
+  },
+  "job.summary.Registered Nurse": {
+   "english": "Provides patient care, administers medication, and coordinates with medical teams."
+  },
+  "job.summary.Research Scientist": {
+   "english": "Designs and runs experiments to answer scientific questions."
+  },
+  "job.summary.Resident Physician": {
+   "english": "Trains under supervision in a hospital residency."
+  },
+  "job.summary.Retail Salesperson": {
+   "english": "Sells products directly to customers."
+  },
+  "job.summary.Roofer": {
+   "english": "Installs and repairs roofs in all weather."
+  },
+  "job.summary.SaaS App Startup": {
+   "english": "Build a subscription software product and grow it toward a real raise."
+  },
+  "job.summary.Sales Director": {
+   "english": "Owns the entire sales organization and revenue strategy."
+  },
+  "job.summary.Sales Manager": {
+   "english": "Leads sales teams and strategies."
+  },
+  "job.summary.Sales Representative": {
+   "english": "Sells products and services to businesses."
+  },
+  "job.summary.Security Guard": {
+   "english": "Protects property and ensures public safety."
+  },
+  "job.summary.Senior 3D Artist": {
+   "english": "Owns key art and sets the visual bar for the team."
+  },
+  "job.summary.Senior Accountant": {
+   "english": "Owns ledger areas and supervises junior accountants."
+  },
+  "job.summary.Senior Business Analyst": {
+   "english": "Leads cross-functional analysis and drives recommendations."
+  },
+  "job.summary.Senior Civil Engineer": {
+   "english": "Leads infrastructure projects and signs off on designs."
+  },
+  "job.summary.Senior Data Analyst": {
+   "english": "Owns analytical workstreams and partners with leadership on decisions."
+  },
+  "job.summary.Senior Electrical Engineer": {
+   "english": "Leads electrical-system architecture for complex products."
+  },
+  "job.summary.Senior Financial Analyst": {
+   "english": "Partners with executives on capital planning and strategy."
+  },
+  "job.summary.Senior Firefighter": {
+   "english": "Experienced firefighter leading a crew on emergency calls."
+  },
+  "job.summary.Senior Game Designer": {
+   "english": "Owns major game systems and mentors designers."
+  },
+  "job.summary.Senior Graphic Artist": {
+   "english": "Owns visual identity work and directs junior artists."
+  },
+  "job.summary.Senior Journalist": {
+   "english": "Runs a beat and breaks the stories others follow."
+  },
+  "job.summary.Senior Lab Technician": {
+   "english": "Leads lab testing and trains junior technicians."
+  },
+  "job.summary.Senior Lawyer": {
+   "english": "Senior associate leading cases and mentoring junior lawyers."
+  },
+  "job.summary.Senior Marketing Specialist": {
+   "english": "Owns marketing programs and reports on impact."
+  },
+  "job.summary.Senior Mechanical Engineer": {
+   "english": "Owns mechanical design projects end-to-end."
+  },
+  "job.summary.Senior Municipal Worker": {
+   "english": "Seasoned public-works hand running crews and equipment."
+  },
+  "job.summary.Senior Paralegal": {
+   "english": "Manages caseload research and trains junior paralegals."
+  },
+  "job.summary.Senior Physician": {
+   "english": "Senior attending supervising residents and complex cases."
+  },
+  "job.summary.Senior Police Officer": {
+   "english": "Veteran officer leading patrols and mentoring recruits."
+  },
+  "job.summary.Senior Project Manager": {
+   "english": "Manages portfolios of projects and senior stakeholders."
+  },
+  "job.summary.Senior Registered Nurse": {
+   "english": "Experienced floor nurse mentoring newer staff."
+  },
+  "job.summary.Senior Research Scientist": {
+   "english": "Leads research programs and publishes original work."
+  },
+  "job.summary.Senior Sales Manager": {
+   "english": "Runs regional sales orgs and hits aggressive targets."
+  },
+  "job.summary.Senior Software Engineer": {
+   "english": "Owns major systems, mentors peers, and drives technical direction."
+  },
+  "job.summary.Senior Systems Administrator": {
+   "english": "Architects infrastructure and leads incident response."
+  },
+  "job.summary.Senior Teacher": {
+   "english": "Veteran teacher mentoring staff and leading a department."
+  },
+  "job.summary.Senior Tutor": {
+   "english": "Experienced tutor running group sessions and mentoring tutors."
+  },
+  "job.summary.Senior UX/UI Designer": {
+   "english": "Leads end-to-end design of major product surfaces."
+  },
+  "job.summary.Social Media Manager": {
+   "english": "Runs brand presence and campaigns across social platforms."
+  },
+  "job.summary.Social Worker": {
+   "english": "Supports vulnerable individuals and families."
+  },
+  "job.summary.Software Engineer": {
+   "english": "Designs and implements software systems."
+  },
+  "job.summary.Software Tester/QA": {
+   "english": "Tests software for defects and quality."
+  },
+  "job.summary.Sous Chef": {
+   "english": "Second-in-command in the kitchen, runs daily service."
+  },
+  "job.summary.Specialty Coffee Roastery": {
+   "english": "Source, roast, and sell your own beans through a café and online."
+  },
+  "job.summary.Staff Software Engineer": {
+   "english": "Sets engineering strategy across teams and unblocks complex initiatives."
+  },
+  "job.summary.Stocker/Order Filler": {
+   "english": "Keeps shelves filled and picks orders in stores and warehouses."
+  },
+  "job.summary.Store Manager": {
+   "english": "Runs a shop floor — staffing, stock, and takings."
+  },
+  "job.summary.Supply Chain Manager": {
+   "english": "Owns the end-to-end supply chain and its suppliers."
+  },
+  "job.summary.Surgeon": {
+   "english": "Performs operations to treat injuries and disease."
+  },
+  "job.summary.Systems Administrator": {
+   "english": "Maintains IT infrastructure."
+  },
+  "job.summary.TV Presenter": {
+   "english": "Presents television programs and live segments."
+  },
+  "job.summary.Taxi Driver": {
+   "english": "Provides on-demand passenger transport."
+  },
+  "job.summary.Teacher": {
+   "english": "Teaches a class of students their core subjects."
+  },
+  "job.summary.Teaching Assistant": {
+   "english": "Supports a classroom teacher and works with pupils in small groups."
+  },
+  "job.summary.Translator/Interpreter": {
+   "english": "Converts text between languages and provides live interpretation."
+  },
+  "job.summary.Truck Driver": {
+   "english": "Transports goods over long distances."
+  },
+  "job.summary.Tutor": {
+   "english": "Coaches students one-on-one in specific subjects."
+  },
+  "job.summary.UX/UI Designer": {
+   "english": "Designs user interfaces and experiences."
+  },
+  "job.summary.Veterinarian": {
+   "english": "Cares for animal health and treatments."
+  },
+  "job.summary.Video Editor": {
+   "english": "Cuts and assembles footage for film, TV, and online."
+  },
+  "job.summary.Waiter/Waitress": {
+   "english": "Serves food and beverages to customers."
+  },
+  "job.summary.Warehouse Manager": {
+   "english": "Runs a distribution site — racking, shifts, and throughput."
+  },
+  "job.summary.Warehouse Worker": {
+   "english": "Picks, packs, and moves warehouse inventory."
+  },
+  "job.summary.Welder": {
+   "english": "Joins metal parts for fabrication and repair."
+  },
+  "job.title.3D Artist": {
+   "english": "3D Artist"
+  },
+  "job.title.Accountant": {
+   "english": "Accountant"
+  },
+  "job.title.Administrative Assistant": {
+   "english": "Administrative Assistant"
+  },
+  "job.title.Aerospace Engineer": {
+   "english": "Aerospace Engineer"
+  },
+  "job.title.Aircraft Maintenance Technician": {
+   "english": "Aircraft Maintenance Technician"
+  },
+  "job.title.Airline Captain": {
+   "english": "Airline Captain"
+  },
+  "job.title.Amateur Player": {
+   "english": "Amateur Player"
+  },
+  "job.title.Anesthesiologist": {
+   "english": "Anesthesiologist"
+  },
+  "job.title.Animator": {
+   "english": "Animator"
+  },
+  "job.title.Apprentice Carpenter": {
+   "english": "Apprentice Carpenter"
+  },
+  "job.title.Apprentice Electrician": {
+   "english": "Apprentice Electrician"
+  },
+  "job.title.Apprentice Plumber": {
+   "english": "Apprentice Plumber"
+  },
+  "job.title.Architect": {
+   "english": "Architect"
+  },
+  "job.title.Art Director": {
+   "english": "Art Director"
+  },
+  "job.title.Assembler": {
+   "english": "Assembler"
+  },
+  "job.title.Baker": {
+   "english": "Baker"
+  },
+  "job.title.Bank Teller": {
+   "english": "Bank Teller"
+  },
+  "job.title.Bartender": {
+   "english": "Bartender"
+  },
+  "job.title.Beautician/Cosmetologist": {
+   "english": "Beautician/Cosmetologist"
+  },
+  "job.title.Bookkeeping Clerk": {
+   "english": "Bookkeeping Clerk"
+  },
+  "job.title.Boutique Fitness Studio": {
+   "english": "Boutique Fitness Studio"
+  },
+  "job.title.Bus Driver": {
+   "english": "Bus Driver"
+  },
+  "job.title.Business Analyst": {
+   "english": "Business Analyst"
+  },
+  "job.title.Carpenter": {
+   "english": "Carpenter"
+  },
+  "job.title.Cashier": {
+   "english": "Cashier"
+  },
+  "job.title.Charge Registered Nurse": {
+   "english": "Charge Registered Nurse"
+  },
+  "job.title.Chef": {
+   "english": "Chef"
+  },
+  "job.title.Chemical Engineer": {
+   "english": "Chemical Engineer"
+  },
+  "job.title.Chief Executive Officer": {
+   "english": "Chief Executive Officer"
+  },
+  "job.title.Chief Medical Officer": {
+   "english": "Chief Medical Officer"
+  },
+  "job.title.Chief Technology Officer": {
+   "english": "Chief Technology Officer"
+  },
+  "job.title.Childcare Worker": {
+   "english": "Childcare Worker"
+  },
+  "job.title.Civil Engineer": {
+   "english": "Civil Engineer"
+  },
+  "job.title.Cloud Architect": {
+   "english": "Cloud Architect"
+  },
+  "job.title.Construction Laborer": {
+   "english": "Construction Laborer"
+  },
+  "job.title.Content Writer": {
+   "english": "Content Writer"
+  },
+  "job.title.Cook": {
+   "english": "Cook"
+  },
+  "job.title.Customer Service Representative": {
+   "english": "Customer Service Representative"
+  },
+  "job.title.Cybersecurity Analyst": {
+   "english": "Cybersecurity Analyst"
+  },
+  "job.title.Data Analyst": {
+   "english": "Data Analyst"
+  },
+  "job.title.Data Scientist": {
+   "english": "Data Scientist"
+  },
+  "job.title.Delivery Courier": {
+   "english": "Delivery Courier"
+  },
+  "job.title.Dental Assistant": {
+   "english": "Dental Assistant"
+  },
+  "job.title.Dentist": {
+   "english": "Dentist"
+  },
+  "job.title.Dishwasher": {
+   "english": "Dishwasher"
+  },
+  "job.title.Dispatcher": {
+   "english": "Dispatcher"
+  },
+  "job.title.Editor-in-Chief": {
+   "english": "Editor-in-Chief"
+  },
+  "job.title.Electrical Engineer": {
+   "english": "Electrical Engineer"
+  },
+  "job.title.Electrician": {
+   "english": "Electrician"
+  },
+  "job.title.Elite Player": {
+   "english": "Elite Player"
+  },
+  "job.title.Event Planner": {
+   "english": "Event Planner"
+  },
+  "job.title.Executive Chef": {
+   "english": "Executive Chef"
+  },
+  "job.title.Factory Worker": {
+   "english": "Factory Worker"
+  },
+  "job.title.Farm-to-Table Restaurant": {
+   "english": "Farm-to-Table Restaurant"
+  },
+  "job.title.Farmer": {
+   "english": "Farmer"
+  },
+  "job.title.Farmhand": {
+   "english": "Farmhand"
+  },
+  "job.title.Fashion Designer": {
+   "english": "Fashion Designer"
+  },
+  "job.title.Fast Food Worker": {
+   "english": "Fast Food Worker"
+  },
+  "job.title.Financial Analyst": {
+   "english": "Financial Analyst"
+  },
+  "job.title.Firefighter": {
+   "english": "Firefighter"
+  },
+  "job.title.First Officer": {
+   "english": "First Officer"
+  },
+  "job.title.Fitness Instructor": {
+   "english": "Fitness Instructor"
+  },
+  "job.title.Flight Attendant": {
+   "english": "Flight Attendant"
+  },
+  "job.title.Food Preparation Worker": {
+   "english": "Food Preparation Worker"
+  },
+  "job.title.Forklift Operator": {
+   "english": "Forklift Operator"
+  },
+  "job.title.Game Designer": {
+   "english": "Game Designer"
+  },
+  "job.title.Graphic Artist": {
+   "english": "Graphic Artist"
+  },
+  "job.title.Groundskeeper": {
+   "english": "Groundskeeper"
+  },
+  "job.title.HVAC Technician": {
+   "english": "HVAC Technician"
+  },
+  "job.title.Hairdresser/Barber": {
+   "english": "Hairdresser/Barber"
+  },
+  "job.title.Head Chef": {
+   "english": "Head Chef"
+  },
+  "job.title.Heavy Equipment Operator": {
+   "english": "Heavy Equipment Operator"
+  },
+  "job.title.Hotel Manager": {
+   "english": "Hotel Manager"
+  },
+  "job.title.Housekeeper": {
+   "english": "Housekeeper"
+  },
+  "job.title.Human Resources Specialist": {
+   "english": "Human Resources Specialist"
+  },
+  "job.title.IT Support Specialist": {
+   "english": "IT Support Specialist"
+  },
+  "job.title.Indie Game Studio": {
+   "english": "Indie Game Studio"
+  },
+  "job.title.Insurance Agent": {
+   "english": "Insurance Agent"
+  },
+  "job.title.Interior Designer": {
+   "english": "Interior Designer"
+  },
+  "job.title.Investment Banker": {
+   "english": "Investment Banker"
+  },
+  "job.title.Janitor/Cleaner": {
+   "english": "Janitor/Cleaner"
+  },
+  "job.title.Journalist": {
+   "english": "Journalist"
+  },
+  "job.title.Judge": {
+   "english": "Judge"
+  },
+  "job.title.Junior 3D Artist": {
+   "english": "Junior 3D Artist"
+  },
+  "job.title.Junior Accountant": {
+   "english": "Junior Accountant"
+  },
+  "job.title.Junior Business Analyst": {
+   "english": "Junior Business Analyst"
+  },
+  "job.title.Junior Civil Engineer": {
+   "english": "Junior Civil Engineer"
+  },
+  "job.title.Junior Data Analyst": {
+   "english": "Junior Data Analyst"
+  },
+  "job.title.Junior Data Scientist": {
+   "english": "Junior Data Scientist"
+  },
+  "job.title.Junior Electrical Engineer": {
+   "english": "Junior Electrical Engineer"
+  },
+  "job.title.Junior Financial Analyst": {
+   "english": "Junior Financial Analyst"
+  },
+  "job.title.Junior Graphic Artist": {
+   "english": "Junior Graphic Artist"
+  },
+  "job.title.Junior Investment Banker": {
+   "english": "Junior Investment Banker"
+  },
+  "job.title.Junior Management Consultant": {
+   "english": "Junior Management Consultant"
+  },
+  "job.title.Junior Marketing Specialist": {
+   "english": "Junior Marketing Specialist"
+  },
+  "job.title.Junior Mechanical Engineer": {
+   "english": "Junior Mechanical Engineer"
+  },
+  "job.title.Junior Paralegal": {
+   "english": "Junior Paralegal"
+  },
+  "job.title.Junior Research Scientist": {
+   "english": "Junior Research Scientist"
+  },
+  "job.title.Junior Software Engineer": {
+   "english": "Junior Software Engineer"
+  },
+  "job.title.Junior Systems Administrator": {
+   "english": "Junior Systems Administrator"
+  },
+  "job.title.Junior UX/UI Designer": {
+   "english": "Junior UX/UI Designer"
+  },
+  "job.title.Lab Technician": {
+   "english": "Lab Technician"
+  },
+  "job.title.Lawyer": {
+   "english": "Lawyer"
+  },
+  "job.title.Lead Firefighter": {
+   "english": "Lead Firefighter"
+  },
+  "job.title.Lead Game Designer": {
+   "english": "Lead Game Designer"
+  },
+  "job.title.Lead Lab Technician": {
+   "english": "Lead Lab Technician"
+  },
+  "job.title.Lead Municipal Worker": {
+   "english": "Lead Municipal Worker"
+  },
+  "job.title.Lead Police Officer": {
+   "english": "Lead Police Officer"
+  },
+  "job.title.Lead Project Manager": {
+   "english": "Lead Project Manager"
+  },
+  "job.title.Lead Teacher": {
+   "english": "Lead Teacher"
+  },
+  "job.title.Lead Tutor": {
+   "english": "Lead Tutor"
+  },
+  "job.title.Lead UX/UI Designer": {
+   "english": "Lead UX/UI Designer"
+  },
+  "job.title.Level Designer": {
+   "english": "Level Designer"
+  },
+  "job.title.Licensed Practical Nurse": {
+   "english": "Licensed Practical Nurse"
+  },
+  "job.title.Light Truck Delivery Driver": {
+   "english": "Light Truck Delivery Driver"
+  },
+  "job.title.Logistics Coordinator": {
+   "english": "Logistics Coordinator"
+  },
+  "job.title.Machine Operator": {
+   "english": "Machine Operator"
+  },
+  "job.title.Machinist": {
+   "english": "Machinist"
+  },
+  "job.title.Maintenance & Repair Worker": {
+   "english": "Maintenance & Repair Worker"
+  },
+  "job.title.Management Consultant": {
+   "english": "Management Consultant"
+  },
+  "job.title.Managing Partner": {
+   "english": "Managing Partner"
+  },
+  "job.title.Marketing Director": {
+   "english": "Marketing Director"
+  },
+  "job.title.Marketing Specialist": {
+   "english": "Marketing Specialist"
+  },
+  "job.title.Master Carpenter": {
+   "english": "Master Carpenter"
+  },
+  "job.title.Master Electrician": {
+   "english": "Master Electrician"
+  },
+  "job.title.Master Plumber": {
+   "english": "Master Plumber"
+  },
+  "job.title.Mechanic": {
+   "english": "Mechanic"
+  },
+  "job.title.Mechanical Engineer": {
+   "english": "Mechanical Engineer"
+  },
+  "job.title.Medical Assistant": {
+   "english": "Medical Assistant"
+  },
+  "job.title.Mover": {
+   "english": "Mover"
+  },
+  "job.title.Municipal Worker": {
+   "english": "Municipal Worker"
+  },
+  "job.title.Narrative Designer": {
+   "english": "Narrative Designer"
+  },
+  "job.title.News Anchor": {
+   "english": "News Anchor"
+  },
+  "job.title.Nurse Practitioner": {
+   "english": "Nurse Practitioner"
+  },
+  "job.title.Nursing Aide": {
+   "english": "Nursing Aide"
+  },
+  "job.title.Office Clerk": {
+   "english": "Office Clerk"
+  },
+  "job.title.Office Manager": {
+   "english": "Office Manager"
+  },
+  "job.title.Operations Manager": {
+   "english": "Operations Manager"
+  },
+  "job.title.Painter (Construction)": {
+   "english": "Painter (Construction)"
+  },
+  "job.title.Paralegal": {
+   "english": "Paralegal"
+  },
+  "job.title.Paramedic": {
+   "english": "Paramedic"
+  },
+  "job.title.Payroll Specialist": {
+   "english": "Payroll Specialist"
+  },
+  "job.title.Personal Care Aide": {
+   "english": "Personal Care Aide"
+  },
+  "job.title.Personal Trainer": {
+   "english": "Personal Trainer"
+  },
+  "job.title.Pharmacist": {
+   "english": "Pharmacist"
+  },
+  "job.title.Pharmacy Technician": {
+   "english": "Pharmacy Technician"
+  },
+  "job.title.Photographer": {
+   "english": "Photographer"
+  },
+  "job.title.Physician": {
+   "english": "Physician"
+  },
+  "job.title.Physiotherapist": {
+   "english": "Physiotherapist"
+  },
+  "job.title.Pilot": {
+   "english": "Pilot"
+  },
+  "job.title.Plumber": {
+   "english": "Plumber"
+  },
+  "job.title.Police Officer": {
+   "english": "Police Officer"
+  },
+  "job.title.Principal Research Scientist": {
+   "english": "Principal Research Scientist"
+  },
+  "job.title.Principal Software Engineer": {
+   "english": "Principal Software Engineer"
+  },
+  "job.title.Professional Player": {
+   "english": "Professional Player"
+  },
+  "job.title.Project Manager": {
+   "english": "Project Manager"
+  },
+  "job.title.Property Development Firm": {
+   "english": "Property Development Firm"
+  },
+  "job.title.Psychologist": {
+   "english": "Psychologist"
+  },
+  "job.title.Quality Control Inspector": {
+   "english": "Quality Control Inspector"
+  },
+  "job.title.Real Estate Agent": {
+   "english": "Real Estate Agent"
+  },
+  "job.title.Receptionist": {
+   "english": "Receptionist"
+  },
+  "job.title.Registered Nurse": {
+   "english": "Registered Nurse"
+  },
+  "job.title.Research Scientist": {
+   "english": "Research Scientist"
+  },
+  "job.title.Resident Physician": {
+   "english": "Resident Physician"
+  },
+  "job.title.Retail Salesperson": {
+   "english": "Retail Salesperson"
+  },
+  "job.title.Roofer": {
+   "english": "Roofer"
+  },
+  "job.title.SaaS App Startup": {
+   "english": "SaaS App Startup"
+  },
+  "job.title.Sales Director": {
+   "english": "Sales Director"
+  },
+  "job.title.Sales Manager": {
+   "english": "Sales Manager"
+  },
+  "job.title.Sales Representative": {
+   "english": "Sales Representative"
+  },
+  "job.title.Security Guard": {
+   "english": "Security Guard"
+  },
+  "job.title.Senior 3D Artist": {
+   "english": "Senior 3D Artist"
+  },
+  "job.title.Senior Accountant": {
+   "english": "Senior Accountant"
+  },
+  "job.title.Senior Business Analyst": {
+   "english": "Senior Business Analyst"
+  },
+  "job.title.Senior Civil Engineer": {
+   "english": "Senior Civil Engineer"
+  },
+  "job.title.Senior Data Analyst": {
+   "english": "Senior Data Analyst"
+  },
+  "job.title.Senior Electrical Engineer": {
+   "english": "Senior Electrical Engineer"
+  },
+  "job.title.Senior Financial Analyst": {
+   "english": "Senior Financial Analyst"
+  },
+  "job.title.Senior Firefighter": {
+   "english": "Senior Firefighter"
+  },
+  "job.title.Senior Game Designer": {
+   "english": "Senior Game Designer"
+  },
+  "job.title.Senior Graphic Artist": {
+   "english": "Senior Graphic Artist"
+  },
+  "job.title.Senior Journalist": {
+   "english": "Senior Journalist"
+  },
+  "job.title.Senior Lab Technician": {
+   "english": "Senior Lab Technician"
+  },
+  "job.title.Senior Lawyer": {
+   "english": "Senior Lawyer"
+  },
+  "job.title.Senior Marketing Specialist": {
+   "english": "Senior Marketing Specialist"
+  },
+  "job.title.Senior Mechanical Engineer": {
+   "english": "Senior Mechanical Engineer"
+  },
+  "job.title.Senior Municipal Worker": {
+   "english": "Senior Municipal Worker"
+  },
+  "job.title.Senior Paralegal": {
+   "english": "Senior Paralegal"
+  },
+  "job.title.Senior Physician": {
+   "english": "Senior Physician"
+  },
+  "job.title.Senior Police Officer": {
+   "english": "Senior Police Officer"
+  },
+  "job.title.Senior Project Manager": {
+   "english": "Senior Project Manager"
+  },
+  "job.title.Senior Registered Nurse": {
+   "english": "Senior Registered Nurse"
+  },
+  "job.title.Senior Research Scientist": {
+   "english": "Senior Research Scientist"
+  },
+  "job.title.Senior Sales Manager": {
+   "english": "Senior Sales Manager"
+  },
+  "job.title.Senior Software Engineer": {
+   "english": "Senior Software Engineer"
+  },
+  "job.title.Senior Systems Administrator": {
+   "english": "Senior Systems Administrator"
+  },
+  "job.title.Senior Teacher": {
+   "english": "Senior Teacher"
+  },
+  "job.title.Senior Tutor": {
+   "english": "Senior Tutor"
+  },
+  "job.title.Senior UX/UI Designer": {
+   "english": "Senior UX/UI Designer"
+  },
+  "job.title.Social Media Manager": {
+   "english": "Social Media Manager"
+  },
+  "job.title.Social Worker": {
+   "english": "Social Worker"
+  },
+  "job.title.Software Engineer": {
+   "english": "Software Engineer"
+  },
+  "job.title.Software Tester/QA": {
+   "english": "Software Tester/QA"
+  },
+  "job.title.Sous Chef": {
+   "english": "Sous Chef"
+  },
+  "job.title.Specialty Coffee Roastery": {
+   "english": "Specialty Coffee Roastery"
+  },
+  "job.title.Staff Software Engineer": {
+   "english": "Staff Software Engineer"
+  },
+  "job.title.Stocker/Order Filler": {
+   "english": "Stocker/Order Filler"
+  },
+  "job.title.Store Manager": {
+   "english": "Store Manager"
+  },
+  "job.title.Supply Chain Manager": {
+   "english": "Supply Chain Manager"
+  },
+  "job.title.Surgeon": {
+   "english": "Surgeon"
+  },
+  "job.title.Systems Administrator": {
+   "english": "Systems Administrator"
+  },
+  "job.title.TV Presenter": {
+   "english": "TV Presenter"
+  },
+  "job.title.Taxi Driver": {
+   "english": "Taxi Driver"
+  },
+  "job.title.Teacher": {
+   "english": "Teacher"
+  },
+  "job.title.Teaching Assistant": {
+   "english": "Teaching Assistant"
+  },
+  "job.title.Translator/Interpreter": {
+   "english": "Translator/Interpreter"
+  },
+  "job.title.Truck Driver": {
+   "english": "Truck Driver"
+  },
+  "job.title.Tutor": {
+   "english": "Tutor"
+  },
+  "job.title.UX/UI Designer": {
+   "english": "UX/UI Designer"
+  },
+  "job.title.Veterinarian": {
+   "english": "Veterinarian"
+  },
+  "job.title.Video Editor": {
+   "english": "Video Editor"
+  },
+  "job.title.Waiter/Waitress": {
+   "english": "Waiter/Waitress"
+  },
+  "job.title.Warehouse Manager": {
+   "english": "Warehouse Manager"
+  },
+  "job.title.Warehouse Worker": {
+   "english": "Warehouse Worker"
+  },
+  "job.title.Welder": {
+   "english": "Welder"
+  }
+ }
+}

@@ -7,6 +7,10 @@
                                     yet, as a JSON file to fill in
     i18n.py chunks LANG NL NC OUTDIR  split what LANG still lacks into NL Localizable and NC Catalogue work files,
                                     each ready to fill in: "strings" values are "" and "_context" explains
+    i18n.py lint FILE.json... [--chunk WORK.json]
+                                    validate translation file(s) as a translator would: every key filled, placeholders and
+                                    plural forms right for the language (from the folder or file name); with --chunk, also
+                                    that the files together cover every key of that work file
     i18n.py check [-v]              validate every translations/**/*.json; after `extract`, report coverage
     i18n.py verify                  the shipped catalogs themselves: every live string has all five translations
                                     with matching placeholders and plural forms (fast, no compile; used by CI)
@@ -73,7 +77,7 @@ def scratch_dir():
 
 # ---------------------------------------------------------------- placeholders
 
-SPEC = re.compile(r"%(?:(\d+)\$)?[-+# 0]*\d*(?:\.\d+)?(hh|h|ll|l|z|q|L|t|j)?([@dDiuUxXoOfFeEgGcCsSpaA])|%%")
+SPEC = re.compile(r"%(?:(\d+)\$)?[-+0]*\d*(?:\.\d+)?(?:hh|h|ll|l|z|q|L|t|j)?([@dDiuUfFs])|%%")  # a bare "% a" in prose ("30% a year") is not a placeholder
 
 
 def specs(text):
@@ -83,7 +87,7 @@ def specs(text):
         if m.group(0) == "%%":
             continue
         conv = m.group(3)
-        cls = "obj" if conv in "@sS" else "float" if conv in "fFeEgGaA" else "int"
+        cls = "obj" if conv in "@sS" else "float" if conv in "fF" else "int"
         out.append((int(m.group(1)) if m.group(1) else None, cls))
     return out
 
@@ -381,6 +385,76 @@ def cmd_chunks(args):
                 json.dump(doc, fh, ensure_ascii=False, indent=1)
                 fh.write("\n")
             print(path, len(rows), "keys")
+
+
+def cmd_lint(args):
+    chunk = None
+    if "--chunk" in args:
+        i = args.index("--chunk")
+        chunk = args[i + 1]
+        args = args[:i] + args[i + 2:]
+    errors = []
+    total = 0
+    table = None
+    strings, context = {}, {}
+    lang = None
+    for path in args:
+        with open(path, encoding="utf-8") as fh:
+            doc = json.load(fh)
+        this_lang = os.path.basename(os.path.dirname(os.path.abspath(path)))
+        if this_lang not in LANGS:
+            this_lang = os.path.basename(path).split("-")[0]
+        if this_lang not in LANGS:
+            sys.exit("cannot tell the language of " + path)
+        lang = lang or this_lang
+        table = doc.get("table", "Localizable")
+        for k, v in doc.get("strings", {}).items():
+            if k in strings:
+                errors.append(f"'{k}' appears twice")
+            strings[k] = v
+        context.update(doc.get("_context", {}))
+    if chunk:
+        with open(chunk, encoding="utf-8") as fh:
+            cdoc = json.load(fh)
+        table = cdoc.get("table", "Localizable")
+        missing = [k for k in cdoc["strings"] if k not in strings]
+        extra = [k for k in strings if k not in cdoc["strings"]]
+        for k in missing[:50]:
+            errors.append(f"missing key: '{k}'")
+        if len(missing) > 50:
+            errors.append(f"... and {len(missing) - 50} more missing keys")
+        for k in extra[:50]:
+            errors.append(f"key not in the work file (typo? the key must be copied exactly): '{k}'")
+    merged = merged_translations([])
+    for key, v in strings.items():
+        total += 1
+        en = merged.get(table, {}).get(key, {}).get("en")
+        label = f"'{key}' [{lang}]"
+        if table == "Catalogue":
+            if not isinstance(v, str) or not v.strip():
+                errors.append(f"{label} is empty")
+            continue
+        plural = isinstance(en, dict)
+        if plural != isinstance(v, dict):
+            errors.append(f"{label} {'must' if plural else 'must not'} be plural variants")
+            continue
+        if plural:
+            cats = set(v)
+            if not cats <= PLURAL_ALLOWED[lang] or not PLURAL_REQUIRED[lang] <= cats:
+                errors.append(f"{label} plural categories {sorted(cats)}; need {sorted(PLURAL_REQUIRED[lang])}")
+            for cat, text in v.items():
+                if not isinstance(text, str) or not text.strip():
+                    errors.append(f"{label}.{cat} is empty")
+                else:
+                    check_placeholders(key, text, f"{label}.{cat} plural", errors)
+        elif not isinstance(v, str) or not v.strip():
+            errors.append(f"{label} is empty")
+        else:
+            check_placeholders(key, v, label, errors)
+    for e in errors[:200]:
+        print("ERROR", e)
+    print(f"{total} keys, {len(errors)} problems")
+    sys.exit(1 if errors else 0)
 
 
 def cmd_check(args):
@@ -689,6 +763,7 @@ def main():
         "extract": cmd_extract,
         "skeleton": cmd_skeleton,
         "check": cmd_check,
+        "lint": cmd_lint,
         "chunks": cmd_chunks,
         "apply": cmd_apply,
         "verify": cmd_verify,

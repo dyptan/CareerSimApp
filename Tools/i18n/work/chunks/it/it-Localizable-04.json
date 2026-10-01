@@ -1,0 +1,2185 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "State license to teach in a public school. Earned after a teacher-training program and supervised classroom hours.": "",
+  "State license to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam.": "",
+  "Emergency Medical Technician — qualifies you to provide pre-hospital emergency care on an ambulance crew. The first step toward becoming a paramedic.": "",
+  "Certified Public Accountant — the licence required to sign off on tax filings, audit financial statements, and lead corporate finance roles.": "",
+  "Specialty board certification earned after residency — the standard credential for attending physicians and medical leadership. Verifies mastery of a medical specialty.": "",
+  "Standard Class D car license. Needed for most jobs that involve any driving.": "",
+  "Commercial Driver’s License — required to drive trucks, buses, and large delivery vehicles for paid work.": "",
+  "Private pilot license — lets you fly small planes for fun, but not for paid work.": "",
+  "Lets you fly planes for paid work — required to be hired by airlines and freight carriers.": "",
+  "Licensed Practical Nurse — a state license to give basic nursing care under an RN or physician. Earned through a roughly one-year practical-nursing program and the NCLEX-PN exam. The common step up from a nursing aide toward becoming an RN.": "",
+  "Government license to work as a nurse. Earned after passing a national exam following a nursing degree.": "",
+  "Nurse Practitioner — an advanced-practice license letting an RN diagnose, treat, and prescribe with real autonomy. Earned after a Master of Science in Nursing on top of RN licensure and bedside experience.": "",
+  "State license to practice medicine as a physician. Earned after medical school by passing the national licensing exam (USMLE) — the credential every doctor must hold to treat patients.": "",
+  "State license to practice dentistry. Earned after dental school (DDS/DMD) and the national and state board exams.": "",
+  "State license to practice as a pharmacist. Earned after a Doctor of Pharmacy (PharmD) and the national board exam (NAPLEX).": "",
+  "State license to practice veterinary medicine. Earned after a Doctor of Veterinary Medicine (DVM) and the national board exam (NAVLE).": "",
+  "Government license to wire buildings safely. Earned after an apprenticeship and an exam.": "",
+  "Government license to install and repair pipes, drains, and water systems. Earned after an apprenticeship and a journeyman exam.": "",
+  "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practice as a lawyer in court.": "",
+  "Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles.": "",
+  "State license required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB).": "",
+  "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs.": "",
+  "State license required to work as an unarmed security guard. Covers law, ethics, and basic emergency response.": "",
+  "Months of recruit training in law, firearms, driving, and defensive tactics. No one is sworn in as an officer without it.": "",
+  "FAA Airframe & Powerplant certificate. Only a certificated mechanic may sign an aircraft back into service.": "",
+  "State license to practise psychology, earned after the doctorate and supervised clinical hours. The title itself is protected.": "",
+  "State license to practise physical therapy, sat after the doctoral program. Required to treat patients unsupervised.": "",
+  "EPA Section 608 certification. Legally required to buy or handle the refrigerants every air-conditioning job runs on.": "",
+  "The senior electrician license. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician.": "",
+  "The senior plumbing license. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber.": "",
+  "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner.": "",
+  "An intensive full-stack software program. No licence — but the skills and portfolio it builds give you a real edge landing tech and engineering roles, and launching a software venture of your own.": "",
+  "A studio-style program in game design and engine programming. Builds the craft to break into a gaming studio — or to ship your own indie title.": "",
+  "A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by.": "",
+  "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed.": "",
+  "Requires age %lld+": "",
+  "Requires %@ first": "",
+  "Requires %@": "",
+  "Requires %lld+ yrs in %@": {
+   "one": "",
+   "other": ""
+  },
+  "Requires %lld+ yrs in the workforce": {
+   "one": "",
+   "other": ""
+  },
+  "Picking an activity uses up your year.": "",
+  "🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies.": "",
+  "📝 Study activities also raise your school grade for the year, which colleges look at when you apply.": "",
+  "🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.": "",
+  "Activity": "",
+  "%@ (%lld yrs)": {
+   "one": "",
+   "other": ""
+  },
+  "🎲 Your chance to win this year: about %@": "",
+  "🏆 If you win: the “%@” title and %@ fame.": "",
+  "Practise it again this year and you're entered automatically.": "",
+  "Every year you practise, you grow:": "",
+  "While you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in %@.": "",
+  "📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply.": "",
+  "Your career advisor helps you find a job you'll love.": "",
+  "🎯 Have a job in mind? It shows you where it's posted, and which skills, school and licences you need.": "",
+  "🤔 Not sure yet? It suggests things to try, and after a few moves it names jobs that fit the skills you've built.": "",
+  "🧭 For a hard-to-reach job, like CEO, it shows how narrow the path is and what really decides it — fame, network, school, years, and having built a company — with the real-world story behind it.": "",
+  "📅 After every year it checks how you're doing and suggests changes. A red dot on the Advice button means it has something for you.": "",
+  "✨ With Apple Intelligence you can type to it, too. The chances it shows are always the game's real chances. Talking is free — it doesn't use up your year.": "",
+  "Thinking…": "",
+  "Send": "",
+  "Type a job, like “nurse”…": "",
+  "Ask me anything…": "",
+  "Degrees": "",
+  "%lld years": {
+   "one": "",
+   "other": ""
+  },
+  "%lld years • compare schools": {
+   "one": "",
+   "other": ""
+  },
+  "Courses": "",
+  "Fields of study": "",
+  "Likely jobs: %@.": "",
+  "Licences": "",
+  "Degrees and professional courses unlock as you get older and finish school.": "",
+  "At an event you ask to go on stage — to give a talk, perform or pitch. 🎲 is your chance they say yes.": "",
+  "If they pick you, you get known in that field and meet lots of people there — both help you get hired and promoted. If not, you still go and meet a few people.": "",
+  "Taking part uses up your year.": "",
+  "🔒 Work or study in %@ to take part": "",
+  "🔒 Work or study in %@ to take part. Then your chance goes up with years of work there, your %@ skill and your fame in the field.": "",
+  "🎲 %@ chance they pick you. It goes up with years of work in %@, your %@ skill and your fame there.": "",
+  "📣 Anyone can apply.": "",
+  "If they pick you: you win the “%@” title (🌟 fame) and meet lots of people in %@, who can help you get hired and promoted there.": "",
+  "If not: you still go and meet a few people.": "",
+  "Grows either way:\n%@": "",
+  "Leading as your seat": "",
+  "Leading as %@ %@": "",
+  "Boardroom": "",
+  "🏛️ Boardroom": "",
+  "💰 Savings: %@": "",
+  "Big moves for the company you lead. You can make each one once a year, and making one uses up your year.": "",
+  "%@ It worked!": "",
+  "%@ Not this time": "",
+  "Asking price": "",
+  "🏷️ Worth about %@ · 🎲 ~%@ chance someone buys · 📉 bad economy": "",
+  "🏷️ Worth about %@ · 🎲 ~%@ chance someone buys": "",
+  "Announce the round": "",
+  "Offer for sale at %@": "",
+  "🎲 ~%@ chance (💼 fame +%@) · 📈 your share ×%@, pay +%@": "",
+  "🎲 ~%@ chance someone buys · 💰 %@": "",
+  "🎉 Investors said yes! The company is worth more, it can pay you more, and you earned the “%@” title.": "",
+  "🚫 Investors said no this time. Grow your reputation and try again next year.": "",
+  "💸 Sold! %@ went into your savings.": "",
+  "🤝 Nobody bought at that price this year. Ask for less, or try again next year.": "",
+  "What helps:": "",
+  "• Your pitch — 💬 Persuader most of all, then vision, talking and leading (+%@ now, up to +40%%)": "",
+  "• People you know": "",
+  "• Your 💼 Business fame — investors back founders they've heard of (+%@ now, up to +25%%)": "",
+  "A gamble: about a %@ chance investors say yes this year.": "",
+  "A company can raise money at most %lld times, and investors want to see a year in business first.": {
+   "one": "",
+   "other": ""
+  },
+  "The money goes into the company, not your pocket. Your share of the company becomes worth ×%@, the business can pay you %@ more, and you get more famous in business. To turn it into money, sell your share. If investors say no, you only lose the year.": "",
+  "Sell your share of the company for a price you choose. It's worth about %@ right now — what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors.": "",
+  "Sell your share of the company for a price you choose. It's worth about %@ right now — the company shares you've earned since you last sold (part of your pay each year, up to twice your pay).": "",
+  "The more you ask, the fewer buyers: at %@ there's about a %@ chance someone buys this year — fewer buyers than usual, because the economy is doing badly.": "",
+  "The more you ask, the fewer buyers: at %@ there's about a %@ chance someone buys this year.": "",
+  "If it sells, you leave the business — it isn't yours any more, and you're free to start something new. Fees and taxes take %@ of the price.": "",
+  "If it sells, you keep your job. Taxes take %@ of the price, and you start earning new shares from zero.": "",
+  "Activities": "",
+  "Events": "",
+  "Jobs": "",
+  "Projects": "",
+  "Ventures": "",
+  "Take": "",
+  "Age:": "",
+  "Game mode": "",
+  "Advice": "",
+  "The advisor has something for you": "",
+  "Score": "",
+  "Progress": "",
+  "Skip": "",
+  "💵 Saving %@ of pay above %@ of living costs each year": "",
+  "%@ Goal: %@": "",
+  "Compare schools": "",
+  "Apply": "",
+  "%@/yr": "",
+  "Total %@": "",
+  "%lld yrs": {
+   "one": "",
+   "other": ""
+  },
+  "Admission requirement:": "",
+  "Admission requirement": "",
+  "You need to have finished this school level before you can apply. Everything else just changes your chance of getting in.": "",
+  "%@ of the decision": "",
+  "🏆 Your accolades: %@": "",
+  "🏆 Trophies & accolades": "",
+  "What this school looks for:": "",
+  "Soft-skill match": "",
+  "%@ match": "",
+  "Admission chance:": "",
+  "How admission works": "",
+  "The school cares about: grades %@, skills %@.": "",
+  "%@ cares about: grades %@, skills %@, prizes and titles %@.": "",
+  "%@ cares about: grades %@, skills %@.": "",
+  "%@ doesn't help; %@ helps the most.": "",
+  "You don't have school grades yet, so the game guesses them from your skills.": "",
+  "Your grade comes from your %lld school years.": {
+   "one": "",
+   "other": ""
+  },
+  "Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is %@.": "",
+  "None yet": "",
+  "%lld · %@ of full marks": "",
+  "Prizes and titles are %@ of what %@ looks at. Bigger prizes count more — winning a national championship is worth lots of school ribbons. About one national title plus a few local wins gets you full marks.": "",
+  "Win them with Activities: every year you practise, you enter that activity's biggest contest.": "",
+  "Your best ones:": "",
+  "%@ %@: you have %lld, they'd like %lld": "",
+  "Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance.": "",
+  "• the skills this school looks for": "",
+  "• your %@ (for a first degree)": "",
+  "• your prizes and titles (at top schools)": "",
+  "You can apply as soon as you've finished the school level above. After that, your chance goes up with:": "",
+  "Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not.": "",
+  "The school accepted you onto %@.": "",
+  "%@ accepted you onto %@.": "",
+  "You've left your job as %@ to study full-time.": "",
+  "🎓 You're in!": "",
+  "🎓 Not this year": "",
+  "The school said no this time — you had a %@ chance. You can try again next year!": "",
+  "%@ said no this time — you had a %@ chance. You can try again next year!": "",
+  "Need %@ first": "",
+  "closes this job for now": "",
+  "no change": "",
+  "%@ boost": "",
+  "cuts your chance to %@ of normal": "",
+  "%@ easier than usual": "",
+  "%@ harder than usual": "",
+  "%@ higher than usual": "",
+  "%@ lower than usual": "",
+  "normal": "",
+  "• %@ %@ is booming this year: %@": "",
+  "• %@ %@ is growing this year: %@": "",
+  "• %@ %@ is steady this year: %@": "",
+  "• %@ %@ is slowing this year: %@": "",
+  "• %@ %@ is in a slump this year: %@": "",
+  "• %@ %@ is booming: %@": "",
+  "• %@ %@ is growing: %@": "",
+  "• %@ %@ is steady: %@": "",
+  "• %@ %@ is slowing: %@": "",
+  "• %@ %@ is in a slump: %@": "",
+  "Requirements not met": "",
+  "Hard requirements not met": "",
+  "%@ %@: %lld/%lld": "",
+  "Skills this job looks for (each one helps, even if you're only part of the way there):": "",
+  "the right schooling, licences and experience": "",
+  "You can't get this job yet. First you need: %@.": "",
+  "This career has a special door: you need the “%@” title first.": "",
+  "Until then your chance stays at %@.": "",
+  "Once you have it, it's the biggest help there is — %@.": "",
+  "• School: %lld school levels below what this job wants (your work experience makes up %@) — %@": {
+   "one": "",
+   "other": ""
+  },
+  "• School: %lld school levels below what this job wants — %@": {
+   "one": "",
+   "other": ""
+  },
+  "• School: employers here prefer a university degree — %@": "",
+  "• School: you have the schooling it needs — %@": "",
+  "• School: you have the right degree — %@": "",
+  "• School: you have a degree, but in a different subject — %@": "",
+  "• Your skills: %lld of %lld are strong enough (%@ match)": "",
+  "• Starting chance for this kind of job: %@ (jobs that need more school start lower)": "",
+  "• A degree from %@: %@": "",
+  "• A degree from your school: %@": "",
+  "• People you know in %@: %@": "",
+  "• Your fame (%@): %@": "",
+  "• Your fame (general): %@": "",
+  "• Your “%@” title: %@": "",
+  "• A course for this field: %@": "",
+  "• Your salary ask: asking for less helps a little (%@)": "",
+  "• Your salary ask: asking for a lot more %@": "",
+  "• Your salary ask: fair ✓": "",
+  "• Lots of people want this job: %@": "",
+  "• Employers need more people in this job: %@": "",
+  "• Joining above the starting level: %@": "",
+  "• Only a few people get a job like this each year: %@ of the people who qualify (having run your own company helps)": "",
+  "• Only a few people get a job like this each year: %@ of the people who qualify": "",
+  "• Experience: none needed ✓": "",
+  "• Experience: %@ of %lld years — %@": {
+   "one": "",
+   "other": ""
+  },
+  "Your school and experience:": "",
+  "• Licences: all set ✓": "",
+  "• Licences: missing": "",
+  "Your chance: %@": "",
+  "This year's job market:": "",
+  "Market median": "",
+  "Requirements": "",
+  "Education:": "",
+  "Education (preferred):": "",
+  "🎓 Preferred education": "",
+  "You don't strictly need it — but it helps every time you apply and every time you could be promoted.": "",
+  "A degree in the right subject helps most, a degree in another subject helps less, and having less schooling than this makes it harder.": "",
+  "Field: %@": "",
+  "Experience:": "",
+  "📅 Experience": "",
+  "Trainings:": "",
+  "Preferred (helpful):": "",
+  "Not needed — but one of these makes it easier to get hired in this field, and counts as one level of the schooling a job here wants.": "",
+  "Breakthrough:": "",
+  "%@ title": "",
+  "You have it! This is the biggest help there is for getting signed.": "",
+  "Without it, teams won't sign you (your chance stays at %@).": "",
+  "This job wants %lld years of experience.": {
+   "one": "",
+   "other": ""
+  },
+  "With less than %lld years, you can't apply yet.": {
+   "one": "",
+   "other": ""
+  },
+  "In between you can, but each missing year makes it much harder.": "",
+  "Every year over %@ helps a little more.": "",
+  "You need %lld years of experience to apply.": {
+   "one": "",
+   "other": ""
+  },
+  "Every extra year helps a little more.": "",
+  "Years as %@ count fully. Other years in %@ %@ count half.": "",
+  "Years in %@ count half too.": "",
+  "Years in %@ count too.": "",
+  "Salary:": "",
+  "💵 Salary": "",
+  "This job pays a set amount — you can't ask for more.": "",
+  "It starts a bit lower for beginners and a bit higher if you have years of experience in this work.": "",
+  "✓ You can apply for this job.": "",
+  "🏢 Employer": "",
+  "🏢 Employer's industry": "",
+  "Every kind of company hires for this job. Pick which one to apply to.": "",
+  "Some industries are doing better than others this year — that changes your chance of getting hired, and how your pay and promotions go while you work there.": "",
+  "Employer": "",
+  "Chance to get hired:": "",
+  "What your chance depends on": "",
+  "Ask for a salary": "",
+  "Your ask:": "",
+  "Win a Junior Championship as a teen. Practise a sport for years to get better at it.": "",
+  "Earn the “%@” title first.": "",
+  "You start as %@ on %@ a year.": "",
+  "🎉 Offer accepted!": "",
+  "❌ No offer this time.": "",
+  "Teams here want the “%@” title — win it first to open this career.": "",
+  "You had a %@ chance, and this time it didn't work out. Don't give up — try again next year!": "",
+  "🔒 Not open to you yet.": "",
+  "🔒 First: %@.": "",
+  "Nobody is posting %@ jobs this year. The job market changes every year — check again next year.": "",
+  "No jobs match these filters. Try another kind of work, or turn off \"Only roles I qualify for\".": "",
+  "Kind of work": "",
+  "%@ %@ — %@": "",
+  "Any": "",
+  "Only roles I qualify for": "",
+  "%lld roles": {
+   "one": "",
+   "other": ""
+  },
+  "🏢 Any of %lld industries — your choice": {
+   "one": "",
+   "other": ""
+  },
+  "🎉 Venture launched!": "",
+  "You put in %@ and opened your business!": "",
+  "In the first year it pays about %@ of the full amount while you find customers.": "",
+  "🧭 %lld yr exp expected": {
+   "one": "",
+   "other": ""
+  },
+  "💰 Target %@": "",
+  "🔒 Nothing to stake yet — earn and save first": "",
+  "🛡️ %@ survive year 1 · stake %@": "",
+  "🏦 %@ of it borrowed": "",
+  "Launch": "",
+  "🔒 You need some money to start a business. Work and save first — then you can start any business you like.": "",
+  "💰 You'd put in %@ of the %@ it needs, from your savings first.": "",
+  "%@ would be a loan that grows %@ a year — you pay it back even if the business closes.": "",
+  "🚀 It always opens. It has a %@ chance to make it through the first year.": "",
+  "What helps: your %lld years in %@ (%@ is good), the skills it needs, %@, %@, and the money you put in.": {
+   "one": "",
+   "other": ""
+  },
+  "Each year it lasts, it gets safer — but a bad economy makes it riskier.": "",
+  "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "",
+  "📉 If it closes, you get back %@ of the money you put in.": "",
+  "🌟 Every year in business, every investment you win and every sale makes you better known in %@ %@ — so your next business is more likely to last.": "",
+  "🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.": "",
+  "Game Over": "",
+  "Your score": "",
+  "Your progress": "",
+  "You reached %lld — your career is over and this score is final.": "",
+  "You reached %lld — your career is over.": "",
+  "You're %lld. Here's how your life is going so far — keep playing to grow your score, or start over.": "",
+  "You're %lld. Here's how your life is going so far — keep playing, or start over.": "",
+  "Money earned: %@": "",
+  "Savings: %@": "",
+  "🏦 Venture loan owed: %@": "",
+  "🎓 Student loan owed: %@": "",
+  "🏅 Score: %@ ÷ %lld y.o. = %@": "",
+  "🏅 Score": "",
+  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "",
+  "Keep playing": "",
+  "Restart": "",
+  "Start over": "",
+  "You climbed all the way to the top — you're now in a top leadership role! 👔": "",
+  "You climbed all the way to the top — you're now %@! 👔": "",
+  "🎉 Goal reached!": "",
+  "Reached at age %lld.": "",
+  "Advisor": "",
+  "Laid Off": "",
+  "OK": "",
+  "Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.": "",
+  "Business Closed 📉": "",
+  "Congratulations! 🎉": "",
+  "Thanks!": "",
+  "Champion! 🏆": "",
+  "Congratulations! 🎓": "",
+  "Career Sim": "",
+  "Pick your character": "",
+  "Age %lld": "",
+  "Starting age": "",
+  "Country": "",
+  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "",
+  "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more.": {
+   "one": "",
+   "other": ""
+  },
+  "🎒 You'll start in %@.": "",
+  "🎒 You'll start in %@ (%@ done).": "",
+  "🎒 You'll start in your last years of school (%@ done).": "",
+  "🎓 You'll start having just finished %@ — time to choose your next step.": "",
+  "Start here": "",
+  "Close": "",
+  "One turn = one year": "",
+  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "",
+  "Build your life from the buttons": "",
+  "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": "",
+  "Watch yourself grow": "",
+  "The middle of the screen tracks the skills, titles, and money you pile up over the years.": "",
+  "Your goal": "",
+  "%@. Tap the ⓘ next to your age at any time to check how you're doing.": "",
+  "Stuck? Look for ⓘ": "",
+  "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": "",
+  "Welcome to Career Sim! 👋": "",
+  "Live a whole life, one year at a time — here's the idea:": "",
+  "Let's go! 🚀": "",
+  "How to play": "",
+  "%lld yr exp.": {
+   "one": "",
+   "other": ""
+  },
+  "✓ You can apply": "",
+  "🔒 Not yet": "",
+  "🔒 Needs the “%@” title": "",
+  "🔒 Opens once you hold the “%@” title — chase it under Projects.": "",
+  " (your %lld years in %@ count double)": {
+   "one": "",
+   "other": ""
+  },
+  "Your chance goes up with the skills below, your %lld years of work%@, and the %@ fame you already have — being known in a field makes the next project there easier.": {
+   "one": "",
+   "other": ""
+  },
+  "If it doesn't work out: you just miss the fame — you keep the skills.": "",
+  "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": "",
+  "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": "",
+  "%@ This field is booming this year: %@.": "",
+  "%@ This field is growing this year: %@.": "",
+  "%@ This field is slowing this year: %@.": "",
+  "%@ This field is slump this year: %@.": "",
+  "🎲 %@ chance it works · 🌟 %@ fame": "",
+  "Needs:\n%@": "",
+  "Grows, whether it works or not:\n%@": "",
+  "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "",
+  "%lld yrs left": {
+   "one": "",
+   "other": ""
+  },
+  "Your average school grade so far, over %lld years.": {
+   "one": "",
+   "other": ""
+  },
+  "School skills set each year's grade, and choosing a Study activity pushes it up.": "",
+  "Universities look at it when you apply — the top ones care about it a lot.": "",
+  "Occupation": "",
+  "Student": "",
+  "In this role": "",
+  "How many years you've worked as %@.": "",
+  "More years help you get promoted, and some jobs only hire people with enough years in this kind of work.": "",
+  "Promotion odds": "",
+  "Ready for %@": "",
+  "%@ %@: you have %lld, it needs %lld": "",
+  "You already have every skill %@ needs. 🎉 That helps your promotion chances as much as it can.": "",
+  "How ready your skills are for %@. Bosses like to promote people who can already do the next job — so growing these skills makes a promotion more likely:": "",
+  "Savings": "",
+  "All the money you've earned so far.": "",
+  "In Simplified mode you keep your whole paycheck.": "",
+  "The money you've saved. It grows by about %@ a year while it's above zero — but it can drop in a year when the economy turns bad.": "",
+  "Gross income": "",
+  "What %@ pays in a year, before taxes and living costs.": "",
+  "Banked from pay": "",
+  "The first %@ of your pay goes on living costs like rent and food.": "",
+  "You save %@ of the rest (%@ of anything over %@).": "",
+  "If you have no job, living costs come out of your savings.": "",
+  "Not working": "",
+  "No job means no pay. Open Jobs to apply for one.": "",
+  "Endorsements": "",
+  "Brands pay famous people — athletes, stars and creators — to show off their products.": "",
+  "The more %@ %@ fame you have, the more they pay, every year.": "",
+  "Tuition": "",
+  "%@ costs %@ a year. Your family pays %@ of it, so you pay %@ — from savings first, then as a student loan.": "",
+  "%@ costs %@ a year while you study — from savings first, then as a student loan.": "",
+  "Venture loan owed": "",
+  "Money you borrowed to start a business. It grows by %@ a year until it's paid back.": "",
+  "Payments come out of your savings and pay each year.": "",
+  "Student loan owed": "",
+  "Money you borrowed for school. It grows by %@ a year.": "",
+  "You don't pay it back while you're studying — after that, payments come out of your savings and pay each year.": "",
+  "Net worth": "",
+  "What you own minus what you owe: your savings (and any business you own) minus your loans.": "",
+  "Divide it by your age and you get your score.": "",
+  "Finances": "",
+  "%@ / yr": "",
+  "Skills": "",
+  "Skills are the things you're good at, besides school and work experience. They help with:": "",
+  "💼 Getting hired — every job lists the skills it needs": "",
+  "⬆️ Promotions — doing your job well and being ready for the next one": "",
+  "🎓 Getting into college — each subject looks for its own skills": "",
+  "📝 School grades, 🏅 contests and 🚀 starting a business": "",
+  "Grow them with Activities, and later with events, courses and projects. Tap a skill's ⓘ to see where it helps most.": "",
+  "Fame": "",
+  "🌐 General": "",
+  "Trophies": "",
+  "Certificates & licences": "",
+  "Credentials": "",
+  "The economy": "",
+  "📉 Declared downturn — roughly %lld more yrs to run.": {
+   "one": "",
+   "other": ""
+  },
+  "📉 Declared downturn this year.": "",
+  "Economy": "",
+  "Every industry below feels the economy in its own way. Some, like hotels and building, feel every up and down. Others, like schools and hospitals, barely notice.": "",
+  "Each industry also has good and bad years of its own — so one can be struggling in a good year, or doing great in a bad one.": "",
+  "🎯 Getting hired here: %@": "",
+  "⬆️ Getting promoted here: %@": "",
+  "✂️ Chance of losing your job: %@": "",
+  "🎲 Projects in this field: %@": "",
+  "📊 Feels the economy more than most — when money is tight, people cut back on this first.": "",
+  "📊 Feels the economy less than most — people still need it in hard times.": "",
+  "📊 Goes up and down with the economy.": "",
+  "🎲 It also has big ups and downs of its own.": "",
+  "🎲 It mostly just follows the economy.": "",
+  "Experience": "",
+  "There's no higher job to be promoted to from here. Your pay still goes up a little each year, up to a limit. To earn more, apply for a bigger job.": "",
+  "What counts:": "",
+  "• How well you do your job: %@": "",
+  "• How ready you are for %@: %@": "",
+  "• Years in this job: %lld (full credit at %lld)": "",
+  "• Your fame in %@: %@": "",
+  "• Your schooling for this job: %@": "",
+  "This year:": "",
+  "• Promotions get harder after many years in the same job, and later in your career.": "",
+  "Each year you have a chance to be promoted to %@.": "",
+  "Your chance this year: %@": "",
+  "You can't be promoted to %@ yet — you need what it asks for and enough years in this job first.": "",
+  "There aren't many %@ jobs — only %@ of the people who are ready get one.": "",
+  "What you're doing right now: your job, or the school you're at.": "",
+  "For a job, you'll see how many years you've been there.": "",
+  "For a job, you'll see how many years you've been there and your chance of being promoted. Tap each ⓘ to learn more.": "",
+  "Your money. In Simplified mode you keep everything you earn.": "",
+  "Your money: what you earn, what you save and what you owe.": "",
+  "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it.": "",
+  "How well known you are in each field.": "",
+  "You get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers.": "",
+  "Titles you've won in contests.": "",
+  "Every year you practise an activity, you're entered in its biggest contest. Trophies make you more famous, and top colleges like them.": "",
+  "Everything you've earned and keep: school diplomas and degrees.": "",
+  "Everything you've earned and keep: school diplomas and degrees, plus certificates and licences.": "",
+  "Many jobs need a certain degree before you can apply.": "",
+  "Many jobs need a certain degree or licence before you can apply.": "",
+  "How the economy is doing this year — overall, and in each industry.": "",
+  "In a good year it's easier to get hired and promoted. In a bad year it's harder, and more people lose their jobs. Your own industry is shown in bold.": "",
+  "How many years you've worked in each job.": "",
+  "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": "",
+  "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.": "",
+  "The newest one is shown here. Open it to see them all, newest first.": "",
+  "Age %lld — %@": "",
+  "Your story": "",
+  "%lld yrs in %@": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yrs work experience": {
+   "one": "",
+   "other": ""
+  },
+  "Requirements:": "",
+  "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "",
+  "Completing this course builds:": "",
+  "licence": "",
+  "✓ Earned": ""
+ },
+ "_context": {
+  "State license to teach in a public school. Earned after a teacher-training program and supervised classroom hours.": {
+   "where": "Training.swift:134"
+  },
+  "State license to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam.": {
+   "where": "Training.swift:135"
+  },
+  "Emergency Medical Technician — qualifies you to provide pre-hospital emergency care on an ambulance crew. The first step toward becoming a paramedic.": {
+   "where": "Training.swift:136"
+  },
+  "Certified Public Accountant — the licence required to sign off on tax filings, audit financial statements, and lead corporate finance roles.": {
+   "where": "Training.swift:137"
+  },
+  "Specialty board certification earned after residency — the standard credential for attending physicians and medical leadership. Verifies mastery of a medical specialty.": {
+   "where": "Training.swift:138"
+  },
+  "Standard Class D car license. Needed for most jobs that involve any driving.": {
+   "where": "Training.swift:139"
+  },
+  "Commercial Driver’s License — required to drive trucks, buses, and large delivery vehicles for paid work.": {
+   "where": "Training.swift:140"
+  },
+  "Private pilot license — lets you fly small planes for fun, but not for paid work.": {
+   "where": "Training.swift:141"
+  },
+  "Lets you fly planes for paid work — required to be hired by airlines and freight carriers.": {
+   "where": "Training.swift:142"
+  },
+  "Licensed Practical Nurse — a state license to give basic nursing care under an RN or physician. Earned through a roughly one-year practical-nursing program and the NCLEX-PN exam. The common step up from a nursing aide toward becoming an RN.": {
+   "where": "Training.swift:143"
+  },
+  "Government license to work as a nurse. Earned after passing a national exam following a nursing degree.": {
+   "where": "Training.swift:144"
+  },
+  "Nurse Practitioner — an advanced-practice license letting an RN diagnose, treat, and prescribe with real autonomy. Earned after a Master of Science in Nursing on top of RN licensure and bedside experience.": {
+   "where": "Training.swift:145"
+  },
+  "State license to practice medicine as a physician. Earned after medical school by passing the national licensing exam (USMLE) — the credential every doctor must hold to treat patients.": {
+   "where": "Training.swift:146"
+  },
+  "State license to practice dentistry. Earned after dental school (DDS/DMD) and the national and state board exams.": {
+   "where": "Training.swift:147"
+  },
+  "State license to practice as a pharmacist. Earned after a Doctor of Pharmacy (PharmD) and the national board exam (NAPLEX).": {
+   "where": "Training.swift:148"
+  },
+  "State license to practice veterinary medicine. Earned after a Doctor of Veterinary Medicine (DVM) and the national board exam (NAVLE).": {
+   "where": "Training.swift:149"
+  },
+  "Government license to wire buildings safely. Earned after an apprenticeship and an exam.": {
+   "where": "Training.swift:150"
+  },
+  "Government license to install and repair pipes, drains, and water systems. Earned after an apprenticeship and a journeyman exam.": {
+   "where": "Training.swift:151"
+  },
+  "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practice as a lawyer in court.": {
+   "where": "Training.swift:152"
+  },
+  "Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles.": {
+   "where": "Training.swift:153"
+  },
+  "State license required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB).": {
+   "where": "Training.swift:154"
+  },
+  "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs.": {
+   "where": "Training.swift:155"
+  },
+  "State license required to work as an unarmed security guard. Covers law, ethics, and basic emergency response.": {
+   "where": "Training.swift:156"
+  },
+  "Months of recruit training in law, firearms, driving, and defensive tactics. No one is sworn in as an officer without it.": {
+   "where": "Training.swift:157"
+  },
+  "FAA Airframe & Powerplant certificate. Only a certificated mechanic may sign an aircraft back into service.": {
+   "where": "Training.swift:158"
+  },
+  "State license to practise psychology, earned after the doctorate and supervised clinical hours. The title itself is protected.": {
+   "where": "Training.swift:159"
+  },
+  "State license to practise physical therapy, sat after the doctoral program. Required to treat patients unsupervised.": {
+   "where": "Training.swift:160"
+  },
+  "EPA Section 608 certification. Legally required to buy or handle the refrigerants every air-conditioning job runs on.": {
+   "where": "Training.swift:161"
+  },
+  "The senior electrician license. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician.": {
+   "where": "Training.swift:162"
+  },
+  "The senior plumbing license. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber.": {
+   "where": "Training.swift:163"
+  },
+  "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner.": {
+   "where": "Training.swift:164"
+  },
+  "An intensive full-stack software program. No licence — but the skills and portfolio it builds give you a real edge landing tech and engineering roles, and launching a software venture of your own.": {
+   "where": "Training.swift:165"
+  },
+  "A studio-style program in game design and engine programming. Builds the craft to break into a gaming studio — or to ship your own indie title.": {
+   "where": "Training.swift:166"
+  },
+  "A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by.": {
+   "where": "Training.swift:167"
+  },
+  "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed.": {
+   "where": "Training.swift:168"
+  },
+  "Requires age %lld+": {
+   "where": "Training.swift:499"
+  },
+  "Requires %@ first": {
+   "where": "Training.swift:502"
+  },
+  "Requires %@": {
+   "where": "Training.swift:507"
+  },
+  "Requires %lld+ yrs in %@": {
+   "where": "Training.swift:516",
+   "english": {
+    "one": "Requires %1$lld+ yr in %2$@",
+    "other": "Requires %1$lld+ yrs in %2$@"
+   }
+  },
+  "Requires %lld+ yrs in the workforce": {
+   "where": "Training.swift:518",
+   "english": {
+    "one": "Requires %lld+ yr in the workforce",
+    "other": "Requires %lld+ yrs in the workforce"
+   }
+  },
+  "Picking an activity uses up your year.": {
+   "where": "ActivitiesView.swift:25"
+  },
+  "🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies.": {
+   "where": "ActivitiesView.swift:26"
+  },
+  "📝 Study activities also raise your school grade for the year, which colleges look at when you apply.": {
+   "where": "ActivitiesView.swift:27"
+  },
+  "🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.": {
+   "where": "ActivitiesView.swift:28"
+  },
+  "Activity": {
+   "where": "ActivitiesView.swift:42"
+  },
+  "%@ (%lld yrs)": {
+   "where": "ActivityListView.swift:57",
+   "english": {
+    "one": "%1$@ (%2$lld yr)",
+    "other": "%1$@ (%2$lld yrs)"
+   }
+  },
+  "🎲 Your chance to win this year: about %@": {
+   "where": "ActivityListView.swift:110"
+  },
+  "🏆 If you win: the “%@” title and %@ fame.": {
+   "where": "ActivityListView.swift:111"
+  },
+  "Practise it again this year and you're entered automatically.": {
+   "where": "ActivityListView.swift:113"
+  },
+  "Every year you practise, you grow:": {
+   "where": "ActivityListView.swift:121"
+  },
+  "While you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in %@.": {
+   "where": "ActivityListView.swift:122"
+  },
+  "📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply.": {
+   "where": "ActivityListView.swift:125"
+  },
+  "Your career advisor helps you find a job you'll love.": {
+   "where": "AdvisorView.swift:29"
+  },
+  "🎯 Have a job in mind? It shows you where it's posted, and which skills, school and licences you need.": {
+   "where": "AdvisorView.swift:30"
+  },
+  "🤔 Not sure yet? It suggests things to try, and after a few moves it names jobs that fit the skills you've built.": {
+   "where": "AdvisorView.swift:31"
+  },
+  "🧭 For a hard-to-reach job, like CEO, it shows how narrow the path is and what really decides it — fame, network, school, years, and having built a company — with the real-world story behind it.": {
+   "where": "AdvisorView.swift:32"
+  },
+  "📅 After every year it checks how you're doing and suggests changes. A red dot on the Advice button means it has something for you.": {
+   "where": "AdvisorView.swift:33"
+  },
+  "✨ With Apple Intelligence you can type to it, too. The chances it shows are always the game's real chances. Talking is free — it doesn't use up your year.": {
+   "where": "AdvisorView.swift:34"
+  },
+  "Thinking…": {
+   "where": "AdvisorView.swift:167"
+  },
+  "Send": {
+   "where": "AdvisorView.swift:204"
+  },
+  "Type a job, like “nurse”…": {
+   "where": "AdvisorView.swift:219"
+  },
+  "Ask me anything…": {
+   "where": "AdvisorView.swift:219"
+  },
+  "Degrees": {
+   "where": "DegreesSubmenuView.swift:36, SkillsView.swift:529"
+  },
+  "%lld years": {
+   "where": "DegreesSubmenuView.swift:59",
+   "english": {
+    "one": "%lld year",
+    "other": "%lld years"
+   }
+  },
+  "%lld years • compare schools": {
+   "where": "DegreesSubmenuView.swift:60",
+   "english": {
+    "one": "%lld year • compare schools",
+    "other": "%lld years • compare schools"
+   }
+  },
+  "Courses": {
+   "where": "DegreesSubmenuView.swift:70"
+  },
+  "Fields of study": {
+   "where": "EducationView.swift:60"
+  },
+  "Likely jobs: %@.": {
+   "where": "EducationView.swift:83"
+  },
+  "Licences": {
+   "where": "EducationView.swift:95"
+  },
+  "Degrees and professional courses unlock as you get older and finish school.": {
+   "where": "EducationView.swift:108"
+  },
+  "At an event you ask to go on stage — to give a talk, perform or pitch. 🎲 is your chance they say yes.": {
+   "where": "EventsView.swift:21"
+  },
+  "If they pick you, you get known in that field and meet lots of people there — both help you get hired and promoted. If not, you still go and meet a few people.": {
+   "where": "EventsView.swift:22"
+  },
+  "Taking part uses up your year.": {
+   "where": "EventsView.swift:23"
+  },
+  "🔒 Work or study in %@ to take part": {
+   "where": "EventsView.swift:70"
+  },
+  "🔒 Work or study in %@ to take part. Then your chance goes up with years of work there, your %@ skill and your fame in the field.": {
+   "where": "EventsView.swift:107"
+  },
+  "🎲 %@ chance they pick you. It goes up with years of work in %@, your %@ skill and your fame there.": {
+   "where": "EventsView.swift:108"
+  },
+  "📣 Anyone can apply.": {
+   "where": "EventsView.swift:112"
+  },
+  "If they pick you: you win the “%@” title (🌟 fame) and meet lots of people in %@, who can help you get hired and promoted there.": {
+   "where": "EventsView.swift:113"
+  },
+  "If not: you still go and meet a few people.": {
+   "where": "EventsView.swift:114"
+  },
+  "Grows either way:\n%@": {
+   "where": "EventsView.swift:115"
+  },
+  "Leading as your seat": {
+   "where": "ExecutiveDecisionsView.swift:24"
+  },
+  "Leading as %@ %@": {
+   "where": "ExecutiveDecisionsView.swift:25"
+  },
+  "Boardroom": {
+   "where": "ExecutiveDecisionsView.swift:49, FooterView.swift:169",
+   "comment": "Footer button: opens the executive decisions (sell shares, raise money) | Title of the sheet with the senior-leadership plays (investment round, selling your stake)"
+  },
+  "🏛️ Boardroom": {
+   "where": "ExecutiveDecisionsView.swift:54"
+  },
+  "💰 Savings: %@": {
+   "where": "ExecutiveDecisionsView.swift:60"
+  },
+  "Big moves for the company you lead. You can make each one once a year, and making one uses up your year.": {
+   "where": "ExecutiveDecisionsView.swift:65"
+  },
+  "%@ It worked!": {
+   "where": "ExecutiveDecisionsView.swift:98"
+  },
+  "%@ Not this time": {
+   "where": "ExecutiveDecisionsView.swift:98"
+  },
+  "Asking price": {
+   "where": "ExecutiveDecisionsView.swift:131"
+  },
+  "🏷️ Worth about %@ · 🎲 ~%@ chance someone buys · 📉 bad economy": {
+   "where": "ExecutiveDecisionsView.swift:158"
+  },
+  "🏷️ Worth about %@ · 🎲 ~%@ chance someone buys": {
+   "where": "ExecutiveDecisionsView.swift:159"
+  },
+  "Announce the round": {
+   "where": "ExecutiveDecisionsView.swift:164"
+  },
+  "Offer for sale at %@": {
+   "where": "ExecutiveDecisionsView.swift:165"
+  },
+  "🎲 ~%@ chance (💼 fame +%@) · 📈 your share ×%@, pay +%@": {
+   "where": "ExecutiveDecisionsView.swift:172"
+  },
+  "🎲 ~%@ chance someone buys · 💰 %@": {
+   "where": "ExecutiveDecisionsView.swift:174"
+  },
+  "🎉 Investors said yes! The company is worth more, it can pay you more, and you earned the “%@” title.": {
+   "where": "ExecutiveDecisionsView.swift:182"
+  },
+  "🚫 Investors said no this time. Grow your reputation and try again next year.": {
+   "where": "ExecutiveDecisionsView.swift:183"
+  },
+  "💸 Sold! %@ went into your savings.": {
+   "where": "ExecutiveDecisionsView.swift:186"
+  },
+  "🤝 Nobody bought at that price this year. Ask for less, or try again next year.": {
+   "where": "ExecutiveDecisionsView.swift:187"
+  },
+  "What helps:": {
+   "where": "ExecutiveDecisionsView.swift:202, JobView.swift:264"
+  },
+  "• Your pitch — 💬 Persuader most of all, then vision, talking and leading (+%@ now, up to +40%%)": {
+   "where": "ExecutiveDecisionsView.swift:203"
+  },
+  "• People you know": {
+   "where": "ExecutiveDecisionsView.swift:204"
+  },
+  "• Your 💼 Business fame — investors back founders they've heard of (+%@ now, up to +25%%)": {
+   "where": "ExecutiveDecisionsView.swift:205"
+  },
+  "A gamble: about a %@ chance investors say yes this year.": {
+   "where": "ExecutiveDecisionsView.swift:208"
+  },
+  "A company can raise money at most %lld times, and investors want to see a year in business first.": {
+   "where": "ExecutiveDecisionsView.swift:210",
+   "english": {
+    "one": "A company can raise money at most %lld time, and investors want to see a year in business first.",
+    "other": "A company can raise money at most %lld times, and investors want to see a year in business first."
+   }
+  },
+  "The money goes into the company, not your pocket. Your share of the company becomes worth ×%@, the business can pay you %@ more, and you get more famous in business. To turn it into money, sell your share. If investors say no, you only lose the year.": {
+   "where": "ExecutiveDecisionsView.swift:211"
+  },
+  "Sell your share of the company for a price you choose. It's worth about %@ right now — what the business earns in a year times how long it's been running (up to 2.5×), plus any money raised from investors.": {
+   "where": "ExecutiveDecisionsView.swift:219"
+  },
+  "Sell your share of the company for a price you choose. It's worth about %@ right now — the company shares you've earned since you last sold (part of your pay each year, up to twice your pay).": {
+   "where": "ExecutiveDecisionsView.swift:220"
+  },
+  "The more you ask, the fewer buyers: at %@ there's about a %@ chance someone buys this year — fewer buyers than usual, because the economy is doing badly.": {
+   "where": "ExecutiveDecisionsView.swift:222"
+  },
+  "The more you ask, the fewer buyers: at %@ there's about a %@ chance someone buys this year.": {
+   "where": "ExecutiveDecisionsView.swift:223"
+  },
+  "If it sells, you leave the business — it isn't yours any more, and you're free to start something new. Fees and taxes take %@ of the price.": {
+   "where": "ExecutiveDecisionsView.swift:225"
+  },
+  "If it sells, you keep your job. Taxes take %@ of the price, and you start earning new shares from zero.": {
+   "where": "ExecutiveDecisionsView.swift:226"
+  },
+  "Activities": {
+   "where": "FooterView.swift:139, RootView.swift:153",
+   "comment": "Footer button: opens the sports, study and hobby activities"
+  },
+  "Events": {
+   "where": "FooterView.swift:144, RootView.swift:169",
+   "comment": "Footer button: opens professional events such as conferences and festivals"
+  },
+  "Jobs": {
+   "where": "FooterView.swift:150, JobsView.swift:155",
+   "comment": "Footer button: opens the job listings | Title of the sheet listing job categories and postings"
+  },
+  "Projects": {
+   "where": "FooterView.swift:154, RootView.swift:160",
+   "comment": "Footer button: opens spare-time projects that build skills and fame"
+  },
+  "Ventures": {
+   "where": "FooterView.swift:163, JobsView.swift:286",
+   "comment": "Footer button: opens starting your own business | Title of the sheet listing businesses the player can found"
+  },
+  "Take": {
+   "where": "GameStyle.swift:42, TrainingRow.swift:125",
+   "comment": "Button on an activity, training or project row: spend this year on it (a verb) | Button: enrol in a course or licence for the coming year."
+  },
+  "Age:": {
+   "where": "HeaderView.swift:17",
+   "comment": "Header label before the player's age number"
+  },
+  "Game mode": {
+   "where": "HeaderView.swift:27"
+  },
+  "Advice": {
+   "where": "HeaderView.swift:34",
+   "comment": "Header button that opens the career advisor (a noun: advice to read)"
+  },
+  "The advisor has something for you": {
+   "where": "HeaderView.swift:46"
+  },
+  "Score": {
+   "where": "HeaderView.swift:64",
+   "comment": "Header button: opens the score sheet (Real Life mode)"
+  },
+  "Progress": {
+   "where": "HeaderView.swift:65",
+   "comment": "Header button: opens the progress check (Simplified mode, which keeps no score)"
+  },
+  "Skip": {
+   "where": "HeaderView.swift:73",
+   "comment": "Header button: let this year pass without choosing anything (a verb)"
+  },
+  "💵 Saving %@ of pay above %@ of living costs each year": {
+   "where": "HeaderView.swift:92"
+  },
+  "%@ Goal: %@": {
+   "where": "HeaderView.swift:94"
+  },
+  "Compare schools": {
+   "where": "InstitutionTiersView.swift:35"
+  },
+  "Apply": {
+   "where": "InstitutionTiersView.swift:41, JobView.swift:134",
+   "comment": "Button: apply for the job shown on this page | Verb. Screen title and button for applying to a school or university; applying uses up the year."
+  },
+  "%@/yr": {
+   "where": "InstitutionTiersView.swift:48, JobView.swift:531, SeniorityOffersView.swift:78"
+  },
+  "Total %@": {
+   "where": "InstitutionTiersView.swift:52"
+  },
+  "%lld yrs": {
+   "where": "InstitutionTiersView.swift:57, SkillsView.swift:198, SkillsView.swift:709",
+   "english": {
+    "one": "%lld yr",
+    "other": "%lld yrs"
+   }
+  },
+  "Admission requirement:": {
+   "where": "InstitutionTiersView.swift:106"
+  },
+  "Admission requirement": {
+   "where": "InstitutionTiersView.swift:109"
+  },
+  "You need to have finished this school level before you can apply. Everything else just changes your chance of getting in.": {
+   "where": "InstitutionTiersView.swift:110"
+  },
+  "%@ of the decision": {
+   "where": "InstitutionTiersView.swift:136, InstitutionTiersView.swift:155"
+  },
+  "🏆 Your accolades: %@": {
+   "where": "InstitutionTiersView.swift:147"
+  },
+  "🏆 Trophies & accolades": {
+   "where": "InstitutionTiersView.swift:151"
+  },
+  "What this school looks for:": {
+   "where": "InstitutionTiersView.swift:170"
+  },
+  "Soft-skill match": {
+   "where": "InstitutionTiersView.swift:173"
+  },
+  "%@ match": {
+   "where": "InstitutionTiersView.swift:177"
+  },
+  "Admission chance:": {
+   "where": "InstitutionTiersView.swift:201"
+  },
+  "How admission works": {
+   "where": "InstitutionTiersView.swift:203"
+  },
+  "The school cares about: grades %@, skills %@.": {
+   "where": "InstitutionTiersView.swift:240"
+  },
+  "%@ cares about: grades %@, skills %@, prizes and titles %@.": {
+   "where": "InstitutionTiersView.swift:242"
+  },
+  "%@ cares about: grades %@, skills %@.": {
+   "where": "InstitutionTiersView.swift:244"
+  },
+  "%@ doesn't help; %@ helps the most.": {
+   "where": "InstitutionTiersView.swift:246"
+  },
+  "You don't have school grades yet, so the game guesses them from your skills.": {
+   "where": "InstitutionTiersView.swift:249"
+  },
+  "Your grade comes from your %lld school years.": {
+   "where": "InstitutionTiersView.swift:250",
+   "english": {
+    "one": "Your grade comes from your %lld school year.",
+    "other": "Your grade comes from your %lld school years."
+   }
+  },
+  "Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is %@.": {
+   "where": "InstitutionTiersView.swift:251"
+  },
+  "None yet": {
+   "where": "InstitutionTiersView.swift:259"
+  },
+  "%lld · %@ of full marks": {
+   "where": "InstitutionTiersView.swift:260"
+  },
+  "Prizes and titles are %@ of what %@ looks at. Bigger prizes count more — winning a national championship is worth lots of school ribbons. About one national title plus a few local wins gets you full marks.": {
+   "where": "InstitutionTiersView.swift:273"
+  },
+  "Win them with Activities: every year you practise, you enter that activity's biggest contest.": {
+   "where": "InstitutionTiersView.swift:274"
+  },
+  "Your best ones:": {
+   "where": "InstitutionTiersView.swift:277"
+  },
+  "%@ %@: you have %lld, they'd like %lld": {
+   "where": "InstitutionTiersView.swift:284"
+  },
+  "Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance.": {
+   "where": "InstitutionTiersView.swift:287"
+  },
+  "• the skills this school looks for": {
+   "where": "InstitutionTiersView.swift:295"
+  },
+  "• your %@ (for a first degree)": {
+   "where": "InstitutionTiersView.swift:296"
+  },
+  "• your prizes and titles (at top schools)": {
+   "where": "InstitutionTiersView.swift:297"
+  },
+  "You can apply as soon as you've finished the school level above. After that, your chance goes up with:": {
+   "where": "InstitutionTiersView.swift:300"
+  },
+  "Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not.": {
+   "where": "InstitutionTiersView.swift:302"
+  },
+  "The school accepted you onto %@.": {
+   "where": "InstitutionTiersView.swift:316"
+  },
+  "%@ accepted you onto %@.": {
+   "where": "InstitutionTiersView.swift:317"
+  },
+  "You've left your job as %@ to study full-time.": {
+   "where": "InstitutionTiersView.swift:319"
+  },
+  "🎓 You're in!": {
+   "where": "InstitutionTiersView.swift:321"
+  },
+  "🎓 Not this year": {
+   "where": "InstitutionTiersView.swift:326"
+  },
+  "The school said no this time — you had a %@ chance. You can try again next year!": {
+   "where": "InstitutionTiersView.swift:328"
+  },
+  "%@ said no this time — you had a %@ chance. You can try again next year!": {
+   "where": "InstitutionTiersView.swift:329"
+  },
+  "Need %@ first": {
+   "where": "InstitutionTiersView.swift:345"
+  },
+  "closes this job for now": {
+   "where": "JobView.swift:21"
+  },
+  "no change": {
+   "where": "JobView.swift:24",
+   "comment": "Plain-words effect of a modifier on the chance to be hired: it changes nothing"
+  },
+  "%@ boost": {
+   "where": "JobView.swift:26"
+  },
+  "cuts your chance to %@ of normal": {
+   "where": "JobView.swift:26"
+  },
+  "%@ easier than usual": {
+   "where": "JobView.swift:33"
+  },
+  "%@ harder than usual": {
+   "where": "JobView.swift:33"
+  },
+  "%@ higher than usual": {
+   "where": "JobView.swift:40"
+  },
+  "%@ lower than usual": {
+   "where": "JobView.swift:40"
+  },
+  "normal": {
+   "where": "JobView.swift:44",
+   "comment": "Plain-words description of a modifier that changes nothing: neither easier nor harder than usual"
+  },
+  "• %@ %@ is booming this year: %@": {
+   "where": "JobView.swift:59"
+  },
+  "• %@ %@ is growing this year: %@": {
+   "where": "JobView.swift:60"
+  },
+  "• %@ %@ is steady this year: %@": {
+   "where": "JobView.swift:61"
+  },
+  "• %@ %@ is slowing this year: %@": {
+   "where": "JobView.swift:62"
+  },
+  "• %@ %@ is in a slump this year: %@": {
+   "where": "JobView.swift:63"
+  },
+  "• %@ %@ is booming: %@": {
+   "where": "JobView.swift:72"
+  },
+  "• %@ %@ is growing: %@": {
+   "where": "JobView.swift:73"
+  },
+  "• %@ %@ is steady: %@": {
+   "where": "JobView.swift:74"
+  },
+  "• %@ %@ is slowing: %@": {
+   "where": "JobView.swift:75"
+  },
+  "• %@ %@ is in a slump: %@": {
+   "where": "JobView.swift:76"
+  },
+  "Requirements not met": {
+   "where": "JobView.swift:132"
+  },
+  "Hard requirements not met": {
+   "where": "JobView.swift:132"
+  },
+  "%@ %@: %lld/%lld": {
+   "where": "JobView.swift:148"
+  },
+  "Skills this job looks for (each one helps, even if you're only part of the way there):": {
+   "where": "JobView.swift:151"
+  },
+  "the right schooling, licences and experience": {
+   "where": "JobView.swift:166"
+  },
+  "You can't get this job yet. First you need: %@.": {
+   "where": "JobView.swift:168"
+  },
+  "This career has a special door: you need the “%@” title first.": {
+   "where": "JobView.swift:178"
+  },
+  "Until then your chance stays at %@.": {
+   "where": "JobView.swift:179"
+  },
+  "Once you have it, it's the biggest help there is — %@.": {
+   "where": "JobView.swift:181"
+  },
+  "• School: %lld school levels below what this job wants (your work experience makes up %@) — %@": {
+   "where": "JobView.swift:195",
+   "english": {
+    "one": "• School: %1$lld school level below what this job wants (your work experience makes up %2$@) — %3$@",
+    "other": "• School: %1$lld school levels below what this job wants (your work experience makes up %2$@) — %3$@"
+   }
+  },
+  "• School: %lld school levels below what this job wants — %@": {
+   "where": "JobView.swift:196",
+   "english": {
+    "one": "• School: %1$lld school level below what this job wants — %2$@",
+    "other": "• School: %1$lld school levels below what this job wants — %2$@"
+   }
+  },
+  "• School: employers here prefer a university degree — %@": {
+   "where": "JobView.swift:198"
+  },
+  "• School: you have the schooling it needs — %@": {
+   "where": "JobView.swift:199"
+  },
+  "• School: you have the right degree — %@": {
+   "where": "JobView.swift:201"
+  },
+  "• School: you have a degree, but in a different subject — %@": {
+   "where": "JobView.swift:202"
+  },
+  "• Your skills: %lld of %lld are strong enough (%@ match)": {
+   "where": "JobView.swift:210"
+  },
+  "• Starting chance for this kind of job: %@ (jobs that need more school start lower)": {
+   "where": "JobView.swift:211"
+  },
+  "• A degree from %@: %@": {
+   "where": "JobView.swift:215, JobView.swift:216"
+  },
+  "• A degree from your school: %@": {
+   "where": "JobView.swift:217"
+  },
+  "• People you know in %@: %@": {
+   "where": "JobView.swift:220, SkillsView.swift:740"
+  },
+  "• Your fame (%@): %@": {
+   "where": "JobView.swift:223"
+  },
+  "• Your fame (general): %@": {
+   "where": "JobView.swift:225"
+  },
+  "• Your “%@” title: %@": {
+   "where": "JobView.swift:229"
+  },
+  "• A course for this field: %@": {
+   "where": "JobView.swift:231"
+  },
+  "• Your salary ask: asking for less helps a little (%@)": {
+   "where": "JobView.swift:234"
+  },
+  "• Your salary ask: asking for a lot more %@": {
+   "where": "JobView.swift:235"
+  },
+  "• Your salary ask: fair ✓": {
+   "where": "JobView.swift:236"
+  },
+  "• Lots of people want this job: %@": {
+   "where": "JobView.swift:240"
+  },
+  "• Employers need more people in this job: %@": {
+   "where": "JobView.swift:241"
+  },
+  "• Joining above the starting level: %@": {
+   "where": "JobView.swift:242"
+  },
+  "• Only a few people get a job like this each year: %@ of the people who qualify (having run your own company helps)": {
+   "where": "JobView.swift:246"
+  },
+  "• Only a few people get a job like this each year: %@ of the people who qualify": {
+   "where": "JobView.swift:247"
+  },
+  "• Experience: none needed ✓": {
+   "where": "JobView.swift:251"
+  },
+  "• Experience: %@ of %lld years — %@": {
+   "where": "JobView.swift:252",
+   "english": {
+    "one": "• Experience: %1$@ of %2$lld year — %3$@",
+    "other": "• Experience: %1$@ of %2$lld years — %3$@"
+   }
+  },
+  "Your school and experience:": {
+   "where": "JobView.swift:255"
+  },
+  "• Licences: all set ✓": {
+   "where": "JobView.swift:257"
+  },
+  "• Licences: missing": {
+   "where": "JobView.swift:257"
+  },
+  "Your chance: %@": {
+   "where": "JobView.swift:263"
+  },
+  "This year's job market:": {
+   "where": "JobView.swift:266"
+  },
+  "Market median": {
+   "where": "JobView.swift:286"
+  },
+  "Requirements": {
+   "where": "JobView.swift:304"
+  },
+  "Education:": {
+   "where": "JobView.swift:313"
+  },
+  "Education (preferred):": {
+   "where": "JobView.swift:316"
+  },
+  "🎓 Preferred education": {
+   "where": "JobView.swift:321"
+  },
+  "You don't strictly need it — but it helps every time you apply and every time you could be promoted.": {
+   "where": "JobView.swift:323"
+  },
+  "A degree in the right subject helps most, a degree in another subject helps less, and having less schooling than this makes it harder.": {
+   "where": "JobView.swift:324"
+  },
+  "Field: %@": {
+   "where": "JobView.swift:346"
+  },
+  "Experience:": {
+   "where": "JobView.swift:359"
+  },
+  "📅 Experience": {
+   "where": "JobView.swift:362"
+  },
+  "Trainings:": {
+   "where": "JobView.swift:384"
+  },
+  "Preferred (helpful):": {
+   "where": "JobView.swift:398"
+  },
+  "Not needed — but one of these makes it easier to get hired in this field, and counts as one level of the schooling a job here wants.": {
+   "where": "JobView.swift:400"
+  },
+  "Breakthrough:": {
+   "where": "JobView.swift:409"
+  },
+  "%@ title": {
+   "where": "JobView.swift:414"
+  },
+  "You have it! This is the biggest help there is for getting signed.": {
+   "where": "JobView.swift:419"
+  },
+  "Without it, teams won't sign you (your chance stays at %@).": {
+   "where": "JobView.swift:421"
+  },
+  "This job wants %lld years of experience.": {
+   "where": "JobView.swift:490",
+   "english": {
+    "one": "This job wants %lld year of experience.",
+    "other": "This job wants %lld years of experience."
+   }
+  },
+  "With less than %lld years, you can't apply yet.": {
+   "where": "JobView.swift:491",
+   "english": {
+    "one": "With less than %lld year, you can't apply yet.",
+    "other": "With less than %lld years, you can't apply yet."
+   }
+  },
+  "In between you can, but each missing year makes it much harder.": {
+   "where": "JobView.swift:492"
+  },
+  "Every year over %@ helps a little more.": {
+   "where": "JobView.swift:493"
+  },
+  "You need %lld years of experience to apply.": {
+   "where": "JobView.swift:497",
+   "english": {
+    "one": "You need %lld year of experience to apply.",
+    "other": "You need %lld years of experience to apply."
+   }
+  },
+  "Every extra year helps a little more.": {
+   "where": "JobView.swift:498"
+  },
+  "Years as %@ count fully. Other years in %@ %@ count half.": {
+   "where": "JobView.swift:502"
+  },
+  "Years in %@ count half too.": {
+   "where": "JobView.swift:510"
+  },
+  "Years in %@ count too.": {
+   "where": "JobView.swift:511"
+  },
+  "Salary:": {
+   "where": "JobView.swift:519"
+  },
+  "💵 Salary": {
+   "where": "JobView.swift:523"
+  },
+  "This job pays a set amount — you can't ask for more.": {
+   "where": "JobView.swift:525"
+  },
+  "It starts a bit lower for beginners and a bit higher if you have years of experience in this work.": {
+   "where": "JobView.swift:526"
+  },
+  "✓ You can apply for this job.": {
+   "where": "JobView.swift:538"
+  },
+  "🏢 Employer": {
+   "where": "JobView.swift:558"
+  },
+  "🏢 Employer's industry": {
+   "where": "JobView.swift:561"
+  },
+  "Every kind of company hires for this job. Pick which one to apply to.": {
+   "where": "JobView.swift:563"
+  },
+  "Some industries are doing better than others this year — that changes your chance of getting hired, and how your pay and promotions go while you work there.": {
+   "where": "JobView.swift:564"
+  },
+  "Employer": {
+   "where": "JobView.swift:568"
+  },
+  "Chance to get hired:": {
+   "where": "JobView.swift:589, SeniorityOffersView.swift:101"
+  },
+  "What your chance depends on": {
+   "where": "JobView.swift:592"
+  },
+  "Ask for a salary": {
+   "where": "JobView.swift:606"
+  },
+  "Your ask:": {
+   "where": "JobView.swift:611"
+  },
+  "Win a Junior Championship as a teen. Practise a sport for years to get better at it.": {
+   "where": "JobView.swift:643"
+  },
+  "Earn the “%@” title first.": {
+   "where": "JobView.swift:645"
+  },
+  "You start as %@ on %@ a year.": {
+   "where": "JobView.swift:652"
+  },
+  "🎉 Offer accepted!": {
+   "where": "JobView.swift:656"
+  },
+  "❌ No offer this time.": {
+   "where": "JobView.swift:656"
+  },
+  "Teams here want the “%@” title — win it first to open this career.": {
+   "where": "JobView.swift:673"
+  },
+  "You had a %@ chance, and this time it didn't work out. Don't give up — try again next year!": {
+   "where": "JobView.swift:676"
+  },
+  "🔒 Not open to you yet.": {
+   "where": "JobView.swift:687"
+  },
+  "🔒 First: %@.": {
+   "where": "JobView.swift:689"
+  },
+  "Nobody is posting %@ jobs this year. The job market changes every year — check again next year.": {
+   "where": "JobsView.swift:98"
+  },
+  "No jobs match these filters. Try another kind of work, or turn off \"Only roles I qualify for\".": {
+   "where": "JobsView.swift:148"
+  },
+  "Kind of work": {
+   "where": "JobsView.swift:164, JobsView.swift:167, JobsView.swift:173"
+  },
+  "%@ %@ — %@": {
+   "where": "JobsView.swift:169, SkillsView.swift:187, SkillsView.swift:625"
+  },
+  "Any": {
+   "where": "JobsView.swift:174",
+   "comment": "Filter choice: show roles of any kind of work"
+  },
+  "Only roles I qualify for": {
+   "where": "JobsView.swift:183"
+  },
+  "%lld roles": {
+   "where": "JobsView.swift:186",
+   "english": {
+    "one": "%lld role",
+    "other": "%lld roles"
+   }
+  },
+  "🏢 Any of %lld industries — your choice": {
+   "where": "JobsView.swift:226",
+   "english": {
+    "one": "🏢 Any of %lld industry — your choice",
+    "other": "🏢 Any of %lld industries — your choice"
+   }
+  },
+  "🎉 Venture launched!": {
+   "where": "JobsView.swift:296"
+  },
+  "You put in %@ and opened your business!": {
+   "where": "JobsView.swift:298"
+  },
+  "In the first year it pays about %@ of the full amount while you find customers.": {
+   "where": "JobsView.swift:299"
+  },
+  "🧭 %lld yr exp expected": {
+   "where": "JobsView.swift:326",
+   "english": {
+    "one": "🧭 %lld yr exp expected",
+    "other": "🧭 %lld yr exp expected"
+   }
+  },
+  "💰 Target %@": {
+   "where": "JobsView.swift:328"
+  },
+  "🔒 Nothing to stake yet — earn and save first": {
+   "where": "JobsView.swift:357"
+  },
+  "🛡️ %@ survive year 1 · stake %@": {
+   "where": "JobsView.swift:361"
+  },
+  "🏦 %@ of it borrowed": {
+   "where": "JobsView.swift:367"
+  },
+  "Launch": {
+   "where": "JobsView.swift:377",
+   "comment": "Button: found this business now"
+  },
+  "🔒 You need some money to start a business. Work and save first — then you can start any business you like.": {
+   "where": "JobsView.swift:396"
+  },
+  "💰 You'd put in %@ of the %@ it needs, from your savings first.": {
+   "where": "JobsView.swift:401"
+  },
+  "%@ would be a loan that grows %@ a year — you pay it back even if the business closes.": {
+   "where": "JobsView.swift:403"
+  },
+  "🚀 It always opens. It has a %@ chance to make it through the first year.": {
+   "where": "JobsView.swift:415"
+  },
+  "What helps: your %lld years in %@ (%@ is good), the skills it needs, %@, %@, and the money you put in.": {
+   "where": "JobsView.swift:416",
+   "english": {
+    "one": "What helps: your %1$lld year in %2$@ (%3$@ is good), the skills it needs, %4$@, %5$@, and the money you put in.",
+    "other": "What helps: your %1$lld years in %2$@ (%3$@ is good), the skills it needs, %4$@, %5$@, and the money you put in."
+   }
+  },
+  "Each year it lasts, it gets safer — but a bad economy makes it riskier.": {
+   "where": "JobsView.swift:417"
+  },
+  "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": {
+   "where": "JobsView.swift:419"
+  },
+  "📉 If it closes, you get back %@ of the money you put in.": {
+   "where": "JobsView.swift:420"
+  },
+  "🌟 Every year in business, every investment you win and every sale makes you better known in %@ %@ — so your next business is more likely to last.": {
+   "where": "JobsView.swift:421"
+  },
+  "🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.": {
+   "where": "JobsView.swift:424"
+  },
+  "Game Over": {
+   "where": "RetirementView.swift:15"
+  },
+  "Your score": {
+   "where": "RetirementView.swift:16"
+  },
+  "Your progress": {
+   "where": "RetirementView.swift:16"
+  },
+  "You reached %lld — your career is over and this score is final.": {
+   "where": "RetirementView.swift:23"
+  },
+  "You reached %lld — your career is over.": {
+   "where": "RetirementView.swift:25"
+  },
+  "You're %lld. Here's how your life is going so far — keep playing to grow your score, or start over.": {
+   "where": "RetirementView.swift:27"
+  },
+  "You're %lld. Here's how your life is going so far — keep playing, or start over.": {
+   "where": "RetirementView.swift:29"
+  },
+  "Money earned: %@": {
+   "where": "RetirementView.swift:35"
+  },
+  "Savings: %@": {
+   "where": "RetirementView.swift:36"
+  },
+  "🏦 Venture loan owed: %@": {
+   "where": "RetirementView.swift:57"
+  },
+  "🎓 Student loan owed: %@": {
+   "where": "RetirementView.swift:63"
+  },
+  "🏅 Score: %@ ÷ %lld y.o. = %@": {
+   "where": "RetirementView.swift:74"
+  },
+  "🏅 Score": {
+   "where": "RetirementView.swift:78"
+  },
+  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": {
+   "where": "RetirementView.swift:79"
+  },
+  "Keep playing": {
+   "where": "RetirementView.swift:179, RetirementView.swift:93"
+  },
+  "Restart": {
+   "where": "RetirementView.swift:103"
+  },
+  "Start over": {
+   "where": "RetirementView.swift:111, RetirementView.swift:190"
+  },
+  "You climbed all the way to the top — you're now in a top leadership role! 👔": {
+   "where": "RetirementView.swift:151"
+  },
+  "You climbed all the way to the top — you're now %@! 👔": {
+   "where": "RetirementView.swift:153"
+  },
+  "🎉 Goal reached!": {
+   "where": "RetirementView.swift:158"
+  },
+  "Reached at age %lld.": {
+   "where": "RetirementView.swift:172"
+  },
+  "Advisor": {
+   "where": "RootView.swift:179"
+  },
+  "Laid Off": {
+   "where": "RootView.swift:220"
+  },
+  "OK": {
+   "where": "RootView.swift:221, RootView.swift:228, RootView.swift:251, RootView.swift:258, RootView.swift:266"
+  },
+  "Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.": {
+   "where": "RootView.swift:223"
+  },
+  "Business Closed 📉": {
+   "where": "RootView.swift:227"
+  },
+  "Congratulations! 🎉": {
+   "where": "RootView.swift:234"
+  },
+  "Thanks!": {
+   "where": "RootView.swift:235"
+  },
+  "Champion! 🏆": {
+   "where": "RootView.swift:242"
+  },
+  "Congratulations! 🎓": {
+   "where": "RootView.swift:265"
+  },
+  "Career Sim": {
+   "where": "RootView.swift:307"
+  },
+  "Pick your character": {
+   "where": "RootView.swift:329"
+  },
+  "Age %lld": {
+   "where": "RootView.swift:361"
+  },
+  "Starting age": {
+   "where": "RootView.swift:363"
+  },
+  "Country": {
+   "where": "RootView.swift:376"
+  },
+  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": {
+   "where": "RootView.swift:397"
+  },
+  "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more.": {
+   "where": "RootView.swift:409",
+   "english": {
+    "one": "🎲 Skipping %1$lld year of childhood gives you %2$@ random skill point. Playing those years yourself builds far more.",
+    "other": "🎲 Skipping %1$lld years of childhood gives you %2$@ random skill points. Playing those years yourself builds far more."
+   }
+  },
+  "🎒 You'll start in %@.": {
+   "where": "RootView.swift:416"
+  },
+  "🎒 You'll start in %@ (%@ done).": {
+   "where": "RootView.swift:417"
+  },
+  "🎒 You'll start in your last years of school (%@ done).": {
+   "where": "RootView.swift:418"
+  },
+  "🎓 You'll start having just finished %@ — time to choose your next step.": {
+   "where": "RootView.swift:419"
+  },
+  "Start here": {
+   "where": "RootView.swift:440"
+  },
+  "Close": {
+   "where": "RootView.swift:535"
+  },
+  "One turn = one year": {
+   "where": "RootView.swift:604"
+  },
+  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": {
+   "where": "RootView.swift:605"
+  },
+  "Build your life from the buttons": {
+   "where": "RootView.swift:606"
+  },
+  "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": {
+   "where": "RootView.swift:607"
+  },
+  "Watch yourself grow": {
+   "where": "RootView.swift:608"
+  },
+  "The middle of the screen tracks the skills, titles, and money you pile up over the years.": {
+   "where": "RootView.swift:609"
+  },
+  "Your goal": {
+   "where": "RootView.swift:610"
+  },
+  "%@. Tap the ⓘ next to your age at any time to check how you're doing.": {
+   "where": "RootView.swift:611"
+  },
+  "Stuck? Look for ⓘ": {
+   "where": "RootView.swift:612"
+  },
+  "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": {
+   "where": "RootView.swift:613"
+  },
+  "Welcome to Career Sim! 👋": {
+   "where": "RootView.swift:622"
+  },
+  "Live a whole life, one year at a time — here's the idea:": {
+   "where": "RootView.swift:624"
+  },
+  "Let's go! 🚀": {
+   "where": "RootView.swift:648"
+  },
+  "How to play": {
+   "where": "RootView.swift:660"
+  },
+  "%lld yr exp.": {
+   "where": "SeniorityOffersView.swift:82",
+   "english": {
+    "one": "%lld yr exp.",
+    "other": "%lld yr exp."
+   }
+  },
+  "✓ You can apply": {
+   "where": "SeniorityOffersView.swift:93"
+  },
+  "🔒 Not yet": {
+   "where": "SeniorityOffersView.swift:93"
+  },
+  "🔒 Needs the “%@” title": {
+   "where": "SideHustlesView.swift:93"
+  },
+  "🔒 Opens once you hold the “%@” title — chase it under Projects.": {
+   "where": "SideHustlesView.swift:122"
+  },
+  " (your %lld years in %@ count double)": {
+   "where": "SideHustlesView.swift:133",
+   "english": {
+    "one": " (your %1$lld year in %2$@ counts double)",
+    "other": " (your %1$lld years in %2$@ count double)"
+   }
+  },
+  "Your chance goes up with the skills below, your %lld years of work%@, and the %@ fame you already have — being known in a field makes the next project there easier.": {
+   "where": "SideHustlesView.swift:135",
+   "english": {
+    "one": "Your chance goes up with the skills below, your %1$lld year of work%2$@, and the %3$@ fame you already have — being known in a field makes the next project there easier.",
+    "other": "Your chance goes up with the skills below, your %1$lld years of work%2$@, and the %3$@ fame you already have — being known in a field makes the next project there easier."
+   }
+  },
+  "If it doesn't work out: you just miss the fame — you keep the skills.": {
+   "where": "SideHustlesView.swift:141"
+  },
+  "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": {
+   "where": "SideHustlesView.swift:147"
+  },
+  "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": {
+   "where": "SideHustlesView.swift:148"
+  },
+  "%@ This field is booming this year: %@.": {
+   "where": "SideHustlesView.swift:157"
+  },
+  "%@ This field is growing this year: %@.": {
+   "where": "SideHustlesView.swift:158"
+  },
+  "%@ This field is slowing this year: %@.": {
+   "where": "SideHustlesView.swift:159"
+  },
+  "%@ This field is slump this year: %@.": {
+   "where": "SideHustlesView.swift:160"
+  },
+  "🎲 %@ chance it works · 🌟 %@ fame": {
+   "where": "SideHustlesView.swift:176"
+  },
+  "Needs:\n%@": {
+   "where": "SideHustlesView.swift:181"
+  },
+  "Grows, whether it works or not:\n%@": {
+   "where": "SideHustlesView.swift:182"
+  },
+  "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": {
+   "where": "SideHustlesView.swift:184"
+  },
+  "%lld yrs left": {
+   "where": "SkillsView.swift:118",
+   "english": {
+    "one": "%lld yr left",
+    "other": "%lld yrs left"
+   }
+  },
+  "Your average school grade so far, over %lld years.": {
+   "where": "SkillsView.swift:131",
+   "english": {
+    "one": "Your average school grade so far, over %lld year.",
+    "other": "Your average school grade so far, over %lld years."
+   }
+  },
+  "School skills set each year's grade, and choosing a Study activity pushes it up.": {
+   "where": "SkillsView.swift:132"
+  },
+  "Universities look at it when you apply — the top ones care about it a lot.": {
+   "where": "SkillsView.swift:133"
+  },
+  "Occupation": {
+   "where": "SkillsView.swift:142, SkillsView.swift:143"
+  },
+  "Student": {
+   "where": "SkillsView.swift:167",
+   "comment": "Headline of the Occupation panel when the player is in school and has no job"
+  },
+  "In this role": {
+   "where": "SkillsView.swift:198"
+  },
+  "How many years you've worked as %@.": {
+   "where": "SkillsView.swift:200"
+  },
+  "More years help you get promoted, and some jobs only hire people with enough years in this kind of work.": {
+   "where": "SkillsView.swift:201"
+  },
+  "Promotion odds": {
+   "where": "SkillsView.swift:209"
+  },
+  "Ready for %@": {
+   "where": "SkillsView.swift:217"
+  },
+  "%@ %@: you have %lld, it needs %lld": {
+   "where": "SkillsView.swift:232"
+  },
+  "You already have every skill %@ needs. 🎉 That helps your promotion chances as much as it can.": {
+   "where": "SkillsView.swift:235"
+  },
+  "How ready your skills are for %@. Bosses like to promote people who can already do the next job — so growing these skills makes a promotion more likely:": {
+   "where": "SkillsView.swift:238"
+  },
+  "Savings": {
+   "where": "SkillsView.swift:253"
+  },
+  "All the money you've earned so far.": {
+   "where": "SkillsView.swift:256"
+  },
+  "In Simplified mode you keep your whole paycheck.": {
+   "where": "SkillsView.swift:257"
+  },
+  "The money you've saved. It grows by about %@ a year while it's above zero — but it can drop in a year when the economy turns bad.": {
+   "where": "SkillsView.swift:259"
+  },
+  "Gross income": {
+   "where": "SkillsView.swift:264, SkillsView.swift:278"
+  },
+  "What %@ pays in a year, before taxes and living costs.": {
+   "where": "SkillsView.swift:265"
+  },
+  "Banked from pay": {
+   "where": "SkillsView.swift:269"
+  },
+  "The first %@ of your pay goes on living costs like rent and food.": {
+   "where": "SkillsView.swift:271"
+  },
+  "You save %@ of the rest (%@ of anything over %@).": {
+   "where": "SkillsView.swift:272"
+  },
+  "If you have no job, living costs come out of your savings.": {
+   "where": "SkillsView.swift:273"
+  },
+  "Not working": {
+   "where": "SkillsView.swift:278"
+  },
+  "No job means no pay. Open Jobs to apply for one.": {
+   "where": "SkillsView.swift:278"
+  },
+  "Endorsements": {
+   "where": "SkillsView.swift:285"
+  },
+  "Brands pay famous people — athletes, stars and creators — to show off their products.": {
+   "where": "SkillsView.swift:287"
+  },
+  "The more %@ %@ fame you have, the more they pay, every year.": {
+   "where": "SkillsView.swift:288"
+  },
+  "Tuition": {
+   "where": "SkillsView.swift:300"
+  },
+  "%@ costs %@ a year. Your family pays %@ of it, so you pay %@ — from savings first, then as a student loan.": {
+   "where": "SkillsView.swift:302"
+  },
+  "%@ costs %@ a year while you study — from savings first, then as a student loan.": {
+   "where": "SkillsView.swift:303"
+  },
+  "Venture loan owed": {
+   "where": "SkillsView.swift:309"
+  },
+  "Money you borrowed to start a business. It grows by %@ a year until it's paid back.": {
+   "where": "SkillsView.swift:311"
+  },
+  "Payments come out of your savings and pay each year.": {
+   "where": "SkillsView.swift:312"
+  },
+  "Student loan owed": {
+   "where": "SkillsView.swift:319"
+  },
+  "Money you borrowed for school. It grows by %@ a year.": {
+   "where": "SkillsView.swift:321"
+  },
+  "You don't pay it back while you're studying — after that, payments come out of your savings and pay each year.": {
+   "where": "SkillsView.swift:322"
+  },
+  "Net worth": {
+   "where": "SkillsView.swift:331"
+  },
+  "What you own minus what you owe: your savings (and any business you own) minus your loans.": {
+   "where": "SkillsView.swift:333"
+  },
+  "Divide it by your age and you get your score.": {
+   "where": "SkillsView.swift:334"
+  },
+  "Finances": {
+   "where": "SkillsView.swift:342, SkillsView.swift:343"
+  },
+  "%@ / yr": {
+   "where": "SkillsView.swift:379"
+  },
+  "Skills": {
+   "where": "SkillsView.swift:429, SkillsView.swift:431"
+  },
+  "Skills are the things you're good at, besides school and work experience. They help with:": {
+   "where": "SkillsView.swift:433"
+  },
+  "💼 Getting hired — every job lists the skills it needs": {
+   "where": "SkillsView.swift:435"
+  },
+  "⬆️ Promotions — doing your job well and being ready for the next one": {
+   "where": "SkillsView.swift:436"
+  },
+  "🎓 Getting into college — each subject looks for its own skills": {
+   "where": "SkillsView.swift:437"
+  },
+  "📝 School grades, 🏅 contests and 🚀 starting a business": {
+   "where": "SkillsView.swift:438"
+  },
+  "Grow them with Activities, and later with events, courses and projects. Tap a skill's ⓘ to see where it helps most.": {
+   "where": "SkillsView.swift:440"
+  },
+  "Fame": {
+   "where": "SkillsView.swift:469, SkillsView.swift:470"
+  },
+  "🌐 General": {
+   "where": "SkillsView.swift:478",
+   "comment": "Fame shelf row: renown that is not tied to one field"
+  },
+  "Trophies": {
+   "where": "SkillsView.swift:509, SkillsView.swift:510"
+  },
+  "Certificates & licences": {
+   "where": "SkillsView.swift:548"
+  },
+  "Credentials": {
+   "where": "SkillsView.swift:559, SkillsView.swift:560"
+  },
+  "The economy": {
+   "where": "SkillsView.swift:602, SkillsView.swift:603"
+  },
+  "📉 Declared downturn — roughly %lld more yrs to run.": {
+   "where": "SkillsView.swift:612",
+   "english": {
+    "one": "📉 Declared downturn — roughly %lld more yr to run.",
+    "other": "📉 Declared downturn — roughly %lld more yrs to run."
+   }
+  },
+  "📉 Declared downturn this year.": {
+   "where": "SkillsView.swift:613"
+  },
+  "Economy": {
+   "where": "SkillsView.swift:640, SkillsView.swift:641"
+  },
+  "Every industry below feels the economy in its own way. Some, like hotels and building, feel every up and down. Others, like schools and hospitals, barely notice.": {
+   "where": "SkillsView.swift:660"
+  },
+  "Each industry also has good and bad years of its own — so one can be struggling in a good year, or doing great in a bad one.": {
+   "where": "SkillsView.swift:661"
+  },
+  "🎯 Getting hired here: %@": {
+   "where": "SkillsView.swift:678"
+  },
+  "⬆️ Getting promoted here: %@": {
+   "where": "SkillsView.swift:679"
+  },
+  "✂️ Chance of losing your job: %@": {
+   "where": "SkillsView.swift:680"
+  },
+  "🎲 Projects in this field: %@": {
+   "where": "SkillsView.swift:681"
+  },
+  "📊 Feels the economy more than most — when money is tight, people cut back on this first.": {
+   "where": "SkillsView.swift:685"
+  },
+  "📊 Feels the economy less than most — people still need it in hard times.": {
+   "where": "SkillsView.swift:687"
+  },
+  "📊 Goes up and down with the economy.": {
+   "where": "SkillsView.swift:689"
+  },
+  "🎲 It also has big ups and downs of its own.": {
+   "where": "SkillsView.swift:692"
+  },
+  "🎲 It mostly just follows the economy.": {
+   "where": "SkillsView.swift:694"
+  },
+  "Experience": {
+   "where": "SkillsView.swift:718, SkillsView.swift:719"
+  },
+  "There's no higher job to be promoted to from here. Your pay still goes up a little each year, up to a limit. To earn more, apply for a bigger job.": {
+   "where": "SkillsView.swift:730"
+  },
+  "What counts:": {
+   "where": "SkillsView.swift:736"
+  },
+  "• How well you do your job: %@": {
+   "where": "SkillsView.swift:737"
+  },
+  "• How ready you are for %@: %@": {
+   "where": "SkillsView.swift:738"
+  },
+  "• Years in this job: %lld (full credit at %lld)": {
+   "where": "SkillsView.swift:739"
+  },
+  "• Your fame in %@: %@": {
+   "where": "SkillsView.swift:741"
+  },
+  "• Your schooling for this job: %@": {
+   "where": "SkillsView.swift:742"
+  },
+  "This year:": {
+   "where": "SkillsView.swift:746"
+  },
+  "• Promotions get harder after many years in the same job, and later in your career.": {
+   "where": "SkillsView.swift:750"
+  },
+  "Each year you have a chance to be promoted to %@.": {
+   "where": "SkillsView.swift:754"
+  },
+  "Your chance this year: %@": {
+   "where": "SkillsView.swift:757"
+  },
+  "You can't be promoted to %@ yet — you need what it asks for and enough years in this job first.": {
+   "where": "SkillsView.swift:760"
+  },
+  "There aren't many %@ jobs — only %@ of the people who are ready get one.": {
+   "where": "SkillsView.swift:762"
+  },
+  "What you're doing right now: your job, or the school you're at.": {
+   "where": "SkillsView.swift:804"
+  },
+  "For a job, you'll see how many years you've been there.": {
+   "where": "SkillsView.swift:806"
+  },
+  "For a job, you'll see how many years you've been there and your chance of being promoted. Tap each ⓘ to learn more.": {
+   "where": "SkillsView.swift:807"
+  },
+  "Your money. In Simplified mode you keep everything you earn.": {
+   "where": "SkillsView.swift:813"
+  },
+  "Your money: what you earn, what you save and what you owe.": {
+   "where": "SkillsView.swift:816"
+  },
+  "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it.": {
+   "where": "SkillsView.swift:817"
+  },
+  "How well known you are in each field.": {
+   "where": "SkillsView.swift:823"
+  },
+  "You get famous by winning contests, speaking at events, projects that work out and running your own company. Fame makes it easier to get hired and promoted in that field — and brands pay very famous entertainers.": {
+   "where": "SkillsView.swift:824"
+  },
+  "Titles you've won in contests.": {
+   "where": "SkillsView.swift:830"
+  },
+  "Every year you practise an activity, you're entered in its biggest contest. Trophies make you more famous, and top colleges like them.": {
+   "where": "SkillsView.swift:831"
+  },
+  "Everything you've earned and keep: school diplomas and degrees.": {
+   "where": "SkillsView.swift:838"
+  },
+  "Everything you've earned and keep: school diplomas and degrees, plus certificates and licences.": {
+   "where": "SkillsView.swift:839"
+  },
+  "Many jobs need a certain degree before you can apply.": {
+   "where": "SkillsView.swift:841"
+  },
+  "Many jobs need a certain degree or licence before you can apply.": {
+   "where": "SkillsView.swift:842"
+  },
+  "How the economy is doing this year — overall, and in each industry.": {
+   "where": "SkillsView.swift:848"
+  },
+  "In a good year it's easier to get hired and promoted. In a bad year it's harder, and more people lose their jobs. Your own industry is shown in bold.": {
+   "where": "SkillsView.swift:849"
+  },
+  "How many years you've worked in each job.": {
+   "where": "SkillsView.swift:855"
+  },
+  "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": {
+   "where": "SkillsView.swift:856"
+  },
+  "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.": {
+   "where": "StatusBarView.swift:21"
+  },
+  "The newest one is shown here. Open it to see them all, newest first.": {
+   "where": "StatusBarView.swift:22"
+  },
+  "Age %lld — %@": {
+   "where": "StatusBarView.swift:33, StatusBarView.swift:46"
+  },
+  "Your story": {
+   "where": "StatusBarView.swift:49"
+  },
+  "%lld yrs in %@": {
+   "where": "TrainingRow.swift:68",
+   "english": {
+    "one": "%1$lld yr in %2$@",
+    "other": "%1$lld yrs in %2$@"
+   }
+  },
+  "%lld yrs work experience": {
+   "where": "TrainingRow.swift:69",
+   "english": {
+    "one": "%lld yr work experience",
+    "other": "%lld yrs work experience"
+   }
+  },
+  "Requirements:": {
+   "where": "TrainingRow.swift:73"
+  },
+  "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": {
+   "where": "TrainingRow.swift:82"
+  },
+  "Completing this course builds:": {
+   "where": "TrainingRow.swift:89"
+  },
+  "licence": {
+   "where": "TrainingRow.swift:105",
+   "comment": "Small badge on a credential that is a legally required licence (lower case)."
+  },
+  "✓ Earned": {
+   "where": "TrainingRow.swift:114",
+   "comment": "Label on a course or licence the player already holds."
+  }
+ }
+}

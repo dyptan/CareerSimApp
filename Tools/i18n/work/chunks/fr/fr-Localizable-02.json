@@ -1,0 +1,2365 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "Olympiad Medalist": "",
+  "Hackathon": "",
+  "Build something that works in a weekend.": "",
+  "Hackathon Winner": "",
+  "World Programming Finals": "",
+  "The world's best teams on one stage.": "",
+  "World Programming Champion": "",
+  "Junior Chess Championship": "",
+  "The national under-18 title.": "",
+  "Junior Chess Champion": "",
+  "National Chess Championship": "",
+  "Classical time control, the country's strongest board.": "",
+  "National Chess Champion": "",
+  "International Chess Open": "",
+  "Norms here earn the title every player wants.": "",
+  "Grandmaster": "",
+  "Youth Debate Championship": "",
+  "Schools from across the country, one motion per round.": "",
+  "Youth Debate Champion": "",
+  "National Debate Championship": "",
+  "University and open circuits — the final is broadcast.": "",
+  "National Debate Champion": "",
+  "Class Representative Election": "",
+  "Make your pitch to the class, then count the votes.": "",
+  "Class Representative": "",
+  "Student Council Election": "",
+  "A campaign, a speech in the hall, and the whole school voting.": "",
+  "Student Body President": "",
+  "National Youth Leadership Award": "",
+  "For the student who led something real — a campaign, a charity, a change at school.": "",
+  "Youth Leadership Award Winner": "",
+  "Math Kangaroo": "",
+  "Thirty tricky puzzles, one morning, millions of kids worldwide.": "",
+  "Math Kangaroo Winner": "",
+  "Math Olympiad": "",
+  "Proofs, not sums — the national round for school students.": "",
+  "Math Olympiad Medalist": "",
+  "International Math Olympiad": "",
+  "Six problems over two days against the world's best school students.": "",
+  "International Math Olympiad Medalist": "",
+  "School Science Fair": "",
+  "A poster, an experiment, and a judge with a clipboard.": "",
+  "Science Fair Winner": "",
+  "Regional Science Fair": "",
+  "A real research question, defended in front of scientists.": "",
+  "Regional Science Fair Winner": "",
+  "International Science & Engineering Fair": "",
+  "The world's largest pre-college science competition.": "",
+  "International Science Fair Winner": "",
+  "Spelling Bee": "",
+  "One word at a time, on stage, until one speller is left.": "",
+  "Spelling Bee Champion": "",
+  "Young Writers' Prize": "",
+  "Short stories and essays, judged by published authors.": "",
+  "Young Writer of the Year": "",
+  "National Essay Competition": "",
+  "One prompt, the country's strongest student writers.": "",
+  "National Essay Prize Winner": "",
+  "Geography Bee": "",
+  "Capitals, rivers, and mountain ranges — fastest hand wins.": "",
+  "Geography Bee Champion": "",
+  "History Bowl": "",
+  "Team quiz rounds from the pharaohs to the moon landing.": "",
+  "History Bowl Champion": "",
+  "National Geography Olympiad": "",
+  "Fieldwork, maps, and a written exam — the national title.": "",
+  "Geography Olympiad Medalist": "",
+  "Junior Language Contest": "",
+  "Recite, listen, and answer — all in another language.": "",
+  "Language Contest Winner": "",
+  "Linguistics Olympiad": "",
+  "Crack the rules of a language you've never seen.": "",
+  "Linguistics Olympiad Medalist": "",
+  "Online Ranked Ladder": "",
+  "Climb the seasonal ranks from your own setup. Cheap to enter, a real grind.": "",
+  "Ladder Season Champion": "",
+  "Regional LAN Tournament": "",
+  "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.": "",
+  "LAN Tournament Champion": "",
+  "World Esports Finals": "",
+  "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.": "",
+  "Esports World Champion": "",
+  "• Pay is the national median for each job.": "",
+  "• Universities charge tuition — from about %@ a year at a community college to %@ or more at an elite one — so many students borrow.": "",
+  "• %@: no job pays under %@ a year.": "",
+  "• A university year costs about %@, or %@ at an elite school.": "",
+  "• Living costs take the first %@ of pay.": "",
+  "Still American for now: school ages and tracks, licence names and most of the advisor's real-world facts.": "",
+  "United States": "",
+  "Pay, prices and school costs from the United States, in dollars.": "",
+  "The federal minimum wage": "",
+  "Germany": "",
+  "Pay, prices and school costs from Germany, in euros.": "",
+  "The minimum wage (€13.90 an hour)": "",
+  "• Scores go to their own German leaderboard.": "",
+  "Everyday jobs pay about the same number of euros as dollars in the US; professional jobs pay roughly half. Doctors, nurses, teachers and pilots follow their German pay scales.": "",
+  "Public universities, the famous ones included, charge only a semester fee, and student loans are interest-free.": "",
+  "Canada": "",
+  "Pay, prices and school costs from Canada, in Canadian dollars.": "",
+  "The federal minimum wage (C$18.15 an hour)": "",
+  "• Scores go to their own Canadian leaderboard.": "",
+  "Pay is close to the US in Canadian dollars for everyday jobs, and lower for professionals. Doctors bill provincial health plans and earn among the most.": "",
+  "Tuition is moderate, and the federal part of a student loan is interest-free.": "",
+  "United Kingdom": "",
+  "Pay, prices and school costs from the United Kingdom, in pounds.": "",
+  "The National Living Wage (£12.71 an hour)": "",
+  "• Scores go to their own British leaderboard.": "",
+  "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.": "",
+  "Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.": "",
+  "France": "",
+  "Pay, prices and school costs from France, in euros.": "",
+  "The minimum wage (SMIC, on a 35-hour week)": "",
+  "• Scores go to their own French leaderboard.": "",
+  "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.": "",
+  "Public universities cost a few hundred euros a year; the elite business schools are the exception.": "",
+  "Italy": "",
+  "Pay, prices and school costs from Italy, in euros.": "",
+  "Collective agreements set the floor (Italy has no legal minimum wage)": "",
+  "• Scores go to their own Italian leaderboard.": "",
+  "Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.": "",
+  "Public universities charge by family income; the private elite schools charge much more.": "",
+  "Japan": "",
+  "Pay, prices and school costs from Japan, in yen.": "",
+  "The minimum wage (¥1,121 an hour on average)": "",
+  "• Scores go to their own Japanese leaderboard.": "",
+  "Pay rises with seniority and is compressed: professionals earn far less than in the US.": "",
+  "The top national universities cost less than most private ones; private medical schools cost millions of yen a year.": "",
+  "Ukraine": "",
+  "Pay, prices and school costs from Ukraine, in hryvnias.": "",
+  "The minimum wage (₴8,647 a month)": "",
+  "• Scores go to their own Ukrainian leaderboard.": "",
+  "Most pay is far below western Europe, but IT pays well above the national average — the best-paid path in the country.": "",
+  "University is free on a state-funded place; these are the fees for a paid (contract) place.": "",
+  "Priced as in peacetime: the war's effects on work and flights aren't in the game.": "",
+  "Australia": "",
+  "Pay, prices and school costs from Australia, in Australian dollars.": "",
+  "The minimum wage (A$26.44 an hour)": "",
+  "• Scores go to their own Australian leaderboard.": "",
+  "Pay is high and compressed: the minimum wage is about half the typical full-time wage.": "",
+  "University fees are set by subject, not by university, and HECS-HELP loans are indexed to prices, so they carry no real interest.": "",
+  "Brazil": "",
+  "Pay, prices and school costs from Brazil, in reais.": "",
+  "The minimum wage (R$1,621 a month, paid 13 times)": "",
+  "• Scores go to their own Brazilian leaderboard.": "",
+  "The minimum wage is paid in 13 instalments, and the average worker earns about 2.3 times the minimum.": "",
+  "Public universities, the most selective included, charge no tuition, but entry is by the ENEM exam, and many students pay for a private college instead.": "",
+  "China": "",
+  "Pay, prices and school costs from China, in yuan.": "",
+  "The minimum wage (Shanghai, CN¥2,740 a month)": "",
+  "• Scores go to their own Chinese leaderboard.": "",
+  "Minimum wages are set province by province, and pay in IT and finance is far above hotels and catering.": "",
+  "Public universities charge a few thousand yuan a year, and one exam, the gaokao, decides where you can go.": "",
+  "India": "",
+  "Pay, prices and school costs from India, in rupees.": "",
+  "The Delhi minimum wage (₹18,456 a month)": "",
+  "• Scores go to their own Indian leaderboard.": "",
+  "There is no single minimum wage: each state sets its own, and most workers earn little.": "",
+  "Elite government institutions such as AIIMS cost very little, but places go by national entrance exams.": "",
+  "Mexico": "",
+  "Pay, prices and school costs from Mexico, in Mexican pesos.": "",
+  "The minimum wage (MX$315.04 a day)": "",
+  "• Scores go to their own Mexican leaderboard.": "",
+  "Pay is low and unequal: nearly half of workers earn no more than one minimum wage.": "",
+  "Public universities such as UNAM are almost free, while the top private ones cost far more than most families earn.": "",
+  "Poland": "",
+  "Pay, prices and school costs from Poland, in zloty.": "",
+  "The minimum wage (4,806 zł a month)": "",
+  "• Scores go to their own Polish leaderboard.": "",
+  "Full-time study at public universities is free, medicine and law included.": "",
+  "The state student loan charges less than inflation, so its real cost is nothing.": "",
+  "Spain": "",
+  "Pay, prices and school costs from Spain, in euros.": "",
+  "The minimum wage (€1,221 a month, paid in 14 instalments)": "",
+  "• Scores go to their own Spanish leaderboard.": "",
+  "Public university costs about €900 a year, and vocational training (FP) has no tuition.": "",
+  "The minimum wage is paid in 14 instalments, and pay is low next to the rest of western Europe.": "",
+  "Sweden": "",
+  "Pay, prices and school costs from Sweden, in Swedish kronor.": "",
+  "The retail pay floor (26,626 kr a month, no legal minimum)": "",
+  "• Scores go to their own Swedish leaderboard.": "",
+  "There is no legal minimum wage: union agreements set the floor, retail's among them.": "",
+  "University is free, and student support is part grant, part loan.": "",
+  "Turkey": "",
+  "Pay, prices and school costs from Turkey, in Turkish lira.": "",
+  "The minimum wage (₺33,030 a month)": "",
+  "• Scores go to their own Turkish leaderboard.": "",
+  "Prices rise about 30% a year, so pay here is in 2026 lira and ages fast.": "",
+  "State universities are free, while the top private ones cost over ₺1 million a year.": "",
+  "South Korea": "",
+  "Pay, prices and school costs from South Korea, in won.": "",
+  "The minimum wage (₩10,320 an hour)": "",
+  "• Scores go to their own South Korean leaderboard.": "",
+  "The minimum wage is about 60% of the typical full-time wage.": "",
+  "University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.": "",
+  "University — Bachelor's": "",
+  "University — Master's": "",
+  "Doctorate": "",
+  "Doctorate+": "",
+  "very good": "",
+  "good": "",
+  "satisfactory": "",
+  "sufficient": "",
+  "très bien": "",
+  "bien": "",
+  "assez bien": "",
+  "passable": "",
+  "%@/20 (%@)": "",
+  "%lld/100": "",
+  "%@ of 5": "",
+  "%lld/200": "",
+  "%@/%lld": "",
+  "%@ (1 = best)": "",
+  "%@ (%@)": "",
+  "Primary School": "",
+  "Middle School": "",
+  "High School": "",
+  "Vocational Diploma": "",
+  "Community College": "",
+  "State University": "",
+  "Elite / Ivy League": "",
+  "GPA": "",
+  "Primary school": "",
+  "Middle school": "",
+  "High school": "",
+  "College / Vocational": "",
+  "Elementary School": "",
+  "High School Diploma": "",
+  "College Diploma": "",
+  "College": "",
+  "University": "",
+  "Top research university (U15)": "",
+  "Grade average": "",
+  "Secondary School": "",
+  "A-levels": "",
+  "BTEC Diploma": "",
+  "Further Education College": "",
+  "Oxbridge / Russell Group": "",
+  "A-level grades": "",
+  "Grundschule": "",
+  "Gymnasium (lower school)": "",
+  "Abitur": "",
+  "Ausbildung": "",
+  "Fachhochschule": "",
+  "Universität": "",
+  "Exzellenzuniversität": "",
+  "Abitur grade": "",
+  "École primaire": "",
+  "Collège": "",
+  "Baccalauréat": "",
+  "BTS": "",
+  "IUT": "",
+  "Université": "",
+  "Grande école": "",
+  "Bac average": "",
+  "Scuola primaria": "",
+  "Scuola media": "",
+  "Diploma di maturità": "",
+  "ITS Diploma": "",
+  "ITS Academy": "",
+  "Università": "",
+  "Top private university": "",
+  "Maturità score": "",
+  "Elementary School (shōgakkō)": "",
+  "Junior High School (chūgakkō)": "",
+  "High School (kōkō)": "",
+  "Senmon Diploma": "",
+  "Junior College": "",
+  "Private University": "",
+  "National University": "",
+  "Grade average (hyōtei)": "",
+  "Basic Secondary School": "",
+  "Atestat": "",
+  "Professional Junior Bachelor": "",
+  "Top university": "",
+  "NMT score": "",
+  "Junior Secondary School": "",
+  "Senior Secondary Certificate": "",
+  "TAFE Diploma": "",
+  "TAFE / Regional Institute": "",
+  "Group of Eight": "",
+  "ATAR": "",
+  "Ensino Fundamental I": "",
+  "Ensino Fundamental II": "",
+  "Ensino Médio": "",
+  "Curso Técnico": "",
+  "Faculdade": "",
+  "Universidade pública": "",
+  "Insper / FGV / PUC": "",
+  "ENEM score": "",
+  "Primary School (xiaoxue)": "",
+  "Junior Middle School (chuzhong)": "",
+  "Senior High School (gaozhong)": "",
+  "Vocational College (gaozhi)": "",
+  "Higher Vocational College": "",
+  "Provincial University": "",
+  "985 / Double First-Class University": "",
+  "Gaokao score": "",
+  "Secondary School (Class 10)": "",
+  "Class 12 (Senior Secondary)": "",
+  "ITI / Polytechnic Diploma": "",
+  "Government Degree College": "",
+  "IIT / IIM / AIIMS": "",
+  "Class 12 percentage": "",
+  "Primaria": "",
+  "Secundaria": "",
+  "Bachillerato": "",
+  "Técnico Superior Universitario": "",
+  "Universidad Tecnológica": "",
+  "Universidad pública": "",
+  "Tec de Monterrey / ITAM": "",
+  "Promedio": "",
+  "Szkoła podstawowa": "",
+  "Szkoła podstawowa (klasy 4–8)": "",
+  "Matura": "",
+  "Technikum": "",
+  "Uczelnia zawodowa": "",
+  "Uniwersytet": "",
+  "UW / UJ / SGH": "",
+  "Matura result": "",
+  "Educación Primaria": "",
+  "ESO": "",
+  "Formación Profesional": "",
+  "FP Grado Superior": "",
+  "Carlos III / Pompeu Fabra / IE": "",
+  "Nota de admisión": "",
+  "Grundskola": "",
+  "Högstadiet": "",
+  "Gymnasieexamen": "",
+  "Yrkeshögskola": "",
+  "Folkhögskola": "",
+  "Högskola / Universitet": "",
+  "KTH / Karolinska / Lund": "",
+  "Meritvärde": "",
+  "İlkokul": "",
+  "Ortaokul": "",
+  "Lise diploması": "",
+  "Önlisans (MYO)": "",
+  "Meslek Yüksekokulu": "",
+  "Devlet üniversitesi": "",
+  "Bilkent / Koç / Sabancı": "",
+  "Diploma notu": "",
+  "Elementary School (chodeung)": "",
+  "Middle School (jung)": "",
+  "High School (godeung)": "",
+  "Junior College (jeonmun)": "",
+  "Regional University": "",
+  "SKY (Seoul National, Korea, Yonsei)": "",
+  "CSAT grade": "",
+  "Ages 7+ · easiest": "",
+  "Teens & up · full challenge": "",
+  "Simplified": "",
+  "Real Life": "",
+  "Pick a degree and climb from junior to senior.": "",
+  "Skills, odds, money and a shifting economy.": "",
+  "Ages 7+ · easiest. The gentlest way in — a good first game.": "",
+  "🎯 Goal: %@ — reach a top leadership job.": "",
+  "• Getting hired only takes the right degree, enough years of work and being old enough. Meet those and the job is yours.": "",
+  "• No hiring odds, salary talks, school tiers or economy.": "",
+  "• You keep all your pay. There's no rent, tuition or loans.": "",
+  "• There's no score and no leaderboard.": "",
+  "Teens & up · full challenge.": "",
+  "🎯 Goal: %@ — your net worth divided by your age when the career ends at %lld.": "",
+  "• Hiring is a roll: skills, fame, network, school prestige and the job market all count.": "",
+  "• 💵 A typical household: the first %@ of pay goes on living costs, and you save %@ of the rest. Your family pays %@ of tuition; you borrow the rest.": "",
+  "• 📉 About a %@ chance each calm year that a recession starts, and layoffs that hit some industries harder than others.": "",
+  "• Scores go to the Game Center leaderboard.": "",
+  "Make it to the top": "",
+  "Best score by %lld": "",
+  "Entertainment": "",
+  "Technology": "",
+  "Arts": "",
+  "Business": "",
+  "Science": "",
+  "Office": "",
+  "Field": "",
+  "People-facing": "",
+  "Engineering": "",
+  "Show Business": "",
+  "Public Services": "",
+  "Health": "",
+  "Education": "",
+  "Agriculture": "",
+  "Design": "",
+  "Law": "",
+  "Construction": "",
+  "Retail": "",
+  "Hospitality": "",
+  "Personal Services": "",
+  "Manufacturing": "",
+  "Entrepreneurship": "",
+  "Transportation": "",
+  "Administration": "",
+  "Software & Internet": "",
+  "Computing Hardware": "",
+  "Telecoms": "",
+  "Automotive": "",
+  "Aerospace & Defence": "",
+  "Energy & Utilities": "",
+  "Banking & Finance": "",
+  "Healthcare": "",
+  "Pharma & Biotech": "",
+  "Government & Public Sector": "",
+  "Retail & Consumer": "",
+  "Hospitality & Tourism": "",
+  "Media & Entertainment": "",
+  "Construction & Property": "",
+  "Agriculture & Food": "",
+  "Transport & Logistics": "",
+  "Industrial Manufacturing": "",
+  "Professional Services": "",
+  "Booming": "",
+  "Growing": "",
+  "Steady": "",
+  "Slowing": "",
+  "Slump": "",
+  "field.education": "",
+  "Sports": "",
+  "Service": "",
+  "CNA": "",
+  "Dental Assistant": "",
+  "Flight Attendant": "",
+  "Teaching Certificate": "",
+  "Cosmetology Licence": "",
+  "EMT": "",
+  "CPA": "",
+  "Board Certification": "",
+  "Pharmacy Technician": "",
+  "Driver's License": "",
+  "CDL": "",
+  "Pilot": "",
+  "Commercial Pilot": "",
+  "LPN": "",
+  "Nurse License": "",
+  "Nurse Practitioner": "",
+  "Medical License": "",
+  "Dental License": "",
+  "Pharmacist License": "",
+  "Veterinary License": "",
+  "Electrician License": "",
+  "Plumber License": "",
+  "Bar Admission": "",
+  "Professional Engineer": "",
+  "Architect Licence": "",
+  "Pesticide Applicator": "",
+  "Security Guard Licence": "",
+  "Master Electrician License": "",
+  "Master Plumber License": "",
+  "ATP": "",
+  "A&P Certificate": "",
+  "Police Academy": "",
+  "Psychologist License": "",
+  "Physical Therapy License": "",
+  "EPA 608": "",
+  "Coding Bootcamp": "",
+  "Game Development Program": "",
+  "Product Design Certificate": "",
+  "Music Production Certificate": "",
+  "Arts & Minds": "",
+  "Study": "",
+  "Beginner": "",
+  "Intermediate": "",
+  "Advanced": "",
+  "Expert": "",
+  "Athletic": "",
+  "E-Sports": "",
+  "Creative": "",
+  "Mind": "",
+  "Academic": "",
+  "Running": "",
+  "Swimming": "",
+  "Cycling": "",
+  "Soccer": "",
+  "Basketball": "",
+  "Tennis": "",
+  "Martial Arts": "",
+  "Gymnastics": "",
+  "Skateboarding & BMX": "",
+  "Music": "",
+  "Drawing & Painting": "",
+  "Photography": "",
+  "Cooking": "",
+  "Dance": "",
+  "Coding": "",
+  "Chess": "",
+  "Debate": "",
+  "Student Council": "",
+  "Mathematics": "",
+  "activity.science": "",
+  "Reading & Writing": "",
+  "History & Geography": "",
+  "Foreign Languages": "",
+  "%@ in %@": ""
+ },
+ "_context": {
+  "Olympiad Medalist": {
+   "where": "Competition.swift:558"
+  },
+  "Hackathon": {
+   "where": "Competition.swift:567"
+  },
+  "Build something that works in a weekend.": {
+   "where": "Competition.swift:569"
+  },
+  "Hackathon Winner": {
+   "where": "Competition.swift:571"
+  },
+  "World Programming Finals": {
+   "where": "Competition.swift:580"
+  },
+  "The world's best teams on one stage.": {
+   "where": "Competition.swift:582"
+  },
+  "World Programming Champion": {
+   "where": "Competition.swift:584"
+  },
+  "Junior Chess Championship": {
+   "where": "Competition.swift:593"
+  },
+  "The national under-18 title.": {
+   "where": "Competition.swift:595"
+  },
+  "Junior Chess Champion": {
+   "where": "Competition.swift:597"
+  },
+  "National Chess Championship": {
+   "where": "Competition.swift:606"
+  },
+  "Classical time control, the country's strongest board.": {
+   "where": "Competition.swift:608"
+  },
+  "National Chess Champion": {
+   "where": "Competition.swift:610"
+  },
+  "International Chess Open": {
+   "where": "Competition.swift:619"
+  },
+  "Norms here earn the title every player wants.": {
+   "where": "Competition.swift:621"
+  },
+  "Grandmaster": {
+   "where": "Competition.swift:623"
+  },
+  "Youth Debate Championship": {
+   "where": "Competition.swift:632"
+  },
+  "Schools from across the country, one motion per round.": {
+   "where": "Competition.swift:634"
+  },
+  "Youth Debate Champion": {
+   "where": "Competition.swift:636"
+  },
+  "National Debate Championship": {
+   "where": "Competition.swift:645"
+  },
+  "University and open circuits — the final is broadcast.": {
+   "where": "Competition.swift:647"
+  },
+  "National Debate Champion": {
+   "where": "Competition.swift:649"
+  },
+  "Class Representative Election": {
+   "where": "Competition.swift:661"
+  },
+  "Make your pitch to the class, then count the votes.": {
+   "where": "Competition.swift:663"
+  },
+  "Class Representative": {
+   "where": "Competition.swift:665"
+  },
+  "Student Council Election": {
+   "where": "Competition.swift:674"
+  },
+  "A campaign, a speech in the hall, and the whole school voting.": {
+   "where": "Competition.swift:676"
+  },
+  "Student Body President": {
+   "where": "Competition.swift:678"
+  },
+  "National Youth Leadership Award": {
+   "where": "Competition.swift:687"
+  },
+  "For the student who led something real — a campaign, a charity, a change at school.": {
+   "where": "Competition.swift:689"
+  },
+  "Youth Leadership Award Winner": {
+   "where": "Competition.swift:691"
+  },
+  "Math Kangaroo": {
+   "where": "Competition.swift:704"
+  },
+  "Thirty tricky puzzles, one morning, millions of kids worldwide.": {
+   "where": "Competition.swift:706"
+  },
+  "Math Kangaroo Winner": {
+   "where": "Competition.swift:708"
+  },
+  "Math Olympiad": {
+   "where": "Competition.swift:717"
+  },
+  "Proofs, not sums — the national round for school students.": {
+   "where": "Competition.swift:719"
+  },
+  "Math Olympiad Medalist": {
+   "where": "Competition.swift:721"
+  },
+  "International Math Olympiad": {
+   "where": "Competition.swift:730"
+  },
+  "Six problems over two days against the world's best school students.": {
+   "where": "Competition.swift:732"
+  },
+  "International Math Olympiad Medalist": {
+   "where": "Competition.swift:734"
+  },
+  "School Science Fair": {
+   "where": "Competition.swift:743"
+  },
+  "A poster, an experiment, and a judge with a clipboard.": {
+   "where": "Competition.swift:745"
+  },
+  "Science Fair Winner": {
+   "where": "Competition.swift:747"
+  },
+  "Regional Science Fair": {
+   "where": "Competition.swift:756"
+  },
+  "A real research question, defended in front of scientists.": {
+   "where": "Competition.swift:758"
+  },
+  "Regional Science Fair Winner": {
+   "where": "Competition.swift:760"
+  },
+  "International Science & Engineering Fair": {
+   "where": "Competition.swift:769"
+  },
+  "The world's largest pre-college science competition.": {
+   "where": "Competition.swift:771"
+  },
+  "International Science Fair Winner": {
+   "where": "Competition.swift:773"
+  },
+  "Spelling Bee": {
+   "where": "Competition.swift:782"
+  },
+  "One word at a time, on stage, until one speller is left.": {
+   "where": "Competition.swift:784"
+  },
+  "Spelling Bee Champion": {
+   "where": "Competition.swift:786"
+  },
+  "Young Writers' Prize": {
+   "where": "Competition.swift:795"
+  },
+  "Short stories and essays, judged by published authors.": {
+   "where": "Competition.swift:797"
+  },
+  "Young Writer of the Year": {
+   "where": "Competition.swift:799"
+  },
+  "National Essay Competition": {
+   "where": "Competition.swift:808"
+  },
+  "One prompt, the country's strongest student writers.": {
+   "where": "Competition.swift:810"
+  },
+  "National Essay Prize Winner": {
+   "where": "Competition.swift:812"
+  },
+  "Geography Bee": {
+   "where": "Competition.swift:821"
+  },
+  "Capitals, rivers, and mountain ranges — fastest hand wins.": {
+   "where": "Competition.swift:823"
+  },
+  "Geography Bee Champion": {
+   "where": "Competition.swift:825"
+  },
+  "History Bowl": {
+   "where": "Competition.swift:834"
+  },
+  "Team quiz rounds from the pharaohs to the moon landing.": {
+   "where": "Competition.swift:836"
+  },
+  "History Bowl Champion": {
+   "where": "Competition.swift:838"
+  },
+  "National Geography Olympiad": {
+   "where": "Competition.swift:847"
+  },
+  "Fieldwork, maps, and a written exam — the national title.": {
+   "where": "Competition.swift:849"
+  },
+  "Geography Olympiad Medalist": {
+   "where": "Competition.swift:851"
+  },
+  "Junior Language Contest": {
+   "where": "Competition.swift:860"
+  },
+  "Recite, listen, and answer — all in another language.": {
+   "where": "Competition.swift:862"
+  },
+  "Language Contest Winner": {
+   "where": "Competition.swift:864"
+  },
+  "Linguistics Olympiad": {
+   "where": "Competition.swift:873"
+  },
+  "Crack the rules of a language you've never seen.": {
+   "where": "Competition.swift:875"
+  },
+  "Linguistics Olympiad Medalist": {
+   "where": "Competition.swift:877"
+  },
+  "Online Ranked Ladder": {
+   "where": "Competition.swift:887"
+  },
+  "Climb the seasonal ranks from your own setup. Cheap to enter, a real grind.": {
+   "where": "Competition.swift:889"
+  },
+  "Ladder Season Champion": {
+   "where": "Competition.swift:891"
+  },
+  "Regional LAN Tournament": {
+   "where": "Competition.swift:900"
+  },
+  "Bracket play on stage against the region's best squads. A few seasons of grinding to qualify.": {
+   "where": "Competition.swift:902"
+  },
+  "LAN Tournament Champion": {
+   "where": "Competition.swift:904"
+  },
+  "World Esports Finals": {
+   "where": "Competition.swift:913"
+  },
+  "The global championship, a packed arena, and a life-changing purse — years at the top to reach it.": {
+   "where": "Competition.swift:915"
+  },
+  "Esports World Champion": {
+   "where": "Competition.swift:917"
+  },
+  "• Pay is the national median for each job.": {
+   "where": "Country.swift:162"
+  },
+  "• Universities charge tuition — from about %@ a year at a community college to %@ or more at an elite one — so many students borrow.": {
+   "where": "Country.swift:163"
+  },
+  "• %@: no job pays under %@ a year.": {
+   "where": "Country.swift:168"
+  },
+  "• A university year costs about %@, or %@ at an elite school.": {
+   "where": "Country.swift:169"
+  },
+  "• Living costs take the first %@ of pay.": {
+   "where": "Country.swift:170"
+  },
+  "Still American for now: school ages and tracks, licence names and most of the advisor's real-world facts.": {
+   "where": "Country.swift:173"
+  },
+  "United States": {
+   "where": "Country.swift:275",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from the United States, in dollars.": {
+   "where": "Country.swift:276",
+   "comment": "First line of the country picker's info text, about United States: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The federal minimum wage": {
+   "where": "Country.swift:280",
+   "comment": "Noun phrase naming the minimum-wage rule in United States. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "Germany": {
+   "where": "Country.swift:293",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Germany, in euros.": {
+   "where": "Country.swift:294",
+   "comment": "First line of the country picker's info text, about Germany: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (€13.90 an hour)": {
+   "where": "Country.swift:312",
+   "comment": "Noun phrase naming the minimum-wage rule in Germany. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own German leaderboard.": {
+   "where": "Country.swift:320",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Germany."
+  },
+  "Everyday jobs pay about the same number of euros as dollars in the US; professional jobs pay roughly half. Doctors, nurses, teachers and pilots follow their German pay scales.": {
+   "where": "Country.swift:322",
+   "comment": "Info bullet in the country picker describing Germany's pay and school costs."
+  },
+  "Public universities, the famous ones included, charge only a semester fee, and student loans are interest-free.": {
+   "where": "Country.swift:323",
+   "comment": "Info bullet in the country picker describing Germany's pay and school costs."
+  },
+  "Canada": {
+   "where": "Country.swift:333",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Canada, in Canadian dollars.": {
+   "where": "Country.swift:334",
+   "comment": "First line of the country picker's info text, about Canada: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The federal minimum wage (C$18.15 an hour)": {
+   "where": "Country.swift:347",
+   "comment": "Noun phrase naming the minimum-wage rule in Canada. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Canadian leaderboard.": {
+   "where": "Country.swift:359",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Canada."
+  },
+  "Pay is close to the US in Canadian dollars for everyday jobs, and lower for professionals. Doctors bill provincial health plans and earn among the most.": {
+   "where": "Country.swift:361",
+   "comment": "Info bullet in the country picker describing Canada's pay and school costs."
+  },
+  "Tuition is moderate, and the federal part of a student loan is interest-free.": {
+   "where": "Country.swift:362",
+   "comment": "Info bullet in the country picker describing Canada's pay and school costs."
+  },
+  "United Kingdom": {
+   "where": "Country.swift:372",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from the United Kingdom, in pounds.": {
+   "where": "Country.swift:373",
+   "comment": "First line of the country picker's info text, about United Kingdom: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The National Living Wage (£12.71 an hour)": {
+   "where": "Country.swift:386",
+   "comment": "Noun phrase naming the minimum-wage rule in United Kingdom. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own British leaderboard.": {
+   "where": "Country.swift:396",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: United Kingdom."
+  },
+  "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.": {
+   "where": "Country.swift:398",
+   "comment": "Info bullet in the country picker describing United Kingdom's pay and school costs."
+  },
+  "Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.": {
+   "where": "Country.swift:399",
+   "comment": "Info bullet in the country picker describing United Kingdom's pay and school costs."
+  },
+  "France": {
+   "where": "Country.swift:409",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from France, in euros.": {
+   "where": "Country.swift:410",
+   "comment": "First line of the country picker's info text, about France: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (SMIC, on a 35-hour week)": {
+   "where": "Country.swift:425",
+   "comment": "Noun phrase naming the minimum-wage rule in France. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own French leaderboard.": {
+   "where": "Country.swift:436",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: France."
+  },
+  "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.": {
+   "where": "Country.swift:438",
+   "comment": "Info bullet in the country picker describing France's pay and school costs."
+  },
+  "Public universities cost a few hundred euros a year; the elite business schools are the exception.": {
+   "where": "Country.swift:439",
+   "comment": "Info bullet in the country picker describing France's pay and school costs."
+  },
+  "Italy": {
+   "where": "Country.swift:449",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Italy, in euros.": {
+   "where": "Country.swift:450",
+   "comment": "First line of the country picker's info text, about Italy: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "Collective agreements set the floor (Italy has no legal minimum wage)": {
+   "where": "Country.swift:465",
+   "comment": "Noun phrase naming the minimum-wage rule in Italy. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Italian leaderboard.": {
+   "where": "Country.swift:477",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Italy."
+  },
+  "Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.": {
+   "where": "Country.swift:479",
+   "comment": "Info bullet in the country picker describing Italy's pay and school costs."
+  },
+  "Public universities charge by family income; the private elite schools charge much more.": {
+   "where": "Country.swift:480",
+   "comment": "Info bullet in the country picker describing Italy's pay and school costs."
+  },
+  "Japan": {
+   "where": "Country.swift:491",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Japan, in yen.": {
+   "where": "Country.swift:492",
+   "comment": "First line of the country picker's info text, about Japan: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (¥1,121 an hour on average)": {
+   "where": "Country.swift:507",
+   "comment": "Noun phrase naming the minimum-wage rule in Japan. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Japanese leaderboard.": {
+   "where": "Country.swift:519",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Japan."
+  },
+  "Pay rises with seniority and is compressed: professionals earn far less than in the US.": {
+   "where": "Country.swift:521",
+   "comment": "Info bullet in the country picker describing Japan's pay and school costs."
+  },
+  "The top national universities cost less than most private ones; private medical schools cost millions of yen a year.": {
+   "where": "Country.swift:522",
+   "comment": "Info bullet in the country picker describing Japan's pay and school costs."
+  },
+  "Ukraine": {
+   "where": "Country.swift:534",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Ukraine, in hryvnias.": {
+   "where": "Country.swift:535",
+   "comment": "First line of the country picker's info text, about Ukraine: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (₴8,647 a month)": {
+   "where": "Country.swift:551",
+   "comment": "Noun phrase naming the minimum-wage rule in Ukraine. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Ukrainian leaderboard.": {
+   "where": "Country.swift:563",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Ukraine."
+  },
+  "Most pay is far below western Europe, but IT pays well above the national average — the best-paid path in the country.": {
+   "where": "Country.swift:565",
+   "comment": "Info bullet in the country picker describing Ukraine's pay and school costs."
+  },
+  "University is free on a state-funded place; these are the fees for a paid (contract) place.": {
+   "where": "Country.swift:566",
+   "comment": "Info bullet in the country picker describing Ukraine's pay and school costs."
+  },
+  "Priced as in peacetime: the war's effects on work and flights aren't in the game.": {
+   "where": "Country.swift:567",
+   "comment": "Info bullet in the country picker describing Ukraine's pay and school costs."
+  },
+  "Australia": {
+   "where": "Country.swift:577",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Australia, in Australian dollars.": {
+   "where": "Country.swift:578",
+   "comment": "First line of the country picker's info text, about Australia: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (A$26.44 an hour)": {
+   "where": "Country.swift:603",
+   "comment": "Noun phrase naming the minimum-wage rule in Australia. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Australian leaderboard.": {
+   "where": "Country.swift:614",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Australia."
+  },
+  "Pay is high and compressed: the minimum wage is about half the typical full-time wage.": {
+   "where": "Country.swift:616",
+   "comment": "Info bullet in the country picker describing Australia's pay and school costs."
+  },
+  "University fees are set by subject, not by university, and HECS-HELP loans are indexed to prices, so they carry no real interest.": {
+   "where": "Country.swift:617",
+   "comment": "Info bullet in the country picker describing Australia's pay and school costs."
+  },
+  "Brazil": {
+   "where": "Country.swift:625",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Brazil, in reais.": {
+   "where": "Country.swift:626",
+   "comment": "First line of the country picker's info text, about Brazil: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (R$1,621 a month, paid 13 times)": {
+   "where": "Country.swift:651",
+   "comment": "Noun phrase naming the minimum-wage rule in Brazil. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Brazilian leaderboard.": {
+   "where": "Country.swift:662",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Brazil."
+  },
+  "The minimum wage is paid in 13 instalments, and the average worker earns about 2.3 times the minimum.": {
+   "where": "Country.swift:664",
+   "comment": "Info bullet in the country picker describing Brazil's pay and school costs."
+  },
+  "Public universities, the most selective included, charge no tuition, but entry is by the ENEM exam, and many students pay for a private college instead.": {
+   "where": "Country.swift:665",
+   "comment": "Info bullet in the country picker describing Brazil's pay and school costs."
+  },
+  "China": {
+   "where": "Country.swift:673",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from China, in yuan.": {
+   "where": "Country.swift:674",
+   "comment": "First line of the country picker's info text, about China: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (Shanghai, CN¥2,740 a month)": {
+   "where": "Country.swift:698",
+   "comment": "Noun phrase naming the minimum-wage rule in China. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Chinese leaderboard.": {
+   "where": "Country.swift:709",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: China."
+  },
+  "Minimum wages are set province by province, and pay in IT and finance is far above hotels and catering.": {
+   "where": "Country.swift:711",
+   "comment": "Info bullet in the country picker describing China's pay and school costs."
+  },
+  "Public universities charge a few thousand yuan a year, and one exam, the gaokao, decides where you can go.": {
+   "where": "Country.swift:712",
+   "comment": "Info bullet in the country picker describing China's pay and school costs."
+  },
+  "India": {
+   "where": "Country.swift:720",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from India, in rupees.": {
+   "where": "Country.swift:721",
+   "comment": "First line of the country picker's info text, about India: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The Delhi minimum wage (₹18,456 a month)": {
+   "where": "Country.swift:745",
+   "comment": "Noun phrase naming the minimum-wage rule in India. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Indian leaderboard.": {
+   "where": "Country.swift:756",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: India."
+  },
+  "There is no single minimum wage: each state sets its own, and most workers earn little.": {
+   "where": "Country.swift:758",
+   "comment": "Info bullet in the country picker describing India's pay and school costs."
+  },
+  "Elite government institutions such as AIIMS cost very little, but places go by national entrance exams.": {
+   "where": "Country.swift:759",
+   "comment": "Info bullet in the country picker describing India's pay and school costs."
+  },
+  "Mexico": {
+   "where": "Country.swift:767",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Mexico, in Mexican pesos.": {
+   "where": "Country.swift:768",
+   "comment": "First line of the country picker's info text, about Mexico: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (MX$315.04 a day)": {
+   "where": "Country.swift:792",
+   "comment": "Noun phrase naming the minimum-wage rule in Mexico. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Mexican leaderboard.": {
+   "where": "Country.swift:803",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Mexico."
+  },
+  "Pay is low and unequal: nearly half of workers earn no more than one minimum wage.": {
+   "where": "Country.swift:805",
+   "comment": "Info bullet in the country picker describing Mexico's pay and school costs."
+  },
+  "Public universities such as UNAM are almost free, while the top private ones cost far more than most families earn.": {
+   "where": "Country.swift:806",
+   "comment": "Info bullet in the country picker describing Mexico's pay and school costs."
+  },
+  "Poland": {
+   "where": "Country.swift:814",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Poland, in zloty.": {
+   "where": "Country.swift:815",
+   "comment": "First line of the country picker's info text, about Poland: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (4,806 zł a month)": {
+   "where": "Country.swift:839",
+   "comment": "Noun phrase naming the minimum-wage rule in Poland. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Polish leaderboard.": {
+   "where": "Country.swift:850",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Poland."
+  },
+  "Full-time study at public universities is free, medicine and law included.": {
+   "where": "Country.swift:852",
+   "comment": "Info bullet in the country picker describing Poland's pay and school costs."
+  },
+  "The state student loan charges less than inflation, so its real cost is nothing.": {
+   "where": "Country.swift:853",
+   "comment": "Info bullet in the country picker describing Poland's pay and school costs."
+  },
+  "Spain": {
+   "where": "Country.swift:861",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Spain, in euros.": {
+   "where": "Country.swift:862",
+   "comment": "First line of the country picker's info text, about Spain: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (€1,221 a month, paid in 14 instalments)": {
+   "where": "Country.swift:887",
+   "comment": "Noun phrase naming the minimum-wage rule in Spain. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Spanish leaderboard.": {
+   "where": "Country.swift:898",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Spain."
+  },
+  "Public university costs about €900 a year, and vocational training (FP) has no tuition.": {
+   "where": "Country.swift:900",
+   "comment": "Info bullet in the country picker describing Spain's pay and school costs."
+  },
+  "The minimum wage is paid in 14 instalments, and pay is low next to the rest of western Europe.": {
+   "where": "Country.swift:901",
+   "comment": "Info bullet in the country picker describing Spain's pay and school costs."
+  },
+  "Sweden": {
+   "where": "Country.swift:909",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Sweden, in Swedish kronor.": {
+   "where": "Country.swift:910",
+   "comment": "First line of the country picker's info text, about Sweden: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The retail pay floor (26,626 kr a month, no legal minimum)": {
+   "where": "Country.swift:935",
+   "comment": "Noun phrase naming the minimum-wage rule in Sweden. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Swedish leaderboard.": {
+   "where": "Country.swift:946",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Sweden."
+  },
+  "There is no legal minimum wage: union agreements set the floor, retail's among them.": {
+   "where": "Country.swift:948",
+   "comment": "Info bullet in the country picker describing Sweden's pay and school costs."
+  },
+  "University is free, and student support is part grant, part loan.": {
+   "where": "Country.swift:949",
+   "comment": "Info bullet in the country picker describing Sweden's pay and school costs."
+  },
+  "Turkey": {
+   "where": "Country.swift:957",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from Turkey, in Turkish lira.": {
+   "where": "Country.swift:958",
+   "comment": "First line of the country picker's info text, about Turkey: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (₺33,030 a month)": {
+   "where": "Country.swift:982",
+   "comment": "Noun phrase naming the minimum-wage rule in Turkey. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own Turkish leaderboard.": {
+   "where": "Country.swift:993",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: Turkey."
+  },
+  "Prices rise about 30% a year, so pay here is in 2026 lira and ages fast.": {
+   "where": "Country.swift:995",
+   "comment": "Info bullet in the country picker describing Turkey's pay and school costs."
+  },
+  "State universities are free, while the top private ones cost over ₺1 million a year.": {
+   "where": "Country.swift:996",
+   "comment": "Info bullet in the country picker describing Turkey's pay and school costs."
+  },
+  "South Korea": {
+   "where": "Country.swift:1004",
+   "comment": "Country name, shown in the country picker and on the score sheet."
+  },
+  "Pay, prices and school costs from South Korea, in won.": {
+   "where": "Country.swift:1005",
+   "comment": "First line of the country picker's info text, about South Korea: its pay, prices, school costs and currency. Written as a whole sentence so each language can name the country and currency naturally."
+  },
+  "The minimum wage (₩10,320 an hour)": {
+   "where": "Country.swift:1030",
+   "comment": "Noun phrase naming the minimum-wage rule in South Korea. It leads the picker line \"<this>: no job pays under <amount> a year.\""
+  },
+  "• Scores go to their own South Korean leaderboard.": {
+   "where": "Country.swift:1041",
+   "comment": "Info bullet in the country picker: each country has its own Game Center leaderboard. Country: South Korea."
+  },
+  "The minimum wage is about 60% of the typical full-time wage.": {
+   "where": "Country.swift:1043",
+   "comment": "Info bullet in the country picker describing South Korea's pay and school costs."
+  },
+  "University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.": {
+   "where": "Country.swift:1044",
+   "comment": "Info bullet in the country picker describing South Korea's pay and school costs."
+  },
+  "University — Bachelor's": {
+   "where": "Country.swift:1173, Education.swift:72, Job.swift:138",
+   "comment": "Education requirement: a bachelor's degree."
+  },
+  "University — Master's": {
+   "where": "Country.swift:1174, Education.swift:73, Job.swift:139",
+   "comment": "Education requirement: a master's degree."
+  },
+  "Doctorate": {
+   "where": "Country.swift:1175, Education.swift:74, EducationLevel.swift:41, Job.swift:140",
+   "comment": "Education requirement: a doctorate (PhD level). | Education stage: the highest degree (PhD, medical or law doctorate), as a level name on its own."
+  },
+  "Doctorate+": {
+   "where": "Country.swift:1176, Education.swift:75, Job.swift:141",
+   "comment": "Education requirement above a doctorate: post-doctoral work."
+  },
+  "very good": {
+   "where": "Country.swift:1209",
+   "comment": "Verbal rating of an Abitur grade of 1.0–1.5 (German sehr gut), shown in brackets after the number."
+  },
+  "good": {
+   "where": "Country.swift:1210",
+   "comment": "Verbal rating of an Abitur grade of 1.6–2.5 (German gut), shown in brackets after the number."
+  },
+  "satisfactory": {
+   "where": "Country.swift:1211",
+   "comment": "Verbal rating of an Abitur grade of 2.6–3.5 (German befriedigend), shown in brackets after the number."
+  },
+  "sufficient": {
+   "where": "Country.swift:1212",
+   "comment": "Verbal rating of the lowest passing Abitur grades (German ausreichend), shown in brackets after the number."
+  },
+  "très bien": {
+   "where": "Country.swift:1219",
+   "comment": "French Baccalauréat mention for an average of 16 or more out of 20 (“with highest honours”). Shown in brackets after the number."
+  },
+  "bien": {
+   "where": "Country.swift:1220",
+   "comment": "French Baccalauréat mention for an average of 14–15.9 out of 20 (“with honours”). Shown in brackets after the number."
+  },
+  "assez bien": {
+   "where": "Country.swift:1221",
+   "comment": "French Baccalauréat mention for an average of 12–13.9 out of 20 (“with fair honours”). Shown in brackets after the number."
+  },
+  "passable": {
+   "where": "Country.swift:1222",
+   "comment": "French Baccalauréat: a pass without a mention (average under 12 out of 20). Shown in brackets after the number."
+  },
+  "%@/20 (%@)": {
+   "where": "Country.swift:1224",
+   "comment": "A French Baccalauréat average out of 20 with its mention in brackets, e.g. “15.8/20 (bien)”. First is the number, second the mention."
+  },
+  "%lld/100": {
+   "where": "Country.swift:1227",
+   "comment": "An Italian maturità score out of 100, e.g. “85/100”."
+  },
+  "%@ of 5": {
+   "where": "Country.swift:1230",
+   "comment": "A Japanese school record average on the five-point scale, e.g. “4.4 of 5”."
+  },
+  "%lld/200": {
+   "where": "Country.swift:1233",
+   "comment": "A Ukrainian national multi-subject test (NMT) score out of 200, e.g. “185/200”."
+  },
+  "%@/%lld": {
+   "where": "Country.swift:1241",
+   "comment": "A grade over its maximum, e.g. “620/750” or “16.5/20”. First is the grade, second the maximum possible."
+  },
+  "%@ (1 = best)": {
+   "where": "Country.swift:1246",
+   "comment": "A grade on a scale where 1 is the best, e.g. “3.0 (1 = best)”. The number is the grade."
+  },
+  "%@ (%@)": {
+   "where": "Country.swift:1254",
+   "comment": "A school grade followed by its letter or verbal rating in brackets, e.g. “3.4 (B+)” or “1.6 (good)”. First is the grade, second the rating."
+  },
+  "Primary School": {
+   "where": "Country.swift:1261, Country.swift:1293, Country.swift:1357, Country.swift:1372, Country.swift:1411, EducationLevel.swift:35",
+   "comment": "Education stage, ages roughly 6–10 (generic name, used where the country has no school name of its own). | School term: primary school (United States, United Kingdom, Ukraine, Australia, India)."
+  },
+  "Middle School": {
+   "where": "Country.swift:1262, Country.swift:1281, EducationLevel.swift:36, EducationLevel.swift:61",
+   "comment": "Education stage, ages roughly 11–13 (lower secondary school). | School term: middle school / lower secondary school (United States, Canada)."
+  },
+  "High School": {
+   "where": "Country.swift:1263, EducationLevel.swift:37, EducationLevel.swift:62",
+   "comment": "Education stage, ages roughly 14–17 (upper secondary school). | School term: school-leaving qualification or high school (United States)."
+  },
+  "Vocational Diploma": {
+   "where": "Country.swift:1264, Education.swift:257, EducationLevel.swift:38",
+   "comment": "Education stage: a hands-on trade qualification, after school and before university. | School term: vocational qualification (United States)."
+  },
+  "Community College": {
+   "where": "Country.swift:1266, EducationTier.swift:13",
+   "comment": "Institution tier: an open-admission two-year college (US). | School term: open-access college tier (United States)."
+  },
+  "State University": {
+   "where": "Country.swift:1267, Country.swift:1417, EducationTier.swift:14",
+   "comment": "Institution tier: a mainstream public university. | School term: mainstream university tier (United States, India)."
+  },
+  "Elite / Ivy League": {
+   "where": "Country.swift:1268, EducationTier.swift:15",
+   "comment": "Institution tier: a top, highly selective university (Ivy League is the US group of elite universities). | School term: top-tier university (United States)."
+  },
+  "GPA": {
+   "where": "Country.swift:1270",
+   "comment": "School term: what the school-leaving grade is called (United States)."
+  },
+  "Primary school": {
+   "where": "Country.swift:1273, Education.swift:67, Education.swift:68, Job.swift:133, Job.swift:134",
+   "comment": "School term: requirement label: primary school (United States)."
+  },
+  "Middle school": {
+   "where": "Country.swift:1274, Education.swift:69, Job.swift:135",
+   "comment": "School term: requirement label: middle school (United States)."
+  },
+  "High school": {
+   "where": "Country.swift:1275, Education.swift:70, Job.swift:136",
+   "comment": "School term: requirement label: high school (United States)."
+  },
+  "College / Vocational": {
+   "where": "Country.swift:1276, Education.swift:71, Job.swift:137",
+   "comment": "School term: requirement label: college / vocational (United States)."
+  },
+  "Elementary School": {
+   "where": "Country.swift:1280, EducationLevel.swift:60",
+   "comment": "School term: primary school (Canada). | US name for the first school stage, ages roughly 6–10."
+  },
+  "High School Diploma": {
+   "where": "Country.swift:1282",
+   "comment": "School term: school-leaving qualification or high school (Canada)."
+  },
+  "College Diploma": {
+   "where": "Country.swift:1283",
+   "comment": "School term: vocational qualification (Canada)."
+  },
+  "College": {
+   "where": "Country.swift:1285, Country.swift:1362",
+   "comment": "School term: open-access college tier (Canada, Ukraine)."
+  },
+  "University": {
+   "where": "Country.swift:1286, Country.swift:1299, Country.swift:1363, Country.swift:1378",
+   "comment": "School term: mainstream university tier (Canada, United Kingdom, Ukraine, Australia)."
+  },
+  "Top research university (U15)": {
+   "where": "Country.swift:1287",
+   "comment": "School term: top-tier university (Canada)."
+  },
+  "Grade average": {
+   "where": "Country.swift:1289",
+   "comment": "School term: what the school-leaving grade is called (Canada)."
+  },
+  "Secondary School": {
+   "where": "Country.swift:1294",
+   "comment": "School term: middle school / lower secondary school (United Kingdom)."
+  },
+  "A-levels": {
+   "where": "Country.swift:1295",
+   "comment": "School term: school-leaving qualification or high school (United Kingdom)."
+  },
+  "BTEC Diploma": {
+   "where": "Country.swift:1296",
+   "comment": "School term: vocational qualification (United Kingdom)."
+  },
+  "Further Education College": {
+   "where": "Country.swift:1298",
+   "comment": "School term: open-access college tier (United Kingdom)."
+  },
+  "Oxbridge / Russell Group": {
+   "where": "Country.swift:1300",
+   "comment": "School term: top-tier university (United Kingdom)."
+  },
+  "A-level grades": {
+   "where": "Country.swift:1302",
+   "comment": "School term: what the school-leaving grade is called (United Kingdom)."
+  },
+  "Grundschule": {
+   "where": "Country.swift:1306",
+   "comment": "School term: primary school (Germany)."
+  },
+  "Gymnasium (lower school)": {
+   "where": "Country.swift:1307",
+   "comment": "School term: middle school / lower secondary school (Germany)."
+  },
+  "Abitur": {
+   "where": "Country.swift:1308",
+   "comment": "School term: school-leaving qualification or high school (Germany)."
+  },
+  "Ausbildung": {
+   "where": "Country.swift:1309",
+   "comment": "School term: vocational qualification (Germany)."
+  },
+  "Fachhochschule": {
+   "where": "Country.swift:1311",
+   "comment": "School term: open-access college tier (Germany)."
+  },
+  "Universität": {
+   "where": "Country.swift:1312",
+   "comment": "School term: mainstream university tier (Germany)."
+  },
+  "Exzellenzuniversität": {
+   "where": "Country.swift:1313",
+   "comment": "School term: top-tier university (Germany)."
+  },
+  "Abitur grade": {
+   "where": "Country.swift:1315",
+   "comment": "School term: what the school-leaving grade is called (Germany)."
+  },
+  "École primaire": {
+   "where": "Country.swift:1319",
+   "comment": "School term: primary school (France)."
+  },
+  "Collège": {
+   "where": "Country.swift:1320",
+   "comment": "School term: middle school / lower secondary school (France)."
+  },
+  "Baccalauréat": {
+   "where": "Country.swift:1321",
+   "comment": "School term: school-leaving qualification or high school (France)."
+  },
+  "BTS": {
+   "where": "Country.swift:1322",
+   "comment": "School term: vocational qualification (France)."
+  },
+  "IUT": {
+   "where": "Country.swift:1324",
+   "comment": "School term: open-access college tier (France)."
+  },
+  "Université": {
+   "where": "Country.swift:1325",
+   "comment": "School term: mainstream university tier (France)."
+  },
+  "Grande école": {
+   "where": "Country.swift:1326",
+   "comment": "School term: top-tier university (France)."
+  },
+  "Bac average": {
+   "where": "Country.swift:1328",
+   "comment": "School term: what the school-leaving grade is called (France)."
+  },
+  "Scuola primaria": {
+   "where": "Country.swift:1332",
+   "comment": "School term: primary school (Italy)."
+  },
+  "Scuola media": {
+   "where": "Country.swift:1333",
+   "comment": "School term: middle school / lower secondary school (Italy)."
+  },
+  "Diploma di maturità": {
+   "where": "Country.swift:1334",
+   "comment": "School term: school-leaving qualification or high school (Italy)."
+  },
+  "ITS Diploma": {
+   "where": "Country.swift:1335",
+   "comment": "School term: vocational qualification (Italy)."
+  },
+  "ITS Academy": {
+   "where": "Country.swift:1337",
+   "comment": "School term: open-access college tier (Italy)."
+  },
+  "Università": {
+   "where": "Country.swift:1338",
+   "comment": "School term: mainstream university tier (Italy)."
+  },
+  "Top private university": {
+   "where": "Country.swift:1339",
+   "comment": "School term: top-tier university (Italy)."
+  },
+  "Maturità score": {
+   "where": "Country.swift:1341",
+   "comment": "School term: what the school-leaving grade is called (Italy)."
+  },
+  "Elementary School (shōgakkō)": {
+   "where": "Country.swift:1345",
+   "comment": "School term: primary school (Japan)."
+  },
+  "Junior High School (chūgakkō)": {
+   "where": "Country.swift:1346",
+   "comment": "School term: middle school / lower secondary school (Japan)."
+  },
+  "High School (kōkō)": {
+   "where": "Country.swift:1347",
+   "comment": "School term: school-leaving qualification or high school (Japan)."
+  },
+  "Senmon Diploma": {
+   "where": "Country.swift:1347",
+   "comment": "School term: vocational qualification (Japan)."
+  },
+  "Junior College": {
+   "where": "Country.swift:1349, Country.swift:1494",
+   "comment": "School term: open-access college tier (Japan, South Korea)."
+  },
+  "Private University": {
+   "where": "Country.swift:1350",
+   "comment": "School term: mainstream university tier (Japan)."
+  },
+  "National University": {
+   "where": "Country.swift:1351",
+   "comment": "School term: top-tier university (Japan)."
+  },
+  "Grade average (hyōtei)": {
+   "where": "Country.swift:1353",
+   "comment": "School term: what the school-leaving grade is called (Japan)."
+  },
+  "Basic Secondary School": {
+   "where": "Country.swift:1358",
+   "comment": "School term: middle school / lower secondary school (Ukraine)."
+  },
+  "Atestat": {
+   "where": "Country.swift:1359",
+   "comment": "School term: school-leaving qualification or high school (Ukraine)."
+  },
+  "Professional Junior Bachelor": {
+   "where": "Country.swift:1360",
+   "comment": "School term: vocational qualification (Ukraine)."
+  },
+  "Top university": {
+   "where": "Country.swift:1364",
+   "comment": "School term: top-tier university (Ukraine)."
+  },
+  "NMT score": {
+   "where": "Country.swift:1366",
+   "comment": "School term: what the school-leaving grade is called (Ukraine)."
+  },
+  "Junior Secondary School": {
+   "where": "Country.swift:1373",
+   "comment": "School term: middle school / lower secondary school (Australia)."
+  },
+  "Senior Secondary Certificate": {
+   "where": "Country.swift:1374",
+   "comment": "School term: school-leaving qualification or high school (Australia)."
+  },
+  "TAFE Diploma": {
+   "where": "Country.swift:1375",
+   "comment": "School term: vocational qualification (Australia)."
+  },
+  "TAFE / Regional Institute": {
+   "where": "Country.swift:1377",
+   "comment": "School term: open-access college tier (Australia)."
+  },
+  "Group of Eight": {
+   "where": "Country.swift:1379",
+   "comment": "School term: top-tier university (Australia)."
+  },
+  "ATAR": {
+   "where": "Country.swift:1381",
+   "comment": "School term: what the school-leaving grade is called (Australia)."
+  },
+  "Ensino Fundamental I": {
+   "where": "Country.swift:1385",
+   "comment": "School term: primary school (Brazil)."
+  },
+  "Ensino Fundamental II": {
+   "where": "Country.swift:1386",
+   "comment": "School term: middle school / lower secondary school (Brazil)."
+  },
+  "Ensino Médio": {
+   "where": "Country.swift:1387",
+   "comment": "School term: school-leaving qualification or high school (Brazil)."
+  },
+  "Curso Técnico": {
+   "where": "Country.swift:1388",
+   "comment": "School term: vocational qualification (Brazil)."
+  },
+  "Faculdade": {
+   "where": "Country.swift:1390",
+   "comment": "School term: open-access college tier (Brazil)."
+  },
+  "Universidade pública": {
+   "where": "Country.swift:1391",
+   "comment": "School term: mainstream university tier (Brazil)."
+  },
+  "Insper / FGV / PUC": {
+   "where": "Country.swift:1392",
+   "comment": "School term: top-tier university (Brazil)."
+  },
+  "ENEM score": {
+   "where": "Country.swift:1394",
+   "comment": "School term: what the school-leaving grade is called (Brazil)."
+  },
+  "Primary School (xiaoxue)": {
+   "where": "Country.swift:1398",
+   "comment": "School term: primary school (China)."
+  },
+  "Junior Middle School (chuzhong)": {
+   "where": "Country.swift:1399",
+   "comment": "School term: middle school / lower secondary school (China)."
+  },
+  "Senior High School (gaozhong)": {
+   "where": "Country.swift:1400",
+   "comment": "School term: school-leaving qualification or high school (China)."
+  },
+  "Vocational College (gaozhi)": {
+   "where": "Country.swift:1401",
+   "comment": "School term: vocational qualification (China)."
+  },
+  "Higher Vocational College": {
+   "where": "Country.swift:1403",
+   "comment": "School term: open-access college tier (China)."
+  },
+  "Provincial University": {
+   "where": "Country.swift:1404",
+   "comment": "School term: mainstream university tier (China)."
+  },
+  "985 / Double First-Class University": {
+   "where": "Country.swift:1405",
+   "comment": "School term: top-tier university (China)."
+  },
+  "Gaokao score": {
+   "where": "Country.swift:1407",
+   "comment": "School term: what the school-leaving grade is called (China)."
+  },
+  "Secondary School (Class 10)": {
+   "where": "Country.swift:1412",
+   "comment": "School term: middle school / lower secondary school (India)."
+  },
+  "Class 12 (Senior Secondary)": {
+   "where": "Country.swift:1413",
+   "comment": "School term: school-leaving qualification or high school (India)."
+  },
+  "ITI / Polytechnic Diploma": {
+   "where": "Country.swift:1414",
+   "comment": "School term: vocational qualification (India)."
+  },
+  "Government Degree College": {
+   "where": "Country.swift:1416",
+   "comment": "School term: open-access college tier (India)."
+  },
+  "IIT / IIM / AIIMS": {
+   "where": "Country.swift:1418",
+   "comment": "School term: top-tier university (India)."
+  },
+  "Class 12 percentage": {
+   "where": "Country.swift:1420",
+   "comment": "School term: what the school-leaving grade is called (India)."
+  },
+  "Primaria": {
+   "where": "Country.swift:1424",
+   "comment": "School term: primary school (Mexico)."
+  },
+  "Secundaria": {
+   "where": "Country.swift:1425",
+   "comment": "School term: middle school / lower secondary school (Mexico)."
+  },
+  "Bachillerato": {
+   "where": "Country.swift:1426, Country.swift:1452",
+   "comment": "School term: school-leaving qualification or high school (Mexico, Spain)."
+  },
+  "Técnico Superior Universitario": {
+   "where": "Country.swift:1427",
+   "comment": "School term: vocational qualification (Mexico)."
+  },
+  "Universidad Tecnológica": {
+   "where": "Country.swift:1429",
+   "comment": "School term: open-access college tier (Mexico)."
+  },
+  "Universidad pública": {
+   "where": "Country.swift:1430, Country.swift:1456",
+   "comment": "School term: mainstream university tier (Mexico, Spain)."
+  },
+  "Tec de Monterrey / ITAM": {
+   "where": "Country.swift:1431",
+   "comment": "School term: top-tier university (Mexico)."
+  },
+  "Promedio": {
+   "where": "Country.swift:1433",
+   "comment": "School term: what the school-leaving grade is called (Mexico)."
+  },
+  "Szkoła podstawowa": {
+   "where": "Country.swift:1437",
+   "comment": "School term: primary school (Poland)."
+  },
+  "Szkoła podstawowa (klasy 4–8)": {
+   "where": "Country.swift:1438",
+   "comment": "School term: middle school / lower secondary school (Poland)."
+  },
+  "Matura": {
+   "where": "Country.swift:1439",
+   "comment": "School term: school-leaving qualification or high school (Poland)."
+  },
+  "Technikum": {
+   "where": "Country.swift:1440",
+   "comment": "School term: vocational qualification (Poland)."
+  },
+  "Uczelnia zawodowa": {
+   "where": "Country.swift:1442",
+   "comment": "School term: open-access college tier (Poland)."
+  },
+  "Uniwersytet": {
+   "where": "Country.swift:1443",
+   "comment": "School term: mainstream university tier (Poland)."
+  },
+  "UW / UJ / SGH": {
+   "where": "Country.swift:1444",
+   "comment": "School term: top-tier university (Poland)."
+  },
+  "Matura result": {
+   "where": "Country.swift:1446",
+   "comment": "School term: what the school-leaving grade is called (Poland)."
+  },
+  "Educación Primaria": {
+   "where": "Country.swift:1450",
+   "comment": "School term: primary school (Spain)."
+  },
+  "ESO": {
+   "where": "Country.swift:1451",
+   "comment": "School term: middle school / lower secondary school (Spain)."
+  },
+  "Formación Profesional": {
+   "where": "Country.swift:1453",
+   "comment": "School term: vocational qualification (Spain)."
+  },
+  "FP Grado Superior": {
+   "where": "Country.swift:1455",
+   "comment": "School term: open-access college tier (Spain)."
+  },
+  "Carlos III / Pompeu Fabra / IE": {
+   "where": "Country.swift:1457",
+   "comment": "School term: top-tier university (Spain)."
+  },
+  "Nota de admisión": {
+   "where": "Country.swift:1459",
+   "comment": "School term: what the school-leaving grade is called (Spain)."
+  },
+  "Grundskola": {
+   "where": "Country.swift:1463",
+   "comment": "School term: primary school (Sweden)."
+  },
+  "Högstadiet": {
+   "where": "Country.swift:1464",
+   "comment": "School term: middle school / lower secondary school (Sweden)."
+  },
+  "Gymnasieexamen": {
+   "where": "Country.swift:1465",
+   "comment": "School term: school-leaving qualification or high school (Sweden)."
+  },
+  "Yrkeshögskola": {
+   "where": "Country.swift:1466",
+   "comment": "School term: vocational qualification (Sweden)."
+  },
+  "Folkhögskola": {
+   "where": "Country.swift:1468",
+   "comment": "School term: open-access college tier (Sweden)."
+  },
+  "Högskola / Universitet": {
+   "where": "Country.swift:1469",
+   "comment": "School term: mainstream university tier (Sweden)."
+  },
+  "KTH / Karolinska / Lund": {
+   "where": "Country.swift:1470",
+   "comment": "School term: top-tier university (Sweden)."
+  },
+  "Meritvärde": {
+   "where": "Country.swift:1472",
+   "comment": "School term: what the school-leaving grade is called (Sweden)."
+  },
+  "İlkokul": {
+   "where": "Country.swift:1476",
+   "comment": "School term: primary school (Turkey)."
+  },
+  "Ortaokul": {
+   "where": "Country.swift:1477",
+   "comment": "School term: middle school / lower secondary school (Turkey)."
+  },
+  "Lise diploması": {
+   "where": "Country.swift:1478",
+   "comment": "School term: school-leaving qualification or high school (Turkey)."
+  },
+  "Önlisans (MYO)": {
+   "where": "Country.swift:1479",
+   "comment": "School term: vocational qualification (Turkey)."
+  },
+  "Meslek Yüksekokulu": {
+   "where": "Country.swift:1481",
+   "comment": "School term: open-access college tier (Turkey)."
+  },
+  "Devlet üniversitesi": {
+   "where": "Country.swift:1482",
+   "comment": "School term: mainstream university tier (Turkey)."
+  },
+  "Bilkent / Koç / Sabancı": {
+   "where": "Country.swift:1483",
+   "comment": "School term: top-tier university (Turkey)."
+  },
+  "Diploma notu": {
+   "where": "Country.swift:1485",
+   "comment": "School term: what the school-leaving grade is called (Turkey)."
+  },
+  "Elementary School (chodeung)": {
+   "where": "Country.swift:1489",
+   "comment": "School term: primary school (South Korea)."
+  },
+  "Middle School (jung)": {
+   "where": "Country.swift:1490",
+   "comment": "School term: middle school / lower secondary school (South Korea)."
+  },
+  "High School (godeung)": {
+   "where": "Country.swift:1491",
+   "comment": "School term: school-leaving qualification or high school (South Korea)."
+  },
+  "Junior College (jeonmun)": {
+   "where": "Country.swift:1492",
+   "comment": "School term: vocational qualification (South Korea)."
+  },
+  "Regional University": {
+   "where": "Country.swift:1495",
+   "comment": "School term: mainstream university tier (South Korea)."
+  },
+  "SKY (Seoul National, Korea, Yonsei)": {
+   "where": "Country.swift:1496",
+   "comment": "School term: top-tier university (South Korea)."
+  },
+  "CSAT grade": {
+   "where": "Country.swift:1498",
+   "comment": "School term: what the school-leaving grade is called (South Korea)."
+  },
+  "Ages 7+ · easiest": {
+   "where": "Difficulty.swift:38",
+   "comment": "Audience chip on the Simplified game-mode card: the youngest players, the gentlest mode."
+  },
+  "Teens & up · full challenge": {
+   "where": "Difficulty.swift:41",
+   "comment": "Audience chip on the Real Life game-mode card: older players, the full simulation."
+  },
+  "Simplified": {
+   "where": "Difficulty.swift:64",
+   "comment": "Name of the easy, tutorial-style game mode (no skills, tiers or economy)."
+  },
+  "Real Life": {
+   "where": "Difficulty.swift:67",
+   "comment": "Name of the full-simulation game mode (skills, hiring odds, money, a shifting economy)."
+  },
+  "Pick a degree and climb from junior to senior.": {
+   "where": "Difficulty.swift:82"
+  },
+  "Skills, odds, money and a shifting economy.": {
+   "where": "Difficulty.swift:83"
+  },
+  "Ages 7+ · easiest. The gentlest way in — a good first game.": {
+   "where": "Difficulty.swift:93"
+  },
+  "🎯 Goal: %@ — reach a top leadership job.": {
+   "where": "Difficulty.swift:95"
+  },
+  "• Getting hired only takes the right degree, enough years of work and being old enough. Meet those and the job is yours.": {
+   "where": "Difficulty.swift:97"
+  },
+  "• No hiring odds, salary talks, school tiers or economy.": {
+   "where": "Difficulty.swift:98"
+  },
+  "• You keep all your pay. There's no rent, tuition or loans.": {
+   "where": "Difficulty.swift:99"
+  },
+  "• There's no score and no leaderboard.": {
+   "where": "Difficulty.swift:100"
+  },
+  "Teens & up · full challenge.": {
+   "where": "Difficulty.swift:104"
+  },
+  "🎯 Goal: %@ — your net worth divided by your age when the career ends at %lld.": {
+   "where": "Difficulty.swift:106"
+  },
+  "• Hiring is a roll: skills, fame, network, school prestige and the job market all count.": {
+   "where": "Difficulty.swift:108"
+  },
+  "• 💵 A typical household: the first %@ of pay goes on living costs, and you save %@ of the rest. Your family pays %@ of tuition; you borrow the rest.": {
+   "where": "Difficulty.swift:109"
+  },
+  "• 📉 About a %@ chance each calm year that a recession starts, and layoffs that hit some industries harder than others.": {
+   "where": "Difficulty.swift:110"
+  },
+  "• Scores go to the Game Center leaderboard.": {
+   "where": "Difficulty.swift:111"
+  },
+  "Make it to the top": {
+   "where": "Difficulty.swift:123",
+   "comment": "Short name of the Simplified mode's goal, shown in the picker and the header."
+  },
+  "Best score by %lld": {
+   "where": "Difficulty.swift:126",
+   "comment": "Short name of the Real Life mode's goal, shown in the picker and the header. The number is the retirement age."
+  },
+  "Entertainment": {
+   "where": "DisplayNames.swift:25",
+   "comment": "A field of fame and of work: film, TV, music, performing and sport. Shown on the fame shelf and in job and industry lists."
+  },
+  "Technology": {
+   "where": "DisplayNames.swift:198, DisplayNames.swift:27, DisplayNames.swift:63",
+   "comment": "A field of work and fame: computing, software and gadgets (not engineering). Also an industry and a degree field. | Field of study (degree subject): computing, programming and information technology."
+  },
+  "Arts": {
+   "where": "DisplayNames.swift:194, DisplayNames.swift:29",
+   "comment": "A field of fame: the creative arts - painting, design, writing, language. Plural noun, not the school subject. | Field of study (degree subject): visual, performing and creative arts (music, drawing, acting, cooking)."
+  },
+  "Business": {
+   "where": "DisplayNames.swift:191, DisplayNames.swift:31, DisplayNames.swift:73",
+   "comment": "A field of work and fame: commerce, management and finance. Also a degree field. | Field of study (degree subject): business, management and entrepreneurship."
+  },
+  "Science": {
+   "where": "DisplayNames.swift:195, DisplayNames.swift:33, DisplayNames.swift:79",
+   "comment": "A field of work and fame: research, labs and discovery. Also a degree field. | Field of study (degree subject): natural science and research."
+  },
+  "Office": {
+   "where": "DisplayNames.swift:42",
+   "comment": "Where a job is done: at a desk, on a screen. A filter on the jobs list, next to Field and People-facing."
+  },
+  "Field": {
+   "where": "DisplayNames.swift:44",
+   "comment": "Where a job is done: hands-on and on your feet - building sites, kitchens, farms, vehicles. A filter on the jobs list; not a sports field or a field of study."
+  },
+  "People-facing": {
+   "where": "DisplayNames.swift:46",
+   "comment": "Where a job is done: dealing with people face to face - serving, teaching, caring, selling. A filter on the jobs list, next to Office and Field."
+  },
+  "Engineering": {
+   "where": "DisplayNames.swift:192, DisplayNames.swift:55",
+   "comment": "A field of work (job category): designing and building machines, structures and systems. Also a degree field. | Field of study (degree subject): engineering."
+  },
+  "Show Business": {
+   "where": "DisplayNames.swift:57",
+   "comment": "A field of work (job category): acting, music, film, TV, creators and professional sport."
+  },
+  "Public Services": {
+   "where": "DisplayNames.swift:59",
+   "comment": "A field of work (job category): police, fire brigade, city services - work for the community."
+  },
+  "Health": {
+   "where": "DisplayNames.swift:193, DisplayNames.swift:61",
+   "comment": "A field of work (job category): doctors, nurses and other health-care jobs. Also a degree field. | Field of study (degree subject): medicine, nursing and care professions."
+  },
+  "Education": {
+   "where": "DisplayNames.swift:118, DisplayNames.swift:65, EducationView.swift:114, FooterView.swift:178",
+   "comment": "A field of work and an industry: teaching and schools. Also a degree field. | Footer button: opens degrees and trainings | Title of the Education screen, where the player picks a degree, course or licence to study for."
+  },
+  "Agriculture": {
+   "where": "DisplayNames.swift:200, DisplayNames.swift:67",
+   "comment": "A field of work (job category): farming and growing food. | Field of study (degree subject): farming and food production."
+  },
+  "Design": {
+   "where": "DisplayNames.swift:202, DisplayNames.swift:69",
+   "comment": "A field of work (job category): graphic, product, fashion and game design. Also a degree field. | Field of study (degree subject): graphic, product, fashion and interior design."
+  },
+  "Law": {
+   "where": "DisplayNames.swift:201, DisplayNames.swift:71",
+   "comment": "A field of work (job category): lawyers, judges and legal work. Also a degree field. | Field of study (degree subject): legal studies."
+  },
+  "Construction": {
+   "where": "DisplayNames.swift:75",
+   "comment": "A field of work (job category): building homes, roads and cities."
+  },
+  "Retail": {
+   "where": "DisplayNames.swift:77",
+   "comment": "A field of work (job category): selling goods to customers in shops and online."
+  },
+  "Hospitality": {
+   "where": "DisplayNames.swift:81",
+   "comment": "A field of work (job category): hotels, restaurants, travel and events - looking after guests."
+  },
+  "Personal Services": {
+   "where": "DisplayNames.swift:83",
+   "comment": "A field of work (job category): personal grooming and beauty services such as hairdressing - not public services."
+  },
+  "Manufacturing": {
+   "where": "DisplayNames.swift:85",
+   "comment": "A field of work (job category): making products in factories and workshops."
+  },
+  "Entrepreneurship": {
+   "where": "DisplayNames.swift:87",
+   "comment": "A field of work (job category): starting and running your own business."
+  },
+  "Transportation": {
+   "where": "DisplayNames.swift:89",
+   "comment": "A field of work (job category): moving people and goods by road, air and rail."
+  },
+  "Administration": {
+   "where": "DisplayNames.swift:91",
+   "comment": "A field of work (job category): office back-room work - accounting, payroll, HR, keeping things organised."
+  },
+  "Software & Internet": {
+   "where": "DisplayNames.swift:100",
+   "comment": "An industry (sector of the economy, what the employer sells): software and online services."
+  },
+  "Computing Hardware": {
+   "where": "DisplayNames.swift:102",
+   "comment": "An industry (sector of the economy): computers, chips and electronic devices."
+  },
+  "Telecoms": {
+   "where": "DisplayNames.swift:104",
+   "comment": "An industry (sector of the economy): phone and network companies."
+  },
+  "Automotive": {
+   "where": "DisplayNames.swift:106",
+   "comment": "An industry (sector of the economy): carmakers and their suppliers."
+  },
+  "Aerospace & Defence": {
+   "where": "DisplayNames.swift:108",
+   "comment": "An industry (sector of the economy): aircraft, space and the military."
+  },
+  "Energy & Utilities": {
+   "where": "DisplayNames.swift:110",
+   "comment": "An industry (sector of the economy): power, oil and gas, water."
+  },
+  "Banking & Finance": {
+   "where": "DisplayNames.swift:112",
+   "comment": "An industry (sector of the economy): banks, insurers and investment firms."
+  },
+  "Healthcare": {
+   "where": "DisplayNames.swift:114",
+   "comment": "An industry (sector of the economy): hospitals, clinics and care services."
+  },
+  "Pharma & Biotech": {
+   "where": "DisplayNames.swift:116",
+   "comment": "An industry (sector of the economy): medicines and biotechnology."
+  },
+  "Government & Public Sector": {
+   "where": "DisplayNames.swift:120",
+   "comment": "An industry (sector of the economy): government and publicly funded bodies."
+  },
+  "Retail & Consumer": {
+   "where": "DisplayNames.swift:122",
+   "comment": "An industry (sector of the economy): shops and consumer goods."
+  },
+  "Hospitality & Tourism": {
+   "where": "DisplayNames.swift:124",
+   "comment": "An industry (sector of the economy): hotels, restaurants and travel."
+  },
+  "Media & Entertainment": {
+   "where": "DisplayNames.swift:126",
+   "comment": "An industry (sector of the economy): publishing, broadcasting, film, music and games - media as in news media."
+  },
+  "Construction & Property": {
+   "where": "DisplayNames.swift:128",
+   "comment": "An industry (sector of the economy): builders and property developers."
+  },
+  "Agriculture & Food": {
+   "where": "DisplayNames.swift:130",
+   "comment": "An industry (sector of the economy): farming and food production."
+  },
+  "Transport & Logistics": {
+   "where": "DisplayNames.swift:132",
+   "comment": "An industry (sector of the economy): freight, delivery, warehouses and airlines."
+  },
+  "Industrial Manufacturing": {
+   "where": "DisplayNames.swift:134",
+   "comment": "An industry (sector of the economy): factories making machinery and equipment."
+  },
+  "Professional Services": {
+   "where": "DisplayNames.swift:136",
+   "comment": "An industry (sector of the economy): consultancies, law and accounting firms, agencies - firms that sell expertise."
+  },
+  "Booming": {
+   "where": "DisplayNames.swift:146",
+   "comment": "How an industry is doing this year: the best state, lots of hiring. Next to Growing, Steady, Slowing, Slump."
+  },
+  "Growing": {
+   "where": "DisplayNames.swift:148",
+   "comment": "How an industry is doing this year: expanding. Next to Booming, Steady, Slowing, Slump."
+  },
+  "Steady": {
+   "where": "DisplayNames.swift:150",
+   "comment": "How an industry is doing this year: neither growing nor shrinking. Next to Booming, Growing, Slowing, Slump."
+  },
+  "Slowing": {
+   "where": "DisplayNames.swift:152",
+   "comment": "How an industry is doing this year: shrinking a little. Next to Booming, Growing, Steady, Slump."
+  },
+  "Slump": {
+   "where": "DisplayNames.swift:154",
+   "comment": "How an industry is doing this year: the worst state, with job losses. A noun, as in an economic slump."
+  },
+  "field.education": {
+   "where": "DisplayNames.swift:197",
+   "comment": "Field of study (degree subject): teaching and pedagogy (not the Education screen)."
+  },
+  "Sports": {
+   "where": "DisplayNames.swift:199, DisplayNames.swift:264",
+   "comment": "Activities tab: athletic disciplines such as running and soccer | Field of study (degree subject): sport science, coaching and athletics."
+  },
+  "Service": {
+   "where": "DisplayNames.swift:203",
+   "comment": "Field of study (degree subject): hospitality, customer service and everyday support roles (the service industry)."
+  },
+  "CNA": {
+   "where": "DisplayNames.swift:214",
+   "comment": "Training: Certified Nursing Assistant, a US entry-level nursing credential. Abbreviation (CNA)."
+  },
+  "Dental Assistant": {
+   "where": "DisplayNames.swift:215",
+   "comment": "Training: certificate to work as a dental assistant (helps the dentist, takes X-rays)."
+  },
+  "Flight Attendant": {
+   "where": "DisplayNames.swift:216",
+   "comment": "Training: certificate to work as cabin crew on commercial flights."
+  },
+  "Teaching Certificate": {
+   "where": "DisplayNames.swift:217",
+   "comment": "Training: state licence to teach in a public school (US-style teaching credential)."
+  },
+  "Cosmetology Licence": {
+   "where": "DisplayNames.swift:218",
+   "comment": "Training: state licence to cut hair and give skin and nail services in a salon (US-style cosmetology licence)."
+  },
+  "EMT": {
+   "where": "DisplayNames.swift:219",
+   "comment": "Training: Emergency Medical Technician, ambulance crew qualification. Abbreviation (EMT)."
+  },
+  "CPA": {
+   "where": "DisplayNames.swift:220",
+   "comment": "Training: Certified Public Accountant, a US accounting licence. Abbreviation (CPA); use the local equivalent title if there is one."
+  },
+  "Board Certification": {
+   "where": "DisplayNames.swift:221",
+   "comment": "Training: specialty board certification for physicians after residency (US medical system)."
+  },
+  "Pharmacy Technician": {
+   "where": "DisplayNames.swift:222",
+   "comment": "Training: registered pharmacy technician (works under a pharmacist, no doctorate)."
+  },
+  "Driver's License": {
+   "where": "DisplayNames.swift:223",
+   "comment": "Training: the ordinary car driving licence (US spelling “License”, US Class D)."
+  },
+  "CDL": {
+   "where": "DisplayNames.swift:224",
+   "comment": "Training: Commercial Driver's License, US licence to drive trucks and buses for work. Abbreviation (CDL)."
+  },
+  "Pilot": {
+   "where": "DisplayNames.swift:225",
+   "comment": "Training: private pilot licence (flying small planes, not for pay). Short name of the licence, not the job title."
+  },
+  "Commercial Pilot": {
+   "where": "DisplayNames.swift:226",
+   "comment": "Training: commercial pilot licence (flying for pay). Short name of the licence, not the job title."
+  },
+  "LPN": {
+   "where": "DisplayNames.swift:227",
+   "comment": "Training: Licensed Practical Nurse, a US nursing licence below registered nurse (RN). Abbreviation (LPN)."
+  },
+  "Nurse License": {
+   "where": "DisplayNames.swift:228",
+   "comment": "Training: licence to work as a registered nurse (RN)."
+  },
+  "Nurse Practitioner": {
+   "where": "DisplayNames.swift:229",
+   "comment": "Training: advanced-practice nursing licence (US): an RN who may diagnose, treat and prescribe."
+  },
+  "Medical License": {
+   "where": "DisplayNames.swift:230",
+   "comment": "Training: licence to practise medicine as a physician (US spelling “License”)."
+  },
+  "Dental License": {
+   "where": "DisplayNames.swift:231",
+   "comment": "Training: licence to practise dentistry (US spelling “License”)."
+  },
+  "Pharmacist License": {
+   "where": "DisplayNames.swift:232",
+   "comment": "Training: licence to practise as a pharmacist (US spelling “License”)."
+  },
+  "Veterinary License": {
+   "where": "DisplayNames.swift:233",
+   "comment": "Training: licence to practise veterinary medicine (US spelling “License”)."
+  },
+  "Electrician License": {
+   "where": "DisplayNames.swift:234",
+   "comment": "Training: journeyman electrician licence (US trades system; US spelling “License”)."
+  },
+  "Plumber License": {
+   "where": "DisplayNames.swift:235",
+   "comment": "Training: journeyman plumber licence (US trades system; US spelling “License”)."
+  },
+  "Bar Admission": {
+   "where": "DisplayNames.swift:236",
+   "comment": "Training: admission to the bar, the licence to practise as a lawyer (US, state by state)."
+  },
+  "Professional Engineer": {
+   "where": "DisplayNames.swift:237",
+   "comment": "Training: Professional Engineer (PE) licence, a US state licence to sign off engineering plans."
+  },
+  "Architect Licence": {
+   "where": "DisplayNames.swift:238",
+   "comment": "Training: state licence to call yourself an architect and stamp building plans."
+  },
+  "Pesticide Applicator": {
+   "where": "DisplayNames.swift:239",
+   "comment": "Training: government permit to apply restricted-use pesticides (US-style certification)."
+  },
+  "Security Guard Licence": {
+   "where": "DisplayNames.swift:240",
+   "comment": "Training: state licence to work as a security guard."
+  },
+  "Master Electrician License": {
+   "where": "DisplayNames.swift:241",
+   "comment": "Training: senior electrician licence above journeyman (US trades system)."
+  },
+  "Master Plumber License": {
+   "where": "DisplayNames.swift:242",
+   "comment": "Training: senior plumber licence above journeyman (US trades system)."
+  },
+  "ATP": {
+   "where": "DisplayNames.swift:243",
+   "comment": "Training: Airline Transport Pilot certificate, the highest US pilot certificate. Abbreviation (ATP)."
+  },
+  "A&P Certificate": {
+   "where": "DisplayNames.swift:244",
+   "comment": "Training: Airframe & Powerplant mechanic certificate (US FAA). Abbreviation (A&P)."
+  },
+  "Police Academy": {
+   "where": "DisplayNames.swift:245",
+   "comment": "Training: recruit training that qualifies you to be sworn in as a police officer."
+  },
+  "Psychologist License": {
+   "where": "DisplayNames.swift:246",
+   "comment": "Training: state licence to practise psychology (US spelling “License”)."
+  },
+  "Physical Therapy License": {
+   "where": "DisplayNames.swift:247",
+   "comment": "Training: state licence to practise physical therapy (US spelling “License”)."
+  },
+  "EPA 608": {
+   "where": "DisplayNames.swift:248",
+   "comment": "Training: US EPA Section 608 certification for handling refrigerants. Proper name, US-specific."
+  },
+  "Coding Bootcamp": {
+   "where": "DisplayNames.swift:249",
+   "comment": "Training: an intensive software-development course."
+  },
+  "Game Development Program": {
+   "where": "DisplayNames.swift:250",
+   "comment": "Training: a course in game design and programming."
+  },
+  "Product Design Certificate": {
+   "where": "DisplayNames.swift:251",
+   "comment": "Training: a UX and product-design certificate."
+  },
+  "Music Production Certificate": {
+   "where": "DisplayNames.swift:252",
+   "comment": "Training: a course in recording, mixing and producing music."
+  },
+  "Arts & Minds": {
+   "where": "DisplayNames.swift:265",
+   "comment": "Activities tab: creative and mental disciplines such as music, chess and coding"
+  },
+  "Study": {
+   "where": "DisplayNames.swift:266",
+   "comment": "Activities tab: school subjects such as maths and science"
+  },
+  "Beginner": {
+   "where": "DisplayNames.swift:275",
+   "comment": "Activity level after the first year of practice"
+  },
+  "Intermediate": {
+   "where": "DisplayNames.swift:276",
+   "comment": "Activity level after two to three years of practice"
+  },
+  "Advanced": {
+   "where": "DisplayNames.swift:277",
+   "comment": "Activity level after four to six years of practice"
+  },
+  "Expert": {
+   "where": "DisplayNames.swift:278",
+   "comment": "Activity level after seven or more years of practice"
+  },
+  "Athletic": {
+   "where": "DisplayNames.swift:287",
+   "comment": "Kind of contest: a sports event"
+  },
+  "E-Sports": {
+   "where": "DisplayNames.swift:288, DisplayNames.swift:309",
+   "comment": "Kind of contest: a competitive video-gaming tournament | Sport: competitive video gaming"
+  },
+  "Creative": {
+   "where": "DisplayNames.swift:289",
+   "comment": "Kind of contest: an arts prize"
+  },
+  "Mind": {
+   "where": "DisplayNames.swift:290",
+   "comment": "Kind of contest: a contest of the mind such as chess or debate"
+  },
+  "Academic": {
+   "where": "DisplayNames.swift:291",
+   "comment": "Kind of contest: a school-subject olympiad or fair"
+  },
+  "Running": {
+   "where": "DisplayNames.swift:300",
+   "comment": "Sport"
+  },
+  "Swimming": {
+   "where": "DisplayNames.swift:301",
+   "comment": "Sport"
+  },
+  "Cycling": {
+   "where": "DisplayNames.swift:302",
+   "comment": "Sport"
+  },
+  "Soccer": {
+   "where": "DisplayNames.swift:303",
+   "comment": "Sport: team football"
+  },
+  "Basketball": {
+   "where": "DisplayNames.swift:304",
+   "comment": "Sport"
+  },
+  "Tennis": {
+   "where": "DisplayNames.swift:305",
+   "comment": "Sport"
+  },
+  "Martial Arts": {
+   "where": "DisplayNames.swift:306",
+   "comment": "Sport: karate, judo, boxing"
+  },
+  "Gymnastics": {
+   "where": "DisplayNames.swift:307",
+   "comment": "Sport"
+  },
+  "Skateboarding & BMX": {
+   "where": "DisplayNames.swift:308",
+   "comment": "Sport"
+  },
+  "Music": {
+   "where": "DisplayNames.swift:310",
+   "comment": "Hobby: learning an instrument"
+  },
+  "Drawing & Painting": {
+   "where": "DisplayNames.swift:311",
+   "comment": "Hobby"
+  },
+  "Photography": {
+   "where": "DisplayNames.swift:312",
+   "comment": "Hobby"
+  },
+  "Cooking": {
+   "where": "DisplayNames.swift:313",
+   "comment": "Hobby"
+  },
+  "Dance": {
+   "where": "DisplayNames.swift:314",
+   "comment": "Hobby"
+  },
+  "Coding": {
+   "where": "DisplayNames.swift:315",
+   "comment": "Hobby: programming"
+  },
+  "Chess": {
+   "where": "DisplayNames.swift:316",
+   "comment": "Hobby"
+  },
+  "Debate": {
+   "where": "DisplayNames.swift:317",
+   "comment": "Hobby: competitive debating"
+  },
+  "Student Council": {
+   "where": "DisplayNames.swift:318",
+   "comment": "School activity: elected pupils' body"
+  },
+  "Mathematics": {
+   "where": "DisplayNames.swift:319",
+   "comment": "School subject"
+  },
+  "activity.science": {
+   "where": "DisplayNames.swift:320",
+   "comment": "School subject (the field of work is a different key)"
+  },
+  "Reading & Writing": {
+   "where": "DisplayNames.swift:321",
+   "comment": "School subject"
+  },
+  "History & Geography": {
+   "where": "DisplayNames.swift:322",
+   "comment": "School subject"
+  },
+  "Foreign Languages": {
+   "where": "DisplayNames.swift:323",
+   "comment": "School subject"
+  },
+  "%@ in %@": {
+   "where": "Education.swift:244",
+   "comment": "A vocational qualification under the country’s own name, followed by its field of study, e.g. “Ausbildung in Health”. The first placeholder is the local name of the qualification, the second the field."
+  }
+ }
+}

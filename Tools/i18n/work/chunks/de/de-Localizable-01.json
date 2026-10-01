@@ -1,0 +1,2363 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "Chatting with the advisor needs iOS or macOS 26 with Apple Intelligence — for now you'll get its standard advice.": "",
+  "The advisor's chat isn't available in %@ yet, so you'll get the advisor's standard advice.": "",
+  "This device can't run Apple Intelligence, so you'll get the advisor's standard advice.": "",
+  "Turn on Apple Intelligence in Settings to chat with the advisor. For now you'll get its standard advice.": "",
+  "Apple Intelligence is still getting ready. For now you'll get the advisor's standard advice.": "",
+  "a school diploma": "",
+  "a college or vocational diploma": "",
+  "a bachelor's degree": "",
+  "a master's degree": "",
+  "a doctorate": "",
+  "a school diploma in %@": "",
+  "a college or vocational diploma in %@": "",
+  "a bachelor's degree in %@": "",
+  "a master's degree in %@": "",
+  "a doctorate in %@": "",
+  "See who's hiring for %@ this year.": "",
+  "Nobody is posting %@ jobs this year — the market changes every year, so check again next year.": "",
+  "You have to be %@ for this job — %lld more years.": {
+   "one": "",
+   "other": ""
+  },
+  "Keep studying — your %@ is what this job asks for.": "",
+  "Get %@. It's the longest step, so start early.": "",
+  "You'll need %@ — that comes after school.": "",
+  "Earn this credential: %@ — this job won't hire without it.": "",
+  "Earn this credential: %@ — this job won't hire without it. (%@.)": "",
+  "Grow %@ from %lld to %lld.": "",
+  "%@ adds +%@ a year — about %lld years.": {
+   "one": "",
+   "other": ""
+  },
+  "%lld years of experience": {
+   "one": "",
+   "other": ""
+  },
+  "This job expects %lld years of experience; you have %@. Working as %@ builds it.": {
+   "one": "",
+   "other": ""
+  },
+  "This job expects %lld years of experience; you have %@. Working in %@ builds it.": {
+   "one": "",
+   "other": ""
+  },
+  "Keep working — the next step up is %@ (%@).": "",
+  "You can apply for %@ now!": "",
+  "You can apply for %@ now — a %@ chance.": "",
+  "You could apply for %@ now, but it's a long shot (%@) — and an application spends the year. Lift your chances first.": "",
+  "You could apply for %@ — but there are no postings this year.": "",
+  "You've reached the top of the %@ ladder — %@! 🏆": "",
+  "You're working as %@. The next step up is %@: %@.": "",
+  "%@ pays %@.": "",
+  "%@ starts at %@, which pays %@.": "",
+  "You can't be hired for it yet.": "",
+  "Your chance to be hired today is %@.": "",
+  "You can apply for it now!": "",
+  "🧪 You've tried %@.": "",
+  "📈 Skills you've grown: %@.": "",
+  "You've tried a few things — I found jobs that might suit you!": "",
+  "%lld more moves of trying new things, and I'll suggest jobs that fit you.": {
+   "one": "",
+   "other": ""
+  },
+  "Try a couple more different things, so I can see what you like.": "",
+  "Try something": "",
+  "You didn't practise anything last year. This year, try %@ — it builds %@.": "",
+  "Try something different": "",
+  "You've stuck with %@. To find what you like, try %@ — it builds %@.": "",
+  "🎉 You got a job on the %@ ladder!": "",
+  "✅ %@ is now %lld — the job asks for %lld.": "",
+  "📈 %@ went from %lld to %lld (the job asks for %lld).": "",
+  "🎓 You earned your %@.": "",
+  "🪪 You earned: %@.": "",
+  "🧭 Another year of experience: %lld of the %lld this job expects.": "",
+  "🌟 Your %@ fame went from %@ to %@.": "",
+  "🤝 Your network in %@ grew from %lld to %lld.": "",
+  "🏗️ Your founder track record grew from %@ to %@ of %@ — the seat chance is now %@.": "",
+  "🎯 Your chance to be hired went from %@ to %@.": "",
+  "You made it! You're at the top of the %@ ladder: %@. 🏆": "",
+  "You're working toward %@ — the next step up the %@ ladder.": "",
+  "You're ready to apply for %@ — your chance is %@.": "",
+  "You're ready to apply for %@!": "",
+  "You're qualified for %@ — now it's a matter of waiting for a posting.": "",
+  "You're getting closer to %@. Nice work!": "",
+  "This year didn't move you closer to %@.": "",
+  "Not hiring right now": "",
+  "Nobody is posting %@ jobs this year. Keep building your skills and check again next year.": "",
+  "Your chance to be hired dropped from %@ to %@.": "",
+  "The %@ industry is in a slump, so employers are hiring less. Keep building skills and try again when it recovers.": "",
+  "Your chances fell": "",
+  "Your application is already at the game's ceiling, so more of these changes nothing for now: %@.": "",
+  "What's left: %@.": "",
+  "Enough polish": "",
+  "%@ is worth about +%@ chance a year.": "",
+  "%@: %@": "",
+  "Your biggest lever": "",
+  "Last year didn't build any of the skills this job asks for. Try %@ — it adds %@ +%@ a year (you're at %lld, the job asks for %lld).": "",
+  "Last year you practised %@ — good, but it doesn't build what %@ asks for. Try %@ for %@ (you're at %lld, the job asks for %lld).": "",
+  "Practise what the job needs": "",
+  "Your next step": "",
+  "Great choice!": "",
+  "My goal: %@": "",
+  "I can only take your answers from the buttons right now — pick one below.": "",
+  "Sure — let's pick a new direction. Do you have a job in mind now, or would you like to explore again?": "",
+  "Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine.": "",
+  "Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine.": "",
+  "🎯 I have a role in mind": "",
+  "🤔 I haven't decided yet": "",
+  "← Other fields": "",
+  "Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.": "",
+  "Here are the %@ jobs. Which one sounds like you?": "",
+  "I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field.": "",
+  "A few jobs fit that. Which one do you mean?": "",
+  "No problem!": "",
+  "💡 Best moves right now": "",
+  "🔄 Change my goal": "",
+  "🧭 The narrow path": "",
+  "🧭 What decides it": "",
+  "🌍 How it really works": "",
+  "🌍 How it works in real life": "",
+  "Here's what would help most:": "",
+  "There's no luck to worry about here: once you have the right school and enough years of work, the job is yours.": "",
+  "There's nothing to plan on this one yet — just keep going with school, activities and trying new things.": "",
+  "Here's how this works in real life — and how the game plays it.": "",
+  "The best way to find out what you like is to try different things.": "",
+  "Nothing new is open to you right now — look through the jobs list for something that catches your eye.": "",
+  "This year, try one of these:": "",
+  "You're %lld moves in — %@ more and I'll suggest jobs that fit you.": {
+   "one": "",
+   "other": ""
+  },
+  "Once you've tried a couple of different things, I'll suggest jobs that fit you.": "",
+  "After a few moves, I'll suggest jobs that fit the skills you've built.": "",
+  "Builds %@.": "",
+  "Open Activities": "",
+  "Here's where you stand.": "",
+  "Still exploring — good.": "",
+  "📅 Check-in · age %lld": "",
+  "Uses your %@. Pays %@.": "",
+  "It takes %@.": "",
+  "Aim for this": "",
+  "See job listings": "",
+  "Right now, the best move is to keep going! Keep building your skills and check back next year. 👍": "",
+  "Here are the moves that pay off most right now, best first:": "",
+  "Hmm, I'm not sure about that one. I can tell you about a job, a skill, or what to do next — try asking it that way.": "",
+  "Worth about +%@ chance a year.": "",
+  "• %@: %@": "",
+  "• %@: %@ — already the most that counts.": "",
+  "• %@: %@ — enough for now; more changes nothing.": "",
+  "• %@: %@ — worth under %@ a year.": "",
+  "The rest": "",
+  "It expects %lld years as %@.": {
+   "one": "",
+   "other": ""
+  },
+  "It expects %lld years in %@.": {
+   "one": "",
+   "other": ""
+  },
+  "Under %lld you're not considered at all; between %lld and %lld your chance is scaled down; past %lld a veteran gets a small bonus.": "",
+  "Under that you're not considered at all; past it a veteran gets a small bonus.": "",
+  "Years running your own business count too.": "",
+  "Years of experience": "",
+  "%@ of %lld years": {
+   "one": "",
+   "other": ""
+  },
+  "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": "",
+  "Furthest behind: %@.": "",
+  "A plan for your skills": "",
+  "One move a year — %@ — closes the whole gap in more than a decade.": "",
+  "One move a year — %@ — closes the whole gap in about %lld years.": {
+   "one": "",
+   "other": ""
+  },
+  "Skills the job asks for": "",
+  "%lld of %lld strong enough (%@ match)": "",
+  "Each point of %@ fame adds +%@ to your chance, up to +%@.": "",
+  "For a top seat, a public name counts for more than for an ordinary job.": "",
+  "%@ fame": "",
+  "%@ of %@ points": "",
+  "Network in %@": "",
+  "%lld of %lld points": "",
+  "Each point adds +%@ to your chance, up to +%@. It's built at that field's events — going adds some, and being accepted to speak adds more.": "",
+  "a degree from: %@": "",
+  "no ranked school yet": "",
+  "School prestige": "",
+  "A relevant degree from a top school (%@) adds +%@ to your chance, one from a mainstream school (%@) +%@.": "",
+  "Adds +%@ to your chance for %@ jobs. Not required — a credential that shows you're serious. One course counts; they don't stack.": "",
+  "Adds +%@ to your chance for %@ jobs. Not open to you yet: %@.": "",
+  "A course for the field": "",
+  "none yet": "",
+  "One skill-building credential covering %@ adds up to +%@ to your chance. It isn't required, and they don't stack.": "",
+  "Only %@ of the people who qualify get a seat like this each year — however strong the application.": "",
+  "%@ of ideal candidates get it each year": "",
+  "Having run your own company eases it: each point of founder track record adds +%@, up to +%@.": "",
+  "%@ of ideal candidates get it each year · track record %@ of %@ points": "",
+  "The seat": "",
+  "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply (about %@ with a founder's track record) — so it usually takes many attempts.": "",
+  "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply — so it usually takes many attempts.": "",
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "",
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply.": "",
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "",
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply.": "",
+  "Closed today — see the steps above.": "",
+  "Closed today. Still missing: %@.": "",
+  "Open — you meet the hard requirements.": "",
+  "Get through the door": "",
+  "Your application is already as strong as the game counts — the chance is capped at %@. More polish changes nothing; what's left is the seat.": "",
+  "At today's skills, fame, network and school your application is %@ of a top candidate's.": "",
+  "Biggest ways up: %@.": "",
+  "Stand out": "",
+  "Only %@ of applicants who are otherwise ideal get the seat each year.": "",
+  "A founder's track record can raise that to %@.": "",
+  "Each application spends a whole year, so it pays to lift these odds first rather than apply at a long shot.": "",
+  "Win the seat": "",
+  "Beat the crowd": "",
+  "Far more people want this job than there are openings, so your chance is cut to %@ of what it would otherwise be.": "",
+  "Earliest realistic: about age %lld.": "",
+  "Earliest realistic: the door opens around age %lld, at full strength around %lld.": "",
+  "Industry events": "",
+  "Events in this field open once you're 18 and have worked or studied in it. Build a first year or two, then take the stage.": "",
+  "+%@ %@ fame": "",
+  "+%lld network in %@": "",
+  "%@ chance the organisers accept you.": "",
+  "If they do: %@.": "",
+  "Just going adds +%lld network.": "",
+  "%@ a year to land. A hit banks +%@ %@ fame.": "",
+  "Hit or miss, the year builds %@.": "",
+  "It also counts as a year of %@ experience.": "",
+  "Take the %@ job": "",
+  "%@ chance to get it, %@.": "",
+  "Every year in %@ counts toward the %lld this job expects.": "",
+  "Run a business of your own": "",
+  "Every year running a venture counts as a year of experience toward this job — whatever the business sells.": "",
+  "A year on it counts as a year of %@ experience, which counts toward %@ jobs — hit or miss.": "",
+  "Aim for an elite university": "",
+  "When you choose a school for your %@ degree, an elite one adds +%@ to your chance for the rest of your career.": "",
+  "It admits by grades, skills and awards — start building them now.": "",
+  "Get into an elite %@ programme": "",
+  "%@ adds +%@, %@ +%@.": "",
+  "Your chance of admission: %@ at the top school, %@ at the mainstream one.": "",
+  "Tuition: %@ against %@ a year.": "",
+  "Keep your company alive": "",
+  "Each year it survives banks +%@ of track record (repeat years of the same company count for less, so a second, different one adds more).": "",
+  "A fold only costs the lessons: +%@.": "",
+  "Sell your stake, or raise a round": "",
+  "Selling your stake in the Boardroom is a Successful Exit: +%@ points.": "",
+  "Closing an investment round adds +%@.": "",
+  "A scalable business (%@) can also break out for +%@.": "",
+  "Every year it survives banks +%@ of track record (a second, different company adds more than a longer first one); a fold still leaves +%@.": "",
+  "A breakout or a sale is worth +%@ each, so a scalable business (%@) can fill the %@ points fast — if it works.": "",
+  "Its years also count as business experience.": "",
+  "You need some savings to stake first — capital is the only hard requirement.": "",
+  "Found a company": "",
+  "Founding opens to adults in a realistic game. Every year it survives banks +%@ of track record.": "",
+  "A breakout or a sale is worth +%@ each.": "",
+  "Adds ≈ +%@ to your chance a year, from %@.": "",
+  "The %@ is the door.": "",
+  "It enters you automatically each year you train %@, once you've trained %lld years.": {
+   "one": "",
+   "other": ""
+  },
+  "It enters you automatically each year you train %@.": "",
+  "Win the %@": "",
+  "Your chance to win it this year: %@.": "",
+  "It's open only to %@ — you're not in that stage.": "",
+  "The “%@” title": "",
+  "not won yet": "",
+  "Without it your chance stays at %@ whatever your skills. Holding it adds +%@ and opens the door.": "",
+  "%@ has one door: the “%@” title. Without it your chance stays at about %@, whatever else you do.": "",
+  "Win the door-opener": "",
+  "Win the “%@” title first. Only then do skills, fame and the rest count.": "",
+  "under %@": "",
+  "🎮 In the game: %@": "",
+  "%lld years of work as %@": {
+   "one": "",
+   "other": ""
+  },
+  "%lld years of work in %@": {
+   "one": "",
+   "other": ""
+  },
+  "In Simplified mode there's no luck to it: the job is yours.": "",
+  "In Simplified mode there's no luck to it: get %@, and the job is yours.": "",
+  "There are no companies to start in Simplified mode — you climb by working.": "",
+  "Becoming a CEO": "",
+  "There are only a few hundred CEO jobs at the biggest companies, and a board's search can run for a year.": "",
+  "That's the seat. Only %@ of otherwise-ideal applicants get a C-suite job in any year.": "",
+  "A CEO is the boss of a whole company. There are only a few hundred CEO jobs at the biggest companies, so many good people never get one.": "",
+  "In the US, the 1,500 largest public companies name roughly 170 new CEOs a year.": "",
+  "Most new CEOs come from inside the company. They typically spent years running a division with its own profit and loss, or served as COO or CFO, while the board watched.": "",
+  "Years open the door: %lld years in %@, and nothing under about %@. Any %@ job counts, and so do years running your own company.": {
+   "one": "",
+   "other": ""
+  },
+  "Most new CEOs already worked at the company for years, running a big part of it while the bosses watched.": "",
+  "In the US, about %@ of new CEOs are inside hires.": "",
+  "Boards hire results — growth delivered, turnarounds, deals — and the ability to speak for the company to investors, staff and the press. A public reputation and friends on other boards help, but only on top of a record.": "",
+  "%@ fame and your network add to your chance (up to +%@ and +%@) — until your application is already at the cap, when more changes nothing.": "",
+  "The other door is to build a company yourself. A founder doesn't wait to be picked, though most start-ups fail. Boards like people who have run a business, even one that failed — yet most new big-company CEOs had never been a CEO before.": "",
+  "That's the founder track record: it lifts the seat from %@ to at most %@. It eases the odds; it never decides them.": "",
+  "Some people start their own company instead. Most new companies fail, but people who tried still learn a lot — and bosses notice.": "",
+  "In the US, about %@ of new big-company CEOs had not.": "",
+  "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.": "",
+  "%@ adds +%@ to your chance, %@ +%@ — small next to the seat.": "",
+  "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.": "",
+  "Each year's job market multiplies your chance: a slump hurts, a boom helps.": "",
+  "Becoming a CTO": "",
+  "At a large company the CTO is usually a senior engineering leader — a VP or head of engineering who has run big teams and budgets. At a start-up it is often a co-founder.": "",
+  "It asks %lld years in %@, and only %@ of ideal applicants get a C-suite seat each year.": {
+   "one": "",
+   "other": ""
+  },
+  "A CTO is the boss of all the technology at a company. At a big company it is usually an engineer who grew into a leader; at a new company it is often one of the founders.": "",
+  "The job is half technology and half leadership: hiring, budgets, and explaining technical bets to the CEO and the board.": "",
+  "%@ and %@ are the skills it weighs most.": "",
+  "Founding a technology company is the common shortcut: build the product, prove it works, and the title follows.": "",
+  "A founder track record eases the seat from %@ to at most %@.": "",
+  "Starting your own tech company is a common shortcut: build something that works, and the title follows.": "",
+  "Becoming a Chief Medical Officer": "",
+  "CMOs are senior physicians who took on management: department chief, then medical director, then the hospital system's top doctor-executive. Medicine comes first — years of medical school, hospital training and practice.": "",
+  "You need the medical licence and board certification, %lld years in %@, and a %@ seat.": {
+   "one": "",
+   "other": ""
+  },
+  "A Chief Medical Officer is a doctor who became the boss of a hospital's doctors. Medicine comes first: many years of school and work as a doctor.": "",
+  "Many add management training, such as an MBA or a master's in health administration, because the job is budgets, quality and people rather than patients.": "",
+  "Becoming a director": "",
+  "Directors are promoted from senior managers who ran a team and hit its numbers: a sales director has carried a quota, a marketing director has launched campaigns that worked.": "",
+  "It asks %lld years in %@, and %@ of ideal applicants get the seat each year.": {
+   "one": "",
+   "other": ""
+  },
+  "A director leads a team. Companies pick someone who already led a team well — for example, someone who reached their sales goals or ran ad campaigns that worked.": "",
+  "A senior sponsor who speaks for you in the room matters as much as the results — most promotions are decided by people, not by rules.": "",
+  "Your network and fame in %@ add to your chance.": "",
+  "It also helps to have a senior person who speaks up for you. Many promotions are decided by people, not by rules.": "",
+  "A company has several director seats rather than one, so it's competitive rather than a lottery.": "",
+  "That's why the seat is %@, not %@.": "",
+  "Becoming a managing partner": "",
+  "Law firms are “up or out”: after roughly seven to ten years as associates, most lawyers leave and only a minority are made partner.": "",
+  "You need a law doctorate, the bar and %lld years — and only %@ of ideal applicants get a partner seat.": {
+   "one": "",
+   "other": ""
+  },
+  "In a law firm, most young lawyers have to leave after about seven to ten years, and only a few are made partners.": "",
+  "Partners are judged on the clients they bring in — “rainmaking” — as much as on the quality of their work.": "",
+  "%@ and %@ are among the skills it weighs most.": "",
+  "Partners are picked for the clients they bring in as much as for their work.": "",
+  "A managing partner is chosen by the other partners: standing among your peers counts for more than any interview.": "",
+  "Few people want the job and fewer get it: the game's demand for it is only %@.": "",
+  "Becoming a health specialist": "",
+  "The road is long and every step is selective: a bachelor's degree, then a professional or doctoral programme that admits well under half of its applicants, then — for doctors — three to seven years of supervised hospital training before you practise alone.": "",
+  "Each step is a gate: the degree, then the licence, then years of experience.": "",
+  "Becoming a doctor takes many years: a bachelor's degree, then medical school, then years of training in a hospital. Each step takes only some of the people who apply.": "",
+  "In Simplified mode you still need the right school and years of work — but there's no licence to earn and no school bill.": "",
+  "Grades and entrance results decide admission — in some countries volunteering or research experience and interviews too — a record built over years, not one good year.": "",
+  "Your school grades, skills and awards set your chance of admission.": "",
+  "Schools look at your grades, your skills and your prizes over many years, not just one good year.": "",
+  "Your grades, skills and prizes decide if a school takes you — in Simplified mode too.": "",
+  "Competitive specialties such as surgery and anaesthesia are a second competition: training places go to the top-ranked candidates.": "",
+  "These jobs ask for more of skills like %@, %@ and %@ than most.": "",
+  "The cost is high, too: years of tuition, often on loans, before a first full salary.": "",
+  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": "",
+  "It costs a lot, too: many people borrow money to pay for school.": "",
+  "Simplified mode has no school bills, so nobody has to borrow.": "",
+  "Study itself costs little here — public universities charge only modest fees — but the long road means years of study before a first full salary.": "",
+  "The game charges only about %@ a year at a public university, so few students borrow — then the pay is among the highest.": "",
+  "School costs little here, but it takes many years before the first full salary.": "",
+  "Becoming a judge": "",
+  "Judges are appointed or elected, usually after ten to twenty years as lawyers or prosecutors. There are few openings, and they rarely come up.": "",
+  "Very few jobs open: the game's demand for judges is %@ of a normal job's.": "",
+  "Judges are chosen after ten to twenty years as lawyers. There are very few jobs, and they open up rarely.": "",
+  "Reputation in the legal community — and often politics — decides who is chosen.": "",
+  "You need a law doctorate, the bar and years practising.": "",
+  "Becoming a research scientist": "",
+  "A scientist needs a PhD — three to seven years of research — often followed by one or more short postdoctoral posts. There are far fewer permanent research jobs than PhD graduates, so many move to industry.": "",
+  "A doctorate is required, and the ladder climbs one rung at a time.": "",
+  "A scientist usually needs a PhD, which is three to seven years of research. There are fewer research jobs than people with PhDs, so many scientists work in companies instead.": "",
+  "Careers are made by publications and by winning research funding: a record of results, and other scientists who cite your work.": "",
+  "Your fame in %@ and your network in it add to your chance.": "",
+  "Becoming an airline pilot": "",
+  "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.": "",
+  "Flight school and its licence are the gate; years of experience open each rung.": "",
+  "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.": "",
+  "Simplified mode skips the licence: years of work open each step up (%@).": "",
+  "In the US that normally means 1,500 flight hours (fewer through some approved flight schools).": "",
+  "In the US that is about 1,500 hours.": "",
+  "At airlines, seniority decides who flies the bigger aircraft and who becomes a captain — years of service count for more than talent.": "",
+  "Each rung asks for more years (%@) and pays far more.": "",
+  "The longer a pilot has worked for an airline, the bigger the plane they get to fly.": "",
+  "Each step up asks for more years of work (%@) and pays a lot more.": "",
+  "Becoming a professional athlete": "",
+  "Very few young players turn professional, and most of those were noticed as teenagers.": "",
+  "The %@ title opens the door, and even then only %@ of title-holders make a roster.": "",
+  "Very few young players become professionals, and most were noticed as teenagers.": "",
+  "The %@ title opens the door — and in Simplified mode, once you have it, a team spot is yours.": "",
+  "In US college sport roughly %@ are drafted.": "",
+  "In US college sport only about 1 to 5 in every 100 get picked.": "",
+  "Careers are short and an injury can end one without warning, so most athletes need a second career.": "",
+  "Careers end early in the game too.": "",
+  "A sports career can end suddenly with an injury, so most athletes need a second job.": "",
+  "Sports careers end early in the game too.": "",
+  "Getting into an elite firm": "",
+  "These firms recruit mostly from a short list of universities, through campus events and internships. At the biggest banks, well under %@ of applicants for analyst jobs are hired.": "",
+  "A top-tier university adds +%@ to your chance, and demand for the job is only %@ of a normal one's.": "",
+  "Big banks and consulting firms mostly hire from a short list of universities, and fewer than 1 in 100 people who apply for a first job there get it.": "",
+  "Analysts are hired in yearly classes and expected to work very long hours. Many leave after a couple of years for other industries; the rest face “up or out” promotions.": "",
+  "Each rung above the entry level is harder to be hired into from outside.": "",
+  "New analysts work very long hours, and many leave after a couple of years.": "",
+  "Becoming a TV presenter": "",
+  "Presenters are found through auditions, showreels and being seen — small stations first, then national. Reliability on live TV and a following of viewers count for more than looks.": "",
+  "%@ fame is what employers weigh (up to +%@): projects and events build it.": "",
+  "TV presenters start with auditions and video clips of themselves, at small stations first. Staying calm on live TV and having viewers who like you matter more than looks.": "",
+  "Open Jobs": "",
+  "Open Events": "",
+  "Open Projects": "",
+  "Open Ventures": "",
+  "Open Boardroom": "",
+  "Open Education": "",
+  "%@ a year": "",
+  "%@ a year to start, growing to about %@ later": "",
+  "You can get this job! It pays %@ a year — %@ more than you earn now.": "",
+  "You can get this job! It pays %@ a year.": "",
+  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "",
+  "You have a %@ chance to get it. It pays %@.": "",
+  "Look for it under %@.": "",
+  "🏆 Getting this job reaches your goal!": "",
+  "Apply for the %@ job": "",
+  "You have a %@ chance to move up this year. You'd earn about %@ a year.": "",
+  "Keep going for %lld more years.": {
+   "one": "",
+   "other": ""
+  },
+  "You need %lld years as %@ first.": {
+   "one": "",
+   "other": ""
+  },
+  "Then you'll have about a %@ chance each year to move up and earn about %@ a year.": "",
+  "Education holds you back (needed: %@) — but going back to school means leaving this job.": "",
+  "Best way to help: grow your %@ (%lld of %lld). %@ is good practice for it.": "",
+  "Work toward %@": "",
+  "This opens the %@ job, which pays %@. You'll also need %@.": "",
+  "This opens the %@ job, which pays %@.": "",
+  "Take %@": "",
+  "This is the first step toward the %@ job (%@). It's about %lld years of school in total.": {
+   "one": "",
+   "other": ""
+  },
+  "This opens the %@ job (%@) after %lld years of school.": {
+   "one": "",
+   "other": ""
+  },
+  "Then: %@ (%lld more years).": {
+   "one": "",
+   "other": ""
+  },
+  "You'd have to leave your job while you study.": "",
+  "Study for: %@": "",
+  "Curious about the %@ job? It pays %@ a year and needs %@ %lld. You're at %lld — keep practising!": "",
+  "The %@ job (%@ a year) needs %@ %lld. You're at %lld.": "",
+  "Build %@ with %@": "",
+  "%lld yr as %@": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yr as %@ (role expects %@ yr)": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yr in %@": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yr in %@ (role expects %@ yr)": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yr as %@ (you have %@)": {
+   "one": "",
+   "other": ""
+  },
+  "%lld yr in %@ (you have %@)": {
+   "one": "",
+   "other": ""
+  },
+  "Reach age %lld": "",
+  "Earn %@": "",
+  "A degree in %@": "",
+  "Training: %@": "",
+  "School Sports Day": "",
+  "Races and routines in front of the whole school — the first taste of winning.": "",
+  "Sports Day Winner": "",
+  "Kids' League Cup": "",
+  "A season of Saturday games, one trophy at the end of it.": "",
+  "Kids' Cup Winner": "",
+  "School Music Recital": "",
+  "One piece, a full hall, and your family in the front row.": "",
+  "Recital Star": "",
+  "School Art Contest": "",
+  "Pinned to the corridor wall — and judged.": "",
+  "Art Contest Winner": "",
+  "Kids' Photo Contest": "",
+  "One photo, one theme, judged by the local paper.": "",
+  "Photo Contest Winner": "",
+  "Kids' Bake-Off": "",
+  "A tray of bakes, a panel of judges, and a ribbon for the best.": "",
+  "Bake-Off Winner": "",
+  "Dance-School Showcase": "",
+  "The end-of-year show — one solo gets the prize.": "",
+  "Showcase Star": "",
+  "Kids' Coding Challenge": "",
+  "Block-coding puzzles against the clock.": "",
+  "Coding Challenge Winner": "",
+  "School Chess Tournament": "",
+  "Swiss rounds in the school library.": "",
+  "School Chess Champion": "",
+  "Primary Debate Cup": "",
+  "Short motions, big opinions, a trophy for the best speaker.": "",
+  "Debate Cup Winner": "",
+  "Junior Championship": "",
+  "The youth league final — where scouts spot the next generation of pro players.": "",
+  "Junior Champion": "",
+  "Junior Athletics Meet": "",
+  "The county youth meet — heats, finals, and a podium.": "",
+  "Junior Meet Winner": "",
+  "High-School Esports Cup": "",
+  "School teams, one bracket, one weekend.": "",
+  "Esports Cup Winner": "",
+  "Local 5K Race": "",
+  "A weekend road race — an accessible first taste of competition.": "",
+  "5K Race Winner": "",
+  "City Marathon": "",
+  "26.2 miles against thousands. A few seasons of training under your belt to even finish.": "",
+  "Marathon Champion": "",
+  "Regional Championship": "",
+  "The step up to serious competition — qualify against your region's best. Years of training required.": "",
+  "Regional Champion": "",
+  "National Championship": "",
+  "The premier athletic title — the country is watching. Only for seasoned competitors.": "",
+  "National Champion": "",
+  "Olympic Games": "",
+  "The world stage. Medal here and you're a household name for life — the summit of a long career.": "",
+  "Olympic Medalist": "",
+  "Youth Music Competition": "",
+  "Graded repertoire before a jury of conservatoire teachers.": "",
+  "Young Musician of the Year": "",
+  "National Music Competition": "",
+  "The country's top young players, one concert hall.": "",
+  "National Music Laureate": "",
+  "International Music Competition": "",
+  "The Chopin, the Tchaikovsky — a win makes a career.": "",
+  "International Music Laureate": "",
+  "Youth Art Prize": "",
+  "A regional gallery hangs the shortlist.": "",
+  "Young Artist of the Year": "",
+  "Open Art Exhibition": "",
+  "Submit to the open show — selection is the first prize.": "",
+  "Exhibition Prizewinner": "",
+  "National Art Prize": "",
+  "The prize critics write about.": "",
+  "National Art Prize Winner": "",
+  "Youth Photography Award": "",
+  "A portfolio of six, judged by working photographers.": "",
+  "Young Photographer of the Year": "",
+  "National Photography Award": "",
+  "The year's best images, printed large and toured.": "",
+  "National Photography Award Winner": "",
+  "Junior Cook-Off": "",
+  "Three courses in ninety minutes, live.": "",
+  "Junior Chef Champion": "",
+  "Culinary Championship": "",
+  "A mystery basket and a panel of head chefs.": "",
+  "Culinary Champion": "",
+  "Youth Dance Competition": "",
+  "Solo and troupe sections, marked to the step.": "",
+  "Youth Dance Champion": "",
+  "National Dance Championship": "",
+  "The title the companies scout at.": "",
+  "National Dance Champion": "",
+  "Coding Olympiad": "",
+  "Five hard problems, five hours, no internet.": ""
+ },
+ "_context": {
+  "Chatting with the advisor needs iOS or macOS 26 with Apple Intelligence — for now you'll get its standard advice.": {
+   "where": "FoundationModelsLanguage.swift:16"
+  },
+  "The advisor's chat isn't available in %@ yet, so you'll get the advisor's standard advice.": {
+   "where": "FoundationModelsLanguage.swift:86"
+  },
+  "This device can't run Apple Intelligence, so you'll get the advisor's standard advice.": {
+   "where": "FoundationModelsLanguage.swift:90"
+  },
+  "Turn on Apple Intelligence in Settings to chat with the advisor. For now you'll get its standard advice.": {
+   "where": "FoundationModelsLanguage.swift:92"
+  },
+  "Apple Intelligence is still getting ready. For now you'll get the advisor's standard advice.": {
+   "where": "FoundationModelsLanguage.swift:94"
+  },
+  "a school diploma": {
+   "where": "AdvisorCoach.swift:615",
+   "comment": "A qualification, as the object of 'Get …' / 'You'll need …' / 'Still missing: …' in the career advisor's steps (secondary-school level)"
+  },
+  "a college or vocational diploma": {
+   "where": "AdvisorCoach.swift:616",
+   "comment": "A qualification, as the object of 'Get …' / 'You'll need …' (post-secondary vocational level, EQF 4)"
+  },
+  "a bachelor's degree": {
+   "where": "AdvisorCoach.swift:617",
+   "comment": "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 5)"
+  },
+  "a master's degree": {
+   "where": "AdvisorCoach.swift:618",
+   "comment": "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 6)"
+  },
+  "a doctorate": {
+   "where": "AdvisorCoach.swift:619",
+   "comment": "A qualification, as the object of 'Get …' / 'You'll need …' (EQF 7)"
+  },
+  "a school diploma in %@": {
+   "where": "AdvisorCoach.swift:629",
+   "comment": "A qualification with its field(s), e.g. 'a school diploma in Health or Science'. The argument is a list of study fields joined with 'or'"
+  },
+  "a college or vocational diploma in %@": {
+   "where": "AdvisorCoach.swift:630",
+   "comment": "A qualification with its field(s). The argument is a list of study fields joined with 'or'"
+  },
+  "a bachelor's degree in %@": {
+   "where": "AdvisorCoach.swift:631",
+   "comment": "A qualification with its field(s). The argument is a list of study fields joined with 'or'"
+  },
+  "a master's degree in %@": {
+   "where": "AdvisorCoach.swift:632",
+   "comment": "A qualification with its field(s). The argument is a list of study fields joined with 'or'"
+  },
+  "a doctorate in %@": {
+   "where": "AdvisorCoach.swift:633",
+   "comment": "A qualification with its field(s). The argument is a list of study fields joined with 'or'"
+  },
+  "See who's hiring for %@ this year.": {
+   "where": "AdvisorCoach.swift:666"
+  },
+  "Nobody is posting %@ jobs this year — the market changes every year, so check again next year.": {
+   "where": "AdvisorCoach.swift:669"
+  },
+  "You have to be %@ for this job — %lld more years.": {
+   "where": "AdvisorCoach.swift:678",
+   "english": {
+    "one": "You have to be %1$@ for this job — %2$lld more year.",
+    "other": "You have to be %1$@ for this job — %2$lld more years."
+   }
+  },
+  "Keep studying — your %@ is what this job asks for.": {
+   "where": "AdvisorCoach.swift:690"
+  },
+  "Get %@. It's the longest step, so start early.": {
+   "where": "AdvisorCoach.swift:692",
+   "comment": "Advisor step. The argument is a qualification as a noun phrase, e.g. 'a bachelor's degree in Business'"
+  },
+  "You'll need %@ — that comes after school.": {
+   "where": "AdvisorCoach.swift:695",
+   "comment": "Advisor step for a player still at school. The argument is a qualification as a noun phrase, e.g. 'a bachelor's degree in Business'"
+  },
+  "Earn this credential: %@ — this job won't hire without it.": {
+   "where": "AdvisorCoach.swift:704"
+  },
+  "Earn this credential: %@ — this job won't hire without it. (%@.)": {
+   "where": "AdvisorCoach.swift:707"
+  },
+  "Grow %@ from %lld to %lld.": {
+   "where": "AdvisorCoach.swift:713"
+  },
+  "%@ adds +%@ a year — about %lld years.": {
+   "where": "AdvisorCoach.swift:716",
+   "english": {
+    "one": "%1$@ adds +%2$@ a year — about %3$lld year.",
+    "other": "%1$@ adds +%2$@ a year — about %3$lld years."
+   }
+  },
+  "%lld years of experience": {
+   "where": "AdvisorCoach.swift:726",
+   "english": {
+    "one": "%lld year of experience",
+    "other": "%lld years of experience"
+   }
+  },
+  "This job expects %lld years of experience; you have %@. Working as %@ builds it.": {
+   "where": "AdvisorCoach.swift:728",
+   "english": {
+    "one": "This job expects %1$lld year of experience; you have %2$@. Working as %3$@ builds it.",
+    "other": "This job expects %1$lld years of experience; you have %2$@. Working as %3$@ builds it."
+   }
+  },
+  "This job expects %lld years of experience; you have %@. Working in %@ builds it.": {
+   "where": "AdvisorCoach.swift:729",
+   "english": {
+    "one": "This job expects %1$lld year of experience; you have %2$@. Working in %3$@ builds it.",
+    "other": "This job expects %1$lld years of experience; you have %2$@. Working in %3$@ builds it."
+   }
+  },
+  "Keep working — the next step up is %@ (%@).": {
+   "where": "AdvisorCoach.swift:739"
+  },
+  "You can apply for %@ now!": {
+   "where": "AdvisorCoach.swift:747"
+  },
+  "You can apply for %@ now — a %@ chance.": {
+   "where": "AdvisorCoach.swift:749"
+  },
+  "You could apply for %@ now, but it's a long shot (%@) — and an application spends the year. Lift your chances first.": {
+   "where": "AdvisorCoach.swift:752"
+  },
+  "You could apply for %@ — but there are no postings this year.": {
+   "where": "AdvisorCoach.swift:756"
+  },
+  "You've reached the top of the %@ ladder — %@! 🏆": {
+   "where": "AdvisorCoach.swift:771"
+  },
+  "You're working as %@. The next step up is %@: %@.": {
+   "where": "AdvisorCoach.swift:773"
+  },
+  "%@ pays %@.": {
+   "where": "AdvisorCoach.swift:778"
+  },
+  "%@ starts at %@, which pays %@.": {
+   "where": "AdvisorCoach.swift:779"
+  },
+  "You can't be hired for it yet.": {
+   "where": "AdvisorCoach.swift:781"
+  },
+  "Your chance to be hired today is %@.": {
+   "where": "AdvisorCoach.swift:783"
+  },
+  "You can apply for it now!": {
+   "where": "AdvisorCoach.swift:785"
+  },
+  "🧪 You've tried %@.": {
+   "where": "AdvisorCoach.swift:854"
+  },
+  "📈 Skills you've grown: %@.": {
+   "where": "AdvisorCoach.swift:858"
+  },
+  "You've tried a few things — I found jobs that might suit you!": {
+   "where": "AdvisorCoach.swift:868"
+  },
+  "%lld more moves of trying new things, and I'll suggest jobs that fit you.": {
+   "where": "AdvisorCoach.swift:874",
+   "english": {
+    "one": "%lld more move of trying new things, and I'll suggest jobs that fit you.",
+    "other": "%lld more moves of trying new things, and I'll suggest jobs that fit you."
+   }
+  },
+  "Try a couple more different things, so I can see what you like.": {
+   "where": "AdvisorCoach.swift:875"
+  },
+  "Try something": {
+   "where": "AdvisorCoach.swift:884",
+   "comment": "Title of an advisor card nudging a player who practised nothing last year to try a new activity"
+  },
+  "You didn't practise anything last year. This year, try %@ — it builds %@.": {
+   "where": "AdvisorCoach.swift:885"
+  },
+  "Try something different": {
+   "where": "AdvisorCoach.swift:890",
+   "comment": "Title of an advisor card nudging a player who has stuck with one activity to try another"
+  },
+  "You've stuck with %@. To find what you like, try %@ — it builds %@.": {
+   "where": "AdvisorCoach.swift:891"
+  },
+  "🎉 You got a job on the %@ ladder!": {
+   "where": "AdvisorCoach.swift:913"
+  },
+  "✅ %@ is now %lld — the job asks for %lld.": {
+   "where": "AdvisorCoach.swift:923"
+  },
+  "📈 %@ went from %lld to %lld (the job asks for %lld).": {
+   "where": "AdvisorCoach.swift:924"
+  },
+  "🎓 You earned your %@.": {
+   "where": "AdvisorCoach.swift:928"
+  },
+  "🪪 You earned: %@.": {
+   "where": "AdvisorCoach.swift:933"
+  },
+  "🧭 Another year of experience: %lld of the %lld this job expects.": {
+   "where": "AdvisorCoach.swift:938"
+  },
+  "🌟 Your %@ fame went from %@ to %@.": {
+   "where": "AdvisorCoach.swift:943"
+  },
+  "🤝 Your network in %@ grew from %lld to %lld.": {
+   "where": "AdvisorCoach.swift:947"
+  },
+  "🏗️ Your founder track record grew from %@ to %@ of %@ — the seat chance is now %@.": {
+   "where": "AdvisorCoach.swift:952"
+  },
+  "🎯 Your chance to be hired went from %@ to %@.": {
+   "where": "AdvisorCoach.swift:955"
+  },
+  "You made it! You're at the top of the %@ ladder: %@. 🏆": {
+   "where": "AdvisorCoach.swift:964"
+  },
+  "You're working toward %@ — the next step up the %@ ladder.": {
+   "where": "AdvisorCoach.swift:969"
+  },
+  "You're ready to apply for %@ — your chance is %@.": {
+   "where": "AdvisorCoach.swift:972"
+  },
+  "You're ready to apply for %@!": {
+   "where": "AdvisorCoach.swift:973"
+  },
+  "You're qualified for %@ — now it's a matter of waiting for a posting.": {
+   "where": "AdvisorCoach.swift:977"
+  },
+  "You're getting closer to %@. Nice work!": {
+   "where": "AdvisorCoach.swift:980"
+  },
+  "This year didn't move you closer to %@.": {
+   "where": "AdvisorCoach.swift:983"
+  },
+  "Not hiring right now": {
+   "where": "AdvisorCoach.swift:992",
+   "comment": "Title of an advisor card: nobody is posting the player's goal role this year"
+  },
+  "Nobody is posting %@ jobs this year. Keep building your skills and check again next year.": {
+   "where": "AdvisorCoach.swift:993"
+  },
+  "Your chance to be hired dropped from %@ to %@.": {
+   "where": "AdvisorCoach.swift:996"
+  },
+  "The %@ industry is in a slump, so employers are hiring less. Keep building skills and try again when it recovers.": {
+   "where": "AdvisorCoach.swift:998"
+  },
+  "Your chances fell": {
+   "where": "AdvisorCoach.swift:1002",
+   "comment": "Title of an advisor card: the player's hire odds for the goal role dropped since the last review"
+  },
+  "Your application is already at the game's ceiling, so more of these changes nothing for now: %@.": {
+   "where": "AdvisorCoach.swift:1010"
+  },
+  "What's left: %@.": {
+   "where": "AdvisorCoach.swift:1011"
+  },
+  "Enough polish": {
+   "where": "AdvisorCoach.swift:1014",
+   "comment": "Title of an advisor card: the application is already as strong as the game counts"
+  },
+  "%@ is worth about +%@ chance a year.": {
+   "where": "AdvisorCoach.swift:1018"
+  },
+  "%@: %@": {
+   "where": "AdvisorCoach.swift:1019"
+  },
+  "Your biggest lever": {
+   "where": "AdvisorCoach.swift:1022",
+   "comment": "Title of an advisor card naming the one thing that would raise the player's hire odds most"
+  },
+  "Last year didn't build any of the skills this job asks for. Try %@ — it adds %@ +%@ a year (you're at %lld, the job asks for %lld).": {
+   "where": "AdvisorCoach.swift:1033"
+  },
+  "Last year you practised %@ — good, but it doesn't build what %@ asks for. Try %@ for %@ (you're at %lld, the job asks for %lld).": {
+   "where": "AdvisorCoach.swift:1034"
+  },
+  "Practise what the job needs": {
+   "where": "AdvisorCoach.swift:1037",
+   "comment": "Title of an advisor card: last year's activities did not build the skills the goal role asks for"
+  },
+  "Your next step": {
+   "where": "AdvisorCoach.swift:1047",
+   "comment": "Title of an advisor card: the next requirement to work on for the goal role"
+  },
+  "Great choice!": {
+   "where": "AdvisorConversation.swift:1026, AdvisorConversation.swift:1048, AdvisorConversation.swift:911, AdvisorConversation.swift:932"
+  },
+  "My goal: %@": {
+   "where": "AdvisorConversation.swift:929"
+  },
+  "I can only take your answers from the buttons right now — pick one below.": {
+   "where": "AdvisorConversation.swift:950"
+  },
+  "Sure — let's pick a new direction. Do you have a job in mind now, or would you like to explore again?": {
+   "where": "AdvisorConversation.swift:970"
+  },
+  "Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine.": {
+   "where": "AdvisorConversation.swift:972"
+  },
+  "Hi, I'm your career advisor! 👋 Do you already have a job in mind that you'd like to work toward — or haven't you decided yet? Either answer is fine.": {
+   "where": "AdvisorConversation.swift:974"
+  },
+  "🎯 I have a role in mind": {
+   "where": "AdvisorConversation.swift:982",
+   "comment": "Advisor chat, quick-reply chip: the player already knows which job they want"
+  },
+  "🤔 I haven't decided yet": {
+   "where": "AdvisorConversation.swift:984",
+   "comment": "Advisor chat, quick-reply chip: the player does not know yet what job they want"
+  },
+  "← Other fields": {
+   "where": "AdvisorConversation.swift:990",
+   "comment": "Advisor chat, quick-reply chip: go back to the list of job fields"
+  },
+  "Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.": {
+   "where": "AdvisorConversation.swift:1002"
+  },
+  "Here are the %@ jobs. Which one sounds like you?": {
+   "where": "AdvisorConversation.swift:1007"
+  },
+  "I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field.": {
+   "where": "AdvisorConversation.swift:1028"
+  },
+  "A few jobs fit that. Which one do you mean?": {
+   "where": "AdvisorConversation.swift:1031, AdvisorConversation.swift:1044"
+  },
+  "No problem!": {
+   "where": "AdvisorConversation.swift:1062"
+  },
+  "💡 Best moves right now": {
+   "where": "AdvisorConversation.swift:1067",
+   "comment": "Advisor chat, quick-reply chip: ask for the most useful next moves"
+  },
+  "🔄 Change my goal": {
+   "where": "AdvisorConversation.swift:1077",
+   "comment": "Advisor chat, quick-reply chip: pick a different target job"
+  },
+  "🧭 The narrow path": {
+   "where": "AdvisorConversation.swift:1085, AdvisorConversation.swift:1193",
+   "comment": "Advisor chat, quick-reply chip and heading: how few people reach a very competitive job"
+  },
+  "🧭 What decides it": {
+   "where": "AdvisorConversation.swift:1086",
+   "comment": "Advisor chat, quick-reply chip: what decides whether the player gets the job"
+  },
+  "🌍 How it really works": {
+   "where": "AdvisorConversation.swift:1092",
+   "comment": "Advisor chat, quick-reply chip, simple wording: how the job works in the real world"
+  },
+  "🌍 How it works in real life": {
+   "where": "AdvisorConversation.swift:1093",
+   "comment": "Advisor chat, quick-reply chip: how the job works in the real world"
+  },
+  "Here's what would help most:": {
+   "where": "AdvisorConversation.swift:1162"
+  },
+  "There's no luck to worry about here: once you have the right school and enough years of work, the job is yours.": {
+   "where": "AdvisorConversation.swift:1181"
+  },
+  "There's nothing to plan on this one yet — just keep going with school, activities and trying new things.": {
+   "where": "AdvisorConversation.swift:1183"
+  },
+  "Here's how this works in real life — and how the game plays it.": {
+   "where": "AdvisorConversation.swift:1199"
+  },
+  "The best way to find out what you like is to try different things.": {
+   "where": "AdvisorConversation.swift:1208"
+  },
+  "Nothing new is open to you right now — look through the jobs list for something that catches your eye.": {
+   "where": "AdvisorConversation.swift:1212"
+  },
+  "This year, try one of these:": {
+   "where": "AdvisorConversation.swift:1214"
+  },
+  "You're %lld moves in — %@ more and I'll suggest jobs that fit you.": {
+   "where": "AdvisorConversation.swift:1219",
+   "english": {
+    "one": "You're %1$lld move in — %2$@ more and I'll suggest jobs that fit you.",
+    "other": "You're %1$lld moves in — %2$@ more and I'll suggest jobs that fit you."
+   }
+  },
+  "Once you've tried a couple of different things, I'll suggest jobs that fit you.": {
+   "where": "AdvisorConversation.swift:1220"
+  },
+  "After a few moves, I'll suggest jobs that fit the skills you've built.": {
+   "where": "AdvisorConversation.swift:1223"
+  },
+  "Builds %@.": {
+   "where": "AdvisorConversation.swift:1228"
+  },
+  "Open Activities": {
+   "where": "AdvisorConversation.swift:1229, CareerAdvisor.swift:57",
+   "comment": "Advisor button: opens the Activities sheet (sports, hobbies and practice)"
+  },
+  "Here's where you stand.": {
+   "where": "AdvisorConversation.swift:1242"
+  },
+  "Still exploring — good.": {
+   "where": "AdvisorConversation.swift:1247"
+  },
+  "📅 Check-in · age %lld": {
+   "where": "AdvisorConversation.swift:1264"
+  },
+  "Uses your %@. Pays %@.": {
+   "where": "AdvisorConversation.swift:1269"
+  },
+  "It takes %@.": {
+   "where": "AdvisorConversation.swift:1270"
+  },
+  "Aim for this": {
+   "where": "AdvisorConversation.swift:1271"
+  },
+  "See job listings": {
+   "where": "AdvisorConversation.swift:1273, CareerAdvisor.swift:51",
+   "comment": "Advisor button: opens the Jobs sheet on one role's current postings"
+  },
+  "Right now, the best move is to keep going! Keep building your skills and check back next year. 👍": {
+   "where": "AdvisorConversation.swift:1288"
+  },
+  "Here are the moves that pay off most right now, best first:": {
+   "where": "AdvisorConversation.swift:1295"
+  },
+  "Hmm, I'm not sure about that one. I can tell you about a job, a skill, or what to do next — try asking it that way.": {
+   "where": "AdvisorConversation.swift:1305"
+  },
+  "Worth about +%@ chance a year.": {
+   "where": "AdvisorPathway.swift:118"
+  },
+  "• %@: %@": {
+   "where": "AdvisorPathway.swift:121"
+  },
+  "• %@: %@ — already the most that counts.": {
+   "where": "AdvisorPathway.swift:135"
+  },
+  "• %@: %@ — enough for now; more changes nothing.": {
+   "where": "AdvisorPathway.swift:136"
+  },
+  "• %@: %@ — worth under %@ a year.": {
+   "where": "AdvisorPathway.swift:137"
+  },
+  "The rest": {
+   "where": "AdvisorPathway.swift:141",
+   "comment": "Title of an advisor card that lists the remaining, minor levers on a hire chance in one line each"
+  },
+  "It expects %lld years as %@.": {
+   "where": "AdvisorPathway.swift:287",
+   "english": {
+    "one": "It expects %1$lld year as %2$@.",
+    "other": "It expects %1$lld years as %2$@."
+   }
+  },
+  "It expects %lld years in %@.": {
+   "where": "AdvisorPathway.swift:288",
+   "english": {
+    "one": "It expects %1$lld year in %2$@.",
+    "other": "It expects %1$lld years in %2$@."
+   }
+  },
+  "Under %lld you're not considered at all; between %lld and %lld your chance is scaled down; past %lld a veteran gets a small bonus.": {
+   "where": "AdvisorPathway.swift:290"
+  },
+  "Under that you're not considered at all; past it a veteran gets a small bonus.": {
+   "where": "AdvisorPathway.swift:291"
+  },
+  "Years running your own business count too.": {
+   "where": "AdvisorPathway.swift:292"
+  },
+  "Years of experience": {
+   "where": "AdvisorPathway.swift:299",
+   "comment": "Name of a lever on the player's hire chance in the career advisor"
+  },
+  "%@ of %lld years": {
+   "where": "AdvisorPathway.swift:300",
+   "english": {
+    "one": "%1$@ of %2$lld year",
+    "other": "%1$@ of %2$lld years"
+   }
+  },
+  "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": {
+   "where": "AdvisorPathway.swift:311"
+  },
+  "Furthest behind: %@.": {
+   "where": "AdvisorPathway.swift:314"
+  },
+  "A plan for your skills": {
+   "where": "AdvisorPathway.swift:321",
+   "comment": "Title of an advisor card: a year-by-year plan of activities to close the player's skill gap"
+  },
+  "One move a year — %@ — closes the whole gap in more than a decade.": {
+   "where": "AdvisorPathway.swift:323"
+  },
+  "One move a year — %@ — closes the whole gap in about %lld years.": {
+   "where": "AdvisorPathway.swift:324",
+   "english": {
+    "one": "One move a year — %1$@ — closes the whole gap in about %2$lld year.",
+    "other": "One move a year — %1$@ — closes the whole gap in about %2$lld years."
+   }
+  },
+  "Skills the job asks for": {
+   "where": "AdvisorPathway.swift:328",
+   "comment": "Name of a lever on the player's hire chance in the career advisor"
+  },
+  "%lld of %lld strong enough (%@ match)": {
+   "where": "AdvisorPathway.swift:329"
+  },
+  "Each point of %@ fame adds +%@ to your chance, up to +%@.": {
+   "where": "AdvisorPathway.swift:341"
+  },
+  "For a top seat, a public name counts for more than for an ordinary job.": {
+   "where": "AdvisorPathway.swift:342"
+  },
+  "%@ fame": {
+   "where": "AdvisorPathway.swift:344",
+   "comment": "Name of a lever in the career advisor. The argument is a field of fame, e.g. 'Science' or 'Entertainment'; 'fame' is the game's own term for public reputation"
+  },
+  "%@ of %@ points": {
+   "where": "AdvisorPathway.swift:345"
+  },
+  "Network in %@": {
+   "where": "AdvisorPathway.swift:357",
+   "comment": "Name of a lever in the career advisor. The argument is a job field, e.g. 'Business'; 'network' means professional contacts"
+  },
+  "%lld of %lld points": {
+   "where": "AdvisorPathway.swift:358"
+  },
+  "Each point adds +%@ to your chance, up to +%@. It's built at that field's events — going adds some, and being accepted to speak adds more.": {
+   "where": "AdvisorPathway.swift:359"
+  },
+  "a degree from: %@": {
+   "where": "AdvisorPathway.swift:372, AdvisorPathway.swift:373"
+  },
+  "no ranked school yet": {
+   "where": "AdvisorPathway.swift:374"
+  },
+  "School prestige": {
+   "where": "AdvisorPathway.swift:377",
+   "comment": "Name of a lever on the player's hire chance in the career advisor: how well-regarded the school behind the degree is"
+  },
+  "A relevant degree from a top school (%@) adds +%@ to your chance, one from a mainstream school (%@) +%@.": {
+   "where": "AdvisorPathway.swift:379"
+  },
+  "Adds +%@ to your chance for %@ jobs. Not required — a credential that shows you're serious. One course counts; they don't stack.": {
+   "where": "AdvisorPathway.swift:398"
+  },
+  "Adds +%@ to your chance for %@ jobs. Not open to you yet: %@.": {
+   "where": "AdvisorPathway.swift:402"
+  },
+  "A course for the field": {
+   "where": "AdvisorPathway.swift:406",
+   "comment": "Name of a lever on the player's hire chance in the career advisor: a skill-building credential that covers the job's field"
+  },
+  "none yet": {
+   "where": "AdvisorPathway.swift:407"
+  },
+  "One skill-building credential covering %@ adds up to +%@ to your chance. It isn't required, and they don't stack.": {
+   "where": "AdvisorPathway.swift:408"
+  },
+  "Only %@ of the people who qualify get a seat like this each year — however strong the application.": {
+   "where": "AdvisorPathway.swift:417"
+  },
+  "%@ of ideal candidates get it each year": {
+   "where": "AdvisorPathway.swift:418"
+  },
+  "Having run your own company eases it: each point of founder track record adds +%@, up to +%@.": {
+   "where": "AdvisorPathway.swift:423"
+  },
+  "%@ of ideal candidates get it each year · track record %@ of %@ points": {
+   "where": "AdvisorPathway.swift:424"
+  },
+  "The seat": {
+   "where": "AdvisorPathway.swift:430",
+   "comment": "Name of a lever in the career advisor: the scarce top position (a board seat, a partnership) that only a small share of qualified people win each year"
+  },
+  "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply (about %@ with a founder's track record) — so it usually takes many attempts.": {
+   "where": "AdvisorPathway.swift:444"
+  },
+  "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply — so it usually takes many attempts.": {
+   "where": "AdvisorPathway.swift:446"
+  },
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": {
+   "where": "AdvisorPathway.swift:448"
+  },
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply.": {
+   "where": "AdvisorPathway.swift:450"
+  },
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": {
+   "where": "AdvisorPathway.swift:452"
+  },
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply.": {
+   "where": "AdvisorPathway.swift:454"
+  },
+  "Closed today — see the steps above.": {
+   "where": "AdvisorPathway.swift:465"
+  },
+  "Closed today. Still missing: %@.": {
+   "where": "AdvisorPathway.swift:466"
+  },
+  "Open — you meet the hard requirements.": {
+   "where": "AdvisorPathway.swift:468"
+  },
+  "Get through the door": {
+   "where": "AdvisorPathway.swift:471",
+   "comment": "Title of the first advisor card about a hard-to-reach job: meeting the hard requirements"
+  },
+  "Your application is already as strong as the game counts — the chance is capped at %@. More polish changes nothing; what's left is the seat.": {
+   "where": "AdvisorPathway.swift:476"
+  },
+  "At today's skills, fame, network and school your application is %@ of a top candidate's.": {
+   "where": "AdvisorPathway.swift:480"
+  },
+  "Biggest ways up: %@.": {
+   "where": "AdvisorPathway.swift:481"
+  },
+  "Stand out": {
+   "where": "AdvisorPathway.swift:484",
+   "comment": "Title of the second advisor card about a hard-to-reach job: making the application strong"
+  },
+  "Only %@ of applicants who are otherwise ideal get the seat each year.": {
+   "where": "AdvisorPathway.swift:488"
+  },
+  "A founder's track record can raise that to %@.": {
+   "where": "AdvisorPathway.swift:490"
+  },
+  "Each application spends a whole year, so it pays to lift these odds first rather than apply at a long shot.": {
+   "where": "AdvisorPathway.swift:492"
+  },
+  "Win the seat": {
+   "where": "AdvisorPathway.swift:493",
+   "comment": "Title of the third advisor card about a hard-to-reach job: only a few qualified people get the scarce seat"
+  },
+  "Beat the crowd": {
+   "where": "AdvisorPathway.swift:497",
+   "comment": "Title of the third advisor card about a very popular job: far more people want it than there are openings"
+  },
+  "Far more people want this job than there are openings, so your chance is cut to %@ of what it would otherwise be.": {
+   "where": "AdvisorPathway.swift:498"
+  },
+  "Earliest realistic: about age %lld.": {
+   "where": "AdvisorPathway.swift:526"
+  },
+  "Earliest realistic: the door opens around age %lld, at full strength around %lld.": {
+   "where": "AdvisorPathway.swift:528"
+  },
+  "Industry events": {
+   "where": "AdvisorPathway.swift:565",
+   "comment": "Title of an advisor card about conferences and events in the player's field"
+  },
+  "Events in this field open once you're 18 and have worked or studied in it. Build a first year or two, then take the stage.": {
+   "where": "AdvisorPathway.swift:566"
+  },
+  "+%@ %@ fame": {
+   "where": "AdvisorPathway.swift:578"
+  },
+  "+%lld network in %@": {
+   "where": "AdvisorPathway.swift:581"
+  },
+  "%@ chance the organisers accept you.": {
+   "where": "AdvisorPathway.swift:582"
+  },
+  "If they do: %@.": {
+   "where": "AdvisorPathway.swift:583"
+  },
+  "Just going adds +%lld network.": {
+   "where": "AdvisorPathway.swift:584"
+  },
+  "%@ a year to land. A hit banks +%@ %@ fame.": {
+   "where": "AdvisorPathway.swift:604"
+  },
+  "Hit or miss, the year builds %@.": {
+   "where": "AdvisorPathway.swift:609"
+  },
+  "It also counts as a year of %@ experience.": {
+   "where": "AdvisorPathway.swift:611"
+  },
+  "Take the %@ job": {
+   "where": "AdvisorPathway.swift:636"
+  },
+  "%@ chance to get it, %@.": {
+   "where": "AdvisorPathway.swift:638"
+  },
+  "Every year in %@ counts toward the %lld this job expects.": {
+   "where": "AdvisorPathway.swift:639"
+  },
+  "Run a business of your own": {
+   "where": "AdvisorPathway.swift:652",
+   "comment": "Title of an advisor card: running a venture counts as work experience"
+  },
+  "Every year running a venture counts as a year of experience toward this job — whatever the business sells.": {
+   "where": "AdvisorPathway.swift:653"
+  },
+  "A year on it counts as a year of %@ experience, which counts toward %@ jobs — hit or miss.": {
+   "where": "AdvisorPathway.swift:663"
+  },
+  "Aim for an elite university": {
+   "where": "AdvisorPathway.swift:678",
+   "comment": "Title of an advisor card: choose a top-ranked school for the degree"
+  },
+  "When you choose a school for your %@ degree, an elite one adds +%@ to your chance for the rest of your career.": {
+   "where": "AdvisorPathway.swift:680"
+  },
+  "It admits by grades, skills and awards — start building them now.": {
+   "where": "AdvisorPathway.swift:681"
+  },
+  "Get into an elite %@ programme": {
+   "where": "AdvisorPathway.swift:688",
+   "comment": "Title of an advisor card. The argument is a study field, e.g. 'Business'"
+  },
+  "%@ adds +%@, %@ +%@.": {
+   "where": "AdvisorPathway.swift:690"
+  },
+  "Your chance of admission: %@ at the top school, %@ at the mainstream one.": {
+   "where": "AdvisorPathway.swift:691"
+  },
+  "Tuition: %@ against %@ a year.": {
+   "where": "AdvisorPathway.swift:692"
+  },
+  "Keep your company alive": {
+   "where": "AdvisorPathway.swift:706",
+   "comment": "Title of an advisor card: surviving years as a founder builds the founder track record"
+  },
+  "Each year it survives banks +%@ of track record (repeat years of the same company count for less, so a second, different one adds more).": {
+   "where": "AdvisorPathway.swift:708"
+  },
+  "A fold only costs the lessons: +%@.": {
+   "where": "AdvisorPathway.swift:709"
+  },
+  "Sell your stake, or raise a round": {
+   "where": "AdvisorPathway.swift:713",
+   "comment": "Title of an advisor card: an exit or an investment round adds to the founder track record"
+  },
+  "Selling your stake in the Boardroom is a Successful Exit: +%@ points.": {
+   "where": "AdvisorPathway.swift:715"
+  },
+  "Closing an investment round adds +%@.": {
+   "where": "AdvisorPathway.swift:716"
+  },
+  "A scalable business (%@) can also break out for +%@.": {
+   "where": "AdvisorPathway.swift:717"
+  },
+  "Every year it survives banks +%@ of track record (a second, different company adds more than a longer first one); a fold still leaves +%@.": {
+   "where": "AdvisorPathway.swift:723"
+  },
+  "A breakout or a sale is worth +%@ each, so a scalable business (%@) can fill the %@ points fast — if it works.": {
+   "where": "AdvisorPathway.swift:724"
+  },
+  "Its years also count as business experience.": {
+   "where": "AdvisorPathway.swift:725"
+  },
+  "You need some savings to stake first — capital is the only hard requirement.": {
+   "where": "AdvisorPathway.swift:728"
+  },
+  "Found a company": {
+   "where": "AdvisorPathway.swift:731, AdvisorPathway.swift:736",
+   "comment": "Title of an advisor card: starting a company builds the founder track record"
+  },
+  "Founding opens to adults in a realistic game. Every year it survives banks +%@ of track record.": {
+   "where": "AdvisorPathway.swift:738"
+  },
+  "A breakout or a sale is worth +%@ each.": {
+   "where": "AdvisorPathway.swift:739"
+  },
+  "Adds ≈ +%@ to your chance a year, from %@.": {
+   "where": "AdvisorPathway.swift:777"
+  },
+  "The %@ is the door.": {
+   "where": "AdvisorPathway.swift:856"
+  },
+  "It enters you automatically each year you train %@, once you've trained %lld years.": {
+   "where": "AdvisorPathway.swift:858",
+   "english": {
+    "one": "It enters you automatically each year you train %1$@, once you've trained %2$lld year.",
+    "other": "It enters you automatically each year you train %1$@, once you've trained %2$lld years."
+   }
+  },
+  "It enters you automatically each year you train %@.": {
+   "where": "AdvisorPathway.swift:859"
+  },
+  "Win the %@": {
+   "where": "AdvisorPathway.swift:860"
+  },
+  "Your chance to win it this year: %@.": {
+   "where": "AdvisorPathway.swift:863"
+  },
+  "It's open only to %@ — you're not in that stage.": {
+   "where": "AdvisorPathway.swift:867"
+  },
+  "The “%@” title": {
+   "where": "AdvisorPathway.swift:871"
+  },
+  "not won yet": {
+   "where": "AdvisorPathway.swift:872",
+   "comment": "Where the player stands on a signature title (a junior championship) that opens a career: they have not won it"
+  },
+  "Without it your chance stays at %@ whatever your skills. Holding it adds +%@ and opens the door.": {
+   "where": "AdvisorPathway.swift:873"
+  },
+  "%@ has one door: the “%@” title. Without it your chance stays at about %@, whatever else you do.": {
+   "where": "AdvisorPathway.swift:879"
+  },
+  "Win the door-opener": {
+   "where": "AdvisorPathway.swift:880",
+   "comment": "Title of an advisor card: win the one signature title that opens a career such as professional sport"
+  },
+  "Win the “%@” title first. Only then do skills, fame and the rest count.": {
+   "where": "AdvisorPathway.swift:881"
+  },
+  "under %@": {
+   "where": "AdvisorPathway.swift:900"
+  },
+  "🎮 In the game: %@": {
+   "where": "AdvisorRealWorld.swift:90"
+  },
+  "%lld years of work as %@": {
+   "where": "AdvisorRealWorld.swift:156",
+   "comment": "One requirement in a list, e.g. '5 years of work as Teacher'. The first argument is a count; the second a career ladder (a role)",
+   "english": {
+    "one": "%1$lld year of work as %2$@",
+    "other": "%1$lld years of work as %2$@"
+   }
+  },
+  "%lld years of work in %@": {
+   "where": "AdvisorRealWorld.swift:157",
+   "comment": "One requirement in a list, e.g. '5 years of work in Business'. The first argument is a count; the second a job field",
+   "english": {
+    "one": "%1$lld year of work in %2$@",
+    "other": "%1$lld years of work in %2$@"
+   }
+  },
+  "In Simplified mode there's no luck to it: the job is yours.": {
+   "where": "AdvisorRealWorld.swift:160",
+   "comment": "Advisor real-world note, tutorial (Simplified mode) telling: this job has no requirements, so it is certain"
+  },
+  "In Simplified mode there's no luck to it: get %@, and the job is yours.": {
+   "where": "AdvisorRealWorld.swift:161",
+   "comment": "Advisor real-world note, tutorial (Simplified mode) telling. The argument is a list of requirements, e.g. 'a bachelor's degree and 5 years of work in Business'"
+  },
+  "There are no companies to start in Simplified mode — you climb by working.": {
+   "where": "AdvisorRealWorld.swift:166",
+   "comment": "Advisor real-world note, tutorial (Simplified mode): founding a company is not possible there"
+  },
+  "Becoming a CEO": {
+   "where": "AdvisorRealWorld.swift:181",
+   "comment": "Title of an advisor real-world note about becoming a chief executive"
+  },
+  "There are only a few hundred CEO jobs at the biggest companies, and a board's search can run for a year.": {
+   "where": "AdvisorRealWorld.swift:182",
+   "comment": "CEO note, point 1 (scarcity of CEO jobs): the real-world claim, for adults. General claim"
+  },
+  "That's the seat. Only %@ of otherwise-ideal applicants get a C-suite job in any year.": {
+   "where": "AdvisorRealWorld.swift:183",
+   "comment": "CEO note, point 1: what the game does about it. The argument is a percentage"
+  },
+  "A CEO is the boss of a whole company. There are only a few hundred CEO jobs at the biggest companies, so many good people never get one.": {
+   "where": "AdvisorRealWorld.swift:184",
+   "comment": "CEO note, point 1: the same fact in a beginner's or child's words"
+  },
+  "In the US, the 1,500 largest public companies name roughly 170 new CEOs a year.": {
+   "where": "AdvisorRealWorld.swift:186",
+   "comment": "CEO note, point 1: US-only statistic, shown to US players only"
+  },
+  "Most new CEOs come from inside the company. They typically spent years running a division with its own profit and loss, or served as COO or CFO, while the board watched.": {
+   "where": "AdvisorRealWorld.swift:187",
+   "comment": "CEO note, point 2 (CEOs are inside hires): the real-world claim, for adults. General claim"
+  },
+  "Years open the door: %lld years in %@, and nothing under about %@. Any %@ job counts, and so do years running your own company.": {
+   "where": "AdvisorRealWorld.swift:188",
+   "comment": "CEO note, point 2: what the game does about it. Arguments: required years, the job field Business (twice), the minimum years that still count",
+   "english": {
+    "one": "Years open the door: %1$lld year in %2$@, and nothing under about %3$@. Any %4$@ job counts, and so do years running your own company.",
+    "other": "Years open the door: %1$lld years in %2$@, and nothing under about %3$@. Any %4$@ job counts, and so do years running your own company."
+   }
+  },
+  "Most new CEOs already worked at the company for years, running a big part of it while the bosses watched.": {
+   "where": "AdvisorRealWorld.swift:189",
+   "comment": "CEO note, point 2: the same fact in a beginner's or child's words"
+  },
+  "In the US, about %@ of new CEOs are inside hires.": {
+   "where": "AdvisorRealWorld.swift:190",
+   "comment": "CEO note, point 2: US-only statistic, shown to US players only. The argument is a percentage"
+  },
+  "Boards hire results — growth delivered, turnarounds, deals — and the ability to speak for the company to investors, staff and the press. A public reputation and friends on other boards help, but only on top of a record.": {
+   "where": "AdvisorRealWorld.swift:191",
+   "comment": "CEO note, point 3 (what boards hire): the real-world claim, for adults. General claim"
+  },
+  "%@ fame and your network add to your chance (up to +%@ and +%@) — until your application is already at the cap, when more changes nothing.": {
+   "where": "AdvisorRealWorld.swift:192",
+   "comment": "CEO note, point 3: what the game does about it. Arguments: the fame field Business, then two percentages"
+  },
+  "The other door is to build a company yourself. A founder doesn't wait to be picked, though most start-ups fail. Boards like people who have run a business, even one that failed — yet most new big-company CEOs had never been a CEO before.": {
+   "where": "AdvisorRealWorld.swift:193",
+   "comment": "CEO note, point 4 (founders): the real-world claim, for adults. General claim"
+  },
+  "That's the founder track record: it lifts the seat from %@ to at most %@. It eases the odds; it never decides them.": {
+   "where": "AdvisorRealWorld.swift:194",
+   "comment": "CEO note, point 4: what the game does about it. Arguments: two percentages"
+  },
+  "Some people start their own company instead. Most new companies fail, but people who tried still learn a lot — and bosses notice.": {
+   "where": "AdvisorRealWorld.swift:195",
+   "comment": "CEO note, point 4: the same fact in a beginner's or child's words"
+  },
+  "In the US, about %@ of new big-company CEOs had not.": {
+   "where": "AdvisorRealWorld.swift:197",
+   "comment": "CEO note, point 4: US-only statistic, shown to US players only. The argument is a percentage. 'Had not' refers to never having been a CEO before"
+  },
+  "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.": {
+   "where": "AdvisorRealWorld.swift:198",
+   "comment": "CEO note, point 5 (the degree matters less): the real-world claim, for adults. General claim"
+  },
+  "%@ adds +%@ to your chance, %@ +%@ — small next to the seat.": {
+   "where": "AdvisorRealWorld.swift:199",
+   "comment": "CEO note, point 5: what the game does about it. Arguments: the country's name for elite schools, a percentage, its name for mainstream schools, a percentage"
+  },
+  "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.": {
+   "where": "AdvisorRealWorld.swift:200",
+   "comment": "CEO note, point 6 (luck and timing): the real-world claim, for adults. General claim"
+  },
+  "Each year's job market multiplies your chance: a slump hurts, a boom helps.": {
+   "where": "AdvisorRealWorld.swift:201",
+   "comment": "CEO note, point 6: what the game does about it"
+  },
+  "Becoming a CTO": {
+   "where": "AdvisorRealWorld.swift:207",
+   "comment": "Title of an advisor real-world note about becoming a chief technology officer"
+  },
+  "At a large company the CTO is usually a senior engineering leader — a VP or head of engineering who has run big teams and budgets. At a start-up it is often a co-founder.": {
+   "where": "AdvisorRealWorld.swift:208",
+   "comment": "CTO note, point 1 (who becomes CTO): the real-world claim, for adults. General claim"
+  },
+  "It asks %lld years in %@, and only %@ of ideal applicants get a C-suite seat each year.": {
+   "where": "AdvisorRealWorld.swift:209",
+   "comment": "CTO note, point 1: what the game does about it. Arguments: required years, the job field Technology, a percentage",
+   "english": {
+    "one": "It asks %1$lld year in %2$@, and only %3$@ of ideal applicants get a C-suite seat each year.",
+    "other": "It asks %1$lld years in %2$@, and only %3$@ of ideal applicants get a C-suite seat each year."
+   }
+  },
+  "A CTO is the boss of all the technology at a company. At a big company it is usually an engineer who grew into a leader; at a new company it is often one of the founders.": {
+   "where": "AdvisorRealWorld.swift:210",
+   "comment": "CTO note, point 1: the same fact in a beginner's or child's words"
+  },
+  "The job is half technology and half leadership: hiring, budgets, and explaining technical bets to the CEO and the board.": {
+   "where": "AdvisorRealWorld.swift:212",
+   "comment": "CTO note, point 2 (the job itself): the real-world claim, for adults. General claim"
+  },
+  "%@ and %@ are the skills it weighs most.": {
+   "where": "AdvisorRealWorld.swift:213, AdvisorRealWorld.swift:228",
+   "comment": "CTO note, point 2: what the game does about it. The arguments are the names of two of the game's skills | Chief Medical Officer note, point 2: what the game does about it. The arguments are the names of two of the game's skills"
+  },
+  "Founding a technology company is the common shortcut: build the product, prove it works, and the title follows.": {
+   "where": "AdvisorRealWorld.swift:214",
+   "comment": "CTO note, point 3 (founding a company): the real-world claim, for adults. General claim"
+  },
+  "A founder track record eases the seat from %@ to at most %@.": {
+   "where": "AdvisorRealWorld.swift:215",
+   "comment": "CTO note, point 3: what the game does about it. Arguments: two percentages"
+  },
+  "Starting your own tech company is a common shortcut: build something that works, and the title follows.": {
+   "where": "AdvisorRealWorld.swift:216",
+   "comment": "CTO note, point 3: the same fact in a beginner's or child's words"
+  },
+  "Becoming a Chief Medical Officer": {
+   "where": "AdvisorRealWorld.swift:222",
+   "comment": "Title of an advisor real-world note about becoming a hospital's chief medical officer"
+  },
+  "CMOs are senior physicians who took on management: department chief, then medical director, then the hospital system's top doctor-executive. Medicine comes first — years of medical school, hospital training and practice.": {
+   "where": "AdvisorRealWorld.swift:223",
+   "comment": "Chief Medical Officer note, point 1 (the path): the real-world claim, for adults. General claim"
+  },
+  "You need the medical licence and board certification, %lld years in %@, and a %@ seat.": {
+   "where": "AdvisorRealWorld.swift:224",
+   "comment": "Chief Medical Officer note, point 1: what the game does about it. Arguments: required years, the job field Health, the seat chance as a percentage",
+   "english": {
+    "one": "You need the medical licence and board certification, %1$lld year in %2$@, and a %3$@ seat.",
+    "other": "You need the medical licence and board certification, %1$lld years in %2$@, and a %3$@ seat."
+   }
+  },
+  "A Chief Medical Officer is a doctor who became the boss of a hospital's doctors. Medicine comes first: many years of school and work as a doctor.": {
+   "where": "AdvisorRealWorld.swift:225",
+   "comment": "Chief Medical Officer note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Many add management training, such as an MBA or a master's in health administration, because the job is budgets, quality and people rather than patients.": {
+   "where": "AdvisorRealWorld.swift:227",
+   "comment": "Chief Medical Officer note, point 2 (management training): the real-world claim, for adults. General claim"
+  },
+  "Becoming a director": {
+   "where": "AdvisorRealWorld.swift:235",
+   "comment": "Title of an advisor real-world note about becoming a marketing or sales director"
+  },
+  "Directors are promoted from senior managers who ran a team and hit its numbers: a sales director has carried a quota, a marketing director has launched campaigns that worked.": {
+   "where": "AdvisorRealWorld.swift:236",
+   "comment": "Director note, point 1 (who is promoted): the real-world claim, for adults. General claim"
+  },
+  "It asks %lld years in %@, and %@ of ideal applicants get the seat each year.": {
+   "where": "AdvisorRealWorld.swift:237",
+   "comment": "Director note, point 1: what the game does about it. Arguments: required years, the job field Business, a percentage",
+   "english": {
+    "one": "It asks %1$lld year in %2$@, and %3$@ of ideal applicants get the seat each year.",
+    "other": "It asks %1$lld years in %2$@, and %3$@ of ideal applicants get the seat each year."
+   }
+  },
+  "A director leads a team. Companies pick someone who already led a team well — for example, someone who reached their sales goals or ran ad campaigns that worked.": {
+   "where": "AdvisorRealWorld.swift:238",
+   "comment": "Director note, point 1: the same fact in a beginner's or child's words"
+  },
+  "A senior sponsor who speaks for you in the room matters as much as the results — most promotions are decided by people, not by rules.": {
+   "where": "AdvisorRealWorld.swift:240",
+   "comment": "Director note, point 2 (sponsors): the real-world claim, for adults. General claim"
+  },
+  "Your network and fame in %@ add to your chance.": {
+   "where": "AdvisorRealWorld.swift:241",
+   "comment": "Director note, point 2: what the game does about it. The argument is the job field Business"
+  },
+  "It also helps to have a senior person who speaks up for you. Many promotions are decided by people, not by rules.": {
+   "where": "AdvisorRealWorld.swift:242",
+   "comment": "Director note, point 2: the same fact in a beginner's or child's words"
+  },
+  "A company has several director seats rather than one, so it's competitive rather than a lottery.": {
+   "where": "AdvisorRealWorld.swift:243",
+   "comment": "Director note, point 3 (several seats): the real-world claim, for adults. General claim"
+  },
+  "That's why the seat is %@, not %@.": {
+   "where": "AdvisorRealWorld.swift:244",
+   "comment": "Director note, point 3: what the game does about it. Arguments: the director seat chance, the C-suite seat chance, both percentages"
+  },
+  "Becoming a managing partner": {
+   "where": "AdvisorRealWorld.swift:249",
+   "comment": "Title of an advisor real-world note about becoming a law firm's managing partner"
+  },
+  "Law firms are “up or out”: after roughly seven to ten years as associates, most lawyers leave and only a minority are made partner.": {
+   "where": "AdvisorRealWorld.swift:250",
+   "comment": "Managing partner note, point 1 (up or out): the real-world claim, for adults. General claim about law firms"
+  },
+  "You need a law doctorate, the bar and %lld years — and only %@ of ideal applicants get a partner seat.": {
+   "where": "AdvisorRealWorld.swift:251",
+   "comment": "Managing partner note, point 1: what the game does about it. Arguments: required years, a percentage",
+   "english": {
+    "one": "You need a law doctorate, the bar and %1$lld year — and only %2$@ of ideal applicants get a partner seat.",
+    "other": "You need a law doctorate, the bar and %1$lld years — and only %2$@ of ideal applicants get a partner seat."
+   }
+  },
+  "In a law firm, most young lawyers have to leave after about seven to ten years, and only a few are made partners.": {
+   "where": "AdvisorRealWorld.swift:252",
+   "comment": "Managing partner note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Partners are judged on the clients they bring in — “rainmaking” — as much as on the quality of their work.": {
+   "where": "AdvisorRealWorld.swift:254",
+   "comment": "Managing partner note, point 2 (rainmaking): the real-world claim, for adults. General claim. 'Rainmaking' is the trade term for winning new clients"
+  },
+  "%@ and %@ are among the skills it weighs most.": {
+   "where": "AdvisorRealWorld.swift:255",
+   "comment": "Managing partner note, point 2: what the game does about it. The arguments are the names of two of the game's skills"
+  },
+  "Partners are picked for the clients they bring in as much as for their work.": {
+   "where": "AdvisorRealWorld.swift:256",
+   "comment": "Managing partner note, point 2: the same fact in a beginner's or child's words"
+  },
+  "A managing partner is chosen by the other partners: standing among your peers counts for more than any interview.": {
+   "where": "AdvisorRealWorld.swift:257",
+   "comment": "Managing partner note, point 3 (chosen by peers): the real-world claim, for adults. General claim"
+  },
+  "Few people want the job and fewer get it: the game's demand for it is only %@.": {
+   "where": "AdvisorRealWorld.swift:258",
+   "comment": "Managing partner note, point 3: what the game does about it. The argument is a percentage"
+  },
+  "Becoming a health specialist": {
+   "where": "AdvisorRealWorld.swift:264",
+   "comment": "Title of an advisor real-world note about becoming a doctor, dentist, vet or pharmacist"
+  },
+  "The road is long and every step is selective: a bachelor's degree, then a professional or doctoral programme that admits well under half of its applicants, then — for doctors — three to seven years of supervised hospital training before you practise alone.": {
+   "where": "AdvisorRealWorld.swift:265",
+   "comment": "Health specialist note, point 1 (a long, selective road): the real-world claim, for adults. General claim"
+  },
+  "Each step is a gate: the degree, then the licence, then years of experience.": {
+   "where": "AdvisorRealWorld.swift:266",
+   "comment": "Health specialist note, point 1: what the game does about it"
+  },
+  "Becoming a doctor takes many years: a bachelor's degree, then medical school, then years of training in a hospital. Each step takes only some of the people who apply.": {
+   "where": "AdvisorRealWorld.swift:267",
+   "comment": "Health specialist note, point 1: the same fact in a beginner's or child's words"
+  },
+  "In Simplified mode you still need the right school and years of work — but there's no licence to earn and no school bill.": {
+   "where": "AdvisorRealWorld.swift:268",
+   "comment": "Health specialist note, point 1: what the Simplified tutorial mode does instead"
+  },
+  "Grades and entrance results decide admission — in some countries volunteering or research experience and interviews too — a record built over years, not one good year.": {
+   "where": "AdvisorRealWorld.swift:269",
+   "comment": "Health specialist note, point 2 (admission): the real-world claim, for adults. General claim"
+  },
+  "Your school grades, skills and awards set your chance of admission.": {
+   "where": "AdvisorRealWorld.swift:270",
+   "comment": "Health specialist note, point 2: what the game does about it"
+  },
+  "Schools look at your grades, your skills and your prizes over many years, not just one good year.": {
+   "where": "AdvisorRealWorld.swift:271",
+   "comment": "Health specialist note, point 2: the same fact in a beginner's or child's words"
+  },
+  "Your grades, skills and prizes decide if a school takes you — in Simplified mode too.": {
+   "where": "AdvisorRealWorld.swift:272",
+   "comment": "Health specialist note, point 2: what the Simplified tutorial mode does instead"
+  },
+  "Competitive specialties such as surgery and anaesthesia are a second competition: training places go to the top-ranked candidates.": {
+   "where": "AdvisorRealWorld.swift:273",
+   "comment": "Health specialist note, point 3 (competitive specialties): the real-world claim, for adults. General claim"
+  },
+  "These jobs ask for more of skills like %@, %@ and %@ than most.": {
+   "where": "AdvisorRealWorld.swift:274",
+   "comment": "Health specialist note, point 3: what the game does about it. The arguments are the names of three of the game's skills"
+  },
+  "The cost is high, too: years of tuition, often on loans, before a first full salary.": {
+   "where": "AdvisorRealWorld.swift:275",
+   "comment": "Health specialist note, point 4a (high cost of study): the real-world claim, for adults. Shown in countries where university is costly (not Germany, France, Italy)"
+  },
+  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": {
+   "where": "AdvisorRealWorld.swift:276",
+   "comment": "Health specialist note, point 4a: what the game does about it. Shown in countries where university is costly"
+  },
+  "It costs a lot, too: many people borrow money to pay for school.": {
+   "where": "AdvisorRealWorld.swift:277",
+   "comment": "Health specialist note, point 4a: the same fact in a beginner's or child's words. Countries where university is costly"
+  },
+  "Simplified mode has no school bills, so nobody has to borrow.": {
+   "where": "AdvisorRealWorld.swift:278, AdvisorRealWorld.swift:283",
+   "comment": "Health specialist note, point 4a: what the Simplified tutorial mode does instead | Health specialist note, point 4b: what the Simplified tutorial mode does instead"
+  },
+  "Study itself costs little here — public universities charge only modest fees — but the long road means years of study before a first full salary.": {
+   "where": "AdvisorRealWorld.swift:280",
+   "comment": "Health specialist note, point 4b (low cost of study): the real-world claim, for adults. Shown only in Germany, France and Italy, where public universities are almost free"
+  },
+  "The game charges only about %@ a year at a public university, so few students borrow — then the pay is among the highest.": {
+   "where": "AdvisorRealWorld.swift:281",
+   "comment": "Health specialist note, point 4b: what the game does about it. Germany, France and Italy only. The argument is a yearly fee as money"
+  },
+  "School costs little here, but it takes many years before the first full salary.": {
+   "where": "AdvisorRealWorld.swift:282",
+   "comment": "Health specialist note, point 4b: the same fact in a beginner's or child's words. Germany, France and Italy only"
+  },
+  "Becoming a judge": {
+   "where": "AdvisorRealWorld.swift:289",
+   "comment": "Title of an advisor real-world note about becoming a judge. Shown only in common-law countries (US, Canada, UK)"
+  },
+  "Judges are appointed or elected, usually after ten to twenty years as lawyers or prosecutors. There are few openings, and they rarely come up.": {
+   "where": "AdvisorRealWorld.swift:290",
+   "comment": "Judge note, point 1 (how judges are chosen): the real-world claim, for adults. True of common-law countries only (US, Canada, UK)"
+  },
+  "Very few jobs open: the game's demand for judges is %@ of a normal job's.": {
+   "where": "AdvisorRealWorld.swift:291",
+   "comment": "Judge note, point 1: what the game does about it. The argument is a percentage"
+  },
+  "Judges are chosen after ten to twenty years as lawyers. There are very few jobs, and they open up rarely.": {
+   "where": "AdvisorRealWorld.swift:292",
+   "comment": "Judge note, point 1: the same fact in a beginner's or child's words. Common-law countries only"
+  },
+  "Reputation in the legal community — and often politics — decides who is chosen.": {
+   "where": "AdvisorRealWorld.swift:295",
+   "comment": "Judge note, point 2 (reputation and politics): the real-world claim, for adults. Common-law countries only (US, Canada, UK)"
+  },
+  "You need a law doctorate, the bar and years practising.": {
+   "where": "AdvisorRealWorld.swift:296",
+   "comment": "Judge note, point 2: what the game does about it"
+  },
+  "Becoming a research scientist": {
+   "where": "AdvisorRealWorld.swift:302",
+   "comment": "Title of an advisor real-world note about becoming a research scientist"
+  },
+  "A scientist needs a PhD — three to seven years of research — often followed by one or more short postdoctoral posts. There are far fewer permanent research jobs than PhD graduates, so many move to industry.": {
+   "where": "AdvisorRealWorld.swift:303",
+   "comment": "Research scientist note, point 1 (PhD and few jobs): the real-world claim, for adults. General claim"
+  },
+  "A doctorate is required, and the ladder climbs one rung at a time.": {
+   "where": "AdvisorRealWorld.swift:304",
+   "comment": "Research scientist note, point 1: what the game does about it"
+  },
+  "A scientist usually needs a PhD, which is three to seven years of research. There are fewer research jobs than people with PhDs, so many scientists work in companies instead.": {
+   "where": "AdvisorRealWorld.swift:305",
+   "comment": "Research scientist note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Careers are made by publications and by winning research funding: a record of results, and other scientists who cite your work.": {
+   "where": "AdvisorRealWorld.swift:307",
+   "comment": "Research scientist note, point 2 (publications and funding): the real-world claim, for adults. General claim"
+  },
+  "Your fame in %@ and your network in it add to your chance.": {
+   "where": "AdvisorRealWorld.swift:308",
+   "comment": "Research scientist note, point 2: what the game does about it. The argument is the job field Science"
+  },
+  "Becoming an airline pilot": {
+   "where": "AdvisorRealWorld.swift:314",
+   "comment": "Title of an advisor real-world note about becoming an airline pilot"
+  },
+  "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.": {
+   "where": "AdvisorRealWorld.swift:315",
+   "comment": "Airline pilot note, point 1 (licence and flying hours): the real-world claim, for adults. General claim"
+  },
+  "Flight school and its licence are the gate; years of experience open each rung.": {
+   "where": "AdvisorRealWorld.swift:316",
+   "comment": "Airline pilot note, point 1: what the game does about it"
+  },
+  "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.": {
+   "where": "AdvisorRealWorld.swift:317",
+   "comment": "Airline pilot note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Simplified mode skips the licence: years of work open each step up (%@).": {
+   "where": "AdvisorRealWorld.swift:318",
+   "comment": "Airline pilot note, point 1: what the Simplified tutorial mode does instead. The argument is a list of years of work, e.g. '0, 3 and 8'"
+  },
+  "In the US that normally means 1,500 flight hours (fewer through some approved flight schools).": {
+   "where": "AdvisorRealWorld.swift:319",
+   "comment": "Airline pilot note, point 1: US-only statistic (FAA flight-hour rule), shown to US players only"
+  },
+  "In the US that is about 1,500 hours.": {
+   "where": "AdvisorRealWorld.swift:320",
+   "comment": "Airline pilot note, point 1: US-only statistic in a beginner's words, shown to US players only"
+  },
+  "At airlines, seniority decides who flies the bigger aircraft and who becomes a captain — years of service count for more than talent.": {
+   "where": "AdvisorRealWorld.swift:321",
+   "comment": "Airline pilot note, point 2 (seniority): the real-world claim, for adults. General claim"
+  },
+  "Each rung asks for more years (%@) and pays far more.": {
+   "where": "AdvisorRealWorld.swift:322",
+   "comment": "Airline pilot note, point 2: what the game does about it. The argument is a list of years of work, e.g. '0, 3 and 8'"
+  },
+  "The longer a pilot has worked for an airline, the bigger the plane they get to fly.": {
+   "where": "AdvisorRealWorld.swift:323",
+   "comment": "Airline pilot note, point 2: the same fact in a beginner's or child's words"
+  },
+  "Each step up asks for more years of work (%@) and pays a lot more.": {
+   "where": "AdvisorRealWorld.swift:324",
+   "comment": "Airline pilot note, point 2: what the Simplified tutorial mode does instead. The argument is a list of years of work"
+  },
+  "Becoming a professional athlete": {
+   "where": "AdvisorRealWorld.swift:331",
+   "comment": "Title of an advisor real-world note about becoming a professional athlete"
+  },
+  "Very few young players turn professional, and most of those were noticed as teenagers.": {
+   "where": "AdvisorRealWorld.swift:332",
+   "comment": "Professional athlete note, point 1 (few turn professional): the real-world claim, for adults. General claim"
+  },
+  "The %@ title opens the door, and even then only %@ of title-holders make a roster.": {
+   "where": "AdvisorRealWorld.swift:333",
+   "comment": "Professional athlete note, point 1: what the game does about it. Arguments: the name of a junior championship title, a percentage"
+  },
+  "Very few young players become professionals, and most were noticed as teenagers.": {
+   "where": "AdvisorRealWorld.swift:334",
+   "comment": "Professional athlete note, point 1: the same fact in a beginner's or child's words"
+  },
+  "The %@ title opens the door — and in Simplified mode, once you have it, a team spot is yours.": {
+   "where": "AdvisorRealWorld.swift:335",
+   "comment": "Professional athlete note, point 1: what the Simplified tutorial mode does instead. The argument is the name of a junior championship title"
+  },
+  "In US college sport roughly %@ are drafted.": {
+   "where": "AdvisorRealWorld.swift:336",
+   "comment": "Professional athlete note, point 1: US-only statistic (share of US college athletes drafted into a pro league), shown to US players only. The argument is a range of percentages such as '1–5%'"
+  },
+  "In US college sport only about 1 to 5 in every 100 get picked.": {
+   "where": "AdvisorRealWorld.swift:337",
+   "comment": "Professional athlete note, point 1: US-only statistic in a beginner's words, shown to US players only"
+  },
+  "Careers are short and an injury can end one without warning, so most athletes need a second career.": {
+   "where": "AdvisorRealWorld.swift:338",
+   "comment": "Professional athlete note, point 2 (short careers): the real-world claim, for adults. General claim"
+  },
+  "Careers end early in the game too.": {
+   "where": "AdvisorRealWorld.swift:339",
+   "comment": "Professional athlete note, point 2: what the game does about it"
+  },
+  "A sports career can end suddenly with an injury, so most athletes need a second job.": {
+   "where": "AdvisorRealWorld.swift:340",
+   "comment": "Professional athlete note, point 2: the same fact in a beginner's or child's words"
+  },
+  "Sports careers end early in the game too.": {
+   "where": "AdvisorRealWorld.swift:341",
+   "comment": "Professional athlete note, point 2: what the Simplified tutorial mode does instead"
+  },
+  "Getting into an elite firm": {
+   "where": "AdvisorRealWorld.swift:346",
+   "comment": "Title of an advisor real-world note about getting hired by an elite investment bank or consultancy"
+  },
+  "These firms recruit mostly from a short list of universities, through campus events and internships. At the biggest banks, well under %@ of applicants for analyst jobs are hired.": {
+   "where": "AdvisorRealWorld.swift:347",
+   "comment": "Elite firm note, point 1 (campus recruiting): the real-world claim, for adults. General claim (the sources are American, the claim is stated for everyone). The argument is a percentage"
+  },
+  "A top-tier university adds +%@ to your chance, and demand for the job is only %@ of a normal one's.": {
+   "where": "AdvisorRealWorld.swift:348",
+   "comment": "Elite firm note, point 1: what the game does about it. Arguments: two percentages"
+  },
+  "Big banks and consulting firms mostly hire from a short list of universities, and fewer than 1 in 100 people who apply for a first job there get it.": {
+   "where": "AdvisorRealWorld.swift:349",
+   "comment": "Elite firm note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Analysts are hired in yearly classes and expected to work very long hours. Many leave after a couple of years for other industries; the rest face “up or out” promotions.": {
+   "where": "AdvisorRealWorld.swift:351",
+   "comment": "Elite firm note, point 2 (long hours, up or out): the real-world claim, for adults. General claim"
+  },
+  "Each rung above the entry level is harder to be hired into from outside.": {
+   "where": "AdvisorRealWorld.swift:352",
+   "comment": "Elite firm note, point 2: what the game does about it"
+  },
+  "New analysts work very long hours, and many leave after a couple of years.": {
+   "where": "AdvisorRealWorld.swift:353",
+   "comment": "Elite firm note, point 2: the same fact in a beginner's or child's words"
+  },
+  "Becoming a TV presenter": {
+   "where": "AdvisorRealWorld.swift:358",
+   "comment": "Title of an advisor real-world note about becoming a TV presenter"
+  },
+  "Presenters are found through auditions, showreels and being seen — small stations first, then national. Reliability on live TV and a following of viewers count for more than looks.": {
+   "where": "AdvisorRealWorld.swift:359",
+   "comment": "TV presenter note, point 1 (auditions and a following): the real-world claim, for adults. General claim"
+  },
+  "%@ fame is what employers weigh (up to +%@): projects and events build it.": {
+   "where": "AdvisorRealWorld.swift:360",
+   "comment": "TV presenter note, point 1: what the game does about it. Arguments: the fame field Entertainment, a percentage. 'Fame' is the game's own term"
+  },
+  "TV presenters start with auditions and video clips of themselves, at small stations first. Staying calm on live TV and having viewers who like you matter more than looks.": {
+   "where": "AdvisorRealWorld.swift:361",
+   "comment": "TV presenter note, point 1: the same fact in a beginner's or child's words"
+  },
+  "Open Jobs": {
+   "where": "CareerAdvisor.swift:50",
+   "comment": "Advisor button under a message: closes the advisor and opens the Jobs sheet"
+  },
+  "Open Events": {
+   "where": "CareerAdvisor.swift:52",
+   "comment": "Advisor button: opens the Events sheet (conferences to attend or speak at)"
+  },
+  "Open Projects": {
+   "where": "CareerAdvisor.swift:53",
+   "comment": "Advisor button: opens the Projects sheet (spare-time projects that build fame)"
+  },
+  "Open Ventures": {
+   "where": "CareerAdvisor.swift:54",
+   "comment": "Advisor button: opens the Ventures sheet (founding a company)"
+  },
+  "Open Boardroom": {
+   "where": "CareerAdvisor.swift:55",
+   "comment": "Advisor button: opens the Boardroom (an executive seat's decisions)"
+  },
+  "Open Education": {
+   "where": "CareerAdvisor.swift:56",
+   "comment": "Advisor button: opens the Education sheet (schools and courses)"
+  },
+  "%@ a year": {
+   "where": "CareerAdvisor.swift:210"
+  },
+  "%@ a year to start, growing to about %@ later": {
+   "where": "CareerAdvisor.swift:211"
+  },
+  "You can get this job! It pays %@ a year — %@ more than you earn now.": {
+   "where": "CareerAdvisor.swift:283"
+  },
+  "You can get this job! It pays %@ a year.": {
+   "where": "CareerAdvisor.swift:285"
+  },
+  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": {
+   "where": "CareerAdvisor.swift:287"
+  },
+  "You have a %@ chance to get it. It pays %@.": {
+   "where": "CareerAdvisor.swift:289"
+  },
+  "Look for it under %@.": {
+   "where": "CareerAdvisor.swift:291"
+  },
+  "🏆 Getting this job reaches your goal!": {
+   "where": "CareerAdvisor.swift:293"
+  },
+  "Apply for the %@ job": {
+   "where": "CareerAdvisor.swift:295"
+  },
+  "You have a %@ chance to move up this year. You'd earn about %@ a year.": {
+   "where": "CareerAdvisor.swift:333"
+  },
+  "Keep going for %lld more years.": {
+   "where": "CareerAdvisor.swift:337",
+   "english": {
+    "one": "Keep going for %lld more year.",
+    "other": "Keep going for %lld more years."
+   }
+  },
+  "You need %lld years as %@ first.": {
+   "where": "CareerAdvisor.swift:338",
+   "english": {
+    "one": "You need %1$lld year as %2$@ first.",
+    "other": "You need %1$lld years as %2$@ first."
+   }
+  },
+  "Then you'll have about a %@ chance each year to move up and earn about %@ a year.": {
+   "where": "CareerAdvisor.swift:339"
+  },
+  "Education holds you back (needed: %@) — but going back to school means leaving this job.": {
+   "where": "CareerAdvisor.swift:346"
+  },
+  "Best way to help: grow your %@ (%lld of %lld). %@ is good practice for it.": {
+   "where": "CareerAdvisor.swift:349"
+  },
+  "Work toward %@": {
+   "where": "CareerAdvisor.swift:352"
+  },
+  "This opens the %@ job, which pays %@. You'll also need %@.": {
+   "where": "CareerAdvisor.swift:383"
+  },
+  "This opens the %@ job, which pays %@.": {
+   "where": "CareerAdvisor.swift:384"
+  },
+  "Take %@": {
+   "where": "CareerAdvisor.swift:385"
+  },
+  "This is the first step toward the %@ job (%@). It's about %lld years of school in total.": {
+   "where": "CareerAdvisor.swift:457",
+   "english": {
+    "one": "This is the first step toward the %1$@ job (%2$@). It's about %3$lld year of school in total.",
+    "other": "This is the first step toward the %1$@ job (%2$@). It's about %3$lld years of school in total."
+   }
+  },
+  "This opens the %@ job (%@) after %lld years of school.": {
+   "where": "CareerAdvisor.swift:458",
+   "english": {
+    "one": "This opens the %1$@ job (%2$@) after %3$lld year of school.",
+    "other": "This opens the %1$@ job (%2$@) after %3$lld years of school."
+   }
+  },
+  "Then: %@ (%lld more years).": {
+   "where": "CareerAdvisor.swift:460",
+   "english": {
+    "one": "Then: %1$@ (%2$lld more year).",
+    "other": "Then: %1$@ (%2$lld more years)."
+   }
+  },
+  "You'd have to leave your job while you study.": {
+   "where": "CareerAdvisor.swift:462"
+  },
+  "Study for: %@": {
+   "where": "CareerAdvisor.swift:463"
+  },
+  "Curious about the %@ job? It pays %@ a year and needs %@ %lld. You're at %lld — keep practising!": {
+   "where": "CareerAdvisor.swift:519"
+  },
+  "The %@ job (%@ a year) needs %@ %lld. You're at %lld.": {
+   "where": "CareerAdvisor.swift:520"
+  },
+  "Build %@ with %@": {
+   "where": "CareerAdvisor.swift:522"
+  },
+  "%lld yr as %@": {
+   "where": "CareerGraph.swift:75, JobView.swift:370",
+   "english": {
+    "one": "%lld yr as %@",
+    "other": "%lld yr as %@"
+   }
+  },
+  "%lld yr as %@ (role expects %@ yr)": {
+   "where": "CareerGraph.swift:76",
+   "english": {
+    "one": "%lld yr as %@ (role expects %@ yr)",
+    "other": "%lld yr as %@ (role expects %@ yr)"
+   }
+  },
+  "%lld yr in %@": {
+   "where": "CareerGraph.swift:79, JobView.swift:371",
+   "english": {
+    "one": "%lld yr in %@",
+    "other": "%lld yr in %@"
+   }
+  },
+  "%lld yr in %@ (role expects %@ yr)": {
+   "where": "CareerGraph.swift:80",
+   "english": {
+    "one": "%lld yr in %@ (role expects %@ yr)",
+    "other": "%lld yr in %@ (role expects %@ yr)"
+   }
+  },
+  "%lld yr as %@ (you have %@)": {
+   "where": "CareerGraph.swift:86",
+   "english": {
+    "one": "%lld yr as %@ (you have %@)",
+    "other": "%lld yr as %@ (you have %@)"
+   }
+  },
+  "%lld yr in %@ (you have %@)": {
+   "where": "CareerGraph.swift:88",
+   "english": {
+    "one": "%lld yr in %@ (you have %@)",
+    "other": "%lld yr in %@ (you have %@)"
+   }
+  },
+  "Reach age %lld": {
+   "where": "CareerGraph.swift:96"
+  },
+  "Earn %@": {
+   "where": "CareerGraph.swift:102"
+  },
+  "A degree in %@": {
+   "where": "CareerGraph.swift:107"
+  },
+  "Training: %@": {
+   "where": "CareerGraph.swift:121"
+  },
+  "School Sports Day": {
+   "where": "Competition.swift:154"
+  },
+  "Races and routines in front of the whole school — the first taste of winning.": {
+   "where": "Competition.swift:156"
+  },
+  "Sports Day Winner": {
+   "where": "Competition.swift:158"
+  },
+  "Kids' League Cup": {
+   "where": "Competition.swift:167"
+  },
+  "A season of Saturday games, one trophy at the end of it.": {
+   "where": "Competition.swift:169"
+  },
+  "Kids' Cup Winner": {
+   "where": "Competition.swift:171"
+  },
+  "School Music Recital": {
+   "where": "Competition.swift:180"
+  },
+  "One piece, a full hall, and your family in the front row.": {
+   "where": "Competition.swift:182"
+  },
+  "Recital Star": {
+   "where": "Competition.swift:184"
+  },
+  "School Art Contest": {
+   "where": "Competition.swift:193"
+  },
+  "Pinned to the corridor wall — and judged.": {
+   "where": "Competition.swift:195"
+  },
+  "Art Contest Winner": {
+   "where": "Competition.swift:197"
+  },
+  "Kids' Photo Contest": {
+   "where": "Competition.swift:206"
+  },
+  "One photo, one theme, judged by the local paper.": {
+   "where": "Competition.swift:208"
+  },
+  "Photo Contest Winner": {
+   "where": "Competition.swift:210"
+  },
+  "Kids' Bake-Off": {
+   "where": "Competition.swift:219"
+  },
+  "A tray of bakes, a panel of judges, and a ribbon for the best.": {
+   "where": "Competition.swift:221"
+  },
+  "Bake-Off Winner": {
+   "where": "Competition.swift:223"
+  },
+  "Dance-School Showcase": {
+   "where": "Competition.swift:232"
+  },
+  "The end-of-year show — one solo gets the prize.": {
+   "where": "Competition.swift:234"
+  },
+  "Showcase Star": {
+   "where": "Competition.swift:236"
+  },
+  "Kids' Coding Challenge": {
+   "where": "Competition.swift:245"
+  },
+  "Block-coding puzzles against the clock.": {
+   "where": "Competition.swift:247"
+  },
+  "Coding Challenge Winner": {
+   "where": "Competition.swift:249"
+  },
+  "School Chess Tournament": {
+   "where": "Competition.swift:258"
+  },
+  "Swiss rounds in the school library.": {
+   "where": "Competition.swift:260"
+  },
+  "School Chess Champion": {
+   "where": "Competition.swift:262"
+  },
+  "Primary Debate Cup": {
+   "where": "Competition.swift:271"
+  },
+  "Short motions, big opinions, a trophy for the best speaker.": {
+   "where": "Competition.swift:273"
+  },
+  "Debate Cup Winner": {
+   "where": "Competition.swift:275"
+  },
+  "Junior Championship": {
+   "where": "Competition.swift:288"
+  },
+  "The youth league final — where scouts spot the next generation of pro players.": {
+   "where": "Competition.swift:290"
+  },
+  "Junior Champion": {
+   "where": "Competition.swift:292"
+  },
+  "Junior Athletics Meet": {
+   "where": "Competition.swift:304"
+  },
+  "The county youth meet — heats, finals, and a podium.": {
+   "where": "Competition.swift:306"
+  },
+  "Junior Meet Winner": {
+   "where": "Competition.swift:308"
+  },
+  "High-School Esports Cup": {
+   "where": "Competition.swift:317"
+  },
+  "School teams, one bracket, one weekend.": {
+   "where": "Competition.swift:319"
+  },
+  "Esports Cup Winner": {
+   "where": "Competition.swift:321"
+  },
+  "Local 5K Race": {
+   "where": "Competition.swift:331"
+  },
+  "A weekend road race — an accessible first taste of competition.": {
+   "where": "Competition.swift:333"
+  },
+  "5K Race Winner": {
+   "where": "Competition.swift:335"
+  },
+  "City Marathon": {
+   "where": "Competition.swift:344"
+  },
+  "26.2 miles against thousands. A few seasons of training under your belt to even finish.": {
+   "where": "Competition.swift:346"
+  },
+  "Marathon Champion": {
+   "where": "Competition.swift:348"
+  },
+  "Regional Championship": {
+   "where": "Competition.swift:357"
+  },
+  "The step up to serious competition — qualify against your region's best. Years of training required.": {
+   "where": "Competition.swift:359"
+  },
+  "Regional Champion": {
+   "where": "Competition.swift:361"
+  },
+  "National Championship": {
+   "where": "Competition.swift:370"
+  },
+  "The premier athletic title — the country is watching. Only for seasoned competitors.": {
+   "where": "Competition.swift:372"
+  },
+  "National Champion": {
+   "where": "Competition.swift:374"
+  },
+  "Olympic Games": {
+   "where": "Competition.swift:383"
+  },
+  "The world stage. Medal here and you're a household name for life — the summit of a long career.": {
+   "where": "Competition.swift:385"
+  },
+  "Olympic Medalist": {
+   "where": "Competition.swift:387"
+  },
+  "Youth Music Competition": {
+   "where": "Competition.swift:397"
+  },
+  "Graded repertoire before a jury of conservatoire teachers.": {
+   "where": "Competition.swift:399"
+  },
+  "Young Musician of the Year": {
+   "where": "Competition.swift:401"
+  },
+  "National Music Competition": {
+   "where": "Competition.swift:410"
+  },
+  "The country's top young players, one concert hall.": {
+   "where": "Competition.swift:412"
+  },
+  "National Music Laureate": {
+   "where": "Competition.swift:414"
+  },
+  "International Music Competition": {
+   "where": "Competition.swift:423"
+  },
+  "The Chopin, the Tchaikovsky — a win makes a career.": {
+   "where": "Competition.swift:425"
+  },
+  "International Music Laureate": {
+   "where": "Competition.swift:427"
+  },
+  "Youth Art Prize": {
+   "where": "Competition.swift:436"
+  },
+  "A regional gallery hangs the shortlist.": {
+   "where": "Competition.swift:438"
+  },
+  "Young Artist of the Year": {
+   "where": "Competition.swift:440"
+  },
+  "Open Art Exhibition": {
+   "where": "Competition.swift:449"
+  },
+  "Submit to the open show — selection is the first prize.": {
+   "where": "Competition.swift:451"
+  },
+  "Exhibition Prizewinner": {
+   "where": "Competition.swift:453"
+  },
+  "National Art Prize": {
+   "where": "Competition.swift:462"
+  },
+  "The prize critics write about.": {
+   "where": "Competition.swift:464"
+  },
+  "National Art Prize Winner": {
+   "where": "Competition.swift:466"
+  },
+  "Youth Photography Award": {
+   "where": "Competition.swift:475"
+  },
+  "A portfolio of six, judged by working photographers.": {
+   "where": "Competition.swift:477"
+  },
+  "Young Photographer of the Year": {
+   "where": "Competition.swift:479"
+  },
+  "National Photography Award": {
+   "where": "Competition.swift:488"
+  },
+  "The year's best images, printed large and toured.": {
+   "where": "Competition.swift:490"
+  },
+  "National Photography Award Winner": {
+   "where": "Competition.swift:492"
+  },
+  "Junior Cook-Off": {
+   "where": "Competition.swift:501"
+  },
+  "Three courses in ninety minutes, live.": {
+   "where": "Competition.swift:503"
+  },
+  "Junior Chef Champion": {
+   "where": "Competition.swift:505"
+  },
+  "Culinary Championship": {
+   "where": "Competition.swift:514"
+  },
+  "A mystery basket and a panel of head chefs.": {
+   "where": "Competition.swift:516"
+  },
+  "Culinary Champion": {
+   "where": "Competition.swift:518"
+  },
+  "Youth Dance Competition": {
+   "where": "Competition.swift:527"
+  },
+  "Solo and troupe sections, marked to the step.": {
+   "where": "Competition.swift:529"
+  },
+  "Youth Dance Champion": {
+   "where": "Competition.swift:531"
+  },
+  "National Dance Championship": {
+   "where": "Competition.swift:540"
+  },
+  "The title the companies scout at.": {
+   "where": "Competition.swift:542"
+  },
+  "National Dance Champion": {
+   "where": "Competition.swift:544"
+  },
+  "Coding Olympiad": {
+   "where": "Competition.swift:554"
+  },
+  "Five hard problems, five hours, no internet.": {
+   "where": "Competition.swift:556"
+  }
+ }
+}
