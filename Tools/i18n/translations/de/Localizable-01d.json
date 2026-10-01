@@ -6,8 +6,8 @@
    "other": "%1$lld J. in %2$@"
   },
   "%lld yr in %@ (role expects %@ yr)": {
-   "one": "%1$lld J. in %2$@ (Rolle erwartet %3$@ J.)",
-   "other": "%1$lld J. in %2$@ (Rolle erwartet %3$@ J.)"
+   "one": "%1$lld J. in %2$@ (Position erwartet %3$@ J.)",
+   "other": "%1$lld J. in %2$@ (Position erwartet %3$@ J.)"
   },
   "%lld yr as %@ (you have %@)": {
    "one": "%1$lld J. als %2$@ (du hast %3$@)",
@@ -49,7 +49,7 @@
   "Swiss rounds in the school library.": "Runden im Schweizer System in der Schulbibliothek.",
   "School Chess Champion": "Schul-Schachmeister",
   "Primary Debate Cup": "Grundschul-Debattierpokal",
-  "Short motions, big opinions, a trophy for the best speaker.": "Kurze Anträge, große Meinungen und eine Trophäe für den besten Redner.",
+  "Short motions, big opinions, a trophy for the best speaker.": "Kurze Thesen, große Meinungen und eine Trophäe für den besten Redner.",
   "Debate Cup Winner": "Debattierpokalsieger",
   "Junior Championship": "Juniorenmeisterschaft",
   "The youth league final — where scouts spot the next generation of pro players.": "Das Finale der Jugendliga – hier entdecken Talentscouts die nächste Generation von Profispielern.",
@@ -61,13 +61,13 @@
   "School teams, one bracket, one weekend.": "Schulteams, ein Turnierbaum, ein Wochenende.",
   "Esports Cup Winner": "E-Sport-Pokalsieger",
   "Local 5K Race": "Lokaler 5-km-Lauf",
-  "A weekend road race — an accessible first taste of competition.": "Ein Straßenlauf am Wochenende – ein leichter erster Vorgeschmack auf den Wettkampf.",
+  "A weekend road race — an accessible first taste of competition.": "Ein Straßenlauf am Wochenende – ein leichter erster Vorgeschmack auf den Wettbewerb.",
   "5K Race Winner": "5-km-Lauf-Sieger",
   "City Marathon": "Stadtmarathon",
   "26.2 miles against thousands. A few seasons of training under your belt to even finish.": "42,2 km gegen Tausende. Ein paar Trainingssaisons brauchst du schon, um überhaupt anzukommen.",
   "Marathon Champion": "Marathonmeister",
   "Regional Championship": "Regionalmeisterschaft",
-  "The step up to serious competition — qualify against your region's best. Years of training required.": "Der Schritt zum ernsthaften Wettkampf – qualifiziere dich gegen die Besten deiner Region. Jahre des Trainings sind nötig.",
+  "The step up to serious competition — qualify against your region's best. Years of training required.": "Der Schritt zum ernsthaften Wettbewerb – qualifiziere dich gegen die Besten deiner Region. Jahre des Trainings sind nötig.",
   "Regional Champion": "Regionalmeister",
   "National Championship": "Nationale Meisterschaft",
   "The premier athletic title — the country is watching. Only for seasoned competitors.": "Der wichtigste Titel im Sport – das ganze Land schaut zu. Nur für erfahrene Wettkämpfer.",
@@ -101,7 +101,7 @@
   "National Photography Award Winner": "Nationaler Fotografiepreisträger",
   "Junior Cook-Off": "Junioren-Kochwettbewerb",
   "Three courses in ninety minutes, live.": "Drei Gänge in neunzig Minuten, live.",
-  "Junior Chef Champion": "Junior-Kochmeister",
+  "Junior Chef Champion": "Junioren-Kochmeister",
   "Culinary Championship": "Kulinarische Meisterschaft",
   "A mystery basket and a panel of head chefs.": "Ein Überraschungskorb und eine Jury aus Küchenchefs.",
   "Culinary Champion": "Kulinarischer Meister",

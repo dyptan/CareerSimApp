@@ -36,8 +36,8 @@
   "You put in %@ and opened your business!": "Du hast %@ eingesetzt und dein Unternehmen eröffnet!",
   "In the first year it pays about %@ of the full amount while you find customers.": "Im ersten Jahr zahlt es etwa %@ des vollen Betrags, während du Kunden findest.",
   "🧭 %lld yr exp expected": {
-   "one": "🧭 %lld J. Erf. erwartet",
-   "other": "🧭 %lld J. Erf. erwartet"
+   "one": "🧭 %lld J. Erf. erwartet",
+   "other": "🧭 %lld J. Erf. erwartet"
   },
   "💰 Target %@": "💰 Ziel %@",
   "🔒 Nothing to stake yet — earn and save first": "🔒 Noch nichts zum Einsetzen – verdiene und spare zuerst",
@@ -68,9 +68,9 @@
   "Savings: %@": "Ersparnisse: %@",
   "🏦 Venture loan owed: %@": "🏦 Offener Gründungskredit: %@",
   "🎓 Student loan owed: %@": "🎓 Offener Studienkredit: %@",
-  "🏅 Score: %@ ÷ %lld y.o. = %@": "🏅 Punktzahl: %1$@ ÷ %2$lld J. = %3$@",
+  "🏅 Score: %@ ÷ %lld y.o. = %@": "🏅 Punktzahl: %1$@ ÷ %2$lld J. = %3$@",
   "🏅 Score": "🏅 Punktzahl",
-  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "Das, was du besitzt, minus das, was du schuldest, geteilt durch dein Alter. Je jünger du deine Ersparnisse aufbaust, desto höher ist deine Punktzahl.",
+  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "Dein Besitz minus deine Schulden, geteilt durch dein Alter. Je jünger du deine Ersparnisse aufbaust, desto höher ist deine Punktzahl.",
   "Keep playing": "Weiterspielen",
   "Restart": "Neustart",
   "Start over": "Neu anfangen",
@@ -92,7 +92,7 @@
   "Age %lld": "Alter %lld",
   "Starting age": "Startalter",
   "Country": "Land",
-  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Wenn du mit %lld startest, wählst du jedes Jahr selbst – auf den frühen Entscheidungen bauen die schwierigsten Schulen und Jobs auf.",
+  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Wenn du mit %lld startest, wählst du jedes Jahr selbst – die frühen Entscheidungen sind die Grundlage für die schwierigsten Schulen und Jobs.",
   "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more.": {
    "one": "🎲 Wenn du ein Jahr Kindheit überspringst, bekommst du %2$@ zufälligen Fähigkeitspunkt. Diese Jahre selbst zu spielen bringt viel mehr.",
    "other": "🎲 Wenn du %1$lld Jahre Kindheit überspringst, bekommst du %2$@ zufällige Fähigkeitspunkte. Diese Jahre selbst zu spielen bringt viel mehr."
@@ -104,7 +104,7 @@
   "Start here": "Hier starten",
   "Close": "Schließen",
   "One turn = one year": "Eine Runde = ein Jahr",
-  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Deine Figur wird jede Runde ein Jahr älter. Etwas zu wählen – eine Aktivität, einen Kurs, einen Job – ist deine Art, dieses Jahr zu verbringen, und das Jahr vergeht, sobald du wählst. Nichts vor in diesem Jahr? Tippe oben auf den blauen Button „Überspringen“.",
+  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Deine Figur wird jede Runde ein Jahr älter. Wenn du etwas wählst – eine Aktivität, einen Kurs, einen Job –, verbringst du damit dieses Jahr. Es vergeht, sobald du wählst. Nichts vor in diesem Jahr? Tippe oben auf den blauen Button „Überspringen“.",
   "Build your life from the buttons": "Bau dein Leben mit den Buttons",
   "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": "Die Buttons unten – Bildung, Aktivitäten, Jobs und mehr – zeigen, wofür du ein Jahr verwenden kannst. Jede Wahl formt, wer du wirst.",
   "Watch yourself grow": "Sieh dir beim Wachsen zu",
@@ -112,14 +112,14 @@
   "Your goal": "Dein Ziel",
   "%@. Tap the ⓘ next to your age at any time to check how you're doing.": "%@. Tippe jederzeit auf das ⓘ neben deinem Alter, um zu sehen, wie du dich schlägst.",
   "Stuck? Look for ⓘ": "Du steckst fest? Suche das ⓘ",
-  "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": "Diese kleinen ⓘ-Buttons gibt es überall – tippe auf eins, um genau zu sehen, wie etwas funktioniert, vom Eingestelltwerden bis zum Gewinnen eines Wettbewerbs.",
+  "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": "Diese kleinen ⓘ-Buttons gibt es überall – tippe auf einen, um genau zu sehen, wie etwas funktioniert, von der Einstellung bis zum Wettbewerbssieg.",
   "Welcome to Career Sim! 👋": "Willkommen bei Career Sim! 👋",
   "Live a whole life, one year at a time — here's the idea:": "Erlebe ein ganzes Leben, ein Jahr nach dem anderen – so funktioniert es:",
   "Let's go! 🚀": "Los geht’s! 🚀",
   "How to play": "Spielanleitung",
   "%lld yr exp.": {
-   "one": "%lld J. Erf.",
-   "other": "%lld J. Erf."
+   "one": "%lld J. Erf.",
+   "other": "%lld J. Erf."
   },
   "✓ You can apply": "✓ Du kannst dich bewerben",
   "🔒 Not yet": "🔒 Noch nicht",
@@ -145,8 +145,8 @@
   "Grows, whether it works or not:\n%@": "Wächst, egal ob es klappt oder nicht:\n%@",
   "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "Wenn es klappt: Ruhm in %1$@ – das macht dein nächstes Projekt leichter und hilft dir bei Jobs in %2$@. Projekte bringen kein Geld: Sie sind für Ruhm und Fähigkeiten.",
   "%lld yrs left": {
-   "one": "noch %lld J.",
-   "other": "noch %lld J."
+   "one": "noch %lld J.",
+   "other": "noch %lld J."
   }
  }
 }

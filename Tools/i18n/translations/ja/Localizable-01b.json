@@ -34,7 +34,7 @@
   "It also counts as a year of %@ experience.": "%@の経験1年分としても数えられます。",
   "Take the %@ job": "%@の仕事に就く",
   "%@ chance to get it, %@.": "就ける確率は%1$@で、%2$@が見込めます。",
-  "Every year in %@ counts toward the %lld this job expects.": "%1$@で過ごした1年ごとに、この仕事が求める%2$lld年に数えられます。",
+  "Every year in %@ counts toward the %lld this job expects.": "%1$@で働いた1年ごとに、この仕事が求める%2$lld年に数えられます。",
   "Run a business of your own": "自分の事業を運営する",
   "Every year running a venture counts as a year of experience toward this job — whatever the business sells.": "事業を運営した年は、何を売る事業でも、この仕事の経験1年分として数えられます。",
   "A year on it counts as a year of %@ experience, which counts toward %@ jobs — hit or miss.": "その1年は%1$@の経験1年分として数えられ、%2$@の仕事の経験にもなります。当たっても外れても数えられます。",
@@ -62,7 +62,7 @@
   "Adds ≈ +%@ to your chance a year, from %@.": "%2$@の効果で、確率が1年あたり≈+%1$@アップします。",
   "The %@ is the door.": "%@が入り口です。",
   "It enters you automatically each year you train %@, once you've trained %lld years.": {
-   "other": "%1$@を%2$lld年練習すると、以降は毎年自動的に出場します。"
+   "other": "%1$@を%2$lld年練習すると、それ以降は練習している年に自動的に出場します。"
   },
   "It enters you automatically each year you train %@.": "%@を練習している年は、毎年自動的に出場します。",
   "Win the %@": "%@で優勝する",
@@ -70,7 +70,7 @@
   "It's open only to %@ — you're not in that stage.": "%@のときだけ出場できます。いまはその時期ではありません。",
   "The “%@” title": "「%@」の称号",
   "not won yet": "まだ獲得していません",
-  "Without it your chance stays at %@ whatever your skills. Holding it adds +%@ and opens the door.": "称号がないと、スキルが高くても確率は%1$@のままです。持っていると+%2$@アップし、入り口が開きます。",
+  "Without it your chance stays at %@ whatever your skills. Holding it adds +%@ and opens the door.": "称号がないと、スキルに関係なく確率は%1$@のままです。持っていると+%2$@アップし、入り口が開きます。",
   "%@ has one door: the “%@” title. Without it your chance stays at about %@, whatever else you do.": "%1$@の入り口は1つだけ、「%2$@」の称号です。これがないと、ほかに何をしても確率は約%3$@のままです。",
   "Win the door-opener": "道を開く称号を獲得する",
   "Win the “%@” title first. Only then do skills, fame and the rest count.": "まず「%@」の称号を獲得しましょう。スキルや名声などが効いてくるのはそれからです。",
@@ -83,7 +83,7 @@
    "other": "%2$@で%1$lld年の勤務"
   },
   "In Simplified mode there's no luck to it: the job is yours.": "かんたんモードでは運は関係なく、その仕事に就けます。",
-  "In Simplified mode there's no luck to it: get %@, and the job is yours.": "かんたんモードでは運は関係ありません。%@を満たせば、その仕事に就けます。",
+  "In Simplified mode there's no luck to it: get %@, and the job is yours.": "かんたんモードでは運は関係ありません。%@がそろえば、その仕事に就けます。",
   "There are no companies to start in Simplified mode — you climb by working.": "かんたんモードでは会社を作れません。働いて昇進していきます。",
   "Becoming a CEO": "CEOになるには",
   "There are only a few hundred CEO jobs at the biggest companies, and a board's search can run for a year.": "最大手企業のCEOのポストは数百しかなく、取締役会の人選に1年かかることもあります。",
@@ -104,8 +104,8 @@
   "In the US, about %@ of new big-company CEOs had not.": "アメリカでは、大企業の新しいCEOの約%@が、それまでCEOの経験がありませんでした。",
   "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.": "学位よりも、何を率いてきたかのほうが大事です。経営学や工学の学位はよくあり、有名校は初めのうちは道を開いてくれますが、出身校だけでCEOに採用される人はいません。",
   "%@ adds +%@ to your chance, %@ +%@ — small next to the seat.": "%1$@で確率が+%2$@、%3$@で+%4$@アップしますが、ポストの難しさに比べれば小さな効果です。",
-  "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.": "運とタイミングも本物です。業界の景気の波、前任者の退任、外部の人材を求める経営難の会社などがあります。優れた候補者でも、何年も待つか、声がかからないままのこともあります。",
-  "Each year's job market multiplies your chance: a slump hurts, a boom helps.": "その年の就職市場が確率にかけ算されます。不況だと不利に、好況だと有利に働きます。",
+  "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.": "運とタイミングも重要です。たとえば、業界の景気の波、前任者の退任、外部の人材を求める経営難の会社などです。優れた候補者でも、何年も待つか、声がかからないままのこともあります。",
+  "Each year's job market multiplies your chance: a slump hurts, a boom helps.": "その年の求人市場が確率にかけ算されます。不況だと不利に、好況だと有利に働きます。",
   "Becoming a CTO": "CTOになるには",
   "At a large company the CTO is usually a senior engineering leader — a VP or head of engineering who has run big teams and budgets. At a start-up it is often a co-founder.": "大企業のCTOは、たいてい上級のエンジニアリングリーダーで、大きなチームと予算を率いてきたVPやエンジニアリング部門の責任者です。スタートアップでは共同創業者であることが多いです。",
   "It asks %lld years in %@, and only %@ of ideal applicants get a C-suite seat each year.": {
@@ -129,7 +129,7 @@
   "It asks %lld years in %@, and %@ of ideal applicants get the seat each year.": {
    "other": "%2$@で%1$lld年が求められ、理想的な応募者のうち毎年ポストを得られるのは%3$@です。"
   },
-  "A director leads a team. Companies pick someone who already led a team well — for example, someone who reached their sales goals or ran ad campaigns that worked.": "本部長はチームを率いる人です。会社は、すでにチームをうまくまとめた人を選びます。たとえば、営業の目標を達成した人や、効果のあった広告を作った人です。",
+  "A director leads a team. Companies pick someone who already led a team well — for example, someone who reached their sales goals or ran ad campaigns that worked.": "本部長はチームを率いる人です。会社は、すでにチームをうまくまとめた人を選びます。たとえば、営業の目標を達成した人や、効果のあった広告を出した人です。",
   "A senior sponsor who speaks for you in the room matters as much as the results — most promotions are decided by people, not by rules.": "会議の場で自分のために発言してくれる上位の後ろ盾は、成果と同じくらい大切です。昇進のほとんどは、ルールではなく人が決めるからです。",
   "Your network and fame in %@ add to your chance.": "%@での人脈と名声が確率に加わります。",
   "It also helps to have a senior person who speaks up for you. Many promotions are decided by people, not by rules.": "自分のために声をあげてくれる上の人がいると助けになります。昇進の多くは、ルールではなく人が決めます。",
@@ -138,11 +138,11 @@
   "Becoming a managing partner": "代表パートナーになるには",
   "Law firms are “up or out”: after roughly seven to ten years as associates, most lawyers leave and only a minority are made partner.": "法律事務所は「昇進か退職か」の世界です。アソシエイトとして7〜10年ほど働くと、ほとんどの弁護士は事務所を去り、パートナーになれるのは一部だけです。",
   "You need a law doctorate, the bar and %lld years — and only %@ of ideal applicants get a partner seat.": {
-   "other": "法務博士号、弁護士登録、%1$lld年が必要で、理想的な応募者でもパートナーのポストを得られるのは%2$@だけです。"
+   "other": "法務博士号、弁護士登録、%1$lld年の経験が必要で、理想的な応募者でもパートナーのポストを得られるのは%2$@だけです。"
   },
-  "In a law firm, most young lawyers have to leave after about seven to ten years, and only a few are made partners.": "法律事務所では、若い弁護士の多くは7〜10年ほどで辞めなければならず、パートナーになれるのは少しだけです。",
+  "In a law firm, most young lawyers have to leave after about seven to ten years, and only a few are made partners.": "法律事務所では、若い弁護士の多くは7〜10年ほどで辞めなければならず、パートナーになれるのはほんの一部の人だけです。",
   "Partners are judged on the clients they bring in — “rainmaking” — as much as on the quality of their work.": "パートナーは、仕事の質と同じくらい、新しい顧客を連れてくる力（「レインメイキング」）で評価されます。",
-  "%@ and %@ are among the skills it weighs most.": "%1$@と%2$@は、特に重視されるスキルです。",
+  "%@ and %@ are among the skills it weighs most.": "%1$@と%2$@は、特に重視されるスキルに含まれます。",
   "Partners are picked for the clients they bring in as much as for their work.": "パートナーは、仕事ぶりと同じくらい、お客さんを連れてくる力で選ばれます。",
   "A managing partner is chosen by the other partners: standing among your peers counts for more than any interview.": "代表パートナーは、ほかのパートナーが選びます。どんな面接よりも、仲間うちでの評価が重視されます。",
   "Few people want the job and fewer get it: the game's demand for it is only %@.": "この仕事を望む人は少なく、実際に就ける人はさらに少数です。ゲーム上の需要は、わずか%@です。",
@@ -150,7 +150,7 @@
   "The road is long and every step is selective: a bachelor's degree, then a professional or doctoral programme that admits well under half of its applicants, then — for doctors — three to seven years of supervised hospital training before you practise alone.": "道のりは長く、どのステップにも選抜があります。まず学士号、次に志願者の半分をはるかに下回る人数しか受け入れない専門職課程や博士課程、そして医師の場合は、1人で診療できるようになるまでに病院で3〜7年の指導つき研修があります。",
   "Each step is a gate: the degree, then the licence, then years of experience.": "どのステップも関門です。学位、免許、そして経験年数の順に進みます。",
   "Becoming a doctor takes many years: a bachelor's degree, then medical school, then years of training in a hospital. Each step takes only some of the people who apply.": "医師になるには長い年月がかかります。まず学士号、次に医学部、そして病院での研修が何年か続きます。どのステップも、応募した人の一部しか進めません。",
-  "In Simplified mode you still need the right school and years of work — but there's no licence to earn and no school bill.": "かんたんモードでも、必要な学校と何年かの仕事は必要ですが、取る免許はなく、学費もかかりません。",
+  "In Simplified mode you still need the right school and years of work — but there's no licence to earn and no school bill.": "かんたんモードでも、必要な学校を終えて何年か働くことが求められますが、取る免許はなく、学費もかかりません。",
   "Grades and entrance results decide admission — in some countries volunteering or research experience and interviews too — a record built over years, not one good year.": "入学選考は成績と入試の結果で決まります。国によっては、ボランティアや研究の経験、面接も加わります。1年だけがんばっても足りず、何年もかけて積み上げた実績が見られます。",
   "Your school grades, skills and awards set your chance of admission.": "学校の成績、スキル、受賞歴で、合格確率が決まります。",
   "Schools look at your grades, your skills and your prizes over many years, not just one good year.": "学校は、1年だけがんばったかどうかではなく、何年にもわたる成績やスキル、受賞歴を見ます。",
@@ -158,7 +158,7 @@
   "Competitive specialties such as surgery and anaesthesia are a second competition: training places go to the top-ranked candidates.": "外科や麻酔科のような競争の激しい診療科は、2つ目の競争になります。研修先の枠は、上位の候補者から埋まります。",
   "These jobs ask for more of skills like %@, %@ and %@ than most.": "これらの仕事は、%1$@、%2$@、%3$@のようなスキルを、ほかの多くの仕事より強く求めます。",
   "The cost is high, too: years of tuition, often on loans, before a first full salary.": "費用も高額です。最初の本格的な給料をもらうまでに、何年もの授業料がかかり、ローンを使うことも多いです。",
-  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": "ゲームでは授業料がかかり、奨学金を負うこともありますが、そのあとの給料は最高水準です。",
+  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": "ゲームでは授業料がかかり、奨学金を借りることもありますが、そのあとの給料は最高水準です。",
   "It costs a lot, too: many people borrow money to pay for school.": "お金もたくさんかかります。学校のために、お金を借りる人も多いです。",
   "Simplified mode has no school bills, so nobody has to borrow.": "かんたんモードには学費がないので、お金を借りる必要はありません。",
   "Study itself costs little here — public universities charge only modest fees — but the long road means years of study before a first full salary.": "ここでは学ぶ費用そのものは少なめです。公立大学の費用はわずかです。ただ、道のりが長いので、最初の本格的な給料をもらうまでに何年も勉強することになります。",
@@ -177,7 +177,7 @@
   "Careers are made by publications and by winning research funding: a record of results, and other scientists who cite your work.": "キャリアは、論文の発表と研究資金の獲得で築かれます。成果の実績と、自分の研究を引用してくれるほかの研究者がカギです。",
   "Your fame in %@ and your network in it add to your chance.": "%@での名声と人脈が確率に加わります。",
   "Becoming an airline pilot": "旅客機パイロットになるには",
-  "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.": "旅客機パイロットには定期運送用操縦士の免許が必要で、取るには飛行時間を何年もかけて積む必要があります。多くのパイロットは、教官や小型機で飛行時間を積み、大手の前に地域航空会社に入ります。",
+  "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.": "旅客機パイロットには定期運送用操縦士の免許が必要で、取るには飛行時間を何年もかけて積む必要があります。多くのパイロットは、教官や小型機で飛行時間を積み、まず地域航空会社に入り、そのあと大手に移ります。",
   "Flight school and its licence are the gate; years of experience open each rung.": "航空学校とその免許が関門で、経験年数が各段階を開きます。",
   "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.": "旅客機パイロットには、特別な免許と、たくさんの飛行時間が必要です。たいてい飛行を教えたり小さな飛行機に乗ったりして始め、そのあと大きな航空会社に入ります。",
   "Simplified mode skips the licence: years of work open each step up (%@).": "かんたんモードでは免許が不要で、働いた年数が各ステップを開きます（%@年）。",

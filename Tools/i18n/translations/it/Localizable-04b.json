@@ -97,7 +97,7 @@
   "• Your skills: %lld of %lld are strong enough (%@ match)": "• Le tue competenze: %1$lld su %2$lld sono abbastanza forti (%3$@ di affinità)",
   "• Starting chance for this kind of job: %@ (jobs that need more school start lower)": "• Probabilità di partenza per questo tipo di lavoro: %@ (i lavori che richiedono più studi partono più in basso)",
   "• A degree from %@: %@": "• Una laurea conseguita presso %1$@: %2$@",
-  "• A degree from your school: %@": "• Una laurea conseguita nella tua scuola: %@",
+  "• A degree from your school: %@": "• Una laurea conseguita presso la tua scuola: %@",
   "• People you know in %@: %@": "• Contatti nel settore %1$@: %2$@",
   "• Your fame (%@): %@": "• La tua fama (%1$@): %2$@",
   "• Your fame (general): %@": "• La tua fama (generale): %@",
@@ -137,7 +137,7 @@
   "Breakthrough:": "Svolta:",
   "%@ title": "Titolo «%@»",
   "You have it! This is the biggest help there is for getting signed.": "Ce l’hai! È il più grande aiuto possibile per ottenere un ingaggio.",
-  "Without it, teams won't sign you (your chance stays at %@).": "Senza, le squadre non ti ingaggiano (la tua probabilità resta a %@).",
+  "Without it, teams won't sign you (your chance stays at %@).": "Senza questo titolo, le squadre non ti ingaggiano (la tua probabilità resta a %@).",
   "This job wants %lld years of experience.": {
    "one": "Questo lavoro richiede %lld anno di esperienza.",
    "other": "Questo lavoro richiede %lld anni di esperienza."

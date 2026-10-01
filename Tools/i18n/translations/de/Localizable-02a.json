@@ -1,7 +1,7 @@
 {
  "table": "Localizable",
  "strings": {
-  "Olympiad Medalist": "Olympiade-Medaillengewinner",
+  "Olympiad Medalist": "Medaillengewinner der Programmier-Olympiade",
   "Hackathon": "Hackathon",
   "Build something that works in a weekend.": "Baue an einem Wochenende etwas, das funktioniert.",
   "Hackathon Winner": "Hackathon-Sieger",
@@ -21,7 +21,7 @@
   "Schools from across the country, one motion per round.": "Schulen aus dem ganzen Land, ein Thema pro Runde.",
   "Youth Debate Champion": "Jugend-Debattiermeister",
   "National Debate Championship": "Nationale Debattiermeisterschaft",
-  "University and open circuits — the final is broadcast.": "Hochschul- und offene Turniere – das Finale wird übertragen.",
+  "University and open circuits — the final is broadcast.": "Hochschulturniere und offene Turniere – das Finale wird übertragen.",
   "National Debate Champion": "Nationaler Debattiermeister",
   "Class Representative Election": "Klassensprecherwahl",
   "Make your pitch to the class, then count the votes.": "Halte deine Rede vor der Klasse, dann werden die Stimmen gezählt.",
@@ -108,19 +108,19 @@
   "Pay, prices and school costs from the United Kingdom, in pounds.": "Gehälter, Preise und Bildungskosten aus dem Vereinigten Königreich, in Pfund.",
   "The National Living Wage (£12.71 an hour)": "Der britische Mindestlohn „National Living Wage“ (12,71 £ pro Stunde)",
   "• Scores go to their own British leaderboard.": "• Punkte landen in der eigenen britischen Bestenliste.",
-  "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.": "Akademische Gehälter liegen deutlich unter denen der USA; NHS-Ärzte, Krankenpfleger und Lehrer folgen nationalen Gehaltstabellen.",
+  "Professional pay is well under the US; NHS doctors, nurses and teachers follow national pay scales.": "Akademische Berufe zahlen deutlich weniger als in den USA; NHS-Ärzte, Krankenpfleger und Lehrer folgen nationalen Gehaltstabellen.",
   "Every English university charges up to £9,790 a year — the famous ones too — and most PhDs are funded.": "Jede englische Universität verlangt bis zu 9.790 £ pro Jahr – auch die berühmten – und die meisten Promotionen werden finanziell gefördert.",
   "France": "Frankreich",
   "Pay, prices and school costs from France, in euros.": "Gehälter, Preise und Bildungskosten aus Frankreich, in Euro.",
   "The minimum wage (SMIC, on a 35-hour week)": "Der Mindestlohn (SMIC, bei einer 35-Stunden-Woche)",
   "• Scores go to their own French leaderboard.": "• Punkte landen in der eigenen französischen Bestenliste.",
-  "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.": "Die Gehälter liegen eng beieinander: Der Mindestlohn ist hoch, akademische Gehälter liegen weit unter denen der USA. Krankenhausärzte, Krankenpfleger und Lehrer folgen nationalen Gehaltsskalen.",
+  "Pay is compressed: the minimum wage is high and professional pay far under the US. Hospital doctors, nurses and teachers follow national grids.": "Die Gehälter liegen eng beieinander: Der Mindestlohn ist hoch, akademische Berufe zahlen weit weniger als in den USA. Krankenhausärzte, Krankenpfleger und Lehrer folgen nationalen Gehaltsskalen.",
   "Public universities cost a few hundred euros a year; the elite business schools are the exception.": "Staatliche Universitäten kosten ein paar hundert Euro pro Jahr; die Elite-Wirtschaftshochschulen sind die Ausnahme.",
   "Italy": "Italien",
   "Pay, prices and school costs from Italy, in euros.": "Gehälter, Preise und Bildungskosten aus Italien, in Euro.",
   "Collective agreements set the floor (Italy has no legal minimum wage)": "Tarifverträge legen die Untergrenze fest (Italien hat keinen gesetzlichen Mindestlohn)",
   "• Scores go to their own Italian leaderboard.": "• Punkte landen in der eigenen italienischen Bestenliste.",
-  "Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.": "Die Gehälter gehören zu den niedrigsten in Westeuropa, und akademische Gehälter sind viel niedriger als in den USA. Ärzte, Krankenpfleger und Lehrer werden nach nationalen Tarifverträgen bezahlt.",
+  "Pay is among the lowest in western Europe, and professional pay is much less than in the US. Doctors, nurses and teachers are paid on national contracts.": "Die Gehälter gehören zu den niedrigsten in Westeuropa, und akademische Berufe zahlen viel weniger als in den USA. Ärzte, Krankenpfleger und Lehrer werden nach nationalen Tarifverträgen bezahlt.",
   "Public universities charge by family income; the private elite schools charge much more.": "Staatliche Universitäten richten die Gebühren nach dem Familieneinkommen; die privaten Eliteschulen verlangen viel mehr.",
   "Japan": "Japan",
   "Pay, prices and school costs from Japan, in yen.": "Gehälter, Preise und Bildungskosten aus Japan, in Yen.",
@@ -194,6 +194,6 @@
   "The minimum wage (₩10,320 an hour)": "Der Mindestlohn (10.320 ₩ pro Stunde)",
   "• Scores go to their own South Korean leaderboard.": "• Punkte landen in der eigenen südkoreanischen Bestenliste.",
   "The minimum wage is about 60% of the typical full-time wage.": "Der Mindestlohn beträgt etwa 60 % des üblichen Vollzeitgehalts.",
-  "University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.": "Der Zugang zur Universität hängt von einer einzigen Prüfung im November ab (CSAT, benotet von 1 (beste) bis 9), und der staatliche Studienkredit hat Zinsen unter der Inflation."
+  "University entry rests on one November exam, the CSAT, graded 1 (best) to 9, and the state student loan charges less than inflation.": "Der Zugang zur Universität hängt von einer einzigen Prüfung im November ab, dem CSAT mit Noten von 1 (beste) bis 9, und der staatliche Studienkredit hat Zinsen unter der Inflation."
  }
 }

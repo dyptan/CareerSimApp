@@ -29,7 +29,7 @@
   "What your chance depends on": "Ce dont dépendent tes chances",
   "Ask for a salary": "Demander un salaire",
   "Your ask:": "Tes prétentions :",
-  "Win a Junior Championship as a teen. Practise a sport for years to get better at it.": "Remporte un championnat junior à l’adolescence. Pratique un sport pendant des années pour progresser.",
+  "Win a Junior Championship as a teen. Practise a sport for years to get better at it.": "Remporte un championnat junior à l’adolescence. Entraîne-toi à un sport pendant des années pour progresser.",
   "Earn the “%@” title first.": "Obtiens d’abord le titre « %@ ».",
   "You start as %@ on %@ a year.": "Tu débutes comme %1$@ avec %2$@ par an.",
   "🎉 Offer accepted!": "🎉 Offre acceptée !",
@@ -38,7 +38,7 @@
   "You had a %@ chance, and this time it didn't work out. Don't give up — try again next year!": "Tu avais %@ de chances, et cette fois ça n’a pas marché. Ne te décourage pas — réessaie l’année prochaine !",
   "🔒 Not open to you yet.": "🔒 Pas encore accessible pour toi.",
   "🔒 First: %@.": "🔒 D’abord : %@.",
-  "Nobody is posting %@ jobs this year. The job market changes every year — check again next year.": "Personne ne propose de poste « %@ » cette année. Le marché de l’emploi change chaque année — reviens voir l’année prochaine.",
+  "Nobody is posting %@ jobs this year. The job market changes every year — check again next year.": "Aucune offre pour %@ cette année. Le marché de l’emploi change chaque année — reviens voir l’année prochaine.",
   "No jobs match these filters. Try another kind of work, or turn off \"Only roles I qualify for\".": "Aucun poste ne correspond à ces filtres. Essaie un autre type de travail, ou désactive « Seulement les postes accessibles ».",
   "Kind of work": "Type de travail",
   "%@ %@ — %@": "%1$@ %2$@ — %3$@",
@@ -69,10 +69,10 @@
   "%@ would be a loan that grows %@ a year — you pay it back even if the business closes.": "Tu emprunterais %1$@ : le prêt augmente de %2$@ par an, et tu le rembourses même si l’entreprise ferme.",
   "🚀 It always opens. It has a %@ chance to make it through the first year.": "🚀 Elle ouvre toujours. Elle a %@ de chances de passer le cap de la première année.",
   "What helps: your %lld years in %@ (%@ is good), the skills it needs, %@, %@, and the money you put in.": {
-   "one": "Ce qui aide : ton expérience (%1$lld an en %2$@ ; l’idéal : %3$@), les compétences demandées, %4$@, %5$@ et l’argent que tu investis.",
-   "other": "Ce qui aide : ton expérience (%1$lld ans en %2$@ ; l’idéal : %3$@), les compétences demandées, %4$@, %5$@ et l’argent que tu investis."
+   "one": "Ce qui aide : ton expérience (%1$lld an en %2$@ ; %3$@, c’est bien), les compétences demandées, %4$@, %5$@ et l’argent que tu investis.",
+   "other": "Ce qui aide : ton expérience (%1$lld ans en %2$@ ; %3$@, c’est bien), les compétences demandées, %4$@, %5$@ et l’argent que tu investis."
   },
-  "Each year it lasts, it gets safer — but a bad economy makes it riskier.": "Chaque année où elle dure, elle devient plus sûre — mais une mauvaise conjoncture la rend plus risquée.",
+  "Each year it lasts, it gets safer — but a bad economy makes it riskier.": "Plus elle dure, plus elle devient sûre — mais une mauvaise conjoncture la rend plus risquée.",
   "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "💵 Les deux premières années, elle rapporte %1$@ puis %2$@ de ses %3$@, ensuite le montant complet — plus dans les bonnes années, moins dans les mauvaises.",
   "📉 If it closes, you get back %@ of the money you put in.": "📉 Si elle ferme, tu récupères %@ de l’argent investi.",
   "🌟 Every year in business, every investment you win and every sale makes you better known in %@ %@ — so your next business is more likely to last.": "🌟 Chaque année d’activité, chaque levée de fonds obtenue et chaque vente te font connaître davantage en %1$@ %2$@ — ta prochaine entreprise a donc plus de chances de durer.",
@@ -80,8 +80,8 @@
   "Game Over": "Partie terminée",
   "Your score": "Ton score",
   "Your progress": "Ta progression",
-  "You reached %lld — your career is over and this score is final.": "Tu as atteint %lld — ta carrière est terminée et ce score est définitif.",
-  "You reached %lld — your career is over.": "Tu as atteint %lld — ta carrière est terminée.",
+  "You reached %lld — your career is over and this score is final.": "Tu as atteint %lld ans — ta carrière est terminée et ce score est définitif.",
+  "You reached %lld — your career is over.": "Tu as atteint %lld ans — ta carrière est terminée.",
   "You're %lld. Here's how your life is going so far — keep playing to grow your score, or start over.": "Tu as %lld ans. Voici où en est ta vie jusqu’ici — continue à jouer pour faire monter ton score, ou recommence.",
   "You're %lld. Here's how your life is going so far — keep playing, or start over.": "Tu as %lld ans. Voici où en est ta vie jusqu’ici — continue à jouer, ou recommence.",
   "Money earned: %@": "Argent gagné : %@",
@@ -112,21 +112,21 @@
   "Age %lld": "%lld ans",
   "Starting age": "Âge de départ",
   "Country": "Pays",
-  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Si tu commences à %lld ans, tu choisis toi-même chaque année — ce sont les premiers choix qui préparent les écoles et les postes les plus difficiles.",
+  "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Si tu commences à %lld ans, tu choisis toi-même chaque année — ce sont tes premiers choix qui te préparent aux écoles et aux postes les plus difficiles.",
   "🎲 Skipping %lld years of childhood gives you %@ random skill points. Playing those years yourself builds far more.": {
-   "one": "🎲 Passer %1$lld an d’enfance te donne %2$@ points de compétence aléatoires. Jouer ces années toi-même en développe bien plus.",
-   "other": "🎲 Passer %1$lld ans d’enfance te donne %2$@ points de compétence aléatoires. Jouer ces années toi-même en développe bien plus."
+   "one": "🎲 Sauter %1$lld an d’enfance te donne %2$@ point de compétence aléatoire. Jouer ces années toi-même en développe bien plus.",
+   "other": "🎲 Sauter %1$lld ans d’enfance te donne %2$@ points de compétence aléatoires. Jouer ces années toi-même en développe bien plus."
   },
   "🎒 You'll start in %@.": "🎒 Ton point de départ : %@.",
   "🎒 You'll start in %@ (%@ done).": "🎒 Ton point de départ : %1$@ (%2$@ déjà derrière toi).",
   "🎒 You'll start in your last years of school (%@ done).": "🎒 Tu commenceras dans tes dernières années d’école (%@ déjà derrière toi).",
-  "🎓 You'll start having just finished %@ — time to choose your next step.": "🎓 Tu commenceras juste après %@ — c’est le moment de choisir ta prochaine étape.",
+  "🎓 You'll start having just finished %@ — time to choose your next step.": "🎓 Tu commenceras juste après tes études secondaires (%@) — c’est le moment de choisir ta prochaine étape.",
   "Start here": "Commencer ici",
   "Close": "Fermer",
   "One turn = one year": "Un tour = une année",
-  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Ton personnage vieillit d’un an à chaque tour. Choisir quelque chose — une activité, une formation, un poste — est la façon de passer cette année, et l’année s’écoule dès que tu choisis. Rien à faire cette année ? Appuie sur le bouton bleu Passer en haut.",
+  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Ton personnage vieillit d’un an à chaque tour. C’est en choisissant quelque chose — une activité, une formation, un poste — que tu occupes cette année, et l’année s’écoule dès que tu choisis. Rien ne te tente cette année ? Appuie sur le bouton bleu Passer en haut.",
   "Build your life from the buttons": "Construis ta vie avec les boutons",
-  "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": "Les boutons en bas — Éducation, Activités, Emplois et d’autres — sont ce à quoi tu peux consacrer une année. Chaque choix façonne qui tu deviens.",
+  "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": "Les boutons en bas — Éducation, Activités, Emplois et d’autres — sont ce à quoi tu peux consacrer une année. Chaque choix façonne la personne que tu deviens.",
   "Watch yourself grow": "Regarde-toi progresser",
   "The middle of the screen tracks the skills, titles, and money you pile up over the years.": "Le milieu de l’écran suit les compétences, les titres et l’argent que tu accumules au fil des ans.",
   "Your goal": "Ton objectif",
@@ -150,8 +150,8 @@
    "other": " (%1$lld ans en %2$@ comptent double)"
   },
   "Your chance goes up with the skills below, your %lld years of work%@, and the %@ fame you already have — being known in a field makes the next project there easier.": {
-   "one": "Tes chances augmentent avec les compétences ci-dessous, ton expérience de %1$lld an de travail%2$@, et la renommée en %3$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine.",
-   "other": "Tes chances augmentent avec les compétences ci-dessous, ton expérience de %1$lld ans de travail%2$@, et la renommée en %3$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine."
+   "one": "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld an%2$@, et la renommée en %3$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine.",
+   "other": "Tes chances augmentent avec les compétences ci-dessous, ton expérience professionnelle de %1$lld ans%2$@, et la renommée en %3$@ que tu as déjà — se faire un nom dans un domaine facilite le prochain projet dans ce domaine."
   },
   "If it doesn't work out: you just miss the fame — you keep the skills.": "Si ça ne marche pas : tu rates seulement la renommée — tu gardes les compétences."
  }

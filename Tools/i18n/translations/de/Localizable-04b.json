@@ -3,8 +3,8 @@
  "strings": {
   "Total %@": "Gesamt %@",
   "%lld yrs": {
-   "one": "%lld J.",
-   "other": "%lld J."
+   "one": "%lld J.",
+   "other": "%lld J."
   },
   "Admission requirement:": "Zulassungsvoraussetzung:",
   "Admission requirement": "Zulassungsvoraussetzung",
@@ -21,7 +21,7 @@
   "%@ cares about: grades %@, skills %@, prizes and titles %@.": "%1$@ achtet auf: Noten %2$@, Fähigkeiten %3$@, Preise und Titel %4$@.",
   "%@ cares about: grades %@, skills %@.": "%1$@ achtet auf: Noten %2$@, Fähigkeiten %3$@.",
   "%@ doesn't help; %@ helps the most.": "%1$@ hilft nicht; %2$@ hilft am meisten.",
-  "You don't have school grades yet, so the game guesses them from your skills.": "Du hast noch keine Schulnoten, deshalb schätzt das Spiel sie aus deinen Fähigkeiten.",
+  "You don't have school grades yet, so the game guesses them from your skills.": "Du hast noch keine Schulnoten, deshalb schätzt das Spiel sie anhand deiner Fähigkeiten.",
   "Your grade comes from your %lld school years.": {
    "one": "Deine Note stammt aus deinem Schuljahr.",
    "other": "Deine Note stammt aus deinen %lld Schuljahren."
@@ -74,7 +74,7 @@
   "You can't get this job yet. First you need: %@.": "Du kannst diesen Job noch nicht bekommen. Du brauchst noch: %@.",
   "This career has a special door: you need the “%@” title first.": "Diese Karriere hat eine besondere Tür: Du brauchst zuerst den Titel „%@“.",
   "Until then your chance stays at %@.": "Bis dahin bleibt deine Chance bei %@.",
-  "Once you have it, it's the biggest help there is — %@.": "Sobald du ihn hast, ist er die größte Hilfe überhaupt – %@.",
+  "Once you have it, it's the biggest help there is — %@.": "Sobald du den Titel hast, ist er die größte Hilfe überhaupt – %@.",
   "• School: %lld school levels below what this job wants (your work experience makes up %@) — %@": {
    "one": "• Schule: %1$lld Schulstufe unter dem, was dieser Job verlangt (deine Berufserfahrung gleicht %2$@ aus) – %3$@",
    "other": "• Schule: %1$lld Schulstufen unter dem, was dieser Job verlangt (deine Berufserfahrung gleicht %2$@ aus) – %3$@"
@@ -97,7 +97,7 @@
   "• Your “%@” title: %@": "• Dein Titel „%1$@“: %2$@",
   "• A course for this field: %@": "• Ein Kurs für diesen Bereich: %@",
   "• Your salary ask: asking for less helps a little (%@)": "• Dein Gehaltswunsch: Weniger zu verlangen hilft ein wenig (%@)",
-  "• Your salary ask: asking for a lot more %@": "• Dein Gehaltswunsch: Viel mehr zu verlangen – %@",
+  "• Your salary ask: asking for a lot more %@": "• Dein Gehaltswunsch: Viel mehr zu verlangen %@",
   "• Your salary ask: fair ✓": "• Dein Gehaltswunsch: fair ✓",
   "• Lots of people want this job: %@": "• Viele Leute wollen diesen Job: %@",
   "• Employers need more people in this job: %@": "• Arbeitgeber suchen mehr Leute für diesen Job: %@",
@@ -130,7 +130,7 @@
   "Breakthrough:": "Durchbruch:",
   "%@ title": "Titel „%@“",
   "You have it! This is the biggest help there is for getting signed.": "Du hast ihn! Das ist die größte Hilfe überhaupt, um unter Vertrag genommen zu werden.",
-  "Without it, teams won't sign you (your chance stays at %@).": "Ohne ihn nehmen dich Teams nicht unter Vertrag (deine Chance bleibt bei %@).",
+  "Without it, teams won't sign you (your chance stays at %@).": "Ohne den Titel nehmen dich Teams nicht unter Vertrag (deine Chance bleibt bei %@).",
   "This job wants %lld years of experience.": {
    "one": "Dieser Job verlangt ein Jahr Erfahrung.",
    "other": "Dieser Job verlangt %lld Jahre Erfahrung."
@@ -152,7 +152,7 @@
   "Salary:": "Gehalt:",
   "💵 Salary": "💵 Gehalt",
   "This job pays a set amount — you can't ask for more.": "Dieser Job zahlt einen festen Betrag – du kannst nicht mehr verlangen.",
-  "It starts a bit lower for beginners and a bit higher if you have years of experience in this work.": "Er startet für Anfänger etwas niedriger und etwas höher, wenn du Jahre an Erfahrung in dieser Arbeit hast.",
+  "It starts a bit lower for beginners and a bit higher if you have years of experience in this work.": "Er startet für Anfänger etwas niedriger und etwas höher, wenn du jahrelange Erfahrung in dieser Arbeit hast.",
   "✓ You can apply for this job.": "✓ Du kannst dich für diesen Job bewerben.",
   "🏢 Employer": "🏢 Arbeitgeber"
  }

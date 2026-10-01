@@ -101,7 +101,7 @@
   "Advisor": "Consulente",
   "Laid Off": "Licenziamento",
   "OK": "OK",
-  "Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.": "Il tuo datore di lavoro ha dovuto tagliare dei posti e il tuo è stato uno di quelli. Hai comunque ricevuto una parte dello stipendio di quest’anno. Apri Lavori per trovarne uno nuovo.",
+  "Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.": "Il tuo datore di lavoro ha dovuto tagliare dei posti di lavoro e il tuo è stato uno di quelli. Hai comunque ricevuto una parte dello stipendio di quest’anno. Apri Lavori per trovarne uno nuovo.",
   "Business Closed 📉": "Impresa chiusa 📉",
   "Congratulations! 🎉": "Congratulazioni! 🎉",
   "Thanks!": "Grazie!",
@@ -124,7 +124,7 @@
   "Start here": "Inizia da qui",
   "Close": "Chiudi",
   "One turn = one year": "Un turno = un anno",
-  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Ogni turno il tuo personaggio invecchia di un anno. Scegliere qualcosa — un’attività, un corso, un lavoro — è il modo di spendere quell’anno, e l’anno passa appena scegli. Non c’è niente che vuoi fare quest’anno? Tocca il pulsante blu Salta in alto.",
+  "Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top.": "Ogni turno il tuo personaggio invecchia di un anno. Scegliere qualcosa — un’attività, un corso, un lavoro — è il modo di spendere quell’anno, e l’anno passa appena scegli. Non c’è niente che tu voglia fare quest’anno? Tocca il pulsante blu Salta in alto.",
   "Build your life from the buttons": "Costruisci la tua vita con i pulsanti",
   "The buttons along the bottom — Education, Activities, Jobs and more — are what a year can be spent on. Every choice shapes who you become.": "I pulsanti in basso — Istruzione, Attività, Lavori e altri — sono ciò a cui puoi dedicare un anno. Ogni scelta plasma la persona che diventi.",
   "Watch yourself grow": "Guardati crescere",
@@ -153,6 +153,6 @@
    "one": "La tua probabilità sale con le competenze qui sotto, il tuo anno di lavoro%2$@ e la fama nel settore %3$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore.",
    "other": "La tua probabilità sale con le competenze qui sotto, i tuoi %1$lld anni di lavoro%2$@ e la fama nel settore %3$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore."
   },
-  "If it doesn't work out: you just miss the fame — you keep the skills.": "Se non va a buon fine: perdi solo la fama — le competenze le tieni."
+  "If it doesn't work out: you just miss the fame — you keep the skills.": "Se non va a buon fine: ti sfugge solo la fama — le competenze le tieni."
  }
 }
