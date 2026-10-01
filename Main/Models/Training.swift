@@ -82,90 +82,90 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// you attend, with the qualification it earns in parentheses.
     var friendlyName: String {
         switch self {
-        case .cna: return "Nursing Assistant Course (CNA)"
-        case .dentalAssistant: return "Dental Assisting Course (Dental Assistant)"
-        case .pharmacyTechnician: return "Pharmacy Technician Course (CPhT)"
-        case .flightAttendantCert: return "Cabin Crew Training (Flight Attendant Certificate)"
-        case .teachingCertificate: return "Teacher Training (Teaching Certificate)"
-        case .cosmetology: return "Cosmetology School (Cosmetology License)"
-        case .emt: return "EMT Course (Emergency Medical Technician)"
-        case .cpa: return "Accounting Program (CPA License)"
-        case .boardCertified: return "Medical Residency (Board Certification)"
-        case .drivers: return "Driving School (Class D Driver's License)"
-        case .cdl: return "Truck Driving School (Commercial Driver's License)"
-        case .pilot: return "Flight School (Private Pilot License)"
-        case .commercialPilot: return "Flight School (Commercial Pilot License)"
-        case .lpn: return "Practical Nursing Program (LPN License)"
-        case .nurse: return "Nursing Board Exam (RN License)"
-        case .np: return "Nurse Practitioner Program (NP License)"
-        case .medicalLicense: return "Medical Board Exam (Medical License)"
-        case .dentalLicense: return "Dental Board Exam (Dental License)"
-        case .pharmacistLicense: return "Pharmacy Board Exam (Pharmacist License)"
-        case .veterinaryLicense: return "Veterinary Board Exam (Veterinary License)"
-        case .electrician: return "Journeyman Electrician Exam (Electrician License)"
-        case .plumber: return "Journeyman Plumber Exam (Plumber License)"
-        case .bar: return "Law Bar Exam (Bar Admission)"
-        case .professionalEngineer: return "PE Licensure (Professional Engineer)"
-        case .architect: return "Architecture Licensure (Architect License)"
-        case .pesticideApplicator: return "Applicator Course (Pesticide License)"
-        case .securityGuard: return "Guard Training (Security Guard License)"
-        case .policeAcademy: return "Police Academy (Sworn Officer)"
-        case .airframePowerplant: return "Aviation Maintenance School (A&P Certificate)"
-        case .psychologyLicense: return "Supervised Practice (Psychologist License)"
-        case .physicalTherapyLicense: return "Board Exam (Physical Therapy License)"
-        case .epaRefrigerant: return "Refrigerant Handling Exam (EPA 608)"
-        case .masterElectrician: return "Master Electrician Program (Master Electrician License)"
-        case .masterPlumber: return "Master Plumber Program (Master Plumber License)"
-        case .airlineTransportPilot: return "Airline Pilot Training (ATP Certificate)"
-        case .codingBootcamp: return "Coding Bootcamp (Full-Stack Certificate)"
-        case .gameDevProgram: return "Game Dev Program (Game Development Certificate)"
-        case .productDesign: return "Design Program (Product Design Certificate)"
-        case .musicProduction: return "Music Production Course (Production Certificate)"
+        case .cna: return L("Nursing Assistant Course (CNA)")
+        case .dentalAssistant: return L("Dental Assisting Course (Dental Assistant)")
+        case .pharmacyTechnician: return L("Pharmacy Technician Course (CPhT)")
+        case .flightAttendantCert: return L("Cabin Crew Training (Flight Attendant Certificate)")
+        case .teachingCertificate: return L("Teacher Training (Teaching Certificate)")
+        case .cosmetology: return L("Cosmetology School (Cosmetology License)")
+        case .emt: return L("EMT Course (Emergency Medical Technician)")
+        case .cpa: return L("Accounting Program (CPA License)")
+        case .boardCertified: return L("Medical Residency (Board Certification)")
+        case .drivers: return L("Driving School (Class D Driver's License)")
+        case .cdl: return L("Truck Driving School (Commercial Driver's License)")
+        case .pilot: return L("Flight School (Private Pilot License)")
+        case .commercialPilot: return L("Flight School (Commercial Pilot License)")
+        case .lpn: return L("Practical Nursing Program (LPN License)")
+        case .nurse: return L("Nursing Board Exam (RN License)")
+        case .np: return L("Nurse Practitioner Program (NP License)")
+        case .medicalLicense: return L("Medical Board Exam (Medical License)")
+        case .dentalLicense: return L("Dental Board Exam (Dental License)")
+        case .pharmacistLicense: return L("Pharmacy Board Exam (Pharmacist License)")
+        case .veterinaryLicense: return L("Veterinary Board Exam (Veterinary License)")
+        case .electrician: return L("Journeyman Electrician Exam (Electrician License)")
+        case .plumber: return L("Journeyman Plumber Exam (Plumber License)")
+        case .bar: return L("Law Bar Exam (Bar Admission)")
+        case .professionalEngineer: return L("PE Licensure (Professional Engineer)")
+        case .architect: return L("Architecture Licensure (Architect License)")
+        case .pesticideApplicator: return L("Applicator Course (Pesticide License)")
+        case .securityGuard: return L("Guard Training (Security Guard License)")
+        case .policeAcademy: return L("Police Academy (Sworn Officer)")
+        case .airframePowerplant: return L("Aviation Maintenance School (A&P Certificate)")
+        case .psychologyLicense: return L("Supervised Practice (Psychologist License)")
+        case .physicalTherapyLicense: return L("Board Exam (Physical Therapy License)")
+        case .epaRefrigerant: return L("Refrigerant Handling Exam (EPA 608)")
+        case .masterElectrician: return L("Master Electrician Program (Master Electrician License)")
+        case .masterPlumber: return L("Master Plumber Program (Master Plumber License)")
+        case .airlineTransportPilot: return L("Airline Pilot Training (ATP Certificate)")
+        case .codingBootcamp: return L("Coding Bootcamp (Full-Stack Certificate)")
+        case .gameDevProgram: return L("Game Dev Program (Game Development Certificate)")
+        case .productDesign: return L("Design Program (Product Design Certificate)")
+        case .musicProduction: return L("Music Production Course (Production Certificate)")
         }
     }
 
     /// Plain-language explanation of the training, for the in-game info popover.
     var description: String {
         switch self {
-        case .cna: return "Certified Nursing Assistant. The first step into nursing — basic patient care under a nurse’s supervision."
-        case .dentalAssistant: return "Trained to help dentists during procedures, take X-rays, and prepare patients."
-        case .pharmacyTechnician: return "Certified to prepare and dispense prescriptions under a pharmacist\u{2019}s supervision \u{2014} the way into a pharmacy without the doctorate."
-        case .flightAttendantCert: return "FAA-issued certificate proving you can keep passengers safe on commercial flights."
-        case .teachingCertificate: return "State license to teach in a public school. Earned after a teacher-training program and supervised classroom hours."
-        case .cosmetology: return "State license to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam."
-        case .emt: return "Emergency Medical Technician — qualifies you to provide pre-hospital emergency care on an ambulance crew. The first step toward becoming a paramedic."
-        case .cpa: return "Certified Public Accountant — the licence required to sign off on tax filings, audit financial statements, and lead corporate finance roles."
-        case .boardCertified: return "Specialty board certification earned after residency — the standard credential for attending physicians and medical leadership. Verifies mastery of a medical specialty."
-        case .drivers: return "Standard Class D car license. Needed for most jobs that involve any driving."
-        case .cdl: return "Commercial Driver’s License — required to drive trucks, buses, and large delivery vehicles for paid work."
-        case .pilot: return "Private pilot license — lets you fly small planes for fun, but not for paid work."
-        case .commercialPilot: return "Lets you fly planes for paid work — required to be hired by airlines and freight carriers."
-        case .lpn: return "Licensed Practical Nurse — a state license to give basic nursing care under an RN or physician. Earned through a roughly one-year practical-nursing program and the NCLEX-PN exam. The common step up from a nursing aide toward becoming an RN."
-        case .nurse: return "Government license to work as a nurse. Earned after passing a national exam following a nursing degree."
-        case .np: return "Nurse Practitioner — an advanced-practice license letting an RN diagnose, treat, and prescribe with real autonomy. Earned after a Master of Science in Nursing on top of RN licensure and bedside experience."
-        case .medicalLicense: return "State license to practice medicine as a physician. Earned after medical school by passing the national licensing exam (USMLE) — the credential every doctor must hold to treat patients."
-        case .dentalLicense: return "State license to practice dentistry. Earned after dental school (DDS/DMD) and the national and state board exams."
-        case .pharmacistLicense: return "State license to practice as a pharmacist. Earned after a Doctor of Pharmacy (PharmD) and the national board exam (NAPLEX)."
-        case .veterinaryLicense: return "State license to practice veterinary medicine. Earned after a Doctor of Veterinary Medicine (DVM) and the national board exam (NAVLE)."
-        case .electrician: return "Government license to wire buildings safely. Earned after an apprenticeship and an exam."
-        case .plumber: return "Government license to install and repair pipes, drains, and water systems. Earned after an apprenticeship and a journeyman exam."
-        case .bar: return "Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practice as a lawyer in court."
-        case .professionalEngineer: return "Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles."
-        case .architect: return "State license required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB)."
-        case .pesticideApplicator: return "Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs."
-        case .securityGuard: return "State license required to work as an unarmed security guard. Covers law, ethics, and basic emergency response."
-        case .policeAcademy: return "Months of recruit training in law, firearms, driving, and defensive tactics. No one is sworn in as an officer without it."
-        case .airframePowerplant: return "FAA Airframe & Powerplant certificate. Only a certificated mechanic may sign an aircraft back into service."
-        case .psychologyLicense: return "State license to practise psychology, earned after the doctorate and supervised clinical hours. The title itself is protected."
-        case .physicalTherapyLicense: return "State license to practise physical therapy, sat after the doctoral program. Required to treat patients unsupervised."
-        case .epaRefrigerant: return "EPA Section 608 certification. Legally required to buy or handle the refrigerants every air-conditioning job runs on."
-        case .masterElectrician: return "The senior electrician license. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician."
-        case .masterPlumber: return "The senior plumbing license. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber."
-        case .airlineTransportPilot: return "The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner."
-        case .codingBootcamp: return "An intensive full-stack software program. No licence — but the skills and portfolio it builds give you a real edge landing tech and engineering roles, and launching a software venture of your own."
-        case .gameDevProgram: return "A studio-style program in game design and engine programming. Builds the craft to break into a gaming studio — or to ship your own indie title."
-        case .productDesign: return "A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by."
-        case .musicProduction: return "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed."
+        case .cna: return L("Certified Nursing Assistant. The first step into nursing — basic patient care under a nurse’s supervision.")
+        case .dentalAssistant: return L("Trained to help dentists during procedures, take X-rays, and prepare patients.")
+        case .pharmacyTechnician: return L("Certified to prepare and dispense prescriptions under a pharmacist\u{2019}s supervision \u{2014} the way into a pharmacy without the doctorate.")
+        case .flightAttendantCert: return L("FAA-issued certificate proving you can keep passengers safe on commercial flights.")
+        case .teachingCertificate: return L("State license to teach in a public school. Earned after a teacher-training program and supervised classroom hours.")
+        case .cosmetology: return L("State license to cut hair and provide skin and nail services in a salon. Earned after attending a cosmetology school and passing a state exam.")
+        case .emt: return L("Emergency Medical Technician — qualifies you to provide pre-hospital emergency care on an ambulance crew. The first step toward becoming a paramedic.")
+        case .cpa: return L("Certified Public Accountant — the licence required to sign off on tax filings, audit financial statements, and lead corporate finance roles.")
+        case .boardCertified: return L("Specialty board certification earned after residency — the standard credential for attending physicians and medical leadership. Verifies mastery of a medical specialty.")
+        case .drivers: return L("Standard Class D car license. Needed for most jobs that involve any driving.")
+        case .cdl: return L("Commercial Driver’s License — required to drive trucks, buses, and large delivery vehicles for paid work.")
+        case .pilot: return L("Private pilot license — lets you fly small planes for fun, but not for paid work.")
+        case .commercialPilot: return L("Lets you fly planes for paid work — required to be hired by airlines and freight carriers.")
+        case .lpn: return L("Licensed Practical Nurse — a state license to give basic nursing care under an RN or physician. Earned through a roughly one-year practical-nursing program and the NCLEX-PN exam. The common step up from a nursing aide toward becoming an RN.")
+        case .nurse: return L("Government license to work as a nurse. Earned after passing a national exam following a nursing degree.")
+        case .np: return L("Nurse Practitioner — an advanced-practice license letting an RN diagnose, treat, and prescribe with real autonomy. Earned after a Master of Science in Nursing on top of RN licensure and bedside experience.")
+        case .medicalLicense: return L("State license to practice medicine as a physician. Earned after medical school by passing the national licensing exam (USMLE) — the credential every doctor must hold to treat patients.")
+        case .dentalLicense: return L("State license to practice dentistry. Earned after dental school (DDS/DMD) and the national and state board exams.")
+        case .pharmacistLicense: return L("State license to practice as a pharmacist. Earned after a Doctor of Pharmacy (PharmD) and the national board exam (NAPLEX).")
+        case .veterinaryLicense: return L("State license to practice veterinary medicine. Earned after a Doctor of Veterinary Medicine (DVM) and the national board exam (NAVLE).")
+        case .electrician: return L("Government license to wire buildings safely. Earned after an apprenticeship and an exam.")
+        case .plumber: return L("Government license to install and repair pipes, drains, and water systems. Earned after an apprenticeship and a journeyman exam.")
+        case .bar: return L("Bar admission — the state-by-state exam and ethics review you must pass after law school before you can practice as a lawyer in court.")
+        case .professionalEngineer: return L("Professional Engineer (PE) — state licence required to sign off on engineering plans for buildings, bridges, and public works. Needed for senior civil, mechanical, and electrical engineering roles.")
+        case .architect: return L("State license required to call yourself an Architect and stamp building plans. Earned after a degree, multi-year internship, and a national exam (NCARB).")
+        case .pesticideApplicator: return L("Government permit to apply restricted-use pesticides on farms or commercial landscapes. Required for many farming, landscaping, and pest-control jobs.")
+        case .securityGuard: return L("State license required to work as an unarmed security guard. Covers law, ethics, and basic emergency response.")
+        case .policeAcademy: return L("Months of recruit training in law, firearms, driving, and defensive tactics. No one is sworn in as an officer without it.")
+        case .airframePowerplant: return L("FAA Airframe & Powerplant certificate. Only a certificated mechanic may sign an aircraft back into service.")
+        case .psychologyLicense: return L("State license to practise psychology, earned after the doctorate and supervised clinical hours. The title itself is protected.")
+        case .physicalTherapyLicense: return L("State license to practise physical therapy, sat after the doctoral program. Required to treat patients unsupervised.")
+        case .epaRefrigerant: return L("EPA Section 608 certification. Legally required to buy or handle the refrigerants every air-conditioning job runs on.")
+        case .masterElectrician: return L("The senior electrician license. Earned after years as a licensed journeyman, it lets you pull permits, run jobs, and supervise apprentices — required to become a Master Electrician.")
+        case .masterPlumber: return L("The senior plumbing license. Earned after journeyman experience, it lets you design systems, pull permits, and lead a crew — required to become a Master Plumber.")
+        case .airlineTransportPilot: return L("The highest-level pilot certificate. Required to serve as captain (pilot-in-command) of a commercial airliner.")
+        case .codingBootcamp: return L("An intensive full-stack software program. No licence — but the skills and portfolio it builds give you a real edge landing tech and engineering roles, and launching a software venture of your own.")
+        case .gameDevProgram: return L("A studio-style program in game design and engine programming. Builds the craft to break into a gaming studio — or to ship your own indie title.")
+        case .productDesign: return L("A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by.")
+        case .musicProduction: return L("Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed.")
         }
     }
 
@@ -496,15 +496,15 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// and the credential is earned; there's no exam roll.
     func requirements(_ player: Player) -> TrainingRequirementResult {
         if player.age < minAge(in: player.country) {
-            return .blocked(reason: "Requires age \(minAge(in: player.country))+")
+            return .blocked(reason: L("Requires age \(minAge(in: player.country))+"))
         }
         for prereq in prerequisites where !player.hardSkills.trainings.contains(prereq) {
-            return .blocked(reason: "Requires \(prereq.friendlyName) first")
+            return .blocked(reason: L("Requires \(prereq.friendlyName) first"))
         }
         let highestEQF = player.degrees.map(\.eqf).max() ?? 0
         if highestEQF < minEQF {
             let label = Education.Requirements(minEQF: minEQF).educationLabel(in: player.country)
-            return .blocked(reason: "Requires \(label)")
+            return .blocked(reason: L("Requires \(label)"))
         }
         if minYearsExperience > 0 {
             // Credited years, not raw category years — the same rule as every
@@ -512,8 +512,10 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
             // founder's entrepreneurship years count toward a Business credential.
             let years = field.map { player.industryExperience(for: $0) } ?? player.totalExperienceYears
             if years < minYearsExperience {
-                let fieldName = field?.rawValue ?? "the workforce"
-                return .blocked(reason: "Requires \(minYearsExperience)+ yr(s) in \(fieldName)")
+                if let field {
+                    return .blocked(reason: L("Requires \(minYearsExperience)+ yrs in \(field.displayName)"))
+                }
+                return .blocked(reason: L("Requires \(minYearsExperience)+ yrs in the workforce"))
             }
         }
         return .ok

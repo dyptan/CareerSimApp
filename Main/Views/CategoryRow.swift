@@ -7,7 +7,7 @@ struct CategoryRow: View, Hashable {
             Text(JobCategory.icon(for: category))
                 .font(.system(size: 22))
                 .frame(width: 28)
-            Text(category.rawValue)
+            Text(category.displayName)
         }
         .padding(.vertical, 6)
         .tag(Optional(category))

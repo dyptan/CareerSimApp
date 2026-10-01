@@ -32,7 +32,32 @@ struct InstitutionTiersView: View {
             }
             .padding()
         }
-        .navigationTitle(player.isSimplified ? "Apply" : "Compare schools")
+        .navigationTitle(player.isSimplified ? Self.applyTitle : L("Compare schools"))
+    }
+
+    /// “Apply” — the verb, for a school application: the screen title in Simplified mode and the
+    /// button on each school's card.
+    private static var applyTitle: String {
+        String(localized: "Apply", comment: "Verb. Screen title and button for applying to a school or university; applying uses up the year.")
+    }
+
+    /// Tuition per year, tuition in total (red when savings fall short) and the length of the degree.
+    @ViewBuilder
+    private func costLabels(for education: Education, canAfford: Bool) -> some View {
+        if !player.isSimplified {
+            Label("\(player.money(education.annualTuition(in: player.country)))/yr", systemImage: "banknote")
+                .font(.caption)
+                .foregroundStyle(canAfford ? Color.secondary : Color.red)
+                .lineLimit(1)
+            Label("Total \(player.money(education.totalTuition(in: player.country)))", systemImage: "sum")
+                .font(.caption)
+                .foregroundStyle(canAfford ? Color.secondary : Color.red)
+                .lineLimit(1)
+        }
+        Label("\(education.yearsToComplete) yrs", systemImage: "clock")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
     }
 
     @ViewBuilder
@@ -48,14 +73,16 @@ struct InstitutionTiersView: View {
         VStack(alignment: .leading, spacing: 10) {
             if player.isSimplified {
                 HStack(spacing: 6) {
-                    Text("\(education.pictogram) \(education.degreeName(in: player.country))")
+                    Text(verbatim: "\(education.pictogram) \(education.degreeName(in: player.country))")
                         .font(.headline)
+                        .fixedSize(horizontal: false, vertical: true)
                     Spacer()
                 }
             } else {
                 HStack(spacing: 6) {
-                    Text("\(education.tier.pictogram) \(player.country.tierName(education.tier))")
+                    Text(verbatim: "\(education.tier.pictogram) \(player.country.tierName(education.tier))")
                         .font(.headline)
+                        .fixedSize(horizontal: false, vertical: true)
                     InfoHint(
                         title: "\(education.tier.pictogram) \(player.country.tierName(education.tier))",
                         message: education.tier.description
@@ -65,20 +92,13 @@ struct InstitutionTiersView: View {
                 }
             }
 
-            HStack(spacing: 10) {
-                // Simplified mode is kid-friendly — education is free, so its
-                // costs are hidden and only the duration is shown.
-                if !player.isSimplified {
-                    Label("\(player.money(education.annualTuition(in: player.country)))/yr", systemImage: "banknote")
-                        .font(.caption)
-                        .foregroundStyle(canAfford ? Color.secondary : Color.red)
-                    Label("Total \(player.money(education.totalTuition(in: player.country)))", systemImage: "sum")
-                        .font(.caption)
-                        .foregroundStyle(canAfford ? Color.secondary : Color.red)
-                }
-                Label("\(education.yearsToComplete) yrs", systemImage: "clock")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Simplified mode is kid-friendly — education is free, so its
+            // costs are hidden and only the duration is shown. The three facts
+            // stack when a longer translation or a narrow screen leaves no room
+            // for them side by side.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) { costLabels(for: education, canAfford: canAfford) }
+                VStack(alignment: .leading, spacing: 4) { costLabels(for: education, canAfford: canAfford) }
             }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -86,8 +106,8 @@ struct InstitutionTiersView: View {
                     Text("Admission requirement:")
                         .font(.subheadline.bold())
                     InfoHint(
-                        title: "Admission requirement",
-                        message: "You need to have finished this school level before you can apply. Everything else just changes your chance of getting in."
+                        title: L("Admission requirement"),
+                        message: L("You need to have finished this school level before you can apply. Everything else just changes your chance of getting in.")
                     )
                 }
                 .padding(.top, 4)
@@ -105,32 +125,38 @@ struct InstitutionTiersView: View {
             if education.gradeWeight > 0 {
                 let gpa = player.highSchoolGPA
                 HStack(spacing: 6) {
-                    Text("📝 \(player.country.schooling.gradeName): \(player.country.gradeLabel(gpa))")
+                    Text(verbatim: "📝 \(player.country.schooling.gradeName): \(player.country.gradeLabel(gpa))")
                         .font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
                     InfoHint(
                         title: "📝 \(player.country.schooling.gradeName)",
                         message: gradesHint(for: education, gpa: gpa)
                     )
-                    Spacer()
-                    Text("\(Int((education.gradeWeight * 100).rounded()))% of the decision")
+                    Spacer(minLength: 4)
+                    Text(L("\(Fmt.percent(education.gradeWeight)) of the decision"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
             // Trophies and accolades, where the school counts them.
             if education.accoladeWeight > 0 {
                 HStack(spacing: 6) {
-                    Text("🏆 Your accolades: \(accoladeSummary)")
+                    Text(L("🏆 Your accolades: \(accoladeSummary)"))
                         .font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
                     InfoHint(
-                        title: "🏆 Trophies & accolades",
+                        title: L("🏆 Trophies & accolades"),
                         message: accoladesHint(for: education)
                     )
-                    Spacer()
-                    Text("\(Int((education.accoladeWeight * 100).rounded()))% of the decision")
+                    Spacer(minLength: 4)
+                    Text(L("\(Fmt.percent(education.accoladeWeight)) of the decision"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -144,13 +170,15 @@ struct InstitutionTiersView: View {
                         Text("What this school looks for:")
                             .font(.subheadline.bold())
                         InfoHint(
-                            title: "Soft-skill match",
+                            title: L("Soft-skill match"),
                             message: admissionSoftSkillsHint(for: overlap)
                         )
-                        Spacer()
-                        Text("\(Int((education.softSkillFit(player: player) * 100).rounded())) % match")
+                        Spacer(minLength: 4)
+                        Text(L("\(Fmt.percent(education.softSkillFit(player: player))) match"))
                             .font(.caption.bold().monospacedDigit())
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.trailing)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
                     ForEach(overlap) { axis in
@@ -172,11 +200,11 @@ struct InstitutionTiersView: View {
             HStack(spacing: 6) {
                 Text("Admission chance:")
                 InfoHint(
-                    title: "How admission works",
-                    message: "You can apply as soon as you've finished the school level above. After that, your chance goes up with:\n\n• the skills this school looks for\n• your \(player.country.schooling.gradeName) (for a first degree)\n• your prizes and titles (at top schools)\n\nPicky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not."
+                    title: L("How admission works"),
+                    message: admissionHint
                 )
                 Spacer()
-                Text(eqfMet ? "\(Int((admission * 100).rounded())) %" : "—")
+                Text(verbatim: eqfMet ? Fmt.percent(admission) : "—")
                     .font(.headline)
                     .foregroundStyle(Color.forOdds(admission))
             }
@@ -203,53 +231,76 @@ struct InstitutionTiersView: View {
     /// skill against what the player brings, and what a gap actually costs —
     /// odds, never entry.
     private func gradesHint(for education: Education, gpa: Double) -> String {
-        let share = Int((education.gradeWeight * 100).rounded())
-        let record = player.highSchoolGrades.isEmpty
-            ? "You don't have school grades yet, so the game guesses them from your skills."
-            : "Your grade comes from your \(player.highSchoolGrades.count) school year\(player.highSchoolGrades.count == 1 ? "" : "s")."
-        return """
-        \(schoolName(education)) cares about: grades \(share)%, skills \(Int((education.softSkillWeight * 100).rounded()))%\(education.accoladeWeight > 0 ? ", prizes and titles \(Int((education.accoladeWeight * 100).rounded()))%" : ""). \(player.country.gradeLabel(GameConstants.gradeFloor)) doesn't help; \(player.country.gradeLabel(4.0)) helps the most.
-
-        \(record) Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is \(player.country.gradeLabel(GameConstants.gradeFloor + GameConstants.gradeSkillSpan)).
-        """
+        let grades = Fmt.percent(education.gradeWeight)
+        let skills = Fmt.percent(education.softSkillWeight)
+        let prizes = Fmt.percent(education.accoladeWeight)
+        // One whole sentence per case: who is judging, and on what.
+        let weights: String
+        if player.isSimplified {
+            weights = L("The school cares about: grades \(grades), skills \(skills).")
+        } else if education.accoladeWeight > 0 {
+            weights = L("\(player.country.tierName(education.tier)) cares about: grades \(grades), skills \(skills), prizes and titles \(prizes).")
+        } else {
+            weights = L("\(player.country.tierName(education.tier)) cares about: grades \(grades), skills \(skills).")
+        }
+        let range = L("\(player.country.gradeLabel(GameConstants.gradeFloor)) doesn't help; \(player.country.gradeLabel(4.0)) helps the most.")
+        let count = player.highSchoolGrades.count
+        let record = count == 0
+            ? L("You don't have school grades yet, so the game guesses them from your skills.")
+            : L("Your grade comes from your \(count) school years.")
+        let ceiling = L("Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is \(player.country.gradeLabel(GameConstants.gradeFloor + GameConstants.gradeSkillSpan)).")
+        return [[weights, range].joined(separator: " "), [record, ceiling].joined(separator: " ")]
+            .joined(separator: "\n\n")
     }
 
     /// "3 · 45% of full marks", or "None yet".
     private var accoladeSummary: String {
         let count = player.fameAwards.reduce(0) { $0 + $1.count }
-        guard count > 0 else { return "None yet" }
-        return "\(count) · \(Int((player.accoladeFit * 100).rounded()))% of full marks"
+        guard count > 0 else { return L("None yet") }
+        return L("\(count) · \(Fmt.percent(player.accoladeFit)) of full marks")
     }
 
     private func accoladesHint(for education: Education) -> String {
-        let share = Int((education.accoladeWeight * 100).rounded())
+        let share = Fmt.percent(education.accoladeWeight)
+        // `\(title)` is the award's English id until the awards have display names.
         let top = player.fameAwards
             .sorted { $0.totalWeight > $1.totalWeight }
             .prefix(5)
-            .map { "\($0.icon) \($0.title)\($0.count > 1 ? " ×\($0.count)" : "")" }
+            .map { $0.count > 1 ? "\($0.icon) \($0.title) ×\($0.count)" : "\($0.icon) \($0.title)" }
             .joined(separator: "\n")
-        return """
-        Prizes and titles are \(share)% of what \(schoolName(education).lowercased()) looks at. Bigger prizes count more — winning a national championship is worth lots of school ribbons. About one national title plus a few local wins gets you full marks.
-
-        Win them with Activities: every year you practise, you enter that activity's biggest contest.\(top.isEmpty ? "" : "\n\nYour best ones:\n\(top)")
-        """
+        var paragraphs = [
+            // Only shown where a school weighs accolades, which is never the single Simplified school.
+            L("Prizes and titles are \(share) of what \(player.country.tierName(education.tier)) looks at. Bigger prizes count more — winning a national championship is worth lots of school ribbons. About one national title plus a few local wins gets you full marks."),
+            L("Win them with Activities: every year you practise, you enter that activity's biggest contest."),
+        ]
+        if !top.isEmpty {
+            paragraphs.append([L("Your best ones:"), top].joined(separator: "\n"))
+        }
+        return paragraphs.joined(separator: "\n\n")
     }
 
     private func admissionSoftSkillsHint(for overlap: [Education.SoftSkillOverlap]) -> String {
         let list = overlap
-            .map { "\($0.pictogram) \($0.label): you have \($0.have), they'd like \($0.target)" }
+            .map { L("\($0.pictogram) \($0.label): you have \($0.have), they'd like \($0.target)") }
             .joined(separator: "\n")
-        return """
-        Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance.
-
-        \(list)
-        """
+        return [
+            L("Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance."),
+            list,
+        ].joined(separator: "\n\n")
     }
 
-    /// How the school reads in a message: the tier when tiers are shown, the
-    /// degree itself in simplified mode, where there is only one school.
-    private func schoolName(_ education: Education) -> String {
-        player.isSimplified ? "The school" : player.country.tierName(education.tier)
+    /// The "How admission works" hint: when you can apply, what moves the odds, what it costs.
+    private var admissionHint: String {
+        let bullets = [
+            L("• the skills this school looks for"),
+            L("• your \(player.country.schooling.gradeName) (for a first degree)"),
+            L("• your prizes and titles (at top schools)"),
+        ].joined(separator: "\n")
+        return [
+            L("You can apply as soon as you've finished the school level above. After that, your chance goes up with:"),
+            bullets,
+            L("Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not."),
+        ].joined(separator: "\n\n")
     }
 
     /// Sends the application, which is how this year gets spent — an admission
@@ -260,19 +311,22 @@ struct InstitutionTiersView: View {
         if player.applyToSchool(education) {
             // Enrolling means studying full-time — say so when it costs a job,
             // rather than letting the salary silently vanish from the header.
-            let leavingNote = player.currentOccupation.map {
-                " You've left your job as \($0.baseTitle) to study full-time."
-            } ?? ""
-            player.reportApplicationOutcome(
-                title: "🎓 You're in!",
-                message: "\(schoolName(education)) accepted you onto \(education.degreeName(in: player.country))." + leavingNote
-            )
+            let degree = education.degreeName(in: player.country)
+            var message = player.isSimplified
+                ? L("The school accepted you onto \(degree).")
+                : L("\(player.country.tierName(education.tier)) accepted you onto \(degree).")
+            if let job = player.currentOccupation {
+                message += " " + L("You've left your job as \(job.displayBaseTitle) to study full-time.")
+            }
+            player.reportApplicationOutcome(title: L("🎓 You're in!"), message: message)
             enroll(in: education)
         } else {
+            let chance = Fmt.percent(admission)
             player.reportApplicationOutcome(
-                title: "🎓 Not this year",
-                message: "\(schoolName(education)) said no this time — you had a "
-                    + "\(Int((admission * 100).rounded()))% chance. You can try again next year!"
+                title: L("🎓 Not this year"),
+                message: player.isSimplified
+                    ? L("The school said no this time — you had a \(chance) chance. You can try again next year!")
+                    : L("\(player.country.tierName(education.tier)) said no this time — you had a \(chance) chance. You can try again next year!")
             )
             onCommit()
         }
@@ -288,15 +342,15 @@ struct InstitutionTiersView: View {
     }
 
     private func applyLabel(eqfMet: Bool, education: Education) -> String {
-        if !eqfMet { return "Need \(education.requirements.educationLabel(in: player.country)) first" }
-        return "Apply"
+        if !eqfMet { return L("Need \(education.requirements.educationLabel(in: player.country)) first") }
+        return Self.applyTitle
     }
 
     @ViewBuilder
     private func prestigeBadge(_ prestige: Int) -> some View {
         HStack(spacing: 2) {
             ForEach(0..<3, id: \.self) { i in
-                Image(systemName: i < prestige ? "star.fill" : "star")
+                Image(systemName: i < prestige ? "star.fill" : "star")  // i18n:ignore SF Symbol
                     .imageScale(.small)
                     .foregroundStyle(i < prestige ? Color.yellow : Color.secondary.opacity(0.4))
             }
