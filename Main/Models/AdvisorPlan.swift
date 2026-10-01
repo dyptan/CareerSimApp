@@ -171,7 +171,7 @@ enum AdvisorVoice: Equatable {
                 Say only what the facts say: do not add hopes, guesses or advice of your own, and keep an age or a number next to what it belongs to.
                 Copy every number exactly as written — never turn a percentage into a fraction such as "1 in 10".
                 A hard goal is something to work toward, never a reason to give up.
-                """
+                """ // i18n:ignore model prompt, never shown to the player
         case .standard:
             return ""
         }
@@ -180,8 +180,8 @@ enum AdvisorVoice: Equatable {
     /// How long a free answer may run, in words a model can follow.
     var answerLength: String {
         switch self {
-        case .simple: return "three"
-        case .standard: return "four"
+        case .simple: return "three" // i18n:ignore model prompt
+        case .standard: return "four" // i18n:ignore model prompt
         }
     }
 }

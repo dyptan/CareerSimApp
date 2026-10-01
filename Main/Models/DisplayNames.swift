@@ -54,3 +54,4 @@ extension Competition.Discipline { var displayName: String { rawValue } }
 
 // MARK: - Requests from other sections
 // Add `extension Type { var displayName: String { … } } // wanted by <section>` here; the owner takes it over.
+extension Job { var displayBreakthroughFame: String? { breakthroughFame } } // wanted by advisor: the signature title (an award id such as "Junior Champion") that opens a career, in the player's language

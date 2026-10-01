@@ -113,14 +113,12 @@ enum AdvisorPathway {
             }
             .prefix(4)
             var cards = shown.map { lever -> AdvisorCard in
-                var detail = lever.mechanics
+                var lines = [lever.mechanics]
                 if lever.potential >= 0.005 {
-                    detail += "\nWorth about +\(AdvisorPathway.points(lever.potential)) chance a year."
+                    lines.append(L("Worth about +\(AdvisorPathway.points(lever.potential)) chance a year."))
                 }
                 let ways = lever.sources.filter { !$0.detail.isEmpty }.prefix(3)
-                if !ways.isEmpty {
-                    detail += "\n" + ways.map { "• \($0.title): \($0.detail)" }.joined(separator: "\n")
-                }
+                lines += ways.map { L("• \($0.title): \($0.detail)") }
                 var actions: [AdvisorAction] = []
                 for way in ways {
                     for action in way.actions where !actions.contains(where: { $0.id == action.id }) {
@@ -128,38 +126,42 @@ enum AdvisorPathway {
                     }
                 }
                 return AdvisorCard(icon: lever.icon, title: "\(lever.title) · \(lever.standing)",
-                                   detail: detail, actions: actions)
+                                   detail: lines.joined(separator: "\n"), actions: actions)
             }
             let rest = levers.filter { lever in !shown.contains { $0.id == lever.id } }
             if !rest.isEmpty {
                 let lines = rest.map { lever -> String in
                     switch lever.state {
-                    case .maxed: return "• \(lever.title): \(lever.standing) — already the most that counts."
-                    case .capped: return "• \(lever.title): \(lever.standing) — enough for now; more changes nothing."
-                    case .open: return "• \(lever.title): \(lever.standing) — worth under 1% a year."
+                    case .maxed: return L("• \(lever.title): \(lever.standing) — already the most that counts.")
+                    case .capped: return L("• \(lever.title): \(lever.standing) — enough for now; more changes nothing.")
+                    case .open: return L("• \(lever.title): \(lever.standing) — worth under \(Fmt.percent(0.01)) a year.")
                     }
                 }
-                cards.append(AdvisorCard(icon: "✔️", title: "The rest", detail: lines.joined(separator: "\n")))
+                cards.append(AdvisorCard(icon: "✔️",
+                                         title: String(localized: "The rest", comment: "Title of an advisor card that lists the remaining, minor levers on a hire chance in one line each"),
+                                         detail: lines.joined(separator: "\n")))
             }
             return cards
         }
 
-        /// Everything a model may quote about the pathway, one fact per line.
+        /// Everything a model may quote about the pathway, one fact per line. Written for the
+        /// language model, which is told which language to answer in, so the wrapper sentences
+        /// stay English; the lever names and figures inside are the player's language.
         var facts: [String] {
             // Short on purpose: a small model answers better from a few clear
             // lines than from every lever.
             var facts = [headline] + gates.map(\.detail)
             for (index, lever) in levers.prefix(3).enumerated() {
-                var line = "\(lever.title): \(lever.standing). \(lever.mechanics)"
+                var line = "\(lever.title): \(lever.standing). \(lever.mechanics)" // i18n:ignore model-facing fact
                 switch lever.state {
                 case .open where lever.potential >= 0.005:
-                    line += " Worth about +\(AdvisorPathway.points(lever.potential)) chance a year."
+                    line += " Worth about +\(AdvisorPathway.points(lever.potential)) chance a year." // i18n:ignore model-facing fact
                 case .capped:
-                    line += " Already enough — more of it changes nothing for now."
+                    line += " Already enough — more of it changes nothing for now." // i18n:ignore model-facing fact
                 default: break
                 }
                 facts.append(line)
-                if index == 0, let source = lever.sources.first { facts.append("Way to build it: \(source.detail)") }
+                if index == 0, let source = lever.sources.first { facts.append("Way to build it: \(source.detail)") } // i18n:ignore model-facing fact
             }
             return facts
         }
@@ -200,7 +202,7 @@ enum AdvisorPathway {
         let narrow = odds.best < 0.5
         return Pathway(
             title: guide.title, isNarrow: narrow, odds: odds,
-            headline: headline(guide.title, odds: odds, exec: job.isExecutive, narrow: narrow),
+            headline: headline(guide.displayTitle, odds: odds, exec: job.isExecutive, narrow: narrow),
             gates: gates(context, odds: odds, levers: levers),
             levers: levers, note: AdvisorRealWorld.note(for: job, player: player))
     }
@@ -280,19 +282,22 @@ enum AdvisorPathway {
         let have = c.job.relevantYears(for: c.player)
         let door = c.job.minimumQualifyingYears(simplified: false)
         let credited = c.job.category.creditedExperienceCategories
-        let scope = c.job.experienceLadder ?? c.job.category.rawValue
+        let ladder = c.job.displayExperienceLadder
         let venturesCount = c.job.experienceLadder == nil && !credited.isEmpty
-        var mechanics = door < wanted
-            ? "It expects \(wanted) years in \(scope). Under \(door) you're not considered at all; between \(door) and \(wanted) your chance is scaled down; past \(wanted) a veteran gets a small bonus."
-            : "It expects \(wanted) years in \(scope). Under that you're not considered at all; past it a veteran gets a small bonus."
-        if venturesCount { mechanics += " Years running your own business count too." }
+        var lines = [ladder.map { L("It expects \(wanted) years as \($0).") }
+                        ?? L("It expects \(wanted) years in \(c.job.category.displayName).")]
+        lines.append(door < wanted
+            ? L("Under \(door) you're not considered at all; between \(door) and \(wanted) your chance is scaled down; past \(wanted) a veteran gets a small bonus.")
+            : L("Under that you're not considered at all; past it a veteran gets a small bonus."))
+        if venturesCount { lines.append(L("Years running your own business count too.")) }
         let potential = max(0, c.qualified - (c.guide.closed ? 0 : (c.guide.odds ?? 0)))
         var sources = feederCards(c)
         if venturesCount {
             sources += ventureExperienceCards(c)
         }
-        return Lever(kind: .experience, icon: "🧭", title: "Years of experience",
-                     standing: "\(have) of \(wanted) years", mechanics: mechanics,
+        return Lever(kind: .experience, icon: "🧭",
+                     title: String(localized: "Years of experience", comment: "Name of a lever on the player's hire chance in the career advisor"),
+                     standing: L("\(String(have)) of \(wanted) years"), mechanics: lines.joinedAsSentences(),
                      potential: potential, state: have >= wanted ? .maxed : .open, sources: sources)
     }
 
@@ -303,22 +308,26 @@ enum AdvisorPathway {
         let potential = c.gain(room)
         let strong = c.job.softSkillsHelpfulScore(for: c.player)
         let gaps = AdvisorCoach.skillNeeds(for: c.job, player: c.player)
-        var mechanics = "Your skills count for up to +\(percent(GameConstants.hireSkillWeight)) of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants."
+        var lines = [L("Your skills count for up to +\(percent(GameConstants.hireSkillWeight)) of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.")]
         if !gaps.isEmpty {
-            mechanics += " Furthest behind: " + AdvisorCoach.list(gaps.prefix(4).map { "\($0.pictogram) \($0.label) \($0.have)/\($0.need)" }) + "."
+            let behind = Fmt.list(gaps.prefix(4).map { "\($0.pictogram) \($0.label) \($0.have)/\($0.need)" })
+            lines.append(L("Furthest behind: \(behind)."))
         }
         let plan = skillPlan(c)
         var sources: [AdvisorCard] = []
         if let plan, !plan.moves.isEmpty {
-            let years = plan.years > 12 ? "more than a decade" : "about \(plan.years) year\(plan.years == 1 ? "" : "s")"
+            let moves = Fmt.list(plan.moves.map(\.label))
             sources.append(AdvisorCard(
-                icon: "🗓️", title: "A plan for your skills",
-                detail: "One move a year — \(AdvisorCoach.list(plan.moves.map(\.label))) — closes the whole gap in \(years)."))
+                icon: "🗓️", title: String(localized: "A plan for your skills", comment: "Title of an advisor card: a year-by-year plan of activities to close the player's skill gap"),
+                detail: plan.years > 12
+                    ? L("One move a year — \(moves) — closes the whole gap in more than a decade.")
+                    : L("One move a year — \(moves) — closes the whole gap in about \(plan.years) years.")))
         }
         sources += skillMoves(c).prefix(3).map(\.card)
-        return Lever(kind: .skills, icon: "🧠", title: "Skills the job asks for",
-                     standing: "\(strong) of \(asked.count) strong enough (\(percent(c.b.skillFit)) match)",
-                     mechanics: mechanics, potential: potential,
+        return Lever(kind: .skills, icon: "🧠",
+                     title: String(localized: "Skills the job asks for", comment: "Name of a lever on the player's hire chance in the career advisor"),
+                     standing: L("\(strong) of \(asked.count) strong enough (\(percent(c.b.skillFit)) match)"),
+                     mechanics: lines.joinedAsSentences(), potential: potential,
                      state: c.state(room: room, gain: potential), sources: sources)
     }
 
@@ -328,11 +337,13 @@ enum AdvisorPathway {
         let points = c.player.famePoints(for: bucket)
         let room = c.room.fame
         let potential = c.gain(room)
-        var mechanics = "Each point of \(bucket.icon) \(bucket.rawValue) fame adds +\(percent(rate)) to your chance, up to +\(percent(cap))."
-        if c.top { mechanics += " For a top seat, a public name counts for more than for an ordinary job." }
-        return Lever(kind: .fame, icon: bucket.icon, title: "\(bucket.rawValue) fame",
-                     standing: "\(decimal(points)) of \(decimal(cap / rate)) points",
-                     mechanics: mechanics, potential: potential,
+        let fame = "\(bucket.icon) \(bucket.displayName)"
+        var lines = [L("Each point of \(fame) fame adds +\(percent(rate)) to your chance, up to +\(percent(cap)).")]
+        if c.top { lines.append(L("For a top seat, a public name counts for more than for an ordinary job.")) }
+        return Lever(kind: .fame, icon: bucket.icon,
+                     title: String(localized: "\(bucket.displayName) fame", comment: "Name of a lever in the career advisor. The argument is a field of fame, e.g. 'Science' or 'Entertainment'; 'fame' is the game's own term for public reputation"),
+                     standing: L("\(decimal(points)) of \(decimal(cap / rate)) points"),
+                     mechanics: lines.joinedAsSentences(), potential: potential,
                      state: c.state(room: room, gain: potential),
                      sources: eventCards(c) + projectFameCards(c, bucket: bucket))
     }
@@ -341,9 +352,11 @@ enum AdvisorPathway {
         let points = c.player.networkPoints(for: c.job.category)
         let room = c.room.network
         let potential = c.gain(room)
-        return Lever(kind: .network, icon: "🤝", title: "Network in \(c.job.category.rawValue)",
-                     standing: "\(points) of \(Int((Player.networkHireCap / Player.networkHirePerPoint).rounded())) points",
-                     mechanics: "Each point adds +\(decimal(Player.networkHirePerPoint * 100))% to your chance, up to +\(percent(Player.networkHireCap)). It's built at that field's events — going adds some, and being accepted to speak adds more.",
+        let perPoint = decimalPercent(Player.networkHirePerPoint)
+        return Lever(kind: .network, icon: "🤝",
+                     title: String(localized: "Network in \(c.job.category.displayName)", comment: "Name of a lever in the career advisor. The argument is a job field, e.g. 'Business'; 'network' means professional contacts"),
+                     standing: L("\(points) of \(Int((Player.networkHireCap / Player.networkHirePerPoint).rounded())) points"),
+                     mechanics: L("Each point adds +\(perPoint) to your chance, up to +\(percent(Player.networkHireCap)). It's built at that field's events — going adds some, and being accepted to speak adds more."),
                      potential: potential, state: c.state(room: room, gain: potential),
                      sources: c.fameBucket == nil ? eventCards(c) : [])
     }
@@ -356,13 +369,14 @@ enum AdvisorPathway {
         let country = c.player.country
         let elite = country.tierName(.elite), state = country.tierName(.state)
         switch c.b.prestige {
-        case Job.prestigeBonus(forPrestige: 3)...: standing = "a degree from: \(elite)"
-        case Job.prestigeBonus(forPrestige: 2)...: standing = "a degree from: \(state)"
-        default: standing = "no ranked school yet"
+        case Job.prestigeBonus(forPrestige: 3)...: standing = L("a degree from: \(elite)")
+        case Job.prestigeBonus(forPrestige: 2)...: standing = L("a degree from: \(state)")
+        default: standing = L("no ranked school yet")
         }
-        return Lever(kind: .prestige, icon: "🏆", title: "School prestige",
+        return Lever(kind: .prestige, icon: "🏆",
+                     title: String(localized: "School prestige", comment: "Name of a lever on the player's hire chance in the career advisor: how well-regarded the school behind the degree is"),
                      standing: standing,
-                     mechanics: "A relevant degree from a top school (\(elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance, one from a mainstream school (\(state)) +\(percent(Job.prestigeBonus(forPrestige: 2))).",
+                     mechanics: L("A relevant degree from a top school (\(elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance, one from a mainstream school (\(state)) +\(percent(Job.prestigeBonus(forPrestige: 2)))."),
                      potential: potential, state: c.state(room: room, gain: potential),
                      sources: prestigeCards(c))
     }
@@ -372,24 +386,26 @@ enum AdvisorPathway {
         let room = c.room.credential
         let potential = c.gain(room)
         let held = courses.filter { c.player.hardSkills.trainings.contains($0) }
+        let field = c.job.category.displayName
         let cards = courses
             .filter { !c.player.hardSkills.trainings.contains($0) }
             .prefix(2)
             .map { course -> AdvisorCard in
-                let weight = course.careerBoost?.weight ?? 0
+                let weight = percent(course.careerBoost?.weight ?? 0)
                 switch course.requirements(c.player) {
                 case .ok:
                     return AdvisorCard(icon: "📜", title: course.friendlyName,
-                                       detail: "Adds +\(percent(weight)) to your chance for \(c.job.category.rawValue) jobs. Not required — a credential that shows you're serious. One course counts; they don't stack.",
+                                       detail: L("Adds +\(weight) to your chance for \(field) jobs. Not required — a credential that shows you're serious. One course counts; they don't stack."),
                                        actions: openable(.education, c.player))
                 case .blocked(let reason):
                     return AdvisorCard(icon: "📜", title: course.friendlyName,
-                                       detail: "Adds +\(percent(weight)) to your chance for \(c.job.category.rawValue) jobs. Not open to you yet: \(reason).")
+                                       detail: L("Adds +\(weight) to your chance for \(field) jobs. Not open to you yet: \(reason)."))
                 }
             }
-        return Lever(kind: .credential, icon: "📜", title: "A course for the field",
-                     standing: held.isEmpty ? "none yet" : held.map(\.friendlyName).joined(separator: ", "),
-                     mechanics: "One skill-building credential covering \(c.job.category.rawValue) adds up to +\(percent(c.credentialMax)) to your chance. It isn't required, and they don't stack.",
+        return Lever(kind: .credential, icon: "📜",
+                     title: String(localized: "A course for the field", comment: "Name of a lever on the player's hire chance in the career advisor: a skill-building credential that covers the job's field"),
+                     standing: held.isEmpty ? L("none yet") : Fmt.list(held.map(\.friendlyName)),
+                     mechanics: L("One skill-building credential covering \(field) adds up to +\(percent(c.credentialMax)) to your chance. It isn't required, and they don't stack."),
                      potential: potential, state: c.state(room: room, gain: potential), sources: Array(cards))
     }
 
@@ -398,19 +414,21 @@ enum AdvisorPathway {
         let exec = c.job.isExecutive
         let record = c.player.founderTrackRecordPoints
         let capPoints = GameConstants.executiveTrackRecordCap / GameConstants.executiveTrackRecordPerPoint
-        var mechanics = "Only \(percent(base)) of the people who qualify get a seat like this each year — however strong the application."
-        var standing = "\(percent(c.b.seat)) of ideal candidates get it each year"
+        var lines = [L("Only \(percent(base)) of the people who qualify get a seat like this each year — however strong the application.")]
+        var standing = L("\(percent(c.b.seat)) of ideal candidates get it each year")
         var potential = 0.0
         var state = Lever.State.maxed
         var sources: [AdvisorCard] = []
         if exec {
-            mechanics += " Having run your own company eases it: each point of founder track record adds +\(percent(GameConstants.executiveTrackRecordPerPoint)), up to +\(percent(GameConstants.executiveTrackRecordCap))."
-            standing += " · track record \(decimal(record)) of \(decimal(capPoints)) points"
+            lines.append(L("Having run your own company eases it: each point of founder track record adds +\(percent(GameConstants.executiveTrackRecordPerPoint)), up to +\(percent(GameConstants.executiveTrackRecordCap))."))
+            standing = L("\(percent(c.b.seat)) of ideal candidates get it each year · track record \(decimal(record)) of \(decimal(capPoints)) points")
             potential = c.qualified * max(0, c.bestSeat / c.b.seat - 1)
             state = record >= capPoints - 0.001 ? .maxed : .open
             sources = founderCards(c, record: record, capPoints: capPoints)
         }
-        return Lever(kind: .seat, icon: "🎟️", title: "The seat", standing: standing, mechanics: mechanics,
+        return Lever(kind: .seat, icon: "🎟️",
+                     title: String(localized: "The seat", comment: "Name of a lever in the career advisor: the scarce top position (a board seat, a partnership) that only a small share of qualified people win each year"),
+                     standing: standing, mechanics: lines.joinedAsSentences(),
                      potential: potential, state: state, sources: sources)
     }
 
@@ -418,56 +436,66 @@ enum AdvisorPathway {
 
     private static func headline(_ title: String, odds: Odds, exec: Bool, narrow: Bool) -> String {
         let flawless = chance(odds.maxed)
-        var line: String
-        if narrow {
-            line = "\(title) is a narrow path: even a flawless candidate is hired only about \(flawless) of the years they apply"
-        } else if odds.maxed >= 0.85 {
-            line = "\(title) is open to a well-prepared candidate: at your very best you'd be hired about \(flawless) of the years you apply"
-        } else {
-            line = "\(title) is competitive but not a lottery: at your very best you'd be hired about \(flawless) of the years you apply"
+        // Only an executive seat can be eased by a founder's record.
+        let founder = exec && odds.bestSeat > odds.seat + 0.001 ? chance(odds.best) : nil
+        // Three tones, each with and without the founder aside: whole sentences, no fragments.
+        switch (narrow, odds.maxed >= 0.85, founder) {
+        case (true, _, let founder?):
+            return L("\(title) is a narrow path: even a flawless candidate is hired only about \(flawless) of the years they apply (about \(founder) with a founder's track record) — so it usually takes many attempts.")
+        case (true, _, nil):
+            return L("\(title) is a narrow path: even a flawless candidate is hired only about \(flawless) of the years they apply — so it usually takes many attempts.")
+        case (false, true, let founder?):
+            return L("\(title) is open to a well-prepared candidate: at your very best you'd be hired about \(flawless) of the years you apply (about \(founder) with a founder's track record).")
+        case (false, true, nil):
+            return L("\(title) is open to a well-prepared candidate: at your very best you'd be hired about \(flawless) of the years you apply.")
+        case (false, false, let founder?):
+            return L("\(title) is competitive but not a lottery: at your very best you'd be hired about \(flawless) of the years you apply (about \(founder) with a founder's track record).")
+        case (false, false, nil):
+            return L("\(title) is competitive but not a lottery: at your very best you'd be hired about \(flawless) of the years you apply.")
         }
-        if exec, odds.bestSeat > odds.seat + 0.001 {
-            line += " (about \(chance(odds.best)) with a founder's track record)"
-        }
-        line += narrow ? " — so it usually takes many attempts." : "."
-        return line
     }
 
     private static func gates(_ c: Context, odds: Odds, levers: [Lever]) -> [AdvisorCard] {
         var cards: [AdvisorCard] = []
 
         // 1 · Qualify
-        var qualify = c.guide.closed
-            ? "Closed today. Still missing: \(AdvisorCoach.list(c.guide.needs))."
-            : "Open — you meet the hard requirements."
-        if c.guide.closed, c.guide.needs.isEmpty { qualify = "Closed today — see the steps above." }
-        if let line = timeline(c) { qualify += " " + line }
-        cards.append(AdvisorCard(icon: "①", title: "Get through the door", detail: qualify))
+        var qualify: String
+        if c.guide.closed {
+            qualify = c.guide.needs.isEmpty
+                ? L("Closed today — see the steps above.")
+                : L("Closed today. Still missing: \(AdvisorCoach.list(c.guide.needs)).")
+        } else {
+            qualify = L("Open — you meet the hard requirements.")
+        }
+        if let line = timeline(c) { qualify += AdvisorCoach.sentenceGap + line }
+        cards.append(AdvisorCard(icon: "①", title: String(localized: "Get through the door", comment: "Title of the first advisor card about a hard-to-reach job: meeting the hard requirements"), detail: qualify))
 
         // 2 · Stand out
         let stand: String
         if odds.strength >= 0.999 {
-            stand = "Your application is already as strong as the game counts — the chance is capped at \(percent(c.b.ceiling)). More polish changes nothing; what's left is the seat."
+            stand = L("Your application is already as strong as the game counts — the chance is capped at \(percent(c.b.ceiling)). More polish changes nothing; what's left is the seat.")
         } else {
             let ways = levers.filter { $0.state == .open && $0.kind != .seat && $0.kind != .experience && $0.potential >= 0.005 }
                 .prefix(3).map { "\($0.title) (+\(points($0.potential)))" }
-            stand = "At today's skills, fame, network and school your application is \(percent(odds.strength)) of a top candidate's."
-                + (ways.isEmpty ? "" : " Biggest ways up: \(AdvisorCoach.list(Array(ways))).")
+            var sentences = [L("At today's skills, fame, network and school your application is \(percent(odds.strength)) of a top candidate's.")]
+            if !ways.isEmpty { sentences.append(L("Biggest ways up: \(AdvisorCoach.list(Array(ways))).")) }
+            stand = sentences.joinedAsSentences()
         }
-        cards.append(AdvisorCard(icon: "②", title: "Stand out", detail: stand))
+        cards.append(AdvisorCard(icon: "②", title: String(localized: "Stand out", comment: "Title of the second advisor card about a hard-to-reach job: making the application strong"), detail: stand))
 
         // 3 · Win the seat — or beat the crowd
         if c.b.seat < 1 {
-            var seat = "Only \(percent(c.b.seat)) of applicants who are otherwise ideal get the seat each year."
+            var sentences = [L("Only \(percent(c.b.seat)) of applicants who are otherwise ideal get the seat each year.")]
             if c.job.isExecutive, odds.bestSeat > odds.seat + 0.001 {
-                seat += " A founder's track record can raise that to \(percent(odds.bestSeat))."
+                sentences.append(L("A founder's track record can raise that to \(percent(odds.bestSeat))."))
             }
-            seat += " Each application spends a whole year, so it pays to lift these odds first rather than apply at a long shot."
-            cards.append(AdvisorCard(icon: "③", title: "Win the seat", detail: seat))
+            sentences.append(L("Each application spends a whole year, so it pays to lift these odds first rather than apply at a long shot."))
+            cards.append(AdvisorCard(icon: "③", title: String(localized: "Win the seat", comment: "Title of the third advisor card about a hard-to-reach job: only a few qualified people get the scarce seat"),
+                                     detail: sentences.joinedAsSentences()))
         } else if c.b.demand < 1 {
             cards.append(AdvisorCard(
-                icon: "③", title: "Beat the crowd",
-                detail: "Far more people want this job than there are openings, so your chance is cut to \(percent(c.b.demand)) of what it would otherwise be."))
+                icon: "③", title: String(localized: "Beat the crowd", comment: "Title of the third advisor card about a very popular job: far more people want it than there are openings"),
+                detail: L("Far more people want this job than there are openings, so your chance is cut to \(percent(c.b.demand)) of what it would otherwise be.")))
         }
         return cards
     }
@@ -495,9 +523,9 @@ enum AdvisorPathway {
         let full = start + max(0, wanted - have)
         guard door > c.player.age else { return nil }
         if wanted == 0 || door == full {
-            return "Earliest realistic: about age \(door)."
+            return L("Earliest realistic: about age \(door).")
         }
-        return "Earliest realistic: the door opens around age \(door), at full strength around \(full)."
+        return L("Earliest realistic: the door opens around age \(door), at full strength around \(full).")
     }
 
     // MARK: Sources — the plays that build each lever
@@ -533,8 +561,9 @@ enum AdvisorPathway {
                 $0.category == c.job.category || (c.fameBucket != nil && $0.category.fameCategory == c.fameBucket)
             }
             guard anyEvent else { return [] }
-            return [AdvisorCard(icon: "🎟️", title: "Industry events",
-                                detail: "Events in this field open once you're 18 and have worked or studied in it. Build a first year or two, then take the stage.")]
+            return [AdvisorCard(icon: "🎟️",
+                                title: String(localized: "Industry events", comment: "Title of an advisor card about conferences and events in the player's field"),
+                                detail: L("Events in this field open once you're 18 and have worked or studied in it. Build a first year or two, then take the stage."))]
         }
         return joinable
             .sorted { lhs, rhs in
@@ -546,15 +575,16 @@ enum AdvisorPathway {
             .map { event in
                 let odds = c.player.presentOdds(event)
                 let bucket = event.category.fameCategory
-                let fame = bucket.map { "+\(weight(event.presenterFameWeight)) \($0.icon) fame" }
+                let fame = bucket.map { L("+\(weight(event.presenterFameWeight)) \($0.icon) fame") }
                 let builds = event.category == c.job.category
                 var accepted = [fame].compactMap { $0 }
-                if builds { accepted.append("+\(event.networkPoints) network in \(event.category.rawValue)") }
-                var detail = "\(percent(odds)) chance the organisers accept you to \(event.presenterActionLabel.lowercased())."
-                if !accepted.isEmpty { detail += " If they do: \(AdvisorCoach.list(accepted))." }
-                if builds { detail += " Just going adds +\(event.networkWeight) network." }
-                return AdvisorCard(icon: event.icon, title: "\(event.presenterActionLabel) at \(event.name)",
-                                   detail: detail, actions: openable(.events, c.player))
+                if builds { accepted.append(L("+\(event.networkPoints) network in \(event.category.displayName)")) }
+                var sentences = [L("\(percent(odds)) chance the organisers accept you.")]
+                if !accepted.isEmpty { sentences.append(L("If they do: \(AdvisorCoach.list(accepted)).")) }
+                if builds { sentences.append(L("Just going adds +\(event.networkWeight) network.")) }
+                return AdvisorCard(icon: event.icon,
+                                   title: String(localized: "\(event.presenterActionLabel) at \(event.name)", comment: "Title of an advisor card. The first argument is a verb such as Present, Demo, Perform or Speak; the second is the name of an industry event"),
+                                   detail: sentences.joinedAsSentences(), actions: openable(.events, c.player))
             }
     }
 
@@ -571,16 +601,16 @@ enum AdvisorPathway {
             .prefix(limit)
             .map { hustle in
                 let odds = c.player.projectOdds(for: hustle)
-                var detail = "\(percent(odds)) a year to land. A hit banks +\(weight(hustle.fameWeight)) \(bucket.icon) fame."
+                var sentences = [L("\(percent(odds)) a year to land. A hit banks +\(weight(hustle.fameWeight)) \(bucket.icon) fame.")]
                 let grows = hustle.growth.compactMap { ability -> String? in
                     guard let label = SoftSkills.label(forKeyPath: ability.keyPath) else { return nil }
                     return "\(label) +\(ability.weight)"
                 }
-                if !grows.isEmpty { detail += " Hit or miss, the year builds \(AdvisorCoach.list(grows))." }
+                if !grows.isEmpty { sentences.append(L("Hit or miss, the year builds \(AdvisorCoach.list(grows)).")) }
                 if let field = hustle.experienceCategory {
-                    detail += " It also counts as a year of \(field.rawValue) experience."
+                    sentences.append(L("It also counts as a year of \(field.displayName) experience."))
                 }
-                return AdvisorCard(icon: hustle.icon, title: hustle.label, detail: detail,
+                return AdvisorCard(icon: hustle.icon, title: hustle.label, detail: sentences.joinedAsSentences(),
                                    actions: openable(.projects, c.player))
             }
     }
@@ -601,9 +631,15 @@ enum AdvisorPathway {
             .sorted { ($0.job.income, $1.job.baseTitle) > ($1.job.income, $0.job.baseTitle) }
             .prefix(limit)
             .map { feeder in
-                AdvisorCard(icon: feeder.job.icon, title: "Work as \(CareerAdvisor.article(for: feeder.job.id)) \(feeder.job.id)",
-                            detail: "\(percent(feeder.odds)) chance to get it, \(CareerAdvisor.payStory(feeder.job, c.player)). Every year in \(feeder.job.category.rawValue) counts toward the \(c.job.requirements.minYearsExperience) this job expects.",
-                            actions: [AdvisorAction(label: "See job listings", effect: .go(.listing(feeder.job.baseTitle)))])
+                let years = c.job.requirements.minYearsExperience
+                return AdvisorCard(
+                    icon: feeder.job.icon, title: L("Take the \(feeder.job.catalogueTitle) job"),
+                    detail: [
+                        L("\(percent(feeder.odds)) chance to get it, \(CareerAdvisor.payStory(feeder.job, c.player))."),
+                        L("Every year in \(feeder.job.category.displayName) counts toward the \(years) this job expects."),
+                    ].joinedAsSentences(),
+                    actions: [AdvisorAction(label: CareerAdvisor.Destination.listing(feeder.job.baseTitle).buttonLabel,
+                                            effect: .go(.listing(feeder.job.baseTitle)))])
             }
     }
 
@@ -613,17 +649,18 @@ enum AdvisorPathway {
         var cards: [AdvisorCard] = []
         if canOpen(.ventures, c.player) {
             cards.append(AdvisorCard(
-                icon: "🏗️", title: "Run a business of your own",
-                detail: "Every year running a venture counts as a year of experience toward this job — whatever the business sells.",
+                icon: "🏗️", title: String(localized: "Run a business of your own", comment: "Title of an advisor card: running a venture counts as work experience"),
+                detail: L("Every year running a venture counts as a year of experience toward this job — whatever the business sells."),
                 actions: openable(.ventures, c.player)))
         }
         if let campaign = SideHustleCatalog.all.first(where: {
             guard let field = $0.experienceCategory else { return false }
             return c.job.category.creditedExperienceCategories.contains(field) && $0.stages.contains(LifeStage.forAge(c.player.age))
         }) {
+            let credited = campaign.experienceCategory?.displayName ?? ""
             cards.append(AdvisorCard(
                 icon: campaign.icon, title: campaign.label,
-                detail: "A year on it counts as a year of \(campaign.experienceCategory?.rawValue ?? "") experience, which counts toward \(c.job.category.rawValue) jobs — hit or miss.",
+                detail: L("A year on it counts as a year of \(credited) experience, which counts toward \(c.job.category.displayName) jobs — hit or miss."),
                 actions: openable(.projects, c.player)))
         }
         return cards
@@ -635,47 +672,82 @@ enum AdvisorPathway {
         let profile = accepted.first ?? c.player.degrees.compactMap(\.profile).first
         guard let profile, c.b.prestige < Job.prestigeBonus(forPrestige: 3) else { return [] }
         let level: Level.Stage = edu.minEQF >= 7 ? .Doctorate : edu.minEQF >= 6 ? .Master : .Bachelor
-        let field = profile.rawValue.capitalized
+        let field = profile.displayName
         guard CareerAdvisor.canOpenEducation(c.player), !c.job.educationMet(for: c.player) else {
-            return [AdvisorCard(icon: "🏆", title: "Aim for an elite university",
-                                detail: "When you choose a school for your \(field) degree, an elite one adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance for the rest of your career. It admits by grades, skills and awards — start building them now.")]
+            return [AdvisorCard(icon: "🏆",
+                                title: String(localized: "Aim for an elite university", comment: "Title of an advisor card: choose a top-ranked school for the degree"),
+                                detail: [
+                                    L("When you choose a school for your \(field) degree, an elite one adds +\(percent(Job.prestigeBonus(forPrestige: 3))) to your chance for the rest of your career."),
+                                    L("It admits by grades, skills and awards — start building them now."),
+                                ].joinedAsSentences())]
         }
         let elite = Education(level, profile: profile, tier: .elite)
         let state = Education(level, profile: profile, tier: .state)
+        let country = c.player.country
         return [AdvisorCard(
-            icon: "🏆", title: "Get into an elite \(field) programme",
-            detail: "\(c.player.country.tierName(.elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))), \(c.player.country.tierName(.state)) +\(percent(Job.prestigeBonus(forPrestige: 2))). Your chance of admission: \(percent(elite.admissionProbability(player: c.player))) at the top school, \(percent(state.admissionProbability(player: c.player))) at the mainstream one. Tuition: \(c.player.money(elite.annualTuition(in: c.player.country))) against \(c.player.money(state.annualTuition(in: c.player.country))) a year.",
+            icon: "🏆", title: String(localized: "Get into an elite \(field) programme", comment: "Title of an advisor card. The argument is a study field, e.g. 'Business'"),
+            detail: [
+                L("\(country.tierName(.elite)) adds +\(percent(Job.prestigeBonus(forPrestige: 3))), \(country.tierName(.state)) +\(percent(Job.prestigeBonus(forPrestige: 2)))."),
+                L("Your chance of admission: \(percent(elite.admissionProbability(player: c.player))) at the top school, \(percent(state.admissionProbability(player: c.player))) at the mainstream one."),
+                L("Tuition: \(c.player.money(elite.annualTuition(in: country))) against \(c.player.money(state.annualTuition(in: country))) a year."),
+            ].joinedAsSentences(),
             actions: openable(.education, c.player))]
     }
 
     /// The plays that build a founder's track record — the seat's only lever.
     private static func founderCards(_ c: Context, record: Double, capPoints: Double) -> [AdvisorCard] {
         var cards: [AdvisorCard] = []
-        let year = GameConstants.founderYearFame
+        let year = decimal(GameConstants.founderYearFame)
+        let fold = decimal(GameConstants.founderFoldFame)
+        let exit = weight(GameConstants.founderExitFame)
+        let scalable = AdvisorCoach.list(scalableVentureNames())
         if c.player.currentOccupation?.isEntrepreneurial == true {
             cards.append(AdvisorCard(
-                icon: "🏗️", title: "Keep your company alive",
-                detail: "Each year it survives banks +\(decimal(year)) of track record (repeat years of the same company count for less, so a second, different one adds more). A fold only costs the lessons: +\(decimal(GameConstants.founderFoldFame))."))
+                icon: "🏗️", title: String(localized: "Keep your company alive", comment: "Title of an advisor card: surviving years as a founder builds the founder track record"),
+                detail: [
+                    L("Each year it survives banks +\(year) of track record (repeat years of the same company count for less, so a second, different one adds more)."),
+                    L("A fold only costs the lessons: +\(fold)."),
+                ].joinedAsSentences()))
             if c.player.canMakeExecutiveDecisions {
                 cards.append(AdvisorCard(
-                    icon: "💸", title: "Sell your stake, or raise a round",
-                    detail: "Selling your stake in the Boardroom is a Successful Exit: +\(weight(GameConstants.founderExitFame)) points. Closing an investment round adds +\(decimal(GameConstants.investmentRoundFame)). A scalable business (\(AdvisorCoach.list(JobCatalog.scalableVentureTitles.sorted()))) can also break out for +\(weight(GameConstants.founderBreakoutFame)).",
+                    icon: "💸", title: String(localized: "Sell your stake, or raise a round", comment: "Title of an advisor card: an exit or an investment round adds to the founder track record"),
+                    detail: [
+                        L("Selling your stake in the Boardroom is a Successful Exit: +\(exit) points."),
+                        L("Closing an investment round adds +\(decimal(GameConstants.investmentRoundFame))."),
+                        L("A scalable business (\(scalable)) can also break out for +\(weight(GameConstants.founderBreakoutFame))."),
+                    ].joinedAsSentences(),
                     actions: openable(.boardroom, c.player)))
             }
         } else if canOpen(.ventures, c.player) {
-            let capital = c.player.maxVentureStake > 0
-                ? ""
-                : " You need some savings to stake first — capital is the only hard requirement."
+            var sentences = [
+                L("Every year it survives banks +\(year) of track record (a second, different company adds more than a longer first one); a fold still leaves +\(fold)."),
+                L("A breakout or a sale is worth +\(exit) each, so a scalable business (\(scalable)) can fill the \(decimal(capPoints)) points fast — if it works."),
+                L("Its years also count as business experience."),
+            ]
+            if c.player.maxVentureStake <= 0 {
+                sentences.append(L("You need some savings to stake first — capital is the only hard requirement."))
+            }
             cards.append(AdvisorCard(
-                icon: "🏗️", title: "Found a company",
-                detail: "Every year it survives banks +\(decimal(year)) of track record (a second, different company adds more than a longer first one); a fold still leaves +\(decimal(GameConstants.founderFoldFame)). A breakout or a sale is worth +\(weight(GameConstants.founderExitFame)) each, so a scalable business (\(AdvisorCoach.list(JobCatalog.scalableVentureTitles.sorted()))) can fill the \(decimal(capPoints)) points fast — if it works. Its years also count as business experience.\(capital)",
+                icon: "🏗️", title: String(localized: "Found a company", comment: "Title of an advisor card: starting a company builds the founder track record"),
+                detail: sentences.joinedAsSentences(),
                 actions: openable(.ventures, c.player)))
         } else {
             cards.append(AdvisorCard(
-                icon: "🏗️", title: "Found a company",
-                detail: "Founding opens to adults in a realistic game. Every year it survives banks +\(decimal(year)) of track record; a breakout or a sale is worth +\(weight(GameConstants.founderExitFame)) each."))
+                icon: "🏗️", title: String(localized: "Found a company", comment: "Title of an advisor card: starting a company builds the founder track record"),
+                detail: [
+                    L("Founding opens to adults in a realistic game. Every year it survives banks +\(year) of track record."),
+                    L("A breakout or a sale is worth +\(exit) each."),
+                ].joinedAsSentences()))
         }
         return cards
+    }
+
+    /// The scalable ventures' names in the player's language, in the id order.
+    private static func scalableVentureNames() -> [String] {
+        let jobs = JobCatalog.allJobs()
+        return JobCatalog.scalableVentureTitles.sorted().map { title in
+            jobs.first { $0.baseTitle == title }?.displayBaseTitle ?? title
+        }
     }
 
     // MARK: Skills
@@ -702,7 +774,7 @@ enum AdvisorPathway {
                 }
                 var card = entry.move.card
                 card = AdvisorCard(icon: card.icon, title: card.title,
-                                   detail: "Adds ≈ +\(decimal(entry.gain * 100))% to your chance a year, from \(AdvisorCoach.list(builds)).",
+                                   detail: L("Adds ≈ +\(decimalPercent(entry.gain)) to your chance a year, from \(AdvisorCoach.list(builds))."),
                                    actions: card.actions)
                 return (entry.gain, card)
             }
@@ -713,7 +785,7 @@ enum AdvisorPathway {
         var moves: [SkillMove] = CareerAdvisor.offeredActivities(c.player).map { sport in
             SkillMove(label: sport.label, abilities: sport.abilities,
                       card: AdvisorCard(icon: sport.pictogram, title: sport.label, detail: "",
-                                        actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(sport.kind)))]))
+                                        actions: [AdvisorAction(label: CareerAdvisor.Destination.activities(sport.kind).buttonLabel, effect: .go(.activities(sport.kind)))]))
         }
         moves += SideHustleCatalog.all
             .filter { $0.stages.contains(stage) && c.player.canTakeProject($0) }
@@ -773,57 +845,69 @@ enum AdvisorPathway {
     /// the player does, until a signature title is won — so that title *is* the path.
     private static func breakthroughPathway(_ c: Context) -> Pathway? {
         guard let award = c.job.breakthroughFame else { return nil }
+        let awardName = c.job.displayBreakthroughFame ?? award
         var sources: [AdvisorCard] = []
         let stage = LifeStage.forAge(c.player.age)
         if let contest = CompetitionCatalog.all.first(where: { $0.achievement == award }) {
             let sports = (contest.sports ?? []).sorted { $0.rawValue < $1.rawValue }
             let practised = sports.max { c.player.sportYears[$0, default: 0] < c.player.sportYears[$1, default: 0] }
             let years = practised.map { c.player.sportYears[$0, default: 0] } ?? 0
-            var detail = "The \(contest.name) is the door. It enters you automatically each year you train \(AdvisorCoach.list(sports.map(\.label), conjunction: "or"))"
-            detail += contest.minSportYears > 0 ? ", once you've trained \(contest.minSportYears) year\(contest.minSportYears == 1 ? "" : "s")." : "."
+            let trained = AdvisorCoach.list(sports.map(\.label), conjunction: "or")
+            var sentences = [L("The \(contest.name) is the door.")]
+            sentences.append(contest.minSportYears > 0
+                ? L("It enters you automatically each year you train \(trained), once you've trained \(contest.minSportYears) years.")
+                : L("It enters you automatically each year you train \(trained)."))
+            let title = L("Win the \(contest.name)")
             if contest.stages.contains(stage), let sport = practised {
                 let odds = contest.winProbability(for: c.player.softSkills, years: years + 1)
-                detail += " Your chance to win it this year: \(percent(odds))."
-                sources.append(AdvisorCard(icon: contest.icon, title: "Win the \(contest.name)", detail: detail,
-                                           actions: [AdvisorAction(label: "Open Activities", effect: .go(.activities(sport.kind)))]))
+                sentences.append(L("Your chance to win it this year: \(percent(odds))."))
+                sources.append(AdvisorCard(icon: contest.icon, title: title, detail: sentences.joinedAsSentences(),
+                                           actions: [AdvisorAction(label: CareerAdvisor.Destination.activities(sport.kind).buttonLabel, effect: .go(.activities(sport.kind)))]))
             } else {
-                detail += " It's open only to \(AdvisorCoach.list(contest.stages.map(\.displayName).sorted())) — you're not in that stage."
-                sources.append(AdvisorCard(icon: contest.icon, title: "Win the \(contest.name)", detail: detail))
+                sentences.append(L("It's open only to \(AdvisorCoach.list(contest.stages.map(\.displayName).sorted())) — you're not in that stage."))
+                sources.append(AdvisorCard(icon: contest.icon, title: title, detail: sentences.joinedAsSentences()))
             }
         }
-        let lever = Lever(kind: .breakthrough, icon: "🔑", title: "The “\(award)” title",
-                          standing: "not won yet",
-                          mechanics: "Without it your chance stays at \(percent(c.b.floor)) whatever your skills. Holding it adds +\(percent(Job.breakthroughBonus)) and opens the door.",
+        let lever = Lever(kind: .breakthrough, icon: "🔑", title: L("The “\(awardName)” title"),
+                          standing: String(localized: "not won yet", comment: "Where the player stands on a signature title (a junior championship) that opens a career: they have not won it"),
+                          mechanics: L("Without it your chance stays at \(percent(c.b.floor)) whatever your skills. Holding it adds +\(percent(Job.breakthroughBonus)) and opens the door."),
                           potential: 0, state: .open, sources: sources)
         let odds = Odds(now: 0, qualified: c.b.floor * c.b.seat, maxed: c.b.floor * c.b.seat, best: c.b.floor * c.b.seat,
                         seat: c.b.seat, bestSeat: c.b.seat, strength: 0)
         return Pathway(
             title: c.guide.title, isNarrow: true, odds: odds,
-            headline: "\(c.guide.title) has one door: the “\(award)” title. Without it your chance stays at about \(chance(c.b.floor)), whatever else you do.",
-            gates: [AdvisorCard(icon: "①", title: "Win the door-opener",
-                                detail: "Win the “\(award)” title first. Only then do skills, fame and the rest count.")],
+            headline: L("\(c.guide.displayTitle) has one door: the “\(awardName)” title. Without it your chance stays at about \(chance(c.b.floor)), whatever else you do."),
+            gates: [AdvisorCard(icon: "①", title: String(localized: "Win the door-opener", comment: "Title of an advisor card: win the one signature title that opens a career such as professional sport"),
+                                detail: L("Win the “\(awardName)” title first. Only then do skills, fame and the rest count."))],
             levers: [lever], note: AdvisorRealWorld.note(for: c.job, player: c.player))
     }
 
     // MARK: - Words
 
-    /// "30%" — a share as a whole percentage.
-    static func percent(_ share: Double) -> String { "\(Int((share * 100).rounded()))%" }
+    /// "30%" — a share as a whole percentage, in the game's language (a thin forwarder to `Fmt.percent`).
+    static func percent(_ share: Double) -> String { Fmt.percent(share) }
 
     /// A yearly chance: "under 1%" rather than a misleading "0%".
     static func chance(_ probability: Double) -> String {
-        probability > 0 && probability < 0.005 ? "under 1%" : percent(probability)
+        probability > 0 && probability < 0.005 ? underOnePercent : percent(probability)
     }
 
     /// Percentage points of chance, for a lever's worth: "4%".
     static func points(_ delta: Double) -> String {
-        delta < 0.005 ? "under 1%" : percent(delta)
+        delta < 0.005 ? underOnePercent : percent(delta)
     }
 
-    /// One decimal, dropping a trailing ".0": 0.3, 2, 4.5.
+    private static var underOnePercent: String { L("under \(Fmt.percent(0.01))") }
+
+    /// One decimal, dropping a trailing ".0": 0.3, 2, 4.5 (or 0,3 in German).
     static func decimal(_ value: Double) -> String {
         let rounded = (value * 10).rounded() / 10
-        return rounded == rounded.rounded() ? String(Int(rounded)) : String(rounded)
+        return rounded == rounded.rounded() ? Fmt.number(Int(rounded)) : Fmt.decimal(rounded, digits: 1)
+    }
+
+    /// A small share with up to one decimal, dropping a trailing ".0": 0.005 → "0.5%", 0.04 → "4%".
+    static func decimalPercent(_ share: Double) -> String {
+        ((share * 1000).rounded() / 1000).formatted(.percent.precision(.fractionLength(0...1)).locale(L10n.locale))
     }
 
     /// A fame weight: 4 rather than 4.0.

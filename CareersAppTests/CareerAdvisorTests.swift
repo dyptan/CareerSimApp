@@ -24,6 +24,22 @@ final class CareerAdvisorTests: XCTestCase {
         XCTAssertTrue(tips.allSatisfy { $0.value > 0 }, "A tip must be worth something.")
     }
 
+    /// Nothing a tip says leaks a format placeholder, and each sheet has a button label of its own.
+    func testTipsAreFinishedSentencesAndEachSheetHasALabel() {
+        for age in [13, 18, 25, 40] {
+            for tip in CareerAdvisor.tips(for: graduate(age: age)) {
+                for marker in ["%@", "%lld", "%1$"] {
+                    XCTAssertFalse((tip.title + tip.detail).contains(marker), "\(tip.kind) at \(age): \(tip.detail)")
+                }
+                XCTAssertFalse(tip.title.isEmpty)
+                XCTAssertFalse(tip.detail.contains("  "), "Two spaces from a sentence join: \(tip.detail)")
+            }
+        }
+        let destinations: [CareerAdvisor.Destination] = [.jobs(.office), .listing("Chef"), .education, .events, .projects,
+                                                         .ventures, .boardroom, .activities(.sports)]
+        XCTAssertEqual(Set(destinations.map(\.buttonLabel)).count, destinations.count, "A label per sheet.")
+    }
+
     func testReadingAdviceChangesNothing() {
         let player = graduate(age: 30)
         let before = (player.age, player.savings, player.softSkills, player.degrees, player.currentOccupation)
