@@ -49,8 +49,8 @@
       "other": "%lld postes"
     },
     "🏢 Any of %lld industries — your choice": {
-      "one": "🏢 %lld secteur au choix — à toi de décider",
-      "other": "🏢 %lld secteurs au choix — à toi de décider"
+      "one": "🏢 %lld secteur au choix",
+      "other": "🏢 %lld secteurs au choix"
     },
     "🎉 Venture launched!": "🎉 Entreprise lancée !",
     "You put in %@ and opened your business!": "Tu as investi %@ et ouvert ton entreprise !",
@@ -61,7 +61,7 @@
     },
     "💰 Target %@": "💰 Capital visé : %@",
     "🔒 Nothing to stake yet — earn and save first": "🔒 Rien à miser pour l’instant — gagne et épargne d’abord",
-    "🛡️ %@ survive year 1 · stake %@": "🛡️ %1$@ de survie la première année · mise : %2$@",
+    "🛡️ %@ survive year 1 · stake %@": "🛡️ %1$@ de chances de survie la première année · mise : %2$@",
     "🏦 %@ of it borrowed": "🏦 dont %@ empruntés",
     "Launch": "Lancer",
     "🔒 You need some money to start a business. Work and save first — then you can start any business you like.": "🔒 Il te faut un peu d’argent pour lancer une entreprise. Travaille et épargne d’abord — ensuite, tu pourras lancer l’entreprise de ton choix.",
@@ -92,7 +92,7 @@
     "🏅 Score": "🏅 Score",
     "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "Ce que tu possèdes moins ce que tu dois, divisé par ton âge. Plus tu constitues ton épargne tôt, plus ton score est élevé.",
     "Keep playing": "Continuer à jouer",
-    "Restart": "Redémarrer",
+    "Restart": "Recommencer",
     "Start over": "Recommencer",
     "You climbed all the way to the top — you're now in a top leadership role! 👔": "Tu as gravi tous les échelons jusqu’au sommet — tu occupes maintenant un poste de direction de haut niveau ! 👔",
     "You climbed all the way to the top — you're now %@! 👔": "Tu as gravi tous les échelons jusqu’au sommet — tu es maintenant %@ ! 👔",

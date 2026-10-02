@@ -29,8 +29,8 @@
   "Earn this credential: %@ — this job won't hire without it. (%@.)": "Erwirb diese Qualifikation: %1$@ – ohne sie wirst du für diesen Job nicht eingestellt. (%2$@.)",
   "Grow %@ from %lld to %lld.": "Verbessere deine Fähigkeit „%1$@“ von %2$lld auf %3$lld.",
   "%@ adds +%@ a year — about %lld years.": {
-   "one": "%1$@ bringt +%2$@ pro Jahr – etwa ein Jahr.",
-   "other": "%1$@ bringt +%2$@ pro Jahr – etwa %3$lld Jahre."
+   "one": "%1$@ bringt +%2$@ pro Jahr – das dauert etwa ein Jahr.",
+   "other": "%1$@ bringt +%2$@ pro Jahr – das dauert etwa %3$lld Jahre."
   },
   "%lld years of experience": {
    "one": "%lld Jahr Erfahrung",
@@ -65,9 +65,9 @@
   },
   "Try a couple more different things, so I can see what you like.": "Probiere noch ein paar verschiedene Dinge aus, damit ich sehen kann, was dir gefällt.",
   "Try something": "Probiere etwas aus",
-  "You didn't practise anything last year. This year, try %@ — it builds %@.": "Letztes Jahr hast du nichts geübt. Probiere dieses Jahr %1$@ aus – das stärkt %2$@.",
+  "You didn't practise anything last year. This year, try %@ — it builds %@.": "Letztes Jahr hast du nichts geübt. Probiere dieses Jahr %1$@ aus – das stärkt deine Fähigkeiten: %2$@.",
   "Try something different": "Probiere etwas anderes aus",
-  "You've stuck with %@. To find what you like, try %@ — it builds %@.": "Du bist bei %1$@ geblieben. Probiere %2$@ aus, um herauszufinden, was dir gefällt – das stärkt %3$@.",
+  "You've stuck with %@. To find what you like, try %@ — it builds %@.": "Du bist bei %1$@ geblieben. Probiere %2$@ aus, um herauszufinden, was dir gefällt – das stärkt deine Fähigkeiten: %3$@.",
   "🎉 You got a job on the %@ ladder!": "🎉 Du hast einen Job auf der Karriereleiter „%@“ bekommen!",
   "✅ %@ is now %lld — the job asks for %lld.": "✅ %1$@ liegt jetzt bei %2$lld – der Job verlangt %3$lld.",
   "📈 %@ went from %lld to %lld (the job asks for %lld).": "📈 %1$@ ist von %2$lld auf %3$lld gestiegen (der Job verlangt %4$lld).",
@@ -96,7 +96,7 @@
   "%@ is worth about +%@ chance a year.": "%1$@ bringt etwa +%2$@ Chance pro Jahr.",
   "%@: %@": "%1$@: %2$@",
   "Your biggest lever": "Deine größte Stellschraube",
-  "Last year didn't build any of the skills this job asks for. Try %@ — it adds %@ +%@ a year (you're at %lld, the job asks for %lld).": "Letztes Jahr hast du keine der Fähigkeiten gestärkt, die dieser Job verlangt. Probiere %1$@ aus – das bringt %2$@ +%3$@ pro Jahr (du bist bei %4$lld, der Job verlangt %5$lld).",
+  "Last year didn't build any of the skills this job asks for. Try %@ — it adds %@ +%@ a year (you're at %lld, the job asks for %lld).": "Letztes Jahr hast du keine der Fähigkeiten gestärkt, die dieser Job verlangt. Probiere %1$@ aus – das steigert deine Fähigkeit „%2$@“ um %3$@ pro Jahr (du bist bei %4$lld, der Job verlangt %5$lld).",
   "Last year you practised %@ — good, but it doesn't build what %@ asks for. Try %@ for %@ (you're at %lld, the job asks for %lld).": "Letztes Jahr hast du %1$@ geübt – gut, aber das stärkt nicht, was der Job als %2$@ verlangt. Probiere %3$@ für %4$@ aus (du bist bei %5$lld, der Job verlangt %6$lld).",
   "Practise what the job needs": "Übe, was der Job braucht",
   "Your next step": "Dein nächster Schritt",
@@ -117,7 +117,7 @@
   "💡 Best moves right now": "💡 Beste Schritte jetzt",
   "🔄 Change my goal": "🔄 Mein Ziel ändern",
   "🧭 The narrow path": "🧭 Der schmale Pfad",
-  "🧭 What decides it": "🧭 Was entscheidet",
+  "🧭 What decides it": "🧭 Worauf es ankommt",
   "🌍 How it really works": "🌍 So funktioniert es wirklich",
   "🌍 How it works in real life": "🌍 So läuft es im echten Leben",
   "Here's what would help most:": "Das würde dir am meisten helfen:",
@@ -133,7 +133,7 @@
   },
   "Once you've tried a couple of different things, I'll suggest jobs that fit you.": "Sobald du ein paar verschiedene Dinge ausprobiert hast, schlage ich dir passende Jobs vor.",
   "After a few moves, I'll suggest jobs that fit the skills you've built.": "Nach ein paar Schritten schlage ich dir Jobs vor, die zu den Fähigkeiten passen, die du aufgebaut hast.",
-  "Builds %@.": "Stärkt %@.",
+  "Builds %@.": "Stärkt: %@.",
   "Open Activities": "Aktivitäten öffnen",
   "Here's where you stand.": "So stehst du gerade da.",
   "Still exploring — good.": "Du erkundest noch – gut so.",
@@ -152,8 +152,8 @@
   "• %@: %@ — worth under %@ a year.": "• %1$@: %2$@ – bringt weniger als %3$@ pro Jahr.",
   "The rest": "Der Rest",
   "It expects %lld years as %@.": {
-   "one": "Er erwartet ein Jahr als %2$@.",
-   "other": "Er erwartet %1$lld Jahre als %2$@."
+   "one": "Der Job erwartet ein Jahr als %2$@.",
+   "other": "Der Job erwartet %1$lld Jahre als %2$@."
   }
  }
 }

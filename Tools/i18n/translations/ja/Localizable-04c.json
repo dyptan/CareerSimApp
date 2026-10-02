@@ -2,8 +2,8 @@
   "table": "Localizable",
   "strings": {
     "🎒 You'll start in %@.": "🎒 %@から始めます。",
-    "🎒 You'll start in %@ (%@ done).": "🎒 %1$@から始めます（%2$@は修了済み）。",
-    "🎒 You'll start in your last years of school (%@ done).": "🎒 学校の最後の数年から始めます（%@は修了済み）。",
+    "🎒 You'll start in %@ (%@ done).": "🎒 %1$@から始めます。%2$@は修了済みです。",
+    "🎒 You'll start in your last years of school (%@ done).": "🎒 学校の最後の数年から始めます。%@は修了済みです。",
     "🎓 You'll start having just finished %@ — time to choose your next step.": "🎓 %@を修了したところから始めます。次の進路を選びましょう。",
     "Start here": "ここからスタート",
     "Close": "閉じる",

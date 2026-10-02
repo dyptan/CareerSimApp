@@ -39,8 +39,8 @@
       "one": "🧭 %lld J. Erf. erwartet",
       "other": "🧭 %lld J. Erf. erwartet"
     },
-    "💰 Target %@": "💰 Ziel %@",
-    "🔒 Nothing to stake yet — earn and save first": "🔒 Noch nichts zum Einsetzen – verdiene und spare zuerst",
+    "💰 Target %@": "💰 Kapitalbedarf %@",
+    "🔒 Nothing to stake yet — earn and save first": "🔒 Noch kein Startkapital – verdiene und spare zuerst",
     "🛡️ %@ survive year 1 · stake %@": "🛡️ %1$@ überleben das erste Jahr · Einsatz %2$@",
     "🏦 %@ of it borrowed": "🏦 %@ davon geliehen",
     "Launch": "Gründen",
@@ -53,7 +53,7 @@
       "other": "Das hilft: deine %1$lld Jahre in %2$@ (ideal: %3$@), die nötigen Fähigkeiten, %4$@, %5$@ und das Geld, das du einsetzt."
     },
     "Each year it lasts, it gets safer — but a bad economy makes it riskier.": "Jedes Jahr, das es besteht, wird es sicherer – aber eine schwache Konjunktur macht es riskanter.",
-    "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "💵 Es zahlt in den ersten beiden Jahren %1$@ und dann %2$@ von %3$@, danach den vollen Betrag – mehr in guten Jahren, weniger in schlechten.",
+    "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "💵 In den ersten beiden Jahren zahlt es nur einen Teil des vollen Betrags von %3$@ (zuerst %1$@, dann %2$@), danach den ganzen Betrag – mehr in guten Jahren, weniger in schlechten.",
     "📉 If it closes, you get back %@ of the money you put in.": "📉 Wenn es schließt, bekommst du %@ des eingesetzten Geldes zurück.",
     "🌟 Every year in business, every investment you win and every sale makes you better known in %@ %@ — so your next business is more likely to last.": "🌟 Jedes Jahr im Geschäft, jede gewonnene Finanzierungsrunde und jeder Verkauf machen dich in %1$@ %2$@ bekannter – so hält dein nächstes Unternehmen eher durch.",
     "🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.": "🦄 Diese Art von Unternehmen kann groß werden: In der Chefetage kannst du Investoren um Geld bitten, und – sehr selten – hebt es ab und wird ein Vermögen wert.",
@@ -108,7 +108,7 @@
     "Your goal": "Dein Ziel",
     "%@. Tap the ⓘ next to your age at any time to check how you're doing.": "%@. Tippe jederzeit auf das ⓘ neben deinem Alter, um zu sehen, wie du dich schlägst.",
     "Stuck? Look for ⓘ": "Du steckst fest? Suche das ⓘ",
-    "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": "Diese kleinen ⓘ-Buttons gibt es überall – tippe auf einen, um genau zu sehen, wie etwas funktioniert, von der Einstellung bis zum Wettbewerbssieg.",
+    "Those little ⓘ buttons are everywhere — tap one to see exactly how something works, from getting hired to winning a competition.": "Diese kleinen ⓘ-Buttons gibt es überall – tippe auf einen, um genau zu sehen, wie etwas funktioniert, von der Bewerbung bis zum Wettbewerbssieg.",
     "Welcome to Career Sim! 👋": "Willkommen bei Career Sim! 👋",
     "Live a whole life, one year at a time — here's the idea:": "Erlebe ein ganzes Leben, ein Jahr nach dem anderen – so funktioniert es:",
     "Let's go! 🚀": "Los geht’s! 🚀",

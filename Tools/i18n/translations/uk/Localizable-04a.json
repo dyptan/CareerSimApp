@@ -78,7 +78,7 @@
   "Send": "Надіслати",
   "Type a job, like “nurse”…": "Напр., «медсестра»…",
   "Ask me anything…": "Запитай мене про що завгодно…",
-  "Degrees": "Ступені",
+  "Degrees": "Ступені та дипломи",
   "%lld years": {
    "one": "%lld рік",
    "few": "%lld роки",
@@ -199,10 +199,10 @@
   "%@ %@: you have %lld, they'd like %lld": "%1$@ %2$@: у тебе %3$lld, заклад хоче %4$lld",
   "Every skill here helps you get in. Reaching the level the school likes counts fully; being a bit short still counts some. A low skill never stops you from applying — it just lowers your chance.": "Кожна навичка тут допомагає вступити. Якщо досягнуто рівня, який подобається закладу, вона враховується повністю; якщо трохи не дотягує — частково. Низька навичка ніколи не забороняє подавати заявку — вона лише знижує шанс.",
   "• the skills this school looks for": "• навички, які цінує цей заклад",
-  "• your %@ (for a first degree)": "• %@ — для першого ступеня",
+  "• your %@ (for a first degree)": "• твій показник «%@» (для першого ступеня)",
   "• your prizes and titles (at top schools)": "• твої призи й титули (у провідних закладах)",
   "You can apply as soon as you've finished the school level above. After that, your chance goes up with:": "Подати заявку можна одразу після завершення рівня освіти, указаного вище. Далі твій шанс підвищують:",
-  "Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not.": "Вибагливі заклади відмовляють багатьом добрим учням, а поблажливі можуть сказати «так», навіть коли навичок небагато. Розвивай навички через розділи «Заняття» та «Проєкти», а в школі обирай заняття з категорії «Навчання», щоб підвищити оцінки. Подача заявки забирає рік, незалежно від того, вступиш ти чи ні.",
+  "Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not.": "Вибагливі заклади відмовляють багатьом добрим учням, а поблажливі можуть сказати «так», навіть коли навичок небагато. Розвивай навички в розділах «Заняття» та «Проєкти», а в школі обирай заняття з категорії «Навчання» — так оцінки зростуть. Заявка забирає рік — вступиш ти чи ні.",
   "The school accepted you onto %@.": "Навчальний заклад зарахував тебе на програму «%@».",
   "%@ accepted you onto %@.": "Заклад «%1$@» зарахував тебе на програму «%2$@».",
   "You've left your job as %@ to study full-time.": "Ти залишаєш посаду «%@», щоб навчатися на очній формі."

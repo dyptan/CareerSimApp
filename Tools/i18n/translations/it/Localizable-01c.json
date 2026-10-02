@@ -35,7 +35,7 @@
   "Open Boardroom": "Apri Sala del consiglio",
   "Open Education": "Apri istruzione",
   "%@ a year": "%@ all’anno",
-  "%@ a year to start, growing to about %@ later": "%1$@ all’anno all’inizio, fino a circa %2$@ più avanti",
+  "%@ a year to start, growing to about %@ later": "da %1$@ all’anno, e col tempo fino a circa %2$@",
   "You can get this job! It pays %@ a year — %@ more than you earn now.": "Puoi ottenere questo lavoro! Lo stipendio è di %1$@ all’anno — %2$@ in più di quanto guadagni ora.",
   "You can get this job! It pays %@ a year.": "Puoi ottenere questo lavoro! Lo stipendio è di %@ all’anno.",
   "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "Probabilità di ottenerlo: %1$@. Stipendio: %2$@ — %3$@ in più di quanto guadagni ora.",
@@ -68,11 +68,11 @@
    "other": "Apre la strada al ruolo di %1$@ (%2$@) dopo %3$lld anni di studio."
   },
   "Then: %@ (%lld more years).": {
-   "one": "Poi: %1$@ (ancora un anno).",
-   "other": "Poi: %1$@ (ancora %2$lld anni)."
+   "one": "Poi: «%1$@» — ancora un anno.",
+   "other": "Poi: «%1$@» — ancora %2$lld anni."
   },
-  "You'd have to leave your job while you study.": "Dovresti lasciare il lavoro mentre studi.",
-  "Study for: %@": "Studia per: %@",
+  "You'd have to leave your job while you study.": "Mentre studi dovrai lasciare il lavoro.",
+  "Study for: %@": "Studia per il titolo «%@»",
   "Curious about the %@ job? It pays %@ a year and needs %@ %lld. You're at %lld — keep practising!": "Ti incuriosisce il ruolo di %1$@? Paga %2$@ all’anno e richiede la competenza %3$@ a quota %4$lld. Tu sei a %5$lld — continua a esercitarti!",
   "The %@ job (%@ a year) needs %@ %lld. You're at %lld.": "Il ruolo di %1$@ (%2$@ all’anno) richiede la competenza %3$@ a quota %4$lld. Tu sei a %5$lld.",
   "Build %@ with %@": "Sviluppa la competenza %1$@ con %2$@",

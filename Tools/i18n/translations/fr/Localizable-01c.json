@@ -10,7 +10,7 @@
   "Getting into an elite firm": "Entrer dans un cabinet d’élite",
   "These firms recruit mostly from a short list of universities, through campus events and internships. At the biggest banks, well under %@ of applicants for analyst jobs are hired.": "Ces entreprises recrutent surtout dans une courte liste d’universités, via des événements sur les campus et des stages. Dans les plus grandes banques, bien moins de %@ des candidats aux postes d’analyste sont embauchés.",
   "A top-tier university adds +%@ to your chance, and demand for the job is only %@ of a normal one's.": "Une université de premier rang ajoute +%1$@ à tes chances, et la demande pour ce poste n’est que de %2$@ de celle d’un poste ordinaire.",
-  "Big banks and consulting firms mostly hire from a short list of universities, and fewer than 1 in 100 people who apply for a first job there get it.": "Les grandes banques et les cabinets de conseil recrutent surtout dans une courte liste d’universités, et moins de 1 personne sur 100 parmi celles qui y postulent pour un premier poste l’obtient.",
+  "Big banks and consulting firms mostly hire from a short list of universities, and fewer than 1 in 100 people who apply for a first job there get it.": "Les grandes banques et les cabinets de conseil recrutent surtout dans une courte liste d’universités, et moins d’une personne sur 100 qui y postule décroche un premier poste.",
   "Analysts are hired in yearly classes and expected to work very long hours. Many leave after a couple of years for other industries; the rest face “up or out” promotions.": "Les analystes sont recrutés par vagues annuelles et doivent faire de très longues journées. Beaucoup partent au bout de deux ans environ vers d’autres secteurs ; les autres affrontent des promotions « progresser ou partir ».",
   "Each rung above the entry level is harder to be hired into from outside.": "Chaque échelon au-dessus du niveau d’entrée est plus difficile à décrocher depuis l’extérieur.",
   "New analysts work very long hours, and many leave after a couple of years.": "Les nouveaux analystes font de très longues journées, et beaucoup partent au bout de deux ans environ.",
@@ -58,10 +58,10 @@
    "other": "Cela ouvre le poste « %1$@ » (%2$@) après %3$lld ans d’études."
   },
   "Then: %@ (%lld more years).": {
-   "one": "Ensuite : %1$@ (encore %2$lld an).",
-   "other": "Ensuite : %1$@ (encore %2$lld ans)."
+   "one": "Ensuite : %1$@ — encore %2$lld an.",
+   "other": "Ensuite : %1$@ — encore %2$lld ans."
   },
-  "You'd have to leave your job while you study.": "Tu devrais quitter ton poste pendant tes études.",
+  "You'd have to leave your job while you study.": "Tu devras quitter ton poste pendant tes études.",
   "Study for: %@": "Étudier : %@",
   "Curious about the %@ job? It pays %@ a year and needs %@ %lld. You're at %lld — keep practising!": "Le poste « %1$@ » t’intrigue ? Il paie %2$@ par an et demande %3$@ : %4$lld. Tu es à %5$lld — continue à pratiquer !",
   "The %@ job (%@ a year) needs %@ %lld. You're at %lld.": "Le poste « %1$@ » (%2$@ par an) demande %3$@ : %4$lld. Tu es à %5$lld.",

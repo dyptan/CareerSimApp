@@ -1,8 +1,8 @@
 {
   "table": "Localizable",
   "strings": {
-    "University — Bachelor's": "Університет — бакалавр",
-    "University — Master's": "Університет — магістр",
+    "University — Bachelor's": "Ступінь бакалавра",
+    "University — Master's": "Ступінь магістра",
     "Doctorate": "Докторський ступінь",
     "Doctorate+": "Постдок",
     "very good": "дуже добре",

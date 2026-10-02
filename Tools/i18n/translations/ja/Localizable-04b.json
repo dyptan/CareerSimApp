@@ -133,25 +133,25 @@
    "other": "🏢 %lld業界から自由に選べます"
   },
   "🎉 Venture launched!": "🎉 事業を立ち上げました！",
-  "You put in %@ and opened your business!": "%@を出資して、事業を開きました！",
+  "You put in %@ and opened your business!": "%@を出資して、営業スタートです！",
   "In the first year it pays about %@ of the full amount while you find customers.": "最初の1年は、お客さんを探す期間なので、収入は満額の約%@です。",
   "🧭 %lld yr exp expected": {
    "other": "🧭 経験%lld年が目安"
   },
   "💰 Target %@": "💰 必要資金%@",
   "🔒 Nothing to stake yet — earn and save first": "🔒 出資できるお金がありません。まず稼いで貯金しましょう",
-  "🛡️ %@ survive year 1 · stake %@": "🛡️ 1年目に生き残る確率%1$@ · 出資額%2$@",
-  "🏦 %@ of it borrowed": "🏦 そのうち%@は借入",
+  "🛡️ %@ survive year 1 · stake %@": "🛡️ 1年目の生存率%1$@ · 出資額%2$@",
+  "🏦 %@ of it borrowed": "🏦 出資額のうち%@は借入",
   "Launch": "立ち上げる",
   "🔒 You need some money to start a business. Work and save first — then you can start any business you like.": "🔒 事業を始めるには、いくらかのお金が必要です。まず働いて貯金すれば、好きな事業を始められます。",
   "💰 You'd put in %@ of the %@ it needs, from your savings first.": "💰 必要な%2$@のうち%1$@を出資します。まず貯金から出します。",
-  "%@ would be a loan that grows %@ a year — you pay it back even if the business closes.": "%1$@は借入になり、1年あたり%2$@ずつ増えます。事業が終わっても返済が必要です。",
+  "%@ would be a loan that grows %@ a year — you pay it back even if the business closes.": "出資額のうち%1$@は借入になります。借入は1年あたり%2$@ずつ増え、事業が終わっても返済が必要です。",
   "🚀 It always opens. It has a %@ chance to make it through the first year.": "🚀 事業は必ず開けます。1年目を乗り切れる確率は%@です。",
   "What helps: your %lld years in %@ (%@ is good), the skills it needs, %@, %@, and the money you put in.": {
-   "other": "有利になること：%2$@での%1$lld年（%3$@年あれば十分）、必要なスキル、%4$@、%5$@、そして出資額。"
+   "other": "有利になること：%2$@での経験（現在%1$lld年、%3$@年あれば十分）、必要なスキル、%4$@、%5$@、そして出資額。"
   },
   "Each year it lasts, it gets safer — but a bad economy makes it riskier.": "続くほど毎年安全になりますが、不景気だとリスクが高くなります。",
-  "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "💵 収入は満額（%3$@）に対して、1年目が%1$@、2年目が%2$@、3年目からは満額です。景気のよい年は多く、悪い年は少なくなります。",
+  "💵 It pays %@, then %@ of its %@ in the first two years, then the full amount — more in good years, less in bad ones.": "💵 収入は満額（%3$@）に対して、1年目が%1$@、2年目が%2$@、3年目からは満額です。景気のよい年は収入が増え、悪い年は減ります。",
   "📉 If it closes, you get back %@ of the money you put in.": "📉 事業が終わると、出資したお金の%@が戻ってきます。",
   "🌟 Every year in business, every investment you win and every sale makes you better known in %@ %@ — so your next business is more likely to last.": "🌟 事業を続けた年、出資を勝ち取るたび、売却するたびに、%1$@ %2$@での名声が高まり、次の事業が長続きしやすくなります。",
   "🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.": "🦄 この種類の事業は大きく成長できます。経営会議で投資家にお金を求められ、ごくまれに急成長して莫大な価値になることもあります。",
@@ -168,7 +168,7 @@
   "🎓 Student loan owed: %@": "🎓 奨学金の残り：%@",
   "🏅 Score: %@ ÷ %lld y.o. = %@": "🏅 スコア：%1$@ ÷ %2$lld歳 = %3$@",
   "🏅 Score": "🏅 スコア",
-  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "持っているお金から借りているお金を引いた額（純資産）を、年齢で割った数です。若いうちに貯金を築くほど、スコアが高くなります。",
+  "What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.": "持っているお金から借りているお金を引いた額（純資産）を、年齢で割った数です。若いうちに貯金をためるほど、スコアが高くなります。",
   "Keep playing": "続ける",
   "Restart": "もう一度あそぶ",
   "Start over": "はじめからやり直す",

@@ -81,8 +81,8 @@
   "Flight school and its licence are the gate; years of experience open each rung.": "Flugschule und Lizenz sind die Hürde; Jahre Erfahrung öffnen jede Stufe.",
   "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.": "Linienpiloten brauchen eine besondere Lizenz und viele Flugstunden. Die meisten fangen als Fluglehrer an oder fliegen kleine Flugzeuge und gehen dann zu einer größeren Airline.",
   "Simplified mode skips the licence: years of work open each step up (%@).": "Der vereinfachte Modus überspringt die Lizenz: Arbeitsjahre öffnen jede Stufe nach oben (%@).",
-  "In the US that normally means 1,500 flight hours (fewer through some approved flight schools).": "In den USA sind das normalerweise 1.500 Flugstunden (weniger an manchen zugelassenen Flugschulen).",
-  "In the US that is about 1,500 hours.": "In den USA sind das etwa 1.500 Stunden.",
+  "In the US that normally means 1,500 flight hours (fewer through some approved flight schools).": "In den USA sind das normalerweise 1.500 Flugstunden (weniger an manchen zugelassenen Flugschulen).",
+  "In the US that is about 1,500 hours.": "In den USA sind das etwa 1.500 Stunden.",
   "At airlines, seniority decides who flies the bigger aircraft and who becomes a captain — years of service count for more than talent.": "Bei Airlines entscheidet das Dienstalter, wer die größeren Flugzeuge fliegt und wer Kapitän wird – Dienstjahre zählen mehr als Talent.",
   "Each rung asks for more years (%@) and pays far more.": "Jede Stufe verlangt mehr Jahre (%@) und zahlt weit mehr.",
   "The longer a pilot has worked for an airline, the bigger the plane they get to fly.": "Je länger ein Pilot für eine Airline gearbeitet hat, desto größer ist das Flugzeug, das er fliegen darf.",
@@ -119,9 +119,9 @@
   "%@ a year to start, growing to about %@ later": "%1$@ pro Jahr zum Start, später etwa %2$@",
   "You can get this job! It pays %@ a year — %@ more than you earn now.": "Du kannst diesen Job bekommen! Er zahlt %1$@ pro Jahr – %2$@ mehr, als du jetzt verdienst.",
   "You can get this job! It pays %@ a year.": "Du kannst diesen Job bekommen! Er zahlt %@ pro Jahr.",
-  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "Deine Chance darauf liegt bei %1$@. Er zahlt %2$@ – %3$@ mehr, als du jetzt verdienst.",
-  "You have a %@ chance to get it. It pays %@.": "Deine Chance darauf liegt bei %1$@. Er zahlt %2$@.",
-  "Look for it under %@.": "Such ihn im Bereich %@.",
+  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "Deine Chance darauf liegt bei %1$@. Der Job zahlt %2$@ – %3$@ mehr, als du jetzt verdienst.",
+  "You have a %@ chance to get it. It pays %@.": "Deine Chance darauf liegt bei %1$@. Der Job zahlt %2$@.",
+  "Look for it under %@.": "Such den Job im Bereich %@.",
   "🏆 Getting this job reaches your goal!": "🏆 Mit diesem Job erreichst du dein Ziel!",
   "Apply for the %@ job": "Bewirb dich als %@",
   "You have a %@ chance to move up this year. You'd earn about %@ a year.": "Deine Chance auf eine Beförderung liegt dieses Jahr bei %1$@. Du verdienst dann etwa %2$@ pro Jahr.",
@@ -137,8 +137,8 @@
   "Education holds you back (needed: %@) — but going back to school means leaving this job.": "Deine Bildung bremst dich aus (nötig: %@) – aber wenn du wieder zur Schule gehst, musst du diesen Job verlassen.",
   "Best way to help: grow your %@ (%lld of %lld). %@ is good practice for it.": "Das hilft am meisten: Verbessere deine Fähigkeit „%1$@“ (%2$lld von %3$lld). %4$@ ist dafür eine gute Übung.",
   "Work toward %@": "Arbeite auf %@ hin",
-  "This opens the %@ job, which pays %@. You'll also need %@.": "Das öffnet den Job als %1$@, der %2$@ zahlt. Außerdem brauchst du %3$@.",
-  "This opens the %@ job, which pays %@.": "Das öffnet den Job als %1$@, der %2$@ zahlt.",
+  "This opens the %@ job, which pays %@. You'll also need %@.": "Das öffnet den Job als %1$@ (%2$@). Außerdem brauchst du %3$@.",
+  "This opens the %@ job, which pays %@.": "Das öffnet den Job als %1$@ (%2$@).",
   "Take %@": "Absolviere %@",
   "This is the first step toward the %@ job (%@). It's about %lld years of school in total.": {
    "one": "Das ist der erste Schritt zum Job als %1$@ (%2$@). Insgesamt ist es etwa ein Jahr Schule und Studium.",
@@ -149,8 +149,8 @@
    "other": "Das öffnet den Job als %1$@ (%2$@) – nach %3$lld Jahren Schule und Studium."
   },
   "Then: %@ (%lld more years).": {
-   "one": "Danach: %1$@ (noch ein Jahr).",
-   "other": "Danach: %1$@ (noch %2$lld Jahre)."
+   "one": "Danach: %1$@ – noch ein Jahr.",
+   "other": "Danach: %1$@ – noch %2$lld Jahre."
   },
   "You'd have to leave your job while you study.": "Solange du lernst, musst du deinen Job aufgeben.",
   "Study for: %@": "Studium: %@",

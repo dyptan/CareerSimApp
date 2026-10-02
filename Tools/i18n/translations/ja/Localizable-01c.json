@@ -35,11 +35,11 @@
   "Open Boardroom": "経営会議を開く",
   "Open Education": "教育を開く",
   "%@ a year": "年収%@",
-  "%@ a year to start, growing to about %@ later": "年収%1$@からスタートし、のちに約%2$@まで伸びる収入",
+  "%@ a year to start, growing to about %@ later": "年収%1$@からスタートし、のちに約%2$@まで伸びる見込み",
   "You can get this job! It pays %@ a year — %@ more than you earn now.": "この仕事に就けます！年収は%1$@で、今より%2$@多くなります。",
   "You can get this job! It pays %@ a year.": "この仕事に就けます！年収は%@です。",
-  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "就ける確率は%1$@です。%2$@が見込め、今より%3$@多くなります。",
-  "You have a %@ chance to get it. It pays %@.": "就ける確率は%1$@です。%2$@が見込めます。",
+  "You have a %@ chance to get it. It pays %@ — %@ more than you earn now.": "採用される確率は%1$@、%2$@です。今より%3$@多くなります。",
+  "You have a %@ chance to get it. It pays %@.": "採用される確率は%1$@、%2$@です。",
   "Look for it under %@.": "%@の分野で探しましょう。",
   "🏆 Getting this job reaches your goal!": "🏆 この仕事に就けば、目標達成です！",
   "Apply for the %@ job": "%@の仕事に応募する",
@@ -54,17 +54,17 @@
   "Education holds you back (needed: %@) — but going back to school means leaving this job.": "学歴が足を引っ張っています（必要な学歴：%@）。ただし、学校に戻るにはこの仕事を辞めることになります。",
   "Best way to help: grow your %@ (%lld of %lld). %@ is good practice for it.": "いちばん効果的なのは、%1$@を伸ばすことです（%3$lld中%2$lld）。そのためには%4$@がよい練習になります。",
   "Work toward %@": "%@をめざす",
-  "This opens the %@ job, which pays %@. You'll also need %@.": "これで%1$@の仕事（%2$@）への道が開けます。さらに%3$@も必要です。",
-  "This opens the %@ job, which pays %@.": "これで%1$@の仕事（%2$@）への道が開けます。",
+  "This opens the %@ job, which pays %@. You'll also need %@.": "これで%1$@の仕事への道が開けます。その仕事は%2$@です。さらに%3$@も必要です。",
+  "This opens the %@ job, which pays %@.": "これで%1$@の仕事への道が開けます。その仕事は%2$@です。",
   "Take %@": "%@を始める",
   "This is the first step toward the %@ job (%@). It's about %lld years of school in total.": {
-   "other": "これは%1$@の仕事（%2$@）への最初のステップです。学校には合計で約%3$lld年かかります。"
+   "other": "これは%1$@の仕事への最初のステップです。その仕事は%2$@です。学校には合計で約%3$lld年かかります。"
   },
   "This opens the %@ job (%@) after %lld years of school.": {
-   "other": "学校に%3$lld年通うと、%1$@の仕事（%2$@）への道が開けます。"
+   "other": "学校に%3$lld年通うと、%1$@の仕事への道が開けます。その仕事は%2$@です。"
   },
   "Then: %@ (%lld more years).": {
-   "other": "そのあと：%1$@（さらに%2$lld年）。"
+   "other": "そのあとの%1$@に、さらに%2$lld年かかります。"
   },
   "You'd have to leave your job while you study.": "勉強している間は、今の仕事を辞めることになります。",
   "Study for: %@": "目指す学位：%@",

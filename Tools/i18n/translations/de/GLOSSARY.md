@@ -236,7 +236,7 @@ Contest and event names: translate by pattern, one word order, no English left e
 | Bee / Bowl / Fair / Cup / Challenge | Wettbewerb (`Spelling Bee` -> `Buchstabierwettbewerb`) / Quiz / Wettbewerb (`Science Fair` -> `Wissenschaftswettbewerb`) / Pokal / Challenge |
 | Math Kangaroo / Hackathon / Olympiad / Marathon | Känguru der Mathematik / Hackathon / Olympiade / Marathon |
 | School Sports Day / Bake-Off / Cook-Off | Schulsportfest / Backwettbewerb / Kochwettbewerb |
-| Event verbs (button / past / "at %@") | Präsentieren / Präsentiert / `Präsentieren bei %@`; Auftreten / Aufgetreten; Mitwirken (Appear on TV) / Mitgewirkt; Sprechen / Gesprochen; Antreten (Compete) / Angetreten; Vorführen (Demo) / Vorgeführt |
+| Event verbs (button / past / "at %@") | Präsentieren / Präsentiert / `Präsentieren bei „%@“` (event names go in quotes: no article is possible); Auftreten / Aufgetreten; Mitwirken (Appear on TV) / Mitgewirkt; Sprechen / Gesprochen; Antreten (Compete) / Angetreten; Vorführen (Demo) / Vorgeführt |
 | Grandmaster | Großmeister |
 
 ### 5.7 Trainings, licences and certificates
@@ -282,10 +282,10 @@ Currencies (`… in euros.`): in Euro · in US-Dollar · in kanadischen Dollar �
 | Start over / Restart / Keep playing | Neu anfangen / Neustart / Weiterspielen | |
 | Launch (business) | Gründen | |
 | Open Jobs / Events / Projects / Ventures / Boardroom / Education / Activities | Jobs / Events / Projekte / Gründungen / Chefetage / Bildung / Aktivitäten öffnen | Footer labels are the bare nouns |
-| Compare schools | Hochschulen vergleichen | A degree programme is at a `Hochschule`, never a `Schule` (that is school up to the Highschool); tier names (`Universität`, `Community College`) cannot take an article, so write `Universität: Hier zählen …`, not `Universität achtet auf …` |
+| Compare schools | Anbieter vergleichen | The label is shared by all degree levels, vocational diplomas included, so it is neutral (`Anbieter`), not `Hochschulen`. A degree programme is at a `Hochschule`, never a `Schule` (that is school up to the Highschool); tier names (`Universität`, `Community College`) cannot take an article, so write `Universität: Hier zählen …`, not `Universität achtet auf …` |
 | Only roles I qualify for | Nur passende Positionen | Toggle label; quote it exactly |
 | Requirements not met / Hard requirements not met | Voraussetzungen nicht erfüllt / Feste Voraussetzungen nicht erfüllt | |
-| Not yet / Needs / Requires %@ first | Noch nicht / Braucht / Braucht zuerst %@ | |
+| Not yet / Needs / Requires %@ first | Noch nicht / Braucht: %@ / Braucht zuerst: %@ | `%@` is a bare level or course name (`Promotion`, `Pflegehelfer-Kurs (CNA)`): put it after a colon, never directly after `Braucht` |
 | ✓ Earned | ✓ Erreicht | |
 | Send / Close / OK / Thanks! | Senden / Schließen / OK / Danke! | |
 | Let's go! / Start here / How to play | Los geht’s! / Hier starten / Spielanleitung | |
@@ -301,7 +301,7 @@ Currencies (`… in euros.`): in Euro · in US-Dollar · in kanadischen Dollar �
 | Science | Wissenschaft (field of work, fame, degree) | Naturwissenschaften (school subject, key `activity.science`) |
 | Education | Bildung (screen, work field, industry) | Pädagogik (degree field, key `field.education`) |
 | Pilot | Pilot (job) | Privatpilot (the licence, short name) |
-| Present | Präsentieren (event button: give a talk; never `Geschenk`, `gegenwärtig`) | `Präsentieren bei %@` (card title), `Präsentiert` (past) |
+| Present | Präsentieren (event button: give a talk; never `Geschenk`, `gegenwärtig`) | `Präsentieren bei „%@“` (card title), `Präsentiert` (past) |
 | Field | Bereich (field of work or fame) | Studienfach (study) · Vor Ort (work setting filter) |
 | Training | Weiterbildung (credential type) | Training (sport practice; verb `trainieren`) |
 | Master | Master (degree) | Meister (trade rung: `Master Electrician`) |

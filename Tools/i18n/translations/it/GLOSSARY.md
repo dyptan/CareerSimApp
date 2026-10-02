@@ -89,7 +89,8 @@ Italian marks gender on participles and adjectives, and the player's gender is u
   **A percentage is never the bare subject or object of a sentence, and never follows «pari a»** («paga 40% delle tasse», «una quota pari a 15%», «solo 5% ottiene» are
   wrong: Italian needs «il 40%», «pari al 15%»). Put it after a colon or in brackets instead: «You have a %@ chance» → «Probabilità: %@» / «(%@ di probabilità)»,
   «Only %@ get it» → «solo una piccola parte (%@)», «Your family pays %@» → «la paga in parte la tua famiglia (%@)», «Fees take %@ of the price» → «si prendono una parte del prezzo (%@)».
-  Never «una probabilità del %@».
+  Never «una probabilità del %@». Same for rates and shares: «Cresce di 8%» is wrong → «cresce ogni anno (interesse: %@)»; «i primi 40% di stipendio» → «una prima parte dello stipendio (%@)»;
+  «12% più difficile» → «più difficile del solito (%@)»; «un tetto di 40%» → «ha un tetto (%@)»; «(prima 40%, poi 70%)» → «(primo anno: %@, secondo anno: %@)».
 * **Never put an article (or a fused preposition) directly before a looked-up name** (job, field, country, skill, degree, activity): the
   name's gender and first letter are unknown. Use a construction that needs none: «come %@», «da %@», «di %@», «in %@» (degrees: «laurea in %@»),
   «nel settore %@», «il ruolo di %@», «la competenza %@», «il titolo «%@»», or a colon. Do not inflect, lower-case or capitalise a name.
@@ -107,7 +108,7 @@ Italian marks gender on participles and adjectives, and the player's gender is u
 | Hard requirements | Requisiti obbligatori | «Preferred (helpful)» → «Consigliato (utile)» |
 | Credentials / credential | Qualifiche / qualifica | Diplomas, degrees, certificates, licences |
 | Certificates & licences | Attestati e abilitazioni | |
-| Trophies / Accolades | Trofei / Riconoscimenti | |
+| Trophies / Accolades | Trofei / Riconoscimenti | On the Compare-schools card the same thing is «premi e titoli» everywhere (row, popover title, text) so one screen has one name |
 | Title (won) | titolo | «il titolo «Junior Champion»» |
 | Contest | gara | Generic. Competition → gara/competizione; championship → campionato; tournament → torneo; prize/award → premio; olympiad → olimpiade |
 | Chance / odds | probabilità | «Chance to get hired» → «Probabilità di assunzione». Never «possibilità» for a percentage |
@@ -249,8 +250,8 @@ Fixed as `English = Italiano`. A name never takes an article from you.
 |---|---|---|
 | Summit / Expo / Forum / Festival | Summit / Expo / Forum / Festival | Kept |
 | Conference / Congress / Symposium / Convention | Conferenza / Congresso / Simposio / Convegno | |
-| Event button: Present / Perform / Appear / Speak / Compete / Demo | Presenta / Esibisciti / Partecipa / Intervieni / Gareggia / Mostra | «Present at %@» → «Presenta a %@», «Appear at %@» → «Partecipa a %@» |
-| Past labels: Presented / Performed / Appeared / Spoke / Competed / Demoed | Presentazione / Esibizione / Partecipazione / Intervento / Gara disputata / Dimostrazione | Nouns, so no gendered participle: «Presented at %@» → «Presentazione a %@», «Spoke at %@» → «Intervento a %@» |
+| Event button: Present / Perform / Appear / Speak / Compete / Demo | Presenta / Esibisciti / Partecipa / Intervieni / Gareggia / Mostra | Event names take no article from you, so the name goes behind «evento» in quotes: «Present at %@» → «Presenta all’evento «%@»», «Appear at %@» → «Partecipa all’evento «%@»» |
+| Past labels: Presented / Performed / Appeared / Spoke / Competed / Demoed | Presentazione / Esibizione / Partecipazione / Intervento / Gara disputata / Dimostrazione | Nouns, so no gendered participle: «Presented at %@» → «Presentazione all’evento «%@»», «Spoke at %@» → «Intervento all’evento «%@»» |
 | Take (button) | Scegli | Activity, training and project rows |
 | Take part | partecipare | «Taking part uses up your year» → «Partecipare ti costa un anno» |
 | Skip / Skip a year | Salta / Salta un anno | |
@@ -258,7 +259,7 @@ Fixed as `English = Italiano`. A name never takes an article from you.
 | Keep playing / Try again / Close / Send / OK | Continua a giocare / Riprova / Chiudi / Invia / OK | |
 | Launch | Avvia | |
 | Start here / Let's go! | Inizia da qui / Andiamo! | |
-| Congratulations! / Thanks! | Congratulazioni! / Grazie! | «Welcome to Career Sim! 👋» → «Ti diamo il benvenuto in Career Sim! 👋» |
+| Congratulations! / Thanks! | Congratulazioni! / Grazie! | «Welcome to Career Sim! 👋» → «Ti diamo il benvenuto in Career Sim! 👋». The alert title already says «Congratulazioni!»: the graduation body starts at «Hai completato …», never repeats it |
 | Tap | Tocca | |
 | It uses up your year | ti costa un anno | Recurring: «Picking an activity uses up your year» → «Scegliere un’attività ti costa un anno» |
 | Champion / Winner / Medalist | campione / vincitore / medagliato | Contest titles use the masculine generic: «Campione di scacchi» |
@@ -413,6 +414,9 @@ Five key families, each a different job:
   Security Guard Licence = «Abilitazione da guardia giurata»; Driver's License = «Patente di guida»; CDL = «Patente professionale (CDL)»;
   Pilot = «Pilota privato»; Commercial Pilot = «Pilota commerciale»; Board Certification = «Certificazione di specialità»; Police Academy = «Accademia di polizia»;
   Journeyman Electrician/Plumber = «Elettricista/Idraulico qualificato». The game models the US system: never invent Italian rules that the key does not state.
+  **Course titles written as «course (credential)» never repeat themselves or stack brackets**: «Esame di abilitazione alla professione medica» (not «Esame di abilitazione (Abilitazione alla professione medica)»),
+  «Esame di abilitazione infermieristica (RN)», «Corso di infermieristica pratica (LPN)», «Corso per infermiere di pratica avanzata (NP)», «Corso di contabilità (CPA)»; where the course name already says it, no bracket
+  («Corso per assistente odontoiatrico», «Formazione per assistenti di volo»). Credential names that come after «Ottieni questa qualifica:» / «Poi:» / «Richiede prima» are put in «…» so their capital letter is natural.
 * **Degree titles** use one pattern: Bachelor of/Bachelor of Science in X = «Laurea in X» (never «triennale»: the game's bachelor stage is 4 years); Master of/of Science in X = «Laurea magistrale in X»;
   Doctor of Philosophy in X = «Dottorato di ricerca (PhD) in X»; Doctor of X = «Dottorato in X»; MBA = «Master in Business Administration (MBA)»; Doctor of Medicine (MD)
   = «Dottorato in Medicina (MD)»; Juris Doctor (JD) = «Dottorato in Giurisprudenza (JD)»; Associate of Applied Science in %@ = «Associate degree in scienze applicate: %@».

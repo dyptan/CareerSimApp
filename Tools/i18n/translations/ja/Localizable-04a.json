@@ -69,7 +69,7 @@
   "Send": "送信",
   "Type a job, like “nurse”…": "「看護師」のように仕事を入力…",
   "Ask me anything…": "なんでも聞いてください…",
-  "Degrees": "学位",
+  "Degrees": "学歴・学位",
   "%lld years": {
    "other": "%lld年"
   },
@@ -86,7 +86,7 @@
   "Taking part uses up your year.": "参加すると、その1年を使います。",
   "🔒 Work or study in %@ to take part": "🔒 参加するには、%@で働くか学ぶ必要があります",
   "🔒 Work or study in %@ to take part. Then your chance goes up with years of work there, your %@ skill and your fame in the field.": "🔒 参加するには、%1$@で働くか学ぶ必要があります。参加できるようになると、そこでの仕事の経験年数、%2$@のスキル、その分野での名声に応じて確率が上がります。",
-  "🎲 %@ chance they pick you. It goes up with years of work in %@, your %@ skill and your fame there.": "🎲 選ばれる確率は%1$@です。%2$@での仕事の経験年数、%3$@のスキル、そこでの名声に応じて上がります。",
+  "🎲 %@ chance they pick you. It goes up with years of work in %@, your %@ skill and your fame there.": "🎲 選ばれる確率は%1$@です。この確率は、%2$@での仕事の経験年数、%3$@のスキル、そこでの名声に応じて上がります。",
   "📣 Anyone can apply.": "📣 だれでも応募できます。",
   "If they pick you: you win the “%@” title (🌟 fame) and meet lots of people in %@, who can help you get hired and promoted there.": "選ばれた場合：「%1$@」の称号（🌟 名声）を獲得し、%2$@でたくさんの人と知り合えます。その人たちが、そこでの採用や昇進を助けてくれます。",
   "If not: you still go and meet a few people.": "選ばれなかった場合：それでも参加して、何人かと知り合えます。",
@@ -150,7 +150,7 @@
   "Admission requirement:": "出願条件：",
   "Admission requirement": "出願条件",
   "You need to have finished this school level before you can apply. Everything else just changes your chance of getting in.": "出願するには、この段階の学校を修了している必要があります。それ以外のことは、合格確率が変わるだけです。",
-  "%@ of the decision": "判断の%@",
+  "%@ of the decision": "合否判断の%@",
   "🏆 Your accolades: %@": "🏆 受賞歴：%@",
   "🏆 Trophies & accolades": "🏆 トロフィーと受賞歴",
   "What this school looks for:": "この学校が重視すること：",
@@ -179,13 +179,13 @@
   "• your prizes and titles (at top schools)": "• 賞と称号（トップ校の場合）",
   "You can apply as soon as you've finished the school level above. After that, your chance goes up with:": "上の段階の学校を修了すれば、すぐに出願できます。そのうえで、次のものがあると合格確率が上がります：",
   "Picky schools say no to many good students, and friendly ones may still say yes when your skills are low. Grow your skills with Activities and projects, and pick Study activities at school to raise your grades. Applying uses up your year, whether you get in or not.": "難関校は優秀な学生でも不合格にすることが多く、入りやすい学校は、スキルが低くても合格にしてくれることがあります。活動やプロジェクトでスキルを伸ばし、学校では勉強の活動を選んで成績を上げましょう。出願すると、合格してもしなくても、その1年を使います。",
-  "The school accepted you onto %@.": "学校が%@への入学を認めました。",
-  "%@ accepted you onto %@.": "%1$@が%2$@への入学を認めました。",
+  "The school accepted you onto %@.": "学校に受け入れてもらえました。%@の勉強が始まります。",
+  "%@ accepted you onto %@.": "%1$@の%2$@課程に入学が決まりました。",
   "You've left your job as %@ to study full-time.": "%@の仕事を辞めて、フルタイムで学びます。",
   "🎓 You're in!": "🎓 合格！",
   "🎓 Not this year": "🎓 今年は不合格",
-  "The school said no this time — you had a %@ chance. You can try again next year!": "今回は不合格でした。合格確率は%@でした。来年また挑戦できます！",
-  "%@ said no this time — you had a %@ chance. You can try again next year!": "今回は%1$@に不合格でした。合格確率は%2$@でした。来年また挑戦できます！",
+  "The school said no this time — you had a %@ chance. You can try again next year!": "合格確率は%@でしたが、今回はうまくいきませんでした。来年また挑戦できます！",
+  "%@ said no this time — you had a %@ chance. You can try again next year!": "%1$@の合格確率は%2$@でしたが、今回はうまくいきませんでした。来年また挑戦できます！",
   "Need %@ first": "先に%@が必要"
  }
 }

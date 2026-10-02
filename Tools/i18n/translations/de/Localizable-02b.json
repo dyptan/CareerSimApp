@@ -1,8 +1,8 @@
 {
  "table": "Localizable",
  "strings": {
-  "University — Bachelor's": "Universität – Bachelor",
-  "University — Master's": "Universität – Master",
+  "University — Bachelor's": "Bachelor-Abschluss",
+  "University — Master's": "Master-Abschluss",
   "Doctorate": "Promotion",
   "Doctorate+": "Promotion+",
   "very good": "sehr gut",

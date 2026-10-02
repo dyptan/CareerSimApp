@@ -25,12 +25,12 @@
   "Keep studying — your %@ is what this job asks for.": "Continua a studiare — questo lavoro richiede proprio il titolo che stai seguendo: %@.",
   "Get %@. It's the longest step, so start early.": "Ottieni %@. È il passo più lungo, quindi inizia presto.",
   "You'll need %@ — that comes after school.": "Ti servirà %@ — un passo che viene dopo la scuola.",
-  "Earn this credential: %@ — this job won't hire without it.": "Ottieni questa qualifica: %@ — senza di essa questo lavoro non assume.",
-  "Earn this credential: %@ — this job won't hire without it. (%@.)": "Ottieni questa qualifica: %1$@ — senza di essa questo lavoro non assume. (%2$@.)",
+  "Earn this credential: %@ — this job won't hire without it.": "Ottieni questa qualifica: «%@» — senza di essa non ti assumono per questo lavoro.",
+  "Earn this credential: %@ — this job won't hire without it. (%@.)": "Ottieni questa qualifica: «%1$@» — senza di essa non ti assumono per questo lavoro. (%2$@.)",
   "Grow %@ from %lld to %lld.": "Fai crescere la competenza %1$@ da %2$lld a %3$lld.",
   "%@ adds +%@ a year — about %lld years.": {
-   "one": "%1$@ aggiunge +%2$@ all’anno — circa un anno.",
-   "other": "%1$@ aggiunge +%2$@ all’anno — circa %3$lld anni."
+   "one": "Con %1$@: +%2$@ all’anno — ci vuole circa un anno.",
+   "other": "Con %1$@: +%2$@ all’anno — ci vogliono circa %3$lld anni."
   },
   "%lld years of experience": {
    "one": "un anno di esperienza",
@@ -53,7 +53,7 @@
   "You're working as %@. The next step up is %@: %@.": "Lavori come %1$@. Il prossimo passo è %2$@: %3$@.",
   "%@ pays %@.": "Il ruolo di %1$@ paga %2$@.",
   "%@ starts at %@, which pays %@.": "Il ruolo di %1$@ parte da %2$@, che paga %3$@.",
-  "You can't be hired for it yet.": "Per ora non puoi ottenerlo.",
+  "You can't be hired for it yet.": "Non puoi ancora ottenerlo.",
   "Your chance to be hired today is %@.": "La tua probabilità di assunzione oggi: %@.",
   "You can apply for it now!": "Puoi candidarti subito!",
   "🧪 You've tried %@.": "🧪 Hai provato: %@.",
@@ -115,7 +115,7 @@
   "A few jobs fit that. Which one do you mean?": "Ci sono alcuni lavori che corrispondono. Quale intendi?",
   "No problem!": "Nessun problema!",
   "💡 Best moves right now": "💡 Le mosse migliori adesso",
-  "🔄 Change my goal": "🔄 Cambia il mio obiettivo",
+  "🔄 Change my goal": "🔄 Cambia obiettivo",
   "🧭 The narrow path": "🧭 La strada stretta",
   "🧭 What decides it": "🧭 Da cosa dipende",
   "🌍 How it really works": "🌍 Come funziona davvero",
@@ -170,13 +170,13 @@
   "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": "Le tue competenze contano fino a +%@ sulla tua probabilità — la singola voce che pesa di più. Ogni competenza richiesta dal lavoro viene valutata rispetto al livello che il lavoro richiede.",
   "Furthest behind: %@.": "Più indietro: %@.",
   "A plan for your skills": "Un piano per le tue competenze",
-  "One move a year — %@ — closes the whole gap in more than a decade.": "Una mossa all’anno — %@ — colma tutto il divario in più di dieci anni.",
+  "One move a year — %@ — closes the whole gap in more than a decade.": "una mossa all’anno — %@ — colma tutto il divario in più di dieci anni.",
   "One move a year — %@ — closes the whole gap in about %lld years.": {
-   "one": "Una mossa all’anno — %1$@ — colma tutto il divario in circa un anno.",
-   "other": "Una mossa all’anno — %1$@ — colma tutto il divario in circa %2$lld anni."
+   "one": "una mossa all’anno — %1$@ — colma tutto il divario in circa un anno.",
+   "other": "una mossa all’anno — %1$@ — colma tutto il divario in circa %2$lld anni."
   },
   "Skills the job asks for": "Competenze richieste dal lavoro",
-  "%lld of %lld strong enough (%@ match)": "%1$lld su %2$lld all’altezza (%3$@ di affinità)",
+  "%lld of %lld strong enough (%@ match)": "%1$lld su %2$lld raggiunte (%3$@ di affinità)",
   "Each point of %@ fame adds +%@ to your chance, up to +%@.": "Ogni punto di fama nel settore %1$@ aggiunge +%2$@ alla tua probabilità, fino a +%3$@.",
   "For a top seat, a public name counts for more than for an ordinary job.": "Per un posto al vertice, essere noti al pubblico conta più che per un lavoro comune.",
   "%@ fame": "Fama: %@",

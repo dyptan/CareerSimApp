@@ -37,8 +37,8 @@
   "A UX and product-design certificate: research, prototyping, and visual craft. Opens doors in design and fashion studios and sharpens the eye a design-led venture lives or dies by.": "Ein Zertifikat in UX und Produktdesign: Recherche, Prototyping und visuelles Handwerk. Es öffnet Türen in Design- und Modestudios und schärft den Blick, von dem ein designgetriebenes Unternehmen lebt – oder an dem es scheitert.",
   "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed.": "Weiterbildung im Aufnehmen, Mischen und Produzieren von Musik. Sie vermittelt das technische Handwerk hinter einer Karriere im Showbusiness – und hinter Veröffentlichungen, die wirklich auffallen.",
   "Requires age %lld+": "Erst ab %lld Jahren",
-  "Requires %@ first": "Braucht zuerst %@",
-  "Requires %@": "Braucht %@",
+  "Requires %@ first": "Braucht zuerst: %@",
+  "Requires %@": "Braucht: %@",
   "Requires %lld+ yrs in %@": {
    "one": "Braucht %1$lld+ J. in %2$@",
    "other": "Braucht %1$lld+ J. in %2$@"
@@ -78,8 +78,8 @@
    "other": "%lld Jahre"
   },
   "%lld years • compare schools": {
-   "one": "%lld Jahr • Hochschulen vergleichen",
-   "other": "%lld Jahre • Hochschulen vergleichen"
+   "one": "%lld Jahr • Anbieter vergleichen",
+   "other": "%lld Jahre • Anbieter vergleichen"
   },
   "Courses": "Kurse",
   "Fields of study": "Studienfächer",
@@ -112,7 +112,7 @@
   "🎲 ~%@ chance (💼 fame +%@) · 📈 your share ×%@, pay +%@": "🎲 ~%1$@ Chance (💼 Ruhm +%2$@) · 📈 dein Anteil ×%3$@, Gehalt +%4$@",
   "🎲 ~%@ chance someone buys · 💰 %@": "🎲 ~%1$@ Chance auf einen Käufer · 💰 %2$@",
   "🎉 Investors said yes! The company is worth more, it can pay you more, and you earned the “%@” title.": "🎉 Die Investoren haben zugesagt! Das Unternehmen ist mehr wert, kann dir mehr zahlen und du hast dir den Titel „%@“ verdient.",
-  "🚫 Investors said no this time. Grow your reputation and try again next year.": "🚫 Die Investoren haben diesmal abgelehnt. Bau dir einen besseren Ruf auf und versuch es nächstes Jahr noch einmal.",
+  "🚫 Investors said no this time. Grow your reputation and try again next year.": "🚫 Die Investoren haben diesmal abgelehnt. Werde bekannter und versuch es nächstes Jahr noch einmal.",
   "💸 Sold! %@ went into your savings.": "💸 Verkauft! %@ sind in deine Ersparnisse geflossen.",
   "🤝 Nobody bought at that price this year. Ask for less, or try again next year.": "🤝 Zu diesem Preis hat dieses Jahr niemand gekauft. Verlange weniger oder versuch es nächstes Jahr noch einmal.",
   "What helps:": "Das hilft:",
@@ -146,7 +146,7 @@
   "Skip": "Überspringen",
   "💵 Saving %@ of pay above %@ of living costs each year": "💵 Du sparst jedes Jahr %1$@ von dem Gehalt, das über %2$@ Lebenshaltungskosten liegt",
   "%@ Goal: %@": "%1$@ Ziel: %2$@",
-  "Compare schools": "Hochschulen vergleichen",
+  "Compare schools": "Anbieter vergleichen",
   "Apply": "Bewerben",
   "%@/yr": "%@/Jahr"
  }

@@ -2,7 +2,7 @@
   "table": "Localizable",
   "strings": {
     "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier.": {
-      "other": "確率は、下のスキル、仕事の経験（現在%1$lld年）、持っている%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
+      "other": "確率は、必要なスキル、仕事の経験（現在%1$lld年）、%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
     },
     "Your %lld years in %@ count double.": {
       "other": "%2$@での%1$lld年は2倍に数えられます。"

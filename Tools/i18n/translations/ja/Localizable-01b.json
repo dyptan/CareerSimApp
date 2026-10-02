@@ -33,7 +33,7 @@
   "Hit or miss, the year builds %@.": "当たっても外れても、その1年で%@が伸びます。",
   "It also counts as a year of %@ experience.": "%@の経験1年分としても数えられます。",
   "Take the %@ job": "%@の仕事に就く",
-  "%@ chance to get it, %@.": "就ける確率は%1$@で、%2$@が見込めます。",
+  "%@ chance to get it, %@.": "採用される確率は%1$@、%2$@です。",
   "Every year in %@ counts toward the %lld this job expects.": "%1$@で働いた1年ごとに、この仕事が求める%2$lld年に数えられます。",
   "Run a business of your own": "自分の事業を運営する",
   "Every year running a venture counts as a year of experience toward this job — whatever the business sells.": "事業を運営した年は、何を売る事業でも、この仕事の経験1年分として数えられます。",

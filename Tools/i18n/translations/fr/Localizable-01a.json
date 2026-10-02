@@ -22,11 +22,11 @@
    "one": "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld an à attendre.",
    "other": "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld ans à attendre."
   },
-  "Keep studying — your %@ is what this job asks for.": "Continue tes études — le diplôme que tu prépares (%@) est justement ce que demande ce poste.",
+  "Keep studying — your %@ is what this job asks for.": "Continue tes études — le diplôme « %@ » que tu prépares est justement ce que demande ce poste.",
   "Get %@. It's the longest step, so start early.": "Obtiens %@. C’est l’étape la plus longue, alors commence tôt.",
   "You'll need %@ — that comes after school.": "Il te faudra %@ — c’est pour après l’école.",
-  "Earn this credential: %@ — this job won't hire without it.": "Obtiens cette qualification : %@ — ce poste n’embauche personne sans elle.",
-  "Earn this credential: %@ — this job won't hire without it. (%@.)": "Obtiens cette qualification : %1$@ — ce poste n’embauche personne sans elle. (%2$@.)",
+  "Earn this credential: %@ — this job won't hire without it.": "Obtiens cette qualification : %@ — sans elle, ce poste reste fermé.",
+  "Earn this credential: %@ — this job won't hire without it. (%@.)": "Obtiens cette qualification : %1$@ — sans elle, ce poste reste fermé. (%2$@.)",
   "Grow %@ from %lld to %lld.": "Fais passer %1$@ de %2$lld à %3$lld.",
   "%@ adds +%@ a year — about %lld years.": {
    "one": "%1$@ : +%2$@ par an — environ %3$lld an.",
@@ -133,12 +133,12 @@
   },
   "Once you've tried a couple of different things, I'll suggest jobs that fit you.": "Quand tu auras essayé deux ou trois choses différentes, je te proposerai des métiers qui te correspondent.",
   "After a few moves, I'll suggest jobs that fit the skills you've built.": "Après quelques essais, je te proposerai des métiers qui correspondent aux compétences que tu as développées.",
-  "Builds %@.": "Développe %@.",
+  "Builds %@.": "Compétences développées : %@.",
   "Open Activities": "Ouvrir Activités",
   "Here's where you stand.": "Voici où tu en es.",
   "Still exploring — good.": "Tu explores encore — c’est bien.",
   "📅 Check-in · age %lld": "📅 Bilan · %lld ans",
-  "Uses your %@. Pays %@.": "Utilise tes compétences : %1$@. Salaire : %2$@.",
+  "Uses your %@. Pays %@.": "Compétences utilisées : %1$@. Salaire : %2$@.",
   "It takes %@.": "Il faut %@.",
   "Aim for this": "Viser ce métier",
   "See job listings": "Voir les offres d’emploi",
@@ -167,7 +167,7 @@
    "one": "%1$@ sur %2$lld an",
    "other": "%1$@ sur %2$lld ans"
   },
-  "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": "Tes compétences comptent pour jusqu’à +%@ de tes chances — le plus gros facteur à lui seul. Chaque compétence demandée par le poste est notée par rapport au niveau voulu.",
+  "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": "Tes compétences apportent jusqu’à +%@ à tes chances — le plus gros facteur à lui seul. Chaque compétence demandée par le poste est notée par rapport au niveau voulu.",
   "Furthest behind: %@.": "Le plus en retard : %@.",
   "A plan for your skills": "Un plan pour tes compétences",
   "One move a year — %@ — closes the whole gap in more than a decade.": "Un choix par an — %@ — comble tout l’écart en plus de dix ans.",
@@ -188,8 +188,8 @@
   "no ranked school yet": "aucune école classée pour l’instant",
   "School prestige": "Prestige de l’école",
   "A relevant degree from a top school (%@) adds +%@ to your chance, one from a mainstream school (%@) +%@.": "Un diplôme pertinent d’une école d’élite (%1$@) ajoute +%2$@ à tes chances, un diplôme d’un établissement classique (%3$@) +%4$@.",
-  "Adds +%@ to your chance for %@ jobs. Not required — a credential that shows you're serious. One course counts; they don't stack.": "Ajoute +%1$@ à tes chances pour les métiers en %2$@. Pas obligatoire — une qualification qui montre ton sérieux. Une seule formation compte ; elles ne se cumulent pas.",
-  "Adds +%@ to your chance for %@ jobs. Not open to you yet: %@.": "Ajoute +%1$@ à tes chances pour les métiers en %2$@. Pas encore accessible : %3$@.",
+  "Adds +%@ to your chance for %@ jobs. Not required — a credential that shows you're serious. One course counts; they don't stack.": "Elle ajoute +%1$@ à tes chances pour les métiers en %2$@. Pas obligatoire — une qualification qui montre ton sérieux. Une seule formation compte ; elles ne se cumulent pas.",
+  "Adds +%@ to your chance for %@ jobs. Not open to you yet: %@.": "Elle ajoute +%1$@ à tes chances pour les métiers en %2$@. Pas encore accessible : %3$@.",
   "A course for the field": "Une formation pour le domaine",
   "none yet": "aucune pour l’instant",
   "One skill-building credential covering %@ adds up to +%@ to your chance. It isn't required, and they don't stack.": "Une qualification qui développe des compétences et couvre %1$@ ajoute jusqu’à +%2$@ à tes chances. Elle n’est pas obligatoire, et les qualifications ne se cumulent pas.",
@@ -200,9 +200,9 @@
   "The seat": "La place",
   "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply (about %@ with a founder's track record) — so it usually takes many attempts.": "Pour le poste « %1$@ », la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule (environ %3$@ avec un parcours de fondateur) — il faut donc souvent de nombreuses tentatives.",
   "%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply — so it usually takes many attempts.": "Pour le poste « %1$@ », la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule — il faut donc souvent de nombreuses tentatives.",
-  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur).",
-  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply.": "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules.",
-  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur).",
-  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply.": "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules."
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : dans le meilleur des cas, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur).",
+  "%@ is open to a well-prepared candidate: at your very best you'd be hired about %@ of the years you apply.": "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : dans le meilleur des cas, tu décrocherais le poste environ %2$@ des années où tu postules.",
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply (about %@ with a founder's track record).": "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : dans le meilleur des cas, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur).",
+  "%@ is competitive but not a lottery: at your very best you'd be hired about %@ of the years you apply.": "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : dans le meilleur des cas, tu décrocherais le poste environ %2$@ des années où tu postules."
  }
 }

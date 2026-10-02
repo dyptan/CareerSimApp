@@ -39,7 +39,7 @@ and list it at the end of your report as `NEW TERM: English -> 日本語`.
 * **Colon** `:` → `：` (full-width). Semicolon `;` → 。 or 、. Parentheses `( )` → `（ ）` always, even around Latin or digits. Ellipsis `…` stays a single `…`.
 * **Quotes**: “title”, "label" → `「…」`; a quote inside a quote `『…』`. Award titles, UI labels, search words ("nurse") all take 「 」.
 * **The em dash `—`** is not carried over. By function: an aside or reason → split into a new sentence (。) or use 、; a label separator ("Graduated — %@") → `：`
-  ("卒業：%@"); a dash joining a name and its role ("%@ — Speaker") → の ("%@の登壇者"). Use `―` (a long dash) only if the sentence truly needs a break and 。 cannot do it; never `ー` (the katakana bar) as a dash.
+  ("卒業：%@"); a dash joining a name and its role ("%@ — Speaker") → の ("%@の発表者"). Use `―` (a long dash) only if the sentence truly needs a break and 。 cannot do it; never `ー` (the katakana bar) as a dash.
 * **Hyphen/en dash in ranges** → `〜` (U+301C): `6〜10歳`, `10〜20年`, `3〜7年`. "7+" → `7歳以上`, "3+ yrs" → `3年以上`; "under 18" → `18歳未満`; "up to" → `〜まで`. A signed number (`+20%`, `−5%`) is kept as it arrives.
 * **Middle dot `・`**: joins parallel nouns and replaces `&` and `/` between two alternatives: `ソフトウェア・インターネット`, `銀行・金融`, `読み書き`, `美容師・理容師`.
   Keep `&` and `/` only inside names and technical tokens: `A&P`, `M&A`, `R&D`, `UX/UI`, `QA`, `Q&A`. A separator ` · ` between phrases in a status line is kept as in the source (` · `).
@@ -157,7 +157,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | Ventures (footer, sheet) | 起業 | founding a company; a venture (the business) 事業; venture loan 起業ローン |
 | Boardroom | 経営会議 | the executive-decisions sheet |
 | Education (footer, screen, job field) | 教育 | one rendering for all; degree *subject* is 教育学 (§3) |
-| Degrees / Courses / Licences | 学位／講座／免許 | sections of the Education screen |
+| Degrees / Courses / Licences | 学位／講座／免許 | sections of the Education screen. The key `Degrees` is also the sub-heading of the Credentials list, which holds school diplomas too, so it reads 学歴・学位 |
 | Fields of study | 学ぶ分野 | |
 | Compare schools | 学校をくらべる | |
 | Likely jobs | 主な仕事 | |
@@ -261,7 +261,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | Degree | 学位 | |
 | Bachelor('s degree) | 学士 | as an object: 学士号; "University — Bachelor's" 大学（学士） |
 | Master('s degree) | 修士 | 修士号; "University — Master's" 大学院（修士） |
-| Doctorate / Doctoral | 博士 | 博士号; "Doctorate+" ポスドク |
+| Doctorate / Doctoral | 博士 | 博士号; the key `Doctorate` (an education requirement and a level name, shown as "🔒 博士号が必要") is 博士号, never bare 博士 (= a person); "Doctorate+" ポスドク |
 | Diploma | 卒業資格 | "a school diploma" 高校卒業資格; "a college or vocational diploma" 短大・専門学校の卒業資格 |
 | Vocational | 職業 | "Vocational Diploma" 職業ディプロマ; "College / Vocational" 短大・専門 |
 | Primary / Elementary School | 小学校 | every country (see §6) |
@@ -295,7 +295,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | Journeyman | 一人前の職人 | "Journeyman Electrician Exam" 電気工事士試験 |
 | Residency | 臨床研修 | "Medical Residency (Board Certification)" 臨床研修（専門医認定） |
 
-**4.4b Credentials (training names).** Pattern `<programme> (<credential>)` → `<programme>（<credential>）`. Fixed credential names:
+**4.4b Credentials (training names).** Pattern `<programme> (<credential>)` → `<programme>（<credential>）`, but drop the bracket when it only repeats the programme's own noun (歯科助手講座, 客室乗務員研修, 警備員研修, 農薬散布講座, 熟練電気工事士課程, 熟練配管工課程) or an exam's own licence (医師国家試験, 歯科医師国家試験, 薬剤師国家試験, 獣医師国家試験, 看護師国家試験, 電気工事士試験, 配管工試験, 建築士試験); keep `音楽制作講座（修了証）`, `ゲーム開発プログラム（修了証）`. A credential name that already carries a bracket (`医師免許`-style names with （RN）, （LPN）, （CDL）) must never be put inside another bracket by a sentence frame. Fixed credential names:
 
 | English | 日本語 | English | 日本語 |
 |---|---|---|---|
@@ -372,8 +372,8 @@ In running text always use the skill's own name above (the Boardroom hint "Persu
 | Winner / Champion / Medalist | 優勝者／チャンピオン／メダリスト | Prizewinner / Laureate | 入賞者／受賞者 |
 | Junior / Youth / Kids' | ジュニア／青少年／こども向け | National / Regional / International | 全国／地域／国際 |
 | Event (Summit / Expo / Conference / Forum) | サミット／展示会／カンファレンス／フォーラム | Symposium / Congress / Convention | シンポジウム／学会／大会 |
-| Festival / Show / Pitch Night | フェス／ショー／ピッチナイト | Speaker | 登壇者 |
-| Present / Presented (button, past) | 発表／発表済み | Perform / Performed | パフォーマンス／パフォーマンス済み |
+| Festival / Show / Pitch Night | フェス／ショー／ピッチナイト | Speaker (award `%@ — Speaker`, shared by present/demo events) | %@の発表者 (the button "Speak" stays 登壇) |
+| Present / Presented (button, past) | 発表／発表済み | Perform / Performed | 披露／披露済み (パフォーマンス is too long for the button) |
 | Appear / Appeared | 出演／出演済み | Speak / Spoke | 登壇／登壇済み |
 | Compete / Competed | 出場／出場済み | Demo / Demoed | デモ／デモ済み |
 
@@ -520,7 +520,7 @@ Country adjectives in "Scores go to their own German leaderboard." → `スコ�
 | 7b | A CEO is the boss of a whole company. There are only a few hundred CEO jobs at the biggest companies, so many good people never get one. | CEOは、会社ぜんたいをまとめるいちばん上の人です。大きな会社のCEOの席は数百しかないので、がんばってもなれない人がたくさんいます。 | child version: kana, short, no jargon |
 | 8 | • 💵 A typical household: the first %@ of pay goes on living costs, and you save %@ of the rest. Your family pays %@ of tuition; you borrow the rest. | • 💵 ふつうの家庭：給料のうち最初の%1$@は生活費にあてられ、残りの%2$@を貯金します。授業料の%3$@は家族が払い、足りない分は借ります。 | bullet and emoji kept; money/percent arrive formatted; no 円 added; `：` for the colon |
 | 9 | • %@ %@ is booming this year: %@ | • %1$@ %2$@は今年、好況です（%3$@） | icon + industry + effect phrase in `（　）`; no `：` after a finished です／ます sentence |
-| 10 | Present / Presented / Present at %@ / %@ — Speaker (event buttons and award title) | 発表 / 発表済み / %@で発表 / %@の登壇者 | button = compact noun; the dash dropped for の |
+| 10 | Present / Presented / Present at %@ / %@ — Speaker (event buttons and award title) | 発表 / 発表済み / %@で発表 / %@の発表者 | button = compact noun; the dash dropped for の; 発表者 because the same award also names the Demo events |
 | 11 | Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine. | こんにちは、キャリアアドバイザーです！👋 将来やってみたい仕事はもう決まっていますか？まだでも大丈夫ですよ。 | advisor voice: warm, ですよ; emoji kept with a space after it |
 | 12 | The minimum wage (¥1,121 an hour on average) / • %@: no job pays under %@ a year. | 最低賃金（全国平均 時給1,121円） / • %1$@：年収%2$@未満の仕事はありません。 | yen literal → 円 prefix moves to suffix; the first noun phrase is inserted by code, so it ends in a noun |
 | 13 | Your character grows a year older each turn. Choosing something — an activity, a course, a job — is how you spend that year, and the year passes as soon as you pick. Nothing you want to do this year? Tap the blue Skip button at the top. | ターンが進むたびに、キャラクターは1つ年をとります。活動・講座・仕事など、何かを選ぶとその1年を使ったことになり、選んだ時点で1年が過ぎます。今年はやりたいことがありませんか？上にある青い「スキップ」ボタンをタップしましょう。 | UI labels in 「」; fixed terms 活動・講座・仕事 |

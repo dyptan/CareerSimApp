@@ -38,7 +38,7 @@
   "Training in recording, mixing, and producing music. Builds the technical craft behind a career in show business — and behind releasing work that actually gets noticed.": "Une formation à l’enregistrement, au mixage et à la production musicale. Elle développe le savoir-faire technique d’une carrière dans le show-business — et celui qui permet de sortir des œuvres qui se font vraiment remarquer.",
   "Requires age %lld+": "À partir de %lld ans",
   "Requires %@ first": "Nécessite d’abord : %@",
-  "Requires %@": "Nécessite : %@",
+  "Requires %@": "Nécessite un niveau d’études (%@)",
   "Requires %lld+ yrs in %@": {
    "one": "Nécessite au moins %1$lld an en %2$@",
    "other": "Nécessite au moins %1$lld ans en %2$@"
@@ -95,7 +95,7 @@
   "📣 Anyone can apply.": "📣 Tout le monde peut postuler.",
   "If they pick you: you win the “%@” title (🌟 fame) and meet lots of people in %@, who can help you get hired and promoted there.": "S’ils te choisissent : tu remportes le titre « %1$@ » (🌟 renommée) et tu rencontres plein de gens en %2$@ qui peuvent t’aider à décrocher un poste et des promotions dans ce domaine.",
   "If not: you still go and meet a few people.": "Sinon : tu y vas quand même et tu rencontres quelques personnes.",
-  "Grows either way:\n%@": "Progresse dans tous les cas :\n%@",
+  "Grows either way:\n%@": "Progression dans tous les cas :\n%@",
   "Leading as your seat": "Diriger depuis ta place",
   "Leading as %@ %@": "Diriger comme %1$@ %2$@",
   "Boardroom": "Salle du conseil",
