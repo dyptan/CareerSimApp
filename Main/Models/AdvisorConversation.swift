@@ -1012,6 +1012,14 @@ final class AdvisorConversation: ObservableObject {
         AdvisorReply(label: "\(family.icon) \(AdvisorRoles.displayName(of: family))", kind: .pickRole(family.baseTitle)) // i18n:ignore icon + display name
     }
 
+    /// Whether a short entry names this role outright ("nurse", "I want to be a nurse"): its whole text,
+    /// or a few words that contain the role's name. A long description that merely mentions a word
+    /// ("…cooking in a busy restaurant kitchen") is the model's to read.
+    private static func namesOutright(_ family: AdvisorCoach.RoleFamily, in text: String) -> Bool {
+        AdvisorRoles.isName(of: family, text)
+            || (AdvisorRoles.isNamed(family, in: text) && AdvisorRoles.contentWordCount(text) <= 4)
+    }
+
     /// Reads a typed role: the model first when there is one, the plain search
     /// otherwise — and always the plain search as its backstop.
     private func resolveRole(from text: String) async {
@@ -1020,7 +1028,7 @@ final class AdvisorConversation: ObservableObject {
         // theirs: the catalogue's own search decides, and the language model — which can pick a
         // plausible-sounding but wrong role for a word it reads badly — is asked only about wishes
         // that no title names.
-        if let top = matches.first, AdvisorRoles.isName(of: top, text) || AdvisorRoles.isNamed(top, in: text) {
+        if let top = matches.first, Self.namesOutright(top, in: text) {
             await aim(at: top.baseTitle, lead: L("Great choice!"))
             return
         }
@@ -1049,8 +1057,7 @@ final class AdvisorConversation: ObservableObject {
         let candidates = AdvisorRoles.search(text)
         // The model may have read the words badly (it once answered "Krankenpfleger" with a 3D artist):
         // a role the player named outright beats whatever it picked.
-        if let top = candidates.first, top.baseTitle != title,
-           AdvisorRoles.isName(of: top, text) || AdvisorRoles.isNamed(top, in: text) {
+        if let top = candidates.first, top.baseTitle != title, Self.namesOutright(top, in: text) {
             await aim(at: top.baseTitle, lead: L("Great choice!"))
             return
         }
