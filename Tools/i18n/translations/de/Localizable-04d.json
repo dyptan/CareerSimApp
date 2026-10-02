@@ -2,8 +2,8 @@
  "table": "Localizable",
  "strings": {
   "Your average school grade so far, over %lld years.": {
-   "one": "Dein Notendurchschnitt bisher, über ein Jahr.",
-   "other": "Dein Notendurchschnitt bisher, über %lld Jahre."
+   "one": "Dein Notendurchschnitt bisher, berechnet aus einem Jahr.",
+   "other": "Dein Notendurchschnitt bisher, berechnet aus %lld Jahren."
   },
   "School skills set each year's grade, and choosing a Study activity pushes it up.": "Schulfähigkeiten bestimmen die Note jedes Jahres, und eine Lern-Aktivität hebt sie an.",
   "Universities look at it when you apply — the top ones care about it a lot.": "Universitäten schauen bei deiner Bewerbung darauf – die besten legen großen Wert darauf.",
@@ -50,8 +50,8 @@
   "Skills are the things you're good at, besides school and work experience. They help with:": "Fähigkeiten sind die Dinge, in denen du gut bist – neben Schule und Berufserfahrung. Sie helfen bei:",
   "💼 Getting hired — every job lists the skills it needs": "💼 Einstellung – jeder Job nennt die Fähigkeiten, die er braucht",
   "⬆️ Promotions — doing your job well and being ready for the next one": "⬆️ Beförderungen – deinen Job gut machen und für den nächsten bereit sein",
-  "🎓 Getting into college — each subject looks for its own skills": "🎓 Hochschulzulassung – jedes Fach sucht nach eigenen Fähigkeiten",
-  "📝 School grades, 🏅 contests and 🚀 starting a business": "📝 Schulnoten, 🏅 Wettbewerben und 🚀 der Gründung eines Unternehmens",
+  "🎓 Getting into college — each subject looks for its own skills": "🎓 Hochschulzulassung – jedes Fach verlangt eigene Fähigkeiten",
+  "📝 School grades, 🏅 contests and 🚀 starting a business": "📝 Schulnoten, 🏅 Wettbewerben und 🚀 der Gründung eines Unternehmens",
   "Grow them with Activities, and later with events, courses and projects. Tap a skill's ⓘ to see where it helps most.": "Baue sie mit Aktivitäten aus, später mit Events, Kursen und Projekten. Tippe auf das ⓘ einer Fähigkeit, um zu sehen, wo sie am meisten hilft.",
   "Fame": "Ruhm",
   "🌐 General": "🌐 Allgemein",
@@ -109,7 +109,7 @@
   "How many years you've worked in each job.": "Wie viele Jahre du in jedem Job gearbeitet hast.",
   "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": "Viele Jobs verlangen Jahre Erfahrung, bevor sie dich einstellen, und Jahre in derselben Art von Arbeit helfen dir beim Aufstieg.",
   "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.": "Die großen Momente deines bisherigen Lebens – etwa der Schulabschluss, ein Job, eine Gehaltserhöhung oder eine Trophäe.",
-  "The newest one is shown here. Open it to see them all, newest first.": "Der neueste wird hier gezeigt. Öffne ihn, um alle zu sehen, den neuesten zuerst.",
+  "The newest one is shown here. Open it to see them all, newest first.": "Hier siehst du den neuesten Moment. Öffne die Liste, um alle zu sehen – die neuesten zuerst.",
   "Age %lld — %@": "Alter %1$lld – %2$@",
   "Your story": "Deine Geschichte",
   "%lld yrs in %@": {
@@ -121,7 +121,7 @@
    "other": "%lld J. Berufserfahrung"
   },
   "Requirements:": "Voraussetzungen:",
-  "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "🎯 Ein Vorteil bei Jobs und Gründungen in: %@ – und es zählt als eine Stufe der Schulbildung, die Positionen dort erwarten.",
+  "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "🎯 Ein Vorteil bei Jobs und Gründungen in %@ – und es zählt als eine Stufe der Schulbildung, die Positionen dort erwarten.",
   "Completing this course builds:": "Wenn du diesen Kurs abschließt, stärkt er:",
   "licence": "Lizenz",
   "✓ Earned": "✓ Erreicht"

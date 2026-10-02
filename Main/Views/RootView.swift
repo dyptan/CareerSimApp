@@ -374,7 +374,7 @@ struct ModeSelectionView: View {
         HStack(spacing: 6) {
             Menu {
                 Picker("Country", selection: $country) {
-                    ForEach(Country.allCases) { option in
+                    ForEach(Country.sortedForPicker) { option in
                         Text(verbatim: "\(option.flag) \(option.title)").tag(option)
                     }
                 }

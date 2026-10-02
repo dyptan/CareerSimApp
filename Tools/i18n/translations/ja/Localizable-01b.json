@@ -75,7 +75,7 @@
   "Win the door-opener": "道を開く称号を獲得する",
   "Win the “%@” title first. Only then do skills, fame and the rest count.": "まず「%@」の称号を獲得しましょう。スキルや名声などが効いてくるのはそれからです。",
   "under %@": "%@未満",
-  "🎮 In the game: %@": "🎮 ゲームでは：%@",
+  "🎮 In the game: %@": "🎮 ゲーム内：%@",
   "%lld years of work as %@": {
    "other": "%2$@として%1$lld年の勤務"
   },
@@ -158,11 +158,11 @@
   "Competitive specialties such as surgery and anaesthesia are a second competition: training places go to the top-ranked candidates.": "外科や麻酔科のような競争の激しい診療科は、2つ目の競争になります。研修先の枠は、上位の候補者から埋まります。",
   "These jobs ask for more of skills like %@, %@ and %@ than most.": "これらの仕事は、%1$@、%2$@、%3$@のようなスキルを、ほかの多くの仕事より強く求めます。",
   "The cost is high, too: years of tuition, often on loans, before a first full salary.": "費用も高額です。最初の本格的な給料をもらうまでに、何年もの授業料がかかり、ローンを使うことも多いです。",
-  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": "ゲームでは授業料がかかり、奨学金を借りることもありますが、そのあとの給料は最高水準です。",
+  "The game charges tuition and you may owe a student loan — then the pay is among the highest.": "授業料がかかり、奨学金を借りることもありますが、そのあとの給料は最高水準です。",
   "It costs a lot, too: many people borrow money to pay for school.": "お金もたくさんかかります。学校のために、お金を借りる人も多いです。",
   "Simplified mode has no school bills, so nobody has to borrow.": "かんたんモードには学費がないので、お金を借りる必要はありません。",
   "Study itself costs little here — public universities charge only modest fees — but the long road means years of study before a first full salary.": "ここでは学ぶ費用そのものは少なめです。公立大学の費用はわずかです。ただ、道のりが長いので、最初の本格的な給料をもらうまでに何年も勉強することになります。",
-  "The game charges only about %@ a year at a public university, so few students borrow — then the pay is among the highest.": "ゲームでは公立大学の授業料が1年あたり約%@だけなので、借りる学生は少なく、そのあとの給料は最高水準です。",
+  "The game charges only about %@ a year at a public university, so few students borrow — then the pay is among the highest.": "公立大学の授業料は1年あたり約%@だけなので、借りる学生は少なく、そのあとの給料は最高水準です。",
   "School costs little here, but it takes many years before the first full salary.": "ここでは学校にあまりお金はかかりませんが、最初の本格的な給料をもらうまでには何年もかかります。",
   "Becoming a judge": "裁判官になるには",
   "Judges are appointed or elected, usually after ten to twenty years as lawyers or prosecutors. There are few openings, and they rarely come up.": "裁判官は任命または選挙で選ばれ、たいてい弁護士や検察官として10〜20年働いた後になります。ポストは少なく、めったに空きません。",
@@ -180,7 +180,7 @@
   "An airline pilot needs an airline transport licence, which takes years of building flying hours. Most pilots build hours as instructors or on small aircraft, then join a regional airline before a major one.": "旅客機パイロットには定期運送用操縦士の免許が必要で、取るには飛行時間を何年もかけて積む必要があります。多くのパイロットは、教官や小型機で飛行時間を積み、まず地域航空会社に入り、そのあと大手に移ります。",
   "Flight school and its licence are the gate; years of experience open each rung.": "航空学校とその免許が関門で、経験年数が各段階を開きます。",
   "Airline pilots need a special licence and lots of hours of flying. Most start by teaching flying or flying small planes, then join a bigger airline.": "旅客機パイロットには、特別な免許と、たくさんの飛行時間が必要です。たいてい飛行を教えたり小さな飛行機に乗ったりして始め、そのあと大きな航空会社に入ります。",
-  "Simplified mode skips the licence: years of work open each step up (%@).": "かんたんモードでは免許が不要で、働いた年数が各ステップを開きます（%@年）。",
+  "Simplified mode skips the licence: years of work open each step up (%@).": "かんたんモードでは免許はいりません。働いた年数が増えると、次のステップに進めます（%@年）。",
   "In the US that normally means 1,500 flight hours (fewer through some approved flight schools).": "アメリカでは通常、飛行時間1,500時間が必要です（認定された一部の航空学校を通せば、それより少なくて済みます）。"
  }
 }

@@ -1,7 +1,7 @@
 {
  "table": "Localizable",
  "strings": {
-  "Vocational Diploma in %@": "Diplôme professionnel en %@",
+  "Vocational Diploma in %@": "Diplôme professionnel (%@)",
   "Bachelor of Business Administration": "Bachelor en administration des affaires",
   "Bachelor of Engineering": "Bachelor en ingénierie",
   "Bachelor of Health Sciences": "Bachelor en sciences de la santé",
@@ -38,7 +38,7 @@
   "Doctor of Design": "Doctorat en design",
   "Doctor of Philosophy in Service Management": "Doctorat (PhD) en gestion des services",
   "Doctor of Philosophy in Sports Science": "Doctorat (PhD) en sciences du sport",
-  "Associate of Applied Science in %@": "Associate degree appliqué en %@",
+  "Associate of Applied Science in %@": "Associate degree appliqué (%@)",
   "Trade Certificate": "Certificat de métier",
   "Bachelor of Science in Engineering": "Bachelor en sciences de l’ingénierie",
   "Bachelor of Science in Health Sciences": "Bachelor en sciences de la santé",

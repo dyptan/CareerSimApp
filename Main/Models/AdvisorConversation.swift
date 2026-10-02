@@ -1015,13 +1015,21 @@ final class AdvisorConversation: ObservableObject {
     /// Reads a typed role: the model first when there is one, the plain search
     /// otherwise — and always the plain search as its backstop.
     private func resolveRole(from text: String) async {
+        let matches = AdvisorRoles.search(text)
+        // A role the player names outright ("nurse", "Krankenpfleger", "I want to be a nurse") is
+        // theirs: the catalogue's own search decides, and the language model — which can pick a
+        // plausible-sounding but wrong role for a word it reads badly — is asked only about wishes
+        // that no title names.
+        if let top = matches.first, AdvisorRoles.isName(of: top, text) || AdvisorRoles.isNamed(top, in: text) {
+            await aim(at: top.baseTitle, lead: L("Great choice!"))
+            return
+        }
         if language.isAvailable,
            case .chooseRole(let title)? = await withTimeout(Self.narrationTimeout, { await self.language.interpret(text) }),
            AdvisorCoach.family(title) != nil {
             await settle(on: title, typed: text)
             return
         }
-        let matches = AdvisorRoles.search(text)
         if let only = matches.first, matches.count == 1 || AdvisorRoles.isName(of: only, text) {
             await aim(at: only.baseTitle, lead: L("Great choice!"))
         } else if matches.isEmpty {

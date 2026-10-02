@@ -685,6 +685,18 @@ final class FormattingTests: XCTestCase {
         }
     }
 
+    func testMoneyIsWrittenTheWayEachLanguageWritesIt() {
+        L10n.languageOverride = .english
+        XCTAssertEqual(Country.germany.money(45_000), "45,000 €".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
+        L10n.languageOverride = .japanese
+        XCTAssertEqual(Country.japan.money(4_380_000), "438万円")
+        XCTAssertEqual(Country.japan.money(4_385_000), "438万5,000円".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
+        XCTAssertEqual(Country.japan.money(9_500), "9,500円".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
+        XCTAssertTrue(Country.unitedStates.money(68_000).hasPrefix("$"))
+        L10n.languageOverride = .german
+        XCTAssertTrue(Country.germany.money(45_000).hasSuffix("\u{00A0}€"))
+    }
+
     func testEveryLanguageHasNamesAndPluralForms() {
         for language in L10n.Language.allCases {
             XCTAssertFalse(language.englishName.isEmpty)

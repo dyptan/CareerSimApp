@@ -145,7 +145,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | General (fame row) | 全般 | 🌐 全般 |
 | Trophies | トロフィー | |
 | Credentials | 学歴・資格 | shelf of diplomas, degrees, certificates, licences |
-| The economy / Economy | 経済 | |
+| The economy / Economy | 経済 | heading "Economy" = 経済; the national row inside it, "The economy", = 経済全体 (so the row does not repeat its own heading) |
 | Declared downturn | 景気後退 | |
 | Recession | 不況 | |
 | Experience | 経験 | "work experience" 職務経験; "years of experience" 経験年数 |
@@ -276,7 +276,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | University | 大学 | |
 | Junior College | 短期大学 | |
 | Private / National University | 私立大学／国立大学 | |
-| Graduate / graduated | 卒業 | "Graduated — %@" 卒業：%@ |
+| Graduate / graduated | 卒業 | "Graduated — %@" `%@を卒業` (a story-log line, shown after `10歳：`, so it carries no colon of its own) |
 | Admission | 入学選考 | "How admission works" 入学選考のしくみ; "Admission requirement" 出願条件 |
 | Accepted / "You're in!" | 合格／合格！ | "said no" 不合格 |
 | Grades | 成績 | "school grade" 学校の成績; "Soft-skill match" スキルの相性 |
@@ -285,7 +285,7 @@ Tables are `English | 日本語 | note`. "(UI)" = shown as a label or button.
 | School prestige | 学校のネームバリュー | |
 | Prizes and titles | 賞と称号 | "Your accolades" 受賞歴 |
 | Course | 講座 | a taught course; programme 課程／プログラム |
-| Training | 研修 | "Training: %@" 研修：%@ |
+| Training | 研修 | "Training: %@" is an unmet requirement shown after 「まず必要なもの：」 / 「まず、…が必要です」, so it is the bare name `%@` |
 | Certificate / certification | 資格 | completion certificate 修了証 |
 | Licence / License | 免許 | where Japan has no 免許 use 資格 or 登録 (§4.4b) |
 | Board exam | 国家試験 | "Medical Board Exam" 医師国家試験 |
@@ -396,7 +396,7 @@ Title suffixes: "X Winner" → `X優勝者`, "X Champion" → `Xチャンピオ�
 | `%lld yr exp.` / `🧭 %lld yr exp expected` | `経験%lld年` / `🧭 経験%lld年が目安` |
 | `Open Jobs / Activities / Events / Projects / Ventures / Boardroom / Education` | `仕事を開く／活動を開く／イベントを開く／プロジェクトを開く／起業を開く／経営会議を開く／教育を開く` |
 | `%@ chance` (percent) | `%@の確率` |
-| `%@ easier than usual` / `%@ harder than usual` (hire, promotion, projects) | `いつもより%@有利` / `いつもより%@不利` (must read after `：`) |
+| `%@ easier than usual` / `%@ harder than usual` (hire, promotion, projects) | `いつもより%@有利` / `いつもより%@不利` (must read after `：` and inside `（　）`) |
 | `%@ higher than usual` / `lower than usual` (risk) | `いつもより%@高い` / `いつもより%@低い` |
 | `%@ boost` / `cuts your chance to %@ of normal` | `%@アップ` / `確率が通常の%@になります` |
 | `no change` / `normal` / `closes this job for now` | `変化なし` / `ふつう` / `今はこの仕事に応募できません` |
@@ -519,7 +519,7 @@ Country adjectives in "Scores go to their own German leaderboard." → `スコ�
 | 7a | There are only a few hundred CEO jobs at the biggest companies, and a board's search can run for a year. | 最大手企業のCEOのポストは数百しかなく、取締役会の人選に1年かかることもあります。 | adult version: standard terms (ポスト, 取締役会) |
 | 7b | A CEO is the boss of a whole company. There are only a few hundred CEO jobs at the biggest companies, so many good people never get one. | CEOは、会社ぜんたいをまとめるいちばん上の人です。大きな会社のCEOの席は数百しかないので、がんばってもなれない人がたくさんいます。 | child version: kana, short, no jargon |
 | 8 | • 💵 A typical household: the first %@ of pay goes on living costs, and you save %@ of the rest. Your family pays %@ of tuition; you borrow the rest. | • 💵 ふつうの家庭：給料のうち最初の%1$@は生活費にあてられ、残りの%2$@を貯金します。授業料の%3$@は家族が払い、足りない分は借ります。 | bullet and emoji kept; money/percent arrive formatted; no 円 added; `：` for the colon |
-| 9 | • %@ %@ is booming this year: %@ | • %1$@ %2$@は今年、好況です：%3$@ | icon + industry + effect phrase; `：` |
+| 9 | • %@ %@ is booming this year: %@ | • %1$@ %2$@は今年、好況です（%3$@） | icon + industry + effect phrase in `（　）`; no `：` after a finished です／ます sentence |
 | 10 | Present / Presented / Present at %@ / %@ — Speaker (event buttons and award title) | 発表 / 発表済み / %@で発表 / %@の登壇者 | button = compact noun; the dash dropped for の |
 | 11 | Hi, I'm your career advisor! 👋 Do you already know what job you'd like to do one day — or not yet? Either is fine. | こんにちは、キャリアアドバイザーです！👋 将来やってみたい仕事はもう決まっていますか？まだでも大丈夫ですよ。 | advisor voice: warm, ですよ; emoji kept with a space after it |
 | 12 | The minimum wage (¥1,121 an hour on average) / • %@: no job pays under %@ a year. | 最低賃金（全国平均 時給1,121円） / • %1$@：年収%2$@未満の仕事はありません。 | yen literal → 円 prefix moves to suffix; the first noun phrase is inserted by code, so it ends in a noun |

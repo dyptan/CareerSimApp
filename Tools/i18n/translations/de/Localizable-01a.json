@@ -19,15 +19,15 @@
   "See who's hiring for %@ this year.": "Sieh nach, wer dieses Jahr Stellen als %@ ausschreibt.",
   "Nobody is posting %@ jobs this year — the market changes every year, so check again next year.": "Dieses Jahr schreibt niemand Stellen als %@ aus – der Markt ändert sich jedes Jahr, schau also nächstes Jahr wieder nach.",
   "You have to be %@ for this job — %lld more years.": {
-   "one": "Für diesen Job musst du %1$@ sein – noch ein Jahr.",
-   "other": "Für diesen Job musst du %1$@ sein – noch %2$lld Jahre."
+   "one": "Für diesen Job musst du mindestens %1$@ Jahre alt sein – dir fehlt noch ein Jahr.",
+   "other": "Für diesen Job musst du mindestens %1$@ Jahre alt sein – dir fehlen noch %2$lld Jahre."
   },
   "Keep studying — your %@ is what this job asks for.": "Studiere weiter – dein Abschluss „%@“ ist genau das, was dieser Job verlangt.",
   "Get %@. It's the longest step, so start early.": "Hol dir %@. Das ist der längste Schritt – fang also früh an.",
   "You'll need %@ — that comes after school.": "Du brauchst %@ – das kommt nach der Schule.",
   "Earn this credential: %@ — this job won't hire without it.": "Erwirb diese Qualifikation: %@ – ohne sie wirst du für diesen Job nicht eingestellt.",
   "Earn this credential: %@ — this job won't hire without it. (%@.)": "Erwirb diese Qualifikation: %1$@ – ohne sie wirst du für diesen Job nicht eingestellt. (%2$@.)",
-  "Grow %@ from %lld to %lld.": "Steigere %1$@ von %2$lld auf %3$lld.",
+  "Grow %@ from %lld to %lld.": "Verbessere deine Fähigkeit „%1$@“ von %2$lld auf %3$lld.",
   "%@ adds +%@ a year — about %lld years.": {
    "one": "%1$@ bringt +%2$@ pro Jahr – etwa ein Jahr.",
    "other": "%1$@ bringt +%2$@ pro Jahr – etwa %3$lld Jahre."
@@ -60,8 +60,8 @@
   "📈 Skills you've grown: %@.": "📈 Gewachsene Fähigkeiten: %@.",
   "You've tried a few things — I found jobs that might suit you!": "Du hast ein paar Dinge ausprobiert – ich habe Jobs gefunden, die zu dir passen könnten!",
   "%lld more moves of trying new things, and I'll suggest jobs that fit you.": {
-   "one": "Noch ein Zug mit etwas Neuem, dann schlage ich dir passende Jobs vor.",
-   "other": "Noch %lld Züge mit Neuem, dann schlage ich dir passende Jobs vor."
+   "one": "Probiere noch einmal etwas Neues aus, dann schlage ich dir passende Jobs vor.",
+   "other": "Probiere noch %lld Mal etwas Neues aus, dann schlage ich dir passende Jobs vor."
   },
   "Try a couple more different things, so I can see what you like.": "Probiere noch ein paar verschiedene Dinge aus, damit ich sehen kann, was dir gefällt.",
   "Try something": "Probiere etwas aus",
@@ -109,12 +109,12 @@
   "🎯 I have a role in mind": "🎯 Ich habe eine Position im Kopf",
   "🤔 I haven't decided yet": "🤔 Ich weiß es noch nicht",
   "← Other fields": "← Andere Bereiche",
-  "Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.": "An welchen Job denkst du? Tippe ihn unten ein (zum Beispiel „Krankenpfleger“ oder „Game“) oder wähle einen Bereich zum Stöbern.",
+  "Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.": "An welchen Job denkst du? Tippe ihn unten ein (zum Beispiel „Krankenpfleger“ oder „Pilot“) oder wähle einen Bereich zum Stöbern.",
   "Here are the %@ jobs. Which one sounds like you?": "Hier sind die Jobs in %@. Welcher passt zu dir?",
-  "I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field.": "Einen solchen Job habe ich nicht gefunden. Probiere ein anderes Wort (zum Beispiel „Krankenpfleger“, „Ingenieur“ oder „Game“) oder wähle einen Bereich.",
+  "I couldn't find a job like that. Try another word (like “nurse”, “engineer” or “game”), or pick a field.": "Einen solchen Job habe ich nicht gefunden. Probiere ein anderes Wort (zum Beispiel „Krankenpfleger“, „Ingenieur“ oder „Pilot“) oder wähle einen Bereich.",
   "A few jobs fit that. Which one do you mean?": "Dazu passen ein paar Jobs. Welchen meinst du?",
   "No problem!": "Kein Problem!",
-  "💡 Best moves right now": "💡 Beste Züge jetzt",
+  "💡 Best moves right now": "💡 Beste Schritte jetzt",
   "🔄 Change my goal": "🔄 Mein Ziel ändern",
   "🧭 The narrow path": "🧭 Der schmale Pfad",
   "🧭 What decides it": "🧭 Was entscheidet",
@@ -128,11 +128,11 @@
   "Nothing new is open to you right now — look through the jobs list for something that catches your eye.": "Im Moment steht dir nichts Neues offen – stöbere in den Jobs, ob dir etwas ins Auge fällt.",
   "This year, try one of these:": "Probiere dieses Jahr eines davon aus:",
   "You're %lld moves in — %@ more and I'll suggest jobs that fit you.": {
-   "one": "Du hast schon einen Zug gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor.",
-   "other": "Du hast schon %1$lld Züge gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
+   "one": "Du hast schon einen Schritt gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor.",
+   "other": "Du hast schon %1$lld Schritte gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
   },
   "Once you've tried a couple of different things, I'll suggest jobs that fit you.": "Sobald du ein paar verschiedene Dinge ausprobiert hast, schlage ich dir passende Jobs vor.",
-  "After a few moves, I'll suggest jobs that fit the skills you've built.": "Nach ein paar Zügen schlage ich dir Jobs vor, die zu den Fähigkeiten passen, die du aufgebaut hast.",
+  "After a few moves, I'll suggest jobs that fit the skills you've built.": "Nach ein paar Schritten schlage ich dir Jobs vor, die zu den Fähigkeiten passen, die du aufgebaut hast.",
   "Builds %@.": "Stärkt %@.",
   "Open Activities": "Aktivitäten öffnen",
   "Here's where you stand.": "So stehst du gerade da.",
@@ -143,7 +143,7 @@
   "Aim for this": "Als Ziel wählen",
   "See job listings": "Stellenangebote ansehen",
   "Right now, the best move is to keep going! Keep building your skills and check back next year. 👍": "Gerade ist es am besten, einfach weiterzumachen! Stärke weiter deine Fähigkeiten und schau nächstes Jahr wieder nach. 👍",
-  "Here are the moves that pay off most right now, best first:": "Das sind die Züge, die sich gerade am meisten lohnen, die besten zuerst:",
+  "Here are the moves that pay off most right now, best first:": "Das sind die Schritte, die sich gerade am meisten lohnen, die besten zuerst:",
   "Hmm, I'm not sure about that one. I can tell you about a job, a skill, or what to do next — try asking it that way.": "Hmm, da bin ich nicht sicher. Ich kann dir etwas zu einem Job, einer Fähigkeit oder deinem nächsten Schritt sagen – frag mich am besten so.",
   "Worth about +%@ chance a year.": "Bringt etwa +%@ Chance pro Jahr.",
   "• %@: %@": "• %1$@: %2$@",

@@ -17,10 +17,10 @@
    "one": "%1$lld J. in %2$@ (du hast %3$@)",
    "other": "%1$lld J. in %2$@ (du hast %3$@)"
   },
-  "Reach age %lld": "Alter %lld erreichen",
+  "Reach age %lld": "%lld Jahre alt werden",
   "Earn %@": "%@ erwerben",
-  "A degree in %@": "Ein Abschluss in %@",
-  "Training: %@": "Weiterbildung: %@",
+  "A degree in %@": "einen Abschluss in %@ erwerben",
+  "Training: %@": "%@ absolvieren",
   "School Sports Day": "Schulsportfest",
   "Races and routines in front of the whole school — the first taste of winning.": "Wettläufe und Vorführungen vor der ganzen Schule – der erste Vorgeschmack aufs Gewinnen.",
   "Sports Day Winner": "Sportfestsieger",

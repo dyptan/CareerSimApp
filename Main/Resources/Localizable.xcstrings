@@ -605,7 +605,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ Objectif : %2$@"
+            "value" : "%1$@ Objectif « %2$@ »"
           }
         },
         "it" : {
@@ -725,7 +725,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ この分野は今年、好況です：%2$@。"
+            "value" : "%1$@ この分野は今年、好況です（%2$@）。"
           }
         },
         "uk" : {
@@ -765,7 +765,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ この分野は今年、成長しています：%2$@。"
+            "value" : "%1$@ この分野は今年、成長しています（%2$@）。"
           }
         },
         "uk" : {
@@ -805,7 +805,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ この分野は今年、不況です：%2$@。"
+            "value" : "%1$@ この分野は今年、不況です（%2$@）。"
           }
         },
         "uk" : {
@@ -845,7 +845,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ この分野は今年、減速しています：%2$@。"
+            "value" : "%1$@ この分野は今年、減速しています（%2$@）。"
           }
         },
         "uk" : {
@@ -954,7 +954,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ogni anno hai una probabilità pari a %1$@ di riuscirci. Un successo porta +%2$@ %3$@ fama."
+            "value" : "Probabilità di riuscirci ogni anno: %1$@. Un successo porta +%2$@ %3$@ fama."
           }
         },
         "ja" : {
@@ -966,7 +966,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Шанс вдатися за рік: %1$@. Хіт приносить: слава (%3$@) +%2$@."
+            "value" : "Шанс на успіх за рік: %1$@. Хіт приносить славу (%3$@): +%2$@."
           }
         }
       }
@@ -1016,7 +1016,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ hat dich für %2$@ angenommen."
+            "value" : "%1$@: Du wurdest für %2$@ angenommen."
           }
         },
         "en" : {
@@ -1028,7 +1028,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ t’a ouvert ses portes : %2$@."
+            "value" : "L’école (%1$@) t’a ouvert ses portes : %2$@."
           }
         },
         "it" : {
@@ -1175,7 +1175,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ bringt +%2$@ Chance, %3$@ +%4$@ – wenig im Vergleich zum Posten."
+            "value" : "Bonus auf deine Chance: %1$@ +%2$@, %3$@ +%4$@ – wenig im Vergleich zum Posten."
           }
         },
         "en" : {
@@ -1215,7 +1215,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ bringt +%2$@, %3$@ +%4$@."
+            "value" : "Bonus: %1$@ +%2$@, %3$@ +%4$@."
           }
         },
         "en" : {
@@ -1389,13 +1389,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@が急成長しました：売上が3倍になり、持ち分は大きな財産になりました"
+            "value" : "%@が急成長し、売上が3倍になり、持ち分は大きな財産になりました"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Бізнес «%@» зробив прорив — виручка зросла втричі, а твоя частка коштує цілий статок"
+            "value" : "Бізнес «%@» зробив прорив: виручка зросла втричі, а твоя частка коштує цілий статок"
           }
         }
       }
@@ -1405,7 +1405,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ achtet auf: Noten %2$@, Fähigkeiten %3$@, Preise und Titel %4$@."
+            "value" : "%1$@: Hier zählen Noten %2$@, Fähigkeiten %3$@, Preise und Titel %4$@."
           }
         },
         "en" : {
@@ -1417,7 +1417,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce qui compte pour %1$@ : notes %2$@, compétences %3$@, prix et titres %4$@."
+            "value" : "Ce qui compte pour ce type d’école (%1$@) : notes %2$@, compétences %3$@, prix et titres %4$@."
           }
         },
         "it" : {
@@ -1445,7 +1445,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ achtet auf: Noten %2$@, Fähigkeiten %3$@."
+            "value" : "%1$@: Hier zählen Noten %2$@, Fähigkeiten %3$@."
           }
         },
         "en" : {
@@ -1457,7 +1457,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce qui compte pour %1$@ : notes %2$@, compétences %3$@."
+            "value" : "Ce qui compte pour ce type d’école (%1$@) : notes %2$@, compétences %3$@."
           }
         },
         "it" : {
@@ -1663,7 +1663,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Проєкт «%@» не вдався — але практика не пропала"
+            "value" : "Проєкт «%@» не вдався, але практика не пропала"
           }
         }
       }
@@ -1691,7 +1691,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con «%1$@» è andata male — la probabilità era pari a %2$@. Hai comunque fatto pratica: le competenze coinvolte sono migliorate lo stesso."
+            "value" : "Con «%1$@» è andata male (%2$@ di probabilità). Hai comunque fatto pratica: le competenze coinvolte sono migliorate lo stesso."
           }
         },
         "ja" : {
@@ -1777,7 +1777,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@：%2$@で名を上げました"
+            "value" : "%1$@が成功し、%2$@で名を上げました"
           }
         },
         "uk" : {
@@ -1968,13 +1968,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@が廃業しました：%2$@を回収しました"
+            "value" : "%1$@が廃業し、%2$@を回収しました"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Бізнес «%1$@» закрито — повернуто %2$@"
+            "value" : "Бізнес «%1$@» закрито: повернуто %2$@"
           }
         }
       }
@@ -2070,7 +2070,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, il n’y a qu’une porte : le titre « %2$@ ». Sans lui, tes chances restent d’environ %3$@, quoi que tu fasses d’autre."
+            "value" : "Pour le poste « %1$@ », il n’y a qu’une porte : le titre « %2$@ ». Sans lui, tes chances restent d’environ %3$@, quoi que tu fasses d’autre."
           }
         },
         "it" : {
@@ -2145,7 +2145,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ en %2$@"
+            "value" : "%1$@ (%2$@)"
           }
         },
         "it" : {
@@ -2185,13 +2185,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule (environ %3$@ avec un parcours de fondateur) — il faut donc souvent de nombreuses tentatives."
+            "value" : "Pour le poste « %1$@ », la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule (environ %3$@ avec un parcours de fondateur) — il faut donc souvent de nombreuses tentatives."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo circa %2$@ degli anni in cui ti candidi (circa %3$@ con un curriculum da fondatore) — quindi di solito servono molti tentativi."
+            "value" : "Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo in una piccola parte degli anni in cui ti candidi (circa %2$@; circa %3$@ con un curriculum da fondatore) — quindi di solito servono molti tentativi."
           }
         },
         "ja" : {
@@ -2225,13 +2225,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule — il faut donc souvent de nombreuses tentatives."
+            "value" : "Pour le poste « %1$@ », la voie est étroite : même un candidat parfait n’est embauché que dans environ %2$@ des années où il postule — il faut donc souvent de nombreuses tentatives."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo circa %2$@ degli anni in cui ti candidi — quindi di solito servono molti tentativi."
+            "value" : "Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo in una piccola parte degli anni in cui ti candidi (circa %2$@) — quindi di solito servono molti tentativi."
           }
         },
         "ja" : {
@@ -2265,13 +2265,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur)."
+            "value" : "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur)."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è competitivo, ma non è una lotteria: al massimo della tua forma ti andrebbe bene circa %2$@ degli anni in cui ti candidi (circa %3$@ con un curriculum da fondatore)."
+            "value" : "Il ruolo di %1$@ è competitivo, ma non è una lotteria: al massimo della tua forma ti andrebbe bene in una parte degli anni in cui ti candidi (circa %2$@; circa %3$@ con un curriculum da fondatore)."
           }
         },
         "ja" : {
@@ -2305,13 +2305,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules."
+            "value" : "Pour le poste « %1$@ », la concurrence est forte mais ce n’est pas une loterie : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è competitivo, ma non è una lotteria: al massimo della tua forma ti andrebbe bene circa %2$@ degli anni in cui ti candidi."
+            "value" : "Il ruolo di %1$@ è competitivo, ma non è una lotteria: al massimo della tua forma ti andrebbe bene in una parte degli anni in cui ti candidi (circa %2$@)."
           }
         },
         "ja" : {
@@ -2345,13 +2345,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur)."
+            "value" : "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules (environ %3$@ avec un parcours de fondateur)."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è aperto a chi si prepara bene: al massimo della tua forma ti andrebbe bene circa %2$@ degli anni in cui ti candidi (circa %3$@ con un curriculum da fondatore)."
+            "value" : "Il ruolo di %1$@ è aperto a chi si prepara bene: al massimo della tua forma ti andrebbe bene in una parte degli anni in cui ti candidi (circa %2$@; circa %3$@ con un curriculum da fondatore)."
           }
         },
         "ja" : {
@@ -2385,13 +2385,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %1$@, la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules."
+            "value" : "Pour le poste « %1$@ », la porte est ouverte à un candidat bien préparé : au mieux de ta forme, tu décrocherais le poste environ %2$@ des années où tu postules."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ruolo di %1$@ è aperto a chi si prepara bene: al massimo della tua forma ti andrebbe bene circa %2$@ degli anni in cui ti candidi."
+            "value" : "Il ruolo di %1$@ è aperto a chi si prepara bene: al massimo della tua forma ti andrebbe bene in una parte degli anni in cui ti candidi (circa %2$@)."
           }
         },
         "ja" : {
@@ -2812,7 +2812,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ від рішення"
+            "value" : "Вага: %@"
           }
         }
       }
@@ -2862,7 +2862,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ hat diesmal abgelehnt – du hattest eine Chance von %2$@. Nächstes Jahr kannst du es noch einmal versuchen!"
+            "value" : "%1$@: Diesmal hat es nicht geklappt – du hattest eine Chance von %2$@. Nächstes Jahr kannst du es noch einmal versuchen!"
           }
         },
         "en" : {
@@ -2874,13 +2874,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ a dit non cette fois — tu avais %2$@ de chances. Tu peux réessayer l’année prochaine !"
+            "value" : "L’école (%1$@) a dit non cette fois — tu avais %2$@ de chances. Tu peux réessayer l’année prochaine !"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa volta la risposta di %1$@ è stata no — la probabilità era pari a %2$@. Puoi riprovare l’anno prossimo!"
+            "value" : "Questa volta la risposta di %1$@ è stata no (%2$@ di probabilità). Puoi riprovare l’anno prossimo!"
           }
         },
         "ja" : {
@@ -3385,13 +3385,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch ein Zug mit etwas Neuem, dann schlage ich dir passende Jobs vor."
+                  "value" : "Probiere noch einmal etwas Neues aus, dann schlage ich dir passende Jobs vor."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Züge mit Neuem, dann schlage ich dir passende Jobs vor."
+                  "value" : "Probiere noch %lld Mal etwas Neues aus, dann schlage ich dir passende Jobs vor."
                 }
               }
             }
@@ -3469,25 +3469,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Спробуй щось нове ще %lld ходи — і я запропоную роботи, які тобі пасують."
+                  "value" : "Спробуй щось нове ще %lld рази — і я запропоную роботи, які тобі пасують."
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Спробуй щось нове ще %lld ходів — і я запропоную роботи, які тобі пасують."
+                  "value" : "Спробуй щось нове ще %lld разів — і я запропоную роботи, які тобі пасують."
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Спробуй щось нове ще %lld хід — і я запропоную роботи, які тобі пасують."
+                  "value" : "Спробуй щось нове ще %lld раз — і я запропоную роботи, які тобі пасують."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Спробуй щось нове ще %lld ходів — і я запропоную роботи, які тобі пасують."
+                  "value" : "Спробуй щось нове ще %lld разів — і я запропоную роботи, які тобі пасують."
                 }
               }
             }
@@ -4175,13 +4175,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Jahr • Schulen vergleichen"
+                  "value" : "%lld Jahr • Hochschulen vergleichen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Jahre • Schulen vergleichen"
+                  "value" : "%lld Jahre • Hochschulen vergleichen"
                 }
               }
             }
@@ -6384,19 +6384,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Abschluss in %@"
+            "value" : "einen Abschluss in %@ erwerben"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un diplôme en %@"
+            "value" : "avoir un diplôme en %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una laurea in %@"
+            "value" : "una laurea in %@"
           }
         },
         "ja" : {
@@ -6408,7 +6408,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ступінь за напрямом «%@»"
+            "value" : "здобути ступінь за напрямом «%@»"
           }
         }
       }
@@ -6430,7 +6430,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una laurea nella materia giusta aiuta di più, una laurea in un’altra materia aiuta meno e avere meno studi di quelli richiesti rende tutto più difficile."
+            "value" : "Una laurea nell’ambito giusto aiuta di più, una laurea in un altro ambito aiuta meno e avere meno studi di quelli richiesti rende tutto più difficile."
           }
         },
         "ja" : {
@@ -6677,7 +6677,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una scommessa: la probabilità che gli investitori dicano di sì quest’anno è di circa %@."
+            "value" : "Una scommessa: quest’anno gli investitori potrebbero dire di sì (circa %@ di probabilità)."
           }
         },
         "ja" : {
@@ -7450,7 +7450,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un’università di fascia alta aggiunge +%1$@ alla tua probabilità, e la domanda per il lavoro è pari ad appena %2$@ di quella di un lavoro normale."
+            "value" : "Un’università di fascia alta aggiunge +%1$@ alla tua probabilità, e la domanda per il lavoro è molto bassa (%2$@ di quella di un lavoro normale)."
           }
         },
         "ja" : {
@@ -7987,7 +7987,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%2$@の仕事で確率が+%1$@アップします。まだ受けられません：%3$@。"
+            "value" : "%2$@の仕事で確率が+%1$@アップします。まだ受けられません（%3$@）。"
           }
         },
         "uk" : {
@@ -8359,7 +8359,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach ein paar Zügen schlage ich dir Jobs vor, die zu den Fähigkeiten passen, die du aufgebaut hast."
+            "value" : "Nach ein paar Schritten schlage ich dir Jobs vor, die zu den Fähigkeiten passen, die du aufgebaut hast."
           }
         },
         "fr" : {
@@ -8383,7 +8383,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Після кількох ходів я запропоную роботи, які пасують до твоїх навичок."
+            "value" : "Після кількох спроб я запропоную роботи, які пасують до твоїх навичок."
           }
         }
       }
@@ -8439,13 +8439,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld ans — %2$@"
+            "value" : "À %1$lld ans — %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld anni — %2$@"
+            "value" : "A %1$lld anni — %2$@"
           }
         },
         "ja" : {
@@ -8537,7 +8537,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ab 7 Jahren · am einfachsten. Der sanfteste Einstieg – ein gutes erstes Spiel."
+            "value" : "Ab 7 Jahren · am einfachsten. Ein sanfter Einstieg – ein gutes erstes Spiel."
           }
         },
         "fr" : {
@@ -8555,13 +8555,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "7歳以上 · いちばんかんたん。いちばんやさしい入り口で、はじめてのゲームにぴったりです。"
+            "value" : "7歳以上 · いちばんかんたん。はじめてでも安心の入り口で、最初のゲームにぴったりです。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Від 7 років · найлегший. Найлагідніший початок — гарна перша гра."
+            "value" : "Від 7 років · найлегший. Мʼякий старт — добра перша гра."
           }
         }
       }
@@ -8715,7 +8715,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agriculture et alimentation"
+            "value" : "Agroalimentaire"
           }
         },
         "it" : {
@@ -9540,7 +9540,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Licence d’architecture (Licence d’architecte)"
+            "value" : "Examen d’architecte (Licence d’architecte)"
           }
         },
         "it" : {
@@ -9678,7 +9678,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arts et esprit"
+            "value" : "Arts et réflexion"
           }
         },
         "it" : {
@@ -9848,7 +9848,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Associate degree appliqué en %@"
+            "value" : "Associate degree appliqué (%@)"
           }
         },
         "it" : {
@@ -9992,7 +9992,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con le competenze, la fama, i contatti e la scuola di oggi, la tua candidatura vale %@ di quella di un candidato al top."
+            "value" : "Con le competenze, la fama, i contatti e la scuola di oggi, la tua candidatura vale una parte di quella di un candidato al top (%@)."
           }
         },
         "ja" : {
@@ -10445,7 +10445,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale"
+            "value" : "Laurea"
           }
         },
         "ja" : {
@@ -10479,7 +10479,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Agraria"
+            "value" : "Laurea in Agraria"
           }
         },
         "ja" : {
@@ -10513,7 +10513,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Arti"
+            "value" : "Laurea in Arti"
           }
         },
         "ja" : {
@@ -10547,7 +10547,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Arti"
+            "value" : "Laurea in Arti"
           }
         },
         "ja" : {
@@ -10581,7 +10581,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Design"
+            "value" : "Laurea in Design"
           }
         },
         "ja" : {
@@ -10615,7 +10615,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Diritto"
+            "value" : "Laurea in Diritto"
           }
         },
         "ja" : {
@@ -10649,7 +10649,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Economia aziendale"
+            "value" : "Laurea in Economia aziendale"
           }
         },
         "ja" : {
@@ -10683,7 +10683,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Design"
+            "value" : "Laurea in Design"
           }
         },
         "ja" : {
@@ -10717,7 +10717,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze dell’educazione"
+            "value" : "Laurea in Scienze dell’educazione"
           }
         },
         "ja" : {
@@ -10751,7 +10751,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Ingegneria"
+            "value" : "Laurea in Ingegneria"
           }
         },
         "ja" : {
@@ -10785,7 +10785,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze della salute"
+            "value" : "Laurea in Scienze della salute"
           }
         },
         "ja" : {
@@ -10819,7 +10819,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Giurisprudenza"
+            "value" : "Laurea in Giurisprudenza"
           }
         },
         "ja" : {
@@ -10853,7 +10853,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze"
+            "value" : "Laurea in Scienze"
           }
         },
         "ja" : {
@@ -10887,7 +10887,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Agraria"
+            "value" : "Laurea in Agraria"
           }
         },
         "ja" : {
@@ -10921,7 +10921,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Ingegneria"
+            "value" : "Laurea in Ingegneria"
           }
         },
         "ja" : {
@@ -10955,7 +10955,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze della salute"
+            "value" : "Laurea in Scienze della salute"
           }
         },
         "ja" : {
@@ -10989,7 +10989,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Informatica"
+            "value" : "Laurea in Informatica"
           }
         },
         "ja" : {
@@ -11023,7 +11023,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze motorie"
+            "value" : "Laurea in Scienze motorie"
           }
         },
         "ja" : {
@@ -11057,7 +11057,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Gestione dei servizi"
+            "value" : "Laurea in Gestione dei servizi"
           }
         },
         "ja" : {
@@ -11091,7 +11091,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale in Scienze motorie e sportive"
+            "value" : "Laurea in Scienze motorie e sportive"
           }
         },
         "ja" : {
@@ -11125,7 +11125,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laurea triennale"
+            "value" : "Laurea"
           }
         },
         "ja" : {
@@ -11789,7 +11789,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per diventare medico servono molti anni: una laurea triennale, poi la facoltà di medicina, poi anni di formazione in ospedale. Ogni passo ammette solo una parte di chi si candida."
+            "value" : "Per diventare medico servono molti anni: una laurea, poi la facoltà di medicina, poi anni di formazione in ospedale. Ogni passo ammette solo una parte di chi si candida."
           }
         },
         "ja" : {
@@ -12081,7 +12081,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Найкращий результат до %lld р."
+            "value" : "Найкращий результат у віці %lld"
           }
         }
       }
@@ -12091,7 +12091,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hilft am meisten: Steigere %1$@ (%2$lld von %3$lld). %4$@ ist dafür eine gute Übung."
+            "value" : "Das hilft am meisten: Verbessere deine Fähigkeit „%1$@“ (%2$lld von %3$lld). %4$@ ist dafür eine gute Übung."
           }
         },
         "en" : {
@@ -12190,7 +12190,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Великі ходи для компанії, яку ти очолюєш. Кожен можна зробити раз на рік, і кожен забирає весь твій рік."
+            "value" : "Великі рішення для компанії, яку ти очолюєш. Кожне можна ухвалити раз на рік, і кожне забирає весь твій рік."
           }
         }
       }
@@ -12432,7 +12432,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ради директорів наймають результати — досягнутий ріст, порятунок компаній, угоди — а також уміння виступати від імені компанії перед інвесторами, працівниками та пресою. Публічна репутація й друзі в інших радах допомагають, але лише на додачу до послужного списку."
+            "value" : "Ради директорів дивляться на результати — досягнутий ріст, порятунок компаній, угоди — а також на вміння виступати від імені компанії перед інвесторами, працівниками та пресою. Публічна репутація й друзі в інших радах допомагають, але лише на додачу до послужного списку."
           }
         }
       }
@@ -12716,7 +12716,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stärke %1$@ mit %2$@"
+            "value" : "Verbessere „%1$@“ mit %2$@"
           }
         },
         "en" : {
@@ -12978,7 +12978,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ボタンで人生を築く"
+            "value" : "ボタンで人生をつくる"
           }
         },
         "uk" : {
@@ -13684,25 +13684,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auch im Spiel enden Karrieren früh."
+            "value" : "Auch hier enden Karrieren früh."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans le jeu aussi, les carrières se terminent tôt."
+            "value" : "Les carrières se terminent tôt aussi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anche nel gioco le carriere finiscono presto."
+            "value" : "Anche qui le carriere finiscono presto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ゲームでも、キャリアは早く終わります。"
+            "value" : "キャリアも早く終わります。"
           }
         },
         "uk" : {
@@ -14313,7 +14313,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingegnere civile, meccanico, elettrico, della robotica"
+            "value" : "ingegnere civile, meccanico, elettrico, della robotica"
           }
         },
         "ja" : {
@@ -14599,7 +14599,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закрито інвестиційний раунд для «%@» — компанія коштує більше й може платити тобі більше"
+            "value" : "Закрито інвестиційний раунд для «%@»: компанія коштує більше й може платити тобі більше"
           }
         }
       }
@@ -14723,7 +14723,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Allenatore, preparatore atletico, scienziato dello sport, fisiologo"
+            "value" : "allenatore, preparatore atletico, scienziato dello sport, fisiologo"
           }
         },
         "ja" : {
@@ -15230,7 +15230,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schulen vergleichen"
+            "value" : "Hochschulen vergleichen"
           }
         },
         "fr" : {
@@ -15642,7 +15642,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glückwunsch! Geschafft: %1$@ – %2$@: %3$@."
+            "value" : "Glückwunsch! Geschafft: %1$@. %2$@: %3$@."
           }
         },
         "en" : {
@@ -15672,7 +15672,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вітаємо! Закінчено: %1$@ — %2$@: %3$@."
+            "value" : "Вітаємо! Закінчено «%1$@» — %2$@: %3$@."
           }
         }
       }
@@ -15792,7 +15792,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Construction et immobilier"
+            "value" : "Bâtiment et immobilier"
           }
         },
         "it" : {
@@ -16436,7 +16436,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neugierig auf den Job als %1$@? Er zahlt %2$@ pro Jahr und verlangt %3$@ %4$lld. Du bist bei %5$lld – übe weiter!"
+            "value" : "Neugierig auf den Job als %1$@? Er zahlt %2$@ pro Jahr und verlangt bei der Fähigkeit „%3$@“ den Wert %4$lld. Du bist bei %5$lld – übe weiter!"
           }
         },
         "en" : {
@@ -16696,7 +16696,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lauree"
+            "value" : "Titoli di studio"
           }
         },
         "ja" : {
@@ -16730,7 +16730,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lauree e corsi professionali si sbloccano quando cresci e finisci la scuola."
+            "value" : "Titoli di studio e corsi professionali si sbloccano quando cresci e finisci la scuola."
           }
         },
         "ja" : {
@@ -16959,13 +16959,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zahnarzthelfer-Kurs (Zahnarzthelfer)"
+            "value" : "Kurs für zahnärztliche Assistenz (Zahnarzthelfer)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formation d’assistant dentaire (Assistant dentaire)"
+            "value" : "Formation d’assistant dentaire"
           }
         },
         "it" : {
@@ -17211,7 +17211,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Designer, musicista, chef, attore"
+            "value" : "designer, musicista, chef, attore"
           }
         },
         "ja" : {
@@ -17301,7 +17301,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreibtischarbeit – planen, analysieren, entwerfen, schreiben."
+            "value" : "Schreibtischarbeit: planen, analysieren, entwerfen, schreiben."
           }
         },
         "fr" : {
@@ -17313,19 +17313,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lavoro alla scrivania — pianificare, analizzare, progettare, scrivere."
+            "value" : "lavoro alla scrivania: pianificare, analizzare, progettare, scrivere."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "デスクワーク：計画、分析、設計、執筆。"
+            "value" : "計画、分析、設計、執筆などのデスクワーク。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Офісна робота — планування, аналіз, проєктування, написання текстів."
+            "value" : "Робота за столом: планування, аналіз, проєктування, написання текстів."
           }
         }
       }
@@ -17382,7 +17382,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sviluppatore, tester, analista di cybersecurity, ingegnere dei dati"
+            "value" : "sviluppatore, tester, analista di cybersecurity, ingegnere dei dati"
           }
         },
         "ja" : {
@@ -18372,7 +18372,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formation EMT (Technicien médical d’urgence)"
+            "value" : "Formation d’ambulancier (Technicien médical d’urgence)"
           }
         },
         "it" : {
@@ -18545,7 +18545,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque candidature prend toute une année, alors mieux vaut d’abord améliorer ces chances plutôt que de tenter un pari risqué."
+            "value" : "Chaque candidature prend toute une année, donc mieux vaut d’abord améliorer ces chances plutôt que de tenter un pari risqué."
           }
         },
         "it" : {
@@ -18579,13 +18579,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque secteur a aussi ses propres bonnes et mauvaises années — l’un peut donc peiner pendant une bonne année, ou aller très bien pendant une mauvaise."
+            "value" : "Chaque secteur a aussi ses propres bonnes et mauvaises années — un secteur peut donc peiner pendant une bonne année, ou aller très bien pendant une mauvaise."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ogni settore ha anche annate buone e cattive tutte sue — quindi uno può andare male in un anno buono o benissimo in uno cattivo."
+            "value" : "Ogni settore ha anche annate buone e cattive tutte sue — quindi un settore può andare male in un anno buono o benissimo in uno cattivo."
           }
         },
         "ja" : {
@@ -19044,25 +19044,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtenir : %@"
+            "value" : "obtenir un niveau d’études (%@)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ottieni %@"
+            "value" : "%@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@を修了"
+            "value" : "%@の取得"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Заробити %@"
+            "value" : "здобути %@"
           }
         }
       }
@@ -19198,7 +19198,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "資格を取得：%@"
+            "value" : "%@を取得しました"
           }
         },
         "uk" : {
@@ -19318,7 +19318,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bildung (bevorzugt):"
+            "value" : "Schulbildung (bevorzugt):"
           }
         },
         "fr" : {
@@ -19336,7 +19336,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学歴（歓迎）："
+            "value" : "歓迎学歴："
           }
         },
         "uk" : {
@@ -19386,7 +19386,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bildung:"
+            "value" : "Schulbildung:"
           }
         },
         "fr" : {
@@ -19671,7 +19671,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empathe"
+            "value" : "Empathique"
           }
         },
         "it" : {
@@ -20389,7 +20389,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede Fähigkeit hier hilft dir bei der Zulassung. Wenn du das Niveau erreichst, das die Schule gern sieht, zählt es voll; wenn dir etwas fehlt, zählt es trotzdem teilweise. Eine niedrige Fähigkeit hindert dich nie am Bewerben – sie senkt nur deine Chance."
+            "value" : "Jede Fähigkeit hier hilft dir bei der Zulassung. Wenn du das Niveau erreichst, das die Hochschule gern sieht, zählt es voll; wenn dir etwas fehlt, zählt es trotzdem teilweise. Eine niedrige Fähigkeit hindert dich nie am Bewerben – sie senkt nur deine Chance."
           }
         },
         "fr" : {
@@ -20605,7 +20605,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jedes Jahr, in dem du übst, wächst du:"
+            "value" : "Jedes Jahr, in dem du übst, legst du zu:"
           }
         },
         "fr" : {
@@ -20652,7 +20652,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I lavori di tutti i giorni pagano circa tanti euro quanti dollari negli Stati Uniti; i lavori professionali pagano circa la metà. Medici, infermieri, insegnanti e piloti seguono le tabelle salariali tedesche."
+            "value" : "I lavori di tutti i giorni pagano in euro circa la stessa cifra che negli Stati Uniti in dollari; i lavori professionali pagano circa la metà. Medici, infermieri, insegnanti e piloti seguono le tabelle salariali tedesche."
           }
         },
         "ja" : {
@@ -21269,7 +21269,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Molte più persone vogliono questo lavoro di quanti siano i posti disponibili, quindi la tua probabilità si riduce a %@ di quella che sarebbe altrimenti."
+            "value" : "Molte più persone vogliono questo lavoro di quanti siano i posti disponibili, quindi la tua probabilità si riduce a una parte di quella che sarebbe altrimenti (%@)."
           }
         },
         "ja" : {
@@ -21337,7 +21337,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agricoltore, agronomo, addetto alla cura degli animali"
+            "value" : "agricoltore, agronomo, addetto alla cura degli animali"
           }
         },
         "ja" : {
@@ -21496,19 +21496,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenige wollen den Job und noch weniger bekommen ihn: Im Spiel beträgt der Bedarf an diesem Job nur %@."
+            "value" : "Wenige wollen den Job und noch weniger bekommen ihn: Der Bedarf an diesem Job beträgt nur %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Peu de gens veulent ce poste et encore moins l’obtiennent : dans le jeu, la demande n’est que de %@."
+            "value" : "Peu de gens veulent ce poste et encore moins l’obtiennent : la demande n’est que de %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pochi vogliono questo lavoro e ancora meno lo ottengono: nel gioco la domanda è pari ad appena %@."
+            "value" : "Pochi vogliono questo lavoro e ancora meno lo ottengono: nel gioco la domanda è molto bassa (%@)."
           }
         },
         "ja" : {
@@ -22085,7 +22085,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour un poste, tu vois depuis combien d’années tu y es et tes chances de promotion. Appuie sur chaque ⓘ pour en savoir plus."
+            "value" : "Pour un poste, tu vois depuis combien d’années tu l’occupes et tes chances de promotion. Appuie sur chaque ⓘ pour en savoir plus."
           }
         },
         "it" : {
@@ -22119,7 +22119,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour un poste, tu vois depuis combien d’années tu y es."
+            "value" : "Pour un poste, tu vois depuis combien d’années tu l’occupes."
           }
         },
         "it" : {
@@ -22344,7 +22344,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Засновано бізнес «%@» — тепер ти генеральний директор (CEO)"
+            "value" : "Засновано бізнес «%@»: тепер ти генеральний директор (CEO)"
           }
         }
       }
@@ -22469,7 +22469,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quattro anni dopo la laurea triennale — facoltà di medicina, di giurisprudenza o un dottorato di ricerca. Necessario per medici, avvocati, professori e scienziati. Medicina e giurisprudenza costano molto e sono selettive."
+            "value" : "Quattro anni dopo la laurea — facoltà di medicina, di giurisprudenza o un dottorato di ricerca. Necessario per medici, avvocati, professori e scienziati. Medicina e giurisprudenza costano molto e sono selettive."
           }
         },
         "ja" : {
@@ -23427,7 +23427,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gouvernement et secteur public"
+            "value" : "Secteur public"
           }
         },
         "it" : {
@@ -23765,31 +23765,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abschluss geschafft – %@"
+            "value" : "Abgeschlossen: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diplôme obtenu — %@"
+            "value" : "Diplôme obtenu : %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Titolo conseguito — %@"
+            "value" : "Hai finito: %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "卒業：%@"
+            "value" : "%@を卒業"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закінчено — %@"
+            "value" : "Закінчено «%@»"
           }
         }
       }
@@ -23799,7 +23799,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abschluss geschafft – %1$@ · %2$@ %3$@"
+            "value" : "Abgeschlossen: %1$@ · %2$@ %3$@"
           }
         },
         "en" : {
@@ -23811,25 +23811,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diplôme obtenu — %1$@ · %2$@ %3$@"
+            "value" : "Diplôme obtenu : %1$@ · %2$@ %3$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Titolo conseguito — %1$@ · %2$@ %3$@"
+            "value" : "Hai finito: %1$@ · %2$@ %3$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "卒業：%1$@ · %2$@ %3$@"
+            "value" : "%1$@を卒業 · %2$@ %3$@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Закінчено — %1$@ · %2$@ %3$@"
+            "value" : "Закінчено «%1$@» · %2$@ %3$@"
           }
         }
       }
@@ -23920,7 +23920,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Graphic designer, UX/UI designer, stilista, designer d’interni"
+            "value" : "graphic designer, UX/UI designer, stilista, designer d’interni"
           }
         },
         "ja" : {
@@ -24045,7 +24045,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Steigere %1$@ von %2$lld auf %3$lld."
+            "value" : "Verbessere deine Fähigkeit „%1$@“ von %2$lld auf %3$lld."
           }
         },
         "en" : {
@@ -24125,13 +24125,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Développe-les avec les Activités, puis avec les événements, les formations et les projets. Appuie sur le ⓘ d’une compétence pour voir où elle aide le plus."
+            "value" : "Développe-les avec les activités, puis avec les événements, les formations et les projets. Appuie sur le ⓘ d’une compétence pour voir où elle aide le plus."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falle crescere con le Attività e, più avanti, con eventi, corsi e progetti. Tocca ⓘ accanto a una competenza per vedere dove aiuta di più."
+            "value" : "Falle crescere con le attività e, più avanti, con eventi, corsi e progetti. Tocca ⓘ accanto a una competenza per vedere dove aiuta di più."
           }
         },
         "ja" : {
@@ -24613,7 +24613,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formazione pratica (1–3 anni) per un mestiere specifico — come saldatura, idraulica, assistenza infermieristica o lavori da elettricista. Più rapida ed economica di una laurea triennale."
+            "value" : "Formazione pratica (1–3 anni) per un mestiere specifico — come saldatura, idraulica, assistenza infermieristica o lavori da elettricista. Più rapida ed economica di una laurea."
           }
         },
         "ja" : {
@@ -24635,7 +24635,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Praktische Arbeit – bauen, reparieren, fahren, anbauen, kochen."
+            "value" : "Praktische Arbeit: bauen, reparieren, fahren, anbauen, kochen."
           }
         },
         "fr" : {
@@ -24647,19 +24647,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lavoro sul campo — costruire, riparare, guidare, coltivare, cucinare."
+            "value" : "lavoro pratico: costruire, riparare, guidare, coltivare, cucinare."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "手を動かす仕事：つくる、直す、運転する、育てる、料理する。"
+            "value" : "つくる、直す、運転する、育てる、料理するなど、手を動かす仕事。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Практична робота — будівництво, ремонт, водіння, вирощування, куховарство."
+            "value" : "Робота руками: будівництво, ремонт, водіння, вирощування, куховарство."
           }
         }
       }
@@ -25119,19 +25119,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das sind die Züge, die sich gerade am meisten lohnen, die besten zuerst:"
+            "value" : "Das sind die Schritte, die sich gerade am meisten lohnen, die besten zuerst:"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voici les actions qui rapportent le plus en ce moment, de la meilleure à la moins bonne :"
+            "value" : "Voici tes meilleurs choix du moment, du plus utile au moins utile :"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ecco le mosse che rendono di più adesso, partendo dalla migliore:"
+            "value" : "Ecco le mosse più utili adesso, partendo dalla migliore:"
           }
         },
         "ja" : {
@@ -25143,7 +25143,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ось ходи, які зараз окупаються найбільше, від найкращого:"
+            "value" : "Ось кроки, які зараз дають найбільше, від найкращого:"
           }
         }
       }
@@ -25171,7 +25171,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現実ではどうなっているのか、そしてゲームではどう扱っているのかを紹介します。"
+            "value" : "現実ではどうなっているのか、そしてゲームではどう扱われているのかを紹介します。"
           }
         },
         "uk" : {
@@ -25597,7 +25597,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Прийнято на посаду «%1$@» — %2$@/рік"
+            "value" : "Прийнято на посаду «%1$@»: %2$@/рік"
           }
         }
       }
@@ -25928,7 +25928,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Addetto all’ospitalità, assistenza clienti, gestione operativa"
+            "value" : "addetto all’ospitalità, assistenza clienti, gestione operativa"
           }
         },
         "ja" : {
@@ -26326,13 +26326,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen solchen Job habe ich nicht gefunden. Probiere ein anderes Wort (zum Beispiel „Krankenpfleger“, „Ingenieur“ oder „Game“) oder wähle einen Bereich."
+            "value" : "Einen solchen Job habe ich nicht gefunden. Probiere ein anderes Wort (zum Beispiel „Krankenpfleger“, „Ingenieur“ oder „Pilot“) oder wähle einen Bereich."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je n’ai pas trouvé de métier comme ça. Essaie un autre mot (par exemple « infirmier », « ingénieur » ou « game »), ou choisis un domaine."
+            "value" : "Je n’ai pas trouvé de métier comme ça. Essaie un autre mot (par exemple « infirmier », « ingénieur » ou « pilote »), ou choisis un domaine."
           }
         },
         "it" : {
@@ -26350,7 +26350,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Такої роботи не знайдено. Спробуй інше слово (наприклад, «медсестра», «інженер» чи «гра») або обери сферу."
+            "value" : "Такої роботи не знайдено. Спробуй інше слово (наприклад, «медсестра», «інженер» чи «пілот») або обери сферу."
           }
         }
       }
@@ -26655,7 +26655,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se si vende, mantieni il tuo lavoro. Le tasse prendono %@ del prezzo e riparti da zero a maturare nuove azioni."
+            "value" : "Se si vende, mantieni il tuo lavoro. Le tasse si prendono una parte del prezzo (%@) e riparti da zero a maturare nuove azioni."
           }
         },
         "ja" : {
@@ -26689,7 +26689,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se si vende, esci dall’impresa — non è più tua e puoi avviare qualcosa di nuovo. Spese e tasse prendono %@ del prezzo."
+            "value" : "Se si vende, esci dall’impresa — non è più tua e puoi avviare qualcosa di nuovo. Spese e tasse si prendono una parte del prezzo (%@)."
           }
         },
         "ja" : {
@@ -27070,7 +27070,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En mode Simplifié, pas de hasard : obtiens %@, et le poste est à toi."
+            "value" : "En mode Simplifié, pas de hasard — obtiens %@, et le poste est à toi."
           }
         },
         "it" : {
@@ -27105,7 +27105,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En mode Simplifié, pas de hasard : le poste est à toi."
+            "value" : "En mode Simplifié, pas de hasard — le poste est à toi."
           }
         },
         "it" : {
@@ -27145,7 +27145,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In modalità Semplificata tieni tutta la tua busta paga."
+            "value" : "In modalità Semplificata tieni tutto ciò che guadagni."
           }
         },
         "ja" : {
@@ -27250,7 +27250,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nello sport universitario statunitense la quota di atleti scelti al draft è di circa %@."
+            "value" : "Nello sport universitario statunitense viene scelta al draft solo una piccola parte degli atleti (circa %@)."
           }
         },
         "ja" : {
@@ -27458,7 +27458,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Negli Stati Uniti, la quota di nuovi CEO scelti dall’interno è pari a circa %@."
+            "value" : "Negli Stati Uniti, una parte dei nuovi CEO viene scelta dall’interno (circa %@)."
           }
         },
         "ja" : {
@@ -27493,7 +27493,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Negli Stati Uniti, la quota di nuovi CEO di grandi aziende che non lo erano mai stati prima è pari a circa %@."
+            "value" : "Negli Stati Uniti, una parte dei nuovi CEO di grandi aziende non lo era mai stata prima (circa %@)."
           }
         },
         "ja" : {
@@ -27562,7 +27562,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il primo anno paga circa %@ dell’importo pieno, mentre trovi i clienti."
+            "value" : "Il primo anno paga una parte dell’importo pieno (circa %@), mentre trovi i clienti."
           }
         },
         "ja" : {
@@ -27694,7 +27694,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Industrie manufacturière"
+            "value" : "Industrie"
           }
         },
         "it" : {
@@ -28364,13 +28364,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Richiede un anno nel settore %2$@; tra i candidati ideali, ottiene il posto ogni anno solo %3$@."
+                  "value" : "Richiede un anno nel settore %2$@; ogni anno ottiene il posto una parte dei candidati ideali (%3$@)."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Richiede %1$lld anni nel settore %2$@; tra i candidati ideali, ottiene il posto ogni anno solo %3$@."
+                  "value" : "Richiede %1$lld anni nel settore %2$@; ogni anno ottiene il posto una parte dei candidati ideali (%3$@)."
                 }
               }
             }
@@ -28483,13 +28483,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Richiede un anno nel settore %2$@; tra i candidati ideali, ottiene un posto nell’alta dirigenza ogni anno solo %3$@."
+                  "value" : "Richiede un anno nel settore %2$@; ogni anno ottiene un posto nell’alta dirigenza solo una piccola parte dei candidati ideali (%3$@)."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Richiede %1$lld anni nel settore %2$@; tra i candidati ideali, ottiene un posto nell’alta dirigenza ogni anno solo %3$@."
+                  "value" : "Richiede %1$lld anni nel settore %2$@; ogni anno ottiene un posto nell’alta dirigenza solo una piccola parte dei candidati ideali (%3$@)."
                 }
               }
             }
@@ -31580,13 +31580,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Métiers probables : %@."
+            "value" : "Débouchés typiques : %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lavori probabili: %@."
+            "value" : "Sbocchi tipici: %@."
           }
         },
         "ja" : {
@@ -32201,7 +32201,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Manager, specialista di marketing, contabile, imprenditore"
+            "value" : "manager, specialista di marketing, contabile, imprenditore"
           }
         },
         "ja" : {
@@ -33702,7 +33702,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Médias et divertissement"
+            "value" : "Médias et loisirs"
           }
         },
         "it" : {
@@ -33925,13 +33925,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@の昇給：年収は%2$@になりました"
+            "value" : "%1$@の昇給で、年収は%2$@になりました"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Підвищення зарплати за заслуги на %1$@ — тепер %2$@ на рік"
+            "value" : "Підвищення зарплати за заслуги на %1$@: тепер %2$@ на рік"
           }
         }
       }
@@ -33959,13 +33959,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "昇給：年収は%@になりました"
+            "value" : "昇給し、年収は%@になりました"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Підвищення зарплати за заслуги — тепер %@ на рік"
+            "value" : "Підвищення зарплати за заслуги: тепер %@ на рік"
           }
         }
       }
@@ -35723,7 +35723,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Жодна робота не відповідає цим фільтрам. Спробуй інший вид роботи або вимкни перемикач «Лише посади, що мені підходять»."
+            "value" : "Жодна робота не відповідає цим фільтрам. Спробуй інший вид роботи або вимкни перемикач «Лише посади, що тобі підходять»."
           }
         }
       }
@@ -35773,7 +35773,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune offre pour %@ cette année — le marché change chaque année, alors reviens voir l’année prochaine."
+            "value" : "Aucune offre pour le poste « %@ » cette année — le marché change chaque année, alors reviens voir l’année prochaine."
           }
         },
         "it" : {
@@ -35807,7 +35807,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune offre pour %@ cette année. Continue à développer tes compétences et reviens voir l’année prochaine."
+            "value" : "Aucune offre pour le poste « %@ » cette année. Continue à développer tes compétences et reviens voir l’année prochaine."
           }
         },
         "it" : {
@@ -35841,7 +35841,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune offre pour %@ cette année. Le marché de l’emploi change chaque année — reviens voir l’année prochaine."
+            "value" : "Aucune offre pour le poste « %@ » cette année. Le marché de l’emploi change chaque année — reviens voir l’année prochaine."
           }
         },
         "it" : {
@@ -35869,19 +35869,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch keine"
+            "value" : "noch keine"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune pour l’instant"
+            "value" : "aucune pour l’instant"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nessuno"
+            "value" : "ancora nessuno"
           }
         },
         "ja" : {
@@ -35893,7 +35893,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поки немає"
+            "value" : "поки немає"
           }
         }
       }
@@ -35984,7 +35984,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non è necessario — ma uno di questi rende più facile ottenere un lavoro in questo settore e vale come un livello degli studi che un lavoro qui richiede."
+            "value" : "Non è necessario — ma uno di questi rende più facile ottenere un lavoro in questo settore e conta come un livello degli studi richiesti dai lavori di questo settore."
           }
         },
         "ja" : {
@@ -35996,7 +35996,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Не обовʼязково, але будь-який із цих курсів полегшує отримання роботи в цій сфері й зараховується як один рівень освіти, який очікують на посадах тут."
+            "value" : "Не обовʼязково, але будь-який із цих курсів полегшує отримання роботи в цій сфері й зараховується як один із рівнів освіти, яких очікують на цих посадах."
           }
         }
       }
@@ -36293,7 +36293,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Infermiere, terapista, tecnico di laboratorio, assistente di studio medico"
+            "value" : "infermiere, terapista, tecnico di laboratorio, assistente di studio medico"
           }
         },
         "ja" : {
@@ -36321,7 +36321,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formation d’aide-soignant (CNA)"
+            "value" : "Formation d’aide-soignant"
           }
         },
         "it" : {
@@ -36761,13 +36761,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein Zug pro Jahr – %1$@ – schließt die ganze Lücke in etwa einem Jahr."
+                  "value" : "Ein Schritt pro Jahr – %1$@ – schließt die ganze Lücke in etwa einem Jahr."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein Zug pro Jahr – %1$@ – schließt die ganze Lücke in etwa %2$lld Jahren."
+                  "value" : "Ein Schritt pro Jahr – %1$@ – schließt die ganze Lücke in etwa %2$lld Jahren."
                 }
               }
             }
@@ -36797,13 +36797,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Une action par an — %1$@ — comble tout l’écart en %2$lld an environ."
+                  "value" : "Un choix par an — %1$@ — comble tout l’écart en %2$lld an environ."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Une action par an — %1$@ — comble tout l’écart en %2$lld ans environ."
+                  "value" : "Un choix par an — %1$@ — comble tout l’écart en %2$lld ans environ."
                 }
               }
             }
@@ -36845,25 +36845,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Один хід на рік — %1$@ — закриє весь розрив приблизно за %2$lld роки."
+                  "value" : "Одне заняття на рік — %1$@ — закриє весь розрив приблизно за %2$lld роки."
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Один хід на рік — %1$@ — закриє весь розрив приблизно за %2$lld років."
+                  "value" : "Одне заняття на рік — %1$@ — закриє весь розрив приблизно за %2$lld років."
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Один хід на рік — %1$@ — закриє весь розрив приблизно за %2$lld рік."
+                  "value" : "Одне заняття на рік — %1$@ — закриє весь розрив приблизно за %2$lld рік."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Один хід на рік — %1$@ — закриє весь розрив приблизно за %2$lld років."
+                  "value" : "Одне заняття на рік — %1$@ — закриє весь розрив приблизно за %2$lld років."
                 }
               }
             }
@@ -36876,13 +36876,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Zug pro Jahr – %@ – schließt die ganze Lücke in mehr als einem Jahrzehnt."
+            "value" : "Ein Schritt pro Jahr – %@ – schließt die ganze Lücke in mehr als einem Jahrzehnt."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une action par an — %@ — comble tout l’écart en plus de dix ans."
+            "value" : "Un choix par an — %@ — comble tout l’écart en plus de dix ans."
           }
         },
         "it" : {
@@ -36900,7 +36900,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Один хід на рік — %@ — закриє весь розрив більш ніж за десять років."
+            "value" : "Одне заняття на рік — %@ — закриє весь розрив більш ніж за десять років."
           }
         }
       }
@@ -37098,7 +37098,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da uno a due anni di studio mirato dopo la laurea triennale. Apre le porte a ruoli di alto livello e a carriere nella ricerca."
+            "value" : "Da uno a due anni di studio mirato dopo la laurea. Apre le porte a ruoli di alto livello e a carriere nella ricerca."
           }
         },
         "ja" : {
@@ -37234,7 +37234,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tra i candidati altrimenti ideali, ottiene il posto ogni anno solo %@."
+            "value" : "Ogni anno ottiene il posto solo una piccola parte dei candidati altrimenti ideali (%@)."
           }
         },
         "ja" : {
@@ -37268,7 +37268,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tra chi ha i requisiti, ottiene un posto così ogni anno solo %@ — per quanto forte sia la candidatura."
+            "value" : "Ogni anno ottiene un posto così solo una piccola parte di chi ha i requisiti (%@) — per quanto forte sia la candidatura."
           }
         },
         "ja" : {
@@ -37314,7 +37314,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Лише посади, що мені підходять"
+            "value" : "Лише посади, що тобі підходять"
           }
         }
       }
@@ -37923,7 +37923,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paralegale, assistente legale, responsabile della conformità"
+            "value" : "paralegale, assistente legale, responsabile della conformità"
           }
         },
         "ja" : {
@@ -38845,7 +38845,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зарплати, ціни та вартість навчання — як у США, у доларах США."
+            "value" : "Зарплати, ціни та вартість навчання — як у США, у доларах."
           }
         }
       }
@@ -39414,7 +39414,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formation de préparateur en pharmacie (CPhT)"
+            "value" : "Formation de préparateur en pharmacie"
           }
         },
         "it" : {
@@ -39716,19 +39716,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wählerische Schulen lehnen viele gute Schüler ab, und freundliche sagen vielleicht trotzdem ja, wenn deine Fähigkeiten niedrig sind. Baue deine Fähigkeiten mit Aktivitäten und Projekten aus und wähle in der Schule Lern-Aktivitäten, um deine Noten zu verbessern. Eine Bewerbung verbraucht dein Jahr – egal, ob du angenommen wirst oder nicht."
+            "value" : "Wählerische Hochschulen lehnen viele gute Bewerber ab, weniger strenge sagen vielleicht trotzdem ja, wenn deine Fähigkeiten niedrig sind. Baue deine Fähigkeiten mit Aktivitäten und Projekten aus und wähle in der Schule Lern-Aktivitäten, um deine Noten zu verbessern. Eine Bewerbung verbraucht dein Jahr – egal, ob du angenommen wirst oder nicht."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les écoles exigeantes disent non à beaucoup de bons élèves, et les écoles accueillantes peuvent encore dire oui quand tes compétences sont faibles. Développe tes compétences avec les Activités et les projets, et choisis des activités d’études à l’école pour améliorer tes notes. Postuler prend toute ton année, que tu entres ou non."
+            "value" : "Les écoles exigeantes disent non à beaucoup de bons élèves, et les écoles moins exigeantes peuvent quand même dire oui quand tes compétences sont faibles. Développe tes compétences avec les activités et les projets, et choisis des activités d’études à l’école pour améliorer tes notes. Postuler prend toute ton année, que tu entres ou non."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le scuole selettive dicono di no a molti bravi studenti, mentre quelle più accoglienti possono dire di sì anche quando le tue competenze sono basse. Fai crescere le competenze con le Attività e i progetti e scegli attività di studio a scuola per alzare i voti. Candidarsi ti costa un anno, che tu entri o no."
+            "value" : "Le scuole selettive dicono di no a molti bravi studenti, mentre quelle più accoglienti possono dire di sì anche quando le tue competenze sono basse. Fai crescere le competenze con le attività e i progetti e scegli attività di studio a scuola per alzare i voti. Candidarsi ti costa un anno, che tu entri o no."
           }
         },
         "ja" : {
@@ -39740,7 +39740,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вибагливі заклади відмовляють багатьом добрим учням, а доброзичливі можуть сказати «так», навіть коли навичок небагато. Розвивай навички через розділи «Заняття» та «Проєкти», а в школі обирай заняття з категорії «Навчання», щоб підвищити оцінки. Подача заявки забирає рік, незалежно від того, вступиш ти чи ні."
+            "value" : "Вибагливі заклади відмовляють багатьом добрим учням, а поблажливі можуть сказати «так», навіть коли навичок небагато. Розвивай навички через розділи «Заняття» та «Проєкти», а в школі обирай заняття з категорії «Навчання», щоб підвищити оцінки. Подача заявки забирає рік, незалежно від того, вступиш ти чи ні."
           }
         }
       }
@@ -40333,7 +40333,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übe sie dieses Jahr wieder, dann bist du automatisch dabei."
+            "value" : "Übe auch dieses Jahr, dann bist du automatisch dabei."
           }
         },
         "fr" : {
@@ -40345,7 +40345,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se la pratichi anche quest’anno, partecipi in automatico."
+            "value" : "Se continui anche quest’anno, partecipi in automatico."
           }
         },
         "ja" : {
@@ -40922,7 +40922,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preise und Titel machen %1$@ dessen aus, worauf %2$@ achtet. Größere Preise zählen mehr – eine nationale Meisterschaft ist viele Schulurkunden wert. Etwa ein nationaler Titel plus ein paar lokale Siege bringen dir die volle Punktzahl."
+            "value" : "%2$@: Preise und Titel machen %1$@ der Entscheidung aus. Größere Preise zählen mehr – eine nationale Meisterschaft ist viele Schulurkunden wert. Etwa ein nationaler Titel plus ein paar lokale Siege bringen dir die volle Punktzahl."
           }
         },
         "en" : {
@@ -40934,13 +40934,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour %2$@, les prix et titres représentent %1$@ de l’évaluation. Plus un prix est grand, plus il compte — gagner un championnat national vaut des tas de petits prix scolaires. Environ un titre national plus quelques victoires locales te donnent la note maximale."
+            "value" : "Pour ce type d’école (%2$@), les prix et titres représentent %1$@ de l’évaluation. Plus un prix est grand, plus il compte — gagner un championnat national vaut des tas de petits prix scolaires. Environ un titre national plus quelques victoires locales te donnent la note maximale."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Premi e titoli pesano %1$@ nella valutazione di questa scuola (%2$@). I premi più grandi contano di più — vincere un campionato nazionale vale quanto molti premi scolastici. Più o meno un titolo nazionale e qualche vittoria locale ti danno il massimo dei punti."
+            "value" : "Nella valutazione di questa scuola (%2$@) premi e titoli hanno questo peso: %1$@. I premi più grandi contano di più — vincere un campionato nazionale vale quanto molti premi scolastici. Più o meno un titolo nazionale e qualche vittoria locale ti danno il massimo dei punti."
           }
         },
         "ja" : {
@@ -41306,7 +41306,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Підвищення до посади «%1$@» — зарплата +%2$@"
+            "value" : "Підвищення до посади «%1$@»: зарплата +%2$@"
           }
         }
       }
@@ -41593,7 +41593,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Staatliche Universitäten richten die Gebühren nach dem Familieneinkommen; die privaten Eliteschulen verlangen viel mehr."
+            "value" : "Staatliche Universitäten richten die Gebühren nach dem Familieneinkommen; die privaten Eliteuniversitäten verlangen viel mehr."
           }
         },
         "fr" : {
@@ -41972,31 +41972,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alter %lld erreichen"
+            "value" : "%lld Jahre alt werden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À partir de %lld ans"
+            "value" : "avoir %lld ans"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arriva a %lld anni"
+            "value" : "%lld anni di età"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld歳になる"
+            "value" : "%lld歳になること"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Досягти віку %lld"
+            "value" : "досягти віку %lld"
           }
         }
       }
@@ -42012,7 +42012,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as %lld ans — carrière terminée"
+            "value" : "Carrière terminée (limite de %lld ans)"
           }
         },
         "it" : {
@@ -42030,7 +42030,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Досягнуто віку %lld — карʼєру завершено"
+            "value" : "Досягнуто віку %lld: карʼєру завершено"
           }
         }
       }
@@ -42764,7 +42764,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nécessite %@"
+            "value" : "Nécessite : %@"
           }
         },
         "it" : {
@@ -42798,7 +42798,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nécessite d’abord %@"
+            "value" : "Nécessite d’abord : %@"
           }
         },
         "it" : {
@@ -43142,7 +43142,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ricercatore, tecnico di laboratorio, analista di dati"
+            "value" : "ricercatore, tecnico di laboratorio, analista di dati"
           }
         },
         "ja" : {
@@ -43240,7 +43240,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commerce et consommation"
+            "value" : "Distribution"
           }
         },
         "it" : {
@@ -43308,7 +43308,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fin de carrière sportive à %lld ans"
+            "value" : "Fin de carrière sportive (%lld ans)"
           }
         },
         "it" : {
@@ -43360,7 +43360,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Зараз найкращий хід — продовжувати! І далі розвивай навички та заглянь знову наступного року. 👍"
+            "value" : "Зараз найкраще — продовжувати! І далі розвивай навички та заглянь знову наступного року. 👍"
           }
         }
       }
@@ -44124,7 +44124,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schulen schauen sich deine Noten, deine Fähigkeiten und deine Preise über viele Jahre an, nicht nur ein gutes Jahr."
+            "value" : "Hochschulen schauen sich deine Noten, deine Fähigkeiten und deine Preise über viele Jahre an, nicht nur ein gutes Jahr."
           }
         },
         "fr" : {
@@ -44581,7 +44581,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vois qui embauche pour %@ cette année."
+            "value" : "Vois qui embauche cette année pour le poste « %@ »."
           }
         },
         "it" : {
@@ -45304,7 +45304,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En mode Simplifié, pas de licence : les années de travail ouvrent chaque étape (%@)."
+            "value" : "En mode Simplifié, pas de licence — les années de travail ouvrent chaque étape (%@)."
           }
         },
         "it" : {
@@ -45316,7 +45316,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "かんたんモードでは免許が不要で、働いた年数が各ステップを開きます（%@年）。"
+            "value" : "かんたんモードでは免許はいりません。働いた年数が増えると、次のステップに進めます（%@年）。"
           }
         },
         "uk" : {
@@ -45544,7 +45544,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les compétences sont ce que tu sais bien faire, en plus des études et de l’expérience professionnelle. Elles aident pour :"
+            "value" : "Les compétences sont ce que tu sais bien faire, en plus des études et de l’expérience professionnelle. Elles servent à :"
           }
         },
         "it" : {
@@ -45682,7 +45682,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passer"
+            "value" : "Passer l’année"
           }
         },
         "it" : {
@@ -45988,7 +45988,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Продано частку в бізнесі «%1$@» за %2$@ (%3$@ після комісій і податку) — вихід із бізнесу"
+            "value" : "Продано частку в бізнесі «%1$@» за %2$@ (%3$@ після комісій і податку): вихід із бізнесу"
           }
         }
       }
@@ -46056,7 +46056,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Цього року одні галузі почуваються краще за інші — це впливає на шанс отримати роботу, а також на зарплату й підвищення, поки ти там працюєш."
+            "value" : "Цього року одним галузям ведеться краще, ніж іншим — це впливає на шанс отримати роботу, а також на зарплату й підвищення, поки ти там працюєш."
           }
         }
       }
@@ -46515,25 +46515,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auch im Spiel enden Sportkarrieren früh."
+            "value" : "Auch hier enden Sportkarrieren früh."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans le jeu aussi, les carrières sportives se terminent tôt."
+            "value" : "Les carrières sportives se terminent tôt aussi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anche nel gioco le carriere sportive finiscono presto."
+            "value" : "Anche qui le carriere sportive finiscono presto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ゲームでも、スポーツのキャリアは早く終わります。"
+            "value" : "スポーツのキャリアも早く終わります。"
           }
         },
         "uk" : {
@@ -46857,7 +46857,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du mit %lld startest, wählst du jedes Jahr selbst – die frühen Entscheidungen sind die Grundlage für die schwierigsten Schulen und Jobs."
+            "value" : "Wenn du mit %lld anfängst, entscheidest du jedes Jahr selbst. Deine ersten Entscheidungen legen den Grundstein für Schulen und Jobs, die schwer zu bekommen sind."
           }
         },
         "fr" : {
@@ -46869,19 +46869,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partire a %lld anni ti permette di scegliere tu ogni anno — le prime scelte sono la base su cui si costruiscono le scuole e i lavori più difficili."
+            "value" : "Se inizi a %lld anni, scegli tu cosa fare ogni anno. Le prime scelte ti preparano alle scuole e ai lavori più difficili da raggiungere."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld歳から始めると、毎年の選択を自分で決められます。難関校や狭き門の仕事は、そうした初期の選択の上に成り立っています。"
+            "value" : "%lld歳から始めると、毎年の選択を自分で決められます。小さいころの選択が、難しい学校やなかなかなれない仕事への土台になります。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Старт із %lld дає змогу самостійно обирати кожен рік — саме ранній вибір відкриває шлях до найскладніших закладів і робіт."
+            "value" : "Якщо почати у віці %lld, ти самостійно обираєш кожен рік — а ранній вибір відкриває шлях до закладів і робіт, куди найважче потрапити."
           }
         }
       }
@@ -47439,25 +47439,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stabil – weder Wachstum noch Rückgang. Die Chancen sind normal."
+            "value" : "Stabil – weder Wachstum noch Rückgang. Die Einstellungschancen sind normal."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stable — ni croissance ni recul. Les chances sont normales."
+            "value" : "Stable — ni croissance ni recul. Les chances d’embauche sont normales."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stabile — non cresce né cala. Le probabilità sono nella norma."
+            "value" : "Stabile — non cresce né cala. Le probabilità di assunzione sono nella norma."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "横ばい：成長も縮小もしていません。確率はふつうです。"
+            "value" : "横ばい：成長も縮小もしていません。採用や昇進の確率はふつうです。"
           }
         },
         "uk" : {
@@ -47507,7 +47507,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorerst noch amerikanisch: Schulalter und Bildungswege, Namen von Lizenzen und die meisten Fakten aus der echten Welt in der Beratung."
+            "value" : "Vorerst noch amerikanisch: Schulalter und Bildungswege, Namen von Lizenzen und die meisten Fakten des Beraters aus dem echten Leben."
           }
         },
         "fr" : {
@@ -47519,7 +47519,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per ora ancora all’americana: età e percorsi scolastici, nomi delle abilitazioni e gran parte delle informazioni reali del consulente."
+            "value" : "Per ora seguono ancora il modello americano: età e percorsi scolastici, nomi delle abilitazioni e gran parte di ciò che il consulente racconta sul mondo reale."
           }
         },
         "ja" : {
@@ -48687,7 +48687,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Insegnante, tutor, consulente scolastico"
+            "value" : "insegnante, tutor, consulente scolastico"
           }
         },
         "ja" : {
@@ -49232,7 +49232,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ados et plus · défi complet"
+            "value" : "Dès l’adolescence · défi complet"
           }
         },
         "it" : {
@@ -49266,7 +49266,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ados et plus · défi complet."
+            "value" : "Dès l’adolescence · défi complet."
           }
         },
         "it" : {
@@ -49452,7 +49452,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È il posto al vertice. Tra i candidati altrimenti ideali, in un anno qualsiasi ottiene un lavoro nell’alta dirigenza solo %@."
+            "value" : "È il posto al vertice. In un anno qualsiasi ottiene un lavoro nell’alta dirigenza solo una piccola parte dei candidati altrimenti ideali (%@)."
           }
         },
         "ja" : {
@@ -49521,7 +49521,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le secteur « %@ » est en berne, alors les employeurs embauchent moins. Continue à développer tes compétences et réessaie quand ça ira mieux."
+            "value" : "Le secteur « %@ » est en berne, donc les employeurs embauchent moins. Continue à développer tes compétences et réessaie quand ça ira mieux."
           }
         },
         "it" : {
@@ -49583,7 +49583,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Job als %1$@ (%2$@ pro Jahr) verlangt %3$@ %4$lld. Du bist bei %5$lld."
+            "value" : "Der Job als %1$@ (%2$@ pro Jahr) verlangt bei der Fähigkeit „%3$@“ den Wert %4$lld. Du bist bei %5$lld."
           }
         },
         "en" : {
@@ -49671,13 +49671,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le titre « %1$@ » ouvre la porte, et même alors seuls %2$@ des détenteurs du titre décrochent une place dans une équipe professionnelle."
+            "value" : "Le titre « %1$@ » ouvre la porte, mais même avec lui, seuls %2$@ des détenteurs du titre décrochent une place dans une équipe professionnelle."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il titolo «%1$@» apre la porta, e anche così solo una quota pari a %2$@ di chi lo detiene entra in una squadra."
+            "value" : "Il titolo «%1$@» apre la porta, e anche così entra in una squadra solo una piccola parte di chi lo detiene (%2$@)."
           }
         },
         "ja" : {
@@ -49843,7 +49843,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le chat du conseiller n’est pas encore disponible en %@, alors tu auras les conseils habituels du conseiller."
+            "value" : "Le chat du conseiller n’est pas encore disponible en %@, donc tu auras les conseils habituels du conseiller."
           }
         },
         "it" : {
@@ -49945,13 +49945,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les grands moments de ta vie jusqu’ici — comme finir l’école, décrocher un poste, une augmentation ou un trophée."
+            "value" : "Les grands moments de ta vie jusqu’ici — comme finir l’école, décrocher un poste, obtenir une augmentation ou remporter un trophée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I momenti più importanti della tua vita finora — come finire la scuola, trovare un lavoro, un aumento o un trofeo."
+            "value" : "I momenti più importanti della tua vita finora — come finire la scuola, trovare un lavoro, ricevere un aumento o vincere un trofeo."
           }
         },
         "ja" : {
@@ -50163,7 +50163,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "経済"
+            "value" : "経済全体"
           }
         },
         "uk" : {
@@ -50318,13 +50318,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Spiel verlangt an einer staatlichen Universität nur etwa %@ pro Jahr, deshalb nehmen wenige Studenten einen Kredit auf – und die Bezahlung gehört dann zu den höchsten."
+            "value" : "An einer staatlichen Universität fallen nur etwa %@ pro Jahr an, deshalb nehmen wenige Studenten einen Kredit auf – und die Bezahlung gehört dann zu den höchsten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le jeu ne fait payer qu’environ %@ par an dans une université publique, donc peu d’étudiants empruntent — puis le salaire fait partie des plus élevés."
+            "value" : "Une université publique ne coûte qu’environ %@ par an, donc peu d’étudiants empruntent — puis le salaire fait partie des plus élevés."
           }
         },
         "it" : {
@@ -50336,7 +50336,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ゲームでは公立大学の授業料が1年あたり約%@だけなので、借りる学生は少なく、そのあとの給料は最高水準です。"
+            "value" : "公立大学の授業料は1年あたり約%@だけなので、借りる学生は少なく、そのあとの給料は最高水準です。"
           }
         },
         "uk" : {
@@ -50353,13 +50353,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Spiel verlangt Studiengebühren, und vielleicht musst du einen Studienkredit zurückzahlen – dafür gehört die Bezahlung zu den höchsten."
+            "value" : "Es fallen Studiengebühren an, und vielleicht musst du einen Studienkredit zurückzahlen – dafür gehört die Bezahlung zu den höchsten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le jeu fait payer des frais de scolarité et tu peux devoir rembourser un prêt étudiant — mais ensuite le salaire fait partie des plus élevés."
+            "value" : "Tu paies des frais de scolarité et tu peux devoir rembourser un prêt étudiant — mais ensuite le salaire fait partie des plus élevés."
           }
         },
         "it" : {
@@ -50371,7 +50371,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ゲームでは授業料がかかり、奨学金を借りることもありますが、そのあとの給料は最高水準です。"
+            "value" : "授業料がかかり、奨学金を借りることもありますが、そのあとの給料は最高水準です。"
           }
         },
         "uk" : {
@@ -51216,7 +51216,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Più chiedi, meno acquirenti ci sono: a %1$@ la probabilità che qualcuno compri quest’anno è di circa %2$@ — meno acquirenti del solito, perché l’economia va male."
+            "value" : "Più chiedi, meno acquirenti ci sono: a %1$@ qualcuno potrebbe comprare quest’anno (circa %2$@ di probabilità) — meno acquirenti del solito, perché l’economia va male."
           }
         },
         "ja" : {
@@ -51256,7 +51256,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Più chiedi, meno acquirenti ci sono: a %1$@ la probabilità che qualcuno compri quest’anno è di circa %2$@."
+            "value" : "Più chiedi, meno acquirenti ci sono: a %1$@ qualcuno potrebbe comprare quest’anno (circa %2$@ di probabilità)."
           }
         },
         "ja" : {
@@ -51312,19 +51312,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der neueste wird hier gezeigt. Öffne ihn, um alle zu sehen, den neuesten zuerst."
+            "value" : "Hier siehst du den neuesten Moment. Öffne die Liste, um alle zu sehen – die neuesten zuerst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le plus récent s’affiche ici. Ouvre-le pour les voir tous, du plus récent au plus ancien."
+            "value" : "Le plus récent s’affiche ici. Ouvre la liste pour les voir tous, du plus récent au plus ancien."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qui vedi il più recente. Aprilo per vederli tutti, dal più recente."
+            "value" : "Qui vedi l’ultimo momento. Apri l’elenco per vederli tutti, dal più recente."
           }
         },
         "ja" : {
@@ -51336,7 +51336,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Тут показано найновіший. Відкрий, щоб побачити всі — від найновіших до найстаріших."
+            "value" : "Тут показано найновіший. Відкрий список, щоб побачити всі — від найновіших до найстаріших."
           }
         }
       }
@@ -51600,7 +51600,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La strada è lunga e ogni passo è selettivo: una laurea triennale, poi un programma professionale o di dottorato che ammette ben meno della metà dei candidati, poi — per i medici — 3–7 anni di formazione in ospedale sotto supervisione prima di poter esercitare in autonomia."
+            "value" : "La strada è lunga e ogni passo è selettivo: una laurea, poi un programma professionale o di dottorato che ammette ben meno della metà dei candidati, poi — per i medici — 3–7 anni di formazione in ospedale sotto supervisione prima di poter esercitare in autonomia."
           }
         },
         "ja" : {
@@ -51622,7 +51622,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Schule hat dich für %@ angenommen."
+            "value" : "Die Hochschule hat dich für %@ angenommen."
           }
         },
         "fr" : {
@@ -51656,7 +51656,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Schule achtet auf: Noten %1$@, Fähigkeiten %2$@."
+            "value" : "Die Hochschule achtet auf: Noten %1$@, Fähigkeiten %2$@."
           }
         },
         "en" : {
@@ -51696,7 +51696,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Schule hat diesmal abgelehnt – du hattest eine Chance von %@. Nächstes Jahr kannst du es noch einmal versuchen!"
+            "value" : "Die Hochschule hat diesmal abgelehnt – du hattest eine Chance von %@. Nächstes Jahr kannst du es noch einmal versuchen!"
           }
         },
         "fr" : {
@@ -51708,7 +51708,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa volta la scuola ha detto di no — la probabilità era pari a %@. Puoi riprovare l’anno prossimo!"
+            "value" : "Questa volta la scuola ha detto di no (%@ di probabilità). Puoi riprovare l’anno prossimo!"
           }
         },
         "ja" : {
@@ -52227,7 +52227,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poi, ogni anno, avrai una probabilità pari a circa %1$@ di avanzare e di guadagnare circa %2$@ all’anno."
+            "value" : "Poi, ogni anno, avrai una probabilità di avanzare (circa %1$@) e di guadagnare circa %2$@ all’anno."
           }
         },
         "ja" : {
@@ -52455,7 +52455,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I lavori da %1$@ sono pochi — solo %2$@ di chi ha i requisiti ne ottiene uno."
+            "value" : "I lavori da %1$@ sono pochi: ne ottiene uno solo una piccola parte di chi ha i requisiti (%2$@)."
           }
         },
         "ja" : {
@@ -52662,7 +52662,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Queste società assumono soprattutto da un breve elenco di università, tramite eventi nei campus e tirocini. Nelle banche più grandi, ben meno di %@ dei candidati a posti da analista ottiene il lavoro."
+            "value" : "Queste società assumono soprattutto da un breve elenco di università, tramite eventi nei campus e tirocini. Nelle banche più grandi ottiene il lavoro solo una piccola parte dei candidati a posti da analista (ben meno di %@)."
           }
         },
         "ja" : {
@@ -52833,7 +52833,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet appareil ne peut pas utiliser Apple Intelligence, alors tu auras les conseils habituels du conseiller."
+            "value" : "Cet appareil ne peut pas utiliser Apple Intelligence, donc tu auras les conseils habituels du conseiller."
           }
         },
         "it" : {
@@ -54113,31 +54113,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiterbildung: %@"
+            "value" : "%@ absolvieren"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formation : %@"
+            "value" : "obtenir la qualification (%@)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formazione: %@"
+            "value" : "la qualifica «%@»"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "研修：%@"
+            "value" : "%@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Курс: %@"
+            "value" : "здобути кваліфікацію «%@»"
           }
         }
       }
@@ -54601,19 +54601,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib einen Job ein, z. B. „Krankenpfleger“…"
+            "value" : "Job eingeben, z. B. „Pilot“…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écris un métier, par ex. « infirmier »…"
+            "value" : "Métier, ex. : « infirmier »…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scrivi un lavoro, ad esempio «infermiere»…"
+            "value" : "Un lavoro, es. «infermiere»…"
           }
         },
         "ja" : {
@@ -54625,7 +54625,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Введи професію, наприклад «медсестра»…"
+            "value" : "Напр., «медсестра»…"
           }
         }
       }
@@ -55280,7 +55280,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Università — laurea triennale"
+            "value" : "Laurea"
           }
         },
         "ja" : {
@@ -55315,7 +55315,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Università — laurea magistrale"
+            "value" : "Laurea magistrale"
           }
         },
         "ja" : {
@@ -55523,7 +55523,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilise tes compétences : %1$@. Paie %2$@."
+            "value" : "Utilise tes compétences : %1$@. Salaire : %2$@."
           }
         },
         "it" : {
@@ -55621,19 +55621,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es werden nur sehr wenige Jobs frei: Im Spiel liegt der Bedarf an Richtern bei %@ von dem eines normalen Jobs."
+            "value" : "Es werden nur sehr wenige Jobs frei: Der Bedarf an Richtern liegt bei %@ von dem eines normalen Jobs."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Très peu de postes s’ouvrent : dans le jeu, la demande pour les juges est de %@ de celle d’un poste ordinaire."
+            "value" : "Très peu de postes s’ouvrent : la demande pour les juges est de %@ de celle d’un poste ordinaire."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si aprono pochissimi posti: nel gioco la domanda di giudici è pari a %@ di quella di un lavoro normale."
+            "value" : "Si aprono pochissimi posti: nel gioco la domanda di giudici è molto bassa (%@ di quella di un lavoro normale)."
           }
         },
         "ja" : {
@@ -55973,7 +55973,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diplôme professionnel en %@"
+            "value" : "Diplôme professionnel (%@)"
           }
         },
         "it" : {
@@ -56323,7 +56323,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Worauf diese Schule achtet:"
+            "value" : "Worauf diese Hochschule achtet:"
           }
         },
         "fr" : {
@@ -56601,13 +56601,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An welchen Job denkst du? Tippe ihn unten ein (zum Beispiel „Krankenpfleger“ oder „Game“) oder wähle einen Bereich zum Stöbern."
+            "value" : "An welchen Job denkst du? Tippe ihn unten ein (zum Beispiel „Krankenpfleger“ oder „Pilot“) oder wähle einen Bereich zum Stöbern."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À quel métier penses-tu ? Écris-le ci-dessous (par exemple « infirmier » ou « game »), ou choisis un domaine à parcourir."
+            "value" : "À quel métier penses-tu ? Écris-le ci-dessous (par exemple « infirmier » ou « pilote »), ou choisis un domaine à parcourir."
           }
         },
         "it" : {
@@ -56625,7 +56625,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Про яку роботу ти думаєш? Напиши її нижче (наприклад, «медсестра» чи «гра») або обери сферу, щоб переглянути."
+            "value" : "Про яку роботу ти думаєш? Напиши її нижче (наприклад, «медсестра» чи «пілот») або обери сферу, щоб переглянути."
           }
         }
       }
@@ -56635,7 +56635,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solange du sie übst, bist du jedes Jahr kostenlos für ihren größten Wettbewerb gemeldet. Deine Siegchance ist anfangs klein und wächst jedes Jahr, und größere Wettbewerbe öffnen sich, wenn du besser wirst. Mit Siegen steigt dein Ruhm in %@."
+            "value" : "Solange du übst, bist du jedes Jahr kostenlos für den größten Wettbewerb dieser Aktivität gemeldet. Deine Siegchance ist anfangs klein und wächst jedes Jahr, und größere Wettbewerbe öffnen sich, wenn du besser wirst. Mit Siegen steigt dein Ruhm in %@."
           }
         },
         "fr" : {
@@ -56647,7 +56647,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finché la pratichi, ogni anno partecipi alla sua gara più importante — gratis. La tua probabilità di vincere parte bassa e cresce ogni anno, e man mano che migliori si aprono gare più grandi. Le vittorie fanno crescere la tua fama nel settore %@."
+            "value" : "Finché continui a praticare questa attività, ogni anno partecipi alla gara più importante — gratis. All’inizio la tua probabilità di vincere è bassa e cresce ogni anno, e man mano che migliori si aprono gare più grandi. Le vittorie fanno crescere la tua fama nel settore %@."
           }
         },
         "ja" : {
@@ -56847,13 +56847,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gagne-les avec les Activités : chaque année où tu pratiques une activité, tu participes à sa plus grande compétition."
+            "value" : "Gagne-les avec les activités : chaque année où tu pratiques une activité, tu participes à sa plus grande compétition."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vincili con le Attività: ogni anno in cui pratichi un’attività partecipi alla sua gara più importante."
+            "value" : "Vincili con le attività: ogni anno in cui pratichi un’attività partecipi alla sua gara più importante."
           }
         },
         "ja" : {
@@ -57204,7 +57204,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arbeit mit Menschen – bedienen, unterrichten, pflegen, auftreten."
+            "value" : "Direkter Kontakt: bedienen, unterrichten, pflegen, auftreten."
           }
         },
         "fr" : {
@@ -57216,19 +57216,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lavoro a contatto con le persone — servire, insegnare, curare, esibirsi."
+            "value" : "lavoro con la gente: servire, insegnare, curare, esibirsi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "人と直接かかわる仕事：接客する、教える、世話をする、パフォーマンスする。"
+            "value" : "接客する、教える、世話をする、パフォーマンスするなど、人と直接かかわる仕事。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Робота з людьми — обслуговування, навчання, догляд, виступи."
+            "value" : "Безпосереднє спілкування: обслуговування, навчання, догляд, виступи."
           }
         }
       }
@@ -57926,7 +57926,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puoi candidarti subito come %1$@ — la probabilità è pari a %2$@."
+            "value" : "Puoi candidarti subito come %1$@ — probabilità: %2$@."
           }
         },
         "ja" : {
@@ -58522,7 +58522,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La probabilità era pari a %@, e questa volta non è andata. Non arrenderti — riprova l’anno prossimo!"
+            "value" : "Questa volta non è andata (%@ di probabilità). Non arrenderti — riprova l’anno prossimo!"
           }
         },
         "ja" : {
@@ -58562,7 +58562,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La probabilità di ottenerlo è pari a %1$@. Lo stipendio è di %2$@ — %3$@ in più di quanto guadagni ora."
+            "value" : "Probabilità di ottenerlo: %1$@. Stipendio: %2$@ — %3$@ in più di quanto guadagni ora."
           }
         },
         "ja" : {
@@ -58602,7 +58602,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La probabilità di ottenerlo è pari a %1$@. Lo stipendio è di %2$@."
+            "value" : "Probabilità di ottenerlo: %1$@. Stipendio: %2$@."
           }
         },
         "ja" : {
@@ -58642,7 +58642,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quest’anno la probabilità di avanzare è pari a %1$@. Guadagneresti circa %2$@ all’anno."
+            "value" : "Probabilità di avanzare quest’anno: %1$@. Guadagneresti circa %2$@ all’anno."
           }
         },
         "ja" : {
@@ -58701,13 +58701,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Für diesen Job musst du %1$@ sein – noch ein Jahr."
+                  "value" : "Für diesen Job musst du mindestens %1$@ Jahre alt sein – dir fehlt noch ein Jahr."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Für diesen Job musst du %1$@ sein – noch %2$lld Jahre."
+                  "value" : "Für diesen Job musst du mindestens %1$@ Jahre alt sein – dir fehlen noch %2$lld Jahre."
                 }
               }
             }
@@ -58737,13 +58737,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld an."
+                  "value" : "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld an à attendre."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld ans."
+                  "value" : "Tu dois avoir %1$@ ans pour ce poste — encore %2$lld ans à attendre."
                 }
               }
             }
@@ -59524,13 +59524,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Servono un dottorato in Giurisprudenza, l’abilitazione forense e un anno — e tra i candidati ideali ottiene un posto da socio ogni anno solo %2$@."
+                  "value" : "Servono un dottorato in Giurisprudenza, l’abilitazione forense e un anno — e ogni anno ottiene un posto da socio solo una piccola parte dei candidati ideali (%2$@)."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Servono un dottorato in Giurisprudenza, l’abilitazione forense e %1$lld anni — e tra i candidati ideali ottiene un posto da socio ogni anno solo %2$@."
+                  "value" : "Servono un dottorato in Giurisprudenza, l’abilitazione forense e %1$lld anni — e ogni anno ottiene un posto da socio solo una piccola parte dei candidati ideali (%2$@)."
                 }
               }
             }
@@ -59712,13 +59712,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Servono l’abilitazione medica e la certificazione di specialità, un anno nel settore %2$@ e una probabilità di ottenere il posto pari a %3$@."
+                  "value" : "Servono l’abilitazione medica, la certificazione di specialità e un anno nel settore %2$@. Probabilità di ottenere il posto: %3$@."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Servono l’abilitazione medica e la certificazione di specialità, %1$lld anni nel settore %2$@ e una probabilità di ottenere il posto pari a %3$@."
+                  "value" : "Servono l’abilitazione medica, la certificazione di specialità e %1$lld anni nel settore %2$@. Probabilità di ottenere il posto: %3$@."
                 }
               }
             }
@@ -59961,7 +59961,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Del resto risparmi %1$@ (%2$@ di ciò che supera %3$@)."
+            "value" : "Del resto ne risparmi una quota: %1$@ (%2$@ di ciò che supera %3$@)."
           }
         },
         "ja" : {
@@ -60104,7 +60104,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il te faudra %@ — ça vient après l’école."
+            "value" : "Il te faudra %@ — c’est pour après l’école."
           }
         },
         "it" : {
@@ -60135,13 +60135,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast schon einen Zug gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
+                  "value" : "Du hast schon einen Schritt gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast schon %1$lld Züge gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
+                  "value" : "Du hast schon %1$lld Schritte gemacht – noch %2$@ weitere, und ich schlage dir passende Jobs vor."
                 }
               }
             }
@@ -60219,25 +60219,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Позаду вже %1$lld ходи — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
+                  "value" : "Позаду вже %1$lld спроби — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Позаду вже %1$lld ходів — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
+                  "value" : "Позаду вже %1$lld спроб — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Позаду вже %1$lld хід — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
+                  "value" : "Позаду вже %1$lld спроба — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Позаду вже %1$lld ходів — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
+                  "value" : "Позаду вже %1$lld спроб — потрібно ще %2$@, і я запропоную роботи, які тобі пасують."
                 }
               }
             }
@@ -60268,7 +60268,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今は%lld歳です。ここまでの歩みを見てみましょう。続けてスコアを伸ばすか、はじめからやり直せます。"
+            "value" : "今は%lld歳です。ここまでの歩みを見てみましょう。続けてスコアを伸ばすことも、はじめからやり直すこともできます。"
           }
         },
         "uk" : {
@@ -60302,7 +60302,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今は%lld歳です。ここまでの歩みを見てみましょう。続けてあそぶか、はじめからやり直せます。"
+            "value" : "今は%lld歳です。ここまでの歩みを見てみましょう。続けてあそぶことも、はじめからやり直すこともできます。"
           }
         },
         "uk" : {
@@ -60404,7 +60404,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ora puoi candidarti come %1$@ — la tua probabilità è pari a %2$@."
+            "value" : "Ora puoi candidarti come %1$@ — la tua probabilità: %2$@."
           }
         },
         "ja" : {
@@ -61103,7 +61103,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "応募はすでにゲーム上の上限に達しているため、いまはこれ以上増やしても変わりません：%@。"
+            "value" : "応募はすでにゲーム上の上限に達しているため、%@は、いまはこれ以上増やしても変わりません。"
           }
         },
         "uk" : {
@@ -61156,13 +61156,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dein Notendurchschnitt bisher, über ein Jahr."
+                  "value" : "Dein Notendurchschnitt bisher, berechnet aus einem Jahr."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dein Notendurchschnitt bisher, über %lld Jahre."
+                  "value" : "Dein Notendurchschnitt bisher, berechnet aus %lld Jahren."
                 }
               }
             }
@@ -61568,7 +61568,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "確率は、下のスキルと、これまでの仕事の経験%1$lld年、すでに持っている%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
+                  "value" : "確率は、下のスキル、仕事の経験（現在%1$lld年）、持っている%2$@の名声に応じて上がります。ある分野で知られていると、その分野の次のプロジェクトがやりやすくなります。"
                 }
               }
             }
@@ -61737,7 +61737,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oggi la tua probabilità di assunzione è pari a %@."
+            "value" : "La tua probabilità di assunzione oggi: %@."
           }
         },
         "ja" : {
@@ -61868,7 +61868,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton personnage vieillit d’un an à chaque tour. C’est en choisissant quelque chose — une activité, une formation, un poste — que tu occupes cette année, et l’année s’écoule dès que tu choisis. Rien ne te tente cette année ? Appuie sur le bouton bleu Passer en haut."
+            "value" : "Ton personnage vieillit d’un an à chaque tour. C’est en choisissant quelque chose — une activité, une formation, un poste — que tu occupes cette année, et l’année s’écoule dès que tu choisis. Rien ne te tente cette année ? Appuie sur le bouton bleu « Passer l’année » en haut."
           }
         },
         "it" : {
@@ -62118,7 +62118,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Noten, Fähigkeiten und Preise entscheiden, ob dich eine Schule aufnimmt – auch im vereinfachten Modus."
+            "value" : "Deine Noten, Fähigkeiten und Preise entscheiden, ob dich eine Hochschule aufnimmt – auch im vereinfachten Modus."
           }
         },
         "fr" : {
@@ -62884,7 +62884,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "una laurea triennale"
+            "value" : "una laurea"
           }
         },
         "ja" : {
@@ -62919,7 +62919,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "una laurea triennale in %@"
+            "value" : "una laurea in %@"
           }
         },
         "ja" : {
@@ -63413,7 +63413,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "riduce la tua probabilità a %@ del normale"
+            "value" : "riduce la tua probabilità (%@ del normale)"
           }
         },
         "ja" : {
@@ -63425,7 +63425,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "знижує шанс до %@ від звичайного"
+            "value" : "знижує шанс до %@ від звичайного рівня"
           }
         }
       }
@@ -64092,7 +64092,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は今年、好況です：%3$@"
+            "value" : "• %1$@ %2$@は今年、好況です（%3$@）"
           }
         },
         "uk" : {
@@ -64132,7 +64132,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は好況です：%3$@"
+            "value" : "• %1$@ %2$@は好況です（%3$@）"
           }
         },
         "uk" : {
@@ -64172,7 +64172,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は今年、成長しています：%3$@"
+            "value" : "• %1$@ %2$@は今年、成長しています（%3$@）"
           }
         },
         "uk" : {
@@ -64212,7 +64212,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は成長しています：%3$@"
+            "value" : "• %1$@ %2$@は成長しています（%3$@）"
           }
         },
         "uk" : {
@@ -64252,7 +64252,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は今年、不況です：%3$@"
+            "value" : "• %1$@ %2$@は今年、不況です（%3$@）"
           }
         },
         "uk" : {
@@ -64292,7 +64292,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は不況です：%3$@"
+            "value" : "• %1$@ %2$@は不況です（%3$@）"
           }
         },
         "uk" : {
@@ -64332,7 +64332,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は今年、減速しています：%3$@"
+            "value" : "• %1$@ %2$@は今年、減速しています（%3$@）"
           }
         },
         "uk" : {
@@ -64372,7 +64372,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は減速しています：%3$@"
+            "value" : "• %1$@ %2$@は減速しています（%3$@）"
           }
         },
         "uk" : {
@@ -64412,7 +64412,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は今年、横ばいです：%3$@"
+            "value" : "• %1$@ %2$@は今年、横ばいです（%3$@）"
           }
         },
         "uk" : {
@@ -64452,7 +64452,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• %1$@ %2$@は横ばいです：%3$@"
+            "value" : "• %1$@ %2$@は横ばいです（%3$@）"
           }
         },
         "uk" : {
@@ -64742,7 +64742,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Abschluss von deiner Schule: %@"
+            "value" : "• Abschluss von deiner Hochschule: %@"
           }
         },
         "fr" : {
@@ -64776,7 +64776,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Ein Studienjahr kostet etwa %1$@, an einer Eliteuniversität %2$@."
+            "value" : "• Ein Studienjahr kostet etwa %1$@, an einer Eliteuniversität sind es %2$@."
           }
         },
         "en" : {
@@ -64788,19 +64788,19 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Une année d’université coûte environ %1$@, ou %2$@ dans une école d’élite."
+            "value" : "• Une année d’université coûte environ %1$@ ; dans une école d’élite, %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Un anno di università costa circa %1$@, o %2$@ in una scuola d’élite."
+            "value" : "• Un anno di università costa circa %1$@; in una scuola d’élite, %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 大学の学費は1年あたり約%1$@、難関校では%2$@です。"
+            "value" : "• 大学の学費は学校によって違い、1年あたり一般的な大学で約%1$@、難関校で%2$@です。"
           }
         },
         "uk" : {
@@ -64834,7 +64834,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• この仕事は人手が求められています：%@"
+            "value" : "• この仕事は人手が求められています（%@）"
           }
         },
         "uk" : {
@@ -64925,7 +64925,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "• 経験：%2$lld年のうち%1$@年：%3$@"
+                  "value" : "• 経験：%2$lld年のうち%1$@年（%3$@）"
                 }
               }
             }
@@ -65002,7 +65002,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Für eine Einstellung brauchst du nur den richtigen Abschluss, genug Arbeitsjahre und das nötige Alter. Erfüllst du das alles, gehört der Job dir."
+            "value" : "• Um eingestellt zu werden, brauchst du nur den richtigen Abschluss, genug Arbeitsjahre und das nötige Alter. Hast du alles davon, gehört der Job dir."
           }
         },
         "fr" : {
@@ -65026,7 +65026,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Щоб отримати роботу, досить мати відповідний ступінь, достатній стаж і потрібний вік. Виконай ці умови — і робота твоя."
+            "value" : "• Щоб отримати роботу, досить мати потрібний ступінь, достатньо років роботи й відповідний вік. Маєш усе це — і робота твоя."
           }
         }
       }
@@ -65054,7 +65054,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 採用は確率の勝負です：スキル、名声、人脈、学校のネームバリュー、求人市場のすべてが影響します。"
+            "value" : "• 採用は確率の勝負です。スキル、名声、人脈、学校のネームバリュー、求人市場のすべてが影響します。"
           }
         },
         "uk" : {
@@ -65298,7 +65298,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• この仕事を望む人がたくさんいます：%@"
+            "value" : "• この仕事を望む人がたくさんいます（%@）"
           }
         },
         "uk" : {
@@ -65314,31 +65314,31 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Keine Einstellungschancen, Gehaltsverhandlungen, Hochschulkategorien oder Konjunktur."
+            "value" : "• Kein Zufall bei Einstellungen, keine Gehaltsverhandlungen, keine Hochschulkategorien, keine Konjunktur."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Pas de chances d’embauche, de négociation du salaire, de niveaux d’écoles ni d’économie."
+            "value" : "• Ni hasard à l’embauche, ni négociation de salaire, ni écoles d’élite, ni économie qui change."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Niente probabilità di assunzione, trattative sullo stipendio, fasce delle scuole o economia."
+            "value" : "• Niente fortuna nelle assunzioni, niente trattative sullo stipendio, niente fasce delle scuole, niente economia."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 採用確率も、給料の交渉も、学校のランクも、経済の変化もありません。"
+            "value" : "• 採用に運は関係なく、給料の交渉も、学校のランクも、経済の変化もありません。"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Немає ні шансів отримати роботу, ні переговорів про зарплату, ні категорій закладів, ні економіки."
+            "value" : "• Немає ні випадковості під час найму, ні переговорів про зарплату, ні категорій закладів, ні економіки."
           }
         }
       }
@@ -65366,7 +65366,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 毎年、この種の仕事に就けるのはごくわずかです：条件を満たす人のうち%@"
+            "value" : "• 毎年、この種の仕事に就けるのは、条件を満たす人のうち%@だけです"
           }
         },
         "uk" : {
@@ -65400,7 +65400,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 毎年、この種の仕事に就けるのはごくわずかです：条件を満たす人のうち%@（自分の会社を経営した経験が助けになります）"
+            "value" : "• 毎年、この種の仕事に就けるのは、条件を満たす人のうち%@だけです（自分の会社を経営した経験が助けになります）"
           }
         },
         "uk" : {
@@ -65422,7 +65422,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les salaires sont la médiane nationale de chaque métier."
+            "value" : "• Les salaires correspondent à la médiane nationale de chaque métier."
           }
         },
         "it" : {
@@ -65633,7 +65633,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "• 学歴：この仕事が求める学歴より%1$lld段階低い（職務経験で%2$@段階分を補えます）：%3$@"
+                  "value" : "• 学歴：この仕事が求める学歴より%1$lld段階低く、職務経験で%2$@段階分を補えます（%3$@）"
                 }
               }
             }
@@ -65751,7 +65751,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "• 学歴：この仕事が求める学歴より%1$lld段階低い：%2$@"
+                  "value" : "• 学歴：この仕事が求める学歴より%1$lld段階低い（%2$@）"
                 }
               }
             }
@@ -65812,7 +65812,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 学歴：この仕事では、大学の学位が好まれます：%@"
+            "value" : "• 学歴：この仕事では、大学の学位が好まれます（%@）"
           }
         },
         "uk" : {
@@ -65840,13 +65840,13 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Scuola: hai una laurea, ma in un’altra materia — %@"
+            "value" : "• Scuola: hai una laurea, ma in un altro ambito di studio — %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 学歴：学位はありますが、分野が違います：%@"
+            "value" : "• 学歴：学位はありますが、分野が違います（%@）"
           }
         },
         "uk" : {
@@ -65880,7 +65880,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 学歴：ふさわしい学位を持っています：%@"
+            "value" : "• 学歴：ふさわしい学位を持っています（%@）"
           }
         },
         "uk" : {
@@ -65914,7 +65914,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 学歴：必要な学歴を満たしています：%@"
+            "value" : "• 学歴：必要な学歴を満たしています（%@）"
           }
         },
         "uk" : {
@@ -65936,7 +65936,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans le classement Game Center."
+            "value" : "• Les scores sont envoyés au classement Game Center."
           }
         },
         "it" : {
@@ -65971,7 +65971,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement australien à part."
+            "value" : "• Les scores ont leur propre classement australien."
           }
         },
         "it" : {
@@ -66006,7 +66006,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement brésilien à part."
+            "value" : "• Les scores ont leur propre classement brésilien."
           }
         },
         "it" : {
@@ -66041,7 +66041,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement britannique à part."
+            "value" : "• Les scores ont leur propre classement britannique."
           }
         },
         "it" : {
@@ -66076,7 +66076,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement canadien à part."
+            "value" : "• Les scores ont leur propre classement canadien."
           }
         },
         "it" : {
@@ -66111,7 +66111,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement chinois à part."
+            "value" : "• Les scores ont leur propre classement chinois."
           }
         },
         "it" : {
@@ -66146,7 +66146,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement français à part."
+            "value" : "• Les scores ont leur propre classement français."
           }
         },
         "it" : {
@@ -66181,7 +66181,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement allemand à part."
+            "value" : "• Les scores ont leur propre classement allemand."
           }
         },
         "it" : {
@@ -66216,7 +66216,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement indien à part."
+            "value" : "• Les scores ont leur propre classement indien."
           }
         },
         "it" : {
@@ -66251,7 +66251,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement italien à part."
+            "value" : "• Les scores ont leur propre classement italien."
           }
         },
         "it" : {
@@ -66286,7 +66286,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement japonais à part."
+            "value" : "• Les scores ont leur propre classement japonais."
           }
         },
         "it" : {
@@ -66321,7 +66321,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement mexicain à part."
+            "value" : "• Les scores ont leur propre classement mexicain."
           }
         },
         "it" : {
@@ -66356,7 +66356,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement polonais à part."
+            "value" : "• Les scores ont leur propre classement polonais."
           }
         },
         "it" : {
@@ -66391,7 +66391,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement sud-coréen à part."
+            "value" : "• Les scores ont leur propre classement sud-coréen."
           }
         },
         "it" : {
@@ -66426,7 +66426,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement espagnol à part."
+            "value" : "• Les scores ont leur propre classement espagnol."
           }
         },
         "it" : {
@@ -66461,7 +66461,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement suédois à part."
+            "value" : "• Les scores ont leur propre classement suédois."
           }
         },
         "it" : {
@@ -66496,7 +66496,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement turc à part."
+            "value" : "• Les scores ont leur propre classement turc."
           }
         },
         "it" : {
@@ -66531,7 +66531,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les scores vont dans un classement ukrainien à part."
+            "value" : "• Les scores ont leur propre classement ukrainien."
           }
         },
         "it" : {
@@ -66605,7 +66605,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Non ci sono punteggio né classifica."
+            "value" : "• Niente punteggio e niente classifica."
           }
         },
         "ja" : {
@@ -66627,7 +66627,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Universitäten verlangen Studiengebühren: von etwa %1$@ pro Jahr an einem Community College bis zu %2$@ oder mehr an einer Eliteuniversität. Deshalb nehmen viele Studenten einen Kredit auf."
+            "value" : "• Hochschulen verlangen Studiengebühren: von etwa %1$@ pro Jahr an einem Community College bis zu %2$@ oder mehr an einer Eliteuniversität. Deshalb nehmen viele Studenten einen Kredit auf."
           }
         },
         "en" : {
@@ -66639,13 +66639,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Les universités font payer des frais de scolarité — d’environ %1$@ par an dans un community college à %2$@ ou plus dans un établissement d’élite — alors beaucoup d’étudiants empruntent."
+            "value" : "• Les universités font payer des frais de scolarité — d’environ %1$@ par an dans un community college à %2$@ ou plus dans un établissement d’élite — donc beaucoup d’étudiants empruntent."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Le università fanno pagare tasse d’iscrizione — da circa %1$@ all’anno in un community college a %2$@ o più in una scuola d’élite — quindi in molti chiedono un prestito."
+            "value" : "• Le tasse d’iscrizione variano — da circa %1$@ all’anno in un community college a %2$@ o più in una scuola d’élite — quindi in molti chiedono un prestito."
           }
         },
         "ja" : {
@@ -67055,7 +67055,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Твої навички: достатньо сильних — %1$lld із %2$lld (збіг: %3$@)"
+            "value" : "• Твої навички: достатньо розвинено %1$lld із %2$lld (збіг: %3$@)"
           }
         }
       }
@@ -67139,7 +67139,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• die Fähigkeiten, auf die diese Schule achtet"
+            "value" : "• die Fähigkeiten, auf die diese Hochschule achtet"
           }
         },
         "fr" : {
@@ -67179,7 +67179,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• tes résultats scolaires (%@), pour un premier diplôme"
+            "value" : "• tes résultats scolaires, pour un premier diplôme : « %@ »"
           }
         },
         "it" : {
@@ -67207,7 +67207,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• deine Preise und Titel (an Spitzenschulen)"
+            "value" : "• deine Preise und Titel (an Spitzenhochschulen)"
           }
         },
         "fr" : {
@@ -67259,7 +67259,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 💵 Una famiglia tipo: i primi %1$@ di stipendio servono per le spese quotidiane e risparmi una quota pari a %2$@ di ciò che resta. La tua famiglia paga %3$@ delle tasse d’iscrizione; il resto lo prendi in prestito."
+            "value" : "• 💵 Una famiglia tipo: i primi %1$@ di stipendio vanno alle spese quotidiane e del resto risparmi una quota: %2$@. Le tasse d’iscrizione le paga in parte la tua famiglia (%3$@); il resto lo prendi in prestito."
           }
         },
         "ja" : {
@@ -67281,19 +67281,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 📉 In jedem ruhigen Jahr liegt die Chance auf eine Rezession bei etwa %@, und Entlassungen treffen manche Branchen härter als andere."
+            "value" : "• 📉 Jedes Jahr ohne Rezession besteht eine Chance von etwa %@, dass eine beginnt; Entlassungen treffen manche Branchen härter als andere."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 📉 Environ %@ de chances chaque année calme qu’une récession commence, et des licenciements qui touchent certains secteurs plus durement que d’autres."
+            "value" : "• 📉 Chaque année sans crise, il y a environ %@ de chances qu’une récession commence, avec des licenciements qui touchent certains secteurs plus durement que d’autres."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 📉 Ogni anno tranquillo la probabilità che inizi una recessione è pari a circa %@, e i licenziamenti colpiscono alcuni settori più di altri."
+            "value" : "• 📉 In un anno senza recessione c’è una probabilità (circa %@) che ne inizi una, e i licenziamenti colpiscono alcuni settori più di altri."
           }
         },
         "ja" : {
@@ -67305,7 +67305,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 📉 Шанс рецесії у спокійний рік — приблизно %@, а скорочення сильніше вдаряють по одних галузях, ніж по інших."
+            "value" : "• 📉 У рік без рецесії шанс, що вона почнеться, — приблизно %@; скорочення сильніше вдаряють по одних галузях, ніж по інших."
           }
         }
       }
@@ -67635,7 +67635,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⬆️ Promotions — bien faire ton travail et te préparer au poste suivant"
+            "value" : "⬆️ Obtenir des promotions — bien faire ton travail et te préparer au poste suivant"
           }
         },
         "it" : {
@@ -68651,7 +68651,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎒 Partirai da: %1$@ (dopo aver finito %2$@)."
+            "value" : "🎒 Punto di partenza: %1$@ (dopo %2$@)."
           }
         },
         "ja" : {
@@ -68685,7 +68685,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎒 Partirai da: %@."
+            "value" : "🎒 Punto di partenza: %@."
           }
         },
         "ja" : {
@@ -68719,7 +68719,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎒 Partirai dagli ultimi anni di scuola (dopo aver finito %@)."
+            "value" : "🎒 Punto di partenza: gli ultimi anni di scuola (dopo %@)."
           }
         },
         "ja" : {
@@ -68741,19 +68741,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Hochschulzulassung – jedes Fach sucht nach eigenen Fähigkeiten"
+            "value" : "🎓 Hochschulzulassung – jedes Fach verlangt eigene Fähigkeiten"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Entrer à l’université — chaque matière recherche ses propres compétences"
+            "value" : "🎓 Entrer à l’université — chaque matière demande ses propres compétences"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Entrare all’università — ogni materia cerca le sue competenze"
+            "value" : "🎓 Entrare all’università — ogni ambito di studio richiede le sue competenze"
           }
         },
         "ja" : {
@@ -68809,7 +68809,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Bevorzugte Bildung"
+            "value" : "🎓 Bevorzugte Schulbildung"
           }
         },
         "fr" : {
@@ -68843,7 +68843,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Kunst und Design."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Kunst und Design."
           }
         },
         "fr" : {
@@ -68877,7 +68877,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Pädagogik, Gesundheit und Dienstleistung."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Pädagogik, Gesundheit und Dienstleistung."
           }
         },
         "fr" : {
@@ -68911,7 +68911,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Ingenieurwesen und Design."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Ingenieurwesen und Design."
           }
         },
         "fr" : {
@@ -68945,7 +68945,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Gesundheit, Sport und Landwirtschaft."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Gesundheit, Sport und Landwirtschaft."
           }
         },
         "fr" : {
@@ -68979,7 +68979,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Technologie und Ingenieurwesen."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Technologie und Ingenieurwesen."
           }
         },
         "fr" : {
@@ -69013,7 +69013,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Kunst, Design, Gesundheit und Recht."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Kunst, Design, Gesundheit und Recht."
           }
         },
         "fr" : {
@@ -69047,7 +69047,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Wirtschaft, Sport und Dienstleistung."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Wirtschaft, Sport und Dienstleistung."
           }
         },
         "fr" : {
@@ -69081,13 +69081,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Wissenschaft, Wirtschaft und Recht."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Technologie, Ingenieurwesen, Wissenschaft, Wirtschaft und Recht."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Écoles : les diplômes en Technologie, Ingénierie, Sciences, Business et Droit la recherchent."
+            "value" : "🎓 Écoles : les diplômes en Technologie, Ingénierie, Sciences, Business et Droit la demandent."
           }
         },
         "it" : {
@@ -69115,7 +69115,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: gefragt bei Abschlüssen in Technologie, Wissenschaft und Sport."
+            "value" : "🎓 Studium: gefragt bei Abschlüssen in Technologie, Wissenschaft und Sport."
           }
         },
         "fr" : {
@@ -69149,7 +69149,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: in den meisten Studienfächern gefragt – Kunst, Design, Wirtschaft, Pädagogik, Gesundheit, Recht, Wissenschaft, Dienstleistung."
+            "value" : "🎓 Studium: in den meisten Studienfächern gefragt – Kunst, Design, Wirtschaft, Pädagogik, Gesundheit, Recht, Wissenschaft, Dienstleistung."
           }
         },
         "fr" : {
@@ -69183,7 +69183,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Schulen: in den meisten Studienfächern gefragt."
+            "value" : "🎓 Studium: in den meisten Studienfächern gefragt."
           }
         },
         "fr" : {
@@ -69297,7 +69297,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎓 Partirai subito dopo aver finito %@ — è il momento di scegliere il tuo prossimo passo."
+            "value" : "🎓 Punto di partenza: subito dopo %@ — è il momento di scegliere il tuo prossimo passo."
           }
         },
         "ja" : {
@@ -69371,7 +69371,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎮 ゲームでは：%@"
+            "value" : "🎮 ゲーム内：%@"
           }
         },
         "uk" : {
@@ -69387,7 +69387,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Ein Vorteil bei Jobs und Gründungen in: %@ – und es zählt als eine Stufe der Schulbildung, die Positionen dort erwarten."
+            "value" : "🎯 Ein Vorteil bei Jobs und Gründungen in %@ – und es zählt als eine Stufe der Schulbildung, die Positionen dort erwarten."
           }
         },
         "fr" : {
@@ -69399,7 +69399,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Un vantaggio per trovare lavoro e avviare imprese in: %@ — e vale come un livello degli studi che i ruoli lì si aspettano."
+            "value" : "🎯 Un vantaggio per trovare lavoro e avviare imprese in: %@ — e conta come un livello degli studi che quei ruoli richiedono."
           }
         },
         "ja" : {
@@ -69411,7 +69411,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Перевага під час пошуку роботи та запуску бізнесу у сферах: %@ — і зараховується як один рівень освіти, який очікують на посадах там."
+            "value" : "🎯 Перевага під час пошуку роботи та запуску бізнесу у сферах: %@ — і зараховується як один із рівнів освіти, яких очікують на посадах у цих сферах."
           }
         }
       }
@@ -69461,13 +69461,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Objectif : %@ — décrocher un poste de direction au plus haut niveau."
+            "value" : "🎯 Objectif « %@ » — décrocher un poste de direction au plus haut niveau."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Obiettivo: %@ — raggiungi un ruolo di vertice."
+            "value" : "🎯 Obiettivo: «%@» — raggiungi un ruolo di vertice."
           }
         },
         "ja" : {
@@ -69479,7 +69479,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Мета: %@ — отримати одну з найвищих керівних посад."
+            "value" : "🎯 Мета: «%@» — отримати одну з найвищих керівних посад."
           }
         }
       }
@@ -69501,13 +69501,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Objectif : %1$@ — ton patrimoine net divisé par ton âge quand ta carrière se termine à %2$lld ans."
+            "value" : "🎯 Objectif « %1$@ » — ton patrimoine net divisé par ton âge à la fin de ta carrière (%2$lld ans)."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Obiettivo: %1$@ — il tuo patrimonio netto diviso per la tua età quando la carriera finisce a %2$lld anni."
+            "value" : "🎯 Obiettivo: «%1$@» — il tuo patrimonio netto diviso per la tua età alla fine della carriera (%2$lld anni)."
           }
         },
         "ja" : {
@@ -69519,7 +69519,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Мета: %1$@ — чистий капітал, поділений на твій вік на момент завершення карʼєри (%2$lld р.)."
+            "value" : "🎯 Мета: «%1$@» — чистий капітал, поділений на твій вік наприкінці карʼєри (%2$lld р.)."
           }
         }
       }
@@ -69541,7 +69541,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎯 Hai un lavoro in mente? Ti mostra dove viene pubblicato e quali competenze, studi e abilitazioni ti servono."
+            "value" : "🎯 Hai un lavoro in mente? Ti mostra chi assume e quali competenze, studi e abilitazioni ti servono."
           }
         },
         "ja" : {
@@ -69662,7 +69662,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🎲 成功する確率%1$@ · 🌟 %2$@の名声"
+            "value" : "🎲 成功確率%1$@ · 🌟 %2$@の名声"
           }
         },
         "uk" : {
@@ -70727,7 +70727,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🏆 Deine Auszeichnungen: %@"
+            "value" : "🏆 Auszeichnungen: %@"
           }
         },
         "fr" : {
@@ -70751,7 +70751,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🏆 Твої відзнаки: %@"
+            "value" : "🏆 Відзнаки: %@"
           }
         }
       }
@@ -70761,7 +70761,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🏆 bei einer Aktivität bedeutet, dass du sie letztes Jahr geübt hast – tippe darauf, um den Wettbewerb dieses Jahres und deine Siegchance zu sehen."
+            "value" : "Steht ein 🏆 neben einer Aktivität, hast du sie letztes Jahr geübt – tippe darauf, um den Wettbewerb dieses Jahres und deine Siegchance zu sehen."
           }
         },
         "fr" : {
@@ -70773,7 +70773,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🏆 su una riga significa che l’hai praticata l’anno scorso — toccalo per vedere la gara di quest’anno e la tua probabilità di vincere."
+            "value" : "Il 🏆 accanto a un’attività significa che l’hai praticata l’anno scorso — toccalo per vedere la gara di quest’anno e la tua probabilità di vincere."
           }
         },
         "ja" : {
@@ -70813,7 +70813,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🏗️ Il tuo curriculum da fondatore è passato da %1$@ a %2$@ su %3$@ — la probabilità di ottenere il posto è ora pari a %4$@."
+            "value" : "🏗️ Il tuo curriculum da fondatore è passato da %1$@ a %2$@ su %3$@ — probabilità di ottenere il posto, ora: %4$@."
           }
         },
         "ja" : {
@@ -70956,25 +70956,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "🏢 Будь-яка з %lld галузей — на твій вибір"
+                  "value" : "🏢 %lld галузі на вибір"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "🏢 Будь-яка з %lld галузей — на твій вибір"
+                  "value" : "🏢 %lld галузей на вибір"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "🏢 Будь-яка з %lld галузі — на твій вибір"
+                  "value" : "🏢 %lld галузь на вибір"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "🏢 Будь-яка з %lld галузей — на твій вибір"
+                  "value" : "🏢 %lld галузей на вибір"
                 }
               }
             }
@@ -71204,13 +71204,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💡 Beste Züge jetzt"
+            "value" : "💡 Beste Schritte jetzt"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💡 Meilleures actions du moment"
+            "value" : "💡 Meilleurs choix du moment"
           }
         },
         "it" : {
@@ -71222,13 +71222,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💡 いまのおすすめ行動"
+            "value" : "💡 いまのおすすめ"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💡 Найкращі ходи зараз"
+            "value" : "💡 Найкращі кроки зараз"
           }
         }
       }
@@ -71466,7 +71466,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💵 Paga %1$@, poi %2$@ di %3$@ nei primi due anni, poi l’importo pieno — di più negli anni buoni, di meno in quelli difficili."
+            "value" : "💵 Nei primi due anni paga una parte dell’importo pieno di %3$@ (prima %1$@, poi %2$@), poi l’importo pieno — di più negli anni buoni, di meno in quelli difficili."
           }
         },
         "ja" : {
@@ -71540,7 +71540,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "💵 Risparmi %1$@ dello stipendio oltre %2$@ di spese quotidiane ogni anno"
+            "value" : "💵 Ogni anno risparmi una quota dello stipendio oltre %2$@ di spese quotidiane (%1$@)"
           }
         },
         "ja" : {
@@ -72480,7 +72480,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📉 Se chiude, recuperi %@ del denaro che hai investito."
+            "value" : "📉 Se chiude, recuperi una parte del denaro che hai investito (%@)."
           }
         },
         "ja" : {
@@ -72672,19 +72672,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📝 Schulnoten, 🏅 Wettbewerben und 🚀 der Gründung eines Unternehmens"
+            "value" : "📝 Schulnoten, 🏅 Wettbewerben und 🚀 der Gründung eines Unternehmens"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📝 Notes scolaires, 🏅 compétitions et 🚀 lancement d’une entreprise"
+            "value" : "📝 Avoir de bonnes notes, 🏅 réussir des compétitions et 🚀 lancer une entreprise"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📝 Voti scolastici, 🏅 gare e 🚀 avvio di un’impresa"
+            "value" : "📝 Voti scolastici, 🏅 gare e 🚀 avvio di un’impresa"
           }
         },
         "ja" : {
@@ -72696,7 +72696,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📝 Шкільні оцінки, 🏅 змагання та 🚀 запуск бізнесу"
+            "value" : "📝 Шкільні оцінки, 🏅 змагання та 🚀 запуск бізнесу"
           }
         }
       }
@@ -72815,25 +72815,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🔒 D’abord : %@."
+            "value" : "🔒 Il faut d’abord : %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🔒 Prima: %@."
+            "value" : "🔒 Prima devi avere: %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🔒 まず必要なもの：%@。"
+            "value" : "🔒 まず必要なもの：%@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🔒 Спершу: %@."
+            "value" : "🔒 Спершу потрібно: %@."
           }
         }
       }
@@ -72963,7 +72963,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🔒 出資できるお金がありません：まず稼いで貯金しましょう"
+            "value" : "🔒 出資できるお金がありません。まず稼いで貯金しましょう"
           }
         },
         "uk" : {
@@ -73133,7 +73133,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🚀 Apre sempre. La probabilità che superi il primo anno è pari a %@."
+            "value" : "🚀 Apre sempre. Probabilità di superare il primo anno: %@."
           }
         },
         "ja" : {
@@ -73356,7 +73356,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🤔 Ще не знаєш, що обрати? Радник підкаже, що спробувати, а після кількох ходів назве роботи, які пасують до твоїх навичок."
+            "value" : "🤔 Ще не знаєш, що обрати? Радник підкаже, що спробувати, а після кількох спроб назве роботи, які пасують до твоїх навичок."
           }
         }
       }
@@ -73684,7 +73684,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🧭 経験がまた1年増えました：この仕事が求める%2$lld年のうち%1$lld年です。"
+            "value" : "🧭 経験がまた1年増えました。この仕事が求める%2$lld年のうち%1$lld年です。"
           }
         },
         "uk" : {
@@ -73706,13 +73706,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🧭 Pour un poste très difficile à atteindre, comme PDG, il montre à quel point la voie est étroite et ce qui décide vraiment — renommée, réseau, études, années d’expérience, et avoir fondé une entreprise — avec ce qui se passe dans le monde réel."
+            "value" : "🧭 Pour un poste très difficile à atteindre, comme PDG, il montre à quel point la voie est étroite et ce qui décide vraiment — renommée, réseau, études, années d’expérience et entreprise déjà fondée — avec ce qui se passe dans le monde réel."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🧭 Per un lavoro difficile da raggiungere, come CEO, ti mostra quanto è stretta la strada e che cosa decide davvero — fama, contatti, studi, anni di esperienza e aver costruito un’azienda — con la storia reale che c’è dietro."
+            "value" : "🧭 Per un lavoro difficile da raggiungere, come CEO, ti mostra quanto è stretta la strada e che cosa decide davvero — fama, contatti, studi, anni di esperienza e l’aver costruito un’azienda — con la storia reale che c’è dietro."
           }
         },
         "ja" : {
@@ -73724,7 +73724,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🧭 Для роботи, на яку важко потрапити, як-от CEO, радник покаже, наскільки вузька стежка і що насправді вирішує — слава, звʼязки, освіта, роки та створена компанія, — і розкаже реальну історію за цим."
+            "value" : "🧭 Для роботи, на яку важко потрапити, як-от CEO, радник покаже, наскільки вузька стежка і що насправді вирішує — слава, звʼязки, освіта, роки та створена компанія, — і розкаже, як усе влаштовано в реальному житті."
           }
         }
       }

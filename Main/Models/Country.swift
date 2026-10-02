@@ -53,6 +53,12 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     /// The country's name in the player's language ("Germany" / "Deutschland").
     /// `rawValue` stays the English id.
     var title: String { String(localized: profile.title) }
+
+    /// Every country, in the order of the game's language (the names are translated, so the
+    /// order of the English names would look shuffled in German or Japanese).
+    static var sortedForPicker: [Country] {
+        allCases.sorted { $0.title.compare($1.title, locale: L10n.locale) == .orderedAscending }
+    }
     var flag: String { profile.flag }
     var currencySymbol: String { profile.currencySymbol }
 
@@ -65,8 +71,13 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         case .english:
             return "\(number) \(currencySymbol)"
         case .japanese:
-            // 円 follows the number; every other currency leads with its sign: "4,380,000円", "$68,000".
-            return self == .japan ? "\(number)円" : "\(currencySymbol)\(number)"
+            // Yen are counted in 万 (ten thousands) and 円 follows: 4,380,000 → "438万円", 4,385,000 → "438万5,000円".
+            // Every other currency leads with its sign: "$68,000".
+            guard self == .japan else { return "\(currencySymbol)\(number)" }
+            guard amount >= 10_000 else { return "\(number)円" }
+            let man = Fmt.number(amount / 10_000)
+            let rest = amount % 10_000
+            return rest == 0 ? "\(man)万円" : "\(man)万\(Fmt.number(rest))円"
         default:
             // A no-break space, so the sign never wraps onto the next line alone.
             return "\(number)\u{00A0}\(currencySymbol)"

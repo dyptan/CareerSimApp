@@ -189,7 +189,7 @@ struct AdvisorView: View {
                 // push the conversation off the screen — and step aside while the
                 // keyboard is up, when the conversation needs the room.
                 if chat.replies.count > 8 {
-                    if !typing { ScrollView { chips }.frame(maxHeight: 130) }
+                    if !typing { ScrollView { chips }.scrollIndicators(.visible).frame(maxHeight: 130) }
                 } else {
                     chips
                 }

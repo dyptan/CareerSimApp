@@ -14,16 +14,20 @@ struct HeaderView: View {
                 HStack {
                     Text(player.avatar)
                         .font(.title2)
-                    Text("Age:", comment: "Header label before the player's age number")  // i18n:ignore translator comment
-                    Text(verbatim: "\(player.age)")
-                        .scaleEffect(didBumpAgeScale ? 2 : 1)
-                        .animation(.spring(), value: didBumpAgeScale)
-                        .onChange(of: player.age) { _ in
-                            didBumpAgeScale = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                didBumpAgeScale = false
+                    // The label and the number sit close, as one phrase; the HStack's own gap would
+                    // open a hole after the colon (wide in Japanese, whose colon is full-width).
+                    HStack(spacing: 4) {
+                        Text("Age:", comment: "Header label before the player's age number")  // i18n:ignore translator comment
+                        Text(verbatim: "\(player.age)")
+                            .scaleEffect(didBumpAgeScale ? 2 : 1)
+                            .animation(.spring(), value: didBumpAgeScale)
+                            .onChange(of: player.age) { _ in
+                                didBumpAgeScale = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    didBumpAgeScale = false
+                                }
                             }
-                        }
+                    }
                     InfoHint(title: L("Game mode"), message: gameModeSummary)
                 }
 

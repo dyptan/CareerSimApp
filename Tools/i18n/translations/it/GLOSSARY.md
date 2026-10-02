@@ -84,9 +84,12 @@ Italian marks gender on participles and adjectives, and the player's gender is u
 * **A count that arrives as pre-formatted `%@` cannot be inflected** (e.g. «role expects %@ yr», «%@ random skill points»: the value may be 1).
   Restructure with a label and colon so the noun is right for any number: «(anni richiesti: %@)», «punti competenza casuali: %@».
 * **Never put an article, or a preposition fused with one (il, lo, la, l’, un, del, nel, sul, al, dell’, nell’…), directly before a
-  numeric/percent/money placeholder**: «il 8%» is wrong, «l’8%» and «l’80%» are right, «il 7%» is right, and the program cannot know which. Use «da %@ a %@», «pari a %@»,
-  «circa %@», «fino a %@», «di %@», «a %@ anni», «all’età di %lld anni», «%@ dei candidati», «+%@ alla tua probabilità».
-  «You have a %@ chance» → «La probabilità è pari a %@», never «una probabilità del %@».
+  numeric/percent/money placeholder**: «il 8%» is wrong, «l’8%» and «l’80%» are right, «il 7%» is right, and the program cannot know which. Use «da %@ a %@»,
+  «circa %@», «fino a %@», «a %@ anni», «all’età di %lld anni», «+%@ alla tua probabilità».
+  **A percentage is never the bare subject or object of a sentence, and never follows «pari a»** («paga 40% delle tasse», «una quota pari a 15%», «solo 5% ottiene» are
+  wrong: Italian needs «il 40%», «pari al 15%»). Put it after a colon or in brackets instead: «You have a %@ chance» → «Probabilità: %@» / «(%@ di probabilità)»,
+  «Only %@ get it» → «solo una piccola parte (%@)», «Your family pays %@» → «la paga in parte la tua famiglia (%@)», «Fees take %@ of the price» → «si prendono una parte del prezzo (%@)».
+  Never «una probabilità del %@».
 * **Never put an article (or a fused preposition) directly before a looked-up name** (job, field, country, skill, degree, activity): the
   name's gender and first letter are unknown. Use a construction that needs none: «come %@», «da %@», «di %@», «in %@» (degrees: «laurea in %@»),
   «nel settore %@», «il ruolo di %@», «la competenza %@», «il titolo «%@»», or a colon. Do not inflect, lower-case or capitalise a name.
@@ -181,16 +184,17 @@ Italian marks gender on participles and adjectives, and the player's gender is u
 | Rung / seniority / Standard | livello / livello / Standard | |
 | Salary: set amount / ask | stipendio fisso / richiesta | |
 | Qualified | «Hai i requisiti» | |
+| Missing requirement (job lock, `First: %@.`) | «Prima devi avere: %@.» | Every missing-requirement phrase must read after «devi avere:»: «Reach age 18» → «18 anni di età», «Earn %@» → «%@», «A degree in %@» → «una laurea in %@», «Training: %@» → «la qualifica «%@»», «3 yr as X (…)» → «3 anni come X (anni richiesti: …)» |
 
 ### 5.4 Education
 | English | Italiano | Note |
 |---|---|---|
 | Education (screen, field of work, industry) | Istruzione | One shared key |
 | Education (degree field, `field.education`) | Pedagogia | «laurea in Pedagogia» |
-| Degrees (tab) / Courses (tab) / Licences (tab) | Lauree / Corsi / Abilitazioni | |
-| Degree (generic) / (university) | titolo di studio / laurea | «A degree in %@» → «Una laurea in %@» |
-| Bachelor('s degree) | laurea triennale | «a bachelor's degree» → «una laurea triennale» |
-| Master('s degree) | laurea magistrale | |
+| Degrees (tab) / Courses (tab) / Licences (tab) | Titoli di studio / Corsi / Abilitazioni | «Degrees» also lists vocational diplomas and school diplomas, so not «Lauree» |
+| Degree (generic) / (university) | titolo di studio / laurea | «A degree in %@» → «una laurea in %@» (lower case: it only ever follows «Prima devi avere:») |
+| Bachelor('s degree) | laurea | Length-neutral: bachelor rows last 4 years in the game, so never «triennale». «a bachelor's degree» → «una laurea», «Bachelor» → «Laurea», «University — Bachelor's» → «Laurea» |
+| Master('s degree) | laurea magistrale | «University — Master's» → «Laurea magistrale» |
 | Doctorate / Doctoral Degree / Doctorate+ | dottorato / Dottorato / Post-dottorato | «a doctorate» → «un dottorato» |
 | School diploma | diploma | «a school diploma» → «un diploma» |
 | Vocational Diploma / vocational | Diploma professionale / professionale | «College / Vocational» (US) → «College / Professionale» |
@@ -209,7 +213,7 @@ Italian marks gender on participles and adjectives, and the player's gender is u
 | Residency / Resident | specializzazione medica / specializzando | |
 | Apprenticeship | apprendistato | |
 | Fields of study | Ambiti di studio | |
-| Student / Graduated | Studente / Titolo conseguito | Occupation headline; «Graduated — %@» → «Titolo conseguito — %@» (no «laureato/a») |
+| Student / Graduated | Studente / Hai finito | Occupation headline; «Graduated — %@» → «Hai finito: %@» (no «laureato/a», no second dash after the age: «A 10 anni — Hai finito: Scuola primaria») |
 
 ### 5.5 Fields, categories, industries (each is also a degree field where noted)
 Fixed as `English = Italiano`. A name never takes an article from you.
@@ -409,7 +413,7 @@ Five key families, each a different job:
   Security Guard Licence = «Abilitazione da guardia giurata»; Driver's License = «Patente di guida»; CDL = «Patente professionale (CDL)»;
   Pilot = «Pilota privato»; Commercial Pilot = «Pilota commerciale»; Board Certification = «Certificazione di specialità»; Police Academy = «Accademia di polizia»;
   Journeyman Electrician/Plumber = «Elettricista/Idraulico qualificato». The game models the US system: never invent Italian rules that the key does not state.
-* **Degree titles** use one pattern: Bachelor of/Bachelor of Science in X = «Laurea triennale in X»; Master of/of Science in X = «Laurea magistrale in X»;
+* **Degree titles** use one pattern: Bachelor of/Bachelor of Science in X = «Laurea in X» (never «triennale»: the game's bachelor stage is 4 years); Master of/of Science in X = «Laurea magistrale in X»;
   Doctor of Philosophy in X = «Dottorato di ricerca (PhD) in X»; Doctor of X = «Dottorato in X»; MBA = «Master in Business Administration (MBA)»; Doctor of Medicine (MD)
   = «Dottorato in Medicina (MD)»; Juris Doctor (JD) = «Dottorato in Giurisprudenza (JD)»; Associate of Applied Science in %@ = «Associate degree in scienze applicate: %@».
   Disciplines inside titles: Business Administration = Economia aziendale · Engineering = Ingegneria · Health Sciences = Scienze della salute · Arts = Arti ·
@@ -422,11 +426,11 @@ Five key families, each a different job:
    one → «Per questo lavoro devi avere %1$@ anni — ancora un anno.» · other → «Per questo lavoro devi avere %1$@ anni — ancora %2$lld anni.»
 2. `🎯 Your chance to be hired went from %@ to %@.` → «🎯 La tua probabilità di assunzione è passata da %1$@ a %2$@.» (no article before the numbers)
 3. `🤝 Your network in %@ grew from %lld to %lld.` → «🤝 I tuoi contatti nel settore %1$@ sono passati da %2$lld a %3$lld.»
-4. `You have a %@ chance to get it. It pays %@.` → «La probabilità di ottenerlo è pari a %1$@. Lo stipendio è di %2$@.»
+4. `You have a %@ chance to get it. It pays %@.` → «Probabilità di ottenerlo: %1$@. Stipendio: %2$@.»
 5. `Hired as %@ — %@/year` → «Assunzione come %1$@ — %2$@/anno» · `Promoted to %@ — pay +%@` → «Promozione a %1$@ — stipendio +%2$@» ·
    `You've been promoted to %@ — %@ a year.` → «Hai ottenuto una promozione a %1$@ — %2$@ all’anno.» (no gendered participle)
 6. `%@ is a narrow path: even a flawless candidate is hired only about %@ of the years they apply — so it usually takes many attempts.`
-   → «Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo circa %2$@ degli anni in cui ti candidi — quindi di solito servono molti tentativi.»
+   → «Il ruolo di %1$@ è una strada stretta: anche una candidatura perfetta riesce solo in una piccola parte degli anni in cui ti candidi (circa %2$@) — quindi di solito servono molti tentativi.»
 7. `Which job are you thinking about? Type it below (like “nurse” or “game”), or pick a field to browse.`
    → «A quale lavoro stai pensando? Scrivilo qui sotto (ad esempio «infermiere» o «game») oppure scegli un settore da esplorare.»
 8. `• Your pitch — 💬 Persuader most of all, then vision, talking and leading (+%@ now, up to +40%%)`

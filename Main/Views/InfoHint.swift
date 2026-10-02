@@ -14,7 +14,7 @@ struct InfoHint: View {
     var symbol: String = "info.circle"  // i18n:ignore SF Symbol name
     @State private var showing = false
     /// The tallest the popover grows before it scrolls.
-    private static let maxHeight: CGFloat = 420
+    private static let maxHeight: CGFloat = 520
 
     var body: some View {
         Button {
@@ -26,23 +26,24 @@ struct InfoHint: View {
         }
         .buttonStyle(.plain)
         .popover(isPresented: $showing) {
-            // An invisible copy of the text sets the popover's size — as tall as
-            // the text, up to `maxHeight` — and the same text, in a scroll view,
-            // is laid over it. Short hints get a snug popover; long ones scroll.
-            popoverText
-                .hidden()
-                .frame(maxHeight: Self.maxHeight)
-                .overlay(ScrollView { popoverText })
-                // The popover picks up the styling around its ⓘ — a section
-                // title's blue tint and centring, a bold row's weight — so it sets
-                // its own and reads the same wherever the ⓘ sits. `Color.primary`,
-                // not `.primary`: the hierarchical style resolves against the
-                // inherited tint and stays blue.
-                .foregroundStyle(Color.primary)
-                .multilineTextAlignment(.leading)
-                .fontWeight(nil)
-                .frame(idealWidth: 300, maxWidth: 320, alignment: .leading)
-                .modifier(CompactPopoverAdaptation())
+            // As tall as the text — up to `maxHeight`, and never more than the room the system
+            // offers this popover (it sits where the ⓘ is, so the room varies) — with the text in a
+            // scroll view when it doesn't all fit. A hidden copy measures the text; see `CappedHeight`.
+            CappedHeight(cap: Self.maxHeight) {
+                popoverText.hidden()
+                ScrollView { popoverText }
+                    .scrollIndicators(.visible)
+            }
+            // The popover picks up the styling around its ⓘ — a section
+            // title's blue tint and centring, a bold row's weight — so it sets
+            // its own and reads the same wherever the ⓘ sits. `Color.primary`,
+            // not `.primary`: the hierarchical style resolves against the
+            // inherited tint and stays blue.
+            .foregroundStyle(Color.primary)
+            .multilineTextAlignment(.leading)
+            .fontWeight(nil)
+            .frame(idealWidth: 300, maxWidth: 320, alignment: .leading)
+            .modifier(CompactPopoverAdaptation())
         }
     }
 
@@ -69,5 +70,27 @@ private struct CompactPopoverAdaptation: ViewModifier {
         } else {
             content
         }
+    }
+}
+
+/// Lays out two views in one box: the first (hidden) only measures the text, the second (the scroll
+/// view) fills the box. The box is as tall as the text, but never taller than `cap` or than the height
+/// the popover is offered — which a plain `.frame(maxHeight:)` around a fixed-size text would ignore,
+/// leaving the popover clipped at top and bottom where there is little room.
+private struct CappedHeight: Layout {
+    var cap: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard let measure = subviews.first else { return .zero }
+        let width = proposal.width ?? 300
+        let natural = measure.sizeThatFits(ProposedViewSize(width: width, height: nil))
+        let height = min(natural.height, cap, proposal.height ?? .infinity)
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 2 else { return }
+        subviews[0].place(at: bounds.origin, anchor: .topLeading, proposal: ProposedViewSize(width: bounds.width, height: nil))
+        subviews[1].place(at: bounds.origin, anchor: .topLeading, proposal: ProposedViewSize(bounds.size))
     }
 }

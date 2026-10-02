@@ -50,7 +50,7 @@
   "Picking an activity uses up your year.": "Wenn du eine Aktivität wählst, verbraucht das dein Jahr.",
   "🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies.": "🏅 Jedes Jahr, in dem du übst, wirst du besser (Anfänger → Experte) und trittst automatisch im größten Wettbewerb dieser Aktivität an. Siege bringen Trophäen und Ruhm – und Spitzenuniversitäten mögen Trophäen.",
   "📝 Study activities also raise your school grade for the year, which colleges look at when you apply.": "📝 Lern-Aktivitäten verbessern außerdem deine Schulnote für das Jahr – und die schauen sich Hochschulen bei deiner Bewerbung an.",
-  "🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.": "🏆 bei einer Aktivität bedeutet, dass du sie letztes Jahr geübt hast – tippe darauf, um den Wettbewerb dieses Jahres und deine Siegchance zu sehen.",
+  "🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.": "Steht ein 🏆 neben einer Aktivität, hast du sie letztes Jahr geübt – tippe darauf, um den Wettbewerb dieses Jahres und deine Siegchance zu sehen.",
   "Activity": "Aktivität",
   "%@ (%lld yrs)": {
    "one": "%1$@ (%2$lld J.)",
@@ -58,9 +58,9 @@
   },
   "🎲 Your chance to win this year: about %@": "🎲 Deine Chance, dieses Jahr zu gewinnen: etwa %@",
   "🏆 If you win: the “%@” title and %@ fame.": "🏆 Wenn du gewinnst: der Titel „%1$@“ und Ruhm in %2$@.",
-  "Practise it again this year and you're entered automatically.": "Übe sie dieses Jahr wieder, dann bist du automatisch dabei.",
-  "Every year you practise, you grow:": "Jedes Jahr, in dem du übst, wächst du:",
-  "While you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in %@.": "Solange du sie übst, bist du jedes Jahr kostenlos für ihren größten Wettbewerb gemeldet. Deine Siegchance ist anfangs klein und wächst jedes Jahr, und größere Wettbewerbe öffnen sich, wenn du besser wirst. Mit Siegen steigt dein Ruhm in %@.",
+  "Practise it again this year and you're entered automatically.": "Übe auch dieses Jahr, dann bist du automatisch dabei.",
+  "Every year you practise, you grow:": "Jedes Jahr, in dem du übst, legst du zu:",
+  "While you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in %@.": "Solange du übst, bist du jedes Jahr kostenlos für den größten Wettbewerb dieser Aktivität gemeldet. Deine Siegchance ist anfangs klein und wächst jedes Jahr, und größere Wettbewerbe öffnen sich, wenn du besser wirst. Mit Siegen steigt dein Ruhm in %@.",
   "📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply.": "📝 In der Highschool verbessert ein Jahr Lernen auch die Note dieses Jahres – und die schauen sich Hochschulen bei deiner Bewerbung an.",
   "Your career advisor helps you find a job you'll love.": "Dein Karriereberater hilft dir, einen Job zu finden, der dir gefällt.",
   "🎯 Have a job in mind? It shows you where it's posted, and which skills, school and licences you need.": "🎯 Du hast einen Job im Kopf? Der Berater zeigt dir, wo er ausgeschrieben ist und welche Fähigkeiten, welche Schulbildung und welche Lizenzen du brauchst.",
@@ -70,7 +70,7 @@
   "✨ With Apple Intelligence you can type to it, too. The chances it shows are always the game's real chances. Talking is free — it doesn't use up your year.": "✨ Mit Apple Intelligence kannst du ihm auch schreiben. Die Chancen, die er zeigt, sind immer die echten Chancen des Spiels. Reden kostet nichts – es verbraucht dein Jahr nicht.",
   "Thinking…": "Ich denke nach…",
   "Send": "Senden",
-  "Type a job, like “nurse”…": "Gib einen Job ein, z. B. „Krankenpfleger“…",
+  "Type a job, like “nurse”…": "Job eingeben, z. B. „Pilot“…",
   "Ask me anything…": "Frag mich etwas…",
   "Degrees": "Abschlüsse",
   "%lld years": {
@@ -78,8 +78,8 @@
    "other": "%lld Jahre"
   },
   "%lld years • compare schools": {
-   "one": "%lld Jahr • Schulen vergleichen",
-   "other": "%lld Jahre • Schulen vergleichen"
+   "one": "%lld Jahr • Hochschulen vergleichen",
+   "other": "%lld Jahre • Hochschulen vergleichen"
   },
   "Courses": "Kurse",
   "Fields of study": "Studienfächer",
@@ -146,7 +146,7 @@
   "Skip": "Überspringen",
   "💵 Saving %@ of pay above %@ of living costs each year": "💵 Du sparst jedes Jahr %1$@ von dem Gehalt, das über %2$@ Lebenshaltungskosten liegt",
   "%@ Goal: %@": "%1$@ Ziel: %2$@",
-  "Compare schools": "Schulen vergleichen",
+  "Compare schools": "Hochschulen vergleichen",
   "Apply": "Bewerben",
   "%@/yr": "%@/Jahr"
  }

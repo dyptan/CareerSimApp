@@ -282,7 +282,7 @@ Currencies (`… in euros.`): in Euro · in US-Dollar · in kanadischen Dollar �
 | Start over / Restart / Keep playing | Neu anfangen / Neustart / Weiterspielen | |
 | Launch (business) | Gründen | |
 | Open Jobs / Events / Projects / Ventures / Boardroom / Education / Activities | Jobs / Events / Projekte / Gründungen / Chefetage / Bildung / Aktivitäten öffnen | Footer labels are the bare nouns |
-| Compare schools | Schulen vergleichen | |
+| Compare schools | Hochschulen vergleichen | A degree programme is at a `Hochschule`, never a `Schule` (that is school up to the Highschool); tier names (`Universität`, `Community College`) cannot take an article, so write `Universität: Hier zählen …`, not `Universität achtet auf …` |
 | Only roles I qualify for | Nur passende Positionen | Toggle label; quote it exactly |
 | Requirements not met / Hard requirements not met | Voraussetzungen nicht erfüllt / Feste Voraussetzungen nicht erfüllt | |
 | Not yet / Needs / Requires %@ first | Noch nicht / Braucht / Braucht zuerst %@ | |
@@ -337,6 +337,9 @@ Currencies (`… in euros.`): in Euro · in US-Dollar · in kanadischen Dollar �
 | Founder of %@ / %@ — Speaker (award titles) | Gründer von %@ / %@ – Redner | |
 
 ### 5.12 Traps
+* `move(s)` in the advisor (one action a year) is `Schritt(e)`, never `Zug/Züge` (chess, trains). A bare skill name after an imperative reads oddly (`Steigere Kreativkopf`): write `Verbessere deine Fähigkeit „Kreativkopf“`.
+* Strings that the app shows after the label `🎮 Im Spiel:` must not say `im Spiel` / `das Spiel` again. `Graduated — %@` is `Abgeschlossen: %@` (no second dash). Gap items of the lock line read as one infinitive or noun phrase each (`18 Jahre alt werden`, `%@ erwerben`, `%@ absolvieren`).
+* After a colon write lower case unless a full sentence or a noun follows (`Auszeichnungen: noch keine`).
 * `apply` is `bewerben`, never `anwenden`; `diploma` is `Abschluss`, not `Diplom`; `college` is not `Kolleg`; `actual(ly)` is `tatsächlich`, not `aktuell`; `become` is `werden`, not `bekommen`; `chance` is `Chance`, not `Gelegenheit`; `sensible` is `vernünftig`.
 * Leave no English in the German text except the words this file keeps (`Events`, `Jobs`, `Summit`, `Junior/Senior/Lead`, loan job titles, acronyms).
 * A string that looks identical in several languages (`Hackathon`, `Expo`) still needs its own German value; copy it when it is correct.

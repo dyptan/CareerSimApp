@@ -10,7 +10,7 @@
     "Age %lld": "Вік: %lld",
     "Starting age": "Початковий вік",
     "Country": "Країна",
-    "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Старт із %lld дає змогу самостійно обирати кожен рік — саме ранній вибір відкриває шлях до найскладніших закладів і робіт.",
+    "Starting at %lld lets you choose every year yourself — the early choices are what the hardest schools and jobs are built on.": "Якщо почати у віці %lld, ти самостійно обираєш кожен рік — а ранній вибір відкриває шлях до закладів і робіт, куди найважче потрапити.",
     "🎒 You'll start in %@.": "🎒 Починаєш на етапі «%@».",
     "🎒 You'll start in %@ (%@ done).": "🎒 Починаєш на етапі «%1$@» (етап «%2$@» пройдено).",
     "🎒 You'll start in your last years of school (%@ done).": "🎒 Починаєш в останні роки школи (етап «%@» пройдено).",
@@ -109,7 +109,7 @@
     "💼 Getting hired — every job lists the skills it needs": "💼 Отримання роботи — кожна робота має список потрібних навичок",
     "⬆️ Promotions — doing your job well and being ready for the next one": "⬆️ Підвищення — добре працювати та вже вміти те, чого вимагає наступна посада",
     "🎓 Getting into college — each subject looks for its own skills": "🎓 Вступ до закладу — кожен напрям шукає свої навички",
-    "📝 School grades, 🏅 contests and 🚀 starting a business": "📝 Шкільні оцінки, 🏅 змагання та 🚀 запуск бізнесу",
+    "📝 School grades, 🏅 contests and 🚀 starting a business": "📝 Шкільні оцінки, 🏅 змагання та 🚀 запуск бізнесу",
     "Grow them with Activities, and later with events, courses and projects. Tap a skill's ⓘ to see where it helps most.": "Розвивай їх через розділ «Заняття», а згодом — через заходи, курси та проєкти. Торкнись ⓘ біля навички, щоб побачити, де вона допомагає найбільше.",
     "Fame": "Слава",
     "🌐 General": "🌐 Загальна",
@@ -169,7 +169,7 @@
     "How many years you've worked in each job.": "Скільки років роботи на кожній посаді.",
     "Many jobs need years of experience before they'll hire you, and years in the same kind of work help you move up.": "Для багатьох робіт потрібні роки досвіду, і роки в тій самій сфері допомагають просуватися вгору.",
     "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.": "Найважливіші моменти твого життя досі — як-от закінчення школи, отримання роботи, підвищення зарплати чи трофей.",
-    "The newest one is shown here. Open it to see them all, newest first.": "Тут показано найновіший. Відкрий, щоб побачити всі — від найновіших до найстаріших.",
+    "The newest one is shown here. Open it to see them all, newest first.": "Тут показано найновіший. Відкрий список, щоб побачити всі — від найновіших до найстаріших.",
     "Age %lld — %@": "Вік: %1$lld — %2$@",
     "Your story": "Твоя історія",
     "%lld yrs in %@": {
@@ -185,7 +185,7 @@
       "other": "%lld р. досвіду роботи"
     },
     "Requirements:": "Вимоги:",
-    "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "🎯 Перевага під час пошуку роботи та запуску бізнесу у сферах: %@ — і зараховується як один рівень освіти, який очікують на посадах там.",
+    "🎯 An edge landing jobs and launching ventures in: %@ — and it counts as one level of the schooling roles there expect.": "🎯 Перевага під час пошуку роботи та запуску бізнесу у сферах: %@ — і зараховується як один із рівнів освіти, яких очікують на посадах у цих сферах.",
     "Completing this course builds:": "Проходження цього курсу розвиває:",
     "licence": "ліцензія",
     "✓ Earned": "✓ Здобуто"

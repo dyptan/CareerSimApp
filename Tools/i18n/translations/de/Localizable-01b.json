@@ -16,10 +16,10 @@
   "Your skills count for up to +%@ of your chance — the biggest single term. Each skill the job asks for is scored against the level it wants.": "Deine Fähigkeiten machen bis zu +%@ deiner Chance aus – der größte Einzelposten. Jede Fähigkeit, die der Job verlangt, wird an dem Niveau gemessen, das er will.",
   "Furthest behind: %@.": "Am weitesten zurück: %@.",
   "A plan for your skills": "Ein Plan für deine Fähigkeiten",
-  "One move a year — %@ — closes the whole gap in more than a decade.": "Ein Zug pro Jahr – %@ – schließt die ganze Lücke in mehr als einem Jahrzehnt.",
+  "One move a year — %@ — closes the whole gap in more than a decade.": "Ein Schritt pro Jahr – %@ – schließt die ganze Lücke in mehr als einem Jahrzehnt.",
   "One move a year — %@ — closes the whole gap in about %lld years.": {
-   "one": "Ein Zug pro Jahr – %1$@ – schließt die ganze Lücke in etwa einem Jahr.",
-   "other": "Ein Zug pro Jahr – %1$@ – schließt die ganze Lücke in etwa %2$lld Jahren."
+   "one": "Ein Schritt pro Jahr – %1$@ – schließt die ganze Lücke in etwa einem Jahr.",
+   "other": "Ein Schritt pro Jahr – %1$@ – schließt die ganze Lücke in etwa %2$lld Jahren."
   },
   "Skills the job asks for": "Fähigkeiten, die der Job verlangt",
   "%lld of %lld strong enough (%@ match)": "%1$lld von %2$lld stark genug (%3$@ Übereinstimmung)",
@@ -86,7 +86,7 @@
   "When you choose a school for your %@ degree, an elite one adds +%@ to your chance for the rest of your career.": "Wenn du eine Hochschule für deinen Abschluss in %1$@ wählst, bringt eine Eliteuniversität +%2$@ Chance – für den Rest deiner Karriere.",
   "It admits by grades, skills and awards — start building them now.": "Aufgenommen wird nach Noten, Fähigkeiten und Auszeichnungen – fang jetzt an, sie aufzubauen.",
   "Get into an elite %@ programme": "Komm in ein Eliteprogramm für %@",
-  "%@ adds +%@, %@ +%@.": "%1$@ bringt +%2$@, %3$@ +%4$@.",
+  "%@ adds +%@, %@ +%@.": "Bonus: %1$@ +%2$@, %3$@ +%4$@.",
   "Your chance of admission: %@ at the top school, %@ at the mainstream one.": "Deine Zulassungschance: %1$@ an der Spitzenuniversität, %2$@ an der normalen Universität.",
   "Tuition: %@ against %@ a year.": "Studiengebühren: %1$@ gegenüber %2$@ pro Jahr.",
   "Keep your company alive": "Halte dein Unternehmen am Leben",
@@ -151,7 +151,7 @@
   "Some people start their own company instead. Most new companies fail, but people who tried still learn a lot — and bosses notice.": "Manche Leute gründen stattdessen ihr eigenes Unternehmen. Die meisten neuen Unternehmen scheitern, aber wer es versucht hat, lernt trotzdem viel – und Chefs bemerken das.",
   "In the US, about %@ of new big-company CEOs had not.": "In den USA waren etwa %@ der neuen CEOs großer Unternehmen zuvor noch nie CEO.",
   "The degree matters less than what you ran. Business and engineering degrees are common and a famous school opens doors early on, but nobody is hired as CEO for their school.": "Der Abschluss zählt weniger als das, was du geleitet hast. Abschlüsse in Wirtschaft und Ingenieurwesen sind verbreitet, und eine bekannte Hochschule öffnet früh Türen, aber niemand wird wegen seiner Hochschule CEO.",
-  "%@ adds +%@ to your chance, %@ +%@ — small next to the seat.": "%1$@ bringt +%2$@ Chance, %3$@ +%4$@ – wenig im Vergleich zum Posten.",
+  "%@ adds +%@ to your chance, %@ +%@ — small next to the seat.": "Bonus auf deine Chance: %1$@ +%2$@, %3$@ +%4$@ – wenig im Vergleich zum Posten.",
   "Luck and timing are real: an industry's cycle, a predecessor leaving, a company in trouble that wants an outsider. Excellent candidates wait years, or never get the call.": "Glück und Timing sind real: der Zyklus einer Branche, ein Vorgänger, der geht, ein Unternehmen in Schwierigkeiten, das einen Außenstehenden will. Hervorragende Bewerber warten Jahre oder bekommen den Anruf nie."
  }
 }
