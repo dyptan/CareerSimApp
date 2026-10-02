@@ -686,12 +686,20 @@ final class FormattingTests: XCTestCase {
     }
 
     func testMoneyIsWrittenTheWayEachLanguageWritesIt() {
+        /// The group separator this machine's region puts in 1,000 (comma, point, space …).
+        let group = String(Fmt.number(1000).dropFirst().dropLast(3))
+        func grouped(_ text: String) -> String { text.replacingOccurrences(of: ",", with: group) }
+
         L10n.languageOverride = .english
-        XCTAssertEqual(Country.germany.money(45_000), "45,000 €".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
+        XCTAssertEqual(Country.germany.money(45_000), grouped("45,000 €"))
         L10n.languageOverride = .japanese
+        XCTAssertEqual(Country.japan.money(9_500), grouped("9,500円"))
+        XCTAssertEqual(Country.japan.money(543_210), grouped("54万3,210円"))
         XCTAssertEqual(Country.japan.money(4_380_000), "438万円")
-        XCTAssertEqual(Country.japan.money(4_385_000), "438万5,000円".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
-        XCTAssertEqual(Country.japan.money(9_500), "9,500円".replacingOccurrences(of: ",", with: Fmt.number(1000).contains(".") ? "." : ","))
+        XCTAssertEqual(Country.japan.money(2_700_864), "270万円")
+        XCTAssertEqual(Country.japan.money(63_094_505), grouped("6,309万円"))
+        XCTAssertEqual(Country.japan.money(123_450_000), grouped("1億2,345万円"))
+        XCTAssertEqual(Country.japan.money(-1_512_000), "−151万円")
         XCTAssertTrue(Country.unitedStates.money(68_000).hasPrefix("$"))
         L10n.languageOverride = .german
         XCTAssertTrue(Country.germany.money(45_000).hasSuffix("\u{00A0}€"))

@@ -297,7 +297,7 @@ struct EntrepreneurshipView: View {
             message: [
                 L("You put in \(player.money(capital)) and opened your business!"),
                 L("In the first year it pays about \(firstYear) of the full amount while you find customers."),
-            ].joined(separator: " ")
+            ].joinedAsSentences()
         )
         onCommit()
     }
@@ -350,17 +350,22 @@ private struct VentureRow: View {
             // and the loan's terms all live in the hint, one tap away, so a
             // list of ventures stays scannable.
             VStack(alignment: .leading, spacing: 2) {
+                // Long names (German, French, Japanese company names) wrap rather than truncate: the
+                // player must be able to tell the businesses apart.
                 Text(job.displayBaseTitle)
                     .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if locked {
                     Text("🔒 Nothing to stake yet — earn and save first")
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 } else {
                     Text(L("🛡️ \(Fmt.percent(survival)) survive year 1 · stake \(player.money(stake))"))
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(Color.forOdds(survival))
+                        .fixedSize(horizontal: false, vertical: true)
                     // Borrowing is the part a player can regret, so it stays on
                     // the row — as a flag, with the terms in the hint.
                     if borrowed > 0 {
@@ -371,6 +376,7 @@ private struct VentureRow: View {
                 }
             }
             .opacity(locked ? 0.5 : 1.0)
+            .layoutPriority(1)
 
             Spacer(minLength: 8)
 
@@ -400,7 +406,7 @@ private struct VentureRow: View {
         let target = player.money(job.targetCapital ?? 0)
         var funding = L("💰 You'd put in \(player.money(stake)) of the \(target) it needs, from your savings first.")
         if borrowed > 0 {
-            funding += " " + L("\(player.money(borrowed)) would be a loan that grows \(Fmt.percent(GameConstants.ventureLoanAnnualInterest)) a year — you pay it back even if the business closes.")
+            funding += AdvisorCoach.sentenceGap + L("\(player.money(borrowed)) would be a loan that grows \(Fmt.percent(GameConstants.ventureLoanAnnualInterest)) a year — you pay it back even if the business closes.")
         }
         let full = player.money(job.annualIncome)
         let ramp = GameConstants.ventureIncomeRamp
@@ -415,7 +421,7 @@ private struct VentureRow: View {
                 L("🚀 It always opens. It has a \(Fmt.percent(survival)) chance to make it through the first year."),
                 L("What helps: your \(years) years in \(job.category.displayName) (\(Fmt.number(job.requirements.minYearsExperience)) is good), the skills it needs, \(HintFmt.skill(\.visionaryThinkingAndAmbition)), \(HintFmt.skill(\.persuasionAndNegotiation)), and the money you put in."),
                 L("Each year it lasts, it gets safer — but a bad economy makes it riskier."),
-            ].joined(separator: " "),
+            ].joinedAsSentences(),
             L("💵 It pays \(firstYear), then \(secondYear) of its \(full) in the first two years, then the full amount — more in good years, less in bad ones."),
             L("📉 If it closes, you get back \(Fmt.percent(GameConstants.ventureFoldRecovery)) of the money you put in."),
             L("🌟 Every year in business, every investment you win and every sale makes you better known in \(fame.icon) \(fame.displayName) — so your next business is more likely to last."),

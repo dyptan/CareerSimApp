@@ -131,7 +131,7 @@ struct SkillsView: View {
                                 L("Your average school grade so far, over \(player.highSchoolGrades.count) years."),
                                 L("School skills set each year's grade, and choosing a Study activity pushes it up."),
                                 L("Universities look at it when you apply — the top ones care about it a lot."),
-                            ].joined(separator: " ")
+                            ].joinedAsSentences()
                         )
                     }
                 }
@@ -199,7 +199,7 @@ struct SkillsView: View {
             hint: [
                 L("How many years you've worked as \(job.displayBaseTitle)."),
                 L("More years help you get promoted, and some jobs only hire people with enough years in this kind of work."),
-            ].joined(separator: " ")
+            ].joinedAsSentences()
         )
 
         // Promotions are a realistic-mode mechanic only.
@@ -255,7 +255,7 @@ struct SkillsView: View {
                         ? [
                             L("All the money you've earned so far."),
                             L("In Simplified mode you keep your whole paycheck."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                         : L("The money you've saved. It grows by about \(pct(GameConstants.investmentReturn)) a year while it's above zero — but it can drop in a year when the economy turns bad.")
                 )
 
@@ -271,7 +271,7 @@ struct SkillsView: View {
                                 L("The first \(player.money(player.livingCostFloor)) of your pay goes on living costs like rent and food."),
                                 L("You save \(pct(player.difficulty.savingsRate)) of the rest (\(pct(GameConstants.highEarnerSavingsRate)) of anything over \(player.money(player.country.highEarnerThreshold)))."),
                                 L("If you have no job, living costs come out of your savings."),
-                            ].joined(separator: " ")
+                            ].joinedAsSentences()
                         )
                     }
                 } else if player.endorsementIncome == 0 {
@@ -286,7 +286,7 @@ struct SkillsView: View {
                         hint: [
                             L("Brands pay famous people — athletes, stars and creators — to show off their products."),
                             L("The more \(entertainment.icon) \(entertainment.displayName) fame you have, the more they pay, every year."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
 
@@ -310,7 +310,7 @@ struct SkillsView: View {
                         hint: [
                             L("Money you borrowed to start a business. It grows by \(pct(GameConstants.ventureLoanAnnualInterest)) a year until it's paid back."),
                             L("Payments come out of your savings and pay each year."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
 
@@ -320,7 +320,7 @@ struct SkillsView: View {
                         hint: [
                             L("Money you borrowed for school. It grows by \(pct(player.country.studentLoanInterest)) a year."),
                             L("You don't pay it back while you're studying — after that, payments come out of your savings and pay each year."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
 
@@ -332,7 +332,7 @@ struct SkillsView: View {
                         hint: [
                             L("What you own minus what you owe: your savings (and any business you own) minus your loans."),
                             L("Divide it by your age and you get your score."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
             }
@@ -751,7 +751,7 @@ struct SkillsView: View {
         }
 
         var paragraphs = [
-            L("Each year you have a chance to be promoted to \(title).") + " " + job.industry.promotionCultureBlurb,
+            L("Each year you have a chance to be promoted to \(title).") + AdvisorCoach.sentenceGap + job.industry.promotionCultureBlurb,
             counts.joined(separator: "\n"),
             thisYear.joined(separator: "\n"),
             L("Your chance this year: \(pct(odds.total))"),

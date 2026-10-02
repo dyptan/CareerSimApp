@@ -179,7 +179,7 @@ struct JobDetail: View {
                 L("Until then your chance stays at \(pct(b.floor))."),
                 breakthroughHowTo(key),
                 L("Once you have it, it's the biggest help there is — \(signed(Job.breakthroughBonus))."),
-            ].joined(separator: " ")
+            ].joinedAsSentences()
             return ([opening] + softSkillsParagraphs).joined(separator: "\n\n")
         }
 
@@ -322,7 +322,7 @@ struct JobDetail: View {
                         message: [
                             L("You don't strictly need it — but it helps every time you apply and every time you could be promoted."),
                             L("A degree in the right subject helps most, a degree in another subject helps less, and having less schooling than this makes it harder."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
                 Spacer()
@@ -419,7 +419,7 @@ struct JobDetail: View {
                      ? L("You have it! This is the biggest help there is for getting signed.")
                      : [breakthroughHowTo(key),
                         L("Without it, teams won't sign you (your chance stays at \(Fmt.percent(GameConstants.hireFloor))).")]
-                        .joined(separator: " "))
+                        .joinedAsSentences())
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -491,12 +491,12 @@ struct JobDetail: View {
                 L("With less than \(floorYears) years, you can't apply yet."),
                 L("In between you can, but each missing year makes it much harder."),
                 L("Every year over \(Fmt.number(baseYears)) helps a little more."),
-            ].joined(separator: " ")]
+            ].joinedAsSentences()]
         } else {
             paragraphs = [[
                 L("You need \(baseYears) years of experience to apply."),
                 L("Every extra year helps a little more."),
-            ].joined(separator: " ")]
+            ].joinedAsSentences()]
         }
         if job.isLadderVariant {
             paragraphs.append(L("Years as \(job.displayBaseTitle) count fully. Other years in \(JobCategory.icon(for: job.category)) \(job.category.displayName) count half."))
@@ -524,7 +524,7 @@ struct JobDetail: View {
                         message: [
                             L("This job pays a set amount — you can't ask for more."),
                             L("It starts a bit lower for beginners and a bit higher if you have years of experience in this work."),
-                        ].joined(separator: " ")
+                        ].joinedAsSentences()
                     )
                 }
                 Spacer()
@@ -562,7 +562,7 @@ struct JobDetail: View {
                 message: [
                     L("Every kind of company hires for this job. Pick which one to apply to."),
                     L("Some industries are doing better than others this year — that changes your chance of getting hired, and how your pay and promotions go while you work there."),
-                ].joined(separator: " ")
+                ].joinedAsSentences()
             )
             Spacer()
             Picker("Employer", selection: Binding(

@@ -71,17 +71,35 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         case .english:
             return "\(number) \(currencySymbol)"
         case .japanese:
-            // Yen are counted in 万 (ten thousands) and 円 follows: 4,380,000 → "438万円", 4,385,000 → "438万5,000円".
+            // Yen are written in 万 (ten thousands) and 億: "9,500円", "54万3,210円", "270万円", "1億2,345万円".
+            // Up to a million it is exact; above, it is rounded to the 万 — a salary of 2,700,864 reads 270万円.
             // Every other currency leads with its sign: "$68,000".
-            guard self == .japan else { return "\(currencySymbol)\(number)" }
-            guard amount >= 10_000 else { return "\(number)円" }
-            let man = Fmt.number(amount / 10_000)
-            let rest = amount % 10_000
-            return rest == 0 ? "\(man)万円" : "\(man)万\(Fmt.number(rest))円"
+            guard self == .japan else { return "\(currencySymbol)\(Fmt.number(amount))" }
+            return Self.yen(amount)
         default:
             // A no-break space, so the sign never wraps onto the next line alone.
             return "\(number)\u{00A0}\(currencySymbol)"
         }
+    }
+
+    /// Yen the way Japanese writes them (see `money`).
+    private static func yen(_ amount: Int) -> String {
+        let sign = amount < 0 ? "−" : ""
+        let value = abs(amount)
+        let body: String
+        switch value {
+        case ..<10_000:
+            body = "\(Fmt.number(value))円"
+        case ..<1_000_000:
+            let man = value / 10_000, rest = value % 10_000
+            body = rest == 0 ? "\(man)万円" : "\(man)万\(Fmt.number(rest))円"
+        default:
+            let man = (value + 5_000) / 10_000          // rounded to the nearest 万
+            let oku = man / 10_000, rest = man % 10_000
+            if oku == 0 { body = "\(Fmt.number(man))万円" }
+            else { body = rest == 0 ? "\(Fmt.number(oku))億円" : "\(Fmt.number(oku))億\(Fmt.number(rest))万円" }
+        }
+        return sign + body
     }
 
     /// The smallest step money moves in on a slider — 500 in most currencies,

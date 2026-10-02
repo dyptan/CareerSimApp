@@ -38,7 +38,7 @@ struct InstitutionTiersView: View {
     /// “Apply” — the verb, for a school application: the screen title in Simplified mode and the
     /// button on each school's card.
     private static var applyTitle: String {
-        String(localized: "Apply", comment: "Verb. Screen title and button for applying to a school or university; applying uses up the year.")
+        String(localized: "school.apply", defaultValue: "Apply", comment: "Verb. Screen title and button for applying to a school or university (not to a job); applying uses up the year.")  // i18n:ignore translator comment
     }
 
     /// Tuition per year, tuition in total (red when savings fall short) and the length of the degree.
@@ -249,7 +249,7 @@ struct InstitutionTiersView: View {
             ? L("You don't have school grades yet, so the game guesses them from your skills.")
             : L("Your grade comes from your \(count) school years.")
         let ceiling = L("Your school skills set each year's grade, and choosing a Study activity pushes it up. With skills alone, the best you can get is \(player.country.gradeLabel(GameConstants.gradeFloor + GameConstants.gradeSkillSpan)).")
-        return [[weights, range].joined(separator: " "), [record, ceiling].joined(separator: " ")]
+        return [[weights, range].joinedAsSentences(), [record, ceiling].joinedAsSentences()]
             .joined(separator: "\n\n")
     }
 
@@ -316,7 +316,7 @@ struct InstitutionTiersView: View {
                 ? L("The school accepted you onto \(degree).")
                 : L("\(player.country.tierName(education.tier)) accepted you onto \(degree).")
             if let job = player.currentOccupation {
-                message += " " + L("You've left your job as \(job.displayBaseTitle) to study full-time.")
+                message += AdvisorCoach.sentenceGap + L("You've left your job as \(job.displayBaseTitle) to study full-time.")
             }
             player.reportApplicationOutcome(title: L("🎓 You're in!"), message: message)
             enroll(in: education)

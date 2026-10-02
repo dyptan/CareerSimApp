@@ -1047,7 +1047,27 @@ final class AdvisorConversation: ObservableObject {
     /// player's to settle, not the model's to guess.
     private func settle(on title: String, typed text: String) async {
         let candidates = AdvisorRoles.search(text)
+        // The model may have read the words badly (it once answered "Krankenpfleger" with a 3D artist):
+        // a role the player named outright beats whatever it picked.
+        if let top = candidates.first, top.baseTitle != title,
+           AdvisorRoles.isName(of: top, text) || AdvisorRoles.isNamed(top, in: text) {
+            await aim(at: top.baseTitle, lead: L("Great choice!"))
+            return
+        }
         let named = AdvisorCoach.family(title).map { AdvisorRoles.isNamed($0, in: text) } ?? false
+        // A short job-like entry ("infirmier") that the model answered with a role none of the
+        // catalogue's matches is: the model misread it, so offer what the words really point at.
+        if AdvisorRoles.contentWordCount(text) <= 3, !candidates.isEmpty,
+           !candidates.contains(where: { $0.baseTitle == title }) {
+            if candidates.count == 1 {
+                await aim(at: candidates[0].baseTitle, lead: L("Great choice!"))
+            } else {
+                say(advisor: L("A few jobs fit that. Which one do you mean?"))
+                replies = candidates.map(roleChip) + [Self.otherFieldsChip]
+                choosing = true
+            }
+            return
+        }
         if AdvisorRoles.contentWordCount(text) <= 2, !named, candidates.count > 1, candidates.contains(where: { $0.baseTitle == title }) {
             say(advisor: L("A few jobs fit that. Which one do you mean?"))
             replies = candidates.map(roleChip) + [Self.otherFieldsChip]

@@ -130,7 +130,7 @@ struct SideHustleRow: View {
         guard let cat = hustle.experienceCategory else { return main }
         let fieldYears = player.industryExperience(for: cat)
         let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
-        return main + " " + L("Your \(fieldYears) years in \(field) count double.")
+        return main + AdvisorCoach.sentenceGap + L("Your \(fieldYears) years in \(field) count double.")
     }
 
     /// What a flop costs: only the fame — the skill gains and the banked experience land either way.
