@@ -121,16 +121,11 @@
     "🔒 Not yet": "🔒 Noch nicht",
     "🔒 Needs the “%@” title": "🔒 Braucht den Titel „%@“",
     "🔒 Opens once you hold the “%@” title — chase it under Projects.": "🔒 Öffnet sich, sobald du den Titel „%@“ hast – hol ihn dir unter „Projekte“.",
-    "If it doesn't work out: you just miss the fame — you keep the skills.": "Wenn es nicht klappt: Dir entgeht nur der Ruhm – die Fähigkeiten behältst du.",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": "Wenn es nicht klappt: Dir entgeht nur der Ruhm – die Fähigkeiten behältst du. 📅 Das Jahr zählt trotzdem als Berufserfahrung in %@.",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": "Wenn es nicht klappt: Dir entgeht nur der Ruhm – die Fähigkeiten behältst du. 📅 Das Jahr zählt trotzdem als Berufserfahrung in %1$@, was auch bei Jobs in %2$@ hilft.",
     "%@ This field is booming this year: %@.": "%1$@ Dieser Bereich boomt dieses Jahr: %2$@.",
     "%@ This field is growing this year: %@.": "%1$@ Dieser Bereich wächst dieses Jahr: %2$@.",
     "%@ This field is slowing this year: %@.": "%1$@ Dieser Bereich flaut dieses Jahr ab: %2$@.",
-    "🎲 %@ chance it works · 🌟 %@ fame": "🎲 %1$@ Chance, dass es klappt · 🌟 Ruhm in %2$@",
     "Needs:\n%@": "Braucht:\n%@",
     "Grows, whether it works or not:\n%@": "Wächst, egal ob es klappt oder nicht:\n%@",
-    "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "Wenn es klappt: Ruhm in %1$@ – das macht dein nächstes Projekt leichter und hilft dir bei Jobs in %2$@. Projekte bringen kein Geld: Sie sind für Ruhm und Fähigkeiten.",
     "%lld yrs left": {
       "one": "noch %lld J.",
       "other": "noch %lld J."

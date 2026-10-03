@@ -1,14 +1,6 @@
 {
   "table": "Localizable",
   "strings": {
-    "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier.": {
-      "one": "Your chance goes up with the skills below, your %1$lld year of work, and the %2$@ fame you already have — being known in a field makes the next project there easier.",
-      "other": "Your chance goes up with the skills below, your %1$lld years of work, and the %2$@ fame you already have — being known in a field makes the next project there easier."
-    },
-    "Your %lld years in %@ count double.": {
-      "one": "Your %1$lld year in %2$@ counts double.",
-      "other": "Your %1$lld years in %2$@ count double."
-    },
     "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
       "one": "🎲 Skipping %lld year of childhood gives you one random skill point. Playing that year yourself builds far more.",
       "other": "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more."

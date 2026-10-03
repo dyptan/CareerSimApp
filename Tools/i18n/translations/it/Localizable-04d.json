@@ -1,15 +1,11 @@
 {
   "table": "Localizable",
   "strings": {
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": "Se non va a buon fine: ti sfugge solo la fama — le competenze le tieni. 📅 L’anno conta comunque come esperienza lavorativa nel settore %@.",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": "Se non va a buon fine: ti sfugge solo la fama — le competenze le tieni. 📅 L’anno conta comunque come esperienza lavorativa nel settore %1$@, utile anche per i lavori nel settore %2$@.",
     "%@ This field is booming this year: %@.": "%1$@ Questo settore è in boom quest’anno: %2$@.",
     "%@ This field is growing this year: %@.": "%1$@ Questo settore è in crescita quest’anno: %2$@.",
     "%@ This field is slowing this year: %@.": "%1$@ Questo settore è in rallentamento quest’anno: %2$@.",
-    "🎲 %@ chance it works · 🌟 %@ fame": "🎲 Probabilità che funzioni: %1$@ · 🌟 fama nel settore %2$@",
     "Needs:\n%@": "Servono:\n%@",
     "Grows, whether it works or not:\n%@": "Crescono, che funzioni o no:\n%@",
-    "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "Se funziona: fama nel settore %1$@ — rende più facile il progetto successivo e ti aiuta a ottenere lavori nel settore %2$@. I progetti non pagano: servono per fama e competenze.",
     "%lld yrs left": {
       "one": "ancora %lld anno",
       "other": "ancora %lld anni"

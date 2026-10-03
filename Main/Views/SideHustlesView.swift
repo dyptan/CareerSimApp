@@ -122,28 +122,13 @@ struct SideHustleRow: View {
         return L("🔒 Opens once you hold the “\(award)” title — chase it under Projects.")
     }
 
-    /// The "your chance goes up with …" line. The note about double-counting years is a sentence of
-    /// its own (with its own count), so each sentence carries one plural and none is glued from fragments.
+    /// What moves the chance, in one short paragraph. The skills it points to are the "Needs" list below it.
+    /// The field note is a sentence of its own, so no sentence is glued from fragments.
     private func oddsLine(for hustle: SideHustle, fame: String) -> String {
-        let years = player.totalExperienceYears
-        let main = L("Your chance goes up with the skills below, your \(years) years of work, and the \(fame) fame you already have — being known in a field makes the next project there easier.")
+        let main = L("Chance goes up with the skills below, your years of work and your \(fame) fame.")
         guard let cat = hustle.experienceCategory else { return main }
-        let fieldYears = player.industryExperience(for: cat)
         let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
-        return main + AdvisorCoach.sentenceGap + L("Your \(fieldYears) years in \(field) count double.")
-    }
-
-    /// What a flop costs: only the fame — the skill gains and the banked experience land either way.
-    private func lossLine(for hustle: SideHustle) -> String {
-        guard let cat = hustle.experienceCategory else {
-            return L("If it doesn't work out: you just miss the fame — you keep the skills.")
-        }
-        let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
-        let credited = Fmt.list(cat.creditedExperienceCategories
-            .map { "\(JobCategory.icon(for: $0)) \($0.displayName)" })
-        return credited.isEmpty
-            ? L("If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as \(field) work experience.")
-            : L("If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as \(field) work experience, which also helps for \(credited) jobs.")
+        return main + AdvisorCoach.sentenceGap + L("Years of \(field) work count double.")
     }
 
     /// What the field's climate does to the odds this year; nothing to say when it is steady.
@@ -159,28 +144,29 @@ struct SideHustleRow: View {
         }
     }
 
-    /// The project hint, kept to what the player can act on: the blurb, the
-    /// odds and what moves them, the fame a win banks (projects pay no money —
-    /// they build fame and skills), what the year costs either way. The
-    /// mechanic used to be spelled out in full prose, which made every row a
-    /// wall of text to read past.
+    /// The project hint, kept to four things: what the project is, the chance
+    /// it works, what moves that chance, and what it gains (fame if it works,
+    /// skills either way). Projects pay no money, and a flop costs only the
+    /// year, which the result pop-up reports.
     private func infoMessage(for hustle: SideHustle, odds: Double,
                              talentHint: String, growthHint: String) -> String {
         let category = hustle.fameCategory
         let fame = "\(category.icon) \(category.displayName)"
 
+        // A closed project has no odds to quote: say what opens it instead.
+        let chance: String? = lockLine(for: hustle) ?? [
+            L("🎲 \(Fmt.percent(odds)) chance it works"),
+            // Naming the drivers makes a 0% row read as "not yet" rather than "broken".
+            oddsLine(for: hustle, fame: fame),
+        ].joined(separator: "\n")
+
         return [
             hustle.blurb,
-            L("🎲 \(Fmt.percent(odds)) chance it works · 🌟 \(fame) fame"),
-            // Naming the drivers with where the player stands now makes a 0% row
-            // read as "not yet" rather than "broken".
-            oddsLine(for: hustle, fame: fame),
+            chance,
             climateLine(for: hustle),
             L("Needs:\n\(talentHint)"),
+            L("If it works: 🌟 \(fame) fame."),
             L("Grows, whether it works or not:\n\(growthHint)"),
-            lockLine(for: hustle),
-            L("If it works: \(fame) fame — it makes your next project easier and helps you get \(category.displayName) jobs. Projects don't pay money: they're for fame and skills."),
-            lossLine(for: hustle),
         ].compactMap { $0 }.joined(separator: "\n\n")
     }
 }

@@ -28,16 +28,11 @@
     "🔒 Not yet": "🔒 まだ応募できません",
     "🔒 Needs the “%@” title": "🔒 「%@」の称号が必要",
     "🔒 Opens once you hold the “%@” title — chase it under Projects.": "🔒 「%@」の称号を手に入れると開きます。称号はプロジェクトで目指しましょう。",
-    "If it doesn't work out: you just miss the fame — you keep the skills.": "うまくいかなかった場合：得られないのは名声だけで、スキルは身につきます。",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": "うまくいかなかった場合：得られないのは名声だけで、スキルは身につきます。📅 その1年は、%@の職務経験として数えられます。",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": "うまくいかなかった場合：得られないのは名声だけで、スキルは身につきます。📅 その1年は%1$@の職務経験として数えられ、%2$@の仕事にも役立ちます。",
     "%@ This field is booming this year: %@.": "%1$@ この分野は今年、好況です（%2$@）。",
     "%@ This field is growing this year: %@.": "%1$@ この分野は今年、成長しています（%2$@）。",
     "%@ This field is slowing this year: %@.": "%1$@ この分野は今年、減速しています（%2$@）。",
-    "🎲 %@ chance it works · 🌟 %@ fame": "🎲 成功確率%1$@ · 🌟 %2$@の名声",
     "Needs:\n%@": "必要なもの：\n%@",
     "Grows, whether it works or not:\n%@": "成功してもしなくても伸びるもの：\n%@",
-    "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "成功すると、%1$@の名声が手に入ります。次のプロジェクトがやりやすくなり、%2$@の仕事にも役立ちます。プロジェクトでお金は稼げません。名声とスキルのためのものです。",
     "%lld yrs left": {
       "other": "残り%lld年"
     },

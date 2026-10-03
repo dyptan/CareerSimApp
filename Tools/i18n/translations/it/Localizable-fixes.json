@@ -1,14 +1,6 @@
 {
   "table": "Localizable",
   "strings": {
-    "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier.": {
-      "one": "La tua probabilità sale con le competenze qui sotto, il tuo anno di lavoro e la fama nel settore %2$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore.",
-      "other": "La tua probabilità sale con le competenze qui sotto, i tuoi %1$lld anni di lavoro e la fama nel settore %2$@ che hai già — avere fama in un settore rende più facile il progetto successivo in quel settore."
-    },
-    "Your %lld years in %@ count double.": {
-      "one": "Il tuo anno nel settore %2$@ conta il doppio.",
-      "other": "I tuoi %1$lld anni nel settore %2$@ contano il doppio."
-    },
     "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
       "one": "🎲 Saltare %lld anno di infanzia ti regala un punto competenza casuale. Giocare quell’anno di persona ne fa guadagnare molti di più.",
       "other": "🎲 Saltare %lld anni di infanzia ti regala un punto competenza casuale per ogni anno. Giocare quegli anni di persona ne fa guadagnare molti di più."

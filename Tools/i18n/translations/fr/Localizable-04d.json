@@ -1,15 +1,11 @@
 {
   "table": "Localizable",
   "strings": {
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience.": "Si ça ne marche pas : tu rates seulement la renommée — tu gardes les compétences. 📅 L’année compte quand même comme expérience professionnelle en %@.",
-    "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs.": "Si ça ne marche pas : tu rates seulement la renommée — tu gardes les compétences. 📅 L’année compte quand même comme expérience professionnelle en %1$@, ce qui aide aussi pour les postes en %2$@.",
     "%@ This field is booming this year: %@.": "%1$@ Ce domaine est en plein essor cette année : %2$@.",
     "%@ This field is growing this year: %@.": "%1$@ Ce domaine est en croissance cette année : %2$@.",
     "%@ This field is slowing this year: %@.": "%1$@ Ce domaine ralentit cette année : %2$@.",
-    "🎲 %@ chance it works · 🌟 %@ fame": "🎲 %1$@ de chances que ça marche · 🌟 renommée en %2$@",
     "Needs:\n%@": "Il faut :\n%@",
     "Grows, whether it works or not:\n%@": "Progression dans tous les cas :\n%@",
-    "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills.": "Si ça marche : renommée en %1$@ — elle facilite ton prochain projet et t’aide à décrocher des postes en %2$@. Les projets ne rapportent pas d’argent : ils servent à gagner en renommée et à développer des compétences.",
     "%lld yrs left": {
       "one": "Il reste %lld an",
       "other": "Il reste %lld ans"

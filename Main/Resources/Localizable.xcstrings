@@ -6124,6 +6124,7 @@
       }
     },
     "A channel of tutorials and deep-dives you record on the side. Explain things well enough and you become a name developers follow." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6346,6 +6347,7 @@
       }
     },
     "A deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6764,6 +6766,7 @@
       }
     },
     "A mod for a game you love — new levels, mechanics, or art built on someone else's engine. A mod the community adopts gets your name known." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6832,6 +6835,7 @@
       }
     },
     "A piece of independent research you write up and post for the world to read. A preprint that gets cited earns you a name in the field." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6901,6 +6905,7 @@
       }
     },
     "A podcast you record and put out episode by episode. Build a loyal audience and your voice becomes a name people know." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7290,6 +7295,7 @@
       }
     },
     "A short film you write, shoot, and edit yourself. Land it in a festival lineup and the art world starts to notice." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7324,6 +7330,7 @@
       }
     },
     "A small demo app you build to show off an idea. Get it in front of people and word gets around." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9048,6 +9055,7 @@
       }
     },
     "An open-source project you contribute to in the open. Land your work in something people depend on and your name travels with it." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10114,7 +10122,42 @@
         }
       }
     },
+    "Audition for the lead role that could make you a movie star." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprich für die Hauptrolle vor, die dich zum Filmstar machen könnte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe l’audition pour le premier rôle qui pourrait faire de toi une star de cinéma."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai il provino per il ruolo da protagonista che potrebbe farti diventare una star del cinema."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "映画スターになれるかもしれない主役のオーディションを受けます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Йди на проби на головну роль, яка може зробити тебе кінозіркою."
+          }
+        }
+      }
+    },
     "Audition for the part that could change everything — a lead that puts your face on every screen. The odds are long and you'll chase it for years, but land it and you're a movie star." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12438,6 +12481,7 @@
       }
     },
     "Book studio time and put your music out there. Long odds, but a breakout single makes you a name." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12467,6 +12511,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Забронюй час у студії й випусти свою музику у світ. Шанси невеликі, зате сингл-прорив зробить тобі імʼя."
+          }
+        }
+      }
+    },
+    "Book studio time and release your own music." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buche Studiozeit und bring deine eigene Musik raus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réserve du temps en studio et sors ta propre musique."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenota lo studio di registrazione e fai uscire la tua musica."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スタジオを借りて、自分の音楽を世に出します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Забронюй час у студії й випусти власну музику."
           }
         }
       }
@@ -12819,7 +12897,76 @@
         }
       }
     },
+    "Build a small demo app to show off an idea." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baue eine kleine Demo-App, mit der du eine Idee zeigst."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée une petite appli de démonstration pour présenter une idée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una piccola app dimostrativa per mostrare un’idea."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイデアを見せるために、小さなデモアプリを作ります。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Створи невеликий демо-застосунок, щоб показати ідею."
+          }
+        }
+      }
+    },
+    "Build an audience across social media, a blog and a podcast." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewinne ein Publikum auf Social Media, mit einem Blog und einem Podcast."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Construis un public sur les réseaux sociaux, un blog et un podcast."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Costruisci un pubblico tra social media, un blog e un podcast."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SNS、ブログ、ポッドキャストでファンを増やします。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Збери аудиторію в соцмережах, блозі та подкасті."
+          }
+        }
+      }
+    },
     "Build an audience across social, a blog, and a podcast, and chase the spotlight. Most channels fizzle — a viral one makes your name." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13983,6 +14130,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Чемпіон! 🏆"
+          }
+        }
+      }
+    },
+    "Chance goes up with the skills below, your years of work and your %@ fame." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Chance steigt mit den Fähigkeiten unten, deinen Arbeitsjahren und deinem Ruhm in %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes chances augmentent avec les compétences ci-dessous, tes années de travail et ta renommée en %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La probabilità sale con le competenze qui sotto, i tuoi anni di lavoro e la tua fama nel settore %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確率は、必要なスキル、仕事の経験年数、%@の名声に応じて上がります。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шанс підвищують навички нижче, твої роки роботи й твоя слава (%@)."
           }
         }
       }
@@ -15879,6 +16060,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Робити внесок у відкритий код"
+          }
+        }
+      }
+    },
+    "Contribute to an open-source project, in the open." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trage öffentlich zu einem Open-Source-Projekt bei."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contribue à un projet open source, au grand jour."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contribuisci a un progetto open source, alla luce del sole."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オープンソースのプロジェクトに、オープンな場で貢献します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Роби внесок у проєкт із відкритим кодом — відкрито, на очах у всіх."
           }
         }
       }
@@ -23382,6 +23597,7 @@
       }
     },
     "Go to auditions and take the parts you can get — an ad, a small TV role, a play. Most actors get started this way, one part at a time." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -23411,6 +23627,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ходи на проби й бери ролі, які вдасться отримати — рекламу, маленьку роль на ТБ, виставу. Так починає більшість акторів — по одній ролі."
+          }
+        }
+      }
+    },
+    "Go to auditions and take the parts you can get: an ad, a small TV role, a play." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geh zum Vorsprechen und nimm die Rollen, die du kriegen kannst: einen Werbespot, eine kleine Fernsehrolle, ein Theaterstück."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe des auditions et prends les rôles que tu peux décrocher : une pub, un petit rôle à la télé, une pièce de théâtre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai ai provini e accetta le parti che riesci a ottenere: una pubblicità, un piccolo ruolo in TV, uno spettacolo teatrale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オーディションを受けて、広告、テレビの小さな役、舞台など、得られる役を引き受けます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ходи на проби й бери ролі, які вдасться отримати: реклама, маленька роль на ТБ, вистава."
           }
         }
       }
@@ -26531,6 +26781,7 @@
       }
     },
     "If it doesn't work out: you just miss the fame — you keep the skills." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -26565,6 +26816,7 @@
       }
     },
     "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience, which also helps for %@ jobs." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -26605,6 +26857,7 @@
       }
     },
     "If it doesn't work out: you just miss the fame — you keep the skills. 📅 The year still counts as %@ work experience." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -26707,6 +26960,7 @@
       }
     },
     "If it works: %@ fame — it makes your next project easier and helps you get %@ jobs. Projects don't pay money: they're for fame and skills." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -26742,6 +26996,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Якщо вдасться: слава (%1$@) — це полегшить наступний проєкт і допоможе отримати роботу у сфері «%2$@». Проєкти не приносять грошей: вони дають славу й навички."
+          }
+        }
+      }
+    },
+    "If it works: 🌟 %@ fame." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn es klappt: 🌟 Ruhm in %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si ça marche : 🌟 renommée en %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se funziona: 🌟 fama nel settore %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功すると、🌟 %@の名声が手に入ります。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо вдасться: 🌟 слава (%@)."
           }
         }
       }
@@ -31873,6 +32161,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Везіння й слушний момент мають значення: цикл галузі, відхід попередника, компанія в скруті, яка шукає людину ззовні. Чудові кандидати чекають роками або так і не дочікуються дзвінка."
+          }
+        }
+      }
+    },
+    "Make a mod for a game you love: new levels, mechanics or art." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baue eine Mod für ein Spiel, das du liebst: neue Level, Mechaniken oder Grafiken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un mod pour un jeu que tu aimes : de nouveaux niveaux, mécaniques ou graphismes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Realizza una mod per un gioco che ami: nuovi livelli, meccaniche o grafica."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大好きなゲームのMODを作ります。新しいレベルや仕組み、アートを加えます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Створи мод для гри, яку ти любиш: нові рівні, механіки або графіка."
           }
         }
       }
@@ -39023,6 +39345,7 @@
       }
     },
     "Perform on your own — as a musician, dancer or actor. Some shows go great, some don't, but every show gets you seen." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39052,6 +39375,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Виступай самостійно — як музикант, танцівник чи актор. Одні виступи проходять чудово, інші ні, але кожен робить тебе помітним."
+          }
+        }
+      }
+    },
+    "Perform on your own, as a musician, dancer or actor." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tritt auf eigene Faust auf – als Musiker, Tänzer oder Schauspieler."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joue à ton compte, comme musicien, danseur ou acteur."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esibisciti in proprio, come musicista, ballerino o attore."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミュージシャン、ダンサー、俳優として、ひとりで出演します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виступай самостійно — як музикант, танцівник або актор."
           }
         }
       }
@@ -40019,7 +40376,42 @@
         }
       }
     },
+    "Play weddings, cafés and shows of your own." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiele auf Hochzeiten, in Cafés und bei eigenen Shows."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joue dans des mariages et des cafés, et donne tes propres concerts."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suona ai matrimoni, nei caffè e nei tuoi spettacoli."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結婚式やカフェ、自分のライブで演奏します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Грай на весіллях, у кафе й на власних шоу."
+          }
+        }
+      }
+    },
     "Play weddings, cafés and your own shows. It's how most musicians practise in front of people — and every crowd is a chance to be noticed." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -40261,6 +40653,7 @@
       }
     },
     "Pour everything into the song that could top the charts. Most never land it — but a genuine hit turns a working musician into a pop star overnight." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -41933,7 +42326,42 @@
         }
       }
     },
+    "Rally backers behind a product idea and hit your funding goal." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewinne Unterstützer für eine Produktidee und erreiche dein Finanzierungsziel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rassemble des contributeurs autour d’une idée de produit et atteins ton objectif de financement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccogli sostenitori attorno a un’idea di prodotto e raggiungi il tuo obiettivo di raccolta fondi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "商品アイデアに支援者を集めて、目標金額を達成します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Згуртуй прихильників навколо ідеї продукту й збери потрібну суму."
+          }
+        }
+      }
+    },
     "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision, lead a crowd, and run a venture end to end." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -42309,7 +42737,76 @@
         }
       }
     },
+    "Record a podcast and put out episode after episode." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimm einen Podcast auf und veröffentliche Folge für Folge."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre un podcast et publie-le épisode après épisode."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra un podcast e pubblica episodio dopo episodio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポッドキャストを収録して、エピソードを次々と配信します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записуй подкаст і випускай епізод за епізодом."
+          }
+        }
+      }
+    },
+    "Record an online course and build an audience of learners." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimm einen Online-Kurs auf und gewinne ein Publikum von Lernenden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre un cours en ligne et fédère un public d’apprenants."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra un corso online e costruisci un pubblico di studenti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オンライン講座を録画して、受講者を増やします。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запиши онлайн-курс і збери аудиторію слухачів."
+          }
+        }
+      }
+    },
     "Record an online course and build an audience of learners. Grow it into a name and the business world takes note." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -42339,6 +42836,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Запиши онлайн-курс і збери аудиторію слухачів. Зроби з нього впізнаване імʼя — і бізнес-світ це помітить."
+          }
+        }
+      }
+    },
+    "Record tutorials and deep-dives for developers, on the side." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nimm nebenbei Tutorials und tiefgehende Erklärungen für Entwickler auf."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre des tutoriels et des analyses approfondies pour les développeurs, à côté."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra tutorial e approfondimenti per sviluppatori, nel tempo libero."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開発者向けの解説動画や深掘り動画を、空いた時間に録画します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записуй уроки та глибокі розбори для розробників у вільний час."
           }
         }
       }
@@ -46337,7 +46868,42 @@
         }
       }
     },
+    "Spend the year writing and publishing a book." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbringe das Jahr damit, ein Buch zu schreiben und zu veröffentlichen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passe l’année à écrire et à publier un livre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa l’anno a scrivere e a pubblicare un libro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1年かけて本を書き、出版します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Присвяти рік книжці: напиши її й видай."
+          }
+        }
+      }
+    },
     "Spend the year writing and publishing. Most titles sink; a hit puts your name on shelves everywhere." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -46683,6 +47249,7 @@
       }
     },
     "Star in a big movie. The more people know your name, the bigger the part — and a hit film makes you even more famous." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -48500,7 +49067,76 @@
         }
       }
     },
+    "Take the lead in a big movie." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiele die Hauptrolle in einem großen Kinofilm."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiens le premier rôle dans un grand film."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interpreta il ruolo principale in un grande film."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大作映画で主演します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зіграй головну роль у великому фільмі."
+          }
+        }
+      }
+    },
+    "Take your songs on tour, from small clubs to stadiums." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geh mit deinen Songs auf Tour – von kleinen Clubs bis in die Stadien."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emmène tes chansons en tournée, des petits clubs aux stades."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porta le tue canzoni in tour, dai piccoli club agli stadi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の曲を持って、小さなライブハウスからスタジアムまでツアーに出ます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирушай зі своїми піснями в тур — від маленьких клубів до стадіонів."
+          }
+        }
+      }
+    },
     "Take your songs on tour. A new act plays small clubs; a superstar fills stadiums — and every show grows your fame." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -57505,6 +58141,142 @@
         }
       }
     },
+    "Write a long deep-dive out of pure curiosity." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreibe aus reiner Neugier einen langen, tiefgehenden Text."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris une analyse longue et approfondie par pure curiosité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi un lungo approfondimento per pura curiosità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "純粋な好奇心から、深掘りした長編記事を書きます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напиши довгий глибокий розбір теми з чистої цікавості."
+          }
+        }
+      }
+    },
+    "Write the song that could top the charts." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreibe den Song, der die Charts anführen könnte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris la chanson qui pourrait dominer les classements."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi la canzone che potrebbe scalare le classifiche."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャート上位に入れる1曲を書きます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напиши пісню, яка може очолити чарти."
+          }
+        }
+      }
+    },
+    "Write up independent research and post it for the world to read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreibe eine unabhängige Forschungsarbeit auf und veröffentliche sie für alle zum Lesen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rédige une recherche indépendante et mets-la en ligne pour que le monde la lise."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi una ricerca indipendente e pubblicala perché tutti possano leggerla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "独立して進めた研究をまとめて、世界に向けて公開します。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оформи й виклади самостійне дослідження, щоб його міг прочитати весь світ."
+          }
+        }
+      }
+    },
+    "Write, shoot and edit a short film yourself." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreibe, drehe und schneide einen Kurzfilm selbst."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écris, tourne et monte un court métrage toi-même."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi, gira e monta da te un cortometraggio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分で脚本を書き、撮影し、編集して、短編映画を作ります。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напиши, зніми й змонтуй короткометражний фільм власноруч."
+          }
+        }
+      }
+    },
     "Writers, filmmakers and online creators meet and share their work." : {
       "localizations" : {
         "de" : {
@@ -57643,6 +58415,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Роки у сферах (%@) також враховуються."
+          }
+        }
+      }
+    },
+    "Years of %@ work count double." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arbeitsjahre in %@ zählen doppelt."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les années de travail en %@ comptent double."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli anni di lavoro nel settore %@ contano il doppio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@での仕事の経験年数は2倍に数えられます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Роки роботи у сфері «%@» враховуються вдвічі."
           }
         }
       }
@@ -60929,6 +61735,7 @@
       }
     },
     "Your %lld years in %@ count double." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -61489,6 +62296,7 @@
       }
     },
     "Your chance goes up with the skills below, your %lld years of work, and the %@ fame you already have — being known in a field makes the next project there easier." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -69675,7 +70483,42 @@
         }
       }
     },
+    "🎲 %@ chance it works" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🎲 %@ Chance, dass es klappt"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🎲 %@ de chances que ça marche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🎲 Probabilità che funzioni: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🎲 成功確率%@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🎲 Шанс успіху: %@"
+          }
+        }
+      }
+    },
     "🎲 %@ chance it works · 🌟 %@ fame" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
