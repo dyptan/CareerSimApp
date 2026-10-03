@@ -1,0 +1,29 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "Record an online course and build an audience of learners.": "Nimm einen Online-Kurs auf und gewinne ein Publikum von Lernenden.",
+    "Build an audience across social media, a blog and a podcast.": "Gewinne ein Publikum auf Social Media, mit einem Blog und einem Podcast.",
+    "Spend the year writing and publishing a book.": "Verbringe das Jahr damit, ein Buch zu schreiben und zu veröffentlichen.",
+    "Perform on your own, as a musician, dancer or actor.": "Tritt auf eigene Faust auf – als Musiker, Tänzer oder Schauspieler.",
+    "Book studio time and release your own music.": "Buche Studiozeit und bring deine eigene Musik raus.",
+    "Go to auditions and take the parts you can get: an ad, a small TV role, a play.": "Geh zum Vorsprechen und nimm die Rollen, die du kriegen kannst: einen Werbespot, eine kleine Fernsehrolle, ein Theaterstück.",
+    "Play weddings, cafés and shows of your own.": "Spiele auf Hochzeiten, in Cafés und bei eigenen Shows.",
+    "Take the lead in a big movie.": "Spiele die Hauptrolle in einem großen Kinofilm.",
+    "Take your songs on tour, from small clubs to stadiums.": "Geh mit deinen Songs auf Tour – von kleinen Clubs bis in die Stadien.",
+    "Audition for the lead role that could make you a movie star.": "Sprich für die Hauptrolle vor, die dich zum Filmstar machen könnte.",
+    "Write the song that could top the charts.": "Schreibe den Song, der die Charts anführen könnte.",
+    "Build a small demo app to show off an idea.": "Baue eine kleine Demo-App, mit der du eine Idee zeigst.",
+    "Contribute to an open-source project, in the open.": "Trage öffentlich zu einem Open-Source-Projekt bei.",
+    "Write a long deep-dive out of pure curiosity.": "Schreibe aus reiner Neugier einen langen, tiefgehenden Text.",
+    "Make a mod for a game you love: new levels, mechanics or art.": "Baue eine Mod für ein Spiel, das du liebst: neue Level, Mechaniken oder Grafiken.",
+    "Record a podcast and put out episode after episode.": "Nimm einen Podcast auf und veröffentliche Folge für Folge.",
+    "Write, shoot and edit a short film yourself.": "Schreibe, drehe und schneide einen Kurzfilm selbst.",
+    "Record tutorials and deep-dives for developers, on the side.": "Nimm nebenbei Tutorials und tiefgehende Erklärungen für Entwickler auf.",
+    "Write up independent research and post it for the world to read.": "Schreibe eine unabhängige Forschungsarbeit auf und veröffentliche sie für alle zum Lesen.",
+    "Rally backers behind a product idea and hit your funding goal.": "Gewinne Unterstützer für eine Produktidee und erreiche dein Finanzierungsziel.",
+    "Chance goes up with the skills below, your years of work and your %@ fame.": "Die Chance steigt mit den Fähigkeiten unten, deinen Arbeitsjahren und deinem Ruhm in %@.",
+    "Years of %@ work count double.": "Arbeitsjahre in %@ zählen doppelt.",
+    "🎲 %@ chance it works": "🎲 %@ Chance, dass es klappt",
+    "If it works: 🌟 %@ fame.": "Wenn es klappt: 🌟 Ruhm in %@."
+  }
+}

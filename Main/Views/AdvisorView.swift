@@ -23,19 +23,17 @@ struct AdvisorView: View {
             player: player, language: language ?? AdvisorLanguages.make(player: player)))
     }
 
-    static let hint = """
-    Your career advisor helps you find a job you'll love.
-
-    🎯 Have a job in mind? It shows you where it's posted, and which skills, school and licences you need.
-
-    🤔 Not sure yet? It suggests things to try, and after a few moves it names jobs that fit the skills you've built.
-
-    🧭 For a hard-to-reach job, like CEO, it shows how narrow the path is and what really decides it — fame, network, school, years, and having built a company — with the real-world story behind it.
-
-    📅 After every year it checks how you're doing and suggests changes. A red dot on the Advice button means it has something for you.
-
-    ✨ With Apple Intelligence you can type to it, too. The chances it shows are always the game's real chances. Talking is free — it doesn't use up your year.
-    """
+    /// The sheet's help text, one paragraph per catalog entry.
+    static var hint: String {
+        [
+            L("Your career advisor helps you find a job you'll love."),
+            L("🎯 Have a job in mind? It shows you where it's posted, and which skills, school and licences you need."),
+            L("🤔 Not sure yet? It suggests things to try, and after a few moves it names jobs that fit the skills you've built."),
+            L("🧭 For a hard-to-reach job, like CEO, it shows how narrow the path is and what really decides it — fame, network, school, years, and having built a company — with the real-world story behind it."),
+            L("📅 After every year it checks how you're doing and suggests changes. A red dot on the Advice button means it has something for you."),
+            L("✨ With Apple Intelligence you can type to it, too. The chances it shows are always the game's real chances. Talking is free — it doesn't use up your year."),
+        ].joined(separator: "\n\n")
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -43,9 +41,10 @@ struct AdvisorView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         if let note = chat.languageNote {
-                            Text(note)
+                            Text(verbatim: note)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         ForEach(chat.messages) { message in
                             bubble(message).id(message.id)
@@ -81,7 +80,7 @@ struct AdvisorView: View {
         .task { await chat.start() }
     }
 
-    private static let bottom = "advisor-bottom"
+    private static let bottom = "advisor-bottom" // i18n:ignore scroll anchor id
 
     // MARK: Messages
 
@@ -91,21 +90,27 @@ struct AdvisorView: View {
         case .player:
             HStack {
                 Spacer(minLength: 40)
-                Text(message.text)
+                // What the player typed, or a chip's wording: data, shown as it is. Wraps to
+                // as many lines as a long German or Ukrainian phrase needs.
+                Text(verbatim: message.text)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
                     .padding(10)
                     .background(Color.accentColor.opacity(0.18), in: RoundedRectangle(cornerRadius: 14))
             }
         case .advisor:
             HStack(alignment: .top, spacing: 8) {
-                Text("💡").font(.title3)
+                Text(verbatim: "💡").font(.title3)
                 VStack(alignment: .leading, spacing: 8) {
                     if let heading = message.heading {
-                        Text(heading)
+                        Text(verbatim: heading)
                             .font(.caption.bold())
                             .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     if !message.text.isEmpty {
-                        Text(message.text)
+                        // The advisor's words — the coach's text or the model's reply — are data.
+                        Text(verbatim: message.text)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     ForEach(message.cards) { card in
@@ -119,27 +124,33 @@ struct AdvisorView: View {
 
     private func cardView(_ card: AdvisorCard) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(card.icon)
+            Text(verbatim: card.icon)
                 .font(.title3)
                 .frame(width: 28)
             VStack(alignment: .leading, spacing: 4) {
                 if !card.title.isEmpty {
-                    Text(card.title)
+                    Text(verbatim: card.title)
                         .font(.subheadline.bold())
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Text(card.detail)
+                Text(verbatim: card.detail)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                 if !card.actions.isEmpty {
-                    HStack(spacing: 8) {
+                    // Buttons wrap onto a second line when the translations are long.
+                    FlowLayout(spacing: 8) {
                         ForEach(card.actions) { action in
-                            Button(action.label) { perform(action) }
-                                .buttonStyle(.bordered)
-                                .controlSize(.small)
+                            Button { perform(action) } label: {
+                                Text(verbatim: action.label)
+                                    .multilineTextAlignment(.leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 2)
                 }
             }
@@ -151,7 +162,7 @@ struct AdvisorView: View {
 
     private var thinking: some View {
         HStack(spacing: 8) {
-            Text("💡").font(.title3)
+            Text(verbatim: "💡").font(.title3)
             ProgressView().controlSize(.small)
             Text("Thinking…")
                 .font(.callout)
@@ -178,20 +189,21 @@ struct AdvisorView: View {
                 // push the conversation off the screen — and step aside while the
                 // keyboard is up, when the conversation needs the room.
                 if chat.replies.count > 8 {
-                    if !typing { ScrollView { chips }.frame(maxHeight: 130) }
+                    if !typing { ScrollView { chips }.scrollIndicators(.visible).frame(maxHeight: 130) }
                 } else {
                     chips
                 }
             }
             if chat.acceptsText {
                 HStack(spacing: 8) {
-                    TextField(chat.choosing ? "Type a job, like “nurse”…" : "Ask me anything…", text: $draft)
+                    TextField(prompt, text: $draft)
                         .textFieldStyle(.roundedBorder)
                         .focused($typing)
                         .submitLabel(.send)
                         .onSubmit(sendDraft)
                     Button("Send", action: sendDraft)
                         .buttonStyle(.borderedProminent)
+                        .fixedSize()
                         .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty || chat.isThinking)
                 }
             }
@@ -202,13 +214,24 @@ struct AdvisorView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// What the empty text box says: a job to type while the advisor is asking for one, else a question.
+    private var prompt: String {
+        chat.choosing ? L("Type a job, like “nurse”…") : L("Ask me anything…")
+    }
+
     private var chips: some View {
         FlowLayout(spacing: 8) {
             ForEach(chat.replies) { reply in
-                Button(reply.label) { Task { await chat.choose(reply) } }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .disabled(chat.isThinking)
+                // A chip is a whole phrase; in German or Ukrainian a long one wraps inside its
+                // button rather than running off the sheet (FlowLayout offers it the row's width).
+                Button { Task { await chat.choose(reply) } } label: {
+                    Text(verbatim: reply.label)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(chat.isThinking)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -225,15 +248,23 @@ struct AdvisorView: View {
 }
 
 /// Lays chips out left to right, wrapping onto new lines — the standard
-/// container has no such layout, and a row of a dozen fields needs one.
+/// container has no such layout, and a row of a dozen fields needs one. A chip
+/// wider than the row (a long German or Ukrainian phrase) is offered the row's
+/// width and wraps its own text, rather than running off the sheet.
 private struct FlowLayout: Layout {
     var spacing: CGFloat = 8
+
+    private func size(of view: LayoutSubview, within width: CGFloat) -> CGSize {
+        let ideal = view.sizeThatFits(.unspecified)
+        guard width.isFinite, ideal.width > width else { return ideal }
+        return view.sizeThatFits(ProposedViewSize(width: width, height: nil))
+    }
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let width = proposal.width ?? .infinity
         var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
         for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
+            let size = size(of: view, within: width)
             if x > 0, x + size.width > width {
                 x = 0
                 y += rowHeight + spacing
@@ -249,7 +280,7 @@ private struct FlowLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
         for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
+            let size = size(of: view, within: bounds.width)
             if x > bounds.minX, x + size.width > bounds.maxX {
                 x = bounds.minX
                 y += rowHeight + spacing

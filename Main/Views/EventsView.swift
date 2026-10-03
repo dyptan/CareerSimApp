@@ -15,14 +15,14 @@ struct EventsView: View {
     /// Taking part spends the year: closes the sheet and runs it.
     var onCommit: () -> Void = {}
 
-    /// The sheet's title ⓘ.
-    static let hint = """
-    At an event you ask to go on stage — to give a talk, perform or pitch. 🎲 is your chance they say yes.
-
-    If they pick you, you get known in that field and meet lots of people there — both help you get hired and promoted. If not, you still go and meet a few people.
-
-    Taking part uses up your year.
-    """
+    /// The sheet's title ⓘ. One paragraph per key.
+    static var hint: String {
+        [
+            L("At an event you ask to go on stage — to give a talk, perform or pitch. 🎲 is your chance they say yes."),
+            L("If they pick you, you get known in that field and meet lots of people there — both help you get hired and promoted. If not, you still go and meet a few people."),
+            L("Taking part uses up your year."),
+        ].joined(separator: "\n\n")
+    }
 
     /// Events the player can join first, best odds first — so the stages the
     /// player has built toward lead, as on the Projects sheet — then by name.
@@ -32,7 +32,7 @@ struct EventsView: View {
             let a = player.canJoinEvent($0), b = player.canJoinEvent($1)
             guard a == b else { return a }
             let oddsA = a ? player.presentOdds($0) : 0, oddsB = b ? player.presentOdds($1) : 0
-            return oddsA == oddsB ? $0.name < $1.name : oddsA > oddsB
+            return oddsA == oddsB ? NameOrder.before($0.name, $1.name) : oddsA > oddsB
         }
     }
 
@@ -55,20 +55,22 @@ struct EventsView: View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
-                    Text("\(event.icon)  \(event.name)")
+                    Text(verbatim: "\(event.icon)  \(event.name)")
                         .font(.headline)
+                        .fixedSize(horizontal: false, vertical: true)
                     if !locked {
                         // Event names run long; the name wraps, the odds don't.
-                        Text("🎲 \(Int((odds * 100).rounded()))%")
+                        Text(verbatim: "🎲 \(Fmt.percent(odds))")
                             .font(.subheadline.monospacedDigit())
                             .foregroundStyle(Color.forOdds(odds))
                             .fixedSize()
                     }
                 }
                 if locked {
-                    Text("🔒 Work or study in \(event.category.rawValue) to take part")
+                    Text(L("🔒 Work or study in \(event.category.displayName) to take part"))
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .opacity(locked ? 0.5 : 1.0)
@@ -95,27 +97,22 @@ struct EventsView: View {
     /// what moves them, what a yes and a no each bring, and the skills it
     /// grows either way.
     private func infoMessage(for event: CareerEvent, odds: Double, locked: Bool) -> String {
-        let field = "\(JobCategory.icon(for: event.category)) \(event.category.rawValue)"
-        let voiceKeyPath: WritableKeyPath<SoftSkills, Int> = \.communicationAndNetworking
-        let voice = "\(SoftSkills.pictogram(forKeyPath: voiceKeyPath) ?? "") \(SoftSkills.label(forKeyPath: voiceKeyPath) ?? "talking")"
+        let field = "\(JobCategory.icon(for: event.category)) \(event.category.displayName)"
+        let voice = SkillLine.tag(\.communicationAndNetworking)
         let grows = event.abilities
-            .map { ability -> String in
-                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
-                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
-                return "\(pic) \(label) +\(ability.weight)"
-            }
+            .map(SkillLine.plus)
             .joined(separator: "\n")
 
         let chance = locked
-            ? "🔒 Work or study in \(field) to take part. Then your chance goes up with years of work there, your \(voice) skill and your fame in the field."
-            : "🎲 \(Int((odds * 100).rounded()))% chance they pick you. It goes up with years of work in \(field), your \(voice) skill and your fame there."
+            ? L("🔒 Work or study in \(field) to take part. Then your chance goes up with years of work there, your \(voice) skill and your fame in the field.")
+            : L("🎲 \(Fmt.percent(odds)) chance they pick you. It goes up with years of work in \(field), your \(voice) skill and your fame there.")
         return [
             event.blurb,
             chance,
-            event.isOpenCall ? "📣 Anyone can apply." : nil,
-            "If they pick you: you win the “\(event.presenterFameTitle)” title (🌟 fame) and meet lots of people in \(field), who can help you get hired and promoted there.",
-            "If not: you still go and meet a few people.",
-            "Grows either way:\n\(grows)",
+            event.isOpenCall ? L("📣 Anyone can apply.") : nil,
+            L("If they pick you: you win the “\(event.presenterFameTitle)” title (🌟 fame) and meet lots of people in \(field), who can help you get hired and promoted there."),
+            L("If not: you still go and meet a few people."),
+            L("Grows either way:\n\(grows)"),
         ].compactMap { $0 }.joined(separator: "\n\n")
     }
 }

@@ -49,14 +49,15 @@ struct DegreesSubmenuView: View {
                                 HStack(spacing: 6) {
                                     Text(education.degreeName(in: player.country))
                                         .font(.headline)
+                                        .fixedSize(horizontal: false, vertical: true)
                                     InfoHint(
                                         title: "\(education.pictogram) \(education.degreeName(in: player.country))",
                                         message: degreeHintBody(for: education)
                                     )
                                 }
                                 Text(player.isSimplified
-                                     ? "\(education.yearsToComplete) years"
-                                     : "\(education.yearsToComplete) years • compare schools")
+                                     ? L("\(education.yearsToComplete) years")
+                                     : L("\(education.yearsToComplete) years • compare schools"))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -79,7 +80,7 @@ struct DegreesSubmenuView: View {
                 }
             }
         }
-        .navigationTitle(profile.rawValue.capitalized)
+        .navigationTitle(profile.displayName)
         .frame(minHeight: 400)
     }
 

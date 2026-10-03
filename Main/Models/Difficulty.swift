@@ -34,8 +34,12 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// than leaving it to the blurb.
     var audience: String {
         switch self {
-        case .simplified:  return "Ages 7+ · easiest"
-        case .middleClass: return "Teens & up · full challenge"
+        case .simplified:
+            return String(localized: "Ages 7+ · easiest",
+                          comment: "Audience chip on the Simplified game-mode card: the youngest players, the gentlest mode.")
+        case .middleClass:
+            return String(localized: "Teens & up · full challenge",
+                          comment: "Audience chip on the Real Life game-mode card: older players, the full simulation.")
         }
     }
 
@@ -56,8 +60,12 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .simplified:  return "Simplified"
-        case .middleClass: return "Real Life"
+        case .simplified:
+            return String(localized: "Simplified",
+                          comment: "Name of the easy, tutorial-style game mode (no skills, tiers or economy).")
+        case .middleClass:
+            return String(localized: "Real Life",
+                          comment: "Name of the full-simulation game mode (skills, hiring odds, money, a shifting economy).")
         }
     }
 
@@ -71,8 +79,8 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// One short line for the picker card; the rest is in `details`.
     var blurb: String {
         switch self {
-        case .simplified:  return "Pick a degree and climb from junior to senior."
-        case .middleClass: return "Skills, odds, money and a shifting economy."
+        case .simplified:  return L("Pick a degree and climb from junior to senior.")
+        case .middleClass: return L("Skills, odds, money and a shifting economy.")
         }
     }
 
@@ -81,27 +89,27 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     func details(in country: Country) -> String {
         switch self {
         case .simplified:
-            return """
-                \(audience). The gentlest way in — a good first game.
-
-                🎯 Goal: \(goalHeadline) — reach a top leadership job.
-
-                • Getting hired only takes the right degree, enough years of work and being old enough. Meet those and the job is yours.
-                • No hiring odds, salary talks, school tiers or economy.
-                • You keep all your pay. There's no rent, tuition or loans.
-                • There's no score and no leaderboard.
-                """
+            return [
+                L("Ages 7+ · easiest. The gentlest way in — a good first game."),
+                "",
+                L("🎯 Goal: \(goalHeadline) — reach a top leadership job."),
+                "",
+                L("• Getting hired only takes the right degree, enough years of work and being old enough. Meet those and the job is yours."),
+                L("• No hiring odds, salary talks, school tiers or economy."),
+                L("• You keep all your pay. There's no rent, tuition or loans."),
+                L("• There's no score and no leaderboard."),
+            ].joined(separator: "\n")
         case .middleClass:
-            return """
-                \(audience).
-
-                🎯 Goal: \(goalHeadline) — your net worth divided by your age when the career ends at \(GameConstants.retirementAge).
-
-                • Hiring is a roll: skills, fame, network, school prestige and the job market all count.
-                • 💵 A typical household: the first \(country.money(livingCostFloor(in: country))) of pay goes on living costs, and you save \(Int(savingsRate * 100))% of the rest. Your family pays \(Int(familyTuitionShare * 100))% of tuition; you borrow the rest.
-                • 📉 About a \(Int(turmoilChance * 100))% chance each calm year that a recession starts, and layoffs that hit some industries harder than others.
-                • Scores go to the Game Center leaderboard.
-                """
+            return [
+                L("Teens & up · full challenge."),
+                "",
+                L("🎯 Goal: \(goalHeadline) — your net worth divided by your age when the career ends at \(GameConstants.retirementAge)."),
+                "",
+                L("• Hiring is a roll: skills, fame, network, school prestige and the job market all count."),
+                L("• 💵 A typical household: the first \(country.money(livingCostFloor(in: country))) of pay goes on living costs, and you save \(Fmt.percent(savingsRate)) of the rest. Your family pays \(Fmt.percent(familyTuitionShare)) of tuition; you borrow the rest."),
+                L("• 📉 About a \(Fmt.percent(turmoilChance)) chance each calm year that a recession starts, and layoffs that hit some industries harder than others."),
+                L("• Scores go to the Game Center leaderboard."),
+            ].joined(separator: "\n")
         }
     }
 
@@ -111,8 +119,12 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// early).
     var goalHeadline: String {
         switch self {
-        case .simplified:  return "Make it to the top"
-        case .middleClass: return "Best score by \(GameConstants.retirementAge)"
+        case .simplified:
+            return String(localized: "Make it to the top",
+                          comment: "Short name of the Simplified mode's goal, shown in the picker and the header.")
+        case .middleClass:
+            return String(localized: "Best score by \(GameConstants.retirementAge)",
+                          comment: "Short name of the Real Life mode's goal, shown in the picker and the header. The number is the retirement age.")
         }
     }
 

@@ -13,8 +13,11 @@ public struct RequirementRow: View {
 
     public var body: some View {
         HStack {
+            // A long translated label wraps onto a second line instead of squeezing the
+            // emoji meter or being cut off.
             Text(label)
-            Spacer()
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
             switch style {
             case let .meter(current, required):
                 HStack(spacing: 4) {
@@ -23,14 +26,17 @@ public struct RequirementRow: View {
                             .opacity(index < current ? 1.0 : 0.3)
                     }
                 }
+                .fixedSize()
+                .layoutPriority(1)
             case let .badge(isMet):
                 Text(emoji)
                     .opacity(isMet ? 1.0 : 0.3)
+                    .layoutPriority(1)
             }
         }
     }
 }
 
 #Preview {
-    RequirementRow(label: "Test", emoji: "🌟", style: .meter(current: 3, required: 5))
+    RequirementRow(label: "Test", emoji: "🌟", style: .meter(current: 3, required: 5))  // i18n:ignore preview
 }

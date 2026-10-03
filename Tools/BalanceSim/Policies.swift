@@ -321,7 +321,7 @@ final class DreamerPolicy: Policy {
         let postings = g.applicablePostings()
         // The pro track: sign with a club, then apply up the ladder (the Player
         // ladder is low-skilled, so it never promotes in place).
-        if p.fameAwards.contains(where: { $0.title == "Junior Champion" }) {
+        if p.fameAwards.contains(where: { $0.key == "Junior Champion" }) {
             let current = p.currentOccupation
             let playerRungs = postings.filter { $0.posting.baseTitle == "Player" }
             if let next = playerRungs.filter({ current?.baseTitle != "Player" || $0.posting.rung > current!.rung })
@@ -339,7 +339,7 @@ final class DreamerPolicy: Policy {
             }
             return
         }
-        if p.fameAwards.contains(where: { $0.title == "Breakout Role" }) {
+        if p.fameAwards.contains(where: { $0.key == "Breakout Role" }) {
             g.takeProject("starFilm", tag: "dreamer:star-film")
         } else {
             g.takeProject("bigBreakActing", tag: "dreamer:big-break")

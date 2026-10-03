@@ -47,8 +47,8 @@ enum CareerGraph {
             let needed = job.minimumQualifyingYears(simplified: player.isSimplified)
             let expected = job.requirements.minYearsExperience
             gaps.append(needed < expected
-                        ? "\(needed) yr \(experienceScope(job)) (role expects \(expected) yr)"
-                        : "\(expected) yr \(experienceScope(job))")
+                        ? yearsGap(needed, roleExpects: expected, job)
+                        : yearsGap(expected, roleExpects: nil, job))
         }
         return gaps
     }
@@ -62,16 +62,30 @@ enum CareerGraph {
         var gaps = gapsBesidesExperience(for: next, player: player)
         if !next.experienceMet(for: player) {
             let have = next.relevantYears(for: player)
-            gaps.append("\(next.requirements.minYearsExperience) yr \(experienceScope(next)) (you have \(have))")
+            gaps.append(promotionYearsGap(next.requirements.minYearsExperience, have: have, next))
         }
         return gaps
     }
 
-    /// Where a role's years must have been earned, for the gap strings: "as
-    /// <ladder>" for a rung or a role that counts another ladder's tenure,
-    /// otherwise "in <category>".
-    private static func experienceScope(_ job: Job) -> String {
-        job.experienceLadder.map { "as \($0)" } ?? "in \(job.category.rawValue)"
+    /// The experience gap of an application: "3 yr as Teacher (role expects 5 yr)". Where a role's years
+    /// must have been earned depends on the role: "as <ladder>" for a rung or a role that counts another
+    /// ladder's tenure, otherwise "in <category>". One whole sentence per case.
+    private static func yearsGap(_ years: Int, roleExpects expected: Int?, _ job: Job) -> String {
+        if let ladder = job.displayExperienceLadder {
+            guard let expected else { return L("\(years) yr as \(ladder)") }
+            return L("\(years) yr as \(ladder) (role expects \(Fmt.number(expected)) yr)")
+        }
+        let category = job.category.displayName
+        guard let expected else { return L("\(years) yr in \(category)") }
+        return L("\(years) yr in \(category) (role expects \(Fmt.number(expected)) yr)")
+    }
+
+    /// The experience gap of a promotion: "5 yr as Teacher (you have 3)".
+    private static func promotionYearsGap(_ years: Int, have: Int, _ job: Job) -> String {
+        if let ladder = job.displayExperienceLadder {
+            return L("\(years) yr as \(ladder) (you have \(Fmt.number(have)))")
+        }
+        return L("\(years) yr in \(job.category.displayName) (you have \(Fmt.number(have)))")
     }
 
     /// Every hard gap except the experience bar — age, degree, licences.
@@ -79,18 +93,18 @@ enum CareerGraph {
         var gaps: [String] = []
 
         if !job.ageGateMet(for: player) {
-            gaps.append("Reach age \(job.minimumHireAge)")
+            gaps.append(L("Reach age \(job.minimumHireAge)"))
         }
         // The degree is absolute in the regulated professions — and, in
         // Simplified mode, for every role (see `Job.educationFactor`).
         if job.educationIsMandatory || player.isSimplified, !job.educationMet(for: player) {
             if player.highestEQF < job.requirements.education.minEQF {
-                gaps.append("Earn \(job.requirements.education.educationLabel(in: player.country))")
+                gaps.append(L("Earn \(job.requirements.education.educationLabel(in: player.country))"))
             } else {
                 let fields = (job.requirements.education.acceptedProfiles ?? [])
-                    .map { $0.rawValue.capitalized }
+                    .map(\.displayName)
                     .joined(separator: " / ")
-                gaps.append("A degree in \(fields)")
+                gaps.append(L("A degree in \(fields)"))
             }
         }
 
@@ -104,7 +118,7 @@ enum CareerGraph {
             let needed = req.trainings.filter { $0.isStatutory || job.category.requiresCredentials }
             for training in needed.subtracting(held)
                 .sorted(by: { $0.rawValue < $1.rawValue }) {
-                gaps.append("Training: \(training.friendlyName)")
+                gaps.append(L("Training: \(training.friendlyName)"))
             }
         }
 
@@ -136,13 +150,13 @@ enum CareerGraph {
 
         // 2. Credential education gates must be attainable at all.
         for training in Training.allCases where training.minEQF > maxAttainableEQF {
-            issues.append("Training ‘\(training.rawValue)’ needs EQF \(training.minEQF) > max attainable \(maxAttainableEQF).")
+            issues.append("Training ‘\(training.rawValue)’ needs EQF \(training.minEQF) > max attainable \(maxAttainableEQF).") // i18n:ignore developer-only validation message
         }
 
         // 3. Every job's education gate must be attainable at all.
         for job in JobCatalog.allJobs() {
             if job.requirements.education.minEQF > maxAttainableEQF {
-                issues.append("Job ‘\(job.id)’ needs EQF \(job.requirements.education.minEQF) > max attainable \(maxAttainableEQF).")
+                issues.append("Job ‘\(job.id)’ needs EQF \(job.requirements.education.minEQF) > max attainable \(maxAttainableEQF).") // i18n:ignore developer-only validation message
             }
         }
 
@@ -161,7 +175,7 @@ enum CareerGraph {
             case 2: return
             case 1:
                 let cycle = (trail + [training]).map(\.rawValue).joined(separator: " → ")
-                issues.append("Training prerequisite cycle: \(cycle)")
+                issues.append("Training prerequisite cycle: \(cycle)") // i18n:ignore developer-only validation message
                 return
             default: break
             }

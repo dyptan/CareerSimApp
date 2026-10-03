@@ -31,7 +31,7 @@ struct PrivateProjectsView: View {
             .filter { $0.stages.contains(currentStage) }
             .sorted {
                 let a = player.projectOdds(for: $0), b = player.projectOdds(for: $1)
-                return a == b ? $0.label < $1.label : a > b
+                return a == b ? NameOrder.before($0.label, $1.label) : a > b
             }
     }
 
@@ -65,22 +65,13 @@ struct SideHustleRow: View {
 
     var body: some View {
         let odds = player.projectOdds(for: hustle)
-        let oddsPct = Int((odds * 100).rounded())
 
         let talentHint: String = hustle.talents
-            .map { kp -> String in
-                let label = SoftSkills.label(forKeyPath: kp) ?? "Skill"
-                let pic = SoftSkills.pictogram(forKeyPath: kp) ?? ""
-                return "\(pic) \(label)"
-            }
+            .map(SkillLine.tag)
             .joined(separator: "\n")
 
         let growthHint: String = hustle.growth
-            .map { boost -> String in
-                let label = SoftSkills.label(forKeyPath: boost.keyPath) ?? "Skill"
-                let pic = SoftSkills.pictogram(forKeyPath: boost.keyPath) ?? ""
-                return "\(pic) \(label) +\(boost.weight)"
-            }
+            .map(SkillLine.plus)
             .joined(separator: "\n")
 
         let locked = !player.canTakeProject(hustle)
@@ -88,18 +79,21 @@ struct SideHustleRow: View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
-                    Text("\(hustle.icon)  \(hustle.label)")
+                    Text(verbatim: "\(hustle.icon)  \(hustle.label)")
                         .font(.headline)
+                        .fixedSize(horizontal: false, vertical: true)
                     if !locked {
-                        Text("🎲 \(oddsPct)%")
+                        Text(verbatim: "🎲 \(Fmt.percent(odds))")
                             .font(.subheadline.monospacedDigit())
                             .foregroundStyle(Color.forOdds(odds))
+                            .fixedSize()
                     }
                 }
-                if let award = hustle.requiresAward, locked {
-                    Text("🔒 Needs the “\(award)” title")
+                if let award = hustle.requiredAwardTitle, locked {
+                    Text(L("🔒 Needs the “\(award)” title"))
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .opacity(locked ? 0.5 : 1.0)
@@ -124,56 +118,55 @@ struct SideHustleRow: View {
 
     /// Why a star project is still closed, if it is.
     private func lockLine(for hustle: SideHustle) -> String? {
-        guard let award = hustle.requiresAward, !player.canTakeProject(hustle) else { return nil }
-        return "🔒 Opens once you hold the “\(award)” title — chase it under Projects."
+        guard let award = hustle.requiredAwardTitle, !player.canTakeProject(hustle) else { return nil }
+        return L("🔒 Opens once you hold the “\(award)” title — chase it under Projects.")
     }
 
-    /// The project hint, kept to what the player can act on: the blurb, the
-    /// odds and what moves them, the fame a win banks (projects pay no money —
-    /// they build fame and skills), what the year costs either way. The
-    /// mechanic used to be spelled out in full prose, which made every row a
-    /// wall of text to read past.
+    /// What moves the chance, in one short paragraph. The skills it points to are the "Needs" list below it.
+    /// The field note is a sentence of its own, so no sentence is glued from fragments.
+    private func oddsLine(for hustle: SideHustle, fame: String) -> String {
+        let main = L("Chance goes up with the skills below, your years of work and your \(fame) fame.")
+        guard let cat = hustle.experienceCategory else { return main }
+        let field = "\(JobCategory.icon(for: cat)) \(cat.displayName)"
+        return main + AdvisorCoach.sentenceGap + L("Years of \(field) work count double.")
+    }
+
+    /// What the field's climate does to the odds this year; nothing to say when it is steady.
+    private func climateLine(for hustle: SideHustle) -> String? {
+        let climate = player.projectClimate(for: hustle)
+        let effect = SkillsView.easierOrHarder(climate.projectFactor)
+        switch climate {
+        case .steady:   return nil
+        case .boom:     return L("\(climate.icon) This field is booming this year: \(effect).")
+        case .growth:   return L("\(climate.icon) This field is growing this year: \(effect).")
+        case .slowdown: return L("\(climate.icon) This field is slowing this year: \(effect).")
+        case .slump:    return L("\(climate.icon) This field is in a slump this year: \(effect).")
+        }
+    }
+
+    /// The project hint, kept to four things: what the project is, the chance
+    /// it works, what moves that chance, and what it gains (fame if it works,
+    /// skills either way). Projects pay no money, and a flop costs only the
+    /// year, which the result pop-up reports.
     private func infoMessage(for hustle: SideHustle, odds: Double,
                              talentHint: String, growthHint: String) -> String {
-        let oddsPct = Int((odds * 100).rounded())
         let category = hustle.fameCategory
-        let fame = "\(category.icon) \(category.rawValue)"
+        let fame = "\(category.icon) \(category.displayName)"
 
-        // Naming the drivers with where the player stands now makes a 0% row
-        // read as "not yet" rather than "broken".
-        var oddsLine = "Your chance goes up with the skills below, your \(player.totalExperienceYears) years of work"
-        if let cat = hustle.experienceCategory {
-            let field = player.industryExperience(for: cat)
-            oddsLine += " (your \(field) years in \(JobCategory.icon(for: cat)) \(cat.rawValue) count double)"
-        }
-        oddsLine += ", and the \(fame) fame you already have — being known in a field makes the next project there easier."
-
-        let climate = player.projectClimate(for: hustle)
-        let climateLine = climate == .steady
-            ? nil
-            : "\(climate.icon) This field is \(climate.rawValue.lowercased()) this year: \(SkillsView.easierOrHarder(climate.projectFactor))."
-
-        // Only the fame is at stake — the skill gains and the banked experience
-        // land either way, so the loss line says what is actually lost.
-        var lossLine = "If it doesn't work out: you just miss the fame — you keep the skills."
-        if let cat = hustle.experienceCategory {
-            let credited = cat.creditedExperienceCategories
-                .map { "\(JobCategory.icon(for: $0)) \($0.rawValue)" }
-                .joined(separator: ", ")
-            lossLine += " 📅 The year still counts as \(JobCategory.icon(for: cat)) \(cat.rawValue) work experience"
-            lossLine += credited.isEmpty ? "." : ", which also helps for \(credited) jobs."
-        }
+        // A closed project has no odds to quote: say what opens it instead.
+        let chance: String? = lockLine(for: hustle) ?? [
+            L("🎲 \(Fmt.percent(odds)) chance it works"),
+            // Naming the drivers makes a 0% row read as "not yet" rather than "broken".
+            oddsLine(for: hustle, fame: fame),
+        ].joined(separator: "\n")
 
         return [
             hustle.blurb,
-            "🎲 \(oddsPct)% chance it works · 🌟 \(fame) fame",
-            oddsLine,
-            climateLine,
-            "Needs:\n\(talentHint)",
-            "Grows, whether it works or not:\n\(growthHint)",
-            lockLine(for: hustle),
-            "If it works: \(fame) fame — it makes your next project easier and helps you get \(category.rawValue) jobs. Projects don't pay money: they're for fame and skills.",
-            lossLine,
+            chance,
+            climateLine(for: hustle),
+            L("Needs:\n\(talentHint)"),
+            L("If it works: 🌟 \(fame) fame."),
+            L("Grows, whether it works or not:\n\(growthHint)"),
         ].compactMap { $0 }.joined(separator: "\n\n")
     }
 }

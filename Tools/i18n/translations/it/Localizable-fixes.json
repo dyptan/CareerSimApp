@@ -1,0 +1,10 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
+      "one": "🎲 Saltare %lld anno di infanzia ti regala un punto competenza casuale. Giocare quell’anno di persona ne fa guadagnare molti di più.",
+      "other": "🎲 Saltare %lld anni di infanzia ti regala un punto competenza casuale per ogni anno. Giocare quegli anni di persona ne fa guadagnare molti di più."
+    },
+    "%@ This field is in a slump this year: %@.": "%1$@ Questo settore è in crisi quest’anno: %2$@."
+  }
+}

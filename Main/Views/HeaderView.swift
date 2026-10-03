@@ -14,24 +14,29 @@ struct HeaderView: View {
                 HStack {
                     Text(player.avatar)
                         .font(.title2)
-                    Text("Age:")
-                    Text("\(player.age)")
-                        .scaleEffect(didBumpAgeScale ? 2 : 1)
-                        .animation(.spring(), value: didBumpAgeScale)
-                        .onChange(of: player.age) { _ in
-                            didBumpAgeScale = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                didBumpAgeScale = false
+                    // The label and the number sit close, as one phrase; the HStack's own gap would
+                    // open a hole after the colon (wide in Japanese, whose colon is full-width).
+                    HStack(spacing: 4) {
+                        Text("Age:", comment: "Header label before the player's age number")  // i18n:ignore translator comment
+                        Text(verbatim: "\(player.age)")
+                            .scaleEffect(didBumpAgeScale ? 2 : 1)
+                            .animation(.spring(), value: didBumpAgeScale)
+                            .onChange(of: player.age) { _ in
+                                didBumpAgeScale = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    didBumpAgeScale = false
+                                }
                             }
-                        }
-                    InfoHint(title: "Game mode", message: gameModeSummary)
+                    }
+                    InfoHint(title: L("Game mode"), message: gameModeSummary)
                 }
 
                 // Free to open at any age: reading advice never spends the year.
                 // A dot means the advisor has something waiting — its opening
                 // question, or a review of the year just lived.
                 Button { appUIState.showAdvisorSheet = true } label: {
-                    Label("Advice", systemImage: "lightbulb")
+                    Label(String(localized: "Advice", comment: "Header button that opens the career advisor (a noun: advice to read)"),  // i18n:ignore translator comment
+                          systemImage: "lightbulb")
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
@@ -59,13 +64,19 @@ struct HeaderView: View {
                 // and Start over (see `RetirementView`). The header itself no
                 // longer shows the score. Simplified keeps no score, so there
                 // it is a progress check.
-                Button(player.difficulty.keepsScore ? "Score" : "Progress") { appUIState.showRetirementSheet = true }
+                Button(player.difficulty.keepsScore
+                       ? String(localized: "Score", comment: "Header button: opens the score sheet (Real Life mode)")  // i18n:ignore translator comment
+                       : String(localized: "Progress", comment: "Header button: opens the progress check (Simplified mode, which keeps no score)")) {  // i18n:ignore translator comment
+                    appUIState.showRetirementSheet = true
+                }
                     .buttonStyle(.bordered)
                     .font(.headline)
 
                 // No years left to spend once the horizon is reached — the
                 // score is final, so the control that would change it goes away.
-                Button("Skip") { player.advanceYear(appUIState: appUIState) }
+                Button(String(localized: "Skip", comment: "Header button: let this year pass without choosing anything (a verb)")) {  // i18n:ignore translator comment
+                    player.advanceYear(appUIState: appUIState)
+                }
                     .buttonStyle(.borderedProminent)
                     .font(.headline)
                     .disabled(player.hasRetired)
@@ -82,9 +93,9 @@ struct HeaderView: View {
         lines.append("\(player.difficulty.icon) \(player.difficulty.title)")
         lines.append("\(player.country.flag) \(player.country.title)")
         if !player.isSimplified {
-            lines.append("💵 Saving \(Int(player.difficulty.savingsRate * 100))% of pay above \(player.money(player.livingCostFloor)) of living costs each year")
+            lines.append(L("💵 Saving \(Fmt.percent(player.difficulty.savingsRate)) of pay above \(player.money(player.livingCostFloor)) of living costs each year"))
         }
-        lines.append("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)")
+        lines.append(L("\(player.difficulty.goalIcon) Goal: \(player.difficulty.goalHeadline)"))
         return lines.joined(separator: "\n")
     }
 }

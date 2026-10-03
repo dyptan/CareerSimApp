@@ -1,0 +1,29 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "Record an online course and build an audience of learners.": "Запиши онлайн-курс і збери аудиторію слухачів.",
+    "Build an audience across social media, a blog and a podcast.": "Збери аудиторію в соцмережах, блозі та подкасті.",
+    "Spend the year writing and publishing a book.": "Присвяти рік книжці: напиши її й видай.",
+    "Perform on your own, as a musician, dancer or actor.": "Виступай самостійно — як музикант, танцівник або актор.",
+    "Book studio time and release your own music.": "Забронюй час у студії й випусти власну музику.",
+    "Go to auditions and take the parts you can get: an ad, a small TV role, a play.": "Ходи на проби й бери ролі, які вдасться отримати: реклама, маленька роль на ТБ, вистава.",
+    "Play weddings, cafés and shows of your own.": "Грай на весіллях, у кафе й на власних шоу.",
+    "Take the lead in a big movie.": "Зіграй головну роль у великому фільмі.",
+    "Take your songs on tour, from small clubs to stadiums.": "Вирушай зі своїми піснями в тур — від маленьких клубів до стадіонів.",
+    "Audition for the lead role that could make you a movie star.": "Йди на проби на головну роль, яка може зробити тебе кінозіркою.",
+    "Write the song that could top the charts.": "Напиши пісню, яка може очолити чарти.",
+    "Build a small demo app to show off an idea.": "Створи невеликий демо-застосунок, щоб показати ідею.",
+    "Contribute to an open-source project, in the open.": "Роби внесок у проєкт із відкритим кодом — відкрито, на очах у всіх.",
+    "Write a long deep-dive out of pure curiosity.": "Напиши довгий глибокий розбір теми з чистої цікавості.",
+    "Make a mod for a game you love: new levels, mechanics or art.": "Створи мод для гри, яку ти любиш: нові рівні, механіки або графіка.",
+    "Record a podcast and put out episode after episode.": "Записуй подкаст і випускай епізод за епізодом.",
+    "Write, shoot and edit a short film yourself.": "Напиши, зніми й змонтуй короткометражний фільм власноруч.",
+    "Record tutorials and deep-dives for developers, on the side.": "Записуй уроки та глибокі розбори для розробників у вільний час.",
+    "Write up independent research and post it for the world to read.": "Оформи й виклади самостійне дослідження, щоб його міг прочитати весь світ.",
+    "Rally backers behind a product idea and hit your funding goal.": "Згуртуй прихильників навколо ідеї продукту й збери потрібну суму.",
+    "Chance goes up with the skills below, your years of work and your %@ fame.": "Шанс підвищують навички нижче, твої роки роботи й твоя слава (%@).",
+    "Years of %@ work count double.": "Роки роботи у сфері «%@» враховуються вдвічі.",
+    "🎲 %@ chance it works": "🎲 Шанс успіху: %@",
+    "If it works: 🌟 %@ fame.": "Якщо вдасться: 🌟 слава (%@)."
+  }
+}

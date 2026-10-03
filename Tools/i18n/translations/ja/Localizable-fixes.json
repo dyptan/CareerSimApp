@@ -1,0 +1,9 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
+      "other": "🎲 子ども時代の%lld年分を飛ばすと、1年につきランダムなスキルポイントが1つもらえます。その年月を自分でプレーすると、もっとたくさん身につきます。"
+    },
+    "%@ This field is in a slump this year: %@.": "%1$@ この分野は今年、不況です（%2$@）。"
+  }
+}

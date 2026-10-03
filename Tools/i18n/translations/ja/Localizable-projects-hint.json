@@ -1,0 +1,29 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "Record an online course and build an audience of learners.": "オンライン講座を録画して、受講者を増やします。",
+    "Build an audience across social media, a blog and a podcast.": "SNS、ブログ、ポッドキャストでファンを増やします。",
+    "Spend the year writing and publishing a book.": "1年かけて本を書き、出版します。",
+    "Perform on your own, as a musician, dancer or actor.": "ミュージシャン、ダンサー、俳優として、ひとりで出演します。",
+    "Book studio time and release your own music.": "スタジオを借りて、自分の音楽を世に出します。",
+    "Go to auditions and take the parts you can get: an ad, a small TV role, a play.": "オーディションを受けて、広告、テレビの小さな役、舞台など、得られる役を引き受けます。",
+    "Play weddings, cafés and shows of your own.": "結婚式やカフェ、自分のライブで演奏します。",
+    "Take the lead in a big movie.": "大作映画で主演します。",
+    "Take your songs on tour, from small clubs to stadiums.": "自分の曲を持って、小さなライブハウスからスタジアムまでツアーに出ます。",
+    "Audition for the lead role that could make you a movie star.": "映画スターになれるかもしれない主役のオーディションを受けます。",
+    "Write the song that could top the charts.": "チャート上位に入れる1曲を書きます。",
+    "Build a small demo app to show off an idea.": "アイデアを見せるために、小さなデモアプリを作ります。",
+    "Contribute to an open-source project, in the open.": "オープンソースのプロジェクトに、オープンな場で貢献します。",
+    "Write a long deep-dive out of pure curiosity.": "純粋な好奇心から、深掘りした長編記事を書きます。",
+    "Make a mod for a game you love: new levels, mechanics or art.": "大好きなゲームのMODを作ります。新しいレベルや仕組み、アートを加えます。",
+    "Record a podcast and put out episode after episode.": "ポッドキャストを収録して、エピソードを次々と配信します。",
+    "Write, shoot and edit a short film yourself.": "自分で脚本を書き、撮影し、編集して、短編映画を作ります。",
+    "Record tutorials and deep-dives for developers, on the side.": "開発者向けの解説動画や深掘り動画を、空いた時間に録画します。",
+    "Write up independent research and post it for the world to read.": "独立して進めた研究をまとめて、世界に向けて公開します。",
+    "Rally backers behind a product idea and hit your funding goal.": "商品アイデアに支援者を集めて、目標金額を達成します。",
+    "Chance goes up with the skills below, your years of work and your %@ fame.": "確率は、必要なスキル、仕事の経験年数、%@の名声に応じて上がります。",
+    "Years of %@ work count double.": "%@での仕事の経験年数は2倍に数えられます。",
+    "🎲 %@ chance it works": "🎲 成功確率%@",
+    "If it works: 🌟 %@ fame.": "成功すると、🌟 %@の名声が手に入ります。"
+  }
+}

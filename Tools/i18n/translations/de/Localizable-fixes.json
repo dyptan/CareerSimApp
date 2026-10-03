@@ -1,0 +1,10 @@
+{
+  "table": "Localizable",
+  "strings": {
+    "🎲 Skipping %lld years of childhood gives you one random skill point for each. Playing those years yourself builds far more.": {
+      "one": "🎲 Wenn du %lld Jahr Kindheit überspringst, bekommst du einen zufälligen Fähigkeitspunkt. Dieses Jahr selbst zu spielen bringt viel mehr.",
+      "other": "🎲 Wenn du %lld Jahre Kindheit überspringst, bekommst du für jedes Jahr einen zufälligen Fähigkeitspunkt. Diese Jahre selbst zu spielen bringt viel mehr."
+    },
+    "%@ This field is in a slump this year: %@.": "%1$@ Dieser Bereich steckt dieses Jahr in der Krise: %2$@."
+  }
+}

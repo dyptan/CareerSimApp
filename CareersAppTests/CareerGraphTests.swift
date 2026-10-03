@@ -2041,7 +2041,7 @@ final class FamePaysTests: XCTestCase {
             ui.selectedSideHustles = [gigs.id]
             player.advanceYear(appUIState: ui)
             XCTAssertEqual(player.savings, 0, "A project year adds no money.")
-            if player.fameAwards.contains(where: { $0.title == (gigs.fameTitle ?? gigs.label) }) { return }
+            if player.fameAwards.contains(where: { $0.key == gigs.fameKey }) { return }
         }
         XCTFail("A near-certain project should land at least once in 50 tries.")
     }
@@ -2453,5 +2453,76 @@ final class HiringModelTests: XCTestCase {
                               "\(role.id) lists \(training.rawValue), which does nothing for it.")
             }
         }
+    }
+}
+
+// MARK: - Catalogue text for translation
+
+/// The job catalogue's translatable text is listed in `Tools/i18n/translations/en/Catalogue-jobs.json`,
+/// which `Tools/i18n/dump-catalogue.sh` writes from the catalogue itself. These tests fail when a job
+/// is added, renamed or reworded without re-running it.
+final class JobCatalogueTextTests: XCTestCase {
+
+    private func listedStrings() throws -> [String: String] {
+        // CareersAppTests/CareerGraphTests.swift -> <repo>/Tools/i18n/translations/en/Catalogue-jobs.json
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Tools/i18n/translations/en/Catalogue-jobs.json")
+        let data = try Data(contentsOf: url)
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(object["table"] as? String, "Catalogue")
+        return try XCTUnwrap(object["strings"] as? [String: String])
+    }
+
+    func testEveryJobTextIsListedForTranslation() throws {
+        let listed = try listedStrings()
+        let hint = "Run Tools/i18n/dump-catalogue.sh."
+        for job in JobCatalog.allJobs() {
+            XCTAssertEqual(listed["job.title.\(job.id)"], job.id, "No title entry for \(job.id). \(hint)")
+            XCTAssertEqual(listed["job.base.\(job.baseTitle)"], job.baseTitle, "No base-title entry for \(job.id). \(hint)")
+            XCTAssertEqual(listed["job.summary.\(job.id)"], job.summary, "No summary entry for \(job.id). \(hint)")
+            if !job.rungLabel.isEmpty {
+                XCTAssertEqual(listed["job.rung.\(job.rungLabel)"], job.rungLabel, "No rung entry for \(job.id). \(hint)")
+            }
+            if let ladder = job.experienceLadder {
+                XCTAssertEqual(listed["job.ladder.\(ladder)"], ladder, "No ladder entry for \(job.id). \(hint)")
+            }
+        }
+    }
+
+    func testNoListedEntryIsStale() throws {
+        let listed = try listedStrings()
+        let jobs = JobCatalog.allJobs()
+        var expected = Set<String>()
+        for job in jobs {
+            expected.insert("job.title.\(job.id)")
+            expected.insert("job.base.\(job.baseTitle)")
+            expected.insert("job.summary.\(job.id)")
+            if !job.rungLabel.isEmpty { expected.insert("job.rung.\(job.rungLabel)") }
+            if let ladder = job.experienceLadder { expected.insert("job.ladder.\(ladder)") }
+        }
+        XCTAssertEqual(Set(listed.keys).subtracting(expected).sorted(), [],
+                       "Entries for jobs that no longer exist. Run Tools/i18n/dump-catalogue.sh.")
+    }
+
+    /// In the headless build (no catalog) every display accessor gives back the English the model holds.
+    func testDisplayAccessorsFallBackToEnglish() throws {
+        for job in JobCatalog.allJobs() {
+            XCTAssertEqual(job.catalogueTitle, job.id)
+            XCTAssertEqual(job.displayBaseTitle, job.baseTitle)
+            XCTAssertEqual(job.displaySummary, job.summary)
+            XCTAssertEqual(job.displayRungLabel, job.rungLabel)
+            XCTAssertEqual(job.displayExperienceLadder, job.experienceLadder)
+            XCTAssertEqual(job.displayTitle, job.isEntrepreneurial ? "CEO, \(job.id)" : job.id)
+            XCTAssertEqual(job.seniorityLabel, job.rungLabel.isEmpty ? "Standard" : job.rungLabel)
+        }
+    }
+
+    func testEveryIdentityEnumHasADisplayName() {
+        for c in FameCategory.allCases { XCTAssertEqual(c.displayName, c.rawValue) }
+        for c in WorkSetting.allCases { XCTAssertEqual(c.displayName, c.rawValue) }
+        for c in JobCategory.allCases { XCTAssertEqual(c.displayName, c.rawValue) }
+        for c in Industry.allCases { XCTAssertEqual(c.displayName, c.rawValue) }
+        for c in IndustryClimate.allCases { XCTAssertEqual(c.displayName, c.rawValue) }
     }
 }

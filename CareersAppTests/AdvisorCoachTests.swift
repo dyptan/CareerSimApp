@@ -46,6 +46,103 @@ final class AdvisorCoachTests: XCTestCase {
                        "Technology, Engineering or Science")
     }
 
+    // MARK: - Finding a role in every language
+
+    /// What the player types is read in the game's language. The headless tests have no catalog, so
+    /// the roles' display names are their English ids: these exercise the tokenizer, the folding and
+    /// the matching directly, with hand-written tokens, and the search with the language pinned.
+    private func withLanguage(_ language: L10n.Language, _ body: () throws -> Void) rethrows {
+        let before = L10n.languageOverride
+        L10n.languageOverride = language
+        defer { L10n.languageOverride = before }
+        try body()
+    }
+
+    func testEnglishQueriesReadAsTheyAlwaysDid() {
+        XCTAssertEqual(AdvisorCoach.contentWords("I want to be a nurse", language: .english), ["nurse"])
+        XCTAssertEqual(AdvisorCoach.contentWords("I'm a Junior Developer!", language: .english), ["junior", "developer"])
+        XCTAssertEqual(AdvisorCoach.contentWords("I want to be a", language: .english), [])
+        XCTAssertEqual(AdvisorCoach.tokens("Software-Engineer, e-mail", language: .english), ["software", "engineer", "e", "mail"])
+    }
+
+    func testJapaneseIsSegmentedIntoWordsAndTheParticlesDropped() {
+        // No spaces in Japanese: the system tokenizer finds the words.
+        XCTAssertGreaterThan(AdvisorCoach.tokens("看護師になりたい", language: .japanese).count, 1)
+        // "I want to be a nurse" → the nurse. (Split as 看護 + 師 or whole, depending on the system.)
+        XCTAssertEqual(AdvisorCoach.contentWords("看護師になりたい", language: .japanese).joined(), "看護師")
+        // "I like animals" → animals; が、好き and です are filler.
+        XCTAssertEqual(AdvisorCoach.contentWords("動物が好きです", language: .japanese).joined(), "動物")
+        // A single kanji is a word; a single kana is a particle.
+        XCTAssertFalse(AdvisorCoach.isFiller("医", language: .japanese))
+        XCTAssertTrue(AdvisorCoach.isFiller("を", language: .japanese))
+    }
+
+    func testDiacriticsCaseAndWidthDoNotMatter() {
+        XCTAssertEqual(AdvisorCoach.fold("Ärztin", language: .german), AdvisorCoach.fold("ARZTIN", language: .german))
+        XCTAssertEqual(AdvisorCoach.fold("Straße", language: .german), "strasse")
+        XCTAssertEqual(AdvisorCoach.fold("Infirmière", language: .french), "infirmiere")
+        XCTAssertEqual(AdvisorCoach.fold("Élève", language: .french), AdvisorCoach.fold("eleve", language: .french))
+        XCTAssertEqual(AdvisorCoach.fold("Farmacista Più", language: .italian), "farmacista piu")
+        XCTAssertEqual(AdvisorCoach.fold("ＡＢＣ ｿﾌﾄ", language: .japanese), "abc ソフト")
+        // Ukrainian keeps й and ї: they are letters of their own, not accents.
+        XCTAssertEqual(AdvisorCoach.fold("Їжак Київ", language: .ukrainian), "їжак київ")
+    }
+
+    func testFillerWordsAreDroppedInEachLanguage() {
+        XCTAssertEqual(AdvisorCoach.contentWords("Ich möchte Krankenpfleger werden", language: .german), ["krankenpfleger"])
+        XCTAssertEqual(AdvisorCoach.contentWords("Je voudrais devenir infirmière", language: .french), ["infirmiere"])
+        XCTAssertEqual(AdvisorCoach.contentWords("Voglio fare l'infermiere", language: .italian), ["infermiere"])
+        XCTAssertEqual(AdvisorCoach.contentWords("Я хочу бути лікарем", language: .ukrainian), ["лікарем"])
+        // English words typed into a German game are filler too.
+        XCTAssertEqual(AdvisorCoach.contentWords("I want to be Pilot", language: .german), ["pilot"])
+    }
+
+    func testWordsMatchOnTheirStemsAndTheirHeads() {
+        XCTAssertTrue(AdvisorCoach.matches("nurs", "nurse", language: .english))
+        XCTAssertFalse(AdvisorCoach.matches("cat", "category", language: .english), "Under four letters is exact only.")
+        // A German compound is found by its head, which English never does.
+        XCTAssertTrue(AdvisorCoach.matches("pfleger", "krankenpfleger", language: .german))
+        XCTAssertFalse(AdvisorCoach.matches("pfleger", "krankenpfleger", language: .english))
+        // A Japanese word is found inside a longer one.
+        XCTAssertTrue(AdvisorCoach.matches("看護師", "看護師長", language: .japanese))
+        XCTAssertFalse(AdvisorCoach.matches("看護師", "薬剤師", language: .japanese))
+    }
+
+    func testTokensThatFillTheCatalogueAreFillerToo() {
+        let documents = (0..<30).map { Set(["arbeit", "rolle\($0)"]) }
+        XCTAssertEqual(AdvisorCoach.frequentTokens(in: documents), ["arbeit"])
+        XCTAssertTrue(AdvisorCoach.isFiller("arbeit", language: .german, frequent: ["arbeit"]))
+        XCTAssertFalse(AdvisorCoach.isFiller("rolle1", language: .german, frequent: ["arbeit"]))
+        XCTAssertTrue(AdvisorCoach.frequentTokens(in: Array(documents.prefix(5))).isEmpty, "Nothing to learn from a handful of roles.")
+    }
+
+    func testTheSearchFindsEnglishTitlesInEveryLanguage() {
+        for language in L10n.Language.allCases {
+            withLanguage(language) {
+                XCTAssertTrue(AdvisorCoach.search("nurse").map(\.baseTitle).contains("Registered Nurse"), language.rawValue)
+                XCTAssertEqual(AdvisorCoach.search("Registered Nurse").first?.baseTitle, "Registered Nurse", language.rawValue)
+                XCTAssertTrue(AdvisorCoach.search("xyzzy").isEmpty, language.rawValue)
+                XCTAssertTrue(AdvisorCoach.contentWords("nurse").contains("nurse"), language.rawValue)
+            }
+        }
+    }
+
+    func testSentencesAreSetApartBySpacesExceptInJapanese() {
+        XCTAssertEqual(AdvisorCoach.sentences(["One.", "", "Two."]), "One. Two.")
+        withLanguage(.japanese) { XCTAssertEqual(AdvisorCoach.sentences(["一。", "二。"]), "一。二。") }
+    }
+
+    func testNumbersAreWrittenThroughFmt() {
+        XCTAssertEqual(AdvisorPathway.percent(0.304), Fmt.percent(0.304))
+        XCTAssertEqual(CareerAdvisor.percent(0.5), Fmt.percent(0.5))
+        XCTAssertEqual(AdvisorPathway.decimal(2.0), "2", "A whole number drops its decimal.")
+        XCTAssertEqual(AdvisorPathway.decimal(0.34), Fmt.decimal(0.3, digits: 1))
+        XCTAssertEqual(AdvisorPathway.chance(0.001), "under \(Fmt.percent(0.01))")
+        XCTAssertEqual(AdvisorPathway.decimalPercent(0.04), Fmt.percent(0.04))
+        XCTAssertTrue(AdvisorPathway.decimalPercent(0.005).contains("5"), "A half percent keeps its decimal.")
+        XCTAssertNotEqual(AdvisorPathway.decimalPercent(0.005), AdvisorPathway.decimalPercent(0.01))
+    }
+
     func testEveryRoleIsPickableAndLaddersRunEntryRungFirst() {
         XCTAssertFalse(AdvisorCoach.families.isEmpty)
         for family in AdvisorCoach.families {

@@ -42,7 +42,7 @@ struct JobsView: View {
         // `isEntrepreneurial` rather than by category (a category still lists its
         // ordinary jobs).
         Array(Set(filteredJobs.map(\.category)))
-            .sorted { $0.rawValue < $1.rawValue }
+            .sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
     }
 
     /// Groups the jobs in `category` by `baseTitle`, returning one entry per
@@ -53,7 +53,7 @@ struct JobsView: View {
         let grouped = Dictionary(grouping: inCategory) { $0.baseTitle }
         return grouped
             .map { (key, value) in RoleGroup(baseTitle: key, variants: Self.leastToMostSenior(value)) }
-            .sorted { $0.baseTitle < $1.baseTitle }
+            .sorted { $0.displayBaseTitle.localizedStandardCompare($1.displayBaseTitle) == .orderedAscending }
     }
 
     /// A role's postings from least to most senior, by the experience they ask
@@ -94,12 +94,13 @@ struct JobsView: View {
             JobDetail(job: only.atBaseSalary(), player: player,
                       showCareersSheet: $showCareersSheet, onCommit: onCommit)
         } else {
-            Text("Nobody is posting \(baseTitle) jobs this year. The job market changes every year — check again next year.")
+            let title = JobCatalog.displayBaseTitle(for: baseTitle)
+            Text(L("Nobody is posting \(title) jobs this year. The job market changes every year — check again next year."))
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .navigationTitle(baseTitle)
+                .navigationTitle(title)
         }
     }
 
@@ -131,13 +132,13 @@ struct JobsView: View {
                                 }
                             } label: {
                                 RoleGroupRow(
-                                    baseTitle: group.baseTitle,
+                                    baseTitle: group.displayBaseTitle,
                                     variants: group.variants
                                 )
                             }
                         }
                     }
-                    .navigationTitle(category.rawValue.capitalized)
+                    .navigationTitle(category.displayName)
                 } label: {
                     CategoryRow(category: category)
                         .padding(.vertical, 6)
@@ -151,7 +152,7 @@ struct JobsView: View {
                     .padding(.vertical, 8)
             }
         }
-        .gameSheetClose($showCareersSheet, title: "Jobs")
+        .gameSheetClose($showCareersSheet, title: String(localized: "Jobs", comment: "Title of the sheet listing job categories and postings")) // i18n:ignore translator comment
     }
 
     /// Filters sit above the list rather than behind a toolbar button: on a small
@@ -161,17 +162,18 @@ struct JobsView: View {
         Section {
             HStack(spacing: 6) {
                 Text("Kind of work")
+                    .fixedSize(horizontal: false, vertical: true)
                 InfoHint(
-                    title: "Kind of work",
+                    title: L("Kind of work"),
                     message: WorkSetting.allCases
-                        .map { "\($0.pictogram) \($0.rawValue) — \($0.blurb)" }
+                        .map { L("\($0.pictogram) \($0.displayName) — \($0.blurb)") }
                         .joined(separator: "\n\n")
                 )
                 Spacer()
                 Picker("Kind of work", selection: $settingFilter) {
-                    Text("Any").tag(WorkSetting?.none)
+                    Text("Any", comment: "Filter choice: show roles of any kind of work").tag(WorkSetting?.none) // i18n:ignore translator comment
                     ForEach(WorkSetting.allCases) { setting in
-                        Text("\(setting.pictogram) \(setting.rawValue)").tag(WorkSetting?.some(setting))
+                        Text(verbatim: "\(setting.pictogram) \(setting.displayName)").tag(WorkSetting?.some(setting))
                     }
                 }
                 .labelsHidden()
@@ -181,7 +183,7 @@ struct JobsView: View {
             Toggle("Only roles I qualify for", isOn: $qualifiedOnly)
                 .platformToggleStyle()
         } footer: {
-            Text(matchingRoleCount == 1 ? "1 role" : "\(matchingRoleCount) roles")
+            Text(L("\(matchingRoleCount) roles"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -193,6 +195,8 @@ private struct RoleGroup: Identifiable {
     let baseTitle: String
     let variants: [Job]
     var id: String { baseTitle }
+    /// The role's name in the player's language (every rung shares it).
+    var displayBaseTitle: String { variants.first?.displayBaseTitle ?? JobCatalog.displayBaseTitle(for: baseTitle) }
 }
 
 private struct RoleGroupRow: View {
@@ -219,11 +223,11 @@ private struct RoleGroupRow: View {
                 // posting's hire probability, and repeating it on every row
                 // turned the list into a wall of weather rather than of jobs.
                 if let first = variants.first, first.offersIndustryChoice {
-                    Text("🏢 Any of \(first.possibleIndustries.count) industries — your choice")
+                    Text(L("🏢 Any of \(first.possibleIndustries.count) industries — your choice"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else if let industry {
-                    Text("\(industry.icon) \(industry.rawValue)")
+                    Text(verbatim: "\(industry.icon) \(industry.displayName)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -279,7 +283,7 @@ struct EntrepreneurshipView: View {
                 VentureRow(job: venture.atBaseSalary(), player: player) { launch($0) }
             }
         }
-        .gameSheetClose($showSheet, title: "Ventures")
+        .gameSheetClose($showSheet, title: String(localized: "Ventures", comment: "Title of the sheet listing businesses the player can found")) // i18n:ignore translator comment
     }
 
     /// Founds the venture with its one-tap stake and reports back through the
@@ -287,10 +291,13 @@ struct EntrepreneurshipView: View {
     private func launch(_ venture: Job) {
         let capital = VentureRow.stake(for: venture, player: player)
         guard player.foundVenture(venture, investedCapital: capital) else { return }
-        let firstYear = Int((Player.ventureRamp(year: 1) * 100).rounded())
+        let firstYear = Fmt.percent(Player.ventureRamp(year: 1))
         player.reportApplicationOutcome(
-            title: "🎉 Venture launched!",
-            message: "You put in \(player.money(capital)) and opened your business! In the first year it pays about \(firstYear)% of the full amount while you find customers."
+            title: L("🎉 Venture launched!"),
+            message: [
+                L("You put in \(player.money(capital)) and opened your business!"),
+                L("In the first year it pays about \(firstYear) of the full amount while you find customers."),
+            ].joinedAsSentences()
         )
         onCommit()
     }
@@ -313,12 +320,12 @@ private struct VentureRow: View {
     /// One-line facts strip for the hint: the industry the venture draws
     /// experience from, the years of it expected, and the capital it wants.
     private var ventureFacts: String {
-        var parts = ["\(job.industry.icon) \(job.industry.rawValue)", "🏭 \(job.category.rawValue)"]
+        var parts = ["\(job.industry.icon) \(job.industry.displayName)", "🏭 \(job.category.displayName)"]
         let years = job.requirements.minYearsExperience
         if years > 0 {
-            parts.append("🧭 \(years) yr exp expected")
+            parts.append(L("🧭 \(years) yr exp expected"))
         }
-        parts.append("💰 Target \(player.money((job.targetCapital ?? 0)))")
+        parts.append(L("💰 Target \(player.money((job.targetCapital ?? 0)))"))
         return parts.joined(separator: "  ·  ")
     }
 
@@ -343,36 +350,42 @@ private struct VentureRow: View {
             // and the loan's terms all live in the hint, one tap away, so a
             // list of ventures stays scannable.
             VStack(alignment: .leading, spacing: 2) {
-                Text(job.baseTitle)
+                // Long names (German, French, Japanese company names) wrap rather than truncate: the
+                // player must be able to tell the businesses apart.
+                Text(job.displayBaseTitle)
                     .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if locked {
                     Text("🔒 Nothing to stake yet — earn and save first")
                         .font(.caption2)
                         .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 } else {
-                    Text("🛡️ \(Int((survival * 100).rounded()))% survive year 1 · stake \(player.money(stake))")
+                    Text(L("🛡️ \(Fmt.percent(survival)) survive year 1 · stake \(player.money(stake))"))
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(Color.forOdds(survival))
+                        .fixedSize(horizontal: false, vertical: true)
                     // Borrowing is the part a player can regret, so it stays on
                     // the row — as a flag, with the terms in the hint.
                     if borrowed > 0 {
-                        Text("🏦 \(player.money(borrowed)) of it borrowed")
+                        Text(L("🏦 \(player.money(borrowed)) of it borrowed"))
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.orange)
                     }
                 }
             }
             .opacity(locked ? 0.5 : 1.0)
+            .layoutPriority(1)
 
             Spacer(minLength: 8)
 
-            TakeButton(label: "Launch") { onLaunch(job) }
+            TakeButton(label: String(localized: "Launch", comment: "Button: found this business now")) { onLaunch(job) } // i18n:ignore translator comment
                 .disabled(locked)
                 .opacity(locked ? 0.5 : 1.0)
 
             InfoHint(
-                title: "\(job.icon) \(job.baseTitle)",
+                title: "\(job.icon) \(job.displayBaseTitle)",
                 message: infoMessage(stake: stake, borrowed: borrowed, survival: survival)
             )
         }
@@ -382,31 +395,39 @@ private struct VentureRow: View {
     /// The pitch, the industry facts, the loan's terms, and how a business's
     /// life plays out. Kept to short lines: a reference the player opens.
     private func infoMessage(stake: Int, borrowed: Int, survival: Double) -> String {
-        let header = [job.summary, ventureFacts]
+        let header = [job.displaySummary, ventureFacts]
 
         guard player.maxVentureStake > 0 else {
             return (header + [
-                "🔒 You need some money to start a business. Work and save first — then you can start any business you like."
+                L("🔒 You need some money to start a business. Work and save first — then you can start any business you like.")
             ]).joined(separator: "\n\n")
         }
 
         let target = player.money(job.targetCapital ?? 0)
-        var funding = "💰 You'd put in \(player.money(stake)) of the \(target) it needs, from your savings first."
+        var funding = L("💰 You'd put in \(player.money(stake)) of the \(target) it needs, from your savings first.")
         if borrowed > 0 {
-            funding += " \(player.money(borrowed)) would be a loan that grows \(Int((GameConstants.ventureLoanAnnualInterest * 100).rounded()))% a year — you pay it back even if the business closes."
+            funding += AdvisorCoach.sentenceGap + L("\(player.money(borrowed)) would be a loan that grows \(Fmt.percent(GameConstants.ventureLoanAnnualInterest)) a year — you pay it back even if the business closes.")
         }
         let full = player.money(job.annualIncome)
-        let ramp = GameConstants.ventureIncomeRamp.map { "\(Int(($0 * 100).rounded()))%" }.joined(separator: ", then ")
+        let ramp = GameConstants.ventureIncomeRamp
+        let firstYear = Fmt.percent(ramp.first ?? 1)
+        let secondYear = Fmt.percent(ramp.last ?? 1)
+        let fame = FameCategory.business
+        let years = player.industryExperience(for: job.category)
 
         var lines = header + [
             funding,
-            "🚀 It always opens. It has a \(Int((survival * 100).rounded()))% chance to make it through the first year. What helps: your \(player.industryExperience(for: job.category)) years in \(job.category.rawValue) (\(job.requirements.minYearsExperience) is good), the skills it needs, 🔭 Visionary, 💬 Persuader, and the money you put in. Each year it lasts, it gets safer — but a bad economy makes it riskier.",
-            "💵 It pays \(ramp) of its \(full) in the first two years, then the full amount — more in good years, less in bad ones.",
-            "📉 If it closes, you get back \(Int(GameConstants.ventureFoldRecovery * 100))% of the money you put in.",
-            "🌟 Every year in business, every investment you win and every sale makes you better known in 💼 Business — so your next business is more likely to last.",
+            [
+                L("🚀 It always opens. It has a \(Fmt.percent(survival)) chance to make it through the first year."),
+                L("What helps: your \(years) years in \(job.category.displayName) (\(Fmt.number(job.requirements.minYearsExperience)) is good), the skills it needs, \(HintFmt.skill(\.visionaryThinkingAndAmbition)), \(HintFmt.skill(\.persuasionAndNegotiation)), and the money you put in."),
+                L("Each year it lasts, it gets safer — but a bad economy makes it riskier."),
+            ].joinedAsSentences(),
+            L("💵 It pays \(firstYear), then \(secondYear) of its \(full) in the first two years, then the full amount — more in good years, less in bad ones."),
+            L("📉 If it closes, you get back \(Fmt.percent(GameConstants.ventureFoldRecovery)) of the money you put in."),
+            L("🌟 Every year in business, every investment you win and every sale makes you better known in \(fame.icon) \(fame.displayName) — so your next business is more likely to last."),
         ]
         if job.isScalableVenture {
-            lines.append("🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune.")
+            lines.append(L("🦄 This kind of business can grow big: you can ask investors for money in the Boardroom, and — very rarely — it takes off and becomes worth a fortune."))
         }
         return lines.joined(separator: "\n\n")
     }

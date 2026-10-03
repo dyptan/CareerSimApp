@@ -314,19 +314,199 @@ final class AdvisorConversationTests: XCTestCase {
 
     // MARK: The number guard
 
+    private func decimal(_ text: String) -> Decimal { Decimal(string: text)! }
+
+    private func numbers(_ text: String) -> Set<Decimal> { AdvisorGuard.values(in: text) }
+
+    private func grounded(_ text: String, _ facts: [String]) -> Bool { AdvisorGuard.isGrounded(text, in: facts) }
+
     func testTheGuardReadsNumbersTheWayThePlayerWouldWriteThem() {
-        XCTAssertEqual(AdvisorGuard.numbers(in: "It pays 68,000 $ — a 12% chance in 3 years."), ["68000", "12", "3"])
-        XCTAssertEqual(AdvisorGuard.numbers(in: "Chance 12.5%. Then, 7, 8."), ["125", "7", "8"])
-        XCTAssertEqual(AdvisorGuard.numbers(in: "no numbers here"), [])
+        XCTAssertEqual(numbers("It pays 68,000 $ — a 12% chance in 3 years."), [68000, 12, 3])
+        XCTAssertEqual(numbers("Chance 12.5%. Then, 7, 8."), [decimal("12.5"), 7, 8])
+        XCTAssertEqual(numbers("no numbers here"), [])
+        XCTAssertEqual(numbers("Ages 3-5, and 10:30"), [3, 5, 10, 30])
+    }
+
+    func testTheGuardComparesValuesNotDigitStrings() {
+        XCTAssertNotEqual(numbers("12.5"), numbers("125"), "12.5 and 125 are different numbers.")
+        XCTAssertFalse(grounded("A 12.5% chance.", ["Your chance is 125 points."]))
+        XCTAssertFalse(grounded("A 125% chance.", ["Your chance is 12.5%."]))
+        XCTAssertTrue(grounded("A 12.50% chance.", ["Your chance is 12.5%."]), "Same value, other spelling.")
+        XCTAssertTrue(grounded("It pays 68000 $.", ["It pays 68,000 $ a year."]))
+    }
+
+    func testTheGuardReadsEveryWayOfGroupingThousands() {
+        for text in ["45,000", "45.000", "45 000", "45\u{00A0}000", "45\u{202F}000", "45\u{2009}000", "45'000", "45’000"] {
+            XCTAssertEqual(numbers("It pays \(text) €"), [45000], text)
+        }
+        // …whatever the device's locale wrote them.
+        for id in ["en_US", "en_GB", "de_DE", "fr_FR", "it_IT", "uk_UA", "ja_JP", "de_CH", "en_CA"] {
+            let text = 45_000.formatted(.number.locale(Locale(identifier: id)))
+            XCTAssertEqual(numbers("It pays \(text) a year"), [45000], "\(id): '\(text)'")
+            let big = 1_234_567.formatted(.number.locale(Locale(identifier: id)))
+            XCTAssertEqual(numbers("Net worth \(big) today"), [1234567], "\(id): '\(big)'")
+        }
+        XCTAssertEqual(numbers("1,234,567 and 1.234.567"), [1234567])
+        XCTAssertEqual(numbers("1.234.567,89 €"), [decimal("1234567.89")])
+        XCTAssertEqual(numbers("1,234.56 $"), [decimal("1234.56")])
+        XCTAssertEqual(numbers("45 000,50 €"), [decimal("45000.5")])
+        XCTAssertEqual(numbers("A 1 234 567 total"), [1234567])
+        XCTAssertEqual(numbers("Born in 2025 100 people"), [2025, 100], "Four digits don't group with the next.")
+        XCTAssertEqual(numbers("Skills 7 of 10, age 16, in 2026"), [7, 10, 16, 2026])
+        XCTAssertEqual(numbers("Level 4 1000 points"), [4, 1000])
+    }
+
+    func testTheGuardTellsAGroupingMarkFromADecimalMarkByTheShapeOfTheNumber() {
+        XCTAssertEqual(numbers("12,5 %"), [decimal("12.5")])
+        XCTAssertEqual(numbers("12.5 %"), [decimal("12.5")])
+        XCTAssertEqual(numbers("0,75 and 0.75"), [decimal("0.75")])
+        XCTAssertEqual(numbers("0.123"), [decimal("0.123")], "A leading zero is never a thousands group.")
+        XCTAssertEqual(numbers("3,14159"), [decimal("3.14159")])
+        // One mark and exactly three digits reads as thousands; the decimal reading
+        // counts only when it is itself a fact.
+        XCTAssertEqual(numbers("1.234"), [1234])
+        XCTAssertTrue(grounded("Das sind 45.000 € im Jahr.", ["Gehalt: 45.000 €"]))
+        XCTAssertTrue(grounded("Das sind 45,000 € im Jahr.", ["Gehalt: 45.000 €"]))
+        XCTAssertTrue(grounded("It is 1.234 long.", ["It measures 1.234 metres, or 1234 mm"]))
+        XCTAssertTrue(grounded("It is 1,234 long.", ["Length: 1.234 metres.", "Width: 1234"]))
+        XCTAssertFalse(grounded("Das sind 45 € im Jahr.", ["Gehalt: 45.000 €"]), "Not a rounding of the fact.")
+        XCTAssertFalse(grounded("Das sind 46.000 € im Jahr.", ["Gehalt: 45.000 €"]))
+    }
+
+    func testTheGuardReadsFullWidthDigitsAndPercentSignsOfEveryLanguage() {
+        XCTAssertEqual(numbers("確率は１２％です"), [12])
+        XCTAssertEqual(numbers("年収は６８，０００円"), [68000])
+        XCTAssertEqual(numbers("１２．５％"), [decimal("12.5")])
+        XCTAssertEqual(numbers("٧٣٪ and ७३"), [73], "Digits of other scripts.")
+        for text in ["73%", "73 %", "73\u{202F}%", "73\u{00A0}%", "73％", "73 pour cent", "73 per cento", "73 Prozent", "73パーセント", "73 відсотків", "73 percent"] {
+            XCTAssertEqual(numbers(text), [73], text)
+        }
+        XCTAssertTrue(grounded("Eine Chance von 73 %.", ["Chance: 73%"]))
+    }
+
+    func testTheGuardSeesVulgarFractions() {
+        XCTAssertEqual(numbers("½ of them"), [decimal("0.5")])
+        XCTAssertEqual(numbers("1½ years"), [decimal("1.5")])
+        XCTAssertEqual(numbers("about ¾"), [decimal("0.75")])
+        XCTAssertFalse(grounded("Half, ½ the time.", ["A 50% chance."]), "½ is not 50.")
+        XCTAssertTrue(grounded("1½ years.", ["It takes 1.5 years."]))
+    }
+
+    func testTheGuardAppliesJapaneseQuantityWords() {
+        XCTAssertEqual(numbers("年収は680万円です"), [6_800_000])
+        XCTAssertEqual(numbers("1億2000万円"), [120_000_000])
+        XCTAssertEqual(numbers("3千5百円"), [3500])
+        XCTAssertEqual(numbers("1.5万円"), [15000])
+        XCTAssertEqual(numbers("６８０万円"), [6_800_000])
+        XCTAssertEqual(numbers("百万円"), [1_000_000])
+        XCTAssertEqual(numbers("六百八十万円"), [6_800_000])
+        XCTAssertEqual(numbers("三十歳"), [30])
+        XCTAssertEqual(numbers("二〇二五年"), [2025])
+        XCTAssertEqual(numbers("5万人"), [50000])
+        // Words that merely contain a numeral are not numbers.
+        XCTAssertEqual(numbers("一番大切なのは、十分な準備です。二人で三つ。"), [])
+        XCTAssertEqual(numbers("千葉と百貨店と万が一"), [])
+        // Compared by value with what the coach wrote.
+        let facts = ["年収は680万円です。", "確率は12％です。"]
+        XCTAssertTrue(grounded("年収は680万円で、確率は12%です。", facts))
+        XCTAssertTrue(grounded("年収は6,800,000円です。", facts))
+        XCTAssertTrue(grounded("年収は六百八十万円です。", facts))
+        XCTAssertFalse(grounded("年収は700万円です。", facts))
+        XCTAssertFalse(grounded("確率は13％です。", facts))
+        XCTAssertTrue(grounded("一番大切なのは準備です。", facts))
+    }
+
+    func testTheGuardAppliesScaleWordsAfterAFigure() {
+        XCTAssertEqual(numbers("68 thousand dollars"), [68000])
+        XCTAssertEqual(numbers("1.5 million"), [1_500_000])
+        XCTAssertEqual(numbers("1,5 Millionen"), [1_500_000])
+        XCTAssertEqual(numbers("2 millions"), [2_000_000])
+        XCTAssertEqual(numbers("68k"), [68000])
+        XCTAssertEqual(numbers("3 тис. гривень"), [3000])
+        XCTAssertEqual(numbers("5 kilometres"), [5], "Only real scale words scale.")
+    }
+
+    func testTheGuardSeesBigFiguresSpelledOut() {
+        XCTAssertEqual(numbers("It pays sixty-eight thousand dollars."), [68000])
+        XCTAssertEqual(numbers("twenty-one"), [21])
+        XCTAssertEqual(numbers("one hundred and five"), [105])
+        XCTAssertEqual(numbers("two thousand five hundred"), [2500])
+        XCTAssertEqual(numbers("a hundred thousand"), [100_000])
+        XCTAssertEqual(numbers("Es sind achtundsechzigtausend Euro."), [68000])
+        XCTAssertEqual(numbers("einundzwanzig"), [21])
+        XCTAssertEqual(numbers("zweihundertfünfzig"), [250])
+        XCTAssertEqual(numbers("hunderttausend"), [100_000])
+        XCTAssertEqual(numbers("quatre-vingt-dix"), [90])
+        XCTAssertEqual(numbers("quatre-vingt-dix-sept"), [97])
+        XCTAssertEqual(numbers("soixante-douze"), [72])
+        XCTAssertEqual(numbers("vingt et un"), [21])
+        XCTAssertEqual(numbers("cent vingt"), [120])
+        XCTAssertEqual(numbers("soixante-huit mille euros"), [68000])
+        XCTAssertEqual(numbers("sessantotto"), [68])
+        XCTAssertEqual(numbers("centomila euro"), [100_000])
+        XCTAssertEqual(numbers("ventuno"), [21])
+        XCTAssertEqual(numbers("двадцять"), [20])
+        XCTAssertEqual(numbers("двісті п'ятдесят"), [250])
+        XCTAssertEqual(numbers("шістдесят вісім тисяч"), [68000])
+        // …and a spelled-out number next to a percent word counts at any size.
+        for text in ["twelve percent", "zwölf Prozent", "douze pour cent", "dodici per cento", "дванадцять відсотків", "twelve per cent"] {
+            XCTAssertEqual(numbers(text), [12], text)
+        }
+        // Ordinary small words are not figures.
+        XCTAssertEqual(numbers("one of these two jobs, and a few more; un an, ein Job, три роки"), [])
+        XCTAssertEqual(numbers("50 cents and 73 per cent"), [50, 73])
+        XCTAssertEqual(numbers("sixty and seventy"), [60, 70], "Two figures, not one.")
+        // Invented spelled-out figures are rejected.
+        XCTAssertTrue(grounded("sixty-eight thousand dollars", ["It pays 68,000 $ a year."]))
+        XCTAssertFalse(grounded("seventy thousand dollars", ["It pays 68,000 $ a year."]))
+        XCTAssertTrue(grounded("a twelve percent chance", ["A 12% chance."]))
+        XCTAssertFalse(grounded("a thirteen percent chance", ["A 12% chance."]))
+        XCTAssertFalse(grounded("achtzig Prozent", ["Chance: 12 %"]))
     }
 
     func testTheGuardRejectsWhatItCannotTraceToTheFacts() {
         let facts = ["Your chance to be hired today is 12%.", "It pays 68,000 $ a year."]
         XCTAssertEqual(AdvisorGuard.accept("A 12% chance, and 68,000 $ a year.", facts: facts), "A 12% chance, and 68,000 $ a year.")
         XCTAssertNil(AdvisorGuard.accept("A 13% chance.", facts: facts))
+        XCTAssertNil(AdvisorGuard.accept("A 1 in 10 chance.", facts: facts), "Turning a percentage into a fraction invents numbers.")
         XCTAssertNil(AdvisorGuard.accept("   ", facts: facts))
         XCTAssertNil(AdvisorGuard.accept(String(repeating: "word ", count: 400), facts: facts), "Rambling is rejected.")
         XCTAssertEqual(AdvisorGuard.accept("  No numbers at all.  ", facts: facts), "No numbers at all.")
+    }
+
+    func testTheGuardAcceptsRepliesInTheLanguageOfTheFacts() {
+        let facts = ["Das Gehalt beträgt 45.000 € im Jahr.", "Die Chance liegt bei 73 %.", "Es dauert 3 Jahre."]
+        XCTAssertNotNil(AdvisorGuard.accept("Du verdienst 45.000 € und hast eine Chance von 73 % in 3 Jahren.", facts: facts))
+        XCTAssertNil(AdvisorGuard.accept("Du verdienst 54.000 €.", facts: facts))
+        let frenchFacts = ["Le salaire est de 45 000 € par an.", "La chance est de 12,5 %."]
+        XCTAssertNotNil(AdvisorGuard.accept("Vous gagnez 45 000 € et avez 12,5 % de chances.", facts: frenchFacts))
+        XCTAssertNil(AdvisorGuard.accept("Vous avez 125 % de chances.", facts: frenchFacts))
+        XCTAssertNil(AdvisorGuard.accept("Vous avez 12 % de chances.", facts: frenchFacts), "12 is not 12,5.")
+    }
+
+    // MARK: Finding roles in the player's words
+
+    func testRoleSearchIsTheCoachsSearchInEnglish() {
+        XCTAssertEqual(AdvisorRoles.search("nurse").map(\.baseTitle), AdvisorCoach.search("nurse").map(\.baseTitle))
+        let nurse = AdvisorCoach.family("Registered Nurse")!
+        XCTAssertTrue(AdvisorRoles.isName(of: nurse, "registered nurse"))
+        XCTAssertFalse(AdvisorRoles.isName(of: nurse, "nurse"))
+        XCTAssertTrue(AdvisorRoles.isNamed(nurse, in: "I want to be a Registered Nurse some day"))
+        XCTAssertEqual(AdvisorRoles.displayName(of: "Registered Nurse"), AdvisorRoles.displayName(of: nurse))
+        XCTAssertEqual(AdvisorRoles.displayName(of: "No Such Role"), "No Such Role")
+    }
+
+    func testAWordCountThatSeesThroughFillerWordsInEveryLanguage() {
+        let before = L10n.languageOverride
+        defer { L10n.languageOverride = before }
+        XCTAssertEqual(AdvisorRoles.contentWordCount("I want to be a nurse"), 1)
+        L10n.languageOverride = .german
+        XCTAssertEqual(AdvisorRoles.contentWordCount("Ich will Lehrer werden"), 1)
+        XCTAssertGreaterThan(AdvisorRoles.contentWordCount("Ich möchte den ganzen Tag in einer Küche kochen"), 2, "A described wish is not a bare job word.")
+        L10n.languageOverride = .french
+        XCTAssertEqual(AdvisorRoles.contentWordCount("Je veux devenir infirmier"), 1)
+        L10n.languageOverride = .ukrainian
+        XCTAssertEqual(AdvisorRoles.contentWordCount("Я хочу стати вчителем"), 1)
     }
 
     // MARK: Who is reading

@@ -362,7 +362,7 @@ final class Game {
         }
         if a == 30 { rec.studentLoanAt30 = player.studentLoan }
         if a == 18 {
-            rec.juniorChampionBy18 = player.fameAwards.contains { $0.title == "Junior Champion" }
+            rec.juniorChampionBy18 = player.fameAwards.contains { $0.key == "Junior Champion" }
             rec.gpa = player.highSchoolGPA
         }
         if player.hasRetired { finish() }
@@ -413,7 +413,7 @@ final class Game {
             if job.educationIsMandatory { rec.everRegulated = true }
             if job.requirements.education.minEQF >= 7 { rec.everDoctorateJob = true }
         }
-        if player.fameAwards.contains(where: { starAwardTitles.contains($0.title) }) {
+        if player.fameAwards.contains(where: { starAwardTitles.contains($0.key) }) {
             rec.everStar = true
             rec.everScreenStar = true
         }

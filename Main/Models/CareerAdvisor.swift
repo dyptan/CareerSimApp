@@ -47,14 +47,14 @@ enum CareerAdvisor {
 
         var buttonLabel: String {
             switch self {
-            case .jobs: return "Open Jobs"
-            case .listing: return "See job listings"
-            case .events: return "Open Events"
-            case .projects: return "Open Projects"
-            case .ventures: return "Open Ventures"
-            case .boardroom: return "Open Boardroom"
-            case .education: return "Open Education"
-            case .activities: return "Open Activities"
+            case .jobs: return String(localized: "Open Jobs", comment: "Advisor button under a message: closes the advisor and opens the Jobs sheet")
+            case .listing: return String(localized: "See job listings", comment: "Advisor button: opens the Jobs sheet on one role's current postings")
+            case .events: return String(localized: "Open Events", comment: "Advisor button: opens the Events sheet (conferences to attend or speak at)")
+            case .projects: return String(localized: "Open Projects", comment: "Advisor button: opens the Projects sheet (spare-time projects that build fame)")
+            case .ventures: return String(localized: "Open Ventures", comment: "Advisor button: opens the Ventures sheet (founding a company)")
+            case .boardroom: return String(localized: "Open Boardroom", comment: "Advisor button: opens the Boardroom (an executive seat's decisions)")
+            case .education: return String(localized: "Open Education", comment: "Advisor button: opens the Education sheet (schools and courses)")
+            case .activities: return String(localized: "Open Activities", comment: "Advisor button: opens the Activities sheet (sports, hobbies and practice)")
             }
         }
     }
@@ -207,8 +207,8 @@ enum CareerAdvisor {
     static func payStory(_ job: Job, _ player: Player) -> String {
         let start = offer(job, player)
         let later = prospectPay(job, player)
-        guard Double(later) >= Double(start) * 1.25 else { return "\(money(start, player)) a year" }
-        return "\(money(start, player)) a year to start, growing to about \(money(later, player)) later"
+        guard Double(later) >= Double(start) * 1.25 else { return L("\(money(start, player)) a year") }
+        return L("\(money(start, player)) a year to start, growing to about \(money(later, player)) later")
     }
 
     /// How far ahead a ladder's prospects are counted (see `prospectPay`).
@@ -254,7 +254,7 @@ enum CareerAdvisor {
     /// course or degree is worth recommending toward them.
     static func lacksBreakthrough(_ job: Job, _ player: Player) -> Bool {
         guard let award = job.breakthroughFame else { return false }
-        return !player.fameAwards.contains { $0.title == award }
+        return !player.fameAwards.contains { $0.key == award }
     }
 
     // MARK: - Tips
@@ -275,16 +275,25 @@ enum CareerAdvisor {
         guard let best else { return nil }
         let job = best.job
         let salary = offer(job, player)
-        var detail = player.isSimplified
-            ? "You can get this job! It pays \(money(salary, player)) a year"
-            : "You have a \(percent(best.odds)) chance to get it. It pays \(payStory(job, player))"
-        detail += pay > 0 && salary > pay ? " — \(money(salary - pay, player)) more than you earn now." : "."
-        detail += " Look for it under \(job.category.rawValue)."
-        if reachesGoal(job, player) {
-            detail += " 🏆 Getting this job reaches your goal!"
+        let raise = pay > 0 && salary > pay ? money(salary - pay, player) : nil
+        // The pay sentence in four whole forms: the mode decides the lead, a raise decides the tail.
+        var sentences: [String]
+        switch (player.isSimplified, raise) {
+        case (true, let raise?):
+            sentences = [L("You can get this job! It pays \(money(salary, player)) a year — \(raise) more than you earn now.")]
+        case (true, nil):
+            sentences = [L("You can get this job! It pays \(money(salary, player)) a year.")]
+        case (false, let raise?):
+            sentences = [L("You have a \(percent(best.odds)) chance to get it. It pays \(payStory(job, player)) — \(raise) more than you earn now.")]
+        case (false, nil):
+            sentences = [L("You have a \(percent(best.odds)) chance to get it. It pays \(payStory(job, player)).")]
         }
-        return Tip(kind: .applyNow, icon: job.icon, title: "Apply to be \(article(for: job.id)) \(job.id)",
-                   detail: detail, destination: .jobs(job.workSetting), job: job, value: best.value)
+        sentences.append(L("Look for it under \(job.category.displayName)."))
+        if reachesGoal(job, player) {
+            sentences.append(L("🏆 Getting this job reaches your goal!"))
+        }
+        return Tip(kind: .applyNow, icon: job.icon, title: L("Apply for the \(job.catalogueTitle) job"),
+                   detail: sentences.joinedAsSentences(), destination: .jobs(job.workSetting), job: job, value: best.value)
     }
 
     /// Staying put for a promotion — with the one lever that would help most.
@@ -319,20 +328,28 @@ enum CareerAdvisor {
         let expectedPay = Player.promotionPay(current: current, next: next, raise: raise)
         let value = careerValue(odds: chance, raise: expectedPay - current, delay: 1 + wait, player: player)
 
-        let years = wait == 1 ? "1 more year" : "\(wait) more years"
-        var detail = wait == 0
-            ? "You have a \(percent(chance)) chance to move up this year. You'd earn about \(money(expectedPay, player)) a year."
-            : "Keep going for \(years) — you need \(next.requirements.minYearsExperience) years as \(next.experienceLadder ?? job.baseTitle) first. Then you'll have about a \(percent(chance)) chance each year to move up and earn about \(money(expectedPay, player)) a year."
+        var detail: String
+        if wait == 0 {
+            detail = L("You have a \(percent(chance)) chance to move up this year. You'd earn about \(money(expectedPay, player)) a year.")
+        } else {
+            let ladder = next.displayExperienceLadder ?? job.displayBaseTitle
+            detail = [
+                L("Keep going for \(wait) more years."),
+                L("You need \(next.requirements.minYearsExperience) years as \(ladder) first."),
+                L("Then you'll have about a \(percent(chance)) chance each year to move up and earn about \(money(expectedPay, player)) a year."),
+            ].joinedAsSentences()
+        }
         var destination: Destination?
         if odds.education < 0 {
             // Studying full-time means leaving the job — no button that would
             // undo the very climb this tip is about.
-            detail += " Not having a \(job.requirements.education.educationLabel(in: player.country)) holds you back — but going back to school means leaving this job."
+            detail += AdvisorCoach.sentenceGap + L("Education holds you back (needed: \(job.requirements.education.educationLabel(in: player.country))) — but going back to school means leaving this job.")
         } else if let lever = biggestTrainableGap(for: next, player: player) {
-            detail += " Best way to help: grow your \(lever.gap.axis.pictogram) \(lever.gap.axis.label) (\(lever.gap.have) of \(lever.gap.need)). \(lever.activity.label) is good practice for it."
+            let skill = "\(lever.gap.axis.pictogram) \(lever.gap.axis.label)"
+            detail += AdvisorCoach.sentenceGap + L("Best way to help: grow your \(skill) (\(lever.gap.have) of \(lever.gap.need)). \(lever.activity.label) is good practice for it.")
             destination = .activities(lever.activity.kind)
         }
-        return Tip(kind: .climb, icon: "📈", title: "Work toward \(next.id)",
+        return Tip(kind: .climb, icon: "📈", title: L("Work toward \(next.catalogueTitle)"),
                    detail: detail, destination: destination, job: next, value: value)
     }
 
@@ -362,9 +379,10 @@ enum CareerAdvisor {
             if beats(value, job, best.map { ($0.value, $0.job.id) }) { best = (job, missing, value) }
         }
         guard let best, let first = best.missing.first else { return nil }
-        var detail = "This opens the \(best.job.id) job, which pays \(payStory(best.job, player))"
-        detail += best.missing.count > 1 ? ". You'll also need \(best.missing[1].friendlyName)." : "."
-        return Tip(kind: .train, icon: "📜", title: "Take \(first.friendlyName)",
+        let detail = best.missing.count > 1
+            ? L("This opens the \(best.job.catalogueTitle) job, which pays \(payStory(best.job, player)). You'll also need \(best.missing[1].friendlyName).")
+            : L("This opens the \(best.job.catalogueTitle) job, which pays \(payStory(best.job, player)).")
+        return Tip(kind: .train, icon: "📜", title: L("Take \(first.friendlyName)"),
                    detail: detail, destination: .education, job: best.job, value: best.value)
     }
 
@@ -434,17 +452,16 @@ enum CareerAdvisor {
         }
         guard let best else { return nil }
         let firstStep = best.degree.eqf < best.job.requirements.education.minEQF
-        var detail = firstStep
-            ? "This is the first step to becoming \(article(for: best.job.id)) \(best.job.id) (\(payStory(best.job, player))). It's about \(best.years) years of school in total"
-            : "This opens the \(best.job.id) job (\(payStory(best.job, player))) after \(best.years) years of school"
+        let title = best.job.catalogueTitle, story = payStory(best.job, player)
+        var sentences = [firstStep
+            ? L("This is the first step toward the \(title) job (\(story)). It's about \(best.years) years of school in total.")
+            : L("This opens the \(title) job (\(story)) after \(best.years) years of school.")]
         if !best.licences.isEmpty {
-            let names = best.licences.map(\.friendlyName).joined(separator: " and ")
-            detail += ", then \(names) (\(best.licences.count) more year\(best.licences.count == 1 ? "" : "s"))"
+            sentences.append(L("Then: \(Fmt.list(best.licences.map(\.friendlyName))) (\(best.licences.count) more years)."))
         }
-        detail += "."
-        if pay > 0 { detail += " You'd have to leave your job while you study." }
-        return Tip(kind: .study, icon: best.degree.pictogram, title: "Study for a \(best.degree.degreeName(in: player.country))",
-                   detail: detail, destination: .education, job: best.job, value: best.value)
+        if pay > 0 { sentences.append(L("You'd have to leave your job while you study.")) }
+        return Tip(kind: .study, icon: best.degree.pictogram, title: L("Study for: \(best.degree.degreeName(in: player.country))"),
+                   detail: sentences.joinedAsSentences(), destination: .education, job: best.job, value: best.value)
     }
 
     /// The tuition the student pays (net of the family's share) to hold EQF
@@ -499,10 +516,10 @@ enum CareerAdvisor {
         guard let best else { return nil }
         let gap = best.gap
         let detail = isChild
-            ? "Want to be \(article(for: best.job.id)) \(best.job.id) one day? It pays \(money(best.job.income, player)) a year and needs \(gap.axis.label) \(gap.need). You're at \(gap.have) — keep practising!"
-            : "The \(best.job.id) job (\(money(offer(best.job, player), player)) a year) needs \(gap.axis.label) \(gap.need). You're at \(gap.have)."
+            ? L("Curious about the \(best.job.catalogueTitle) job? It pays \(money(best.job.income, player)) a year and needs \(gap.axis.label) \(gap.need). You're at \(gap.have) — keep practising!")
+            : L("The \(best.job.catalogueTitle) job (\(money(offer(best.job, player), player)) a year) needs \(gap.axis.label) \(gap.need). You're at \(gap.have).")
         return Tip(kind: .buildSkill, icon: gap.axis.pictogram,
-                   title: "Build \(gap.axis.label) with \(best.activity.label)",
+                   title: L("Build \(gap.axis.label) with \(best.activity.label)"),
                    detail: detail, destination: .activities(best.activity.kind),
                    job: best.job, value: best.value)
     }
@@ -620,15 +637,9 @@ enum CareerAdvisor {
         player.currentEducation == nil && player.age >= GameConstants.minimumTertiaryAge
     }
 
-    /// "a" or "an" for a job title, by its first letter — good enough for the
-    /// catalogue's titles ("an Insurance Agent", "a Software Engineer").
-    static func article(for title: String) -> String {
-        guard let first = title.lowercased().first else { return "a" }
-        return "aeiou".contains(first) ? "an" : "a"
-    }
-
     /// An amount in the player's currency (`Country.money`).
     static func money(_ amount: Int, _ player: Player) -> String { player.money(amount) }
 
-    static func percent(_ probability: Double) -> String { "\(Int((probability * 100).rounded()))%" }
+    /// "30%" — a thin forwarder to `Fmt.percent`.
+    static func percent(_ probability: Double) -> String { Fmt.percent(probability) }
 }

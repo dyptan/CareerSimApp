@@ -22,14 +22,44 @@ struct StatusEvent: Identifiable, Hashable {
 /// it only lifts hiring odds for roles whose industry maps to that same bucket
 /// (see `Player.fameHireBonus(for:)`); `nil` is general renown that helps a
 /// little everywhere.
+///
+/// **Identity vs display.** `key` is the accolade's stable English name — the id
+/// the game merges repeats on, looks up requirements by (`SideHustle.requiresAward`,
+/// the job gates) and keeps in a save; it never changes. `title` is what the
+/// player reads, stored when the award is banked so it is in the language the
+/// game is played in (see `FameAward.title(forKey:)` for a key alone). Compare awards by `key`, never by `title`.
 struct FameAward: Identifiable, Hashable {
+    let key: String
     let title: String
     let icon: String
     let category: FameCategory?
     let weight: Double
     var count: Int = 1
 
-    var id: String { title }
+    var id: String { key }
+
+    /// The key prefix of the per-venture accolade a founder banks each year
+    /// ("Founder of Specialty Coffee Roastery").
+    static let founderKeyPrefix = "Founder of "  // i18n:ignore award key prefix, not displayed
+
+    /// The key of the accolade for running `venture` (a venture's `baseTitle`).
+    static func founderKey(venture: String) -> String { founderKeyPrefix + venture }
+
+    /// Whether `key` is one of the per-venture "Founder of …" accolades.
+    static func isFounderKey(_ key: String) -> Bool { key.hasPrefix(founderKeyPrefix) }
+
+    /// The display title for an accolade known by its English `key` — a trophy,
+    /// a project's title, a founder credential. The one place award names are
+    /// shown from; falls back to the key where there is no translation.
+    static func title(forKey key: String) -> String {
+        if isFounderKey(key) {
+            let venture = Job.displayBaseTitle(forBaseTitle: String(key.dropFirst(founderKeyPrefix.count)))
+            return L("Founder of \(venture)")
+        }
+        // The key is the English title, which is also the catalog key its literal was extracted under
+        // (a trophy, a project's title, an event's fame title), so the one translation serves both.
+        return Bundle.main.localizedString(forKey: key, value: key, table: nil)
+    }
 
     /// Total reputation this shelf entry contributes: per-instance `weight`
     /// scaled by the square root of the times it's been earned. Repeating the
@@ -76,11 +106,13 @@ final class Player: ObservableObject {
 
     /// Banks an accolade on the fame shelf, levelling an existing
     /// entry of the same title rather than adding a duplicate row.
-    func award(_ title: String, icon: String, category: FameCategory?, weight: Double) {
-        if let i = fameAwards.firstIndex(where: { $0.title == title }) {
+    /// `key` is the accolade's English name (see `FameAward.key`), not its display text.
+    /// `title` is what the player reads (defaults to the key's own translation).
+    func award(_ key: String, title: String? = nil, icon: String, category: FameCategory?, weight: Double) {
+        if let i = fameAwards.firstIndex(where: { $0.key == key }) {
             fameAwards[i].count += 1
         } else {
-            fameAwards.append(FameAward(title: title, icon: icon, category: category, weight: weight))
+            fameAwards.append(FameAward(key: key, title: title ?? FameAward.title(forKey: key), icon: icon, category: category, weight: weight))
         }
     }
 
@@ -170,13 +202,13 @@ final class Player: ObservableObject {
     var founderTrackRecordPoints: Double {
         fameAwards
             .filter { award in
-                award.title.hasPrefix("Founder of ") || Player.founderTrackRecordTitles.contains(award.title)
+                FameAward.isFounderKey(award.key) || Player.founderTrackRecordTitles.contains(award.key)
             }
             .reduce(0) { $0 + $1.totalWeight }
     }
 
     static let founderTrackRecordTitles: Set<String> = [
-        "Founder's Lessons", "Breakout Startup", "Successful Exit", "Raised a Round",
+        "Founder's Lessons", "Breakout Startup", "Successful Exit", "Raised a Round",  // i18n:ignore award keys
     ]
 
     /// Years a prolonged recession still has to run. While positive, each
@@ -293,19 +325,18 @@ final class Player: ObservableObject {
     /// just marks the moment.
     func graduationMessage(for degree: Education) -> String {
         if degree.level == .HighSchool {
-            return "Congratulations! You finished \(degree.degreeName(in: country)) — \(country.schooling.gradeName): \(country.gradeLabel(highSchoolGPA))."
+            return L("Congratulations! You finished \(degree.degreeName(in: country)) — \(country.schooling.gradeName): \(country.gradeLabel(highSchoolGPA)).")
         }
-        return "Congratulations! You completed your \(degree.degreeName(in: country))."
+        return L("Congratulations! You completed your \(degree.degreeName(in: country)).")
     }
 
     /// The status-log line for finishing `degree`. Leaving school is the one
     /// moment the grade is reported: "Graduated — Abitur · Abitur grade 1.6 (good)".
     func graduationStatus(for degree: Education) -> String {
-        var line = "Graduated — \(degree.degreeName(in: country))"
         if degree.level == .HighSchool {
-            line += " · \(country.schooling.gradeName) \(country.gradeLabel(highSchoolGPA))"
+            return L("Graduated — \(degree.degreeName(in: country)) · \(country.schooling.gradeName) \(country.gradeLabel(highSchoolGPA))")
         }
-        return line
+        return L("Graduated — \(degree.degreeName(in: country))")
     }
 
     // MARK: - School grades
@@ -361,7 +392,7 @@ final class Player: ObservableObject {
     }
 
     static func formatGPA(_ gpa: Double) -> String {
-        String(format: "%.1f", gpa)
+        Fmt.decimal(gpa)
     }
 
     /// The familiar letter for a GPA, for players who think in grades.
@@ -465,7 +496,7 @@ final class Player: ObservableObject {
     /// projects open only to a name the big break has made).
     func canTakeProject(_ hustle: SideHustle) -> Bool {
         guard let award = hustle.requiresAward else { return true }
-        return fameAwards.contains { $0.title == award }
+        return fameAwards.contains { $0.key == award }
     }
 
     /// Yearly endorsement income: brands pay a famous entertainment name —
@@ -489,20 +520,29 @@ final class Player: ObservableObject {
         climate(forFame: hustle.fameCategory)
     }
 
+    /// The status-log line for taking `event`'s stage: one whole sentence per
+    /// stage role (the event's button verb), since the verb changes the grammar.
+    private func presenterStatusLine(for event: CareerEvent) -> String {
+        event.presenterStatusLine
+    }
+
     /// Raises the result pop-up for a resolved spare-time project. Every project
     /// costs the year whether or not it lands, so the year always reports back —
     /// a flop names the odds it rolled against so a long shot reads as bad luck
     /// rather than a broken game. Kept short; the details live in the sheets.
     func reportProjectOutcome(_ outcome: SideHustle.Outcome) {
         let hustle = outcome.hustle
-        let chance = "\(Int((outcome.odds * 100).rounded()))%"
+        let chance = Fmt.percent(outcome.odds)
         if outcome.success {
-            projectOutcomeTitle = "\(hustle.icon) It landed!"
-            let earned = outcome.grantedFame.map { " You earned the “\($0.title)” title." } ?? ""
-            projectOutcomeMessage = "\(hustle.label) worked out!" + earned
+            projectOutcomeTitle = "\(hustle.icon) " + L("It landed!")
+            if let grant = outcome.grantedFame {
+                projectOutcomeMessage = L("\(hustle.label) worked out! You earned the “\(grant.title)” title.")
+            } else {
+                projectOutcomeMessage = L("\(hustle.label) worked out!")
+            }
         } else {
-            projectOutcomeTitle = "\(hustle.icon) It didn't land"
-            projectOutcomeMessage = "\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway."
+            projectOutcomeTitle = "\(hustle.icon) " + L("It didn't land")
+            projectOutcomeMessage = L("\(hustle.label) didn't pan out — it was a \(chance) shot. You kept the practice: the skills it draws on improved anyway.")
         }
         showProjectOutcomeAlert = true
     }
@@ -1192,7 +1232,7 @@ final class Player: ObservableObject {
         // A training rung (a medical residency) isn't a contest: finishing it
         // is what makes you the next rung, so the step is certain once the
         // years are served.
-        let roll = job.rungLabel == "Resident" ? 1.0 : contested
+        let roll = job.rungLabel == "Resident" ? 1.0 : contested  // i18n:ignore rung id, not displayed
         let seat = next.promotionSeatChance(for: self)
         return PromotionOdds(promotes: true, performance: performance, readiness: readiness,
                              seniority: seniority, tenureYears: years, nextRole: next,
@@ -1315,7 +1355,7 @@ final class Player: ObservableObject {
         let newTrainings = appUIState.selectedTrainings.subtracting(hardSkills.trainings)
         hardSkills.trainings.formUnion(appUIState.selectedTrainings)
         for training in newTrainings {
-            recordStatus(training.isStatutory ? "🪪" : "📜", "Earned \(training.friendlyName)")
+            recordStatus(training.isStatutory ? "🪪" : "📜", L("Earned \(training.friendlyName)"))
         }
 
         // Bank the year's sport training. Each sport practised adds one to
@@ -1352,11 +1392,11 @@ final class Player: ObservableObject {
             guard let event = EventCatalog.byId[id] else { continue }
             if Double.random(in: 0...1) < presentOdds(event) {
                 networkByCategory[event.category, default: 0] += GameConstants.presenterNetworkBonus
-                award(event.presenterFameTitle, icon: event.icon,
+                award(event.presenterFameKey, title: event.presenterFameTitle, icon: event.icon,
                       category: event.category.fameCategory, weight: event.presenterFameWeight)
-                recordStatus("🎤", "\(event.presenterPastLabel) at \(event.name)")
+                recordStatus("🎤", presenterStatusLine(for: event))
             } else {
-                recordStatus("🎟️", "\(event.name) said no this time — you still went and met people")
+                recordStatus("🎟️", L("\(event.name) said no this time — you still went and met people"))
             }
         }
         appUIState.selectedEvents.removeAll()
@@ -1394,7 +1434,7 @@ final class Player: ObservableObject {
         if appUIState.yearsLeftToGraduation == 0 {
             if let currentEducation {
                 degrees.append(currentEducation)
-                recordStatus("🎓", "Graduated — \(currentEducation.degreeName(in: country))")
+                recordStatus("🎓", L("Graduated — \(currentEducation.degreeName(in: country))"))
                 graduationMessage = graduationMessage(for: currentEducation)
                 showGraduationAlert = true
             }
@@ -1495,7 +1535,11 @@ final class Player: ObservableObject {
                 var raised = job
                 raised.annualIncome = meritRaise
                 currentOccupation = raised
-                recordStatus("💵", "Merit raise\(pct > 0 ? " of \(pct)%" : "") — now \(money(meritRaise)) a year")
+                if pct > 0 {
+                    recordStatus("💵", L("Merit raise of \(Fmt.percent(Double(pct) / 100)) — now \(money(meritRaise)) a year"))
+                } else {
+                    recordStatus("💵", L("Merit raise — now \(money(meritRaise)) a year"))
+                }
             }
 
             // A founder's year (realistic mode): the business may fold, may —
@@ -1507,10 +1551,10 @@ final class Player: ObservableObject {
             // A professional athlete's body sets the end of the career, not the
             // ladder: most pros are done by their mid-30s. The fame stays — it
             // opens broadcasting, coaching and endorsement doors afterwards.
-            if job.baseTitle == "Player", job.rung >= 1,
+            if job.baseTitle == "Player", job.rung >= 1,  // i18n:ignore role id, not displayed
                Double.random(in: 0...1) < Player.athleteRetirementChance(atAge: age) {
                 currentOccupation = nil
-                recordStatus("🏁", "Retired from professional sport at \(age)")
+                recordStatus("🏁", L("Retired from professional sport at \(age)"))
             }
         }
 
@@ -1548,7 +1592,7 @@ final class Player: ObservableObject {
             let careerYears = totalExperienceYears
             if let cat = hustle.experienceCategory {
                 experience[cat, default: 0] += 1
-                recordStatus("📅", "Banked a year of \(cat.rawValue) experience running \(hustle.label)")
+                recordStatus("📅", L("Banked a year of \(cat.displayName) experience running \(hustle.label)"))
             }
             // Reputation compounds inside its own bucket: a name made shipping
             // software opens the next software project, and does nothing for a
@@ -1567,14 +1611,14 @@ final class Player: ObservableObject {
             }
             if outcome.success {
                 if let grant = outcome.grantedFame {
-                    award(grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
-                    recordStatus("🌟", "\(hustle.label) earned fame in \(grant.category.rawValue)")
+                    award(grant.key, title: grant.title, icon: hustle.icon, category: grant.category, weight: grant.weight)
+                    recordStatus("🌟", L("\(hustle.label) earned fame in \(grant.category.displayName)"))
                 }
                 // A landed project is worth the confetti whatever the odds were —
                 // it cost a year of the player's life to find out.
                 celebrate()
             } else {
-                recordStatus(hustle.icon, "\(hustle.label) didn't land — but the practice counts")
+                recordStatus(hustle.icon, L("\(hustle.label) didn't land — but the practice counts"))
             }
             reportProjectOutcome(outcome)
         }
@@ -1599,12 +1643,13 @@ final class Player: ObservableObject {
             ) else { continue }
             let odds = competition.winProbability(for: softSkills, years: years)
             if Double.random(in: 0...1) < odds {
-                award(competition.achievement, icon: competition.icon,
+                award(competition.fameKey, title: competition.achievement, icon: competition.icon,
                       category: sport.fameCategory, weight: competition.fameWeight)
                 competitionWins += 1
                 celebrateIfLucky(odds)
-                recordStatus("🏆", "Won \(competition.achievement)")
-                competitionWinMessage = "You won the \(competition.name) and earned the “\(competition.achievement)” title!"
+                let achievement = competition.achievement
+                recordStatus("🏆", L("Won \(achievement)"))
+                competitionWinMessage = L("You won the \(competition.name) and earned the “\(achievement)” title!")
                 showCompetitionWinAlert = true
             }
         }
@@ -1631,13 +1676,13 @@ final class Player: ObservableObject {
         var spendingCut = isSimplified ? 0 : Int((Double(grossThisYear) * GameConstants.maxDebtServiceShare).rounded())
         if serviceLoan(&outstandingLoan, payment: &ventureLoanPayment,
                        rate: GameConstants.ventureLoanAnnualInterest, income: &spendingCut) {
-            recordStatus("🏦", "Paid off your venture loan")
+            recordStatus("🏦", L("Paid off your venture loan"))
         }
         if studiedThisYear, studentLoan > 0 {
             studentLoan = Int((Double(studentLoan) * (1 + country.studentLoanInterest)).rounded())
         } else if serviceLoan(&studentLoan, payment: &studentLoanPayment,
                               rate: country.studentLoanInterest, income: &spendingCut) {
-            recordStatus("🎓", "Paid off your student loan")
+            recordStatus("🎓", L("Paid off your student loan"))
         }
 
         // The advisor reviews the year once it has fully settled — the new
@@ -1652,7 +1697,7 @@ final class Player: ObservableObject {
         // sheet after everything else has settled, so the final score already
         // includes this year's pay, growth and loan servicing.
         if hasRetired {
-            recordStatus("🎂", "Reached \(GameConstants.retirementAge) — career over")
+            recordStatus("🎂", L("Reached \(GameConstants.retirementAge) — career over"))
             appUIState.showRetirementSheet = true
         }
     }
@@ -1685,7 +1730,7 @@ final class Player: ObservableObject {
         currentOccupation = nil
         lostJobThisYear = true
         showLayoffAlert = true
-        recordStatus("💼", "Laid off from \(job.baseTitle) — paid about half the year, with severance")
+        recordStatus("💼", L("Laid off from \(job.displayBaseTitle) — paid about half the year, with severance"))
         return job
     }
 
@@ -1708,8 +1753,8 @@ final class Player: ObservableObject {
             : 0
         celebrateIfLucky(odds.total)
         showPromotionAlert = true
-        promotionMessage = "You've been promoted to \(promoted.displayTitle) — \(money(promoted.annualIncome)) a year."
-        recordStatus("⬆️", "Promoted to \(promoted.id) — pay +\(lastPromotionRaisePct)%")
+        promotionMessage = L("You've been promoted to \(promoted.displayTitle) — \(money(promoted.annualIncome)) a year.")
+        recordStatus("⬆️", L("Promoted to \(promoted.catalogueTitle) — pay +\(Fmt.percent(Double(lastPromotionRaisePct) / 100))"))
         return true
     }
 
@@ -1737,7 +1782,7 @@ final class Player: ObservableObject {
             hiredJob.annualIncome = job.isEntrepreneurial ? requestedSalary : max(country.minimumAnnualPay, requestedSalary)
             currentOccupation = hiredJob
             yearsInRole = 0                 // a new position, even under the same title
-            recordStatus("💼", "Hired as \(hiredJob.baseTitle) — \(money(hiredJob.annualIncome))/year")
+            recordStatus("💼", L("Hired as \(hiredJob.displayBaseTitle) — \(money(hiredJob.annualIncome))/year"))
         }
         return hired
     }
@@ -1770,7 +1815,7 @@ final class Player: ObservableObject {
             outstandingLoan += borrowed        // the rest is a loan
             ventureLoanPayment = Player.annualLoanPayment(
                 balance: outstandingLoan, rate: GameConstants.ventureLoanAnnualInterest)
-            recordStatus("🏦", "Borrowed \(money(borrowed)) to fund your venture")
+            recordStatus("🏦", L("Borrowed \(money(borrowed)) to fund your venture"))
         }
 
         let previous = currentOccupation
@@ -1783,9 +1828,9 @@ final class Player: ObservableObject {
         venture.annualIncome = Int((Double(job.annualIncome) * Player.ventureRamp(year: 1)).rounded())
         currentOccupation = venture             // the venture is now the player's job
         if let previous, previous.id != job.id {
-            recordStatus("🚪", "Left \(previous.baseTitle) to go all-in on your venture")
+            recordStatus("🚪", L("Left \(previous.displayBaseTitle) to go all-in on your venture"))
         }
-        recordStatus("🚀", "Founded \(job.baseTitle) — you're now CEO")
+        recordStatus("🚀", L("Founded \(job.displayBaseTitle) — you're now CEO"))
         return true
     }
 
@@ -1806,15 +1851,15 @@ final class Player: ObservableObject {
             currentOccupation = nil
             clearVenture()
             showVentureFailureAlert = true
-            ventureFailureMessage = "\(job.baseTitle) had to close this year. Selling what was left got back \(money(recovered)) — but you still have to pay back any loan."
-            recordStatus("📉", "\(job.baseTitle) folded — recovered \(money(recovered))")
+            ventureFailureMessage = L("\(job.displayBaseTitle) had to close this year. Selling what was left got back \(money(recovered)) — but you still have to pay back any loan.")
+            recordStatus("📉", L("\(job.displayBaseTitle) folded — recovered \(money(recovered))"))
             // A fold costs no reputation — the lessons count for something.
             award("Founder's Lessons", icon: "📚", category: .business, weight: GameConstants.founderFoldFame)
             return
         }
 
         // Another year in business builds the founder's name.
-        award("Founder of \(job.baseTitle)", icon: job.icon, category: .business, weight: GameConstants.founderYearFame)
+        award(FameAward.founderKey(venture: job.baseTitle), icon: job.icon, category: .business, weight: GameConstants.founderYearFame)
 
         let climate = self.climate(for: job.industry)
         if job.isScalableVenture, !ventureBrokeOut, year >= 2 {
@@ -1823,12 +1868,12 @@ final class Player: ObservableObject {
             if Double.random(in: 0...1) < chance {
                 ventureBrokeOut = true
                 ventureMatureIncome = Int((Double(ventureMatureIncome) * GameConstants.ventureBreakoutIncomeMultiple).rounded())
-                award("Breakout Startup", icon: "🦄", category: job.industry.fameCategory ?? .business,
+                award("Breakout Startup", icon: "🦄", category: job.industry.fameCategory ?? .business,  // i18n:ignore award key
                       weight: GameConstants.founderBreakoutFame)
-                recordStatus("🦄", "\(job.baseTitle) broke out — revenue tripled and your stake is worth a fortune")
+                recordStatus("🦄", L("\(job.displayBaseTitle) broke out — revenue tripled and your stake is worth a fortune"))
                 reportApplicationOutcome(
-                    title: "🦄 Breakout!",
-                    message: "\(job.baseTitle) took off: revenue tripled, and your stake is now worth many times more. Sell it in the Boardroom, or keep riding it."
+                    title: L("🦄 Breakout!"),
+                    message: L("\(job.displayBaseTitle) took off: revenue tripled, and your stake is now worth many times more. Sell it in the Boardroom, or keep riding it.")
                 )
             }
         }
@@ -1991,7 +2036,7 @@ final class Player: ObservableObject {
             let ask = askPrice ?? shareStakeValue()
             let sold = Double.random(in: 0...1) < shareSaleOdds(askPrice: ask)
             guard sold else {
-                recordStatus("🤝", "No buyer for your \(job.baseTitle) stake at \(money(ask)) this year")
+                recordStatus("🤝", L("No buyer for your \(job.displayBaseTitle) stake at \(money(ask)) this year"))
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
             }
             // What reaches the bank: a hired executive's vested shares are taxed
@@ -2007,18 +2052,18 @@ final class Player: ObservableObject {
             if job.isEntrepreneurial {
                 currentOccupation = nil            // clears the venture state too
                 // A successful exit is the strongest founder credential there is.
-                award("Successful Exit", icon: decision.icon, category: .business, weight: GameConstants.founderExitFame)
-                recordStatus(decision.icon, "Sold your stake in \(job.baseTitle) for \(money(ask)) (\(money(proceeds)) after fees and tax) — exited the venture")
+                award("Successful Exit", icon: decision.icon, category: .business, weight: GameConstants.founderExitFame)  // i18n:ignore award key
+                recordStatus(decision.icon, L("Sold your stake in \(job.displayBaseTitle) for \(money(ask)) (\(money(proceeds)) after fees and tax) — exited the venture"))
             } else {
                 equityVestedYears = 0
-                recordStatus(decision.icon, "Sold vested shares in \(job.baseTitle) for \(money(ask)) (\(money(proceeds)) after tax)")
+                recordStatus(decision.icon, L("Sold vested shares in \(job.displayBaseTitle) for \(money(ask)) (\(money(proceeds)) after tax)"))
             }
             return ExecutiveDecision.Outcome(decision: decision, success: true, cash: proceeds, fameTitle: nil)
         case .investmentRound:
             let odds = investmentRoundOdds()
             let succeeded = Double.random(in: 0...1) < odds
             guard succeeded else {
-                recordStatus("🚫", "Investment round for \(job.baseTitle) fell through")
+                recordStatus("🚫", L("Investment round for \(job.displayBaseTitle) fell through"))
                 return ExecutiveDecision.Outcome(decision: decision, success: false, cash: 0, fameTitle: nil)
             }
             // The money goes into the company, not the founder's pocket: the
@@ -2040,8 +2085,8 @@ final class Player: ObservableObject {
                 softSkills[keyPath: kp] = min(softSkills[keyPath: kp] + 1, 10)
             }
             celebrateIfLucky(odds)
-            recordStatus(decision.icon, "Closed an investment round for \(job.baseTitle) — the company is worth more and can pay you more")
-            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: 0, fameTitle: title)
+            recordStatus(decision.icon, L("Closed an investment round for \(job.displayBaseTitle) — the company is worth more and can pay you more"))
+            return ExecutiveDecision.Outcome(decision: decision, success: true, cash: 0, fameTitle: FameAward.title(forKey: title))
         }
     }
 

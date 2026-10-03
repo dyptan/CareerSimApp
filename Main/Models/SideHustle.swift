@@ -13,9 +13,13 @@ import Foundation
 /// talent or career for and you are rolling against essentially nothing.
 struct SideHustle: Identifiable, Hashable {
     let id: String
-    let label: String
+    private let labelResource: LocalizedStringResource
+    /// The project's name, in the player's language.
+    var label: String { String(localized: labelResource) }
     let icon: String
-    let blurb: String
+    private let blurbResource: LocalizedStringResource
+    /// What the project is, in a sentence or two.
+    var blurb: String { String(localized: blurbResource) }
     /// The soft-skill axes this venture draws on. The player's levels in these
     /// talents drive the success odds.
     let talents: [WritableKeyPath<SoftSkills, Int>]
@@ -29,9 +33,15 @@ struct SideHustle: Identifiable, Hashable {
     /// capped at 10 in `advanceYear`) — the craft axes drawn on plus a
     /// founder-cluster bump. Only the fame award turns on the roll.
     var growth: [WeightedAbility] = []
-    /// Title of the fame award banked on a successful year. Defaults to `label`
-    /// when nil.
-    var fameTitle: String? = nil
+    private var fameTitleResource: LocalizedStringResource? = nil
+    /// The bespoke title of the fame award banked on a successful year, in the player's
+    /// language; nil when the award is named after the project (see `awardTitle`).
+    var fameTitle: String? { fameTitleResource.map { String(localized: $0) } }
+    /// The title of the fame award a successful year banks, in the player's language.
+    var awardTitle: String { fameTitle ?? label }
+    /// The English title of that award: its stable id (`FameAward` key, `requiresAward`,
+    /// `Job.breakthroughFame`). Never shown.
+    var fameKey: String { fameTitleResource?.key ?? labelResource.key }
     /// The industry a committed year of this venture credits as *work
     /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
     /// so years spent building a startup, pitching, or crowdfunding accumulate
@@ -48,8 +58,37 @@ struct SideHustle: Identifiable, Hashable {
     /// within the cap, so building an audience matters most where it's lowest.
     var successCeiling: Double = 0.9
     /// A fame award the player must hold to take this project on — the big-
-    /// break titles that open the star projects. `nil` for open projects.
+    /// break titles that open the star projects. `nil` for open projects. The
+    /// award's English title, i.e. its id (compare with `fameKey`); show it with
+    /// `requiredAwardTitle`.
     var requiresAward: String? = nil
+
+    /// The required award's title in the player's language, for the lock line.
+    var requiredAwardTitle: String? {
+        guard let requiresAward else { return nil }
+        return SideHustleCatalog.all.first { $0.fameKey == requiresAward }?.awardTitle ?? requiresAward
+    }
+
+    /// Row literals pass the text as literals (`label: "Host a Podcast"`), which the compiler
+    /// extracts into the String Catalog; `label`, `blurb` and `fameTitle` read it back.
+    init(id: String, label: LocalizedStringResource, icon: String, blurb: LocalizedStringResource,
+         talents: [WritableKeyPath<SoftSkills, Int>], fameCategory: FameCategory, fameWeight: Double,
+         stages: Set<LifeStage>, growth: [WeightedAbility] = [], fameTitle: LocalizedStringResource? = nil,
+         experienceCategory: JobCategory? = nil, successCeiling: Double = 0.9, requiresAward: String? = nil) {
+        self.id = id
+        self.labelResource = label
+        self.icon = icon
+        self.blurbResource = blurb
+        self.talents = talents
+        self.fameCategory = fameCategory
+        self.fameWeight = fameWeight
+        self.stages = stages
+        self.growth = growth
+        self.fameTitleResource = fameTitle
+        self.experienceCategory = experienceCategory
+        self.successCeiling = successCeiling
+        self.requiresAward = requiresAward
+    }
 
     static func == (lhs: SideHustle, rhs: SideHustle) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -163,13 +202,16 @@ struct SideHustle: Identifiable, Hashable {
         // event — the banked reputation is scaled up from the raw catalogue
         // weight (see GameConstants.accomplishmentFameMultiplier).
         let banked = fameWeight * GameConstants.accomplishmentFameMultiplier
-        let grant = FameGrant(title: fameTitle ?? label, category: fameCategory, weight: banked)
+        let grant = FameGrant(title: awardTitle, key: fameKey, category: fameCategory, weight: banked)
         return Outcome(hustle: self, success: true, odds: odds, grantedFame: grant)
     }
 
     /// The fame award banked by a successful year.
     struct FameGrant {
+        /// The award's title, in the player's language.
         let title: String
+        /// The award's English title: its stable id. Never shown.
+        let key: String
         let category: FameCategory
         let weight: Double
     }
@@ -208,7 +250,7 @@ enum SideHustleCatalog {
             id: "moocCourse",
             label: "Create a MOOC Course",
             icon: "🎓",
-            blurb: "Record an online course and build an audience of learners. Grow it into a name and the business world takes note.",
+            blurb: "Record an online course and build an audience of learners.",
             talents: [\.analyticalReasoningAndProblemSolving, \.communicationAndNetworking],
             fameCategory: .business, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
@@ -222,7 +264,7 @@ enum SideHustleCatalog {
             id: "influencer",
             label: "Influencer / Content Creator",
             icon: "📱",
-            blurb: "Build an audience across social, a blog, and a podcast, and chase the spotlight. Most channels fizzle — a viral one makes your name.",
+            blurb: "Build an audience across social media, a blog and a podcast.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking],
             fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
@@ -235,7 +277,7 @@ enum SideHustleCatalog {
             id: "selfPublishBook",
             label: "Write & Self-Publish a Book",
             icon: "📚",
-            blurb: "Spend the year writing and publishing. Most titles sink; a hit puts your name on shelves everywhere.",
+            blurb: "Spend the year writing and publishing a book.",
             talents: [\.communicationAndNetworking, \.selfDisciplineAndPerseverance, \.creativityAndInsightfulThinking],
             fameCategory: .arts, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
@@ -249,7 +291,7 @@ enum SideHustleCatalog {
             id: "freelancePerformer",
             label: "Freelance Artist & Performer",
             icon: "🎭",
-            blurb: "Perform on your own — as a musician, dancer or actor. Some shows go great, some don't, but every show gets you seen.",
+            blurb: "Perform on your own, as a musician, dancer or actor.",
             talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.selfDisciplineAndPerseverance],
             fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.youngAdult, .adult],
@@ -263,7 +305,7 @@ enum SideHustleCatalog {
             id: "releaseAlbum",
             label: "Record & Release an Album",
             icon: "🎵",
-            blurb: "Book studio time and put your music out there. Long odds, but a breakout single makes you a name.",
+            blurb: "Book studio time and release your own music.",
             talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.selfDisciplineAndPerseverance],
             fameCategory: .entertainment, fameWeight: 2.0,
             stages: [.youngAdult, .adult],
@@ -280,7 +322,7 @@ enum SideHustleCatalog {
             id: "actingGigs",
             label: "Take Acting Gigs",
             icon: "🎭",
-            blurb: "Go to auditions and take the parts you can get — an ad, a small TV role, a play. Most actors get started this way, one part at a time.",
+            blurb: "Go to auditions and take the parts you can get: an ad, a small TV role, a play.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
             fameCategory: .entertainment, fameWeight: 0.5,
             stages: [.youngAdult, .adult],
@@ -293,7 +335,7 @@ enum SideHustleCatalog {
             id: "musicGigs",
             label: "Play Music Gigs",
             icon: "🎸",
-            blurb: "Play weddings, cafés and your own shows. It's how most musicians practise in front of people — and every crowd is a chance to be noticed.",
+            blurb: "Play weddings, cafés and shows of your own.",
             talents: [\.creativityAndInsightfulThinking, \.tinkeringAndFingerPrecision, \.selfDisciplineAndPerseverance],
             fameCategory: .entertainment, fameWeight: 0.5,
             stages: [.teen, .youngAdult, .adult],
@@ -308,7 +350,7 @@ enum SideHustleCatalog {
             id: "starFilm",
             label: "Star in a Film",
             icon: "🌟",
-            blurb: "Star in a big movie. The more people know your name, the bigger the part — and a hit film makes you even more famous.",
+            blurb: "Take the lead in a big movie.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
             fameCategory: .entertainment, fameWeight: 2.0,
             stages: [.youngAdult, .adult],
@@ -322,7 +364,7 @@ enum SideHustleCatalog {
             id: "headlineTour",
             label: "Headline a Tour",
             icon: "🎤",
-            blurb: "Take your songs on tour. A new act plays small clubs; a superstar fills stadiums — and every show grows your fame.",
+            blurb: "Take your songs on tour, from small clubs to stadiums.",
             talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.resilienceAndEndurance],
             fameCategory: .entertainment, fameWeight: 2.0,
             stages: [.youngAdult, .adult],
@@ -343,7 +385,7 @@ enum SideHustleCatalog {
             id: "bigBreakActing",
             label: "Chase a Breakout Role",
             icon: "🎬",
-            blurb: "Audition for the part that could change everything — a lead that puts your face on every screen. The odds are long and you'll chase it for years, but land it and you're a movie star.",
+            blurb: "Audition for the lead role that could make you a movie star.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking, \.resilienceAndEndurance],
             fameCategory: .entertainment, fameWeight: 3.0,
             stages: [.youngAdult, .adult],
@@ -359,7 +401,7 @@ enum SideHustleCatalog {
             id: "bigBreakMusic",
             label: "Chase a Hit Single",
             icon: "🎤",
-            blurb: "Pour everything into the song that could top the charts. Most never land it — but a genuine hit turns a working musician into a pop star overnight.",
+            blurb: "Write the song that could top the charts.",
             talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.selfDisciplineAndPerseverance],
             fameCategory: .entertainment, fameWeight: 3.0,
             stages: [.youngAdult, .adult],
@@ -374,7 +416,7 @@ enum SideHustleCatalog {
             id: "projectApp",
             label: "Build a Demo App",
             icon: "📱",
-            blurb: "A small demo app you build to show off an idea. Get it in front of people and word gets around.",
+            blurb: "Build a small demo app to show off an idea.",
             talents: [\.analyticalReasoningAndProblemSolving, \.creativityAndInsightfulThinking, \.timeManagementAndPlanning],
             fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -388,7 +430,7 @@ enum SideHustleCatalog {
             id: "projectLibrary",
             label: "Contribute to Open Source",
             icon: "📦",
-            blurb: "An open-source project you contribute to in the open. Land your work in something people depend on and your name travels with it.",
+            blurb: "Contribute to an open-source project, in the open.",
             talents: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail, \.selfDisciplineAndPerseverance],
             fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -403,7 +445,7 @@ enum SideHustleCatalog {
             id: "projectArticle",
             label: "Write a Long-Form Article",
             icon: "📝",
-            blurb: "A deep-dive you write out of pure curiosity. A piece that gets read and shared builds a quiet kind of renown.",
+            blurb: "Write a long deep-dive out of pure curiosity.",
             talents: [\.communicationAndNetworking, \.carefulnessAndAttentionToDetail],
             fameCategory: .arts, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -417,7 +459,7 @@ enum SideHustleCatalog {
             id: "projectGame3d",
             label: "Build a Game Mod",
             icon: "🎮",
-            blurb: "A mod for a game you love — new levels, mechanics, or art built on someone else's engine. A mod the community adopts gets your name known.",
+            blurb: "Make a mod for a game you love: new levels, mechanics or art.",
             talents: [\.creativityAndInsightfulThinking, \.spacialNavigationAndOrientation, \.analyticalReasoningAndProblemSolving],
             fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -434,7 +476,7 @@ enum SideHustleCatalog {
             id: "projectPodcast",
             label: "Host a Podcast",
             icon: "🎙️",
-            blurb: "A podcast you record and put out episode by episode. Build a loyal audience and your voice becomes a name people know.",
+            blurb: "Record a podcast and put out episode after episode.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking],
             fameCategory: .entertainment, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -448,7 +490,7 @@ enum SideHustleCatalog {
             id: "projectShortFilm",
             label: "Direct a Short Film",
             icon: "🎞️",
-            blurb: "A short film you write, shoot, and edit yourself. Land it in a festival lineup and the art world starts to notice.",
+            blurb: "Write, shoot and edit a short film yourself.",
             talents: [\.creativityAndInsightfulThinking, \.communicationAndNetworking, \.timeManagementAndPlanning],
             fameCategory: .arts, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
@@ -463,7 +505,7 @@ enum SideHustleCatalog {
             id: "projectTechChannel",
             label: "Run a Tech Channel",
             icon: "🎥",
-            blurb: "A channel of tutorials and deep-dives you record on the side. Explain things well enough and you become a name developers follow.",
+            blurb: "Record tutorials and deep-dives for developers, on the side.",
             talents: [\.communicationAndNetworking, \.analyticalReasoningAndProblemSolving],
             fameCategory: .technology, fameWeight: 1.0,
             stages: [.teen, .youngAdult, .adult],
@@ -477,7 +519,7 @@ enum SideHustleCatalog {
             id: "projectPreprint",
             label: "Publish a Research Preprint",
             icon: "🧪",
-            blurb: "A piece of independent research you write up and post for the world to read. A preprint that gets cited earns you a name in the field.",
+            blurb: "Write up independent research and post it for the world to read.",
             talents: [\.analyticalReasoningAndProblemSolving, \.carefulnessAndAttentionToDetail, \.selfDisciplineAndPerseverance],
             fameCategory: .science, fameWeight: 1.5,
             stages: [.youngAdult, .adult],
@@ -501,7 +543,7 @@ enum SideHustleCatalog {
             id: "crowdfundingCampaign",
             label: "Run a Crowdfunding Campaign",
             icon: "💸",
-            blurb: "Rally backers behind a product idea and hit your funding goal. A funded campaign proves you can sell a vision, lead a crowd, and run a venture end to end.",
+            blurb: "Rally backers behind a product idea and hit your funding goal.",
             talents: [\.communicationAndNetworking, \.creativityAndInsightfulThinking],
             fameCategory: .business, fameWeight: 1.0,
             stages: [.youngAdult, .adult],

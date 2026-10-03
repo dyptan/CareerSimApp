@@ -5,10 +5,11 @@
 # Usage: Tools/BalanceSim/run-tests.sh   (output bundle goes to $TMPDIR)
 set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-OUT="${TMPDIR:-/tmp}/careers-xctest"
 PLAT=$(xcrun --sdk macosx --show-sdk-platform-path)
-mkdir -p "$OUT/CareersTests.xctest/Contents/MacOS"
 cd "$ROOT"
+# One output folder per checkout, so runs in parallel worktrees do not clobber each other.
+OUT="${TMPDIR:-/tmp}/careers-xctest-$(echo "$ROOT" | cksum | cut -d' ' -f1)"
+mkdir -p "$OUT/CareersTests.xctest/Contents/MacOS"
 xcrun swiftc -module-name CareersApp -parse-as-library -Onone -Xlinker -bundle \
   -o "$OUT/CareersTests.xctest/Contents/MacOS/CareersTests" \
   -F "$PLAT/Developer/Library/Frameworks" -I "$PLAT/Developer/usr/lib" -L "$PLAT/Developer/usr/lib" \

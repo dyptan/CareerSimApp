@@ -64,15 +64,15 @@ struct Education: Codable, Hashable, Identifiable {
 
         func educationLabel() -> String {
             switch minEQF {
-            case ..<1: return "Primary school"
-            case 1: return "Primary school"
-            case 2: return "Middle school"
-            case 3: return "High school"
-            case 4: return "College / Vocational"
-            case 5: return "University — Bachelor's"
-            case 6: return "University — Master's"
-            case 7: return "Doctorate"
-            default: return "Doctorate+"
+            case ..<1: return L("Primary school")
+            case 1: return L("Primary school")
+            case 2: return L("Middle school")
+            case 3: return L("High school")
+            case 4: return L("College / Vocational")
+            case 5: return L("University — Bachelor's")
+            case 6: return L("University — Master's")
+            case 7: return L("Doctorate")
+            default: return L("Doctorate+")
             }
         }
     }
@@ -240,7 +240,9 @@ struct Education: Codable, Hashable, Identifiable {
     func degreeName(in country: Country) -> String {
         if let local = country.schoolName(level) {
             guard level == .Vocational else { return local }
-            if let prof = profile, prof.allowsVocational { return "\(local) in \(prof.rawValue.capitalized)" }
+            if let prof = profile, prof.allowsVocational {
+                return String(localized: "\(local) in \(prof.displayName)", comment: "A vocational qualification under the country’s own name, followed by its field of study, e.g. “Ausbildung in Health”. The first placeholder is the local name of the qualification, the second the field.")
+            }
             return local
         }
         return internationalName
@@ -250,54 +252,53 @@ struct Education: Codable, Hashable, Identifiable {
     private var internationalName: String {
         switch (level, profile) {
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
-            let title = prof.rawValue.capitalized
-            return "Vocational Diploma in \(title)"
+            return L("Vocational Diploma in \(prof.displayName)")
         case (.Vocational, _):
-            return "Vocational Diploma"
+            return L("Vocational Diploma")
         case (.Bachelor, .some(let prof)):
             switch prof {
-            case .business: return "Bachelor of Business Administration"
-            case .engineering: return "Bachelor of Engineering"
-            case .health: return "Bachelor of Health Sciences"
-            case .arts: return "Bachelor of Arts"
-            case .science: return "Bachelor of Science"
-            case .education: return "Bachelor of Education"
-            case .technology: return "Bachelor of Science in Information Technology"
-            case .agriculture: return "Bachelor of Agriculture"
-            case .law: return "Bachelor of Laws"
-            case .design: return "Bachelor of Design"
-            case .service: return "Bachelor of Science in Service Management"
-            case .sports: return "Bachelor of Science in Sports Science"
+            case .business: return L("Bachelor of Business Administration")
+            case .engineering: return L("Bachelor of Engineering")
+            case .health: return L("Bachelor of Health Sciences")
+            case .arts: return L("Bachelor of Arts")
+            case .science: return L("Bachelor of Science")
+            case .education: return L("Bachelor of Education")
+            case .technology: return L("Bachelor of Science in Information Technology")
+            case .agriculture: return L("Bachelor of Agriculture")
+            case .law: return L("Bachelor of Laws")
+            case .design: return L("Bachelor of Design")
+            case .service: return L("Bachelor of Science in Service Management")
+            case .sports: return L("Bachelor of Science in Sports Science")
             }
         case (.Master, .some(let prof)):
             switch prof {
-            case .business: return "Master of Business Administration"
-            case .engineering: return "Master of Engineering"
-            case .health: return "Master of Health Sciences"
-            case .arts: return "Master of Arts"
-            case .science: return "Master of Science"
-            case .education: return "Master of Education"
-            case .technology: return "Master of Science in Information Technology"
-            case .agriculture: return "Master of Agriculture"
-            case .law: return "Master of Laws"
-            case .design: return "Master of Design"
-            case .service: return "Master of Science in Service Management"
-            case .sports: return "Master of Science in Sports Science"
+            case .business: return L("Master of Business Administration")
+            case .engineering: return L("Master of Engineering")
+            case .health: return L("Master of Health Sciences")
+            case .arts: return L("Master of Arts")
+            case .science: return L("Master of Science")
+            case .education: return L("Master of Education")
+            case .technology: return L("Master of Science in Information Technology")
+            case .agriculture: return L("Master of Agriculture")
+            case .law: return L("Master of Laws")
+            case .design: return L("Master of Design")
+            case .service: return L("Master of Science in Service Management")
+            case .sports: return L("Master of Science in Sports Science")
             }
         case (.Doctorate, .some(let prof)):
             switch prof {
-            case .business: return "Doctor of Business Administration"
-            case .engineering: return "Doctor of Philosophy in Engineering"
-            case .health: return "Doctor of Medicine (MD)"
-            case .arts: return "Doctor of Fine Arts"
-            case .science: return "Doctor of Philosophy in Science"
-            case .education: return "Doctor of Education"
-            case .technology: return "Doctor of Philosophy in Information Technology"
-            case .agriculture: return "Doctor of Philosophy in Agriculture"
-            case .law: return "Juris Doctor (JD)"
-            case .design: return "Doctor of Design"
-            case .service: return "Doctor of Philosophy in Service Management"
-            case .sports: return "Doctor of Philosophy in Sports Science"
+            case .business: return L("Doctor of Business Administration")
+            case .engineering: return L("Doctor of Philosophy in Engineering")
+            case .health: return L("Doctor of Medicine (MD)")
+            case .arts: return L("Doctor of Fine Arts")
+            case .science: return L("Doctor of Philosophy in Science")
+            case .education: return L("Doctor of Education")
+            case .technology: return L("Doctor of Philosophy in Information Technology")
+            case .agriculture: return L("Doctor of Philosophy in Agriculture")
+            case .law: return L("Juris Doctor (JD)")
+            case .design: return L("Doctor of Design")
+            case .service: return L("Doctor of Philosophy in Service Management")
+            case .sports: return L("Doctor of Philosophy in Sports Science")
             }
         default:
             return Level(stage: level).degree
@@ -307,54 +308,53 @@ struct Education: Codable, Hashable, Identifiable {
     var degreeUS: String {
         switch (level, profile) {
         case (.Vocational, .some(let prof)) where prof.allowsVocational:
-            let title = prof.rawValue.capitalized
-            return "Associate of Applied Science in \(title)"
+            return L("Associate of Applied Science in \(prof.displayName)")
         case (.Vocational, _):
-            return "Trade Certificate"
+            return L("Trade Certificate")
         case (.Bachelor, .some(let prof)):
             switch prof {
-            case .business: return "Bachelor of Business Administration"
-            case .engineering: return "Bachelor of Science in Engineering"
-            case .health: return "Bachelor of Science in Health Sciences"
-            case .arts: return "Bachelor of Arts in Arts"
-            case .science: return "Bachelor of Science"
-            case .education: return "Bachelor of Education"
-            case .technology: return "Bachelor of Science in Information Technology"
-            case .agriculture: return "Bachelor of Science in Agriculture"
-            case .law: return "Bachelor of Arts in Law"
-            case .design: return "Bachelor of Arts in Design"
-            case .service: return "Bachelor of Science in Service Management"
-            case .sports: return "Bachelor of Science in Kinesiology"
+            case .business: return L("Bachelor of Business Administration")
+            case .engineering: return L("Bachelor of Science in Engineering")
+            case .health: return L("Bachelor of Science in Health Sciences")
+            case .arts: return L("Bachelor of Arts in Arts")
+            case .science: return L("Bachelor of Science")
+            case .education: return L("Bachelor of Education")
+            case .technology: return L("Bachelor of Science in Information Technology")
+            case .agriculture: return L("Bachelor of Science in Agriculture")
+            case .law: return L("Bachelor of Arts in Law")
+            case .design: return L("Bachelor of Arts in Design")
+            case .service: return L("Bachelor of Science in Service Management")
+            case .sports: return L("Bachelor of Science in Kinesiology")
             }
         case (.Master, .some(let prof)):
             switch prof {
-            case .business: return "Master of Business Administration"
-            case .engineering: return "Master of Science in Engineering"
-            case .health: return "Master of Science in Health Sciences"
-            case .arts: return "Master of Arts in Arts"
-            case .science: return "Master of Science"
-            case .education: return "Master of Education"
-            case .technology: return "Master of Science in Information Technology"
-            case .agriculture: return "Master of Science in Agriculture"
-            case .law: return "Master of Laws"
-            case .design: return "Master of Arts in Design"
-            case .service: return "Master of Science in Service Management"
-            case .sports: return "Master of Science in Kinesiology"
+            case .business: return L("Master of Business Administration")
+            case .engineering: return L("Master of Science in Engineering")
+            case .health: return L("Master of Science in Health Sciences")
+            case .arts: return L("Master of Arts in Arts")
+            case .science: return L("Master of Science")
+            case .education: return L("Master of Education")
+            case .technology: return L("Master of Science in Information Technology")
+            case .agriculture: return L("Master of Science in Agriculture")
+            case .law: return L("Master of Laws")
+            case .design: return L("Master of Arts in Design")
+            case .service: return L("Master of Science in Service Management")
+            case .sports: return L("Master of Science in Kinesiology")
             }
         case (.Doctorate, .some(let prof)):
             switch prof {
-            case .business: return "Doctor of Business Administration"
-            case .engineering: return "Doctor of Philosophy in Engineering"
-            case .health: return "Doctor of Medicine (MD)"
-            case .arts: return "Doctor of Fine Arts"
-            case .science: return "Doctor of Philosophy in Science"
-            case .education: return "Doctor of Education"
-            case .technology: return "Doctor of Philosophy in Information Technology"
-            case .agriculture: return "Doctor of Philosophy in Agriculture"
-            case .law: return "Juris Doctor (JD)"
-            case .design: return "Doctor of Design"
-            case .service: return "Doctor of Philosophy in Service Management"
-            case .sports: return "Doctor of Philosophy in Kinesiology"
+            case .business: return L("Doctor of Business Administration")
+            case .engineering: return L("Doctor of Philosophy in Engineering")
+            case .health: return L("Doctor of Medicine (MD)")
+            case .arts: return L("Doctor of Fine Arts")
+            case .science: return L("Doctor of Philosophy in Science")
+            case .education: return L("Doctor of Education")
+            case .technology: return L("Doctor of Philosophy in Information Technology")
+            case .agriculture: return L("Doctor of Philosophy in Agriculture")
+            case .law: return L("Juris Doctor (JD)")
+            case .design: return L("Doctor of Design")
+            case .service: return L("Doctor of Philosophy in Service Management")
+            case .sports: return L("Doctor of Philosophy in Kinesiology")
             }
         default:
             return Level(stage: level).degreeUS

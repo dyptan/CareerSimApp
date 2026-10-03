@@ -16,7 +16,12 @@ struct StatusBarView: View {
 
     /// The ⓘ beside the bar, in the same voice as the main screen's section
     /// hints (see `SkillsView`).
-    static let hint = "The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy.\n\nThe newest one is shown here. Open it to see them all, newest first."
+    static var hint: String {
+        [
+            L("The big moments of your life so far — like finishing school, getting a job, a pay rise or a trophy."),
+            L("The newest one is shown here. Open it to see them all, newest first."),
+        ].joined(separator: "\n\n")
+    }
 
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
@@ -41,7 +46,7 @@ struct StatusBarView: View {
                     Text("Age \(latest.age) — \(latest.message)")
                         .lineLimit(1)
                         .truncationMode(.tail)
-                    InfoHint(title: "Your story", message: Self.hint)
+                    InfoHint(title: L("Your story"), message: Self.hint)
                 }
                 .font(.caption.bold())
             }

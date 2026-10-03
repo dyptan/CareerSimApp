@@ -48,16 +48,15 @@ struct ActivityListView: View {
         // The skills a year of practice builds are listed in the info hint —
         // the row itself stays clean.
         let abilityHint: String = sport.abilities
-            .map { ability -> String in
-                let label = SoftSkills.label(forKeyPath: ability.keyPath) ?? "Skill"
-                let pic = SoftSkills.pictogram(forKeyPath: ability.keyPath) ?? ""
-                return "\(pic) \(label) (+\(ability.weight))"
-            }
+            .map(SkillLine.gain)
             .joined(separator: "\n")
 
         let years = player.sportYears[sport, default: 0]
-        let levelLine: String = ActivityLevel(years: years)
-            .map { "  ·  \($0.rawValue) (\(years) yr\(years == 1 ? "" : "s"))" } ?? ""
+        // "Beginner (1 yr)" — one plural key per line, so each language inflects "yr" itself.
+        let levelText: String? = ActivityLevel(years: years)
+            .map { L("\($0.displayName) (\(years) yrs)") }
+        let title = "\(sport.pictogram) \(sport.displayName)"
+        let rowTitle = levelText.map { "\(title)  ·  \($0)" } ?? title
 
         // The contest this discipline would feed *this* year. The year being
         // committed counts as a practised year, so the tier and odds are
@@ -68,7 +67,7 @@ struct ActivityListView: View {
             forSport: sport, stage: currentStage, years: enteredYears
         )
         let competitionOdds = competition.map {
-            Int(($0.winProbability(for: player.softSkills, years: enteredYears) * 100).rounded())
+            $0.winProbability(for: player.softSkills, years: enteredYears)
         }
 
         HStack(spacing: 8) {
@@ -77,12 +76,14 @@ struct ActivityListView: View {
             // sits beside the name, not among the buttons, so every row's Take
             // stays in one column.
             HStack(spacing: 6) {
-                Text("\(sport.pictogram) \(sport.label)\(levelLine)")
+                // Long names and levels wrap onto a second line rather than clip.
+                Text(verbatim: rowTitle)
+                    .fixedSize(horizontal: false, vertical: true)
                 if player.lastYearSports.contains(sport), let competition, let competitionOdds {
                     InfoHint(
                         title: "\(competition.icon) \(competition.name)",
-                        message: "\(competition.blurb)\n\n🎲 Your chance to win this year: about \(competitionOdds)%\n🏆 If you win: the “\(competition.achievement)” title and \(sport.fameCategory.rawValue) fame.\n\nPractise it again this year and you're entered automatically.",
-                        symbol: "trophy"
+                        message: contestHint(for: competition, sport: sport, odds: competitionOdds),
+                        symbol: "trophy"  // i18n:ignore SF Symbol name
                     )
                 }
             }
@@ -94,11 +95,36 @@ struct ActivityListView: View {
             }
 
             InfoHint(
-                title: "\(sport.pictogram) \(sport.label)",
-                message: "\(sport.description)\n\nEvery year you practise, you grow:\n\n\(abilityHint)\n\nWhile you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in \(sport.fameCategory.rawValue).\(sport.kind == .study ? "\n\n📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply." : "")"
+                title: "\(sport.pictogram) \(sport.displayName)",
+                message: disciplineHint(for: sport, abilityHint: abilityHint)
             )
         }
         .padding(5)
+    }
+
+    /// The 🏆 popover: this year's contest, the odds and the prize.
+    private func contestHint(for competition: Competition, sport: Sport, odds: Double) -> String {
+        [
+            competition.blurb,
+            [
+                L("🎲 Your chance to win this year: about \(Fmt.percent(odds))"),
+                L("🏆 If you win: the “\(competition.achievement)” title and \(sport.fameCategory.displayName) fame."),
+            ].joined(separator: "\n"),
+            L("Practise it again this year and you're entered automatically."),
+        ].joined(separator: "\n\n")
+    }
+
+    /// The ⓘ popover: what the discipline is, what a year of it grows, and how its contests work.
+    private func disciplineHint(for sport: Sport, abilityHint: String) -> String {
+        var paragraphs = [
+            sport.description,
+            L("Every year you practise, you grow:") + "\n\n" + abilityHint,
+            L("While you practise it, you're entered in its biggest contest each year — for free. Your chance to win starts small and grows every year, and bigger contests open up as you get better. Wins make you famous in \(sport.fameCategory.displayName)."),
+        ]
+        if sport.kind == .study {
+            paragraphs.append(L("📝 In high school, a year of study also raises that year's grade — which colleges look at when you apply."))
+        }
+        return paragraphs.joined(separator: "\n\n")
     }
 }
 

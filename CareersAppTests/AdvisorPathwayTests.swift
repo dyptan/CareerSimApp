@@ -296,6 +296,28 @@ final class AdvisorPathwayTests: XCTestCase {
         XCTAssertEqual(ceo.facts.count, ceo.points.count * 2)
     }
 
+    /// Every telling of every note, for every country and voice, is a finished sentence: no format
+    /// placeholder survives into the text, and no telling is empty.
+    func testNoNoteLeaksAPlaceholder() throws {
+        let titles = [ceoTitle, "Chief Technology Officer", "Chief Medical Officer", "Marketing Director", "Managing Partner",
+                      "Physician", "Judge", "Research Scientist", "Airline Pilot", "Player", "Investment Banker", "TV Presenter"]
+        for country in Country.allCases {
+            for title in titles {
+                guard let family = AdvisorCoach.family(title, in: country) else { continue }
+                for difficulty in [Difficulty.middleClass, .simplified] {
+                    for voice in [AdvisorVoice.standard, .simple] {
+                        guard let note = AdvisorRealWorld.note(for: family.entry, difficulty: difficulty, voice: voice, country: country) else { continue }
+                        let text = ([note.title] + note.points.flatMap { [$0.real, $0.game ?? ""] }).joined(separator: " ")
+                        for marker in ["%@", "%lld", "%1$", "%d"] {
+                            XCTAssertFalse(text.contains(marker), "\(country.title) \(title): \(marker) in “\(text.prefix(120))…”")
+                        }
+                        XCTAssertTrue(note.points.allSatisfy { !$0.real.isEmpty }, title)
+                    }
+                }
+            }
+        }
+    }
+
     func testEveryHardCareerNoteIsReachableAndEasyCareersHaveNone() throws {
         let hard = [ceoTitle, "Chief Technology Officer", "Chief Medical Officer", "Marketing Director", "Sales Director",
                     "Managing Partner", "Physician", "Surgeon", "Judge", "Research Scientist", "Airline Pilot", "Player",

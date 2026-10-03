@@ -19,16 +19,15 @@ struct ActivitiesView: View {
 
     private var tabs: [ActivityKind] { Self.availableTabs(for: player) }
 
-    /// The sheet's title ⓘ: how levels, contests and the Study tab work.
-    static let hint = """
-    Picking an activity uses up your year.
-
-    🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies.
-
-    📝 Study activities also raise your school grade for the year, which colleges look at when you apply.
-
-    🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win.
-    """
+    /// The sheet's title ⓘ: how levels, contests and the Study tab work. One paragraph per key.
+    static var hint: String {
+        [
+            L("Picking an activity uses up your year."),
+            L("🏅 Every year you practise, you get better (Beginner → Expert) and you're entered in its biggest contest. Winning earns trophies and fame — and top universities like trophies."),
+            L("📝 Study activities also raise your school grade for the year, which colleges look at when you apply."),
+            L("🏆 on a row means you practised it last year — tap it to see this year's contest and your chance to win."),
+        ].joined(separator: "\n\n")
+    }
 
     /// The remembered tab (it lives in `AppUIState`, so it survives the sheet
     /// closing every year), falling back to the first one open at this age.
@@ -41,7 +40,7 @@ struct ActivitiesView: View {
             // A single open tab needs no switch.
             if tabs.count > 1 {
                 Picker("Activity", selection: $appUIState.activitiesTab) {
-                    ForEach(tabs) { Text($0.rawValue).tag($0) }
+                    ForEach(tabs) { Text($0.displayName).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
