@@ -1,6 +1,8 @@
 # Career Simulator 1.0: App Store submission guide
 
-Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms. Nothing here has been entered or submitted for you.
+Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
+
+**Status, 2026-10-03.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`, and the 18 Game Center leaderboards exist as drafts. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the Support and Privacy Policy URLs, screenshots, builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -59,19 +61,18 @@ Same form again, separately. Differences:
 
 ## 4. Game Center leaderboards
 
-The 18 boards (US plus 17 country suffixes, each named in six languages) do not exist in App Store Connect yet. `Tools/GameCenter/leaderboards.py` creates them from an App Store Connect API key. It is untested against the live API, so look at the dry run first:
+The 18 boards (US plus 17 country suffixes) were created in App Store Connect on 2026-10-03 by `Tools/GameCenter/leaderboards.py create --apply`, each as a draft with six localizations (`INTEGER`, best score, high is best). Apple caps a leaderboard name at 30 characters, so the name a player sees is the country's own; the description says what is measured.
+
+What is left is to **add the leaderboards to each version page**, under **Game Center**, so they ship with 1.0: a draft board is not live until it belongs to a released version. The entitlement `com.apple.developer.game-center` is already in `CareersApp.entitlements`.
+
+To change or add a board, edit the table in the script, run `leaderboards.py check`, then look at the dry run before applying:
 
 ```bash
 python3 Tools/GameCenter/leaderboards.py create
-```
-
-Then, with your key (Users and Access ▸ Integrations ▸ App Store Connect API, App Manager role):
-
-```bash
 ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_PATH=~/AuthKey_….p8 ASC_BUNDLE_ID=dev.dyptan.carrersim python3 Tools/GameCenter/leaderboards.py create --apply
 ```
 
-The boards are created as drafts. On each version page, under **Game Center**, add the leaderboards so they ship with 1.0. The entitlement `com.apple.developer.game-center` is already in `CareersApp.entitlements`.
+The key comes from Users and Access ▸ Integrations ▸ App Store Connect API. The key used on 2026-10-03 could create the leaderboards but was refused (HTTP 403) when writing the version page's text fields, so filling those through the API needs a key with the **App Manager** (or Admin) role.
 
 ## 5. Support and privacy pages
 
