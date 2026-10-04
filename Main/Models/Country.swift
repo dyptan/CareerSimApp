@@ -64,7 +64,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
 
     /// An amount the way the game writes money: "68,000 $", "45.000 €",
     /// "4,380,000 ¥". The grouping follows the game's language and locale, and Japanese
-    /// writes "4,380,000円" and "$68,000".
+    /// writes "438万円" and "$68,000".
     func money(_ amount: Int) -> String {
         let number = Fmt.number(amount)
         switch L10n.language {
@@ -102,7 +102,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         return sign + body
     }
 
-    /// The smallest step money moves in on a slider — 500 in most currencies,
+    /// The smallest step money moves in on a slider — 500 in many currencies,
     /// more where the unit is small (yen, hryvnia).
     var moneyStep: Int { profile.step }
 
@@ -143,7 +143,7 @@ enum Country: String, Codable, CaseIterable, Identifiable {
     var generalPayScale: Double { profile.generalPayScale }
 
     /// The age a driving licence can be taken: 16 in the US and Canada (by state
-    /// and province), 17 in the UK and France, 18 elsewhere.
+    /// and province), 17 in the UK, France and Australia, 18 elsewhere.
     var drivingAge: Int { profile.drivingAge }
 
     /// Full-time pay at the minimum wage: the least any job may pay — its
@@ -241,7 +241,6 @@ enum Country: String, Codable, CaseIterable, Identifiable {
         let highEarnerThreshold: Int
         let generalPayScale: Double
         let capitalScale: Double
-        /// The age the driving licence opens at.
         var drivingAge: Int = 18
         /// What school is called and how it is graded.
         var schooling: Schooling = .american
@@ -1106,7 +1105,6 @@ extension Country {
         private let requirementResources: [Int: LocalizedStringResource]
         let scale: GradeScale
 
-        /// The primary school's name.
         var primarySchool: String { String(localized: primarySchoolName) }
         /// The lower-secondary school's name.
         var middleSchool: String { String(localized: middleSchoolName) }

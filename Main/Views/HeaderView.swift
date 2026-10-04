@@ -61,9 +61,8 @@ struct HeaderView: View {
             // the choice to make none.
             VStack(alignment: .trailing, spacing: 8) {
                 // Opens the score sheet: the running score, with Keep playing
-                // and Start over (see `RetirementView`). The header itself no
-                // longer shows the score. Simplified keeps no score, so there
-                // it is a progress check.
+                // and Start over (see `RetirementView`). Simplified keeps no
+                // score, so there it is a progress check.
                 Button(player.difficulty.keepsScore
                        ? String(localized: "Score", comment: "Header button: opens the score sheet (Real Life mode)")  // i18n:ignore translator comment
                        : String(localized: "Progress", comment: "Header button: opens the progress check (Simplified mode, which keeps no score)")) {  // i18n:ignore translator comment
@@ -84,7 +83,7 @@ struct HeaderView: View {
         }
     }
 
-    /// Plain-text summary of the current run's rules: mode, savings rate, goal.
+    /// Plain-text summary of the current run's rules: mode, country, savings rate, goal.
     /// Fed into the `InfoHint` next to the age. Year-by-year news (layoffs,
     /// promotions, wins) is the status log's job, and the recession is shown in
     /// the Economy section, so neither is repeated here.

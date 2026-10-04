@@ -13,7 +13,6 @@ struct InfoHint: View {
     let message: String
     var symbol: String = "info.circle"  // i18n:ignore SF Symbol name
     @State private var showing = false
-    /// The tallest the popover grows before it scrolls.
     private static let maxHeight: CGFloat = 520
 
     var body: some View {

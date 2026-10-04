@@ -77,8 +77,7 @@ struct RootView: View {
 
             // The skills panel flexes to fill the space between the pinned header
             // and footer — scrolling when there's a lot to show (a full career)
-            // and top-aligning when there isn't (early childhood) — instead of the
-            // old pair of Spacers that centred it and left a large void mid-screen.
+            // and top-aligning when there isn't (early childhood).
             SkillsView(player: player, appUIState: appUIState)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
@@ -87,12 +86,9 @@ struct RootView: View {
             FooterView(player: player, appUIState: appUIState)
         }
         #if os(macOS)
-        // Resizable game window with a sensible default; min keeps it usable.
         .frame(minWidth: 900, idealWidth: 1000, maxWidth: .infinity,
                minHeight: 600, idealHeight: 700, maxHeight: .infinity)
         #endif
-        // First-run onboarding: greet a brand-new player once, right after they
-        // land in the game, then never again (flag persists across launches).
         .onAppear {
             if !hasSeenCoach { showCoach = true }
         }
@@ -187,7 +183,7 @@ struct RootView: View {
             GoalView(player: player, appUIState: appUIState)
         }
         // The only fixed goal left is Simplified's top-leadership finish line,
-        // which turns on when the occupation changes; realistic modes are
+        // which turns on when the occupation changes; Real Life is
         // score-based, ending at `GameConstants.retirementAge` (see
         // `Player.goalMet` / `Player.hasRetired`).
         .onChange(of: player.currentOccupation) { _ in checkGoalReached() }
@@ -215,22 +211,19 @@ struct RootView: View {
             }
         }
         .padding()
-        // A layoff is a major setback, so it interrupts with a pop-up. The
-        // status log keeps a "Laid off" line afterward.
+        // A layoff is a major setback, so it interrupts with a pop-up.
         .alert("Laid Off", isPresented: $player.showLayoffAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Your employer had to cut jobs, and yours was one of them. You still got part of this year's pay. Open Jobs to find a new one.")
         }
-        // A founder's venture folding is a major setback worth a pop-up — they're
-        // not laid off, their business fails (see the ongoing venture risk).
+        // A founder's venture folding is a major setback worth a pop-up.
         .alert("Business Closed 📉", isPresented: $player.showVentureFailureAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(player.ventureFailureMessage)
         }
         // Congratulates the player on a promotion — a milestone worth a pop-up.
-        // The status log keeps a "Promoted" line afterward.
         .alert("Congratulations! 🎉", isPresented: $player.showPromotionAlert) {
             Button("Thanks!", role: .cancel) { }
         } message: {
@@ -244,24 +237,17 @@ struct RootView: View {
         } message: {
             Text(player.competitionWinMessage)
         }
-        // Reports back on an application or a venture launch — an offer, or a
-        // no with what to change. Applying spends the year either way, so the
-        // answer arrives here rather than inside a sheet that has closed.
         .alert(player.applicationOutcomeTitle, isPresented: $player.showApplicationOutcomeAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(player.applicationOutcomeMessage)
         }
-        // Reports back on the spare-time project the year was spent on — a hit or
-        // a flop, either way. A hit also fires the confetti (Player.celebrate).
+        // A hit also fires the confetti (Player.celebrate).
         .alert(player.projectOutcomeTitle, isPresented: $player.showProjectOutcomeAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(player.projectOutcomeMessage)
         }
-        // Marks the end of a degree with a congrats pop-up. The same milestone
-        // is also banked into the StatusBar history so the player can revisit it
-        // later. College and Careers stay reachable any year from the footer.
         .alert("Congratulations! 🎓", isPresented: $player.showGraduationAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -493,10 +479,6 @@ struct ModeSelectionView: View {
 /// Standard chrome for every action sheet in the game. Wraps plain content in a
 /// navigation container and gives it a **Close** button in a bar pinned along
 /// the sheet's bottom edge, under an inline title, via `gameSheetClose`.
-///
-/// There is no **Next** control: choosing something *is* committing to the year,
-/// so every sheet closes and the year advances as soon as the player picks. The
-/// only button here is **Close**, for leaving without spending the year.
 ///
 /// The four dialogs that manage their own `NavigationStack` (Jobs, Education,
 /// Ventures, Boardroom) don't use this wrapper — they apply `gameSheetClose`

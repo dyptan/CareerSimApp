@@ -7,8 +7,7 @@ import SwiftUI
 /// (a) names the level shown on the row, (b) escalates the tier of the contest
 /// the discipline auto-enters each year and (c) adds a fit bonus to its win
 /// probability. Competitions have no menu of their own — they resolve
-/// automatically in `Player.advanceYear`. A row keeps this year's contest behind
-/// a 🏆 button, shown only for a discipline practised last year.
+/// automatically in `Player.advanceYear`.
 struct ActivityListView: View {
     @ObservedObject var player: Player
     let kind: ActivityKind

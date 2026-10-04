@@ -7,7 +7,8 @@ import SwiftUI
 /// create — a festival set, a TV casting, a conference talk, a pitch competition
 /// — are Events instead (see `EventCatalog`).
 ///
-/// Nothing here is locked. Every project can be attempted at any time, and the
+/// Nothing here is locked except the star projects, which open only to a
+/// big-break title. Every other project can be attempted at any time, and the
 /// odds on the row carry the whole decision: they rise with the soft skills the
 /// work draws on and the working life behind you, and a project you have no
 /// talent or career for shows the ~0% it really is. Each attempt costs the year

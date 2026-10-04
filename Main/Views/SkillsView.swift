@@ -54,7 +54,7 @@ struct SkillsView: View {
         case .experience:
             return !experienceEntries.isEmpty
         case .economy:
-            // A realistic-mode mechanic; Simplified has no economy, so the
+            // A Real Life mechanic; Simplified has no economy, so the
             // section would be a list of "Steady" with nothing behind it. It
             // also waits for the high-school diploma: before then the job market
             // is not yet the player's concern (a teen's part-time job still
@@ -176,7 +176,7 @@ struct SkillsView: View {
         }
         .fontWeight(.semibold)
 
-        // The economy is a realistic-mode mechanic, so Simplified has no
+        // The economy is a Real Life mechanic, so Simplified has no
         // climate to show — and the sector alone decides nothing there.
         if !player.isSimplified {
             let climate = player.climate(for: job.industry)
@@ -202,7 +202,7 @@ struct SkillsView: View {
             ].joinedAsSentences()
         )
 
-        // Promotions are a realistic-mode mechanic only.
+        // Promotions are a Real Life mechanic only.
         if !player.isSimplified {
             let odds = player.promotionOdds(for: job)
             labelledRow(
@@ -242,10 +242,10 @@ struct SkillsView: View {
 
     // MARK: - Finances
 
-    /// The money pillar, gathered in one place instead of scattered across the
-    /// header: what's in the bank, what comes in each year and how much of it is
-    /// actually banked, what's going out (tuition, loan interest), and the net
-    /// worth the leaderboard score is built on.
+    /// The money pillar, gathered in one place: what's in the bank, what comes
+    /// in each year and how much of it is actually banked, what's going out
+    /// (tuition, loan interest), and the net worth the leaderboard score is
+    /// built on.
     private var financesSection: some View {
         DisclosureGroup(isExpanded: $financesExpanded) {
             VStack(alignment: .leading, spacing: 4) {
@@ -351,7 +351,7 @@ struct SkillsView: View {
     }
 
     /// Whether a tuition bill is running this year: a paid course (one with an
-    /// institution profile) still in progress. Realistic mode only.
+    /// institution profile) still in progress. Real Life only.
     private var showsTuition: Bool {
         !player.isSimplified
             && player.currentEducation?.profile != nil
@@ -519,9 +519,9 @@ struct SkillsView: View {
     // MARK: - Credentials
 
     /// Everything the player formally *holds*: degrees, plus the trainings
-    /// (certificates and licences) that used to sit in their own "Skills"
-    /// section. They're the same kind of thing — a qualification you've earned
-    /// and keep — so they share one list, grouped by kind.
+    /// (certificates and licences). They're the same kind of thing — a
+    /// qualification you've earned and keep — so they share one list, grouped
+    /// by kind.
     private var credentialsSection: some View {
         DisclosureGroup(isExpanded: $credentialsExpanded) {
             VStack(alignment: .leading, spacing: 6) {
@@ -542,8 +542,6 @@ struct SkillsView: View {
                         }
                     }
                 }
-                // Trainings don't apply in simplified mode, which is why the
-                // group is conditional rather than just empty there.
                 if showsTrainings {
                     credentialGroup(title: L("Certificates & licences")) {
                         ForEach(trainings) { training in
@@ -562,7 +560,7 @@ struct SkillsView: View {
         }
     }
 
-    /// Trainings are a realistic-mode mechanic, so simplified runs never show
+    /// Trainings are a Real Life mechanic, so Simplified runs never show
     /// the group even if the set somehow isn't empty.
     private var showsTrainings: Bool {
         !player.isSimplified && !trainings.isEmpty
@@ -588,10 +586,9 @@ struct SkillsView: View {
     // MARK: - Macroeconomics
 
     /// What each industry is doing this year. Every row here is load-bearing:
-    /// the climate multiplies hire odds, moves promotion odds (and freezes them
-    /// outright in a slump), and scales the odds a spare-time project in that
-    /// field lands. It is the one place a player can see *when* to apply, not
-    /// just where.
+    /// the climate multiplies hire odds, moves promotion odds, and scales the
+    /// odds a spare-time project in that field lands. It is the one place a
+    /// player can see *when* to apply, not just where.
     private var economySection: some View {
         DisclosureGroup(isExpanded: $economyExpanded) {
             VStack(alignment: .leading, spacing: 4) {

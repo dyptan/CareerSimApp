@@ -9,9 +9,9 @@ import Foundation
 /// `Player.executiveActionsThisYear`).
 ///
 /// Two decisions ship today, tuned as a risk/reward pair:
-/// - **Announce an Investment Round** — a gamble. A successful year realises a
-///   large capital raise as equity liquidity (a multiple of the player's pay)
-///   and banks industry fame; a failure yields nothing but the opportunity cost.
+/// - **Announce an Investment Round** — a gamble. A successful round grows the
+///   company (and with it the founder's stake) and banks business fame; a
+///   failure yields nothing but the opportunity cost.
 ///   The odds turn on the founder-cluster soft skills, plus the player's network
 ///   and reputation in the field.
 /// - **Sell Your Stake** — put your equity on the market at a price you name. The
@@ -22,9 +22,9 @@ struct ExecutiveDecision: Identifiable, Hashable {
     /// How the decision resolves. Each kind has its own odds/payout maths on
     /// `Player`, so the catalogue stays declarative.
     enum Kind: String, Hashable {
-        /// A high-variance capital raise: big cash + fame on success, else nothing.
+        /// A high-variance capital raise: company growth + fame on success, else nothing.
         case investmentRound
-        /// A guaranteed, tenure-scaled equity cash-out.
+        /// A tenure-scaled equity cash-out at the player's asking price, if a buyer bites.
         case sellShares
     }
 
@@ -38,7 +38,7 @@ struct ExecutiveDecision: Identifiable, Hashable {
     /// The play's pitch, in the player's language.
     var blurb: String { String(localized: blurbResource) }
     /// Soft-skill axes the decision leans on. Drives the odds for a gamble
-    /// (`investmentRound`); shown as context for the guaranteed `sellShares`.
+    /// (`investmentRound`).
     let talents: [WritableKeyPath<SoftSkills, Int>]
 
     /// The catalogue rows pass their text as literals, which the compiler extracts into the
@@ -61,9 +61,10 @@ struct ExecutiveDecision: Identifiable, Hashable {
     /// this returns.
     struct Outcome {
         let decision: ExecutiveDecision
-        /// True for a guaranteed sell-shares, or a successful investment round.
+        /// True when a buyer takes the stake, or the investment round closes.
         let success: Bool
-        /// Cash added to savings this decision (0 on a failed round).
+        /// Cash added to savings this decision: a sale's proceeds after tax and
+        /// fees. 0 for a round (its money goes into the company) or an unsold stake.
         let cash: Int
         /// Title of any fame award banked (investment round success only).
         let fameTitle: String?

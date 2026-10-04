@@ -14,10 +14,6 @@ import Foundation
 /// assumed to pass the exam, so there's no roll. Hard gates — age, education
 /// (EQF), prerequisite trainings, and, for senior credentials, work experience —
 /// decide whether you may *enrol*.
-///
-/// `isStatutory` marks the legally-mandated credentials: they
-/// hard-gate hiring in every field, whereas the rest
-/// only gate hiring in regulated industries (see `Job.hardSkillsMet`).
 enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     // MARK: Role-defining certifications
     case cna = "CNA"
@@ -401,7 +397,7 @@ enum Training: String, CaseIterable, Codable, Hashable, Identifiable {
     /// The hiring/founding edge a *non-gating* skill-building credential confers,
     /// and the fields it applies to. Unlike the licences and role-defining certs —
     /// whose value is the hard gate they clear — these modern programs (coding,
-    /// game dev, design, performing arts) legally gate nothing, so their payoff is
+    /// game dev, design, music production) legally gate nothing, so their payoff is
     /// this soft probability lift: a relevant credential meaningfully raises the
     /// odds of being hired into the field (`Job.hireProbability`) and of a venture
     /// in it succeeding (`Job.founderSuccessProbability`), and counts as one
@@ -528,7 +524,7 @@ extension Training {
     /// Every gate and classification of one credential, in one place.
     ///
     /// A dictionary rather than a `switch` per value, because coverage is then
-    /// *checkable*: `TrainingIntegrityTests` compares `Training.allCases` against
+    /// *checkable*: `CatalogIntegrityTests` compares `Training.allCases` against
     /// the table's keys, where a `default:` arm would silently hand a new
     /// credential the fallback — a statutory licence that quietly stopped gating
     /// hiring, say. Rows state only what differs from the defaults below.
@@ -653,6 +649,6 @@ extension Training {
     ]
 
     /// This credential's rules. Falls back to the defaults for a case with no
-    /// row — a state `TrainingIntegrityTests` exists to prevent.
+    /// row — a state `CatalogIntegrityTests` exists to prevent.
     var rules: Rules { Training.rulesByTraining[self] ?? Rules() }
 }

@@ -70,7 +70,7 @@ enum CareerAdvisor {
         let destination: Destination?
         /// The role the move is aimed at.
         let job: Job
-        /// Expected extra lifetime pay in dollars — what tips are ranked by.
+        /// Expected extra lifetime pay in the player's currency — what tips are ranked by.
         let value: Double
 
         var id: String { kind.rawValue }
@@ -171,9 +171,8 @@ enum CareerAdvisor {
     /// Simplified's goal, twice its whole pay. Simplified mode's finish line is a top-leadership seat, not a
     /// number, so reaching it outranks a merely better-paid role even when it
     /// pays less than the job it replaces (a surgeon stepping up to chief
-    /// medical officer). Before degrees gated every Simplified role, the best-
-    /// paid path happened to end in the C-suite; now it can end at a surgeon's
-    /// salary, one seat short of the goal.
+    /// medical officer). The best-paid path can end at a surgeon's salary, one
+    /// seat short of the goal.
     static func goalAdjustedRaise(_ job: Job, pay: Int, player: Player) -> Int {
         reachesGoal(job, player) ? 2 * offer(job, player) : prospectPay(job, player) - pay
     }
@@ -302,10 +301,10 @@ enum CareerAdvisor {
     /// the next rung — only once the player meets its full requirements, all of
     /// its years included, and clears its seat (`Job.promotionSeatChance`) —
     /// at a raise clamped into the new rung's band (`Player.promotionPay`).
-    /// There is no in-place raise to wait for any more, so a role with no rung
+    /// There is no in-place raise to wait for, so a role with no rung
     /// above offers no climb. When only years stand between the player and the
     /// rung, the tip counts the wait; any other gap (a degree, a licence) is
-    /// the train and study tips' business. Realistic mode only — simplified
+    /// the train and study tips' business. Real Life only — Simplified
     /// mode never promotes, the way up there is applying, which `applyNowTip`
     /// covers.
     static func climbTip(_ player: Player) -> Tip? {
@@ -427,7 +426,7 @@ enum CareerAdvisor {
             let admission = retryOutlook(degree.admissionProbability(player: player))
             let delay = years + licences.count + admission.extraYears
             // The education factor today against the one the degree earns: a
-            // pass/fail gate in the regulated fields and simplified mode, the
+            // pass/fail gate in the regulated fields and Simplified mode, the
             // relevant-degree premium everywhere else.
             let educationAfter = (job.educationIsMandatory || player.isSimplified)
                 ? 1.0 : GameConstants.relevantDegreeMultiplier
@@ -441,7 +440,7 @@ enum CareerAdvisor {
             let gain = hire.chance - retryOutlook(now).chance
             guard gain > 0 else { continue }
             // Study is full-time: the job (and its pay) goes, and — outside
-            // simplified mode — the student's share of tuition is due, for the
+            // Simplified mode — the student's share of tuition is due, for the
             // degree after this one too when this is only the first step.
             let cost = Double(pay * degree.yearsToComplete + studentTuition(degree, toward: minEQF, player: player))
             let value = admission.chance * careerValue(odds: gain, raise: goalAdjustedRaise(job, pay: pay, player: player),

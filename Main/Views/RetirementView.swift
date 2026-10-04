@@ -65,10 +65,9 @@ struct RetirementView: View {
                     .foregroundStyle(.orange)
             }
 
-            // The header no longer carries the running score — this sheet, behind
-            // the header's Score button, is where it lives, so the formula is
-            // spelled out in full. Debt counts against it, which is why the
-            // caption says net worth and not savings.
+            // The running score lives on this sheet, behind the header's Score
+            // button, so the formula is spelled out in full. Debt counts against
+            // it, which is why the caption says net worth and not savings.
             if keepsScore {
                 HStack(spacing: 6) {
                     Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(Fmt.number(player.leaderboardScore))")

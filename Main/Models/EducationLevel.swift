@@ -16,7 +16,6 @@ struct Level: Codable, Hashable, Identifiable {
 
     var id: String { stage.rawValue }
 
-    // EQF mapping by stage
     var eqf: Int {
         switch stage {
         case .PrimarySchool: return 1

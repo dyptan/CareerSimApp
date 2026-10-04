@@ -18,7 +18,7 @@ enum GameConstants {
     static let previewWindowWidth: CGFloat = 1000
     static let previewWindowHeight: CGFloat = 700
 
-    /// Realistic mode: annual REAL (after-inflation) return the accumulated
+    /// Real Life: annual REAL (after-inflation) return the accumulated
     /// balance compounds at in an ordinary year. Salaries are fixed 2026 dollars,
     /// so the return has to be real too: a balanced portfolio has returned about
     /// 5 % real since 1926 and planners assume 4–5 % (CFA Institute RPC 2025).
@@ -112,11 +112,11 @@ enum GameConstants {
     /// Minimum age at which the entrepreneurial surface (founder ventures) opens
     /// up. Staking capital on a business is an adult play, so — like the
     /// Boardroom, which gates on holding an executive seat — Ventures stays
-    /// hidden from children even in realistic mode, keeping the young-player
+    /// hidden from children even in Real Life, keeping the young-player
     /// footer uncluttered. Matches the age formal adulthood begins.
     static let minimumEntrepreneurAge: Int = 18
 
-    /// Realistic mode: when a downturn turns out to be *prolonged*, how many
+    /// Real Life: when a downturn turns out to be *prolonged*, how many
     /// extra years (beyond the year it strikes) it drags on for. The exact
     /// length is rolled from this range. See `Difficulty.prolongedTurmoilChance`.
     /// NBER: the longest post-war contraction ran 18 months, so a prolonged
@@ -189,7 +189,7 @@ enum GameConstants {
 
     /// The top of the founder-preparation score (`Job.founderSuccessProbability`),
     /// which no amount of experience, skill, capital or credentials exceeds.
-    /// Preparation no longer decides whether a business opens — it always does —
+    /// Preparation does not decide whether a business opens — it always does —
     /// but how well it survives (see `Player.ventureFoldRisk`).
     static let founderMaxSuccess: Double = 0.55
 
@@ -433,7 +433,7 @@ enum GameConstants {
 
     /// The education level (EQF 4 = vocational) below which a role counts as
     /// unskilled (`Job.isLowSkilled`) — and gets the lower pay band for merit
-    /// raises (`payCeilingMultipleSubDegree`). It no longer decides who is
+    /// raises (`payCeilingMultipleSubDegree`). It does not decide who is
     /// promoted: any rung with a rung above it can be, police and trade
     /// apprentices included, and a role with no rung above has nothing to be
     /// promoted to.
@@ -455,7 +455,7 @@ enum GameConstants {
     //     odds  = (merit + network + fame + education)
     //             × climate × passed over × age fade
     //
-    // and a win steps up one rung — there is no in-place "promotion" any more —
+    // and a win steps up one rung — there is no in-place "promotion" —
     // provided the player meets that rung's requirements *and* its full years,
     // and clears its seat (`Job.promotionSeatChance`).
 
@@ -630,8 +630,7 @@ enum GameConstants {
     static let slumpPostingWithdrawalChance: Double = 0.40
 
     /// A running venture's fold risk is multiplied by this in a recession year
-    /// (`Player.advanceVenture`) — its own constant, no longer the employee
-    /// layoff severity.
+    /// (`Player.advanceVenture`).
     static let ventureRecessionFoldMultiplier: Double = 1.3
 
     // MARK: - Offers

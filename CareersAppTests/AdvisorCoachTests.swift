@@ -6,7 +6,7 @@ import XCTest
 /// not on wording, so these pin the coach's structure and leave the phrasing free.
 final class AdvisorCoachTests: XCTestCase {
 
-    /// A realistic-mode player of `age` with no skills and no plan yet.
+    /// A Real Life player of `age` with no skills and no plan yet.
     private func player(age: Int, simplified: Bool = false) -> Player {
         let player = Player()
         player.difficulty = simplified ? .simplified : .middleClass

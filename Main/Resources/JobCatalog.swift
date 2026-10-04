@@ -6,7 +6,7 @@ import Foundation
 /// **Why these tables are dictionaries rather than `switch` statements.** Each is
 /// keyed by a job title, so renaming a job would silently drop it back to its
 /// category defaults — the balance changes and nothing complains. A dictionary's
-/// keys can be *enumerated*, so `JobCatalogIntegrityTests` asserts every key
+/// keys can be *enumerated*, so `CatalogIntegrityTests` asserts every key
 /// names a real job and a rename fails the tests instead. A `switch` cannot be
 /// checked that way.
 enum JobCatalog {
@@ -59,12 +59,7 @@ enum JobCatalog {
     /// A career ladder: one role at several seniority levels.
     ///
     /// The rungs are **ordered, entry rung first, and that order is the ladder**
-    /// — promotion moves to the next index. Previously a ladder existed only as a
-    /// coincidence of spelling: rungs were matched by stripping a seniority
-    /// prefix off the title and ranked from a prefix table, so two rungs could
-    /// tie for "next" (staff and principal both ranked 5, making the promotion
-    /// pick shuffle-dependent and stranding staff as a dead end) and a rung whose
-    /// title didn't start with a blessed prefix couldn't join its ladder at all.
+    /// — promotion moves to the next index.
     struct LadderSpec {
         /// The role irrespective of rung. Becomes `Job.baseTitle`, which tenure
         /// (`Player.experienceByRole`) and the jobs list group by.
@@ -146,7 +141,7 @@ enum JobCatalog {
 
         "Fashion Designer":               .init(creativityAndInsightfulThinking: 4, communicationAndNetworking: 2, persuasionAndNegotiation: 1, visionaryThinkingAndAmbition: 1, carefulnessAndAttentionToDetail: 2, tinkeringAndFingerPrecision: 1),
 
-        // Fitness (personal-brand coaching roles kept; competitive sport ladders removed)
+        // Fitness (personal-brand coaching roles)
         "Fitness Instructor":             .init(communicationAndNetworking: 3, leadershipAndInfluence: 1, resilienceAndEndurance: 3, stressResistanceAndEmotionalRegulation: 1, empathyAndInterpersonalCare: 2, collaborationAndTeamwork: 1, timeManagementAndPlanning: 1, selfDisciplineAndPerseverance: 2),
 
         // Games — the art, design and engineering that ship them
@@ -514,8 +509,8 @@ enum JobCatalog {
     /// ladder, keyed by base title → that ladder's name. A surgeon's or an
     /// anesthesiologist's five years are years as a doctor — residency and
     /// attending practice — not five years in any health job, which is what a
-    /// standalone role's whole-category count would otherwise accept (two
-    /// years as a nursing aide used to qualify). See `Job.relevantYears`.
+    /// standalone role's whole-category count would otherwise accept. See
+    /// `Job.relevantYears`.
     static let tenureLadderByBaseTitle: [String: String] = [
         "Surgeon": "Physician",  // i18n:ignore catalogue data
         "Anesthesiologist": "Physician",  // i18n:ignore catalogue data
@@ -546,7 +541,7 @@ enum JobCatalog {
         // business degree (the CPA's 150 credit hours are mostly accounting).
         "Accountant": [.business],
         // Game roles hire from technology, design and arts alike, so they keep
-        // that spread rather than inheriting whichever category now holds them.
+        // that spread rather than inheriting whichever category holds them.
         "Game Designer": [.technology, .design, .arts],
         "Narrative Designer": [.technology, .design, .arts],
     ]
@@ -594,10 +589,8 @@ enum JobCatalog {
         // …and the ones that are out chasing the story or the shot.
         "Journalist": .field,
         "Photographer": .field,
-        // Transportation: the tower is a control room, not a cab.
     ]
 
-    /// Where a role in `category` is done, absent an entry above.
     /// The markets that plausibly employ a discipline, when
     /// `industriesByBaseTitle` says nothing more specific. A posting draws one of
     /// these each time the market is redrawn (see `allJobs`), which is what makes
@@ -701,12 +694,6 @@ enum JobCatalog {
 
     /// How a rung's demands differ from the entry rung's.
     ///
-    /// A ladder used to ask exactly the same of every rung: a Delivery Courier
-    /// and an Airline Captain, an IT Support Specialist and a Chief Technology
-    /// Officer, a Bank Teller and a Chief Executive Officer were each written
-    /// down as the same person. Forty of the catalogue's forty-two ladders were
-    /// flat, so the only thing that changed on the way up was the pay.
-    ///
     /// The authored profile is **the entry rung's** — the bar for joining the
     /// ladder at all. Each rung above it adds:
     ///
@@ -776,10 +763,7 @@ enum JobCatalog {
     ///
     /// Every category is spelled out and there is no `default:` branch, so
     /// adding a category fails the build rather than silently inheriting a
-    /// near-empty profile. That is exactly what used to happen to public
-    /// services and entrepreneurship: both fell through to a catch-all that
-    /// asked almost nothing, which made a $130k precinct commander with twelve
-    /// years in one of the easiest hires in the game.
+    /// near-empty profile.
     static func defaultSoftSkills(for category: JobCategory) -> SoftSkills {
         switch category {
 
@@ -836,7 +820,7 @@ enum JobCatalog {
             )
 
         // Teaching is explaining and holding a room — a different job from
-        // nursing, which it used to share a profile with.
+        // nursing.
         case .education:
             return .init(
                 communicationAndNetworking: 3,
@@ -968,7 +952,7 @@ enum JobCatalog {
             )
 
         // Policing, firefighting, and public works: the calm, physical trades
-        // of the state. This used to fall through to the catch-all.
+        // of the state.
         case .publicServices:
             return .init(
                 communicationAndNetworking: 2,
@@ -1003,8 +987,7 @@ enum JobCatalog {
                 selfDisciplineAndPerseverance: 2
             )
 
-        // Founding: nerve, a story, and the discipline to keep going. Also
-        // previously a catch-all case, which asked a founder for nothing.
+        // Founding: nerve, a story, and the discipline to keep going.
         case .entrepreneurship:
             return .init(
                 analyticalReasoningAndProblemSolving: 2,
@@ -1125,13 +1108,9 @@ enum JobCatalog {
     static let standaloneRoles: [JobSpec] = [
         // MARK: The biggest employers
         //
-        // These are the roles most people actually hold. The catalogue skewed
-        // hard toward glamour work — show business and games were 20% of it and
-        // are under 2% of real employment — while care work, shop floors, school
-        // support, kitchens and back offices, which between them employ tens of
-        // millions, were barely represented. US employment figures in the
-        // comments are approximate (BLS OES, ~2023), kept here so a future edit
-        // can tell a common job from a rare one.
+        // These are the roles most people actually hold. US employment figures in
+        // the comments are approximate (BLS OES, ~2023), kept here so a future
+        // edit can tell a common job from a rare one.
         //
         // Pay is the BLS OEWS May 2025 median for the matching occupation
         // (fixed 2026 dollars — the game has no inflation). A ladder spreads
@@ -1239,7 +1218,6 @@ enum JobCatalog {
         .init(title: "Photographer", category: .showBusiness, income: 44_000, icon: "📷", summary: "Takes photos for commercial and personal use.", minEQF: 3),  // i18n:ignore catalogue data
         .init(title: "Video Editor", category: .showBusiness, income: 72_000, icon: "🎬", summary: "Cuts and assembles footage for film, TV, and online.", minEQF: 5),  // BLS: bachelor's  // i18n:ignore catalogue data
         .init(title: "Social Media Manager", category: .showBusiness, income: 70_000, icon: "📱", summary: "Runs brand presence and campaigns across social platforms.", minEQF: 5),  // i18n:ignore catalogue data
-        // Sports / Fitness
         // Agriculture
         .init(title: "Farmhand", category: .agriculture, income: 36_000, icon: "🧑‍🌾", summary: "Plants, harvests, and tends crops and livestock.", minEQF: 1),  // i18n:ignore catalogue data
         .init(title: "Farmer", category: .agriculture, income: 32_000, icon: "🚜", summary: "Operates agricultural production and livestock.", minEQF: 2),  // i18n:ignore catalogue data
@@ -1268,10 +1246,6 @@ enum JobCatalog {
     // rungs can never tie for "next". Credentials and soft skills are inherited
     // from the ladder's name via the per-base-title tables.
     static let ladders: [LadderSpec] = [
-        // One flight-deck career, not three jobs. First Officer, Pilot and Airline
-        // Captain were separate roles with rising experience gates — a ladder
-        // written out longhand, which also meant seniority in the seat didn't
-        // count toward the seat above it. Each rung keeps its own real title.
         // One logistics-management career, not four jobs. Warehouse, fleet and
         // supply-chain managers are a single BLS occupation (~160k), and the
         // coordinator role is its entry grade — so they are the rungs of it.
@@ -1282,6 +1256,8 @@ enum JobCatalog {
             .init(label: "", income: 82_000, summary: "Runs a distribution site — racking, shifts, and throughput.", minEQF: 4, minYears: 3, icon: "🏬", title: "Warehouse Manager"),  // i18n:ignore catalogue data
             .init(label: "", income: 120_000, summary: "Owns the end-to-end supply chain and its suppliers.", minEQF: 5, minYears: 6, icon: "🔗", title: "Supply Chain Manager"),  // i18n:ignore catalogue data
         ]),
+        // One flight-deck career, not three jobs: seniority in the seat counts
+        // toward the seat above it. Each rung keeps its own real title.
         .init(name: "Airline Pilot", category: .transportation, icon: "✈️", rungs: [  // i18n:ignore catalogue data
             .init(label: "", income: 100_000, summary: "Co-pilots commercial flights alongside the captain.", minEQF: 5, icon: "🧑‍✈️", title: "First Officer"),  // i18n:ignore catalogue data
             .init(label: "", income: 200_000, summary: "Operates aircraft for passenger or cargo flights.", minEQF: 5, icon: "✈️", title: "Pilot"),  // i18n:ignore catalogue data
@@ -1292,12 +1268,10 @@ enum JobCatalog {
         // base rung on pay, so it is that ladder's first step.
         .init(name: "3D Artist", category: .design, icon: "🎨", rungs: [
             .init(label: "Junior", income: 62_000, summary: "Sculpts characters, props, and environments as 3D assets.", minEQF: 5, icon: "🧊"),  // i18n:ignore catalogue data
-            // Games — art, design and engineering ladders inside a studio
             .init(label: "", income: 85_000, summary: "Creates textured, lit 3D art for games and film.", minEQF: 5, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 115_000, summary: "Owns key art and sets the visual bar for the team.", minEQF: 5, minYears: 5),  // i18n:ignore catalogue data
         ]),
         .init(name: "Accountant", category: .administration, icon: "📒", rungs: [  // i18n:ignore catalogue data
-            // Business / Finance
             .init(label: "Junior", income: 62_000, summary: "Books transactions and supports month-end close.", minEQF: 4, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 84_000, summary: "Prepares financial records and statements.", minEQF: 5, minYears: 1),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 115_000, summary: "Owns ledger areas and supervises junior accountants.", minEQF: 5, minYears: 4),  // i18n:ignore catalogue data
@@ -1318,13 +1292,11 @@ enum JobCatalog {
             // kitchen work (BLS) — credited from any hospitality job, so a
             // cook's years count.
             .init(label: "", income: 45_000, summary: "Prepares meals in restaurants or institutions; entry rung of the kitchen ladder.", minEQF: 3, minYears: 3),  // i18n:ignore catalogue data
-            // Hospitality (chef ladder)
             .init(label: "Sous", income: 58_000, summary: "Second-in-command in the kitchen, runs daily service.", minEQF: 4, minYears: 4),  // i18n:ignore catalogue data
             .init(label: "Head", income: 72_000, summary: "Owns menu, sourcing, and kitchen leadership.", minEQF: 4, minYears: 6),  // i18n:ignore catalogue data
             .init(label: "Executive", income: 100_000, summary: "Oversees multiple kitchens and culinary brand.", minEQF: 4, minYears: 10),  // i18n:ignore catalogue data
         ]),
         .init(name: "Civil Engineer", category: .engineering, icon: "🛣️", rungs: [  // i18n:ignore catalogue data
-            // Engineering disciplines
             .init(label: "Junior", income: 75_000, summary: "Drafts plans and supports senior engineers on site.", minEQF: 5, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 101_000, summary: "Designs infrastructure and public works.", minEQF: 5, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 135_000, summary: "Leads infrastructure projects and signs off on designs.", minEQF: 5, minYears: 6),  // i18n:ignore catalogue data
@@ -1344,23 +1316,19 @@ enum JobCatalog {
             .init(label: "Senior", income: 155_000, summary: "Leads electrical-system architecture for complex products.", minEQF: 5, minYears: 6),  // i18n:ignore catalogue data
         ]),
         .init(name: "Electrician", category: .construction, icon: "🔌", rungs: [  // i18n:ignore catalogue data
-            // Trades — apprentice entry beneath the journeyman base role and master
             .init(label: "Apprentice", income: 40_000, summary: "Trains on the job toward a journeyman electrician license.", minEQF: 3, minYears: 0),  // i18n:ignore catalogue data
             // Journeyman: a four-year apprenticeship, entered from high school
             // (46% of electricians hold no more than a diploma — BLS).
             .init(label: "", income: 63_000, summary: "Installs and repairs electrical systems.", minEQF: 3, minYears: 4),  // i18n:ignore catalogue data
-            // Construction trades
             .init(label: "Master", income: 95_000, summary: "Licensed master responsible for jobs and apprentices.", minEQF: 4, minYears: 5),  // i18n:ignore catalogue data
         ]),
         .init(name: "Financial Analyst", category: .business, icon: "💹", rungs: [  // i18n:ignore catalogue data
             .init(label: "Junior", income: 75_000, summary: "Builds forecasting models with senior oversight.", minEQF: 5, minYears: 0),  // i18n:ignore catalogue data
-            // Business / Finance
             .init(label: "", income: 103_000, summary: "Analyzes financial performance and forecasts.", minEQF: 5),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 145_000, summary: "Partners with executives on capital planning and strategy.", minEQF: 5, minYears: 5),  // i18n:ignore catalogue data
         ]),
         .init(name: "Firefighter", category: .publicServices, icon: "🔥", rungs: [  // i18n:ignore catalogue data
             .init(label: "", income: 59_000, summary: "Responds to fires, accidents, and rescue emergencies.", minEQF: 3),  // i18n:ignore catalogue data
-            // Public Services — Firefighting / Rescue track (base "Firefighter")
             .init(label: "Senior", income: 88_000, summary: "Experienced firefighter leading a crew on emergency calls.", minEQF: 3, minYears: 6, icon: "🚒"),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 115_000, summary: "Commands a fire station and emergency operations.", minEQF: 4, minYears: 12, icon: "🚒"),  // i18n:ignore catalogue data
         ]),
@@ -1371,7 +1339,6 @@ enum JobCatalog {
         ]),
         .init(name: "Graphic Artist", category: .design, icon: "🎨", rungs: [  // i18n:ignore catalogue data
             .init(label: "Junior", income: 45_000, summary: "Produces assets to spec under art-director review.", minEQF: 3, minYears: 0),  // i18n:ignore catalogue data
-            // Design
             .init(label: "", income: 63_000, summary: "Creates visual artwork for media.", minEQF: 4, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 85_000, summary: "Owns visual identity work and directs junior artists.", minEQF: 4, minYears: 4),  // i18n:ignore catalogue data
         ]),
@@ -1380,17 +1347,13 @@ enum JobCatalog {
             .init(label: "", income: 300_000, summary: "Structures deals, raises capital, and advises on M&A.", minEQF: 5),  // i18n:ignore catalogue data
         ]),
         .init(name: "Lab Technician", category: .science, icon: "🧪", rungs: [  // i18n:ignore catalogue data
-            // Science
             // Science — two tracks: a Lab Technician trade ladder and a
-            // doctorate-gated Research Scientist ladder (Senior/Lead/Principal
-            // rungs live in the seniority ladders below).
+            // doctorate-gated Research Scientist ladder.
             .init(label: "", income: 52_000, summary: "Runs lab tests, preps samples, and records results.", minEQF: 4),  // i18n:ignore catalogue data
-            // Science — Laboratory track (base "Lab Technician")
             .init(label: "Senior", income: 65_000, summary: "Leads lab testing and trains junior technicians.", minEQF: 4, minYears: 5),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 80_000, summary: "Runs the lab's daily operations, safety, and quality.", minEQF: 5, minYears: 9, icon: "🔬"),  // i18n:ignore catalogue data
         ]),
         .init(name: "Lawyer", category: .law, icon: "⚖️", rungs: [  // i18n:ignore catalogue data
-            // Law / Public Services
             .init(label: "", income: 125_000, summary: "Provides legal advice and represents clients.", minEQF: 7),  // i18n:ignore catalogue data
             // Law — associate → senior associate → partner
             .init(label: "Senior", income: 170_000, summary: "Senior associate leading cases and mentoring junior lawyers.", minEQF: 7, minYears: 6),  // i18n:ignore catalogue data
@@ -1432,12 +1395,10 @@ enum JobCatalog {
         ]),
         .init(name: "Municipal Worker", category: .publicServices, icon: "🧹", rungs: [  // i18n:ignore catalogue data
             .init(label: "", income: 45_000, summary: "Keeps the city running — sanitation, parks, roads, and facilities.", minEQF: 2),  // i18n:ignore catalogue data
-            // Public Services — Municipal Services track (base "Municipal Worker")
             .init(label: "Senior", income: 56_000, summary: "Seasoned public-works hand running crews and equipment.", minEQF: 2, minYears: 5, icon: "🧰"),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 72_000, summary: "Supervises municipal crews, budgets, and city services.", minEQF: 3, minYears: 10, icon: "🏛️"),  // i18n:ignore catalogue data
         ]),
         .init(name: "Paralegal", category: .law, icon: "📑", rungs: [  // i18n:ignore catalogue data
-            // Law
             .init(label: "Junior", income: 48_000, summary: "Files documents and supports research for senior staff.", minEQF: 3, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 63_000, summary: "Assists lawyers with research and documentation.", minEQF: 4, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 80_000, summary: "Manages caseload research and trains junior paralegals.", minEQF: 4, minYears: 4),  // i18n:ignore catalogue data
@@ -1459,8 +1420,8 @@ enum JobCatalog {
             // The entry rung is easy to *qualify* for (no degree, no tenure) but
             // effectively closed without its signature achievement: hire odds sit
             // at the hiring floor until you hold it (see `Job.breakthroughFameByRole`).
-            // Screen and music stars are paid per project instead (see the star
-            // projects in `SideHustleCatalog`); team athletes hold real contracts.
+            // Screen and music stars take the star projects instead (see
+            // `SideHustleCatalog`); team athletes hold real contracts.
             // Athletics — the pro-player track, opened by a junior-competition win
             // ("Junior Champion", from the teen Junior Championship).
             .init(label: "Amateur", income: 35_000, summary: "Signed to a club's development squad after a standout junior career.", minEQF: 1, minYears: 0),  // i18n:ignore catalogue data
@@ -1476,17 +1437,14 @@ enum JobCatalog {
         .init(name: "Police Officer", category: .publicServices, icon: "👮", rungs: [  // i18n:ignore catalogue data
             // Public Services — three tracks, each climbed by seniority:
             // Law Enforcement (Police Officer), Firefighting/Rescue (Firefighter),
-            // and Municipal Services (Municipal Worker). Entry rungs here; the
-            // Senior/Lead rungs live in the seniority ladders below.
+            // and Municipal Services (Municipal Worker).
             .init(label: "", income: 72_000, summary: "Enforces laws and protects the public on patrol.", minEQF: 3),  // i18n:ignore catalogue data
-            // Public Services — Law Enforcement track (base "Police Officer")
             .init(label: "Senior", income: 100_000, summary: "Veteran officer leading patrols and mentoring recruits.", minEQF: 3, minYears: 5),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 135_000, summary: "Commands a precinct and sets policing strategy.", minEQF: 4, minYears: 12, icon: "🚓"),  // i18n:ignore catalogue data
         ]),
         .init(name: "Project Manager", category: .business, icon: "📋", rungs: [  // i18n:ignore catalogue data
             .init(label: "", income: 98_000, summary: "Plans and oversees projects to completion.", minEQF: 5),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 145_000, summary: "Manages portfolios of projects and senior stakeholders.", minEQF: 5, minYears: 7),  // i18n:ignore catalogue data
-            // Business — top rung / sales leadership capstone
             .init(label: "Lead", income: 175_000, summary: "Heads the PMO and the organization's most critical programs.", minEQF: 5, minYears: 10),  // i18n:ignore catalogue data
         ]),
         .init(name: "Registered Nurse", category: .health, icon: "🩺", rungs: [  // i18n:ignore catalogue data
@@ -1494,12 +1452,10 @@ enum JobCatalog {
             // of RNs hold one (BLS) — so the ADN route works; charge nurses,
             // who lead the shift, are expected to hold the BSN.
             .init(label: "", income: 82_000, summary: "Provides patient care, administers medication, and coordinates with medical teams.", minEQF: 4),  // i18n:ignore catalogue data
-            // Health
             .init(label: "Senior", income: 102_000, summary: "Experienced floor nurse mentoring newer staff.", minEQF: 4, minYears: 5),  // i18n:ignore catalogue data
             .init(label: "Charge", income: 118_000, summary: "Coordinates the nursing shift and triages escalations — the top of the floor-nursing ladder.", minEQF: 5, minYears: 8),  // i18n:ignore catalogue data
         ]),
         .init(name: "Research Scientist", category: .science, icon: "🔬", rungs: [  // i18n:ignore catalogue data
-            // Science — Research track (base "Research Scientist", doctorate-gated)
             .init(label: "Junior", income: 62_000, summary: "Early-career scientist running experiments under a senior lead.", minEQF: 7, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 105_000, summary: "Designs and runs experiments to answer scientific questions.", minEQF: 7),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 145_000, summary: "Leads research programs and publishes original work.", minEQF: 7, minYears: 6),  // i18n:ignore catalogue data
@@ -1510,9 +1466,7 @@ enum JobCatalog {
             .init(label: "Senior", income: 175_000, summary: "Runs regional sales orgs and hits aggressive targets.", minEQF: 5, minYears: 7),  // i18n:ignore catalogue data
         ]),
         .init(name: "Software Engineer", category: .technology, icon: "💻", rungs: [  // i18n:ignore catalogue data
-            // Technology
             .init(label: "Junior", income: 88_000, summary: "Entry-level developer learning the codebase and shipping small features.", minEQF: 5, minYears: 0),  // i18n:ignore catalogue data
-            // Technology
             // The mid-level engineer ("L4 / Engineer II") — postings ask 2–5
             // years, which is what makes the junior rung the way in.
             .init(label: "", income: 125_000, summary: "Designs and implements software systems.", minEQF: 5, minYears: 2),  // i18n:ignore catalogue data
@@ -1524,28 +1478,23 @@ enum JobCatalog {
             // MARK: Added rungs so every professional track has ≥3 levels.
             // Prefixed rungs gate on same-track (per-role) experience; the
             // Director/Partner capstones stay reachable on broad industry years.
-            // Tech — junior entry beneath the Systems Administrator ladder
             .init(label: "Junior", income: 70_000, summary: "Maintains servers and accounts under senior guidance.", minEQF: 4, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 99_000, summary: "Maintains IT infrastructure.", minEQF: 4, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 125_000, summary: "Architects infrastructure and leads incident response.", minEQF: 4, minYears: 5),  // i18n:ignore catalogue data
         ]),
         .init(name: "Teacher", category: .education, icon: "🏫", rungs: [  // i18n:ignore catalogue data
             .init(label: "", income: 48_000, summary: "Teaches a class of students their core subjects.", minEQF: 5),  // i18n:ignore catalogue data
-            // Education — Teacher track (base "Teacher", degree-gated)
             .init(label: "Senior", income: 72_000, summary: "Veteran teacher mentoring staff and leading a department.", minEQF: 5, minYears: 6, icon: "📚"),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 106_000, summary: "Heads the school's academics and leads the teaching staff.", minEQF: 6, minYears: 11, icon: "🍎"),  // i18n:ignore catalogue data
         ]),
         .init(name: "Tutor", category: .education, icon: "📖", rungs: [  // i18n:ignore catalogue data
             // Education — two tracks: an accessible Tutor ladder and a
-            // degree-gated Teacher ladder (Senior/Lead rungs in the seniority
-            // ladders below).
+            // degree-gated Teacher ladder.
             .init(label: "", income: 40_000, summary: "Coaches students one-on-one in specific subjects.", minEQF: 3),  // i18n:ignore catalogue data
-            // Education — Tutor track (base "Tutor", accessible)
             .init(label: "Senior", income: 48_000, summary: "Experienced tutor running group sessions and mentoring tutors.", minEQF: 4, minYears: 5),  // i18n:ignore catalogue data
             .init(label: "Lead", income: 60_000, summary: "Runs a tutoring center's staff, curriculum, and clients.", minEQF: 5, minYears: 9),  // i18n:ignore catalogue data
         ]),
         .init(name: "UX/UI Designer", category: .design, icon: "🖥️", rungs: [  // i18n:ignore catalogue data
-            // Design
             .init(label: "Junior", income: 72_000, summary: "Produces wireframes and visual assets under senior direction.", minEQF: 4, minYears: 0),  // i18n:ignore catalogue data
             .init(label: "", income: 104_000, summary: "Designs user interfaces and experiences.", minEQF: 5, minYears: 2),  // i18n:ignore catalogue data
             .init(label: "Senior", income: 135_000, summary: "Leads end-to-end design of major product surfaces.", minEQF: 5, minYears: 5),  // i18n:ignore catalogue data

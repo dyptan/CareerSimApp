@@ -30,7 +30,7 @@ func L(_ resource: LocalizedStringResource) -> String {
 /// advisor always agree.
 enum L10n {
     /// The languages the game ships in. Adding one: a `knownRegions` entry in the
-    /// project, a case here, and its column in every `Tools/i18n/translations/*.json`.
+    /// project, a case here, and a `Tools/i18n/translations/<code>/` folder.
     enum Language: String, CaseIterable {
         case english = "en"
         case german = "de"

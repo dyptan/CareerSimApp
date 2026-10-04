@@ -35,7 +35,7 @@ enum ActivityLevel: String {
 /// A discipline the player can train in by spending their yearly spare-time
 /// slot — athletic, creative, or a contest of the mind. Every one of them
 /// **levels up and competes**: that is the bar for being in the Activities
-/// sheet at all (pastimes with no ladder — a diary, educational TV — were cut).
+/// sheet at all.
 /// Each year practised bumps the matching soft skills and adds a year to
 /// `Player.sportYears`, which names the level, gates the Competitions tagged
 /// with the discipline, and scales the win probability inside them.

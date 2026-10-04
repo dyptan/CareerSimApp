@@ -4,16 +4,11 @@ import SwiftUI
 /// `FooterView` so its button rows reflow on narrow windows / split views
 /// instead of clipping.
 ///
-/// A wrapping row: items flow left to right and wrap onto further lines.
-///
 /// Measurement and placement share one row-breaking pass, and the reported size
-/// is the width actually used rather than the whole proposal. They used to
-/// disagree — `sizeThatFits` wrapped against `proposal.width` and returned that
-/// full width, while `placeSubviews` wrapped against `bounds.maxX`. When a
-/// parent handed back a narrower bounds (here the footer's `Skip` button takes
-/// its share first), placement produced more rows than measurement had reported,
-/// so every row after the first rendered *outside* the layout's frame and
-/// silently took no taps.
+/// is the width actually used rather than the whole proposal. If they
+/// disagreed, a parent handing back narrower bounds would make placement
+/// produce more rows than measurement had reported, so every row after the
+/// first would render *outside* the layout's frame and silently take no taps.
 private struct FlowLayout: Layout {
     var spacing: CGFloat = 8
     var lineSpacing: CGFloat = 8
@@ -121,7 +116,7 @@ struct FooterView: View {
     var body: some View {
         // Everything the year can be spent on, and nothing else: letting a year
         // pass without spending it is **Skip**, up in the header. Events are a
-        // realistic-mode feature, so they hide in simplified mode; activities stay,
+        // Real Life feature, so they hide in Simplified mode; activities stay,
         // since they build the soft skills that shape school admission odds.
         // Competitions have no button at all — they fire automatically each year
         // from the sport trained in Activities.
@@ -154,7 +149,7 @@ struct FooterView: View {
                 Button(String(localized: "Projects", comment: "Footer button: opens spare-time projects that build skills and fame")) { appUIState.showSideHustlesSheet = true }  // i18n:ignore translator comment
             }
 
-            // The founder path is a realistic-mode adult play, and only one
+            // The founder path is a Real Life adult play, and only one
             // venture runs at a time — once founded it becomes the occupation,
             // so this hides until the player exits it.
             if !player.isSimplified,

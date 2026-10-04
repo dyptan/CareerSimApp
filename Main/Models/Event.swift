@@ -1,7 +1,7 @@
 import Foundation
 
 /// A professional event — a summit, conference, expo, festival, or pitch
-/// competition. Distinct from an Activities discipline (`Sport`): events are a realistic-mode feature
+/// competition. Distinct from an Activities discipline (`Sport`): events are a Real Life feature
 /// that build an industry **professional network** improving both the hiring
 /// odds on that field's job postings and the chance of promotion while working
 /// in it (see `Player.networkBonus` and `Player.promotionChance`). They also

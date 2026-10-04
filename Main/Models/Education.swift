@@ -160,9 +160,6 @@ struct Education: Codable, Hashable, Identifiable {
         }
     }
 
-    /// How well the player's soft skills line up with what this school looks for,
-    /// as 0...1 — the average of the per-axis overlap. A school that weighs no
-    /// soft skills scores a flat 1.0.
     /// The share of the admission fit high-school grades make up here: the
     /// tier's weight for a first degree (vocational or bachelor's, applied to
     /// straight from school), nothing for a graduate programme.
@@ -182,6 +179,9 @@ struct Education: Codable, Hashable, Identifiable {
     /// accolades have taken their share.
     var softSkillWeight: Double { 1 - gradeWeight - accoladeWeight }
 
+    /// How well the player's soft skills line up with what this school looks for,
+    /// as 0...1 — the average of the per-axis overlap. A school that weighs no
+    /// soft skills scores a flat 1.0.
     func softSkillFit(player: Player) -> Double {
         let overlap = softSkillOverlap(player: player)
         guard !overlap.isEmpty else { return 1.0 }
@@ -559,9 +559,8 @@ func availableNextEducations(holds: [Education]) -> [Education] {
         }
     }
 
-    // A Master's opens in every field the player holds a Bachelor's in, and a
-    // Doctorate in every field with a Master's — one entry per field, however
-    // many qualifying degrees back it.
+    // A Master's opens in every field the player holds a Bachelor's in — one
+    // entry per field, however many qualifying degrees back it.
     let bachelorProfiles = Set(holds.filter { $0.level == .Bachelor }.compactMap(\.profile))
     for profile in TertiaryProfile.allCases
     where bachelorProfiles.contains(profile) && !alreadyHeld(.Master, profile) {

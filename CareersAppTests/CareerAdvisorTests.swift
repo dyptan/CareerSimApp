@@ -6,7 +6,7 @@ import XCTest
 /// which move with the random economy and starting skills.
 final class CareerAdvisorTests: XCTestCase {
 
-    /// A realistic-mode adult who has just finished high school and is free to
+    /// A Real Life adult who has just finished high school and is free to
     /// choose: no job, no study in progress.
     private func graduate(age: Int = 18) -> Player {
         let player = Player()

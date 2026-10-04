@@ -7,21 +7,16 @@ import AppKit
 #endif
 
 /// Wraps Game Center: authenticates the local player and submits scores to a
-/// leaderboard. The score is the player's "wealth velocity" — savings ÷ age —
+/// leaderboard. The score is the player's "wealth velocity" — net worth ÷ age —
 /// so banking wealth at a younger age ranks higher (see `Player.leaderboardScore`).
 /// Only scored runs use it at all (`Difficulty.keepsScore`): the Simplified
 /// tutorial neither signs in nor submits.
 ///
-/// ── One-time setup required outside the code ──────────────────────────────
-///  1. Xcode → CareersApp target → Signing & Capabilities → **+ Capability →
-///     Game Center** (adds the `com.apple.developer.game-center` entitlement and
-///     enables Game Center on the App ID).
-///  2. App Store Connect → your app → Features → Leaderboards → create a
-///     leaderboard (Integer format, High score is best) and set its ID below in
-///     `leaderboardID`.
-///  3. The Mac / device must be signed into Game Center (System Settings).
-/// Until that's done, authentication and submission fail gracefully — they log
-/// and are ignored, so the rest of the game is unaffected.
+/// The boards themselves live in App Store Connect, one per country
+/// (`Country.leaderboardID`); `Tools/GameCenter/leaderboards.py` creates them.
+/// Until a board exists, or while the player isn't signed into Game Center,
+/// authentication and submission fail gracefully — they log and are ignored, so
+/// the rest of the game is unaffected.
 final class GameCenterManager: ObservableObject {
     static let shared = GameCenterManager()
 

@@ -143,9 +143,9 @@ final class CatalogIntegrityTests: XCTestCase {
     }
 
     /// Every category states an entry profile of its own. There is no `default:`
-    /// arm any more, so this really checks the *content*: public services and
-    /// entrepreneurship used to land on a catch-all that asked for almost
-    /// nothing, which made a precinct commander one of the easiest hires around.
+    /// arm, so this really checks the *content*: public services and
+    /// entrepreneurship must not land on a catch-all that asks for almost nothing,
+    /// which would make a precinct commander one of the easiest hires around.
     func testEveryCategoryAsksForSomething() {
         for category in JobCategory.allCases {
             let profile = JobCatalog.defaultSoftSkills(for: category)
@@ -157,10 +157,9 @@ final class CatalogIntegrityTests: XCTestCase {
         }
     }
 
-    /// Climbing a ladder has to *mean* something in the requirements. Forty of
-    /// the forty-two ladders used to repeat one profile on every rung, so a
-    /// Delivery Courier and an Airline Captain were written down as the same
-    /// person and only the pay changed.
+    /// Climbing a ladder has to *mean* something in the requirements. A profile
+    /// repeated on every rung would write a Delivery Courier and an Airline
+    /// Captain down as the same person, with only the pay changing.
     func testSeniorRungsAskMoreThanTheRungBelow() {
         for ladder in JobCatalog.ladders where ladder.rungs.count > 1 {
             let rungs = JobCatalog.jobs(for: ladder)
@@ -332,10 +331,10 @@ final class CatalogIntegrityTests: XCTestCase {
     // MARK: - The skill-fit term
 
     /// Listing a skill a candidate already has must not make a role *harder* to
-    /// land. The scorer used to count how many of all eighteen axes the
-    /// candidate cleared, so every axis a role asked nothing of scored as a free
-    /// pass — and naming one more requirement took a free pass away. Profile
-    /// length was a difficulty knob nobody had set on purpose.
+    /// land. Counting how many of all the axes the candidate cleared would score
+    /// every axis a role asks nothing of as a free pass — and naming one more
+    /// requirement would take a free pass away, making profile length a
+    /// difficulty knob nobody had set on purpose.
     func testNamingASkillTheCandidateHasNeverCostsThem() {
         let player = Self.candidate(eqf: .Bachelor, profile: nil)
         guard let job = JobCatalog.allJobs().first(where: {
@@ -357,8 +356,8 @@ final class CatalogIntegrityTests: XCTestCase {
     }
 
     /// The term grades. Three of a required four is worth three quarters, not
-    /// nothing — the all-or-nothing version made the last point on an axis worth
-    /// as much as the first three together.
+    /// nothing — an all-or-nothing term would make the last point on an axis
+    /// worth as much as the first three together.
     func testPartialSkillCounts() {
         guard let job = JobCatalog.allJobs().first(where: {
             !$0.isEntrepreneurial
@@ -398,7 +397,7 @@ final class CatalogIntegrityTests: XCTestCase {
     /// The same factor has to reach promotions, not just hiring — being
     /// under-credentialled for the role you hold should cap how far you climb.
     func testDegreeMovesPromotionOdds() {
-        // A rung with one above it: only a real rung step is a promotion now.
+        // A rung with one above it: only a real rung step is a promotion.
         let all = JobCatalog.allJobs()
         guard let job = all.first(where: { candidate in
             !candidate.isEntrepreneurial && !candidate.educationIsMandatory
@@ -513,7 +512,7 @@ final class CareerGraphTests: XCTestCase {
         }
 
         let player = Player()
-        player.difficulty = .middleClass // a non-simplified mode, so hard skills are gated
+        player.difficulty = .middleClass // Real Life, so hard skills are gated
         player.age = 30 // clear the working-age gate
 
         let before = CareerGraph.missingHardRequirements(for: job, player: player)
@@ -598,7 +597,7 @@ final class CareerGraphTests: XCTestCase {
                        "The experience term should cap out at a full fit.")
     }
 
-    /// Nothing gates a project any more, so the odds have to carry the meaning:
+    /// Nothing gates a project, so the odds have to carry the meaning:
     /// a player with no talent and no career rolls against nothing, and no
     /// player ever exceeds the project's own ceiling.
     func testProjectOddsSpanZeroToCeiling() {
@@ -695,9 +694,9 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Projects vs. Events taxonomy
 
-    /// The four participate-in-an-organized-thing plays moved out of Projects and
-    /// into Events: they must exist as `CareerEvent`s and be gone from the
-    /// spare-time project catalogue (which is now self-initiated works only).
+    /// The four participate-in-an-organized-thing plays belong to Events, not
+    /// Projects: they must exist as `CareerEvent`s and be absent from the
+    /// spare-time project catalogue (which holds self-initiated works only).
     func testSpotlightPlaysAreEventsNotProjects() {
         let movedEventIds = ["music-festival", "tv-casting", "conference-talk", "pitch-competition"]
         for id in movedEventIds {
@@ -732,7 +731,7 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Skill-building trainings (career-boost credentials)
 
-    /// The new creative/digital programs are non-statutory, non-gating credentials
+    /// The creative/digital programs are non-statutory, non-gating credentials
     /// whose value is the career edge they confer in the right fields.
     func testSkillBuildingTrainingsAreNonGatingBoosts() {
         let expected: [Training: Set<JobCategory>] = [
@@ -953,7 +952,7 @@ final class CareerGraphTests: XCTestCase {
     }
 
     /// Business fame is a heavy lever on investment-round odds: a well-known
-    /// founder's reputation should move the odds substantially (up to the +0.55
+    /// founder's reputation should move the odds substantially (up to the +0.25
     /// cap) and outweigh a small skill edge. Fame in another bucket does nothing.
     func testBusinessFameSignificantlyLiftsInvestmentRoundOdds() {
         guard let ceo = JobCatalog.allJobs().first(where: { $0.id == "Chief Executive Officer" }) else {
@@ -1104,7 +1103,7 @@ final class CareerGraphTests: XCTestCase {
 
     // MARK: - Open-ended realistic goal + running score
 
-    /// Realistic modes are open-ended: no savings target ever counts as a goal,
+    /// Real Life is open-ended: no savings target ever counts as a goal,
     /// however wealthy the player gets.
     func testRealisticModeHasNoFixedGoal() {
         let player = Player()
@@ -1162,7 +1161,7 @@ final class CareerGraphTests: XCTestCase {
         }
     }
 
-    /// The running score is savings ÷ age and recomputes from current state.
+    /// The running score is net worth ÷ age and recomputes from current state.
     func testRunningScoreTracksSavingsPerYear() {
         let player = Player()
         player.age = 25
@@ -1225,12 +1224,12 @@ final class CareerGraphTests: XCTestCase {
         for kept in ["3D Artist", "Animator", "Art Director"] {
             XCTAssertTrue(baseTitles.contains(kept), "'\(kept)' should still exist.")
         }
-        // Modelling became the 3D Artist ladder's entry rung.
+        // Modelling is the 3D Artist ladder's entry rung.
         let artist = JobCatalog.allJobs().filter { $0.baseTitle == "3D Artist" }
         XCTAssertEqual(artist.count, 3, "3D Artist should now run junior → base → senior.")
 
-        // The three show-business pairs that were one occupation apiece are now
-        // one ladder each, with the senior half kept as its own rung title.
+        // Each pair is a single ladder rather than two occupations, with the
+        // senior half kept as its own rung title.
         let pairs: [(base: String, senior: String)] = [
             ("Fitness Instructor", "Personal Trainer"),
             ("TV Presenter", "News Anchor"),
@@ -1517,7 +1516,7 @@ final class CareerGraphTests: XCTestCase {
     }
 
     /// The exploit this horizon closes, stated as arithmetic: with compounding
-    /// alone the score climbs every year once the player is past ~17, so without
+    /// alone the score climbs every year once the player is past ~22, so without
     /// a horizon the best strategy is to stop playing and let the clock run.
     func testIdlingWouldOtherwiseRaiseTheScoreForever() {
         let r = GameConstants.investmentReturn
@@ -1613,9 +1612,6 @@ final class CareerGraphTests: XCTestCase {
                                  "At skill \(level) a state place should beat an elite one.")
         }
 
-        // The floor is what makes a first application affordable: a fresh
-        // school-leaver should expect to get into the open-admission tier, not
-        // burn years being turned away with nothing to show for them.
         for axis in SoftSkills.allAxes { player.softSkills[keyPath: axis.keyPath] = 0 }
         XCTAssertGreaterThan(odds(.community), 0.6,
                              "An open-admission college should take a thin applicant most of the time.")
@@ -1787,7 +1783,7 @@ final class ActivityCatalogTests: XCTestCase {
 
     /// Every discipline has a contest at every life stage it's offered in —
     /// children included — once the player has put the years in. A discipline
-    /// without one would be a pastime, which the sheet no longer carries.
+    /// without one would be a pastime.
     func testEveryActivityCompetesAtEveryStageItIsOffered() {
         for sport in Sport.allCases {
             for stage in sport.stages {
@@ -2056,7 +2052,7 @@ final class FamePaysTests: XCTestCase {
         XCTAssertGreaterThan(player.endorsementIncome, 0)
     }
 
-    /// Screen and music stars are paid per project now, not a salary ladder.
+    /// Screen and music stars are paid per project, not a salary ladder.
     func testNoSalariedStarOrPerformerJobs() {
         let titles = Set(JobCatalog.allBaseTitles)
         for gone in ["Movie Star", "Pop Star", "Actor", "Musician"] {
@@ -2173,7 +2169,7 @@ final class HiringModelTests: XCTestCase {
         try XCTUnwrap(JobCatalog.allJobs().first { $0.id == title }, "Missing \(title).").atBaseSalary()
     }
 
-    /// A realistic-mode adult in a steady economy with every skill at `skills`.
+    /// A Real Life adult in a steady economy with every skill at `skills`.
     private func adult(age: Int = 30, skills: Int = 5, _ difficulty: Difficulty = .middleClass) -> Player {
         let p = Player()
         p.difficulty = difficulty

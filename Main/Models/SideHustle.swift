@@ -8,9 +8,6 @@ import Foundation
 /// A successful year banks an industry-scoped reputation award (see
 /// `Player.fameAwards` / `fameHireBonus`) and grows the soft skills it drew on —
 /// the reward a passive hobby can't give.
-/// Nothing is locked: any venture can be attempted at any time, and the odds
-/// (see `successProbability`) carry the whole decision — attempt one you have no
-/// talent or career for and you are rolling against essentially nothing.
 struct SideHustle: Identifiable, Hashable {
     let id: String
     private let labelResource: LocalizedStringResource
@@ -27,7 +24,7 @@ struct SideHustle: Identifiable, Hashable {
     /// weight in reputation points (see `Player.award`).
     let fameCategory: FameCategory
     let fameWeight: Double
-    /// Life stages in which the venture is offered (mirrors `Activity.stages`).
+    /// Life stages in which the venture is offered (mirrors `Sport.stages`).
     let stages: Set<LifeStage>
     /// Soft-skill gains applied for *any* committed year, hit or flop (each
     /// capped at 10 in `advanceYear`) — the craft axes drawn on plus a
@@ -44,9 +41,9 @@ struct SideHustle: Identifiable, Hashable {
     var fameKey: String { fameTitleResource?.key ?? labelResource.key }
     /// The industry a committed year of this venture credits as *work
     /// experience*. Set on the entrepreneurship ventures (`.entrepreneurship`),
-    /// so years spent building a startup, pitching, or crowdfunding accumulate
-    /// like a job would — and, because Business credits entrepreneurship
-    /// (`JobCategory.creditedExperienceCategories`), count toward Business roles.
+    /// so years spent on them accumulate like a job would — and, because Business
+    /// credits entrepreneurship (`JobCategory.creditedExperienceCategories`),
+    /// count toward Business roles.
     /// Years in this field count double toward the odds (see `experienceFit`).
     /// `nil` for ventures that build no formal work experience (most fame plays).
     var experienceCategory: JobCategory? = nil
@@ -54,7 +51,7 @@ struct SideHustle: Identifiable, Hashable {
     /// however talented and famous the player is — set per project from how
     /// often such work really pays off: booking gigs ~90%, crowdfunding and
     /// articles ~60%, a book, an album or a new channel 20–25%, a true big
-    /// break ~5% (a lottery you keep entering for years). Fame raises the odds
+    /// break ~0.5% (a lottery you keep entering for years). Fame raises the odds
     /// within the cap, so building an audience matters most where it's lowest.
     var successCeiling: Double = 0.9
     /// A fame award the player must hold to take this project on — the big-
@@ -136,7 +133,7 @@ struct SideHustle: Identifiable, Hashable {
 
     /// Probability (0...`successCeiling`) that the project pays off this year.
     ///
-    /// Nothing gates a project — every one can be attempted at any age, with any
+    /// No skill or career gates a project — every one can be attempted with any
     /// skills — so this number carries the whole decision. It is the weighted
     /// blend of two things the player earns over time: how well their soft skills
     /// fit the work (`talentFit`) and how much working life stands behind it
@@ -186,8 +183,8 @@ struct SideHustle: Identifiable, Hashable {
     static let bigBreakIds: Set<String> = ["bigBreakActing", "bigBreakMusic"]
 
     /// Rolls a single year of this venture: a `FameGrant` on success, nothing on
-    /// a flop. No money is staked, so there is nothing to salvage. The experience
-    /// and fame arguments are the odds inputs described on `successProbability`.
+    /// a flop. The experience and fame arguments are the odds inputs described on
+    /// `successProbability`.
     func resolve(for soft: SoftSkills, famePoints: Double = 0,
                  totalExperienceYears: Int = 0, fieldExperienceYears: Int = 0,
                  climate: IndustryClimate = .steady, age: Int? = nil) -> Outcome {
@@ -533,7 +530,7 @@ enum SideHustleCatalog {
         // --- Entrepreneurship venture: the self-initiated path to the founder
         // skillset that hobbies can't teach — leadership, vision, persuasion, and
         // risk appetite. (Its organized-competition sibling, entering a pitch
-        // competition, is an Event now.) A committed year credits
+        // competition, is an Event.) A committed year credits
         // `.entrepreneurship` work experience (which counts toward Business
         // roles), banks business-industry fame (toward management and C-suite
         // roles), and grows the entrepreneurial cluster the way running a company

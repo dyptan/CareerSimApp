@@ -8,10 +8,9 @@ enum TrainingRequirementResult {
 // MARK: - Hard skills model
 
 struct HardSkills: Codable, Hashable {
-    /// Professional credentials the player has earned — the former
-    /// certifications and licences, now unified as `Training`. A plain set:
-    /// trainings carry no proficiency level (you either hold the credential or
-    /// you don't).
+    /// Professional credentials the player has earned — certifications and
+    /// licences alike, each a `Training`. A plain set: trainings carry no
+    /// proficiency level (you either hold the credential or you don't).
     var trainings: Set<Training> = []
 
     init(trainings: Set<Training> = []) {

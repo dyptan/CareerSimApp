@@ -26,10 +26,10 @@ final class VentureLaunchTests: XCTestCase {
         )
     }
 
-    /// A player in a realistic (non-Simplified) mode set up the way the app does
-    /// on launch — starting age 18 with the matching K-12 record — plus a war
-    /// chest to stake, retail experience to clear the gate, and strong founder
-    /// soft skills so a funded launch has real odds.
+    /// A Real Life player set up the way the app does on launch — starting age
+    /// 18 with the matching K-12 record — plus a war chest to stake, retail
+    /// experience to clear the gate, and strong founder soft skills so a funded
+    /// launch has real odds.
     private func realisticFounder(savings: Int, retailYears: Int = 6) -> Player {
         let player = Player()
         player.difficulty = .middleClass
@@ -51,7 +51,7 @@ final class VentureLaunchTests: XCTestCase {
     // MARK: - Founding
 
     /// A funded, experienced founder has real (non-zero, capped) launch odds —
-    /// the value the "Launch your venture" screen shows before they commit.
+    /// the preparation behind the survival chance the Ventures sheet shows.
     func testFundedExperiencedVentureHasStrongOdds() throws {
         let player = realisticFounder(savings: 100_000)
         let job = try coffeeRoasteryJob()
@@ -105,15 +105,15 @@ final class VentureLaunchTests: XCTestCase {
         )
     }
 
-    /// A stake smaller than the founder screen's investment step (500) is still a
-    /// valid founding — the case that crashed the launch slider (range
+    /// A stake smaller than the 500 step of the old launch slider is still a
+    /// valid founding — the case that crashed that slider (range
     /// `0...savings` narrower than a 500 step) for an early player with only a
     /// few hundred saved. The model must accept it so the UI has something valid.
     func testTinyStakeBelowStepIsAValidFounding() throws {
         let job = try coffeeRoasteryJob()
         var launched = false
         for _ in 0..<500 {
-            let player = realisticFounder(savings: 400)   // < 500 UI step, < target
+            let player = realisticFounder(savings: 400)   // < 500 step, < target
             let p = job.founderSuccessProbability(for: player, investedCapital: 400)
             XCTAssertGreaterThan(p, 0.0, "A small but positive stake should still give positive odds.")
             XCTAssertTrue(p.isFinite, "Founding odds must be finite for any stake.")
@@ -238,8 +238,7 @@ final class VentureLaunchTests: XCTestCase {
     }
 
     /// Staking beyond savings borrows the shortfall: savings fund the stake
-    /// first, the rest — up to 2× income — is booked as an outstanding loan,
-    /// whatever the launch roll says.
+    /// first, the rest — up to 2× income — is booked as an outstanding loan.
     func testStakeBeyondSavingsBooksALoan() throws {
         let job = try coffeeRoasteryJob()
         let player = realisticFounder(savings: 10_000)

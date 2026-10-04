@@ -100,9 +100,9 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
     /// regulated/blue-collar work). Fame is earned and spent in these five
     /// curated buckets rather than per job category (see `FameCategory` and
     /// `Player.fameHireBonus`): tech/engineering build **Technology**
-    /// fame, business/finance/retail/entrepreneurship/administration build
+    /// fame, business/retail/entrepreneurship/administration build
     /// **Business**, science/health/education build **Science**,
-    /// design/fashion/language build **Arts**, and the spotlight fields
+    /// design builds **Arts**, and the spotlight fields
     /// (show business, which already folds in the performing arts and sports)
     /// build **Entertainment**.
     var fameCategory: FameCategory? {
@@ -270,9 +270,9 @@ enum JobCategory: String, CaseIterable, Identifiable, Codable {
 /// The two are genuinely different axes and one cannot stand in for the other: a
 /// mechanical engineer, a lawyer and a designer are all `.engineering`, `.law`
 /// and `.design` respectively whichever sector employs them, and a single sector
-/// employs all three. Modelling the economy on `JobCategory` meant a downturn in
-/// "Design" — which is not a market anyone trades in — instead of a downturn in
-/// advertising or in carmaking.
+/// employs all three. Modelling the economy on `JobCategory` would mean a
+/// downturn in "Design" — which is not a market anyone trades in — instead of a
+/// downturn in advertising or in carmaking.
 ///
 /// Every posting states its sector (see `Job.industry`), and this is the unit the
 /// cycle runs on: `Player.industryTrend` is keyed by `Industry`, not by category.
