@@ -39,15 +39,10 @@ LANGS = ["en", "de", "fr", "it", "ja", "uk"]
 # App Store Connect locale codes for Game Center localizations.
 ASC_LOCALE = {"en": "en-US", "de": "de-DE", "fr": "fr-FR", "it": "it", "ja": "ja", "uk": "uk"}
 
-# "Wealth velocity": net worth per year of age. Name pattern per language (the country name is appended).
-NAME = {
-    "en": "Wealth Velocity – {country}",
-    "de": "Vermögenstempo – {country}",
-    "fr": "Vitesse d’enrichissement – {country}",
-    "it": "Velocità di arricchimento – {country}",
-    "ja": "資産スピード – {country}",
-    "uk": "Швидкість накопичення – {country}",
-}
+# App Store Connect rejects a leaderboard name over 30 characters, which a "Wealth Velocity – <country>" label
+# overflows in every language but Japanese. The name a player sees is therefore the country's own (22 characters
+# at most); the description says what is measured, and the reference name keeps the full label.
+NAME_LIMIT = 30
 DESCRIPTION = {
     "en": "Net worth divided by age at retirement, in local money. Get rich younger to rank higher.",
     "de": "Vermögen geteilt durch das Alter beim Ruhestand, in Landeswährung. Wer früher reich wird, steht weiter oben.",
@@ -95,7 +90,7 @@ def boards():
             "localizations": {
                 lang: {
                     "locale": ASC_LOCALE[lang],
-                    "name": NAME[lang].format(country=names[lang]),
+                    "name": names[lang],
                     "description": DESCRIPTION[lang],
                     # " €/Jahr": the suffix follows the number, so it carries the space.
                     "formatterSuffix": " " + symbol + PER_YEAR[lang],
@@ -119,9 +114,9 @@ def check():
         print("MISSING here:", sorted(set(code) - set(table)), " EXTRA here:", sorted(set(table) - set(code)))
     for b in boards():
         for lang, loc in b["localizations"].items():
-            if len(loc["name"]) > 64:
+            if len(loc["name"]) > NAME_LIMIT:
                 ok = False
-                print("name over 64 characters:", b["vendorIdentifier"], lang, loc["name"])
+                print(f"name over {NAME_LIMIT} characters:", b["vendorIdentifier"], lang, loc["name"])
             if len(loc["description"]) > 255:
                 ok = False
                 print("description over 255 characters:", b["vendorIdentifier"], lang)

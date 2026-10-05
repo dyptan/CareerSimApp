@@ -23,7 +23,7 @@ extension Game {
     }
 
     /// The offered activity that best closes the gaps between the player's soft
-    /// skills and what better-paid postings ask for (0 when nothing helps).
+    /// skills and what better-paid postings ask for (nil when nothing helps).
     func bestSkillActivity() -> Sport? {
         let pay = currentPay
         var jobs = listedJobs.map { $0.atBaseSalary() }.filter { $0.income > pay }

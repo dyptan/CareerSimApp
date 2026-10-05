@@ -1,6 +1,5 @@
 import Foundation
 
-// Profiles for tertiary education
 enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
     case business
     case engineering
@@ -17,7 +16,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Human-readable description for each profile
     var description: String {
         switch self {
         case .business: return L("Business, management, and entrepreneurship.")
@@ -36,7 +34,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// Short kid-friendly summary.
     var shortKidSummary: String {
         switch self {
         case .business: return L("Learn how to start, run, and grow a company.")
@@ -54,7 +51,6 @@ enum TertiaryProfile: String, CaseIterable, Codable, Hashable, Identifiable {
         }
     }
 
-    /// What the degree means (plain language)
     var degreeMeaning: String {
         switch self {
         case .business:

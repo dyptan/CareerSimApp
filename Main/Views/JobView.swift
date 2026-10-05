@@ -351,8 +351,6 @@ struct JobDetail: View {
                 .padding(.horizontal)
             }
 
-            // Experience is a hard gate at the role's baseline; above that, the
-            // employer's tier-scaled preference shapes the hire probability.
             let baseYears = job.requirements.minYearsExperience
             if baseYears > 0 {
                 HStack(spacing: 6) {
@@ -403,7 +401,7 @@ struct JobDetail: View {
 
             // Breakthrough fame award: the gateway achievement for gated careers
             // (e.g. a junior-competition win for Professional Player). Applies in
-            // every mode, so it's shown regardless of simplified/realistic.
+            // every mode, so it's shown regardless of Simplified/Real Life.
             if let key = job.breakthroughFame {
                 let held = player.fameAwards.contains { $0.key == key }
                 Text("Breakthrough:")
@@ -476,9 +474,6 @@ struct JobDetail: View {
     /// posted rate (see `Job.salaryIsNegotiable`).
     private var canNegotiate: Bool { !isSimplified && job.salaryIsNegotiable }
 
-    /// Pay for a role you take at the advertised rate. Still shows the hire
-    /// odds in the realistic modes — what you can't argue about, you can still
-    /// weigh.
     /// The experience ⓘ: the qualifying bar (the same arithmetic as
     /// `Job.experienceFactor`, via `minimumQualifyingYears`), that more years
     /// help, and which other experience is credited here.
@@ -513,6 +508,8 @@ struct JobDetail: View {
         return paragraphs.joined(separator: "\n\n")
     }
 
+    /// Pay for a role you take at the advertised rate. Still shows the hire
+    /// odds in Real Life — what you can't argue about, you can still weigh.
     private var postedSalarySection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -549,8 +546,6 @@ struct JobDetail: View {
         .padding(.vertical)
     }
 
-    /// The odds readout, shared by both pay sections so it reads the same either
-    /// way.
     /// Which kind of organisation to apply to, each with this year's hire odds
     /// there — the industry's climate is what moves them.
     private var industryPicker: some View {
@@ -584,6 +579,8 @@ struct JobDetail: View {
         .padding(.horizontal)
     }
 
+    /// The odds readout, shared by both pay sections so it reads the same either
+    /// way.
     private var hireProbabilityRow: some View {
         HStack(spacing: 6) {
             Text("Chance to get hired:")
@@ -646,8 +643,6 @@ struct JobDetail: View {
         }
     }
 
-    /// What to say on a win. The header already shows the new job, so this says
-    /// what it means rather than repeating the title.
     private var successMessage: String {
         L("You start as \(job.displayTitle) on \(player.money(Int(requestedSalary))) a year.")
     }

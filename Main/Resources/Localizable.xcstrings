@@ -31375,6 +31375,41 @@
         }
       }
     },
+    "Leaderboard" : {
+      "comment" : "Header button: opens the sheet with the country's top 10 and the player's own score (Real Life mode)",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestenliste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Classifica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リーダーボード"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Таблиця лідерів"
+          }
+        }
+      }
+    },
     "Leading as %@ %@" : {
       "localizations" : {
         "de" : {
@@ -36080,6 +36115,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Без проблем!"
+          }
+        }
+      }
+    },
+    "No scores here yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier gibt es noch keine Punktzahlen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun score pour l’instant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora nessun punteggio qui."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだスコアはありません。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тут ще немає результатів."
           }
         }
       }
@@ -41561,6 +41630,7 @@
     },
     "Progress" : {
       "comment" : "Header button: opens the progress check (Simplified mode, which keeps no score)",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -43691,6 +43761,7 @@
       }
     },
     "Restart" : {
+      "comment" : "Button: start the run over from the start screen (the header in Simplified mode, and the end-of-career sheet)",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -44823,6 +44894,7 @@
     },
     "Score" : {
       "comment" : "Header button: opens the score sheet (Real Life mode)",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -45749,6 +45821,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Зірка показових виступів"
+          }
+        }
+      }
+    },
+    "Sign in to Game Center to see the leaderboard." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich bei Game Center an, um die Bestenliste zu sehen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi à Game Center pour voir le classement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accedi a Game Center per vedere la classifica."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リーダーボードを見るには、Game Centerにサインインしてください。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увійди в Game Center, щоб побачити таблицю лідерів."
           }
         }
       }
@@ -51121,6 +51227,40 @@
         }
       }
     },
+    "The leaderboard isn't available right now." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Bestenliste ist gerade nicht verfügbar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le classement n’est pas disponible pour le moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La classifica non è disponibile al momento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "いまはリーダーボードを表示できません。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Таблиця лідерів зараз недоступна."
+          }
+        }
+      }
+    },
     "The longer a pilot has worked for an airline, the bigger the plane they get to fly." : {
       "comment" : "Airline pilot note, point 2: the same fact in a beginner's or child's words",
       "localizations" : {
@@ -51977,7 +52117,42 @@
         }
       }
     },
+    "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Leaderboard at the top to see it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zahl rechts ist das, was du besitzt, minus das, was du schuldest. Teile sie durch dein Alter, dann hast du deine Punktzahl – tippe oben auf „Bestenliste“, um sie zu sehen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nombre à droite, c’est ce que tu possèdes moins ce que tu dois. Divisé par ton âge, il donne ton score — appuie sur Classement en haut."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il numero a destra è ciò che possiedi meno ciò che devi. Dividilo per la tua età per ottenere il punteggio (tocca Classifica in alto)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右にある数字は、持っているものから借りているものを引いた額です。これを年齢で割るとスコアになります。上の「リーダーボード」をタップすると見られます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сума праворуч — це все, що ти маєш, мінус борги. Поділи її на свій вік — і отримаєш результат; торкнись кнопки «Таблиця лідерів» угорі, щоб побачити його."
+          }
+        }
+      }
+    },
     "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -54434,6 +54609,40 @@
         }
       }
     },
+    "Top 10 · %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top 10 · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top 10 · %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top 10 · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トップ10 · %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Топ-10 · %@"
+          }
+        }
+      }
+    },
     "Top private university" : {
       "comment" : "School term: top-tier university (Italy).",
       "localizations" : {
@@ -54980,6 +55189,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Спробуй ще кілька різних занять — так буде видно, що тобі до вподоби."
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut versuchen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riprova"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度試す"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Спробувати ще раз"
           }
         }
       }
@@ -58641,6 +58884,41 @@
         }
       }
     },
+    "You" : {
+      "comment" : "The player's own line in the leaderboard list (the other lines show other players' names)",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなた"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ти"
+          }
+        }
+      }
+    },
     "You already have every skill %@ needs. 🎉 That helps your promotion chances as much as it can." : {
       "localizations" : {
         "de" : {
@@ -61086,6 +61364,7 @@
       }
     },
     "You're %lld. Here's how your life is going so far — keep playing, or start over." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -63094,6 +63373,7 @@
       }
     },
     "Your progress" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -63231,6 +63511,7 @@
       }
     },
     "Your score" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -63260,6 +63541,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Твій результат"
+          }
+        }
+      }
+    },
+    "Your score is posted when your career ends, or when you start over." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Punktzahl kommt in die Bestenliste, wenn deine Karriere endet oder du neu anfängst."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton score est publié quand ta carrière se termine, ou quand tu recommences."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo punteggio viene pubblicato quando la tua carriera finisce o quando ricominci da capo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スコアは、キャリアが終わったとき、またははじめからやり直したときに、リーダーボードに送られます。"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Твій результат потрапить до таблиці лідерів, коли карʼєра завершиться або ти почнеш спочатку."
           }
         }
       }

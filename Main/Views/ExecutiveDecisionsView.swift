@@ -16,7 +16,8 @@ struct ExecutiveDecisionsView: View {
     var onCommit: () -> Void = {}
 
     /// The asking price the player has dialled in on the Sell-Your-Stake slider,
-    /// in dollars. `nil` until they touch it, so the slider seeds at fair value.
+    /// in the player's currency. `nil` until they touch it, so the slider seeds
+    /// at fair value.
     @State private var askPrice: Double?
 
     /// "Leading as 💼 Chief Executive Officer" — a whole sentence per case.
@@ -113,8 +114,8 @@ struct ExecutiveDecisionsView: View {
 
     // MARK: - Sell-your-stake controls
 
-    /// The asking price currently dialled in, in dollars — the slider value, or
-    /// fair value if the player hasn't touched it yet.
+    /// The asking price currently dialled in, in the player's currency — the
+    /// slider value, or fair value if the player hasn't touched it yet.
     private var currentAsk: Int {
         Int((askPrice ?? Double(player.shareStakeValue())).rounded())
     }

@@ -1,0 +1,29 @@
+Thank you for reviewing Career Simulator.
+
+NO SIGN-IN NEEDED
+The app has no accounts, so there are no demo credentials ("Sign-in required" is off). It works fully offline. There are no in-app purchases, no ads and no analytics, and the app collects no data.
+
+HOW TO TRY IT (about two minutes)
+1. On the start screen pick a character, a starting age (18 skips school), a country and a mode.
+2. "Simplified" is a tutorial with no score. "Real Life" is the full simulation with a score.
+3. The buttons along the bottom (Activities, Education, Jobs, Projects, Events, Ventures) each spend the year on a choice. "Skip" in the header lets a year pass with no choice. Open Jobs, pick a role you qualify for and apply; the result arrives when the year ends.
+4. "Advice" in the header opens the Career Advisor. In Real Life, "Leaderboard" shows how the run is going and lists the ten best scores for the chosen country. In Simplified the same button is "Restart" and starts over from the start screen.
+5. A Real Life career ends at age 65 and shows the final score. Pressing Skip repeatedly gets there quickly.
+
+GAME CENTER
+Game Center is used only for leaderboards, and only in Real Life. Sign-in is requested when a Real Life run starts (never in Simplified) and can be declined without affecting the game. The score (net worth divided by age) is submitted when a career ends or when the player taps "Start over". The Leaderboard button reads the ten best scores of the chosen country back from Game Center and shows them with the names Game Center provides; they stay on screen only and are not stored. Without a Game Center sign-in it says so and everything else works. There is one leaderboard per country: dev.dyptan.carrersim.wealth_velocity for the United States, and the same ID plus _de, _ca, _uk, _fr, _it, _jp, _ua, _au, _br, _cn, _in, _mx, _pl, _es, _se, _tr or _kr for the others.
+
+APPLE INTELLIGENCE
+The advisor works with taps alone. Where Apple Intelligence is available (iOS or macOS 26 or later) the player can also type to it. This uses Apple's on-device Foundation Models framework, so nothing leaves the device. Where it is unavailable, or the app language is not supported by the model, a short note says so and everything else still works.
+
+PRIVACY
+The app collects no data and sends none to the developer or to third parties (App Privacy: Data Not Collected). The only data that leaves the device is the score and leaderboard exchange with Apple's Game Center, described above. The only stored setting is a flag that the advisor's introduction has been shown.
+
+CONTENT
+This is a game about school and work. It has no violence, no gambling, no user-generated content and no web access. Real-world names (countries, currencies, school systems) are used descriptively.
+
+LANGUAGES
+English, German, French, Italian, Japanese and Ukrainian. Please review in English.
+
+IPHONE AND IPAD
+The app is universal and supports every orientation.

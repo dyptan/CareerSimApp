@@ -1,0 +1,14 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "Leaderboard": "Classifica",
+  "No scores here yet.": "Ancora nessun punteggio qui.",
+  "Sign in to Game Center to see the leaderboard.": "Accedi a Game Center per vedere la classifica.",
+  "The leaderboard isn't available right now.": "La classifica non è disponibile al momento.",
+  "Top 10 · %@": "Top 10 · %@",
+  "Try again": "Riprova",
+  "You": "Tu",
+  "Your score is posted when your career ends, or when you start over.": "Il tuo punteggio viene pubblicato quando la tua carriera finisce o quando ricominci da capo.",
+  "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Leaderboard at the top to see it.": "Il numero a destra è ciò che possiedi meno ciò che devi. Dividilo per la tua età per ottenere il punteggio (tocca Classifica in alto)."
+ }
+}

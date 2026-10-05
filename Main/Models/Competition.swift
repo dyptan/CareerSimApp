@@ -35,8 +35,7 @@ struct Competition: Identifiable, Hashable {
     /// Sports that qualify for entry. Set membership is the hard gate: the
     /// competition only auto-enters when the player trains one of these sports
     /// (see `CompetitionCatalog.bestCompetition`). `nil` means open (no sport
-    /// gate), in which case `sportBonus` returns 0 — and since entry is
-    /// sport-driven, such an event has no way in.
+    /// gate), but since entry is sport-driven, such an event has no way in.
     let sports: Set<Sport>?
     /// Life stages in which the competition is open (mirrors `Sport.stages`).
     let stages: Set<LifeStage>
@@ -141,9 +140,8 @@ struct Competition: Identifiable, Hashable {
 }
 
 enum CompetitionCatalog {
-    /// Athletic and e-sports contests, mixing accessible local events with
-    /// marquee championships carrying a far more prestigious trophy. Open from
-    /// the teen years onward.
+    /// Every discipline's contests, mixing accessible local events with
+    /// marquee championships carrying a far more prestigious trophy.
     static let all: [Competition] = [
         // MARK: - Childhood (first rung)
         // Every discipline open to children has a small school-level contest, so

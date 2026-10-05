@@ -545,7 +545,7 @@ final class CountryTests: XCTestCase {
         XCTAssertEqual(Education.Requirements(minEQF: 3).educationLabel(in: .unitedKingdom), "A-levels")
     }
 
-    /// The hire-gap banner named the requirement in the US's words in every country.
+    /// The hire-gap banner names the requirement in the country's own words, not the US's.
     func testTheHireGapNamesTheRequirementInTheCountrysWords() throws {
         let german = player(in: .germany, age: 18)
         let job = try XCTUnwrap(german.availableJobs.first { $0.educationIsMandatory && $0.requirements.education.minEQF == 4 })
@@ -612,7 +612,7 @@ final class CountryTests: XCTestCase {
 
     // MARK: More countries
 
-    /// Each new country writes the school-leaving grade the way its own system does, from its pass mark to its top.
+    /// Each of these countries writes the school-leaving grade the way its own system does, from its pass mark to its top.
     func testTheNewCountriesWriteTheirGradeScalesFromPassToTop() {
         let d = { (value: Double, digits: Int) in Fmt.decimal(value, digits: digits) }   // locale-aware, like the labels
         let ends: [Country: (String, String)] = [

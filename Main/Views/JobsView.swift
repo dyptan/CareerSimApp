@@ -5,7 +5,7 @@ struct JobsView: View {
     @ObservedObject var player: Player
     @Binding var showCareersSheet: Bool
     /// The list's filters. Held by `AppUIState` rather than as view state, so a
-    /// choice survives the sheet closing — which it now does every year.
+    /// choice survives the sheet closing — which it does every year.
     @Binding var settingFilter: WorkSetting?
     @Binding var qualifiedOnly: Bool
     /// A role (a `Job.baseTitle`) to open straight onto — set when the advisor's
@@ -38,7 +38,7 @@ struct JobsView: View {
     func categories() -> [JobCategory] {
         // Ventures live on their own surface (see `EntrepreneurshipView`) — a
         // founder play is a capital-staked bet, not salaried employment. Ventures
-        // now keep their true industry category, so they're filtered out by
+        // keep their true industry category, so they're filtered out by
         // `isEntrepreneurial` rather than by category (a category still lists its
         // ordinary jobs).
         Array(Set(filteredJobs.map(\.category)))
@@ -113,8 +113,6 @@ struct JobsView: View {
                     List {
                         ForEach(roleGroups(in: category)) { group in
                             NavigationLink {
-                                // Pick a role, then a seniority rung (or go straight
-                                // to the single role) — no company-tier step.
                                 if group.variants.count > 1 {
                                     SeniorityOffersView(
                                         variants: group.variants,
@@ -247,11 +245,10 @@ private struct RoleGroupRow: View {
 /// player's experience in that industry and their soft-skill fit, not mainly
 /// capital (see `Player.foundVenture` and `Player.ventureFoldRisk`).
 ///
-/// There is no invest submenu: tapping **Launch** on a row founds the venture on
-/// the spot, staking its target capital as far as savings-plus-loan reach — the
-/// same stake the old invest slider opened at. The spare-time plays (course,
-/// app, game, and the creative fame gambles) live in the **Projects** sheet
-/// instead (see `PrivateProjectsView`).
+/// Tapping **Launch** on a row founds the venture on the spot, staking its
+/// target capital as far as savings-plus-loan reach. The spare-time plays
+/// (course, app, game, and the creative fame gambles) live in the **Projects**
+/// sheet instead (see `PrivateProjectsView`).
 struct EntrepreneurshipView: View {
     var availableJobs: [Job]
     @ObservedObject var player: Player
@@ -310,9 +307,8 @@ private struct VentureRow: View {
     let onLaunch: (Job) -> Void
 
     /// The stake a one-tap launch commits: the venture's target capital, funded
-    /// as far as savings-plus-loan reach — the same value the old invest
-    /// slider opened at. Savings go in first; any shortfall up to the loan cap
-    /// is borrowed (see `Player.foundVenture`).
+    /// as far as savings-plus-loan reach. Savings go in first; any shortfall up
+    /// to the loan cap is borrowed (see `Player.foundVenture`).
     static func stake(for job: Job, player: Player) -> Int {
         min(job.targetCapital ?? 0, player.maxVentureStake)
     }

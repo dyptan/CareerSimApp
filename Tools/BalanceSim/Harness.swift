@@ -335,7 +335,7 @@ final class Game {
         }
         if player.lostJobThisYear { rec.layoffs += 1 }
         if player.showVentureFailureAlert { rec.ventureFolds += 1 }
-        // Every promotion is a rung step now; a merit raise is the same job at
+        // Every promotion is a rung step; a merit raise is the same job at
         // higher pay, with no pop-up.
         if player.showPromotionAlert { rec.rungPromotions += 1 }
         if let before = jobBefore, let now = player.currentOccupation, now.id == before.id,

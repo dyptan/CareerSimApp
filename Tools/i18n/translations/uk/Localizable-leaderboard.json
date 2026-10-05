@@ -1,0 +1,14 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "Leaderboard": "Таблиця лідерів",
+  "No scores here yet.": "Тут ще немає результатів.",
+  "Sign in to Game Center to see the leaderboard.": "Увійди в Game Center, щоб побачити таблицю лідерів.",
+  "The leaderboard isn't available right now.": "Таблиця лідерів зараз недоступна.",
+  "Top 10 · %@": "Топ-10 · %@",
+  "Try again": "Спробувати ще раз",
+  "You": "Ти",
+  "Your score is posted when your career ends, or when you start over.": "Твій результат потрапить до таблиці лідерів, коли карʼєра завершиться або ти почнеш спочатку.",
+  "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Leaderboard at the top to see it.": "Сума праворуч — це все, що ти маєш, мінус борги. Поділи її на свій вік — і отримаєш результат; торкнись кнопки «Таблиця лідерів» угорі, щоб побачити його."
+ }
+}

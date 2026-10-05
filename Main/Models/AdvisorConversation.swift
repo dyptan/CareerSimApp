@@ -1020,8 +1020,8 @@ final class AdvisorConversation: ObservableObject {
             || (AdvisorRoles.isNamed(family, in: text) && AdvisorRoles.contentWordCount(text) <= 4)
     }
 
-    /// Reads a typed role: the model first when there is one, the plain search
-    /// otherwise — and always the plain search as its backstop.
+    /// Reads a typed role: the plain search when the text names one outright, else
+    /// the model when there is one — and always the plain search as its backstop.
     private func resolveRole(from text: String) async {
         let matches = AdvisorRoles.search(text)
         // A role the player names outright ("nurse", "Krankenpfleger", "I want to be a nurse") is

@@ -7,13 +7,13 @@
       "layers" : [
         {
           "hidden" : false,
-          "image-name" : "ChatGPT Image 14. Okt. 2025, 15_40_16 Medium.png",
-          "name" : "ChatGPT Image 14. Okt. 2025, 15_40_16 Medium",
+          "image-name" : "tie.svg",
+          "name" : "tie",
           "position" : {
-            "scale" : 2,
+            "scale" : 1,
             "translation-in-points" : [
-              -2.125,
-              -11.1796875
+              0,
+              0
             ]
           }
         }

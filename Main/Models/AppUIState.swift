@@ -39,11 +39,11 @@ final class AppUIState: ObservableObject {
 
     // Selections
     @Published var selectedActivities: Set<String>
-    /// Trainings the player is attempting this year (former certifications +
-    /// licences, now unified). Resolved and cleared by `Player.advanceYear`.
+    /// Trainings the player is attempting this year (certifications +
+    /// licences). Resolved and cleared by `Player.advanceYear`.
     @Published var selectedTrainings: Set<Training>
-    /// Ids of the spare-time ventures (money hustles + fame projects, now one
-    /// system) the player is attempting this year (see `SideHustleCatalog`).
+    /// Ids of the spare-time ventures (money hustles + fame projects) the
+    /// player is attempting this year (see `SideHustleCatalog`).
     /// Resolved and cleared by `Player.advanceYear`.
     @Published var selectedSideHustles: Set<String> = []
     /// Ids of the professional events the player applied to take the stage at

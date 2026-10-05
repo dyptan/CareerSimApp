@@ -3,30 +3,33 @@ import SwiftUI
 struct RetirementView: View {
     @ObservedObject var player: Player
     @ObservedObject var appUIState: AppUIState
+    @ObservedObject private var gameCenter = GameCenterManager.shared
 
-    /// Simplified is the tutorial: no score, no leaderboard — this sheet is
-    /// just a progress check there (`Difficulty.keepsScore`).
+    /// The country's top 10, read from Game Center each time the sheet opens.
+    @State private var board: LeaderboardState = .loading
+    @State private var reloads = 0
+
+    /// Simplified is the tutorial: no score, no leaderboard. Its header button
+    /// restarts the run at once, so this sheet only appears there when the
+    /// career is over (`Difficulty.keepsScore`).
     private var keepsScore: Bool { player.difficulty.keepsScore }
 
-    /// The sheet's headline. Opened from the header's Score button any time, and
-    /// on its own at the end of a career — so it reads as a progress check until
-    /// the run is actually over.
+    /// The sheet's headline. Opened from the header's Leaderboard button any
+    /// time in Real Life, and on its own at the end of a career — so it reads as
+    /// the leaderboard until the run is actually over.
     private var heading: String {
-        if player.hasRetired { return L("Game Over") }
-        return keepsScore ? L("Your score") : L("Your progress")
+        player.hasRetired ? L("Game Over") : L("Leaderboard")
     }
 
-    /// One whole sentence per state (retired or not, scored or not).
+    /// One whole sentence per state. Before the end only a scored run gets here.
     private var summary: String {
         switch (player.hasRetired, keepsScore) {
         case (true, true):
             return L("You reached \(GameConstants.retirementAge) — your career is over and this score is final.")
         case (true, false):
             return L("You reached \(GameConstants.retirementAge) — your career is over.")
-        case (false, true):
+        case (false, _):
             return L("You're \(player.age). Here's how your life is going so far — keep playing to grow your score, or start over.")
-        case (false, false):
-            return L("You're \(player.age). Here's how your life is going so far — keep playing, or start over.")
         }
     }
 
@@ -37,55 +40,88 @@ struct RetirementView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text(heading)
-                .font(.largeTitle.bold())
-                .multilineTextAlignment(.center)
-                .padding(.top)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text(heading)
+                        .font(.largeTitle.bold())
+                        .multilineTextAlignment(.center)
+                        .padding(.top)
 
-            Text(summary)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal)
+                    Text(summary)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal)
 
-            Text(savingsLine)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            if player.outstandingLoan > 0 {
-                Text("🏦 Venture loan owed: \(player.money(player.outstandingLoan))")
-                    .font(.subheadline)
-                    .foregroundStyle(.orange)
-            }
-
-            if player.studentLoan > 0 {
-                Text("🎓 Student loan owed: \(player.money(player.studentLoan))")
-                    .font(.subheadline)
-                    .foregroundStyle(.orange)
-            }
-
-            // The header no longer carries the running score — this sheet, behind
-            // the header's Score button, is where it lives, so the formula is
-            // spelled out in full. Debt counts against it, which is why the
-            // caption says net worth and not savings.
-            if keepsScore {
-                HStack(spacing: 6) {
-                    Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(Fmt.number(player.leaderboardScore))")
-                        .font(.subheadline.bold())
+                    Text(savingsLine)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    InfoHint(
-                        title: L("🏅 Score"),
-                        message: L("What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.")
-                    )
+
+                    if player.outstandingLoan > 0 {
+                        Text("🏦 Venture loan owed: \(player.money(player.outstandingLoan))")
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
+                    }
+
+                    if player.studentLoan > 0 {
+                        Text("🎓 Student loan owed: \(player.money(player.studentLoan))")
+                            .font(.subheadline)
+                            .foregroundStyle(.orange)
+                    }
+
+                    // The running score lives on this sheet, behind the header's
+                    // Leaderboard button, so the formula is spelled out in full. Debt
+                    // counts against it, which is why the caption says net worth and
+                    // not savings.
+                    if keepsScore {
+                        HStack(spacing: 6) {
+                            Text("🏅 Score: \(player.money(max(0, player.netWorth))) ÷ \(player.age) y.o. = \(Fmt.number(player.leaderboardScore))")
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.secondary)
+                            InfoHint(
+                                title: L("🏅 Score"),
+                                message: L("What you own minus what you owe, divided by your age. The younger you build your savings, the higher your score.")
+                            )
+                        }
+
+                        LeaderboardSection(country: player.country, state: board, careerOver: player.hasRetired) {
+                            reloads += 1
+                        }
+                    } else {
+                        buttons.padding(.top, 8)
+                    }
                 }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
             }
 
-            // The sheet opens from the header's Score button to check on the
-            // run, so its main button is the way back to the game — especially
-            // on macOS, where a sheet can't be swiped away — and wiping the run
-            // is the secondary choice. Once the horizon is reached there is no
-            // run left to go back to, so Restart is the only button.
+            // With a board to scroll through, the buttons stay put below it.
+            if keepsScore {
+                buttons
+                    .padding([.horizontal, .bottom])
+                    .padding(.top, 8)
+            }
+        }
+        #if os(macOS)
+        .frame(minWidth: 700, minHeight: keepsScore ? 560 : 400, idealHeight: keepsScore ? 700 : 440)
+        #endif
+        .task(id: [gameCenter.isAuthenticated ? 1 : 0, reloads]) { await refreshBoard() }
+    }
+
+    /// The sheet opens from the header's Leaderboard button to check on the run, so
+    /// its main button is the way back to the game — especially on macOS,
+    /// where a sheet can't be swiped away — and wiping the run is the secondary choice.
+    /// Once the horizon is reached there is no run left to go back to, so Restart is the
+    /// only button. The player's own line goes with them when it is further down than
+    /// the top 10, so it stays in sight.
+    private var buttons: some View {
+        VStack(spacing: 16) {
+            if case .loaded(_, let you?) = board {
+                LeaderboardLine(row: you)
+                    .frame(maxWidth: 480)
+            }
+
             if !player.hasRetired {
                 Button {
                     appUIState.showRetirementSheet = false
@@ -95,7 +131,6 @@ struct RetirementView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .padding(.top, 8)
             }
 
             if player.hasRetired {
@@ -105,7 +140,6 @@ struct RetirementView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .padding(.top, 8)
             } else {
                 Button(action: startOver) {
                     Text("Start over")
@@ -114,16 +148,16 @@ struct RetirementView: View {
                 .buttonStyle(.bordered)
             }
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .center)
-        #if os(macOS)
-        .frame(minWidth: 700, minHeight: 400)
-        #endif
-        // Only a finished career submits on sight; checking the score mid-run
-        // doesn't (see `startOver`).
-        .onAppear {
-            if player.hasRetired { GameCenterManager.shared.submitScore(of: player) }
-        }
+    }
+
+    /// Reads the board. A finished career banks its score first, so the list already
+    /// counts it; the task runs again when Game Center sign-in completes, which also
+    /// banks a final score that was waiting for it.
+    private func refreshBoard() async {
+        guard keepsScore else { return }
+        if player.hasRetired { await GameCenterManager.shared.submitScore(of: player).value }
+        board = .loading
+        board = await GameCenterManager.shared.loadLeaderboard(for: player.country)
     }
 
     /// Wipes the run and returns to the start screen. Starting over mid-run
@@ -135,6 +169,102 @@ struct RetirementView: View {
         }
         player.reset()
         appUIState.reset()
+    }
+}
+
+/// The country's ten best scores with the player's own line marked — or the reason
+/// there is nothing to list. The score is money ÷ age in the country's own money, so
+/// the list is the country's alone, the board the run's score goes to.
+private struct LeaderboardSection: View {
+    let country: Country
+    let state: LeaderboardState
+    /// A finished career has already posted its score, so the "posted when…" note no longer applies.
+    let careerOver: Bool
+    let retry: () -> Void
+
+    private var place: String { "\(country.flag) \(country.title)" }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("Top 10 · \(place)")
+                .font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            content
+        }
+        .frame(maxWidth: 480)
+        .padding(.top, 8)
+    }
+
+    @ViewBuilder private var content: some View {
+        switch state {
+        case .loading:
+            ProgressView()
+                .controlSize(.small)
+                .frame(maxWidth: .infinity, minHeight: 120)
+        case .signedOut:
+            note("Sign in to Game Center to see the leaderboard.")
+        case .unavailable:
+            note("The leaderboard isn't available right now.")
+            Button("Try again", action: retry)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+        case .loaded(let top, let you):
+            if top.isEmpty { note("No scores here yet.") }
+            ForEach(Array(top.enumerated()), id: \.offset) { _, row in LeaderboardLine(row: row) }
+            if !careerOver, you == nil, !top.contains(where: \.isLocalPlayer) {
+                note("Your score is posted when your career ends, or when you start over.")
+            }
+        }
+    }
+
+    private func note(_ text: LocalizedStringResource) -> some View {
+        Text(L(text))
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+    }
+}
+
+/// One line of a board: the rank (a medal for the top three), the name and the score. The
+/// player's own line says "You" and is marked.
+private struct LeaderboardLine: View {
+    let row: LeaderboardRow
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text(verbatim: Self.medal(for: row.rank) ?? Fmt.number(row.rank))
+                .accessibilityLabel(Text(verbatim: Fmt.number(row.rank)))
+                .frame(minWidth: 36, alignment: .trailing)
+            Group {
+                if row.isLocalPlayer {
+                    Text("You", comment: "The player's own line in the leaderboard list (the other lines show other players' names)")  // i18n:ignore translator comment
+                } else {
+                    Text(verbatim: row.name)
+                }
+            }
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            Text(verbatim: Fmt.number(row.score))
+                .foregroundStyle(.secondary)
+        }
+        .font(.subheadline.monospacedDigit())
+        .fontWeight(row.isLocalPlayer ? .bold : .regular)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
+        .background(row.isLocalPlayer ? Color.accentColor.opacity(0.18) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .combine)
+    }
+
+    private static func medal(for rank: Int) -> String? {
+        switch rank {
+        case 1: return "🥇"
+        case 2: return "🥈"
+        case 3: return "🥉"
+        default: return nil
+        }
     }
 }
 

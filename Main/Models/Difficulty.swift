@@ -28,10 +28,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     /// The default when a game starts before a difficulty is chosen.
     static let `default`: Difficulty = .middleClass
 
-    /// Who each setting is aimed at, shown as a chip in the picker so players
-    /// (and parents) can self-select. The game is meant to be approachable for
-    /// kids and challenging for adults — this makes that split explicit rather
-    /// than leaving it to the blurb.
+    /// Who each setting is aimed at.
     var audience: String {
         switch self {
         case .simplified:
@@ -44,7 +41,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
     }
 
     /// The setting suggested to a first-time player. Surfaced as a "Start here"
-    /// badge in the picker; the simplified rules are the gentlest on-ramp.
+    /// badge in the picker; the Simplified rules are the gentlest on-ramp.
     var isRecommendedForNewPlayers: Bool { self == .simplified }
 
     /// True when only the basic (degree + experience) rules apply — no skills,
@@ -137,7 +134,7 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 
     /// Share of gross income *above the living-cost floor* (`livingCostFloor`)
     /// that becomes savings once taxes are paid — up to
-    /// `GameConstants.highEarnerThreshold`, above which the higher
+    /// `Country.highEarnerThreshold`, above which the higher
     /// `highEarnerSavingsRate` applies (see `Player.annualSaving`). A low
     /// earner spends nearly everything just to get by; a professional banks a
     /// real share. Effective rates come out near Vanguard's plan-participant

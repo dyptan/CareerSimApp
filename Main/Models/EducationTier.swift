@@ -97,9 +97,9 @@ enum EducationTier: String, Codable, Hashable, CaseIterable {
     /// How far a flawless soft-skill record lifts the odds above `admissionFloor`.
     /// Narrow at community, where there was little to earn, and wide above it, so
     /// the years a player spends building skills are what buys them a better
-    /// school. The sum is the ceiling: 98% community, 90% state, and 65% elite —
-    /// even a perfect applicant is turned away from an elite place a third of the
-    /// time, so getting in is earned over years rather than given.
+    /// school. The sum is the ceiling: 98% community, 92% state, and 35% elite —
+    /// even a perfect applicant is turned away from an elite place about two
+    /// times in three, so getting in is earned over years rather than given.
     var admissionFitSpan: Double {
         switch self {
         case .community: return 0.03

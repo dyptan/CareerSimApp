@@ -1,7 +1,6 @@
 {
  "table": "Localizable",
  "strings": {
-  "Progress": "Progression",
   "Skip": "Passer l’année",
   "💵 Saving %@ of pay above %@ of living costs each year": "💵 Tu épargnes %1$@ du salaire au-delà de %2$@ de dépenses courantes, chaque année",
   "%@ Goal: %@": "%1$@ Objectif « %2$@ »",

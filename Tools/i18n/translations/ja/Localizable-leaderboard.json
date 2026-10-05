@@ -1,0 +1,14 @@
+{
+ "table": "Localizable",
+ "strings": {
+  "Leaderboard": "リーダーボード",
+  "No scores here yet.": "まだスコアはありません。",
+  "Sign in to Game Center to see the leaderboard.": "リーダーボードを見るには、Game Centerにサインインしてください。",
+  "The leaderboard isn't available right now.": "いまはリーダーボードを表示できません。",
+  "Top 10 · %@": "トップ10 · %@",
+  "Try again": "もう一度試す",
+  "You": "あなた",
+  "Your score is posted when your career ends, or when you start over.": "スコアは、キャリアが終わったとき、またははじめからやり直したときに、リーダーボードに送られます。",
+  "The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Leaderboard at the top to see it.": "右にある数字は、持っているものから借りているものを引いた額です。これを年齢で割るとスコアになります。上の「リーダーボード」をタップすると見られます。"
+ }
+}

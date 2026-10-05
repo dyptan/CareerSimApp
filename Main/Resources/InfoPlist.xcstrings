@@ -42,6 +42,48 @@
           }
         }
       }
+    },
+    "CFBundleName": {
+      "comment": "The app's name in the menu bar and in the Quit and About menu items (macOS).",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karriere-Simulator"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Career Simulator"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulateur de carrière"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulatore di carriera"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャリアシミュレーター"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Симулятор карʼєри"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

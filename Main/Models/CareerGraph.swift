@@ -132,9 +132,7 @@ enum CareerGraph {
     /// result means every unlockable is reachable and every job's hard
     /// requirements are in principle satisfiable.
     ///
-    /// Run as a DEBUG launch assertion (see `Main.init`); also trivially liftable
-    /// into an XCTest if a test target is ever added: `XCTAssertEqual(
-    /// CareerGraph.validateCatalogue(), [])`.
+    /// Asserted empty by `CareerGraphTests.testCatalogueHasNoUnreachablePaths`.
     ///
     /// Not yet covered (honest scope): that a job's `acceptedProfiles` are
     /// actually offered by the education system, and that the soft-skill

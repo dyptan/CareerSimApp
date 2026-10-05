@@ -1,7 +1,6 @@
 {
  "table": "Localizable",
  "strings": {
-  "Progress": "Progressi",
   "Skip": "Salta",
   "💵 Saving %@ of pay above %@ of living costs each year": "💵 Ogni anno risparmi una quota (%1$@) dello stipendio che supera le spese quotidiane (%2$@)",
   "%@ Goal: %@": "%1$@ Obiettivo: %2$@",

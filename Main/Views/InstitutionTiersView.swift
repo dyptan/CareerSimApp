@@ -227,9 +227,6 @@ struct InstitutionTiersView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    /// Spells out the match rows in numbers: what the school looks for on each
-    /// skill against what the player brings, and what a gap actually costs —
-    /// odds, never entry.
     private func gradesHint(for education: Education, gpa: Double) -> String {
         let grades = Fmt.percent(education.gradeWeight)
         let skills = Fmt.percent(education.softSkillWeight)
@@ -279,6 +276,9 @@ struct InstitutionTiersView: View {
         return paragraphs.joined(separator: "\n\n")
     }
 
+    /// Spells out the match rows in numbers: what the school looks for on each
+    /// skill against what the player brings, and what a gap actually costs —
+    /// odds, never entry.
     private func admissionSoftSkillsHint(for overlap: [Education.SoftSkillOverlap]) -> String {
         let list = overlap
             .map { L("\($0.pictogram) \($0.label): you have \($0.have), they'd like \($0.target)") }
@@ -310,7 +310,7 @@ struct InstitutionTiersView: View {
     private func apply(to education: Education, admission: Double) {
         if player.applyToSchool(education) {
             // Enrolling means studying full-time — say so when it costs a job,
-            // rather than letting the salary silently vanish from the header.
+            // rather than letting the salary silently vanish.
             let degree = education.degreeName(in: player.country)
             var message = player.isSimplified
                 ? L("The school accepted you onto \(degree).")

@@ -149,8 +149,8 @@ struct Job: Identifiable, Codable, Hashable {
 
 extension Job {
     /// Soft-skill keypaths counted by the hire-probability score, derived from
-    /// the single source of truth (`SoftSkills.allAxes`). The hire-probability
-    /// divisor uses `.count`, so new axes are scored automatically.
+    /// the single source of truth (`SoftSkills.allAxes`), so new axes are scored
+    /// automatically.
     private static let scoredSoftSkills: [WritableKeyPath<SoftSkills, Int>] =
         SoftSkills.allAxes.filter(\.isScored).map(\.keyPath)
 
@@ -198,23 +198,15 @@ extension Job {
 
     /// 0...1 fit of the player's soft skills against what this role asks for.
     ///
-    /// Two properties matter, and the old scorer had neither.
+    /// Two properties matter.
     ///
-    /// **It reads only the axes the role names.** It used to count how many of
-    /// all eighteen axes the player cleared, which meant an axis a role asks
-    /// nothing of scored as a pass — so a role listing five requirements handed
-    /// out thirteen free points and a role listing fourteen handed out four.
-    /// Listing a nice-to-have made a job measurably *harder to get*, which is
-    /// backwards, and left profile length acting as a difficulty knob nobody
-    /// had set deliberately: a Junior Graphic Artist was a harder hire than a
-    /// Senior Accountant purely because its category's default profile was
-    /// longer.
+    /// **It reads only the axes the role names.** An axis a role asks nothing of
+    /// counts for nothing — neither a free pass nor a penalty — so profile
+    /// length can't act as an unintended difficulty knob.
     ///
     /// **It grades.** Each axis pays out in proportion, so three of a required
-    /// four is worth three quarters rather than nothing. The all-or-nothing
-    /// version made the last point on an axis worth as much as the first three
-    /// together, and disagreed with `founderSkillFit`, which has always graded
-    /// its own profile term this way.
+    /// four is worth three quarters rather than nothing. `founderSkillFit`
+    /// reuses it for a venture's own profile.
     ///
     /// A role that asks for nothing is a perfect fit for anyone.
     func softSkillFit(for player: Player) -> Double {
@@ -275,8 +267,8 @@ extension Job {
     }
 
     /// Whether the player has the role's full stated experience
-    /// (`minYearsExperience`). Simplified mode gates on exactly this; the
-    /// realistic modes consider an applicant from `minimumQualifyingYears`
+    /// (`minYearsExperience`). Simplified mode gates on exactly this; Real Life
+    /// considers an applicant from `minimumQualifyingYears`
     /// (see `experienceFactor`), and a promotion into a rung requires it in
     /// full.
     func experienceMet(for player: Player) -> Bool {
@@ -324,7 +316,7 @@ extension Job {
     /// degree is optional and merely lifts the odds (see `educationFactor`).
     var educationIsMandatory: Bool { category.educationIsMandatory }
 
-    /// The realistic-mode education gate: enforced only where a degree is
+    /// The Real Life education gate: enforced only where a degree is
     /// mandatory. Elsewhere it's always "met" so a lack of degree never blocks
     /// the application — it just costs hire probability. (Simplified mode gates
     /// every role on `educationMet`; see `educationFactor`.)
@@ -360,12 +352,6 @@ extension Job {
     /// raised by `JobCatalog.minimumAgeByBaseTitle` where a licensing law sets a
     /// higher bar (serving alcohol, say). Founders need to be adults to stake
     /// capital (`GameConstants.minimumEntrepreneurAge`).
-    ///
-    /// This replaces a gate that checked age only for roles expecting no
-    /// schooling at all, on the theory that school takes care of the rest —
-    /// but outside the regulated fields education only grades the odds, so a
-    /// 14-year-old could apply to be a software engineer and a 16-year-old
-    /// cashier could become store manager.
     var minimumHireAge: Int {
         if isEntrepreneurial { return GameConstants.minimumEntrepreneurAge }
         let minEQF = requirements.education.minEQF
@@ -565,7 +551,7 @@ extension Job {
         return experienceFactor(ratio: Double(relevantYears(for: player)) / Double(required))
     }
 
-    /// The realistic-mode experience factor for holding `ratio` of the stated
+    /// The Real Life experience factor for holding `ratio` of the stated
     /// years:
     ///
     /// * at or above the figure, up to `experienceVeteranMultiplier` for a
@@ -870,9 +856,6 @@ extension Job {
     /// category) so founder roles can live under the Business category.
     var isEntrepreneurial: Bool { targetCapital != nil }
 
-    /// A venture that can scale — software and games sell the same product to
-    /// any number of customers — so it can raise investment and, rarely, break
-    /// out. A restaurant or a studio grows one location at a time.
     /// The industries this role can be posted in (see
     /// `JobCatalog.industries(forBaseTitle:category:)`).
     var possibleIndustries: [Industry] {
@@ -894,6 +877,9 @@ extension Job {
         return copy
     }
 
+    /// A venture that can scale — software and games sell the same product to
+    /// any number of customers — so it can raise investment and, rarely, break
+    /// out. A restaurant or a studio grows one location at a time.
     var isScalableVenture: Bool {
         isEntrepreneurial && JobCatalog.scalableVentureTitles.contains(baseTitle)
     }
@@ -980,9 +966,9 @@ extension Job {
     /// **Capital is the only hard requirement.** Anyone with a stake may try
     /// anything — nobody is barred from opening a restaurant for never having
     /// worked in hospitality, it is simply far more likely to fold. The
-    /// industry-experience baseline that used to gate this outright is now just
-    /// the largest probabilistic term (`founderExperienceFit`), so an unprepared
-    /// founder sits near the 0.03 floor rather than being refused.
+    /// industry-experience baseline only shapes a probabilistic term
+    /// (`founderExperienceFit`), so an unprepared founder sits near the 0.03
+    /// floor rather than being refused.
     func founderSuccessProbability(for player: Player, investedCapital: Int) -> Double {
         guard isEntrepreneurial, let target = targetCapital, target > 0 else { return 0.0 }
         // The one hard requirement. Everything else below only moves the odds.
@@ -1097,13 +1083,12 @@ extension Job {
 extension Job {
     /// Whether this job sits *above* the entry rung of its ladder.
     ///
-    /// Position, not the label. It used to ask whether the title carried a
-    /// seniority word, which quietly exempted every rung that tops its ladder
-    /// under a name of its own: an Airline Captain, a Supply Chain Manager and
-    /// an Editor-in-Chief all read as standalone roles, so their experience bar
-    /// was satisfied by *any* years in the category — eight years of moving
-    /// furniture qualified you to command a flight deck. A rung is a rung
-    /// whether or not anyone wrote "Senior" on it.
+    /// Position, not the label: a rung that tops its ladder under a name of its
+    /// own — an Airline Captain, a Supply Chain Manager, an Editor-in-Chief —
+    /// is above entry like any other, so its experience bar counts years on its
+    /// own ladder in full and other years in the field at half value (see
+    /// `relevantYears`). A rung is a rung whether or not anyone wrote "Senior"
+    /// on it.
     var isLadderVariant: Bool { rung > 0 }
 
     /// Player-facing label for this seniority level. "Standard" for the rung
@@ -1143,7 +1128,7 @@ extension Job {
     ]
 
     /// True for the top management role of a career track — the win condition
-    /// ("Make it to the top") for the simplified game mode. Covers apex seniority
+    /// ("Make it to the top") for the Simplified game mode. Covers apex seniority
     /// rungs, chief/director titles, and the explicit manager capstones.
     var isTopLeadership: Bool {
         if Job.leadershipPrefixes.contains(rungLabel) {

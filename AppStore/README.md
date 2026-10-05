@@ -1,0 +1,108 @@
+# Career Simulator 1.0: App Store submission guide
+
+Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
+
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5" and 7 iPad 13", reshot on 2026-10-05 with the Leaderboard button; 1 Mac, `screenshots/mac/01-main-window.png`, also captured on 2026-10-05; in the order of their file names, every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Build 102 (from the tag `v1.3.0-alpha.2`) is attached to both 1.0 pages (§6). The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Review information: both pages have the owner's contact block (entered in the web form, so the phone number never passed through the API) and their notes saved through the API, with sign-in off. The 18 leaderboards are in one draft review submission (not submitted) that does not contain an app version yet (§4). A read-only audit on 2026-10-05 found nothing missing on either page that the API can see (text, URLs, screenshots, build 102, review information, price, content rights, availability, age rating); what is left is adding each version to a review submission and submitting it, which is the owner's call. Nothing has been submitted.
+
+| File | Goes into |
+| --- | --- |
+| `en-US/subtitle.txt` | App Information ▸ Subtitle (28 / 30) |
+| `en-US/promotional-text.txt` | Promotional Text (150 / 170) |
+| `en-US/description.txt` | Description (2,379 / 4,000) |
+| `en-US/keywords.txt` | Keywords (97 / 100) |
+| `en-US/copyright.txt` | Copyright |
+| `en-US/review-notes-ios.txt` | App Review Information ▸ Notes, iOS page |
+| `en-US/review-notes-macos.txt` | App Review Information ▸ Notes, macOS page |
+| `../docs/index.html`, `../docs/privacy.html` | Support URL and Privacy Policy URL (published with GitHub Pages, §5) |
+
+## 1. "iOS App Version 1.0" page
+
+| Field | What to enter |
+| --- | --- |
+| **Previews and Screenshots ▸ iPhone 6.5" Display** | 1 to 10 portrait screenshots, **1284 × 2778** (or 1242 × 2688). Apple reuses them for the other iPhone sizes. App previews (video) are optional. Seven ready-made shots are in `screenshots/iphone-6.5/` (start screen, how to play, careers, job odds, school comparison, advisor, skills), already 1284 × 2778 with no alpha channel; they are not committed to git. |
+| **… ▸ iPad tab** | Required, because the app is universal (`TARGETED_DEVICE_FAMILY = 1,2`): 13" display, **2064 × 2752** or 2048 × 2732. The same seven scenes are in `screenshots/ipad-13/`, at exactly 2064 × 2752 with no alpha channel (iPad Pro 13-inch simulator, portrait), also not committed. |
+| **… ▸ Apple Watch tab** | Leave empty. |
+| **Promotional Text** | `en-US/promotional-text.txt`. Optional, and can be changed later without a new version. |
+| **Description** | `en-US/description.txt`. Keep the "Compete on Game Center" paragraph only if the 18 leaderboards are submitted together with this version (§4); otherwise delete it. |
+| **Keywords** | `en-US/keywords.txt`. It leaves out "career" and "simulator", which Apple already indexes from the name. |
+| **Support URL** | Required: `https://dyptan.github.io/CareerSimApp/` (the page is `docs/index.html`, §5). It links to GitHub Issues as the way to contact you. |
+| **Marketing URL** | Leave blank (optional). |
+| **Version** | `1.0`, already filled in. The project's `MARKETING_VERSION` is now `1.0` so the build matches this record. |
+| **Copyright** | `2026 Ivan Dyptan` (the year, then the rights holder; no URL, no ©). |
+| **Routing App Coverage File**, **App Clip**, **iMessage App** | Not applicable. Leave them. |
+| **Build** | Click **Add Build** and pick the processed 1.0 build. The button is greyed out until a build with version `1.0` has finished processing (§6). |
+| **Game Center** | Nothing to type here. Leave Multiplayer Compatibility as it is (the game is single-player). The leaderboards are set up under Game Center in the left menu (§4). |
+| **Sign-in required** | **Untick it.** The app has no accounts; leaving it ticked forces a username and password you do not have. |
+| **Contact Information** | First name `Ivan`, last name `Dyptan`, plus your own phone number (with country code) and email. Only App Review sees these. |
+| **Notes** | `en-US/review-notes-ios.txt` (2,946 / 4,000). |
+| **Attachment** | Skip. |
+| **App Store Version Release** | **Manually release this version** (already selected) is the safe choice for a first release: you decide when it goes live once it is approved. |
+
+## 2. "macOS App Version 1.0" page
+
+Same form again, separately. Differences:
+
+* Screenshots: Mac sizes, 16:10: **1280 × 800, 1440 × 900, 2560 × 1600 or 2880 × 1800**, with no alpha channel (a plain window grab has both problems). Take them on your Mac with the app running. One is uploaded: `screenshots/mac/01-main-window.png` (2560 × 1600, the capture cut out of the desktop and centred at native sharpness on a neutral background with a shadow); one screenshot is enough for the Mac page (1 to 10 are allowed). The other files in that folder are older captures that still show the old Score button, so do not upload them; more can be added later. Capture with the Mac's region set to the United States, or launch with `-AppleLanguages "(en)" -AppleLocale en_US`, so numbers read "4,000 $/yr" instead of "4.000 $/yr".
+* Notes: `en-US/review-notes-macos.txt`.
+* Build: the macOS build from Xcode Cloud (the build list is per platform).
+* The description, keywords, support URL and copyright can be identical.
+
+## 3. Sections in the left menu that also block "Add for Review"
+
+| Section | What to answer |
+| --- | --- |
+| **App Information** | Name `Career Simulator`. Subtitle from `en-US/subtitle.txt`. Primary category **Games** (subcategories Simulation, Strategy); the secondary category is optional. **Privacy Policy URL is required** for iOS and macOS: `https://dyptan.github.io/CareerSimApp/privacy.html` (§5). **Content Rights:** the app does not contain, show or access third-party content. |
+| **App Privacy** | **Data Not Collected.** The app has no networking of its own, and no analytics, ads or tracking. Apple states you are not responsible for disclosing data Apple itself collects (Game Center), and data processed only on device (the Apple Intelligence advisor) is not "collected". The project now ships `PrivacyInfo.xcprivacy` declaring no tracking, no collected data, and the one required-reason API it uses: UserDefaults (`@AppStorage("hasSeenCoach")`, reason `CA92.1`). |
+| **Ratings and Reviews** (age rating) | Answer **None / No** to every content question: no violence, sexual content, profanity, horror, alcohol or drugs, simulated gambling, contests, user-generated content, web access or messaging with other people. Expected result: **4+**. If a question asks about AI chat: the advisor is Apple's on-device model, limited to game facts. |
+| **Pricing and Availability** (under Monetization) | Your choice of price (the app has no in-app purchases). **Untick China mainland and Vietnam**: Apple requires games there to hold a government approval number or licence. South Korea needs nothing extra (a GRAC rating is only for casino or Frequent/Intense gambling, sexual, alcohol or violence content). |
+| **App Accessibility** | Optional. Skip for 1.0 unless you have tested VoiceOver, Larger Text and the rest and can honestly tick them. |
+| **Digital Services Act** (EU trader status) | Account Holder or Admin only: **Business** (top bar) ▸ **Agreements** tab ▸ **Compliance** section ▸ *Complete Compliance Requirements* next to Digital Services Act. Then, per app: **App Information** ▸ *App Store Regulations and Permits* ▸ Digital Services Act ▸ **Edit**. It is required to submit a new app, and apps without it are removed from the EU storefronts. |
+| **Export compliance** | No prompt: the project now sets `ITSAppUsesNonExemptEncryption = NO` (the app uses only the encryption built into the OS). |
+
+## 4. Game Center leaderboards
+
+The 18 boards (US plus 17 country suffixes) were created in App Store Connect on 2026-10-03 by `Tools/GameCenter/leaderboards.py create --apply`, each as a draft with six localizations (`INTEGER`, best score, high is best). Apple caps a leaderboard name at 30 characters, so the name a player sees is the country's own; the description says what is measured.
+
+What is left is to **add the boards to the review submission**, together with the app version (Apple's procedure, "Submit Game Center components"): App Store Connect ▸ the app ▸ **Game Center** in the sidebar ▸ open a leaderboard ▸ **Add for Review** (top right) ▸ choose the draft submission that holds the app version (or create it) ▸ repeat for each board ▸ add the version for review ▸ **Submit for Review**. They are then reviewed with the app and become live when it is approved. The Game Center checkbox on the version pages is already ticked for iOS and macOS 1.0 (the API reports `enabled: true`). Do this as the last step, because **a board cannot be deleted once it is submitted, and its ID can never be changed**; the documentation does not say whether several boards can be selected at once, so expect 18 repetitions, and nothing here has been checked against the API (there was no draft submission yet on 2026-10-05). The entitlement `com.apple.developer.game-center` is already in `CareersApp.entitlements`.
+
+To change or add a board, edit the table in the script, run `leaderboards.py check`, then look at the dry run before applying:
+
+```bash
+python3 Tools/GameCenter/leaderboards.py create
+ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_PATH=~/AuthKey_….p8 ASC_BUNDLE_ID=dev.dyptan.carrersim python3 Tools/GameCenter/leaderboards.py create --apply
+```
+
+The key comes from Users and Access ▸ Integrations ▸ App Store Connect API. The key used on 2026-10-03 could create the leaderboards but was refused (HTTP 403) when writing the version page's text fields, so filling those through the API needs a key with the **App Manager** (or Admin) role.
+
+## 5. Support and privacy pages
+
+Both pages live in `docs/` and are served by GitHub Pages: `docs/index.html` is the Support page and `docs/privacy.html` the Privacy Policy.
+
+| Field in App Store Connect | URL |
+| --- | --- |
+| Support URL (each version page) | `https://dyptan.github.io/CareerSimApp/` |
+| Privacy Policy URL (App Information, shared by iOS and macOS) | `https://dyptan.github.io/CareerSimApp/privacy.html` |
+
+The contact on both pages is **GitHub Issues** of this repository (turned on 2026-10-05), so no email address is published. Posting there needs a free GitHub account; if App Review or players need a plain email address, add one to both pages.
+
+Pages was turned on 2026-10-05 to serve `/docs` from the branch `claude/appstore-prep`, so the URLs work before the pull request is merged. **After PR #43 is merged, switch the source to `main` / `docs`** (Settings ▸ Pages ▸ Build and deployment, or `gh api -X PUT repos/dyptan/CareerSimApp/pages -f 'source[branch]=main' -f 'source[path]=/docs'`); until then, edits made on `main` do not reach the site.
+
+The privacy policy states what the app does, so keep it true: if a change adds networking, analytics, storage of personal data or another third-party package, update `docs/privacy.html` and its "Last updated" date in the same pull request, and revisit the App Privacy answers.
+
+## 6. Builds
+
+Xcode Cloud archives on a tag. A build only attaches to a version page if its version string is `1.0` (`MARKETING_VERSION`, now set), it has finished processing in App Store Connect, **and it is App Store eligible**. That last part is set per archive action in the Xcode Cloud workflow (`buildDistributionAudience`, "Deployment Preparation" in the editor): an *internal only* build is meant for internal TestFlight testing, and App Store Connect refuses it on a version page (HTTP 409, "The specified pre-release build could not be added"); an action with no setting never uploads its archive at all. Then **Add Build**. A build that stays on "Missing Compliance" cannot be selected; the new Info.plist key prevents that. Tags already pushed are `v1.0.0` to `v1.3.0-alpha.2`, so the next one has to be higher than those (for example `v1.3.0-alpha.3`, not `v1.0.0-rc.1`).
+
+Until 2026-10-05 the workflow "Default" had "Archive - iOS" set to internal only and "Archive - macOS" set to nothing, so no build could be added to either page (the tag `v1.3.0-alpha.2` produced iOS build 101, valid but internal only; the newest Mac build was number 84 from 14 September, version `1`). **Both actions are now set to App Store eligible**, and every tag push builds eligible iOS and macOS builds (they also appear in TestFlight for internal testers; App Store Connect caps uploads per app per day, so tag only when you want a build).
+
+To get builds without a new tag, a manual run was started on `v1.3.0-alpha.2` (the workflow's manual start, or `POST /v1/ciBuildRuns` with the workflow and the tag's git reference, which is what was used). **Run #102** (commit `ed4b4d5`, about 10 minutes) succeeded for both platforms and produced **iOS build 102 and macOS build 102**, both version 1.0, processed, valid and App Store eligible. Build 102 is attached to the iOS 1.0 page and to the macOS 1.0 page. The Mac App Store signing and upload worked in the cloud on the first run. The original workflow settings are not kept in the repo; restoring them means setting the iOS action back to internal only and the macOS one to no distribution.
+
+## 7. Before you click "Add for Review"
+
+* [ ] Sign-in required is unticked
+* [ ] Support URL and Privacy Policy URL are entered and open in a browser; Pages serves `main` / `docs` (not the PR branch)
+* [ ] Screenshots uploaded for iPhone, iPad (and Mac on the macOS page)
+* [x] Build attached on both platforms (build 102 on each page, §6)
+* [ ] Leaderboards added for review together with the app version (§4), or the Game Center paragraphs removed from the description and notes
+* [x] App Privacy, Age Rating, Pricing and Availability, Trader status all complete (price Free, content rights and availability verified through the API; App Privacy and trader status are the owner's word)
+* [ ] Contact phone and email filled in
