@@ -2,7 +2,7 @@
 
 Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
 
-**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5" and 7 iPad 13", reshot on 2026-10-05 with the Leaderboard button; 5 Mac, from before that, which still show "Score"; in the order of their file names, every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Build 102 (from the tag `v1.3.0-alpha.2`) is attached to both 1.0 pages (§6). The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5" and 7 iPad 13", reshot on 2026-10-05 with the Leaderboard button; 1 Mac, `screenshots/mac/01-main-window.png`, also captured on 2026-10-05; in the order of their file names, every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Build 102 (from the tag `v1.3.0-alpha.2`) is attached to both 1.0 pages (§6). The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Review information: both pages have the owner's contact block (entered in the web form, so the phone number never passed through the API) and their notes saved through the API, with sign-in off. The 18 leaderboards are in one draft review submission (not submitted) that does not contain an app version yet (§4). A read-only audit on 2026-10-05 found nothing missing on either page that the API can see (text, URLs, screenshots, build 102, review information, price, content rights, availability, age rating); what is left is adding each version to a review submission and submitting it, which is the owner's call. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -23,7 +23,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 | **… ▸ iPad tab** | Required, because the app is universal (`TARGETED_DEVICE_FAMILY = 1,2`): 13" display, **2064 × 2752** or 2048 × 2732. The same seven scenes are in `screenshots/ipad-13/`, at exactly 2064 × 2752 with no alpha channel (iPad Pro 13-inch simulator, portrait), also not committed. |
 | **… ▸ Apple Watch tab** | Leave empty. |
 | **Promotional Text** | `en-US/promotional-text.txt`. Optional, and can be changed later without a new version. |
-| **Description** | `en-US/description.txt`. Keep the "Compete on Game Center" paragraph only if the 18 leaderboards are live and attached to this version (§4); otherwise delete it. |
+| **Description** | `en-US/description.txt`. Keep the "Compete on Game Center" paragraph only if the 18 leaderboards are submitted together with this version (§4); otherwise delete it. |
 | **Keywords** | `en-US/keywords.txt`. It leaves out "career" and "simulator", which Apple already indexes from the name. |
 | **Support URL** | Required: `https://dyptan.github.io/CareerSimApp/` (the page is `docs/index.html`, §5). It links to GitHub Issues as the way to contact you. |
 | **Marketing URL** | Leave blank (optional). |
@@ -34,7 +34,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 | **Game Center** | Nothing to type here. Leave Multiplayer Compatibility as it is (the game is single-player). The leaderboards are set up under Game Center in the left menu (§4). |
 | **Sign-in required** | **Untick it.** The app has no accounts; leaving it ticked forces a username and password you do not have. |
 | **Contact Information** | First name `Ivan`, last name `Dyptan`, plus your own phone number (with country code) and email. Only App Review sees these. |
-| **Notes** | `en-US/review-notes-ios.txt` (2,786 / 4,000). |
+| **Notes** | `en-US/review-notes-ios.txt` (2,946 / 4,000). |
 | **Attachment** | Skip. |
 | **App Store Version Release** | **Manually release this version** (already selected) is the safe choice for a first release: you decide when it goes live once it is approved. |
 
@@ -42,7 +42,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 
 Same form again, separately. Differences:
 
-* Screenshots: Mac sizes, 16:10: **1280 × 800, 1440 × 900, 2560 × 1600 or 2880 × 1800**, with no alpha channel (a plain window grab has both problems). Take them on your Mac with the app running; seven are already prepared in `screenshots/mac/` (upload 01 to 05; 06 and 07 are the weaker ones) (2560 × 1600, the capture centred at native sharpness on a neutral background with a shadow). Capture with the Mac's region set to the United States, or launch with `-AppleLanguages "(en)" -AppleLocale en_US`, so numbers read "4,000 $/yr" instead of "4.000 $/yr".
+* Screenshots: Mac sizes, 16:10: **1280 × 800, 1440 × 900, 2560 × 1600 or 2880 × 1800**, with no alpha channel (a plain window grab has both problems). Take them on your Mac with the app running. One is uploaded: `screenshots/mac/01-main-window.png` (2560 × 1600, the capture cut out of the desktop and centred at native sharpness on a neutral background with a shadow); one screenshot is enough for the Mac page (1 to 10 are allowed). The other files in that folder are older captures that still show the old Score button, so do not upload them; more can be added later. Capture with the Mac's region set to the United States, or launch with `-AppleLanguages "(en)" -AppleLocale en_US`, so numbers read "4,000 $/yr" instead of "4.000 $/yr".
 * Notes: `en-US/review-notes-macos.txt`.
 * Build: the macOS build from Xcode Cloud (the build list is per platform).
 * The description, keywords, support URL and copyright can be identical.
@@ -63,7 +63,7 @@ Same form again, separately. Differences:
 
 The 18 boards (US plus 17 country suffixes) were created in App Store Connect on 2026-10-03 by `Tools/GameCenter/leaderboards.py create --apply`, each as a draft with six localizations (`INTEGER`, best score, high is best). Apple caps a leaderboard name at 30 characters, so the name a player sees is the country's own; the description says what is measured.
 
-What is left is to **add the leaderboards to each version page**, under **Game Center**, so they ship with 1.0: a draft board is not live until it belongs to a released version. The entitlement `com.apple.developer.game-center` is already in `CareersApp.entitlements`.
+What is left is to **add the boards to the review submission**, together with the app version (Apple's procedure, "Submit Game Center components"): App Store Connect ▸ the app ▸ **Game Center** in the sidebar ▸ open a leaderboard ▸ **Add for Review** (top right) ▸ choose the draft submission that holds the app version (or create it) ▸ repeat for each board ▸ add the version for review ▸ **Submit for Review**. They are then reviewed with the app and become live when it is approved. The Game Center checkbox on the version pages is already ticked for iOS and macOS 1.0 (the API reports `enabled: true`). Do this as the last step, because **a board cannot be deleted once it is submitted, and its ID can never be changed**; the documentation does not say whether several boards can be selected at once, so expect 18 repetitions, and nothing here has been checked against the API (there was no draft submission yet on 2026-10-05). The entitlement `com.apple.developer.game-center` is already in `CareersApp.entitlements`.
 
 To change or add a board, edit the table in the script, run `leaderboards.py check`, then look at the dry run before applying:
 
@@ -103,6 +103,6 @@ To get builds without a new tag, a manual run was started on `v1.3.0-alpha.2` (t
 * [ ] Support URL and Privacy Policy URL are entered and open in a browser; Pages serves `main` / `docs` (not the PR branch)
 * [ ] Screenshots uploaded for iPhone, iPad (and Mac on the macOS page)
 * [x] Build attached on both platforms (build 102 on each page, §6)
-* [ ] Leaderboards created and attached, or the Game Center paragraphs removed from the description and notes
-* [ ] App Privacy, Age Rating, Pricing and Availability, Trader status all complete
+* [ ] Leaderboards added for review together with the app version (§4), or the Game Center paragraphs removed from the description and notes
+* [x] App Privacy, Age Rating, Pricing and Availability, Trader status all complete (price Free, content rights and availability verified through the API; App Privacy and trader status are the owner's word)
 * [ ] Contact phone and email filled in
