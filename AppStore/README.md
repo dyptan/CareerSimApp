@@ -2,7 +2,7 @@
 
 Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
 
-**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5" and 7 iPad 13", reshot on 2026-10-05 with the Leaderboard button; 5 Mac, from before that, which still show "Score"; in the order of their file names, every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Build 102 (from the tag `v1.3.0-alpha.2`) is attached to both 1.0 pages (§6). The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -91,14 +91,18 @@ The privacy policy states what the app does, so keep it true: if a change adds n
 
 ## 6. Builds
 
-Xcode Cloud archives on a tag. A build only attaches to this page if its version string is `1.0` (`MARKETING_VERSION`, now set). After this branch is merged, tag it (for example `v1.0.0-rc.1`), wait for the iOS and macOS builds to finish processing in App Store Connect, then **Add Build**. A build that stays on "Missing Compliance" cannot be selected; the new Info.plist key prevents that.
+Xcode Cloud archives on a tag. A build only attaches to a version page if its version string is `1.0` (`MARKETING_VERSION`, now set), it has finished processing in App Store Connect, **and it is App Store eligible**. That last part is set per archive action in the Xcode Cloud workflow (`buildDistributionAudience`, "Deployment Preparation" in the editor): an *internal only* build is meant for internal TestFlight testing, and App Store Connect refuses it on a version page (HTTP 409, "The specified pre-release build could not be added"); an action with no setting never uploads its archive at all. Then **Add Build**. A build that stays on "Missing Compliance" cannot be selected; the new Info.plist key prevents that. Tags already pushed are `v1.0.0` to `v1.3.0-alpha.2`, so the next one has to be higher than those (for example `v1.3.0-alpha.3`, not `v1.0.0-rc.1`).
+
+Until 2026-10-05 the workflow "Default" had "Archive - iOS" set to internal only and "Archive - macOS" set to nothing, so no build could be added to either page (the tag `v1.3.0-alpha.2` produced iOS build 101, valid but internal only; the newest Mac build was number 84 from 14 September, version `1`). **Both actions are now set to App Store eligible**, and every tag push builds eligible iOS and macOS builds (they also appear in TestFlight for internal testers; App Store Connect caps uploads per app per day, so tag only when you want a build).
+
+To get builds without a new tag, a manual run was started on `v1.3.0-alpha.2` (the workflow's manual start, or `POST /v1/ciBuildRuns` with the workflow and the tag's git reference, which is what was used). **Run #102** (commit `ed4b4d5`, about 10 minutes) succeeded for both platforms and produced **iOS build 102 and macOS build 102**, both version 1.0, processed, valid and App Store eligible. Build 102 is attached to the iOS 1.0 page and to the macOS 1.0 page. The Mac App Store signing and upload worked in the cloud on the first run. The original workflow settings are not kept in the repo; restoring them means setting the iOS action back to internal only and the macOS one to no distribution.
 
 ## 7. Before you click "Add for Review"
 
 * [ ] Sign-in required is unticked
 * [ ] Support URL and Privacy Policy URL are entered and open in a browser; Pages serves `main` / `docs` (not the PR branch)
 * [ ] Screenshots uploaded for iPhone, iPad (and Mac on the macOS page)
-* [ ] Build attached on both platforms
+* [x] Build attached on both platforms (build 102 on each page, §6)
 * [ ] Leaderboards created and attached, or the Game Center paragraphs removed from the description and notes
 * [ ] App Privacy, Age Rating, Pricing and Availability, Trader status all complete
 * [ ] Contact phone and email filled in
