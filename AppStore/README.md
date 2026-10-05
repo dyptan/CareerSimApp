@@ -2,7 +2,7 @@
 
 Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
 
-**Status, 2026-10-03.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`, and the 18 Game Center leaderboards exist as drafts. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the Support and Privacy Policy URLs, screenshots, builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the Support and Privacy Policy URLs, builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -19,8 +19,8 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 
 | Field | What to enter |
 | --- | --- |
-| **Previews and Screenshots ▸ iPhone 6.5" Display** | 1 to 10 portrait screenshots, **1284 × 2778** (or 1242 × 2688). Apple reuses them for the other iPhone sizes. App previews (video) are optional. |
-| **… ▸ iPad tab** | Required, because the app is universal (`TARGETED_DEVICE_FAMILY = 1,2`): 13" display, **2064 × 2752** or 2048 × 2732. |
+| **Previews and Screenshots ▸ iPhone 6.5" Display** | 1 to 10 portrait screenshots, **1284 × 2778** (or 1242 × 2688). Apple reuses them for the other iPhone sizes. App previews (video) are optional. Seven ready-made shots are in `screenshots/iphone-6.5/` (start screen, how to play, careers, job odds, school comparison, advisor, skills), already 1284 × 2778 with no alpha channel; they are not committed to git. |
+| **… ▸ iPad tab** | Required, because the app is universal (`TARGETED_DEVICE_FAMILY = 1,2`): 13" display, **2064 × 2752** or 2048 × 2732. The same seven scenes are in `screenshots/ipad-13/`, at exactly 2064 × 2752 with no alpha channel (iPad Pro 13-inch simulator, portrait), also not committed. |
 | **… ▸ Apple Watch tab** | Leave empty. |
 | **Promotional Text** | `en-US/promotional-text.txt`. Optional, and can be changed later without a new version. |
 | **Description** | `en-US/description.txt`. Keep the "Compete on Game Center" paragraph only if the 18 leaderboards are live and attached to this version (§4); otherwise delete it. |
@@ -42,7 +42,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 
 Same form again, separately. Differences:
 
-* Screenshots: Mac sizes, 16:10: **1280 × 800, 1440 × 900, 2560 × 1600 or 2880 × 1800**. Take them on your Mac with the app running.
+* Screenshots: Mac sizes, 16:10: **1280 × 800, 1440 × 900, 2560 × 1600 or 2880 × 1800**, with no alpha channel (a plain window grab has both problems). Take them on your Mac with the app running; seven are already prepared in `screenshots/mac/` (upload 01 to 05; 06 and 07 are the weaker ones) (2560 × 1600, the capture centred at native sharpness on a neutral background with a shadow). Capture with the Mac's region set to the United States, or launch with `-AppleLanguages "(en)" -AppleLocale en_US`, so numbers read "4,000 $/yr" instead of "4.000 $/yr".
 * Notes: `en-US/review-notes-macos.txt`.
 * Build: the macOS build from Xcode Cloud (the build list is per platform).
 * The description, keywords, support URL and copyright can be identical.
