@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- collar: two wings with a V neck opening; its lower edge is a gentle smile -->
+  <path fill="#FFFFFF" d="M 346 150 L 458 150 L 512 232 L 566 150 L 678 150 L 716 258 L 602 318 Q 512 352 422 318 L 308 258 Z"/>
+  <!-- knot and blade in one piece; a thin gap separates it from the collar -->
+  <path fill="#FFFFFF" d="M 436 344 Q 512 376 588 344 L 604 404 L 560 424 C 580 520 630 650 640 716 L 512 888 L 384 716 C 394 650 444 520 464 424 L 420 404 Z"/>
+</svg>
