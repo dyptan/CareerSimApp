@@ -55,18 +55,25 @@ struct HeaderView: View {
             Spacer()
 
             // The two controls that concern the run itself, stacked together:
-            // check (or end) it, or let a year pass. **Skip** lives here rather
-            // than in the footer so the row below stays what the year can be
-            // *spent* on — every button there opens a choice, and this one is
-            // the choice to make none.
+            // check on it or start it over, or let a year pass. **Skip** lives
+            // here rather than in the footer so the row below stays what the
+            // year can be *spent* on — every button there opens a choice, and
+            // this one is the choice to make none.
             VStack(alignment: .trailing, spacing: 8) {
-                // Opens the score sheet: the running score, with Keep playing
-                // and Start over (see `RetirementView`). Simplified keeps no
-                // score, so there it is a progress check.
+                // Real Life opens the leaderboard sheet: the country's top 10 and
+                // the running score, with Keep playing and Start over (see
+                // `RetirementView`). Simplified keeps no score and has no board,
+                // so there the button starts the run over at once, back at the
+                // start screen.
                 Button(player.difficulty.keepsScore
-                       ? String(localized: "Score", comment: "Header button: opens the score sheet (Real Life mode)")  // i18n:ignore translator comment
-                       : String(localized: "Progress", comment: "Header button: opens the progress check (Simplified mode, which keeps no score)")) {  // i18n:ignore translator comment
-                    appUIState.showRetirementSheet = true
+                       ? String(localized: "Leaderboard", comment: "Header button: opens the sheet with the country's top 10 and the player's own score (Real Life mode)")  // i18n:ignore translator comment
+                       : String(localized: "Restart", comment: "Button: start the run over from the start screen (the header in Simplified mode, and the end-of-career sheet)")) {  // i18n:ignore translator comment
+                    if player.difficulty.keepsScore {
+                        appUIState.showRetirementSheet = true
+                    } else {
+                        player.reset()
+                        appUIState.reset()
+                    }
                 }
                     .buttonStyle(.bordered)
                     .font(.headline)

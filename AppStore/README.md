@@ -2,7 +2,7 @@
 
 Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
 
-**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs still have to be entered in App Store Connect. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs are entered in App Store Connect (Support URL on both 1.0 version pages, Privacy Policy URL under App Information). Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -34,7 +34,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 | **Game Center** | Nothing to type here. Leave Multiplayer Compatibility as it is (the game is single-player). The leaderboards are set up under Game Center in the left menu (§4). |
 | **Sign-in required** | **Untick it.** The app has no accounts; leaving it ticked forces a username and password you do not have. |
 | **Contact Information** | First name `Ivan`, last name `Dyptan`, plus your own phone number (with country code) and email. Only App Review sees these. |
-| **Notes** | `en-US/review-notes-ios.txt` (2,404 / 4,000). |
+| **Notes** | `en-US/review-notes-ios.txt` (2,786 / 4,000). |
 | **Attachment** | Skip. |
 | **App Store Version Release** | **Manually release this version** (already selected) is the safe choice for a first release: you decide when it goes live once it is approved. |
 

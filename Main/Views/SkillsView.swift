@@ -811,7 +811,7 @@ private enum SectionHints {
         }
         return [
             L("Your money: what you earn, what you save and what you owe."),
-            L("The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Score at the top to see it."),
+            L("The number on the right is what you own minus what you owe. Divide it by your age and you get your score — tap Leaderboard at the top to see it."),
         ].joined(separator: "\n\n")
     }
 
