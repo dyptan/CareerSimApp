@@ -2,7 +2,7 @@
 
 Everything App Store Connect asks for, matched to what the code actually does. The long texts live next to this file so you can copy them straight into the forms.
 
-**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), the Support and Privacy Policy URLs, builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
+**Status, 2026-10-05.** Through the App Store Connect API, the iOS and macOS 1.0 versions already have their **description, promotional text, keywords, copyright** (release set to manual) and the app's **subtitle** filled in from `en-US/`; the **screenshots** are uploaded (7 iPhone 6.5", 7 iPad 13", 5 Mac, in the order of their file names; every one processed and checked against the required size); and the 18 Game Center leaderboards exist as drafts. The Support and Privacy Policy pages are published with GitHub Pages (§5); their URLs still have to be entered in App Store Connect. Still open: the review contact details and notes (the API requires a contact email and phone, in `+<country code> …` form, before it saves the notes), builds, the declarations (content rights, App Privacy, EU trader status, availability), and adding the leaderboards to each version. Nothing has been submitted.
 
 | File | Goes into |
 | --- | --- |
@@ -13,7 +13,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 | `en-US/copyright.txt` | Copyright |
 | `en-US/review-notes-ios.txt` | App Review Information ▸ Notes, iOS page |
 | `en-US/review-notes-macos.txt` | App Review Information ▸ Notes, macOS page |
-| `web/support.html`, `web/privacy.html` | Support URL and Privacy Policy URL (host them, see below) |
+| `../docs/index.html`, `../docs/privacy.html` | Support URL and Privacy Policy URL (published with GitHub Pages, §5) |
 
 ## 1. "iOS App Version 1.0" page
 
@@ -25,7 +25,7 @@ Everything App Store Connect asks for, matched to what the code actually does. T
 | **Promotional Text** | `en-US/promotional-text.txt`. Optional, and can be changed later without a new version. |
 | **Description** | `en-US/description.txt`. Keep the "Compete on Game Center" paragraph only if the 18 leaderboards are live and attached to this version (§4); otherwise delete it. |
 | **Keywords** | `en-US/keywords.txt`. It leaves out "career" and "simulator", which Apple already indexes from the name. |
-| **Support URL** | Required. A public page with a way to contact you: publish `web/support.html` (§5). |
+| **Support URL** | Required: `https://dyptan.github.io/CareerSimApp/` (the page is `docs/index.html`, §5). It links to GitHub Issues as the way to contact you. |
 | **Marketing URL** | Leave blank (optional). |
 | **Version** | `1.0`, already filled in. The project's `MARKETING_VERSION` is now `1.0` so the build matches this record. |
 | **Copyright** | `2026 Ivan Dyptan` (the year, then the rights holder; no URL, no ©). |
@@ -51,7 +51,7 @@ Same form again, separately. Differences:
 
 | Section | What to answer |
 | --- | --- |
-| **App Information** | Name `Career Simulator`. Subtitle from `en-US/subtitle.txt`. Primary category **Games** (subcategories Simulation, Strategy); the secondary category is optional. **Privacy Policy URL is required** for iOS and macOS: publish `web/privacy.html`. **Content Rights:** the app does not contain, show or access third-party content. |
+| **App Information** | Name `Career Simulator`. Subtitle from `en-US/subtitle.txt`. Primary category **Games** (subcategories Simulation, Strategy); the secondary category is optional. **Privacy Policy URL is required** for iOS and macOS: `https://dyptan.github.io/CareerSimApp/privacy.html` (§5). **Content Rights:** the app does not contain, show or access third-party content. |
 | **App Privacy** | **Data Not Collected.** The app has no networking of its own, and no analytics, ads or tracking. Apple states you are not responsible for disclosing data Apple itself collects (Game Center), and data processed only on device (the Apple Intelligence advisor) is not "collected". The project now ships `PrivacyInfo.xcprivacy` declaring no tracking, no collected data, and the one required-reason API it uses: UserDefaults (`@AppStorage("hasSeenCoach")`, reason `CA92.1`). |
 | **Ratings and Reviews** (age rating) | Answer **None / No** to every content question: no violence, sexual content, profanity, horror, alcohol or drugs, simulated gambling, contests, user-generated content, web access or messaging with other people. Expected result: **4+**. If a question asks about AI chat: the advisor is Apple's on-device model, limited to game facts. |
 | **Pricing and Availability** (under Monetization) | Your choice of price (the app has no in-app purchases). **Untick China mainland and Vietnam**: Apple requires games there to hold a government approval number or licence. South Korea needs nothing extra (a GRAC rating is only for casino or Frequent/Intense gambling, sexual, alcohol or violence content). |
@@ -76,7 +76,18 @@ The key comes from Users and Access ▸ Integrations ▸ App Store Connect API. 
 
 ## 5. Support and privacy pages
 
-Both pages are drafts with one placeholder, `{{SUPPORT_EMAIL}}`. Replace it with a real contact address, then publish them anywhere that gives a stable public URL. The repository is public, so the least effort is GitHub Pages: copy both files into `docs/` on `main` (rename `support.html` to `index.html` if you like), then Settings ▸ Pages ▸ Deploy from branch ▸ `main` / `docs`. The URLs would be `https://dyptan.github.io/CareerSimApp/` and `…/privacy.html`.
+Both pages live in `docs/` and are served by GitHub Pages: `docs/index.html` is the Support page and `docs/privacy.html` the Privacy Policy.
+
+| Field in App Store Connect | URL |
+| --- | --- |
+| Support URL (each version page) | `https://dyptan.github.io/CareerSimApp/` |
+| Privacy Policy URL (App Information, shared by iOS and macOS) | `https://dyptan.github.io/CareerSimApp/privacy.html` |
+
+The contact on both pages is **GitHub Issues** of this repository (turned on 2026-10-05), so no email address is published. Posting there needs a free GitHub account; if App Review or players need a plain email address, add one to both pages.
+
+Pages was turned on 2026-10-05 to serve `/docs` from the branch `claude/appstore-prep`, so the URLs work before the pull request is merged. **After PR #43 is merged, switch the source to `main` / `docs`** (Settings ▸ Pages ▸ Build and deployment, or `gh api -X PUT repos/dyptan/CareerSimApp/pages -f 'source[branch]=main' -f 'source[path]=/docs'`); until then, edits made on `main` do not reach the site.
+
+The privacy policy states what the app does, so keep it true: if a change adds networking, analytics, storage of personal data or another third-party package, update `docs/privacy.html` and its "Last updated" date in the same pull request, and revisit the App Privacy answers.
 
 ## 6. Builds
 
@@ -85,7 +96,7 @@ Xcode Cloud archives on a tag. A build only attaches to this page if its version
 ## 7. Before you click "Add for Review"
 
 * [ ] Sign-in required is unticked
-* [ ] Support URL and Privacy Policy URL open in a browser and show a real contact address
+* [ ] Support URL and Privacy Policy URL are entered and open in a browser; Pages serves `main` / `docs` (not the PR branch)
 * [ ] Screenshots uploaded for iPhone, iPad (and Mac on the macOS page)
 * [ ] Build attached on both platforms
 * [ ] Leaderboards created and attached, or the Game Center paragraphs removed from the description and notes
